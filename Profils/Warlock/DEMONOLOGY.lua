@@ -785,12 +785,16 @@ local function APL()
     if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:SoulShardsP() < 2) then
         if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams build_a_shard"; end
     end
+    -- demonbolt,if=soul_shard<=3&buff.demonic_core.remains
+    if S.Demonbolt:IsCastableP() and not ShouldStop and (Player:SoulShardsP() <= 3 and Player:BuffP(S.DemonicCoreBuff)) then
+        if HR.Cast(S.Demonbolt) then return "demonbolt 44"; end
+    end
     -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-    if S.SoulStrike:IsCastableP() and not ShouldStop and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
+    if S.SoulStrike:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
         if HR.Cast(S.SoulStrike) then return "soul_strike 14"; end
     end
     -- shadow_bolt
-    if S.ShadowBolt:IsCastableP() and not ShouldStop then
+    if S.ShadowBolt:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and not Player:IsCasting(S.ShadowBolt) then
         if HR.Cast(S.ShadowBolt) then return "shadow_bolt 20"; end
     end
   end
