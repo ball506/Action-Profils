@@ -6,6 +6,7 @@ local TMW = TMW
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local MultiUnits = Action.MultiUnits
 
 Action[ACTION_CONST_PRIEST_SHADOW] = {
     -- Racial
@@ -58,7 +59,8 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     -- Defensive
     Dispersion                            = Action.Create({ Type = "Spell", ID = 47585     }),	
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+    Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     RecklessForceBuff                    = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
     -- Buffs
     ShadowformBuff                        = Action.Create({ Type = "Spell", ID = 232698, Hidden = true     }),
@@ -280,6 +282,35 @@ local function TrinketON()
 	end
 end
 
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if Player:InRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if Player:InDungeon() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if Player:InPvP() then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+end
+
+
 local function num(val)
   if val then return 1 else return 0 end
 end
@@ -345,13 +376,12 @@ local function APL()
     EnemiesCount = GetEnemiesCount(10)
     HL.GetEnemies(40, true) -- To populate Cache.Enemies[40] for CastCycles
     DetermineEssenceRanks()
+	-- Multidots var
+	MissingVampiricTouch = MultiUnits:GetByRangeMissedDoTs(40, 5, 34914) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingShadowWordPain = MultiUnits:GetByRangeMissedDoTs(40, 5, 589) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    print(MissingVampiricTouch)
+    HandleMultidots()
 	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-
     -- Handle all generics trinkets	
 	local function GeneralTrinkets()
         if trinketReady(1) then
@@ -666,6 +696,17 @@ local function APL()
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
         end
     end
+	
+	local function MultidotsChecks
+	    -- vampiric_touch
+        if S.VampiricTouch:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.VampiricTouchDebuff) <= 10 and not Player:IsCasting(S.VampiricTouch) then
+            if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
+        end
+        -- shadow_word_pain
+        if S.ShadowWordPain:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.ShadowWordPainDebuff) <= 10 then
+            if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
+        end
+	end
     
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
@@ -695,7 +736,19 @@ local function APL()
             else 
                 return
             end 
-        end    
+        end  
+		
+		-- Auto Multi Dot	  
+	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") 
+		and (MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) and EnemiesCount > 1 and EnemiesCount <= 7 
+		and Target:DebuffRemainsP(S.ShadowWordPainDebuff) >= 6 and Target:DebuffRemainsP(S.VampiricTouchDebuff) >= 6 then
+            if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
+        end	
+
+        -- Multidots checks
+        if Action.GetToggle(2, "AutoDot") and (MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) then
+            local ShouldReturn = MultidotsChecks(); if ShouldReturn then return ShouldReturn; end
+        end       		
 		
 		-- Dispersion if activated
 		if S.Dispersion:IsCastableP() and Player:HealthPercentage() <= Action.GetToggle(2, "DispersionHP") and Action.GetToggle(2, "UseDispersion") then
@@ -710,7 +763,7 @@ local function APL()
         -- berserking
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "GCDasOffGCD")) then return "berserking 271"; end
-        end
+        end		
         -- run_action_list,name=cleave,if=active_enemies>1
         if (EnemiesCount > 1) then
             local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end

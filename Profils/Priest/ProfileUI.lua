@@ -149,14 +149,57 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7] 
+            { -- [7] Multidots settings
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- Miscellaneous -- ",
+                        ANY = " -- Multidots settings -- ",
                     },
                 },
             },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Multidots", 
+                        ruRU = "Multidots", 
+                        frFR = "Multidots", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically multidots units.",
+                        ruRU = "Automatically multidots units.",
+                        frFR = "Automatically multidots units.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = true,
+                    DB = "AutoDotSelection",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+						[4] = true,
+                    }, 
+                    L = { 
+                        ANY = "Multidots where",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Choose where you want to automatically multidots units.", 
+                    }, 
+                    M = {},
+                },				
+			},
             { -- [7]
                 {
                     E = "Header",
@@ -292,35 +335,7 @@ A.Data.ProfileUI = {
                 },				
             },
             { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 10,                            
-                    DB = "Implosion",
-                    DBV = 5, -- Set number of imps default @ 5. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Number of Imps to use " .. A.GetSpellInfo(196277),
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "UnendingResolve",
-                    DBV = 30, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(104773) .. " (%)",
-                    }, 
-                    TT = { 
-                        enUS = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).", 
-                        ruRU = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).", 
-                        frFR = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).",
-                    }, 
-                    M = {},
-                },
+
             },
             { -- [4] 4th Row
                 {
