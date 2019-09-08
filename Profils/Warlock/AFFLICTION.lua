@@ -6,6 +6,7 @@ local TMW = TMW
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local MultiUnits = Action.MultiUnits
 
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Racial
@@ -62,7 +63,8 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
     -- Misc
     BurningRush                          = Action.Create({ Type = "Spell", ID = 278727     }),
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+    Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     -- Buffs
     GrimoireofSacrificeBuff              = Action.Create({ Type = "Spell", ID = 196099, Hidden = true     }),
     ActiveUasBuff                        = Action.Create({ Type = "Spell", ID = 233490, Hidden = true     }),
@@ -370,6 +372,35 @@ local function PrepareAshvaneBurst()
     return false
 end
 
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if Player:InRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if Player:InDungeon() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if Player:InPvP() then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
+
 ----------------------------
 ---- Interrupt handler -----
 
@@ -543,6 +574,19 @@ local function APL()
     else
         print("No Pet Data") 
     end	
+	
+	-- Multidots var
+	MissingCorruption = MultiUnits:GetByRangeMissedDoTs(40, 5, 146739) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingAgony = MultiUnits:GetByRangeMissedDoTs(40, 5, 980) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    --print(MissingVampiricTouch)
+    AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(40, 5, 146739) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+ 	AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(40, 5, 980) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    --print(AppliedVampiricTouch)
+    CorruptionToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 146739, 5)
+    AgonyToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 980, 5)
+    --SiphonLifeToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 980, 5)
+	--print(VampiricTouchToRefresh)
+	local CanMultidot = HandleMultidots()
 	
 	    -- Handle all generics trinkets	
 	local function GeneralTrinkets()
@@ -928,7 +972,13 @@ local function APL()
             else 
                 return
             end 
-        end    
+        end   
+		-- Auto Multi Dot	  
+	    if not Player:PrevGCDP(1, S.TargetEnemy)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
+		and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and EnemiesCount > 1 and EnemiesCount <= 10 
+		and Target:DebuffRemainsP(S.AgonyDebuff) >= 8 then
+            if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
+        end		
         -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
         if (true) then
             VarUseSeed = num(S.SowtheSeeds:IsAvailable() and EnemiesCount >= 3 or S.SiphonLife:IsAvailable() and EnemiesCount >= 5 or EnemiesCount >= 8)
@@ -944,7 +994,7 @@ local function APL()
         -- variable,name=maintain_se,value=spell_targets.seed_of_corruption_aoe<=1+talent.writhe_in_agony.enabled+talent.absolute_corruption.enabled*2+(talent.writhe_in_agony.enabled&talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>2)+(talent.siphon_life.enabled&!talent.creeping_death.enabled&!talent.drain_soul.enabled)+raid_event.invulnerable.up
         if (true) then
             VarMaintainSe = num(EnemiesCount <= 1 + num(S.WritheInAgony:IsAvailable()) + num(S.AbsoluteCorruption:IsAvailable()) * 2 + num((S.WritheInAgony:IsAvailable() and S.SowtheSeeds:IsAvailable() and EnemiesCount > 2)) + num((S.SiphonLife:IsAvailable() and not S.CreepingDeath:IsAvailable() and not S.DrainSoul:IsAvailable())))
-        end
+        end		
         -- call_action_list,name=cooldowns
         if (true) and HR.CDsON() then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
@@ -1067,9 +1117,9 @@ local function APL()
             local ShouldReturn = Fillers(); if ShouldReturn then return ShouldReturn; end
         end
         -- run_action_list,name=trinkets
-        if (true) and not ShouldStop then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
+       -- if (true) and not ShouldStop then
+       --     local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
+       -- end	
     end
 end
 -- Finished
