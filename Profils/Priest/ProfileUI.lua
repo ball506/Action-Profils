@@ -118,9 +118,9 @@ A.Data.ProfileUI = {
                         frFR = "Activer le Multidots auto", 
                     }, 
                     TT = { 
-                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.",
-                        ruRU = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.",
-                        frFR = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.",
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        frFR = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
                     }, 
                     M = {},
                 },

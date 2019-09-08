@@ -308,7 +308,7 @@ local function HandleMultidots()
     else
 		return false
     end
-	print(choice)
+	--print(choice)
 end
 
 
