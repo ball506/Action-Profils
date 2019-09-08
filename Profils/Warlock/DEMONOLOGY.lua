@@ -728,6 +728,36 @@ local function APL()
 	else
 	    ShouldStop = false
 	end
+	
+    -- Precombat DBM
+    local function Precombat_DBM()
+      -- flask
+      -- food
+      -- augmentation
+      -- actions.precombat+=/summon_pet
+        -- summon_pet
+        if S.SummonPet:IsReadyP() and not ShouldStop and not Pet:Exists() then
+            if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
+        end
+	    -- BattlePotionOfIntellect
+        --if I.BattlePotionOfIntellect:IsReady() and Pull >= S.Demonbolt:CastTime() + 1 and Pull <= S.Demonbolt:CastTime() + 2 then
+        --    return 967532
+        --end
+	    -- PotionofUnbridledFury
+        if I.PotionofUnbridledFury:IsReady() and Pull >= S.Demonbolt:CastTime() + 1 and Pull <= S.Demonbolt:CastTime() + 2 then
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 10"; end
+        end
+        -- inner_demons,if=talent.inner_demons.enabled
+        if S.InnerDemons:IsCastableP() and (S.InnerDemons:IsAvailable()) then
+            if HR.Cast(S.InnerDemons) then return "InnerDemons 10"; end
+        end
+        -- snapshot_stats
+	    -- potion
+        -- demonbolt
+        if S.Demonbolt:IsCastableP() and not Player:IsCasting(S.Demonbolt) and not Player:PrevGCDP(1, S.Demonbolt) and Pull > 0.1 and Pull <= S.Demonbolt:CastTime() + S.Demonbolt:TravelTime() then
+           if HR.Cast(S.Demonbolt) then return "Demonbolt 10"; end
+        end
+    end
     
     local function Precombat()
     -- flask
@@ -992,18 +1022,12 @@ local function APL()
     end
   end
 	
-
-    
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
 	-- call DBM precombat
-   -- if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-   --         if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -1180,10 +1204,6 @@ local function APL()
     if (true) then
         local ShouldReturn = BuildAShard(); if ShouldReturn then return ShouldReturn; end
     end
-        -- run_action_list,name=trinkets
-    if (true) then
-        local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-    end	
     end
 end
 -- Finished
