@@ -629,7 +629,7 @@ local function APL()
             -- if HR.Cancel(S.StarlordBuff) then return ""; end
         -- end
         -- starfall,if=(buff.starlord.stack<3|buff.starlord.remains>=8)&spell_targets>=variable.sf_targets&(target.time_to_die+1)*spell_targets>cost%2.5
-        if S.Starfall:IsReadyP() and EnemiesCount > 3 and ((Player:BuffStackP(S.StarlordBuff) < 3 or Player:BuffRemainsP(S.StarlordBuff) >= 8) and EnemiesCount >= VarSfTargets and (Target:TimeToDie() + 1) * EnemiesCount > S.Starfall:Cost() / 2.5) then
+        if S.Starfall:IsReadyP() and EnemiesCount > 5 and Target:TimeToDie() >= 15 and ((Player:BuffStackP(S.StarlordBuff) < 3 or Player:BuffRemainsP(S.StarlordBuff) >= 8) and EnemiesCount >= VarSfTargets and (Target:TimeToDie() + 1) * EnemiesCount > S.Starfall:Cost() / 2.5) then
             if HR.Cast(S.Starfall, Action.GetToggle(2, "GCDasOffGCD")) then return "starfall 164"; end
         end
         -- starsurge,if=(talent.starlord.enabled&(buff.starlord.stack<3|buff.starlord.remains>=5&buff.arcanic_pulsar.stack<8)|!talent.starlord.enabled&(buff.arcanic_pulsar.stack<8|buff.ca_inc.up))&spell_targets.starfall<variable.sf_targets&buff.lunar_empowerment.stack+buff.solar_empowerment.stack<4&buff.solar_empowerment.stack<3&buff.lunar_empowerment.stack<3&(!variable.az_ss|!buff.ca_inc.up|!prev.starsurge)|target.time_to_die<=execute_time*astral_power%40|!solar_wrath.ap_check
