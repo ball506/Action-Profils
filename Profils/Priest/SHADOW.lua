@@ -308,6 +308,7 @@ local function HandleMultidots()
     else
 		return false
     end
+	print(choice)
 end
 
 
@@ -379,8 +380,15 @@ local function APL()
 	-- Multidots var
 	MissingVampiricTouch = MultiUnits:GetByRangeMissedDoTs(40, 5, 34914) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
 	MissingShadowWordPain = MultiUnits:GetByRangeMissedDoTs(40, 5, 589) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-    print(MissingVampiricTouch)
-    HandleMultidots()
+    --print(MissingVampiricTouch)
+    AppliedVampiricTouch = MultiUnits:GetByRangeAppliedDoTs(40, 5, 34914) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+ 	AppliedShadowWordPain = MultiUnits:GetByRangeAppliedDoTs(40, 5, 589) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    --print(AppliedVampiricTouch)
+    VampiricTouchToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 34914, 5)
+    ShadowWordPainToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 589, 5)
+	--print(VampiricTouchToRefresh)
+	local CanMultidot = HandleMultidots()	
+	--print(CanMultidot)
 	
     -- Handle all generics trinkets	
 	local function GeneralTrinkets()
@@ -697,15 +705,16 @@ local function APL()
         end
     end
 	
-	local function MultidotsChecks
+	local function MultidotsChecks()
 	    -- vampiric_touch
-        if S.VampiricTouch:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.VampiricTouchDebuff) <= 10 and not Player:IsCasting(S.VampiricTouch) then
+        if S.VampiricTouch:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.VampiricTouchDebuff) <= 10 and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
         end
         -- shadow_word_pain
-        if S.ShadowWordPain:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.ShadowWordPainDebuff) <= 10 then
+        if S.ShadowWordPain:IsCastableP() and not Player:PrevGCDP(1, S.ShadowWordPain) and not ShouldStop and Target:DebuffRemainsP(S.ShadowWordPainDebuff) <= 10 then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
         end
+
 	end
     
 	-- call DBM precombat
@@ -737,16 +746,15 @@ local function APL()
                 return
             end 
         end  
-		
 		-- Auto Multi Dot	  
-	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") 
-		and (MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) and EnemiesCount > 1 and EnemiesCount <= 7 
+	    if not Player:PrevGCDP(1, S.TargetEnemy) and not Player:PrevGCDP(2, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and CanMultidot 
+		and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (AppliedVampiricTouch < EnemiesCount or AppliedShadowWordPain < EnemiesCount) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) and EnemiesCount > 1 and EnemiesCount <= 10 
 		and Target:DebuffRemainsP(S.ShadowWordPainDebuff) >= 6 and Target:DebuffRemainsP(S.VampiricTouchDebuff) >= 6 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
-        end	
-
+        end
+		
         -- Multidots checks
-        if Action.GetToggle(2, "AutoDot") and (MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) then
+        if Action.GetToggle(2, "AutoDot") and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) then
             local ShouldReturn = MultidotsChecks(); if ShouldReturn then return ShouldReturn; end
         end       		
 		

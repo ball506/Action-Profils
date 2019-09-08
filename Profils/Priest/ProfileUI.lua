@@ -182,14 +182,9 @@ A.Data.ProfileUI = {
 						{ text = "In PvP", value = "In PvP" },
                         { text = "Everywhere", value = "Everywhere" },
                     },
-                    MULT = true,
+                    MULT = false,
                     DB = "AutoDotSelection",
-                    DBV = {
-                        [1] = true, 
-                        [2] = true,
-                        [3] = true,
-						[4] = true,
-                    }, 
+                    DBV = "In Raid", 
                     L = { 
                         ANY = "Multidots where",
                     }, 
