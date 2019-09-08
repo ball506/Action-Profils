@@ -513,10 +513,10 @@ local function APL()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
-  	    -- SkullBash
-  	    if useKick and S.SkullBash:IsReady() and Target:IsInterruptible() then 
+  	    -- SolarBeam
+  	    if useKick and S.SolarBeam:IsReady() and S.SolarBeam:IsAvailable() and Target:IsInterruptible() then 
 		  	if Target:CastPercentage() >= randomInterrupt then
-          	    if HR.Cast(S.SkullBash, true) then return "SkullBash 5"; end
+          	    if HR.Cast(S.SolarBeam, true) then return "SolarBeam 5"; end
          	else 
           	    return
          	end 
