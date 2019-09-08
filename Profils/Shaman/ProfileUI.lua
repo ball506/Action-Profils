@@ -364,10 +364,34 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "AstralShiftHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 30, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(108271) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EarthShieldHP",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(974) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "HealingSurgeHP",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(8004) .. " (%)",
                     }, 
                     M = {},
                 },

@@ -60,6 +60,8 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     CapacitorTotem                        = Action.Create({ Type = "Spell", ID = 192058     }),
     Purge                                 = Action.Create({ Type = "Spell", ID = 370     }),
     GhostWolf                             = Action.Create({ Type = "Spell", ID = 2645     }),
+    EarthShield                           = Action.Create({ Type = "Spell", ID = 974     }),
+    HealingSurge                          = Action.Create({ Type = "Spell", ID = 8004     }),
 	PrimalElementalist                    = Action.Create({ Type = "Spell", ID = 117013 , Hidden = true     }),
     -- Storm Elemental   
     EyeOfTheStorm                         = Action.Create({ Type = "Spell", ID = 157375 , Hidden = true     }), 
@@ -894,16 +896,16 @@ local function APL()
         if S.Ascendance:IsCastableP() and HR.CDsON() and S.Ascendance:IsAvailable() then
             if HR.Cast(S.Ascendance, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ascendance 202"; end
         end	
-        -- 12 Lavaburst		
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 then
-            if HR.Cast(S.LavaBurst) then return "lava_burst 33"; end
-        end	
 		-- 13 EarthShock
-		if S.EarthShock:IsReadyP() and Player:Maelstrom() >= 60 then 
+		if S.EarthShock:IsReadyP() and FutureMaelstromPower() >= 60 then 
 		    if HR.Cast(S.EarthShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "EarthShock 33"; end
 		end
+        -- 18 lava_burst
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and FutureMaelstromPower() <= 90 and Player:BuffP(S.SurgeofPowerBuff) and not Player:BuffP(S.StormkeeperBuff) then
+            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
+        end
         -- 17 frost_shock
-        if S.FrostShock:IsCastableP() and S.Icefury:IsAvailable() and Player:BuffP(S.IcefuryBuff) then
+        if S.FrostShock:IsCastableP() and S.Icefury:IsAvailable() and Player:BuffP(S.IcefuryBuff) and not Player:BuffP(S.LavaSurgeBuff) then
             if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 536"; end
         end	
         -- 15 lightning_bolt
@@ -911,21 +913,18 @@ local function APL()
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
         end
 		-- 14 Lavaburst while moving
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 100 then
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
         end			
 		-- 16 frost_shock  ,moving
         if S.FrostShock:IsCastableP() and Player:IsMoving() and not Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 157"; end
         end	
-        -- 18 lava_burst
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 and Player:BuffP(S.SurgeofPowerBuff) then
-            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
+        -- 12 Lavaburst		
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and not Player:BuffP(S.LavaSurgeBuff) and not Player:BuffP(S.IcefuryBuff) and FutureMaelstromPower() <= 80 then
+            if HR.Cast(S.LavaBurst) then return "lava_burst 33"; end
         end		
-        -- 18 lava_burst
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 and Player:BuffP(S.SurgeofPowerBuff) and not Player:BuffP(S.StormkeeperBuff) then
-            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
-        end			
+			
 		
 	end
     
@@ -977,7 +976,18 @@ local function APL()
 		if Player:MovingFor() >= 2 and S.GhostWolf:IsReadyP() and not ShouldStop and not Player:BuffP(S.GhostWolfBuff) and Action.GetToggle(2, "UseGhostWolf") then
 		    if HR.Cast(S.GhostWolf) then return "GhostWolf 585"; end
 		end
-		
+		-- Earth Shield
+        if S.EarthShield:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "EarthShieldHP") then
+            if HR.Cast(S.EarthShield) then return "EarthShield 267"; end
+        end
+		-- Healing Surge
+        if S.HealingSurge:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "HealingSurgeHP") then
+            if HR.Cast(S.HealingSurge) then return "HealingSurge 267"; end
+        end
+		-- Astral Shift
+        if S.AstralShift:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "AstralShiftHP") then
+            if HR.Cast(S.AstralShift) then return "AstralShift 267"; end
+        end
         -- bloodlust,if=azerite.ancestral_resonance.enabled
         -- potion,if=expected_combat_length-time<30|cooldown.fire_elemental.remains>120|cooldown.storm_elemental.remains>120
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Target:TimeToDie() < 30 or S.FireElemental:CooldownRemainsP() > 120 or S.StormElemental:CooldownRemainsP() > 120) then
