@@ -272,6 +272,66 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
+            { -- [7] Multidots settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Multidots settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Enable auto Multidots", 
+                        ruRU = "Использовать auto Multidots", 
+                        frFR = "Activer le Multidots auto", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        frFR = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AutoDotSelection",
+                    DBV = "In Raid", 
+                    L = { 
+                        ANY = "Multidots where",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Choose where you want to automatically multidots units.", 
+                    }, 
+                    M = {},
+                },				
+			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Miscellaneous -- ",
+                    },
+                },
+            },
 			{
                 {
                     E = "Checkbox", 
@@ -286,22 +346,6 @@ A.Data.ProfileUI = {
                         enUS = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
                         ruRU = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
                         frFR = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
-                    DB = "AutoDot",
-                    DBV = true,
-                    L = { 
-                        enUS = "Auto detect multiple units and auto dot them", 
-                        ruRU = "Auto detect multiple units and auto dot them",
-                        frFR = "Auto detect multiple units and auto dot them",
-                    }, 
-                    TT = { 
-                        enUS = "Auto detect multiple units and auto dot them",
-                        ruRU = "Auto detect multiple units and auto dot them",
-                        frFR = "Auto detect multiple units and auto dot them",
                     }, 
                     M = {},
                 },

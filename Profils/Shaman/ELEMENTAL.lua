@@ -346,6 +346,64 @@ local function ResonanceTotemTime()
   return 0
 end
 
+local function FutureMaelstromPower()
+  local MaelstromPower = Player:Maelstrom()
+  local overloadChance = Player:MasteryPct() / 100
+  local factor = 1 + 0.75 * overloadChance
+  local resonance = 0
+
+  if Player:AffectingCombat() then
+    if S.TotemMastery:IsCastableP() then
+      resonance = Player:CastRemains()
+    end
+    if not Player:IsCasting() then
+      return MaelstromPower
+    else
+      if Player:IsCasting(S.LightningBolt) then
+        return MaelstromPower + 8 + resonance
+      elseif Player:IsCasting(S.LavaBurst) then
+        return MaelstromPower + 10 + resonance
+      elseif Player:IsCasting(S.ChainLightning) then
+        local enemiesHit = min(Cache.EnemiesCount[40], 3)
+        return MaelstromPower + 4 * enemiesHit * factor + resonance
+      elseif Player:IsCasting(S.Icefury) then
+        return MaelstromPower + 25 * factor + resonance
+      else
+        return MaelstromPower
+      end
+    end
+  end
+end
+
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if Player:InRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if Player:InDungeon() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if Player:InPvP() then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
+
 local function num(val)
   if val then return 1 else return 0 end
 end
@@ -402,10 +460,14 @@ local function APL()
     EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40) -- For CastCycle calls
 	DetermineEssenceRanks()
-    AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(40, 10, 188389) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-	--print(AppliedFlameShock)
+	FutureMaelstromPower()
+    AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(40, 5, 188389) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    FlameShockToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 188389, 5)
+    MissingFlameShock = MultiUnits:GetByRangeMissedDoTs(40, 5, 188389) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+
+	local CanMultidot = HandleMultidots()
 	
-    -- Handle all generics trinkets	
+	-- Handle all generics trinkets	
 	local function GeneralTrinkets()
         if trinketReady(1) then
         	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
@@ -810,7 +872,7 @@ local function APL()
             if HR.Cast(S.StormElemental, Action.GetToggle(2, "OffGCDasOffGCD")) then return "storm_elemental 595"; end
         end
 		-- 4 Icefury
-        if S.Icefury:IsCastableP() and not StormElementalIsActive() and S.Icefury:IsAvailable() then
+        if S.Icefury:IsCastableP() and not StormElementalIsActive() and S.Icefury:IsAvailable() and not Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.Icefury) then return "icefury 469"; end
         end	
     	-- 5 Eye of the Storm if Storm Elemental is up and we got Primal Elementalists
@@ -833,35 +895,35 @@ local function APL()
             if HR.Cast(S.Ascendance, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ascendance 202"; end
         end	
         -- 12 Lavaburst		
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() then
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 then
             if HR.Cast(S.LavaBurst) then return "lava_burst 33"; end
         end	
 		-- 13 EarthShock
 		if S.EarthShock:IsReadyP() and Player:Maelstrom() >= 60 then 
-		    if HR.Cast(S.EarthShock) then return "EarthShock 33"; end
+		    if HR.Cast(S.EarthShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "EarthShock 33"; end
 		end
         -- 17 frost_shock
         if S.FrostShock:IsCastableP() and S.Icefury:IsAvailable() and Player:BuffP(S.IcefuryBuff) then
-            if HR.Cast(S.FrostShock) then return "frost_shock 536"; end
+            if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 536"; end
         end	
-		-- 14 Lavaburst while moving
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) then
-            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
-        end			
         -- 15 lightning_bolt
         if S.LightningBolt:IsCastableP() and Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
         end
+		-- 14 Lavaburst while moving
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 100 then
+            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
+        end			
 		-- 16 frost_shock  ,moving
         if S.FrostShock:IsCastableP() and Player:IsMoving() and not Player:BuffP(S.StormkeeperBuff) then
-            if HR.Cast(S.FrostShock) then return "frost_shock 157"; end
+            if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 157"; end
         end	
         -- 18 lava_burst
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and Player:BuffP(S.SurgeofPowerBuff) then
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 and Player:BuffP(S.SurgeofPowerBuff) then
             if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
         end		
         -- 18 lava_burst
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and Player:BuffP(S.SurgeofPowerBuff) and not Player:BuffP(S.StormkeeperBuff) then
+        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) > S.LavaBurst:CastTime() and FutureMaelstromPower() <= 100 and Player:BuffP(S.SurgeofPowerBuff) and not Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
         end			
 		
@@ -992,11 +1054,11 @@ local function APL()
             if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 633"; end
         end
 		-- Auto Multi Dot	  
-	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and AppliedFlameShock < EnemiesCount and EnemiesCount > 1 and EnemiesCount <= 7 and Target:DebuffRemainsP(S.FlameShockDebuff) > 15 then
+	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and S.FlameShock:IsReadyP() and CanMultidot and (MissingFlameShock >= 1 or FlameShockToRefresh >= 1) and EnemiesCount > 1 and EnemiesCount <= 7 and Target:DebuffRemainsP(S.FlameShockDebuff) >= 12 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
         end			
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
-        if (EnemiesCount > 2) and Action.GetToggle(2, "AoE") then
+        if (EnemiesCount > 2) or Action.GetToggle(2, "AoE") then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
         end
         -- CustomST
