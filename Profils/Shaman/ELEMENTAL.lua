@@ -991,10 +991,6 @@ local function APL()
         if S.AncestralCall:IsCastableP() and not ShouldStop and HR.CDsON() and (not S.Ascendance:IsAvailable() or Player:BuffP(S.AscendanceBuff) or S.Ascendance:CooldownRemainsP() > 50) then
             if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 633"; end
         end
-        -- CustomST
-        if (EnemiesCount < 2) or not Action.GetToggle(2, "AoE") then
-            local ShouldReturn = CustomST(); if ShouldReturn then return ShouldReturn; end
-        end
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and AppliedFlameShock < EnemiesCount and EnemiesCount > 1 and EnemiesCount <= 7 and Target:DebuffRemainsP(S.FlameShockDebuff) > 15 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
@@ -1002,6 +998,10 @@ local function APL()
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
         if (EnemiesCount > 2) and Action.GetToggle(2, "AoE") then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
+        end
+        -- CustomST
+        if (EnemiesCount < 2) or not Action.GetToggle(2, "AoE") then
+            local ShouldReturn = CustomST(); if ShouldReturn then return ShouldReturn; end
         end
         -- run_action_list,name=funnel,if=active_enemies>=2&(spell_targets.chain_lightning<2|spell_targets.lava_beam<2)
         if (EnemiesCount < 2) then
