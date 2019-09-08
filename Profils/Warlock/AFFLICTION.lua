@@ -96,6 +96,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
     PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
     -- Misc
+	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     CyclotronicBlast                      = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
     ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     -- Hidden Heart of Azeroth
@@ -866,10 +867,6 @@ local function APL()
         end
     end
     
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
         local ShouldReturn = Precombat_DBM(); 
@@ -1028,7 +1025,7 @@ local function APL()
         -- seed_of_corruption,if=variable.use_seed&soul_shard=5
         if S.SeedofCorruption:IsCastableP() and not ShouldStop and Action.GetToggle(2, "AoE") and (bool(VarUseSeed) and Player:SoulShardsP() == 5) then
             if HR.Cast(S.SeedofCorruption) then return "seed_of_corruption 873"; end
-        end
+        end	
         -- call_action_list,name=dots
         if (true) then
             local ShouldReturn = Dots(); if ShouldReturn then return ShouldReturn; end
