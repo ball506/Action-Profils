@@ -786,11 +786,11 @@ local function APL()
         if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams build_a_shard"; end
     end
     -- demonbolt,if=soul_shard<=3&buff.demonic_core.remains
-    if S.Demonbolt:IsCastableP() and not ShouldStop and (Player:SoulShardsP() <= 3 and Player:BuffP(S.DemonicCoreBuff)) then
+    if S.Demonbolt:IsCastableP() and not ShouldStop and not Player:IsCasting(S.ShadowBolt) and (Player:SoulShardsP() <= 3 and Player:BuffP(S.DemonicCoreBuff)) then
         if HR.Cast(S.Demonbolt) then return "demonbolt 44"; end
     end
     -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-    if S.SoulStrike:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
+    if S.SoulStrike:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and not Player:IsCasting(S.ShadowBolt) and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
         if HR.Cast(S.SoulStrike) then return "soul_strike 14"; end
     end
     -- shadow_bolt
@@ -866,11 +866,7 @@ local function APL()
     end
   end
   local function Implosion()
-    -- implosion,if=(buff.wild_imps.stack>=6&(soul_shard<3|prev_gcd.1.call_dreadstalkers|buff.wild_imps.stack>=9|prev_gcd.1.bilescourge_bombers|(!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan))&!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&buff.demonic_power.down)|(time_to_die<3&buff.wild_imps.stack>0)|(prev_gcd.2.call_dreadstalkers&buff.wild_imps.stack>2&!talent.demonic_calling.enabled)
-    if S.Implosion:IsCastableP() and not ShouldStop and ((WildImpsCount() >= 6 and (Player:SoulShardsP() < 3 or Player:PrevGCDP(1, S.CallDreadstalkers) or WildImpsCount() >= 9 or Player:PrevGCDP(1, S.BilescourgeBombers) or (not Player:PrevGCDP(1, S.HandofGuldan) and not Player:PrevGCDP(2, S.HandofGuldan))) and not Player:PrevGCDP(1, S.HandofGuldan) and not Player:PrevGCDP(2, S.HandofGuldan) and Player:BuffDownP(S.DemonicPowerBuff)) or (Target:TimeToDie() < 3 and WildImpsCount() > 0) or (Player:PrevGCDP(2, S.CallDreadstalkers) and WildImpsCount() > 2 and not S.DemonicCalling:IsAvailable())) then
-        if HR.Cast(S.Implosion) then return "implosion 96"; end
-    end
-    	-- implosion,if=PetStack.imps>=mainAddon.db.profile[266].sk2+RubimRH.AoEON
+    -- implosion,if=PetStack.imps>=mainAddon.db.profile[266].sk2+RubimRH.AoEON
     if S.Implosion:IsCastableP() and not ShouldStop and not Player:PrevGCDP(1, S.SummonDemonicTyrant) and not Player:PrevGCDP(1, S.Implosion) and WildImpsCount() > 1 and WildImpsCount() >= Action.GetToggle(2, "Implosion") and HR.AoEON() then
         if HR.Cast(S.Implosion) then return "implosion 97"; end
     end  
@@ -882,12 +878,8 @@ local function APL()
     if S.CallDreadstalkers:IsReadyP() and not ShouldStop and ((S.SummonDemonicTyrant:CooldownRemainsP() < 9 and bool(Player:BuffRemainsP(S.DemonicCallingBuff))) or (S.SummonDemonicTyrant:CooldownRemainsP() < 11 and not bool(Player:BuffRemainsP(S.DemonicCallingBuff))) or S.SummonDemonicTyrant:CooldownRemainsP() > 14) then
         if HR.Cast(S.CallDreadstalkers) then return "call_dreadstalkers 134"; end
     end
-    -- summon_demonic_tyrant
-    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() then
-        if HR.Cast(S.SummonDemonicTyrant, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_demonic_tyrant 146"; end
-    end
     -- hand_of_guldan,if=soul_shard>=5
-    if S.HandofGuldan:IsCastableP() and not ShouldStop and (Player:SoulShardsP() >= 5) then
+    if S.HandofGuldan:IsCastableP() and not ShouldStop and (Player:SoulShardsP() >= 3) then
         if HR.Cast(S.HandofGuldan) then return "hand_of_guldan 148"; end
     end
     -- hand_of_guldan,if=soul_shard>=3&(((prev_gcd.2.hand_of_guldan|buff.wild_imps.stack>=3)&buff.wild_imps.stack<9)|cooldown.summon_demonic_tyrant.remains<=gcd*2|buff.demonic_power.remains>gcd*2)
