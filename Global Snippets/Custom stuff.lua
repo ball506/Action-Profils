@@ -15,7 +15,11 @@ local Item = HL.Item;
 local next, pairs, type, print  = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
+local PetLib = LibStub("PetLibrary")
 
+-------------------------------------------------------------------------------
+-- UI Toggles
+-------------------------------------------------------------------------------
 -- AoE Status on Main Icon
 function Action.AoEToggleMode()
     Action.UseAoE = Action.GetToggle(2, "AoE")    
@@ -29,6 +33,9 @@ function Action.AoEToggleMode()
     TMW:Fire("TMW_ACTION_AOE_MODE_CHANGED")
 end 
 
+-------------------------------------------------------------------------------
+-- Profil Loader
+-------------------------------------------------------------------------------
 -- Load default profils for each class
 local currentClass = select(2, UnitClass("player"))
 
@@ -87,7 +94,9 @@ if currentClass == "DEMONHUNTER" then
     Action.Print("Automatically loaded profile : [Taste]Action - Demon Hunter")
 end
 
+-------------------------------------------------------------------------------
 -- Movement checker
+-------------------------------------------------------------------------------
 -- @return number
 local movedTimer = 0
 function Unit:MovingFor()
@@ -97,7 +106,9 @@ function Unit:MovingFor()
     return GetTime() - movedTimer
 end
 
---- Instance checker
+-------------------------------------------------------------------------------
+-- Instance checker
+-------------------------------------------------------------------------------
 -- @return boolean
 function Player:InArena()
     return select(2, IsInInstance()) == "arena"
@@ -119,7 +130,9 @@ function Player:InRaid()
     return select(2, IsInInstance()) == "raid" or C_Map.GetBestMapForUnit("Player") == 480
 end
 
-
+-------------------------------------------------------------------------------
+-- Multiunits
+-------------------------------------------------------------------------------
 function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, refreshTime, upTTD)
 	-- @return number
 	-- @usage A.MultiUnits:GetByRangeDoTsToRefresh(@number, @number, @table or @number, @number, @number)
@@ -142,3 +155,15 @@ function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, 
 	return total 
 end 
 Action.MultiUnits.GetByRangeDoTsToRefresh = Action.MakeFunctionCachedDynamic(Action.MultiUnits.GetByRangeDoTsToRefresh)
+
+-------------------------------------------------------------------------------
+-- PetLib
+-------------------------------------------------------------------------------
+local petClass = select(2, UnitClass("player"))
+
+if petClass == "WARLOCK" then 
+	PetLib:Add(266, { -- Demono Warlock 
+	    30213, -- Legion Strike
+	    89751, --Felstorm
+	})
+end
