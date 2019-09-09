@@ -6,6 +6,7 @@ local TMW = TMW
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local PetLib							= LibStub("PetLibrary")
 
 Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     -- Racial
@@ -50,7 +51,10 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     BalefulInvocation                    = Action.Create({ Type = "Spell", ID = 287059}),
     ShadowsBite                          = Action.Create({ Type = "Spell", ID = 272944}),    
     SpellLock                            = Action.Create({ Type = "Spell", ID = 19647}),
-    AxeToss                              = Action.Create({ Type = "Spell", ID = 89766}),
+	-- Pet
+    LegionStrike                         = Action.Create({ Type = "Spell", ID = 89766}),
+    AxeToss                              = Action.Create({ Type = "Spell", ID = 30213}), -- Legion Strike
+    Felstorm                             = Action.Create({ Type = "Spell", ID = 89751}), --Felstorm
     -- Defensive
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
     -- Misc
@@ -712,6 +716,9 @@ local function APL()
     UpdateSoulShards()
     DetermineEssenceRanks()
 
+	print(PetLib:GetMultiUnitsBySpell(30213, 10))
+	--print(PetLib:GetMultiUnitsBySpell(89751, 10))
+	--print(PetLib:GetMultiUnitsBySpell(89751, 10))
 	
 	    -- Handle all generics trinkets	
 	local function GeneralTrinkets()
@@ -1077,7 +1084,7 @@ local function APL()
         if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll"; end
     end
     -- use_item,name=shiver_venom_relic,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffP(S.ShiverVenomDebuff) and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
     end
     -- use_item,name=aquipotent_nautilus,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
@@ -1128,10 +1135,29 @@ local function APL()
     if (S.NetherPortal:IsAvailable() and EnemiesCount <= 2) then
         local ShouldReturn = NetherPortal(); if ShouldReturn then return ShouldReturn; end
     end
-    -- call_action_list,name=implosion,if=spell_targets.implosion>1
-    if (EnemiesCount > 1) then
+	
+	
+	
+    
+	-- function Lib:GetMultiUnitsBySpell(petSpell, units)
+	-- @return number (of total units in range by petSpell, if 'units' is ommited then will take summary units)
+	-- Note: petSpell can be table {123, 124} which will be queried 
+	
+	local FelguardSpells = {
+	    30213, -- Legion Strike
+	    89751, --Felstorm
+	}
+	--Pet:GetMultiUnitsBySpell
+
+	-- call_action_list,name=implosion,if=spell_targets.implosion>1
+	-- Also check number of enemies in range of our pet to know if we can fully cleave or not
+    if (EnemiesCount > 1) and PetLib:GetMultiUnitsBySpell(89751, 10) > 1 then
         local ShouldReturn = Implosion(); if ShouldReturn then return ShouldReturn; end
     end
+	
+	
+	
+	
     -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
     if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and HR.CDsON() and (S.SummonDemonicTyrant:CooldownRemainsP() <= 15 or Target:TimeToDie() <= 30) then
         if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 408"; end
@@ -1161,7 +1187,7 @@ local function APL()
         if HR.Cast(S.HandofGuldan) then return "hand_of_guldan 435"; end
     end
     -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:SoulShardsP() < 3 and (not S.DemonicConsumption:IsAvailable() or WildImpsCount() + ImpsSpawnedDuring(2000) >= 6) or Target:TimeToDie() < 20) then
+    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() and Player:SoulShardsP() < 3 and (not S.DemonicConsumption:IsAvailable() or WildImpsCount() + ImpsSpawnedDuring(2000) > 6) then
         if HR.Cast(S.SummonDemonicTyrant, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_demonic_tyrant 445"; end
     end
     -- power_siphon,if=buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&spell_targets.implosion<2
