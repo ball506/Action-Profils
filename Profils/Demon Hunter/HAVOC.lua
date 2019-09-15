@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   -- Racial
@@ -73,8 +84,8 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568, Hidden = true}),
   ConductiveInkDebuff                   = Action.Create({ Type = "Spell", ID = 302565, Hidden = true}),
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+  
+  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
@@ -260,45 +271,6 @@ local function DetermineEssenceRanks()
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-	
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
 
 -- Interrupts handler
 --[[local function Interrupts(Target, ShouldStop)
@@ -353,23 +325,6 @@ local function APL()
     UpdateRanges()
     Everyone.AoEToggleEnemiesUpdate()
     DetermineEssenceRanks()
-	
-	-- Anti channeling protection ? To see if its usefull
-	--if Player:IsCasting() or Player:IsChanneling() then
-	--    ShouldStop = true
-	--else
-	--    ShouldStop = false
-	--end
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
 	
     local function Precombat_DBM()
         -- flask
@@ -640,17 +595,13 @@ local function APL()
         end
     end
     
-	-- Custom stuff
-    -- Protect against interrupt of channeled spells
-  --  if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-  --      if HR.Cast(S.Channeling) then return "" end
-  --  end  
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
         local ShouldReturn = Precombat_DBM(); 
             if ShouldReturn then return ShouldReturn; 
         end    
     end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -669,7 +620,7 @@ local function APL()
         
   	    -- Disrupt
   	    if useKick and S.Disrupt:IsReady() and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Disrupt, true) then return "Disrupt 5"; end
          	else 
           	    return
@@ -678,7 +629,7 @@ local function APL()
 	
      	 -- ChaosNova
       	if useCC and S.ChaosNova:IsReady() and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.ChaosNova, true) then return "ChaosNova 5"; end
      	    else 
      	        return
@@ -736,25 +687,30 @@ local function APL()
         -- run_action_list,name=normal
         if (true) then
             local ShouldReturn = Normal(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end		
+        end	
     end
 end
 -- Finished
-
 
 
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
