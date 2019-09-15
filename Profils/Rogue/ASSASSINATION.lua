@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     -- Racial
@@ -575,46 +586,6 @@ local function DetermineEssenceRanks()
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 -- HeroLib EnemiesCount handler
 local EnemyRanges = {"Melee", 6, 9}
 local function UpdateRanges()
@@ -910,16 +881,16 @@ local Interrupts = {
 -- # Essences
 local function Essences ()
     -- actions.essences+=/blood_of_the_enemy,if=debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up&combo_points.deficit<=1|debuff.vendetta.remains<=10)|target.time_to_die<=10
-    if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Target:DebuffP(S.Vendetta) and (not S.ToxicBlade:IsAvailable()
+    if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Target:DebuffP(S.Vendetta) and (not S.ToxicBlade:IsAvailable()
         or (Target:DebuffP(S.ToxicBladeDebuff) and Player:ComboPointsDeficit() <= 1) or Target:DebuffRemainsP(S.Vendetta) <= 10) then
         if HR.Cast(S.BloodoftheEnemy) then return "Cast BloodoftheEnemy"; end
     end
     -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-    if S.ConcentratedFlame:IsCastableP() and not ShouldStop and Player:EnergyTimeToMaxPredicted() > 1 and not Target:DebuffP(S.Vendetta) and (not Target:DebuffP(S.ConcentratedFlameBurn)
+    if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:EnergyTimeToMaxPredicted() > 1 and not Target:DebuffP(S.Vendetta) and (not Target:DebuffP(S.ConcentratedFlameBurn)
         and not Player:PrevGCD(1, S.ConcentratedFlame) or S.ConcentratedFlame:FullRechargeTime() < Player:GCD() + Player:GCDRemains()) then
         if HR.Cast(S.ConcentratedFlame) then return "Cast ConcentratedFlame"; end
     end
-    if S.GuardianofAzeroth:IsCastableP() and not ShouldStop then
+    if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
         -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
         if S.Vendetta:CooldownRemainsP() < 3 or Target:DebuffP(S.Vendetta) or Target:BossFilteredTimeToDie("<", 30) then
             if HR.Cast(S.GuardianofAzeroth) then return "Cast GuardianofAzeroth Synced"; end
@@ -931,27 +902,27 @@ local function Essences ()
         end
     end
     -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-    if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Player:EnergyPredicted() < 70 then
+    if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:EnergyPredicted() < 70 then
         if HR.Cast(S.FocusedAzeriteBeam) then return "Cast FocusedAzeriteBeam"; end
     end
     -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
-    if S.PurifyingBlast:IsCastableP() and not ShouldStop then
+    if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
         if HR.Cast(S.PurifyingBlast) then return "Cast PurifyingBlast"; end
     end
     -- actions.essences+=/the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-    if S.TheUnboundForce:IsCastableP() and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 10) then
+    if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 10) then
         if HR.Cast(S.TheUnboundForce) then return "Cast TheUnboundForce"; end
     end
     -- ripple_in_space
-    if S.RippleInSpace:IsCastableP() and not ShouldStop then
+    if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
         if HR.Cast(S.RippleInSpace) then return "Cast RippleInSpace"; end
     end
     -- worldvein_resonance,if=buff.lifeblood.stack<3
-    if S.WorldveinResonance:IsCastableP() and not ShouldStop and Player:BuffStackP(S.LifebloodBuff) < 3 then
+    if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:BuffStackP(S.LifebloodBuff) < 3 then
         if HR.Cast(S.WorldveinResonance) then return "Cast WorldveinResonance"; end
     end
     -- memory_of_lucid_dreams,if=energy<50&!cooldown.vendetta.up
-    if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Player:EnergyPredicted() < 50 and not S.Vendetta:CooldownUpP() then
+    if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:EnergyPredicted() < 50 and not S.Vendetta:CooldownUpP() then
         if HR.Cast(S.MemoryofLucidDreams) then return "Cast MemoryofLucidDreams"; end
     end
     return false;
@@ -971,7 +942,7 @@ local function CDs ()
                 if HR.Cast(S.MarkedforDeath, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Marked for Death"; end
             end
             if ComboPointsDeficit >= CPMaxSpend() then
-                HR.CastSuggested(S.MarkedforDeath);
+                HR.Cast(S.MarkedforDeath);
             end
         end
 
@@ -1318,17 +1289,7 @@ local function APL()
     -- Feint
     ShouldReturn = Feint(S.Feint);
     if ShouldReturn then return ShouldReturn; end
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
+		
 	-- Anti channel interrupt
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
@@ -1381,7 +1342,7 @@ local function APL()
         
   	    -- Kick
   	    if useKick and S.Kick:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Kick, true) then return "Kick 5"; end
          	else 
           	    return
@@ -1390,7 +1351,7 @@ local function APL()
 	
      	 -- CheapShot
       	if useCC and S.CheapShot:IsReady() and not ShouldStop and Target:IsInterruptible() and Player:EnergyPredicted() >= 40 then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
      	    else 
      	        return
@@ -1457,10 +1418,6 @@ local function APL()
         if S.Mutilate:IsCastable("Melee") then
             if HR.Cast(S.Channeling) then return "Normal Pooling"; end
         end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
     end    
 end
 -- Finished
@@ -1471,10 +1428,20 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
