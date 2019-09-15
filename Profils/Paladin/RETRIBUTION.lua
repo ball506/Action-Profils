@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   -- Racial
@@ -59,8 +70,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
   RazorCoralDebuff                     = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+  
+  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -206,46 +217,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 S.ConcentratedFlame:RegisterInFlight()
 
 --- ======= ACTION LISTS =======
@@ -265,14 +236,25 @@ local function APL()
 	else
 	    ShouldStop = false
 	end
-	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- use_item,name=azsharas_font_of_power
+            if I.AzsharasFontofPower:IsEquipReady() and Pull > 0.1 and Pull <= 5 then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 5"; end
+            end
+            -- potion
+            if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
+                if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_strength 4"; end
+            end
+            -- judgment,if=holy_power<=2|(holy_power<=4&(cooldown.blade_of_justice.remains>gcd*2|variable.HoW))
+            if S.Judgment:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 0.3 then
+                if HR.Cast(S.Judgment) then return "judgment 128"; end
+            end
         end
     end
 	
@@ -284,7 +266,7 @@ local function APL()
         if Everyone.TargetIsValid() then
             -- potion
             if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofFocusedResolve) then return "battle_potion_of_strength 4"; end
+                if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_strength 4"; end
             end
             -- use_item,name=azsharas_font_of_power
             if I.AzsharasFontofPower:IsEquipReady() then
@@ -300,7 +282,7 @@ local function APL()
     local function Cooldowns()
         -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
         if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and ((S.GuardianofAzeroth:CooldownRemainsP() > 90 or not S.GuardianofAzeroth:IsAvailable()) and (Player:HasHeroism() or Player:BuffP(S.AvengingWrathBuff) and Player:BuffRemainsP(S.AvengingWrathBuff) > 18 or Player:BuffP(S.CrusadeBuff) and Player:BuffRemainsP(S.CrusadeBuff) < 25)) then
-            if HR.CastSuggested(I.PotionofFocusedResolve) then return "battle_potion_of_strength 10"; end
+            if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_strength 10"; end
         end
         -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
         if S.LightsJudgment:IsCastableP() and not ShouldStop then
@@ -447,11 +429,11 @@ local function APL()
     end
 
 	-- call DBM precombat
-   -- if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-   --         if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
    
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
@@ -469,7 +451,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")          
   	    -- Rebuke
   	    if useKick and S.Rebuke:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Rebuke, true) then return "Rebuke 5"; end
          	else 
           	    return
@@ -477,7 +459,7 @@ local function APL()
       	end 	
      	-- HammerofJustice
       	if useCC and S.HammerofJustice:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.HammerofJustice, true) then return "HammerofJustice 5"; end
      	    else 
      	        return
@@ -491,24 +473,30 @@ local function APL()
         if (true) then
             local ShouldReturn = Generators(); if ShouldReturn then return ShouldReturn; end
         end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
     end
 end
 -- Finished
-
 
 
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
+
 
