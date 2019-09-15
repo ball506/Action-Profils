@@ -350,6 +350,22 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+                {
+                    E = "Checkbox", 
+                    DB = "UseEarthElemental",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Earth Elemental", 
+                        ruRU = "Use Earth Elemental", 
+                        frFR = "Use Earth Elemental", 
+                    }, 
+                    TT = { 
+                        enUS = "Will force use of Earth Elemental.", 
+                        ruRU = "Will force use of Earth Elemental.", 
+                        frFR = "Will force use of Earth Elemental.", 
+                    }, 
+                    M = {},
+                },
             { -- [7] 
                 {
                     E = "Header",
