@@ -274,11 +274,11 @@ local function APL()
                 if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
             end
             -- potion
-            if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and Pull() > 0.1 + Player:GCD() and Pull() < 0.5 + Player:GCD() then
+            if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and Pull > 0.1 + Player:GCD() and Pull < 0.5 + Player:GCD() then
                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_strength 4"; end
             end
              -- recklessness
-            if S.Recklessness:IsCastableP() and not ShouldStop and Pull() > 0.1 and Pull() <= 0.7 then
+            if S.Recklessness:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
                 if HR.Cast(S.Recklessness) then return "recklessness precombat"; end
             end
 		end

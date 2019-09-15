@@ -343,7 +343,7 @@ local function CheckGoodBuffs()
             -- # Do not reroll if Snake Eyes is at 2+ stacks of the buff (1+ stack with Broadside up)
             -- actions+=/variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
             if Player:BuffStackP(S.SnakeEyesBuff) >= 2 - num(Player:BuffP(S.Broadside)) then
-                GotGoodBuff = false;
+                GotGoodBuff = true;
             end
         elseif S.Deadshot:AzeriteEnabled() or S.AceUpYourSleeve:AzeriteEnabled() then
             GotGoodBuff = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or

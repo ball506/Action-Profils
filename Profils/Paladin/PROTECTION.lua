@@ -168,7 +168,7 @@ local ShouldReturn; -- Used to get the return string
 local ForceOffGCD = {true, false};
 local Everyone = HR.Commons.Everyone;
 
-local EnemyRanges = {}
+local EnemyRanges = {5, 8, 40}
 local function UpdateRanges()
   for _, i in ipairs(EnemyRanges) do
     HL.GetEnemies(i);

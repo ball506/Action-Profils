@@ -318,7 +318,7 @@ local function APL()
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth precombat"; end
         end
         -- potion
-        if I.SuperiorBattlePotionofStrength:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull() > 0.1 + Player:GCD() and Pull() < 0.5 + Player:GCD() then
+        if I.SuperiorBattlePotionofStrength:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 + Player:GCD() and Pull < 0.5 + Player:GCD() then
             if HR.Cast(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength precombat"; end
         end
 		
