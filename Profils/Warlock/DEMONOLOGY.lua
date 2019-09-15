@@ -863,7 +863,7 @@ local function APL()
         if HR.Cast(S.Implosion) then return "implosion 96"; end
     end
     	-- implosion,if=PetStack.imps>=mainAddon.db.profile[266].sk2+RubimRH.AoEON
-    if S.Implosion:IsCastableP() and not ShouldStop and not Player:PrevGCDP(1, S.SummonDemonicTyrant) and not Player:PrevGCDP(1, S.Implosion) and WildImpsCount() >= Action.GetToggle(2, "Implosion") and HR.AoEON() then
+    if S.Implosion:IsCastableP() and not ShouldStop and not Player:PrevGCDP(1, S.SummonDemonicTyrant) and not Player:PrevGCDP(1, S.Implosion) and WildImpsCount() >= Action.GetToggle(2, "Implosion") then
         if HR.Cast(S.Implosion) then return "implosion 97"; end
     end  
 	-- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
