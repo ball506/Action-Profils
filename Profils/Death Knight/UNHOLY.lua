@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
   -- Racial
@@ -57,18 +68,16 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
   ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368     }),
   Asphyxiate                            = Action.Create({ Type = "Spell", ID = 108194     }),
   -- Buffs
-  RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932     }),
-  DeathStrikeBuff                       = Action.Create({ Type = "Spell", ID = 101568     }), 
-  UnholyFrenzyBuff                      = Action.Create({ Type = "Spell", ID = 207289     }),  
-  SuddenDoomBuff                        = Action.Create({ Type = "Spell", ID = 81340     }),
-  DeathandDecayBuff                     = Action.Create({ Type = "Spell", ID = 188290     }),  
+  RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
+  DeathStrikeBuff                       = Action.Create({ Type = "Spell", ID = 101568 , Hidden = true     }),
+  UnholyFrenzyBuff                      = Action.Create({ Type = "Spell", ID = 207289 , Hidden = true     }),  
+  SuddenDoomBuff                        = Action.Create({ Type = "Spell", ID = 81340, Hidden = true     }),
+  DeathandDecayBuff                     = Action.Create({ Type = "Spell", ID = 188290, Hidden = true     }),  
   -- Debuffs
-  RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568     }),
-  VirulentPlagueDebuff                  = Action.Create({ Type = "Spell", ID = 191587     }), 
-  FesteringWoundDebuff                  = Action.Create({ Type = "Spell", ID = 194310     }),  
+  RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568 , Hidden = true     }),
+  VirulentPlagueDebuff                  = Action.Create({ Type = "Spell", ID = 191587, Hidden = true     }), 
+  FesteringWoundDebuff                  = Action.Create({ Type = "Spell", ID = 194310, Hidden = true     }),  
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -87,40 +96,43 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
   -- Misc
   CyclotronicBlast                      = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
   Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
-  RecklessForceCounter                 = Action.Create({ Type = "Spell", ID = 298409}),
-  RecklessForceCounter2                 = Action.Create({ Type = "Spell", ID = 302917}),
+  RecklessForceCounter                 = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),
+  RecklessForceCounter2                 = Action.Create({ Type = "Spell", ID = 302917, Hidden = true     }),
   -- Hidden Heart of Azeroth
-  VisionofPerfectionMinor               = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
-  VisionofPerfectionMinor2              = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
-  VisionofPerfectionMinor3              = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-  UnleashHeartOfAzeroth                 = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-  BloodoftheEnemy                       = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-  BloodoftheEnemy2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-  BloodoftheEnemy3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-  ConcentratedFlame                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-  ConcentratedFlame2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-  ConcentratedFlame3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-  GuardianofAzeroth                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-  GuardianofAzeroth2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-  GuardianofAzeroth3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-  FocusedAzeriteBeam                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-  FocusedAzeriteBeam2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-  FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-  PurifyingBlast                        = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-  PurifyingBlast2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-  PurifyingBlast3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-  TheUnboundForce                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-  TheUnboundForce2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-  TheUnboundForce3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-  RippleInSpace                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-  RippleInSpace2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-  RippleInSpace3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-  WorldveinResonance                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-  WorldveinResonance2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-  WorldveinResonance3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-  MemoryofLucidDreams                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-  MemoryofLucidDreams2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-  MemoryofLucidDreams3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
+    VisionofPerfectionMinor               = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2              = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3              = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                 = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                       = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    PurifyingBlast                        = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
+	VisionofPerfection                    = Action.Create({ Type = "HeartOfAzeroth", ID = 296325, Hidden = true}),
+    VisionofPerfection2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299368, Hidden = true}),
+    VisionofPerfection3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299370, Hidden = true}),
     -- Here come all the stuff needed by simcraft but not classic spells or items. 
 }
 
@@ -230,54 +242,47 @@ local function DetermineEssenceRanks()
     S.VisionofPerfectionMinor = S.VisionofPerfectionMinor3:IsAvailable() and S.VisionofPerfectionMinor3 or S.VisionofPerfectionMinor
     S.GuardianofAzeroth = S.GuardianofAzeroth2:IsAvailable() and S.GuardianofAzeroth2 or S.GuardianofAzeroth
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
+    S.VisionofPerfection = S.VisionofPerfection2:IsAvailable() and S.VisionofPerfection2 or S.VisionofPerfection
+    S.VisionofPerfection = S.VisionofPerfection3:IsAvailable() and S.VisionofPerfection3 or S.VisionofPerfection
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
-end
-
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-	
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
 end
 
 local function UpdateGargoyleID()
     S.SummonGargoyle = S.SummonGargoyle2:IsAvailable() and S.SummonGargoyle2 or S.SummonGargoyle1
 end
 
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and Action.SpearHandStrike:IsReady(unit) and Action.SpearHandStrike:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and Unit(unit):CanInterrupt(true) then 
+        return Action.SpearHandStrike
+    end 
+    
+    if useCC and Action.Paralysis:IsReady(unit) and Action.Paralysis:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+        return Action.Paralysis              
+    end             
+    
+    if useRacial and Action.QuakingPalm:AutoRacial(unit) then 
+        return Action.QuakingPalm
+    end 
+    
+    if useRacial and Action.Haymaker:AutoRacial(unit) then 
+        return Action.Haymaker
+    end 
+    
+    if useRacial and Action.WarStomp:AutoRacial(unit) then 
+        return Action.WarStomp
+    end 
+    
+    if useRacial and Action.BullRush:AutoRacial(unit) then 
+        return Action.BullRush
+    end      
+    
+end 
+Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
+
 local function Init ()
+  S.VirulentPlagueDebuff:RegisterAuraTracking();
   HL.RegisterNucleusAbility(152280, 8, 6)               -- Defile
   HL.RegisterNucleusAbility(115989, 8, 6)               -- Unholy Blight
   HL.RegisterNucleusAbility(43265, 8, 6)                -- Death and Decay
@@ -297,23 +302,30 @@ local function APL()
     DetermineEssenceRanks()
 	UpdateGargoyleID()
 	
-	-- Anti channeling protection ? To see if its usefull
-	--if Player:IsCasting() or Player:IsChanneling() then
-	--    ShouldStop = true
-	--else
-	--    ShouldStop = false
-	--end
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- snapshot_stats
+        -- raise_dead
+        if S.RaiseDead:IsCastableP() and not Pet:IsActive() then
+            if HR.Cast(S.RaiseDead) then return "raise_dead 6"; end
         end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+        if Everyone.TargetIsValid() then
+		    -- use_item,name=azsharas_font_of_power
+            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
+            end
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and Pull() > 0.1 + Player:GCD() and Pull() < 0.5 + Player:GCD() then
+                if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
+            end
+            -- army_of_the_dead,delay=2
+            if S.ArmyoftheDead:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
+                if HR.Cast(S.ArmyoftheDead, Action.GetToggle(2, "OffGCDasOffGCD")) then return "army_of_the_dead 8"; end
+            end
         end
-    end
-	
+    end	
     local function Precombat()
         -- flask
         -- food
@@ -321,11 +333,11 @@ local function APL()
         -- snapshot_stats
         -- potion
         if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
         end
         -- raise_dead
         if S.RaiseDead:IsCastableP() and not ShouldStop then
-            if HR.CastSuggested(S.RaiseDead) then return "raise_dead 6"; end
+            if HR.Cast(S.RaiseDead) then return "raise_dead 6"; end
         end
         if Everyone.TargetIsValid() then
             -- use_item,name=azsharas_font_of_power
@@ -383,6 +395,10 @@ local function APL()
         if S.DeathCoil:IsUsableP() and not ShouldStop and (bool(Player:BuffStackP(S.SuddenDoomBuff)) and not bool(VarPoolingForGargoyle) or S.SummonGargoyle:TimeSinceLastCast() <= 35) then
             if HR.Cast(S.DeathCoil) then return "death_coil 57"; end
         end
+        -- Manually added: Multiple target Epidemic in place of below Death Coil
+        if S.Epidemic:IsReadyP() and ((Player:RunicPowerDeficit() < 14 and (S.Apocalypse:CooldownRemainsP() > 5 or Target:DebuffStackP(S.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) and S.VirulentPlagueDebuff:ActiveCount() > 1) then
+            if HR.Cast(S.Epidemic) then return "epidemic 173"; end
+        end
         -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
         if S.DeathCoil:IsUsableP() and not ShouldStop and (Player:RunicPowerDeficit() < 14 and (S.Apocalypse:CooldownRemainsP() > 5 or Target:DebuffStackP(S.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) then
             if HR.Cast(S.DeathCoil) then return "death_coil 63"; end
@@ -395,6 +411,10 @@ local function APL()
         if S.ClawingShadows:IsCastableP() and not ShouldStop and (((Target:DebuffP(S.FesteringWoundDebuff) and S.Apocalypse:CooldownRemainsP() > 5) or Target:DebuffStackP(S.FesteringWoundDebuff) > 4) and (S.ArmyoftheDead:CooldownRemainsP() > 5 or Action.GetToggle(2, "AotDOff"))) then
             if HR.Cast(S.ClawingShadows) then return "clawing_shadows 81"; end
         end
+	    -- Manually added: Multiple target Epidemic if close to capping RP
+        if S.Epidemic:IsReadyP() and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle) and S.VirulentPlagueDebuff:ActiveCount() > 1) then
+            if HR.Cast(S.Epidemic) then return "epidemic 173"; end
+        end
         -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
         if S.DeathCoil:IsUsableP() and not ShouldStop and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
             if HR.Cast(S.DeathCoil) then return "death_coil 91"; end
@@ -402,6 +422,10 @@ local function APL()
         -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
         if S.FesteringStrike:IsCastableP() and not ShouldStop and (((((Target:DebuffStackP(S.FesteringWoundDebuff) < 4 and not Player:BuffP(S.UnholyFrenzyBuff)) or Target:DebuffStackP(S.FesteringWoundDebuff) < 3) and S.Apocalypse:CooldownRemainsP() < 3) or Target:DebuffStackP(S.FesteringWoundDebuff) < 1) and (S.ArmyoftheDead:CooldownRemainsP() > 5 or Action.GetToggle(2, "AotDOff"))) then
             if HR.Cast(S.FesteringStrike) then return "festering_strike 95"; end
+        end
+		-- Manually added: Multiple target Epidemic filler to burn RP
+        if S.Epidemic:IsReadyP() and (not bool(VarPoolingForGargoyle) and S.VirulentPlagueDebuff:ActiveCount() > 1) then
+            if HR.Cast(S.Epidemic) then return "epidemic 173"; end
         end
         -- death_coil,if=!variable.pooling_for_gargoyle
         if S.DeathCoil:IsUsableP() and not ShouldStop and (not bool(VarPoolingForGargoyle)) then
@@ -448,39 +472,39 @@ local function APL()
     end
     local function Essences()
         -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and (Player:RuneTimeToX(1) > Player:GCD() and Player:RunicPower() < 40) then
+        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:RuneTimeToX(1) > Player:GCD() and Player:RunicPower() < 40) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and ((bool(S.DeathandDecay:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Defile:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Apocalypse:CooldownRemainsP()) and S.DeathandDecay:IsCastableP() and not ShouldStop)) then
+        if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and ((bool(S.DeathandDecay:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Defile:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Apocalypse:CooldownRemainsP()) and S.DeathandDecay:IsCastableP() and not ShouldStop)) then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- guardian_of_azeroth,if=cooldown.apocalypse.remains<6
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and (S.Apocalypse:CooldownRemainsP() < 6) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (S.Apocalypse:CooldownRemainsP() < 6) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-        if S.TheUnboundForce:IsCastableP() and not ShouldStop and (Player:BuffP(RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 11) then
+        if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 11) then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
         end
         -- focused_azerite_beam,if=!death_and_decay.ticking
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (Target:DebuffDownP(S.ConcentratedFlameBurn)) then
+        if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Target:DebuffDownP(S.ConcentratedFlameBurn)) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
         -- purifying_blast,if=!death_and_decay.ticking
-        if S.PurifyingBlast:IsCastableP() and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
+        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast"; end
         end
         -- worldvein_resonance,if=!death_and_decay.ticking
-        if S.WorldveinResonance:IsCastableP() and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
+        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- ripple_in_space,if=!death_and_decay.ticking
-        if S.RippleInSpace:IsCastableP() and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
+        if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
             if HR.Cast(S.RippleInSpace) then return "ripple_in_space"; end
         end
     end
@@ -523,24 +547,19 @@ local function APL()
         end
     end
     
-	-- Custom stuff
-    -- Protect against interrupt of channeled spells
-  --  if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-  --      if HR.Cast(S.Channeling) then return "" end
-  --  end  
 	-- call DBM precombat
-    --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-    --    local ShouldReturn = Precombat_DBM(); 
-    --        if ShouldReturn then return ShouldReturn; 
-    --    end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
             if ShouldReturn then return ShouldReturn; 
         end    
-    end
-	
+    end	
     
     --- In Combat
     if Player:AffectingCombat() then
@@ -552,7 +571,7 @@ local function APL()
         
   	    -- MindFreeze
   	    if useKick and S.MindFreeze:IsReady() and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.MindFreeze, true) then return "MindFreeze 5"; end
          	else 
           	    return
@@ -561,7 +580,7 @@ local function APL()
 	
      	 -- Asphyxiate
       	if useCC and S.Asphyxiate:IsReady() and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.Asphyxiate, true) then return "Asphyxiate 5"; end
      	    else 
      	        return
@@ -633,7 +652,7 @@ local function APL()
         end
         -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
         if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and (S.ArmyoftheDead:CooldownUpP() or S.SummonGargoyle:TimeSinceLastCast() <= 35 or Player:BuffP(S.UnholyFrenzyBuff)) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 293"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 293"; end
         end
         -- outbreak,target_if=dot.virulent_plague.remains<=gcd
         if S.Outbreak:IsCastableP() and not ShouldStop and EvaluateCycleOutbreak303(Target) then
@@ -665,10 +684,23 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-    if APL() then 
+    
+	local unit = "target"
+    
+	if APL() then 
         return true 
+    end
+	
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
     end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
+	
 end
 
