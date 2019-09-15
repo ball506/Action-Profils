@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DEMONHUNTER_VENGEANCE] = {
   -- Racial
@@ -66,8 +77,8 @@ Action[ACTION_CONST_DEMONHUNTER_VENGEANCE] = {
   DemonSpikesBuff                       = Action.Create({ Type = "Spell", ID = 203819, Hidden = true}), 
   SigilofFlameDebuff                    = Action.Create({ Type = "Spell", ID = 204598, Hidden = true}),   
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+  
+  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
@@ -259,46 +270,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-	
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function UpdateSigilID()
     S.SigilofFlame = S.SigilofFlame2:IsAvailable() and S.SigilofFlame2 or S.SigilofFlame
 end
@@ -333,24 +304,7 @@ local function APL()
     UpdateIsInMeleeRange();
     DetermineEssenceRanks()
 	UpdateSigilID()
-	
-	-- Anti channeling protection ? To see if its usefull
-	--if Player:IsCasting() or Player:IsChanneling() then
-	--    ShouldStop = true
-	--else
-	--    ShouldStop = false
-	--end
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
+		
     local function Precombat()
         -- flask
         -- augmentation
@@ -359,7 +313,7 @@ local function APL()
         -- snapshot_stats
         -- potion
         if I.SuperiorSteelskinPotion:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion precombat"; end
+            if HR.Cast(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion precombat"; end
         end
         -- use_item,name=azsharas_font_of_power
         if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
@@ -389,7 +343,7 @@ local function APL()
         end
         -- Metamorphosis
         if S.Metamorphosis:IsCastable("Melee") and not ShouldStop and (Player:HealthPercentage() <= Action.GetToggle(2, "MetamorphosisHealthThreshold")) then
-            HR.CastSuggested(S.Metamorphosis);
+            HR.Cast(S.Metamorphosis);
         end
         -- Fiery Brand
         if S.FieryBrand:IsCastable() and not ShouldStop and not Target:DebuffP(S.FieryBrandDebuff) and (ActiveMitigationNeeded or Player:HealthPercentage() <= Action.GetToggle(2, "FieryBrandHealthThreshold")) then
@@ -431,7 +385,7 @@ local function APL()
     local function Cooldowns()
         -- potion
         if I.SuperiorSteelskinPotion:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion cooldowns"; end
+            if HR.Cast(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion cooldowns"; end
         end
         -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
         if S.ConcentratedFlame:IsCastable() and not ShouldStop and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight() or S.ConcentratedFlame:FullRechargeTimeP() < Player:GCD()) then
@@ -520,11 +474,6 @@ local function APL()
         end
     end
     
-	-- Custom stuff
-    -- Protect against interrupt of channeled spells
-  --  if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-  --      if HR.Cast(S.Channeling) then return "" end
-  --  end  
 	-- call DBM precombat
    -- if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
    --     local ShouldReturn = Precombat_DBM(); 
@@ -549,7 +498,7 @@ local function APL()
         
   	    -- Disrupt
   	    if useKick and S.Disrupt:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Disrupt, true) then return "Disrupt 5"; end
          	else 
           	    return
@@ -558,7 +507,7 @@ local function APL()
 	
      	 -- ChaosNova
       	if useCC and S.ChaosNova:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.ChaosNova, true) then return "ChaosNova 5"; end
      	    else 
      	        return
@@ -602,15 +551,24 @@ end
 -- Finished
 
 
-
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
