@@ -349,7 +349,6 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-			},
                 {
                     E = "Checkbox", 
                     DB = "UseEarthElemental",
@@ -366,6 +365,24 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "UseCapacitorTotem",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Capacitor Totem", 
+                        ruRU = "Use Capacitor Totem", 
+                        frFR = "Use Capacitor Totem", 
+                    }, 
+                    TT = { 
+                        enUS = "Will force use of Capacitor Totem if Wind Shear is not ready.", 
+                        ruRU = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                        frFR = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                    }, 
+                    M = {},
+                },
+			},
+
             { -- [7] 
                 {
                     E = "Header",

@@ -91,15 +91,13 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     IcefuryBuff                           = Action.Create({ Type = "Spell", ID = 210714, Hidden = true     }),	
     StormkeeperBuff                       = Action.Create({ Type = "Spell", ID = 191634, Hidden = true     }),	
     WindGustBuff                          = Action.Create({ Type = "Spell", ID = 263806, Hidden = true     }),
-    GhostWolfBuff                         = Action.Create({ Type = "Spell", ID = 2645     }),	
+    GhostWolfBuff                         = Action.Create({ Type = "Spell", ID = 2645, Hidden = true     }),	
 	-- Debuffs 
     FlameShockDebuff                      = Action.Create({ Type = "Spell", ID = 188389, Hidden = true     }),		
     -- Misc
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
 	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    -- Trinkets
-    
-    
+	-- Trinkets    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -927,8 +925,7 @@ local function APL()
          	else 
           	    return
          	end 
-      	end 
-	
+      	end	
      	-- CapacitorTotem
       	if useCC and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
 	  		if ActionUnit(unit):CanInterrupt(true) then
