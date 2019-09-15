@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DRUID_BALANCE] = {
     -- Racial
@@ -80,8 +91,8 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     -- Misc
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	
     -- Trinkets
-    GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    
+    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -203,46 +214,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
     S.CondensedLifeforce = S.CondensedLifeforce2:IsAvailable() and S.CondensedLifeforce2 or S.CondensedLifeforce
     S.CondensedLifeforce = S.CondensedLifeforce3:IsAvailable() and S.CondensedLifeforce3 or S.CondensedLifeforce
-end
-
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
 end
 
 -- Variables
@@ -412,16 +383,25 @@ local function APL()
 	    ShouldStop = false
 	end
 	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
+  	local function Precombat_DBM()	    
+        -- flask
+        -- food
+        -- augmentation
+        -- moonkin_form
+        if S.MoonkinForm:IsCastableP() and not ShouldStop and Player:BuffDownP(S.MoonkinForm) then
+            if HR.Cast(S.MoonkinForm, Action.GetToggle(2, "GCDasOffGCD")) then return "moonkin_form 39"; end
         end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+        -- snapshot_stats
+	    -- potion
+        if I.BattlePotionOfIntellect:IsReady() and Pull > 1 and Pull <= (S.SolarWrath:CastTime() + S.SolarWrath:TravelTime() + 1) then
+            return 967532
         end
-    end
-    
+        -- solar_wrath
+        if S.SolarWrath:IsReady() and not Player:IsCasting(S.SolarWrath) and Pull > 0.1 and Pull <= S.SolarWrath:CastTime() + S.SolarWrath:TravelTime() then
+            if HR.Cast(S.SolarWrath) then return "solar_wrath 44"; end
+        end
+    end	
+ 
     local function Precombat()
         -- flask
         -- food
@@ -466,7 +446,7 @@ local function APL()
         end
         -- potion,dynamic_prepot=1
         if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 42"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 42"; end
         end
         -- solar_wrath
         if S.SolarWrath:IsCastableP() and not ShouldStop and (not Player:PrevGCDP(1, S.SolarWrath) and not Player:PrevGCDP(2, S.SolarWrath)) then
@@ -487,17 +467,14 @@ local function APL()
     if S.MoonkinForm:IsCastableP() and not ShouldStop and Player:BuffDownP(S.MoonkinForm) and Action.GetToggle(2, "ShowMoonkinFormOOC") then
         if HR.Cast(S.MoonkinForm) then return "moonkin_form ooc"; end
     end
-    
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
+ 
 	-- call DBM precombat
-   --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-    --    local ShouldReturn = Precombat_DBM(); 
-    --        if ShouldReturn then return ShouldReturn; 
-    --    end    
-    --end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -515,7 +492,7 @@ local function APL()
         
   	    -- SolarBeam
   	    if useKick and S.SolarBeam:IsReady() and S.SolarBeam:IsAvailable() and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.SolarBeam, true) then return "SolarBeam 5"; end
          	else 
           	    return
@@ -524,7 +501,7 @@ local function APL()
 	
      	-- MightyBash
       	if useCC and S.MightyBash:IsAvailable() and S.MightyBash:IsReady() and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.MightyBash, true) then return "MightyBash 5"; end
      	    else 
      	        return
@@ -539,7 +516,7 @@ local function APL()
         end
         -- potion,if=buff.celestial_alignment.remains>13|buff.incarnation.remains>16.5
         if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and (Player:BuffRemainsP(S.CelestialAlignment) > 13 or Player:BuffRemainsP(S.Incarnation) > 16.5) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 57"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 57"; end
         end
         -- berserking,if=buff.ca_inc.up
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(CaInc())) then
@@ -680,10 +657,6 @@ local function APL()
         if S.Sunfire:IsCastableP() and not ShouldStop then
             if HR.Cast(S.Sunfire) then return "sunfire 399"; end
         end	
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end
     end
 end
 -- Finished
@@ -694,10 +667,20 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
