@@ -369,13 +369,6 @@ local function APL()
     DetermineEssenceRanks()
 	-- Blink Handler
 	local BlinkAny = S.Shimmer:IsAvailable() and S.Shimmer or S.Blink
-	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
 
     local function Precombat_DBM()
         -- flask
