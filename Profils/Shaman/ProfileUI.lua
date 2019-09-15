@@ -343,25 +343,9 @@ A.Data.ProfileUI = {
                         frFR = "Use Ghost Wolf",
                     }, 
                     TT = { 
-                        enUS = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
-                        ruRU = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
-                        frFR = "Use Ghost Wolf if player is moving for more than 2 seconds.", 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
-                    DB = "UseEarthElemental",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use Earth Elemental", 
-                        ruRU = "Use Earth Elemental", 
-                        frFR = "Use Earth Elemental", 
-                    }, 
-                    TT = { 
-                        enUS = "Will force use of Earth Elemental.", 
-                        ruRU = "Will force use of Earth Elemental.", 
-                        frFR = "Will force use of Earth Elemental.", 
+                        enUS = "Automatically use Ghost Wolf if out of range and in combat.", 
+                        ruRU = "Automatically use Ghost Wolf if out of range and in combat.", 
+                        frFR = "Automatically use Ghost Wolf if out of range and in combat.", 
                     }, 
                     M = {},
                 },
@@ -429,6 +413,58 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseEarthElemental",
+                    DBV = true,
+                    L = { 
+                        enUS = "Defensive Earth Elemental", 
+                        ruRU = "Defensive Earth Elemental", 
+                        frFR = "Defensive Earth Elemental", 
+                    }, 
+                    TT = { 
+                        enUS = "Will use Earth Elemental defensively depending on your settings.", 
+                        ruRU = "Will use Earth Elemental defensively depending on your settings.", 
+                        frFR = "Will use Earth Elemental defensively depending on your settings.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EarthElementalHP",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Health",
+                    },
+                    TT = { 
+                        enUS = "Current player health percentage to use Earth Elemental.", 
+                        ruRU = "Current player health percentage to use Earth Elemental.", 
+                        frFR = "Current player health percentage to use Earth Elemental.",
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "EarthElementalEnemies",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Enemies",
+                    }, 
+                    TT = { 
+                        enUS = "Number of enemies around to use Earth Elemental.", 
+                        ruRU = "Number of enemies around to use Earth Elemental.", 
+                        frFR = "Number of enemies around to use Earth Elemental.",
+                    },
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
                 {
                     E = "LayoutSpace",                                                                         

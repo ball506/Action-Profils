@@ -449,7 +449,7 @@ local function APL()
             end
             -- earth_elemental,if=!talent.primal_elementalist.enabled
             -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
-            if S.Stormkeeper:IsCastableP() and not ShouldStop and Player:BuffDownP(S.StormkeeperBuff) and S.Stormkeeper:IsAvailable() and Pull > 0.1 and Pull <= (S.LavaBurst:CastTime() + S.LavaBurst:TravelTime() + 2) then
+            if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and not ShouldStop and Player:BuffDownP(S.StormkeeperBuff) and S.Stormkeeper:IsAvailable() and Pull > 0.1 and Pull <= (S.LavaBurst:CastTime() + S.LavaBurst:TravelTime() + 2) then
                 if HR.Cast(S.Stormkeeper) then return "stormkeeper 7"; end
             end
             -- potion
@@ -477,12 +477,8 @@ local function APL()
             if S.TotemMastery:IsReadyP() and not ShouldStop and ResonanceTotemTime() < 6 then
                 if HR.Cast(S.TotemMastery) then return "totem_mastery 4"; end
             end
-            -- earth_elemental,if=!talent.primal_elementalist.enabled
-			if S.EarthElemental:IsCastableP() and not S.PrimalElementalist:IsAvailable() and Action.GetToggle(2, "UseEarthElemental") then
-			    if HR.Cast(S.EarthElemental) then return "EarthElemental 7"; end
-			end
 			-- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
-            if S.Stormkeeper:IsCastableP() and not ShouldStop and Player:BuffDownP(S.StormkeeperBuff) and (S.Stormkeeper:IsAvailable() and ((EnemiesCount - 1) < 3)) then
+            if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and not ShouldStop and Player:BuffDownP(S.StormkeeperBuff) and (S.Stormkeeper:IsAvailable() and ((EnemiesCount - 1) < 3)) then
                 if HR.Cast(S.Stormkeeper) then return "stormkeeper 7"; end
             end
             -- fire_elemental,if=!talent.storm_elemental.enabled
@@ -510,14 +506,14 @@ local function APL()
                 if HR.Cast(S.FlameShock) then return "flame_shock opener"; end
             end
             -- chain_lightning,if=spell_targets.chain_lightning>2
-            if S.ChainLightning:IsCastableP() and not ShouldStop and (EnemiesCount > 2) then
+            if S.ChainLightning:IsCastableP() and not Player:IsMoving() and not ShouldStop and (EnemiesCount > 2) then
                 if HR.Cast(S.ChainLightning) then return "chain_lightning 37"; end
             end
         end
     end
     local function Aoe()
         -- stormkeeper,if=talent.stormkeeper.enabled
-        if S.Stormkeeper:IsCastableP() and not ShouldStop and (S.Stormkeeper:IsAvailable()) then
+        if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and not ShouldStop and (S.Stormkeeper:IsAvailable()) then
             if HR.Cast(S.Stormkeeper) then return "stormkeeper 39"; end
         end
         -- flame_shock,target_if=refreshable&(spell_targets.chain_lightning<(5-!talent.totem_mastery.enabled)|!talent.storm_elemental.enabled&(cooldown.fire_elemental.remains>(120+14*spell_haste)|cooldown.fire_elemental.remains<(24-14*spell_haste)))&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120|spell_targets.chain_lightning=3&buff.wind_gust.stack<14)
@@ -545,7 +541,7 @@ local function APL()
             if HR.Cast(S.LavaBurst) then return "lava_burst 106"; end
         end
         -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
-        if S.Icefury:IsCastableP() and not ShouldStop and EnemiesCount < 4 and not Player:BuffP(S.AscendanceBuff) and not StormElementalIsActive() then
+        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and EnemiesCount < 4 and not Player:BuffP(S.AscendanceBuff) and not StormElementalIsActive() then
             if HR.Cast(S.Icefury) then return "icefury 116"; end
         end
 		-- 14 Lavaburst while moving
@@ -565,12 +561,8 @@ local function APL()
             if HR.Cast(S.LavaBeam) then return "lava_beam 134"; end
         end
         -- chain_lightning
-        if S.ChainLightning:IsCastableP() and not ShouldStop then
+        if S.ChainLightning:IsCastableP() and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.ChainLightning) then return "chain_lightning 138"; end
-        end
-        -- lava_burst,moving=1,if=talent.ascendance.enabled
-        if S.LavaBurst:IsCastableP() and not ShouldStop and Player:IsMoving() and (S.Ascendance:IsAvailable()) then
-            if HR.Cast(S.LavaBurst) then return "lava_burst 140"; end
         end
         -- flame_shock,moving=1,target_if=refreshable
         if S.FlameShock:IsCastableP() and not ShouldStop and EvaluateCycleFlameShock148(Target) and Player:IsMoving() then
@@ -595,7 +587,7 @@ local function APL()
             if HR.Cast(S.ElementalBlast) then return "elemental_blast 708"; end
         end
         -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)&(!talent.surge_of_power.enabled|buff.surge_of_power.up|maelstrom>=44)
-        if S.Stormkeeper:IsCastableP() and not ShouldStop and (S.Stormkeeper:IsAvailable() and EnemiesCount < 3 and (not S.SurgeofPower:IsAvailable() or Player:BuffP(S.SurgeofPowerBuff) or Player:Maelstrom() >= 44)) then
+        if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and not ShouldStop and (S.Stormkeeper:IsAvailable() and EnemiesCount < 3 and (not S.SurgeofPower:IsAvailable() or Player:BuffP(S.SurgeofPowerBuff) or Player:Maelstrom() >= 44)) then
             if HR.Cast(S.Stormkeeper) then return "stormkeeper 710"; end
         end
         -- liquid_magma_totem,if=talent.liquid_magma_totem.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
@@ -651,7 +643,7 @@ local function APL()
             if HR.Cast(S.LavaBurst) then return "lava_burst 738"; end
         end
         -- icefury,if=talent.icefury.enabled&!(maelstrom>75&cooldown.lava_burst.remains<=0)&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-        if S.Icefury:IsCastableP() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (Player:Maelstrom() > 75 and S.LavaBurst:CooldownUpP()) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
+        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (Player:Maelstrom() > 75 and S.LavaBurst:CooldownUpP()) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
             if HR.Cast(S.Icefury) then return "icefury 740"; end
         end
         -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
@@ -708,7 +700,7 @@ local function APL()
             if HR.Cast(S.ElementalBlast) then return "elemental_blast 218"; end
         end
         -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)&(!talent.surge_of_power.enabled|buff.surge_of_power.up|maelstrom>=44)
-        if S.Stormkeeper:IsCastableP() and not ShouldStop and (S.Stormkeeper:IsAvailable() and ((EnemiesCount - 1) < 3) and (not S.SurgeofPower:IsAvailable() or Player:BuffP(S.SurgeofPowerBuff) or Player:Maelstrom() >= 44)) then
+        if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and not ShouldStop and (S.Stormkeeper:IsAvailable() and ((EnemiesCount - 1) < 3) and (not S.SurgeofPower:IsAvailable() or Player:BuffP(S.SurgeofPowerBuff) or Player:Maelstrom() >= 44)) then
             if HR.Cast(S.Stormkeeper) then return "stormkeeper 236"; end
         end
         -- liquid_magma_totem,if=talent.liquid_magma_totem.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
@@ -768,7 +760,7 @@ local function APL()
             if HR.Cast(S.LavaBurst) then return "lava_burst 461"; end
         end
         -- icefury,if=talent.icefury.enabled&!(maelstrom>75&cooldown.lava_burst.remains<=0)&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-        if S.Icefury:IsCastableP() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (Player:Maelstrom() > 75 and S.LavaBurst:CooldownRemainsP() <= 0) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
+        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (Player:Maelstrom() > 75 and S.LavaBurst:CooldownRemainsP() <= 0) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
             if HR.Cast(S.Icefury) then return "icefury 469"; end
         end
         -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
@@ -827,7 +819,7 @@ local function APL()
 	        if HR.Cast(S.FlameShock) then return "flame_shock 571"; end
 		end		
 		-- 2 Stormkeeper
-		if S.Stormkeeper:IsCastableP() and S.Stormkeeper:IsAvailable() then 
+		if S.Stormkeeper:IsCastableP() and not Player:IsMoving() and S.Stormkeeper:IsAvailable() then 
             if HR.Cast(S.Stormkeeper) then return "stormkeeper 236"; end
         end		
 		-- 3 Fire Elemental
@@ -839,7 +831,7 @@ local function APL()
             if HR.Cast(S.StormElemental, Action.GetToggle(2, "OffGCDasOffGCD")) then return "storm_elemental 595"; end
         end
 		-- 4 Icefury
-        if S.Icefury:IsCastableP() and not StormElementalIsActive() and S.Icefury:IsAvailable() and not Player:BuffP(S.StormkeeperBuff) then
+        if S.Icefury:IsCastableP() and not Player:IsMoving() and not StormElementalIsActive() and S.Icefury:IsAvailable() and not Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.Icefury) then return "icefury 469"; end
         end	
     	-- 5 Eye of the Storm if Storm Elemental is up and we got Primal Elementalists
@@ -941,7 +933,7 @@ local function APL()
             if HR.Cast(S.Purge) then return "" end
         end	
 		-- Ghost Wolf
-		if Player:MovingFor() >= 2 and Target:MinDistanceToPlayer(true) > 40 and S.GhostWolf:IsReadyP() and not ShouldStop and not Player:BuffP(S.GhostWolfBuff) and Action.GetToggle(2, "UseGhostWolf") then
+		if Target:MinDistanceToPlayer(true) > 40 and S.GhostWolf:IsReadyP() and not ShouldStop and not Player:BuffP(S.GhostWolfBuff) and Action.GetToggle(2, "UseGhostWolf") then
 		    if HR.Cast(S.GhostWolf) then return "GhostWolf 585"; end
 		end
 		-- Earth Shield
@@ -978,8 +970,8 @@ local function APL()
     	if S.EyeOfTheStorm:CooldownRemainsP() < 0.1 and S.PrimalElementalist:IsAvailable() and HR.CDsON() and StormElementalIsActive() and S.CallLightning:CooldownRemainsP() > 1 then
 		    if HR.Cast(S.EyeOfTheStorm) then return "EyeOfTheStorm"; end
         end
-        -- earth_elemental,if=!talent.primal_elementalist.enabled|talent.primal_elementalist.enabled&(cooldown.fire_elemental.remains<120&!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120&talent.storm_elemental.enabled)
-		if S.EarthElemental:IsCastableP() and Action.GetToggle(2, "UseEarthElemental") then
+        -- Manually added, defensive Earth Elemental with custom settings from UI. 
+		if S.EarthElemental:IsCastableP() and Action.GetToggle(2, "UseEarthElemental") and Player:HealthPercentage() <= Action.GetToggle(2, "EarthElementalHP") and EnemiesCount >= Action.GetToggle(2, "EarthElementalEnemies") then
 		    if HR.Cast(S.EarthElemental) then return "EarthElemental 7"; end
 		end
 		-- concentrated_flame
@@ -988,7 +980,7 @@ local function APL()
         end
         -- blood_of_the_enemy
         if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.CasT(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
+            if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- guardian_of_azeroth
         if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
@@ -1023,7 +1015,7 @@ local function APL()
             if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "blood_fury 611"; end
         end
         -- berserking,if=!talent.ascendance.enabled|buff.ascendance.up
-        if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (not S.Ascendance:IsAvailable() or Player:BuffP(S.AscendanceBuff)) then
+        if S.Berserking:IsCastableP() and not Player:BuffP(S.StormkeeperBuff) and not ShouldStop and HR.CDsON() and (not S.Ascendance:IsAvailable() or Player:BuffP(S.AscendanceBuff)) then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 619"; end
         end
         -- fireblood,if=!talent.ascendance.enabled|buff.ascendance.up|cooldown.ascendance.remains>50
