@@ -1,12 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
-local PetLib							= LibStub("PetLibrary")
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     -- Racial
@@ -51,10 +61,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     BalefulInvocation                    = Action.Create({ Type = "Spell", ID = 287059}),
     ShadowsBite                          = Action.Create({ Type = "Spell", ID = 272944}),    
     SpellLock                            = Action.Create({ Type = "Spell", ID = 19647}),
-	-- Pet
-    LegionStrike                         = Action.Create({ Type = "Spell", ID = 89766}),
-    AxeToss                              = Action.Create({ Type = "Spell", ID = 30213}), -- Legion Strike
-    Felstorm                             = Action.Create({ Type = "Spell", ID = 89751}), --Felstorm
+    AxeToss                              = Action.Create({ Type = "Spell", ID = 89766}),
     -- Defensive
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
     -- Misc
@@ -71,8 +78,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     -- Debuffs 
     ShiverVenomDebuff                    = Action.Create({ Type = "Spell", ID = 301624}),
     -- Trinkets
-    GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),    
+    
+        
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -104,7 +111,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     GuardianofAzeroth3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
     FocusedAzeriteBeam                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
     FocusedAzeriteBeam2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
     PurifyingBlast                        = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
     PurifyingBlast2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
     PurifyingBlast3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
@@ -716,20 +723,6 @@ local function APL()
     UpdateSoulShards()
     DetermineEssenceRanks()
 
-	print(PetLib:GetMultiUnitsBySpell(30213, 10))
-	--print(PetLib:GetMultiUnitsBySpell(89751, 10))
-	--print(PetLib:GetMultiUnitsBySpell(89751, 10))
-	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
 	else
@@ -746,10 +739,6 @@ local function APL()
         if S.SummonPet:IsReadyP() and not ShouldStop and not Pet:Exists() then
             if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
         end
-	    -- BattlePotionOfIntellect
-        --if I.BattlePotionOfIntellect:IsReady() and Pull >= S.Demonbolt:CastTime() + 1 and Pull <= S.Demonbolt:CastTime() + 2 then
-        --    return 967532
-        --end
 	    -- PotionofUnbridledFury
         if I.PotionofUnbridledFury:IsReady() and Pull >= S.Demonbolt:CastTime() + 1 and Pull <= S.Demonbolt:CastTime() + 2 then
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 10"; end
@@ -792,16 +781,12 @@ local function APL()
     if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:SoulShardsP() < 2) then
         if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams build_a_shard"; end
     end
-    -- demonbolt,if=soul_shard<=3&buff.demonic_core.remains
-    if S.Demonbolt:IsCastableP() and not ShouldStop and not Player:IsCasting(S.ShadowBolt) and (Player:SoulShardsP() <= 3 and Player:BuffP(S.DemonicCoreBuff)) then
-        if HR.Cast(S.Demonbolt) then return "demonbolt 44"; end
-    end
     -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-    if S.SoulStrike:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and not Player:IsCasting(S.ShadowBolt) and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
+    if S.SoulStrike:IsCastableP() and not ShouldStop and (not S.DemonicConsumption:IsAvailable() or HL.CombatTime() > 15 or Player:PrevGCDP(1, S.HandofGuldan) and not Player:HasHeroism()) then
         if HR.Cast(S.SoulStrike) then return "soul_strike 14"; end
     end
     -- shadow_bolt
-    if S.ShadowBolt:IsCastableP() and not ShouldStop and Player:SoulShardsP() <= 4 and not Player:IsCasting(S.ShadowBolt) then
+    if S.ShadowBolt:IsCastableP() and not ShouldStop then
         if HR.Cast(S.ShadowBolt) then return "shadow_bolt 20"; end
     end
   end
@@ -873,8 +858,12 @@ local function APL()
     end
   end
   local function Implosion()
-    -- implosion,if=PetStack.imps>=mainAddon.db.profile[266].sk2+RubimRH.AoEON
-    if S.Implosion:IsCastableP() and not ShouldStop and not Player:PrevGCDP(1, S.SummonDemonicTyrant) and not Player:PrevGCDP(1, S.Implosion) and WildImpsCount() > 1 and WildImpsCount() >= Action.GetToggle(2, "Implosion") and HR.AoEON() then
+    -- implosion,if=(buff.wild_imps.stack>=6&(soul_shard<3|prev_gcd.1.call_dreadstalkers|buff.wild_imps.stack>=9|prev_gcd.1.bilescourge_bombers|(!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan))&!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&buff.demonic_power.down)|(time_to_die<3&buff.wild_imps.stack>0)|(prev_gcd.2.call_dreadstalkers&buff.wild_imps.stack>2&!talent.demonic_calling.enabled)
+    if S.Implosion:IsCastableP() and not ShouldStop and ((WildImpsCount() >= 6 and (Player:SoulShardsP() < 3 or Player:PrevGCDP(1, S.CallDreadstalkers) or WildImpsCount() >= 9 or Player:PrevGCDP(1, S.BilescourgeBombers) or (not Player:PrevGCDP(1, S.HandofGuldan) and not Player:PrevGCDP(2, S.HandofGuldan))) and not Player:PrevGCDP(1, S.HandofGuldan) and not Player:PrevGCDP(2, S.HandofGuldan) and Player:BuffDownP(S.DemonicPowerBuff)) or (Target:TimeToDie() < 3 and WildImpsCount() > 0) or (Player:PrevGCDP(2, S.CallDreadstalkers) and WildImpsCount() > 2 and not S.DemonicCalling:IsAvailable())) then
+        if HR.Cast(S.Implosion) then return "implosion 96"; end
+    end
+    	-- implosion,if=PetStack.imps>=mainAddon.db.profile[266].sk2+RubimRH.AoEON
+    if S.Implosion:IsCastableP() and not ShouldStop and not Player:PrevGCDP(1, S.SummonDemonicTyrant) and not Player:PrevGCDP(1, S.Implosion) and WildImpsCount() >= Action.GetToggle(2, "Implosion") and HR.AoEON() then
         if HR.Cast(S.Implosion) then return "implosion 97"; end
     end  
 	-- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
@@ -885,8 +874,12 @@ local function APL()
     if S.CallDreadstalkers:IsReadyP() and not ShouldStop and ((S.SummonDemonicTyrant:CooldownRemainsP() < 9 and bool(Player:BuffRemainsP(S.DemonicCallingBuff))) or (S.SummonDemonicTyrant:CooldownRemainsP() < 11 and not bool(Player:BuffRemainsP(S.DemonicCallingBuff))) or S.SummonDemonicTyrant:CooldownRemainsP() > 14) then
         if HR.Cast(S.CallDreadstalkers) then return "call_dreadstalkers 134"; end
     end
+    -- summon_demonic_tyrant
+    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() then
+        if HR.Cast(S.SummonDemonicTyrant, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_demonic_tyrant 146"; end
+    end
     -- hand_of_guldan,if=soul_shard>=5
-    if S.HandofGuldan:IsCastableP() and not ShouldStop and (Player:SoulShardsP() >= 3) then
+    if S.HandofGuldan:IsCastableP() and not ShouldStop and (Player:SoulShardsP() >= 5) then
         if HR.Cast(S.HandofGuldan) then return "hand_of_guldan 148"; end
     end
     -- hand_of_guldan,if=soul_shard>=3&(((prev_gcd.2.hand_of_guldan|buff.wild_imps.stack>=3)&buff.wild_imps.stack<9)|cooldown.summon_demonic_tyrant.remains<=gcd*2|buff.demonic_power.remains>gcd*2)
@@ -906,7 +899,7 @@ local function APL()
         if HR.Cast(S.BilescourgeBombers) then return "bilescourge_bombers 178"; end
     end
     -- focused_azerite_beam
-    if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
+    if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and EnemiesCount >= 3 then
         if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam implosion"; end
     end
     -- purifying_blast
@@ -931,7 +924,7 @@ local function APL()
     end
     -- doom,cycle_targets=1,max_cycle_targets=7,if=refreshable
     if S.Doom:IsCastableP() and not ShouldStop and EvaluateCycleDoom198(Target) then
-        if HR.CastCycle(S.Doom) then return "doom 206" end
+        if HR.Cast(S.Doom) then return "doom 206" end
     end
     -- call_action_list,name=build_a_shard
     if (true) then
@@ -1084,7 +1077,7 @@ local function APL()
         if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll"; end
     end
     -- use_item,name=shiver_venom_relic,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffP(S.ShiverVenomDebuff) and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
     end
     -- use_item,name=aquipotent_nautilus,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
@@ -1135,29 +1128,10 @@ local function APL()
     if (S.NetherPortal:IsAvailable() and EnemiesCount <= 2) then
         local ShouldReturn = NetherPortal(); if ShouldReturn then return ShouldReturn; end
     end
-	
-	
-	
-    
-	-- function Lib:GetMultiUnitsBySpell(petSpell, units)
-	-- @return number (of total units in range by petSpell, if 'units' is ommited then will take summary units)
-	-- Note: petSpell can be table {123, 124} which will be queried 
-	
-	local FelguardSpells = {
-	    30213, -- Legion Strike
-	    89751, --Felstorm
-	}
-	--Pet:GetMultiUnitsBySpell
-
-	-- call_action_list,name=implosion,if=spell_targets.implosion>1
-	-- Also check number of enemies in range of our pet to know if we can fully cleave or not
-    if (EnemiesCount > 1) and PetLib:GetMultiUnitsBySpell(89751, 10) > 1 then
+    -- call_action_list,name=implosion,if=spell_targets.implosion>1
+    if (EnemiesCount > 1) and HR.AoEON() then
         local ShouldReturn = Implosion(); if ShouldReturn then return ShouldReturn; end
     end
-	
-	
-	
-	
     -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
     if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and HR.CDsON() and (S.SummonDemonicTyrant:CooldownRemainsP() <= 15 or Target:TimeToDie() <= 30) then
         if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 408"; end
@@ -1187,7 +1161,7 @@ local function APL()
         if HR.Cast(S.HandofGuldan) then return "hand_of_guldan 435"; end
     end
     -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() and Player:SoulShardsP() < 3 and (not S.DemonicConsumption:IsAvailable() or WildImpsCount() + ImpsSpawnedDuring(2000) > 6) then
+    if S.SummonDemonicTyrant:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:SoulShardsP() < 3 and (not S.DemonicConsumption:IsAvailable() or WildImpsCount() + ImpsSpawnedDuring(2000) >= 6) or Target:TimeToDie() < 20) then
         if HR.Cast(S.SummonDemonicTyrant, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_demonic_tyrant 445"; end
     end
     -- power_siphon,if=buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&spell_targets.implosion<2
@@ -1236,10 +1210,19 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
-
