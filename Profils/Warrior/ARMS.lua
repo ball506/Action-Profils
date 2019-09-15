@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_WARRIOR_ARMS] = {
     -- Racial
@@ -74,9 +85,7 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     DeepWoundsDebuff                      = Action.Create({ Type = "Spell", ID = 262115, Hidden = true     }),
     ColossusSmashDebuff                   = Action.Create({ Type = "Spell", ID = 208086, Hidden = true     }),
     RendDebuff                            = Action.Create({ Type = "Spell", ID = 772, Hidden = true     }),
-    -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    -- Trinkets    
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -232,46 +241,6 @@ local function DetermineEssenceRanks()
     S.CondensedLifeforce = S.CondensedLifeforce3:IsAvailable() and S.CondensedLifeforce3 or S.CondensedLifeforce
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function Init ()
   HL.RegisterNucleusAbility(152277, 8, 6)               -- Ravager
   HL.RegisterNucleusAbility(227847, 8, 6)               -- Bladestorm
@@ -294,23 +263,36 @@ local function APL()
 	ExecuteRange()
 	DetermineEssenceRanks()
 	
-	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
 	else
 	    ShouldStop = false
 	end
-    
+	
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+		    -- use_item,name=azsharas_font_of_power
+            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
+            end
+            -- memory_of_lucid_dreams
+            if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Pull > 0.1 and Pull <= 1 then
+                if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
+            end
+            -- guardian_of_azeroth
+            if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Pull > 0.1 and Pull <= 1 then
+                if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
+            end
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull() > 0.1 + Player:GCD() and Pull() < 0.5 + Player:GCD() then
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_strength 4"; end
+            end
+        end
+    end    
     local function Precombat()
         -- flask
         -- food
@@ -322,16 +304,16 @@ local function APL()
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
             end
             -- memory_of_lucid_dreams
-            if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop then
+            if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
                 if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
             end
             -- guardian_of_azeroth
-            if S.GuardianofAzeroth:IsCastableP() and not ShouldStop then
+            if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
                 if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
             end
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_strength 4"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_strength 4"; end
             end
         end
     end
@@ -569,17 +551,14 @@ local function APL()
             if HR.Cast(S.Slam) then return "slam 340"; end
         end
     end
-    
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
+
 	-- call DBM precombat
-   --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-    --    local ShouldReturn = Precombat_DBM(); 
-    --        if ShouldReturn then return ShouldReturn; 
-    --    end    
-    --end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -598,7 +577,7 @@ local function APL()
         
   	    -- Pummel
   	    if useKick and S.Pummel:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
          	else 
           	    return
@@ -614,7 +593,7 @@ local function APL()
         end
         -- potion
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_strength 354"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_strength 354"; end
         end
         -- blood_fury,if=debuff.colossus_smash.up
         if S.BloodFury:IsCastableP() and not ShouldStop and HR.CDsON() and (Target:DebuffP(S.ColossusSmashDebuff)) then
@@ -653,39 +632,39 @@ local function APL()
             if HR.Cast(S.SweepingStrikes) then return "sweeping_strikes 390"; end
         end
         -- blood_of_the_enemy,if=buff.test_of_might.up|(debuff.colossus_smash.up&!azerite.test_of_might.enabled)
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and (Player:BuffP(S.TestofMightBuff) or (Target:DebuffP(S.ColossusSmashDebuff) and not S.TestofMight:IsAvailable())) then
+        if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(S.TestofMightBuff) or (Target:DebuffP(S.ColossusSmashDebuff) and not S.TestofMight:IsAvailable())) then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- purifying_blast,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-        if S.PurifyingBlast:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
+        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast"; end
         end
         -- ripple_in_space,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-        if S.RippleInSpace:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
+        if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
             if HR.Cast(S.RippleInSpace) then return "ripple_in_space"; end
         end
         -- worldvein_resonance,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-        if S.WorldveinResonance:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
+        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- focused_azerite_beam,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- concentrated_flame,if=!debuff.colossus_smash.up&!buff.test_of_might.up&dot.concentrated_flame_burn.remains=0
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (Target:DebuffDownP(S.ColossusSmashDebuff) and Player:BuffDownP(S.TestofMightBuff) and Target:DebuffDownP(S.ConcentratedFlameBurn)) then
+        if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Target:DebuffDownP(S.ColossusSmashDebuff) and Player:BuffDownP(S.TestofMightBuff) and Target:DebuffDownP(S.ConcentratedFlameBurn)) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up
-        if S.TheUnboundForce:IsCastableP() and not ShouldStop and (Player:BuffP(S.RecklessForceBuff)) then
+        if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(S.RecklessForceBuff)) then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
         end
         -- guardian_of_azeroth,if=cooldown.colossus_smash.remains<10
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and (S.ColossusSmash:CooldownRemainsP() < 10) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (S.ColossusSmash:CooldownRemainsP() < 10) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- memory_of_lucid_dreams,if=!talent.warbreaker.enabled&cooldown.colossus_smash.remains<3|cooldown.warbreaker.remains<3
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and (not S.Warbreaker:IsAvailable() and S.ColossusSmash:CooldownRemainsP() < 3 or S.Warbreaker:CooldownRemainsP() < 3) then
+        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not S.Warbreaker:IsAvailable() and S.ColossusSmash:CooldownRemainsP() < 3 or S.Warbreaker:CooldownRemainsP() < 3) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- run_action_list,name=hac,if=raid_event.adds.exists
@@ -709,15 +688,23 @@ end
 -- Finished
 
 
-
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
-
