@@ -392,9 +392,9 @@ local function APL()
             if HR.Cast(S.MoonkinForm, Action.GetToggle(2, "GCDasOffGCD")) then return "moonkin_form 39"; end
         end
         -- snapshot_stats
-	    -- potion
-        if I.BattlePotionOfIntellect:IsReady() and Pull > 1 and Pull <= (S.SolarWrath:CastTime() + S.SolarWrath:TravelTime() + 1) then
-            return 967532
+        -- potion,dynamic_prepot=1
+        if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and Pull > 1 and Pull <= (S.SolarWrath:CastTime() + S.SolarWrath:TravelTime() + 1) then
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 42"; end
         end
         -- solar_wrath
         if S.SolarWrath:IsReady() and not Player:IsCasting(S.SolarWrath) and Pull > 0.1 and Pull <= S.SolarWrath:CastTime() + S.SolarWrath:TravelTime() then
