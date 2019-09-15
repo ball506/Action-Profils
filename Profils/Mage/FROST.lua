@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_MAGE_FROST] = {
     -- Racials
@@ -75,8 +86,8 @@ Action[ACTION_CONST_MAGE_FROST] = {
     -- Potions
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
     PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
@@ -257,46 +268,6 @@ local function DetermineEssenceRanks()
     S.MemoryofLucidDreamsMinor = S.MemoryofLucidDreamsMinor3:IsAvailable() and S.MemoryofLucidDreamsMinor3 or S.MemoryofLucidDreamsMinor
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 -- Initiate Nucleus Ability registration
 local function Init ()
   HL.RegisterNucleusAbility(84714, 8, 6)               -- Frost Orb
@@ -319,24 +290,31 @@ local function APL()
     EnemiesCount = GetEnemiesCount(8)
     HL.GetEnemies(40, 12) -- For interrupts
     DetermineEssenceRanks()
-	
-	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
+		
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- arcane_intellect
+        if S.ArcaneIntellect:IsCastableP() and not ShouldStop and Player:BuffDownP(S.ArcaneIntellectBuff, true) then
+            if HR.Cast(S.ArcaneIntellect) then return "arcane_intellect 3"; end
         end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+        -- summon_water_elemental
+        if S.SummonWaterElemental:IsCastableP() and not ShouldStop and not Pet:Exists() then
+            if HR.Cast(S.SummonWaterElemental) then return "summon_water_elemental 7"; end
         end
-    end
-	
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= S.Frostbolt:CastTime() + S.Frostbolt:TravelTime() + 1.2 then
+                if HR.Cast(I.PotionofUnbridledFury) then return "prolonged_power 12"; end
+            end
+            -- frostbolt
+            if S.Frostbolt:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= S.Frostbolt:CastTime() + S.Frostbolt:TravelTime() then
+                if HR.Cast(S.Frostbolt) then return "frostbolt 14"; end
+            end
+        end
+    end	
     local function Precombat()
         -- flask
         -- food
@@ -357,7 +335,7 @@ local function APL()
             end
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "prolonged_power 12"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "prolonged_power 12"; end
             end
             -- frostbolt
             if S.Frostbolt:IsCastableP() and not ShouldStop then
@@ -419,7 +397,7 @@ local function APL()
             if HR.Cast(S.IceNova) then return "ice_nova 22"; end
         end
         -- flurry,if=prev_gcd.1.ebonbolt|buff.brain_freeze.react&(prev_gcd.1.frostbolt&(buff.icicles.stack<4|!talent.glacial_spike.enabled)|prev_gcd.1.glacial_spike)
-        if S.Flurry:IsCastableP() and not ShouldStop and Player:PrevGCDP(1, S.Ebonbolt) or Player:BuffP(S.BrainFreezeBuff) and (Player:PrevGCDP(1, S.Frostbolt) and (Player:BuffStackP(S.IciclesBuff) < 4 or not S.GlacialSpike:IsAvailable()) or Player:PrevGCDP(1, S.GlacialSpike)) then
+        if S.Flurry:IsCastableP() and (Player:PrevGCDP(1, S.Ebonbolt) or bool(Player:BuffStackP(S.BrainFreezeBuff)) and (Player:PrevGCDP(1, S.Frostbolt) and (Player:BuffStackP(S.IciclesBuff) < 4 or not S.GlacialSpike:IsAvailable()) or Player:PrevGCDP(1, S.GlacialSpike))) then
             if HR.Cast(S.Flurry) then return "flurry 24"; end
         end
         -- ice_lance,if=buff.fingers_of_frost.react
@@ -463,6 +441,7 @@ local function APL()
             if HR.Cast(S.IceLance) then return "ice_lance 54"; end
         end
     end
+	
     local function Cooldowns()
         -- guardian_of_azeroth
         if S.GuardianofAzeroth:IsCastableP() and not ShouldStop then
@@ -486,7 +465,7 @@ local function APL()
         end
         -- potion,if=prev_gcd.1.icy_veins|target.time_to_die<30
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:PrevGCDP(1, S.IcyVeins) or Target:TimeToDie() < 30) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "prolonged_power 96"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "prolonged_power 96"; end
         end
         -- use_item,name=balefire_branch,if=!talent.glacial_spike.enabled|buff.brain_freeze.react&prev_gcd.1.glacial_spike
         if I.BalefireBranch:IsEquipReady() and (not S.GlacialSpike:IsAvailable() or Player:BuffP(S.BrainFreezeBuff) and Player:PrevGCDP(1, S.GlacialSpike)) then
@@ -533,17 +512,21 @@ local function APL()
         if S.IceNova:IsCastableP() and not ShouldStop and (S.IceNova:CooldownUpP() and Target:DebuffP(S.WintersChillDebuff)) then
             if HR.Cast(S.IceNova) then return "ice_nova 117"; end
         end
-        -- flurry,if=talent.ebonbolt.enabled&prev_gcd.1.ebonbolt&buff.brain_freeze.react
-        if S.Flurry:IsCastableP() and not ShouldStop and S.Ebonbolt:IsAvailable() and Player:PrevGCDP(1, S.Ebonbolt) and Player:BuffP(S.BrainFreezeBuff) then
+        -- flurry,if=talent.ebonbolt.enabled&prev_gcd.1.ebonbolt&(!talent.glacial_spike.enabled|buff.icicles.stack<4|buff.brain_freeze.react)
+        if S.Flurry:IsCastableP() and (S.Ebonbolt:IsAvailable() and Player:PrevGCDP(1, S.Ebonbolt) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4 or bool(Player:BuffStackP(S.BrainFreezeBuff)))) then
             if HR.Cast(S.Flurry) then return "flurry 123"; end
         end
-        -- flurry,if=prev_gcd.1.glacial_spike&buff.brain_freeze.react
-        if S.Flurry:IsCastableP() and not ShouldStop and Player:PrevGCDP(1, S.GlacialSpike) and Player:BuffP(S.BrainFreezeBuff) then
+        -- flurry,if=talent.glacial_spike.enabled&prev_gcd.1.glacial_spike&buff.brain_freeze.react
+        if S.Flurry:IsCastableP() and (S.GlacialSpike:IsAvailable() and Player:PrevGCDP(1, S.GlacialSpike) and bool(Player:BuffStackP(S.BrainFreezeBuff))) then
             if HR.Cast(S.Flurry) then return "flurry 135"; end
         end
-        -- flurry,if=prev_gcd.1.glacial_spike&buff.brain_freeze.react
-        if S.Flurry:IsCastableP() and not ShouldStop and Player:BuffP(S.BrainFreezeBuff) then
+        -- flurry,if=prev_gcd.1.frostbolt&buff.brain_freeze.react&(!talent.glacial_spike.enabled|buff.icicles.stack<4)
+        if S.Flurry:IsCastableP() and (Player:PrevGCDP(1, S.Frostbolt) and bool(Player:BuffStackP(S.BrainFreezeBuff)) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4)) then
             if HR.Cast(S.Flurry) then return "flurry 135"; end
+        end
+        -- Manual addition of Ice Lance with Flurry as PrevGCDP
+        if S.IceLance:IsCastableP() and not ShouldStop and Player:PrevGCDP(1, S.Flurry) then
+            if HR.Cast(S.IceLance) then return "ice_lance 218"; end
         end
         -- call_action_list,name=essences
         local ShouldReturn = Essences(); if ShouldReturn then return ShouldReturn; end
@@ -552,7 +535,7 @@ local function APL()
             if HR.Cast(S.FrozenOrb, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frozen_orb 153"; end
         end
         -- blizzard,if=active_enemies>2|active_enemies>1&!talent.splitting_ice.enabled
-        if S.Blizzard:IsCastableP() and not ShouldStop and (EnemiesCount > 2 or EnemiesCount > 1 and not S.SplittingIce:IsAvailable()) then
+        if S.Blizzard:IsCastableP() and HR.AoEON() and not ShouldStop and (EnemiesCount > 2 or EnemiesCount > 1 and not S.SplittingIce:IsAvailable()) then
             if HR.Cast(S.Blizzard) then return "blizzard 155"; end
         end
         -- comet_storm
@@ -563,9 +546,8 @@ local function APL()
         if S.Ebonbolt:IsCastableP() and not ShouldStop and Player:BuffStackP(S.IciclesBuff) == 5 and Player:BuffDownP(S.BrainFreezeBuff) then
             if HR.Cast(S.Ebonbolt) then return "ebonbolt 181"; end
         end
-        -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down
-        -- TODO: Add handling for the Incanter's Flow conditions
-        if S.GlacialSpike:IsReadyP() and not ShouldStop and (Player:BuffP(S.BrainFreezeBuff) or Player:PrevGCDP(1, S.Ebonbolt)) then
+        -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|active_enemies>1&talent.splitting_ice.enabled
+        if S.GlacialSpike:IsReadyP() and Player:BuffStackP(S.IciclesBuff) == 5 and (Player:Buff(S.BrainFreezeBuff) or Player:PrevGCDP(1, S.Ebonbolt) and S.SplittingIce:IsAvailable()) then
             if HR.Cast(S.GlacialSpike) then return "glacial_spike 182"; end
         end
         -- ice_nova
@@ -619,16 +601,13 @@ local function APL()
         end
 	end
     
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
 	-- call DBM precombat
-   --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-    --        if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+           if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -646,7 +625,7 @@ local function APL()
         
 		-- Counterspell
         if useKick and S.Counterspell:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		    if Target:CastPercentage() >= randomInterrupt then
+		    if ActionUnit(unit):CanInterrupt(true) then
                 if HR.Cast(S.Counterspell, true) then return "Counterspell 5"; end
             else 
                 return
@@ -656,7 +635,7 @@ local function APL()
 		-- Purge
 		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if S.Spellsteal:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("player", "UsePurge", "PurgeHigh") then
+        if S.Spellsteal:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
             if HR.Cast(S.Spellsteal) then return "" end
         end	
 		-- Emergency
@@ -666,7 +645,7 @@ local function APL()
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
         -- call_action_list,name=aoe,if=active_enemies>3&talent.freezing_rain.enabled|active_enemies>4
-        if (EnemiesCount > 3 and S.FreezingRain:IsAvailable() or EnemiesCount > 4) then
+        if (EnemiesCount > 3 and S.FreezingRain:IsAvailable() or EnemiesCount > 4) and HR.AoEON() then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
         end
         -- call_action_list,name=single
@@ -678,14 +657,25 @@ end
 -- Finished
 
 
+
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
