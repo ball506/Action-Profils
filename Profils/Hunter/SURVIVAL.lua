@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     -- Racials
@@ -39,10 +50,10 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     KillCommand                           = Action.Create({ Type = "Spell", ID = 259489     }),
     --WildfireBomb                          = MultiSpell(259495, 270335, 270323, 271045     }),
 	WingClip                              = Action.Create({ Type = "Spell", ID = 195645     }),
-    WildfireBomb                          = Action.Create({ Type = "Spell", ID = 259495     }),
-    ShrapnelBomb                          = Action.Create({ Type = "Spell", ID = 270335     }),
-    PheromoneBomb                         = Action.Create({ Type = "Spell", ID = 270323     }),
-    VolatileBomb                          = Action.Create({ Type = "Spell", ID = 271045     }),
+    WildfireBomb                          = Action.Create({ Type = "Spell", ID = 259495, Texture = 269747     }),
+    ShrapnelBomb                          = Action.Create({ Type = "Spell", ID = 270335, Texture = 269747     }),
+    PheromoneBomb                         = Action.Create({ Type = "Spell", ID = 270323, Texture = 269747     }),
+    VolatileBomb                          = Action.Create({ Type = "Spell", ID = 271045, Texture = 269747     }),
     SerpentSting                          = Action.Create({ Type = "Spell", ID = 259491     }),
     AMurderofCrows                        = Action.Create({ Type = "Spell", ID = 131894     }),
     CoordinatedAssault                    = Action.Create({ Type = "Spell", ID = 266779     }),
@@ -95,8 +106,8 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     -- Potions
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
 	AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
@@ -219,6 +230,14 @@ local ShouldReturn; -- Used to get the return string
 local ForceOffGCD = {true, false};
 local Everyone = HR.Commons.Everyone;
 local EnemiesCount, GCDMax;
+    
+S.MongooseBite.TextureSpellID = { 224795 } -- Raptor Strikes
+S.Butchery.TextureSpellID = { 203673 } -- Carve
+S.ShrapnelBomb.TextureSpellID = { 269747 }
+S.PheromoneBomb.TextureSpellID = { 269747 }
+S.VolatileBomb.TextureSpellID = { 269747 }
+S.WildfireBomb.TextureSpellID = { 269747 }
+S.WingClip.TextureSpellID = { 76151 }
 
 -- Stuns
 local StunInterrupts = {
@@ -315,46 +334,6 @@ local function DetermineEssenceRanks()
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function UpdateRaptorStrikeID()
     S.RaptorStrike = S.RaptorStrikeEagle:IsAvailable() and S.RaptorStrikeEagle or S.RaptorStrike
 end
@@ -367,14 +346,6 @@ end
 local function cacheOverwrite()
     Cache.Persistent.SpellLearned.Player[S.MendPet.SpellID] = true
 end
-
-S.MongooseBite.TextureSpellID = { 224795 } -- Raptor Strikes
-S.Butchery.TextureSpellID = { 203673 } -- Carve
-S.ShrapnelBomb.TextureSpellID = { 269747 }
-S.PheromoneBomb.TextureSpellID = { 269747 }
-S.VolatileBomb.TextureSpellID = { 269747 }
-S.WildfireBomb.TextureSpellID = { 269747 }
-S.WingClip.TextureSpellID = { 76151 }
 
 local function UpdateWFB()
     if S.ShrapnelBomb:IsReady() and not ShouldStop then
@@ -415,28 +386,45 @@ local function APL()
 	--print(EnemiesCount)
     HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
     DetermineEssenceRanks()
-    UpdateWFB()
+
+	UpdateWFB()
 	UpdateMangooseBiteID()
 	UpdateRaptorStrikeID()
 	UpdateRanges()
 
-
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
 	else
 	    ShouldStop = false
 	end
-	
+    local function Precombat_DBM()
+        -- flask
+        -- augmentation
+        -- food
+        -- summon_pet
+        if S.SummonPet:IsCastableP() and not ShouldStop and not Pet:Exists() then
+            if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
+        end
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- use_item,name=azsharas_font_of_power
+            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 0.1 and Pull <= 6 then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
+            end
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
+            end
+            -- steel_trap
+            if S.SteelTrap:IsCastableP() and not ShouldStop and Action.GetToggle(2, "UseSteelTrap") and Player:DebuffDownP(S.SteelTrapDebuff) and Pull > 0.1 and Pull <= 0.5 then
+                if HR.Cast(S.SteelTrap) then return "steel_trap 10"; end
+            end
+            -- harpoon
+            if S.Harpoon:IsCastableP() and not ShouldStop and Action.GetToggle(2, "UseHarpoonOOR") and Target:MinDistanceToPlayer(true) >= 8 and Target:MaxDistanceToPlayer(true) <= 30 and Pull > 0.1 and Pull <= 0.5 then
+                if HR.Cast(S.Harpoon, Action.GetToggle(2, "OffGCDasOffGCD")) then return "harpoon 12"; end
+            end
+        end
+    end	
     local function Precombat()
         -- flask
         -- augmentation
@@ -446,10 +434,10 @@ local function APL()
             if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
         end
         -- snapshot_stats
-        --if Everyone.TargetIsValid() then
+        if Everyone.TargetIsValid() then
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
             end
             -- use_item,name=azsharas_font_of_power
             if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
@@ -471,7 +459,7 @@ local function APL()
             if S.Harpoon:IsCastableP() and not ShouldStop and Action.GetToggle(2, "UseHarpoonOOR") and Target:MinDistanceToPlayer(true) >= 8 and Target:MaxDistanceToPlayer(true) <= 30 then
                 if HR.Cast(S.Harpoon, Action.GetToggle(2, "OffGCDasOffGCD")) then return "harpoon 12"; end
             end
-        --end
+        end
     end
     local function Apst()
         -- mongoose_bite,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
@@ -495,7 +483,7 @@ local function APL()
             if HR.Cast(S.SteelTrap) then return "steel_trap 54"; end
         end
         -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up)
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 64"; end
         end
         -- serpent_sting,if=!dot.serpent_sting.ticking&!buff.coordinated_assault.up
@@ -527,7 +515,7 @@ local function APL()
             if HR.Cast(S.RaptorStrike) then return "raptor_strike 140"; end
         end
         -- wildfire_bomb,if=!ticking
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.WildfireBombDebuff)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (not Target:DebuffP(S.WildfireBombDebuff)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 142"; end
         end
     end
@@ -549,7 +537,7 @@ local function APL()
             if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 166"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd|focus+cast_regen<focus.max&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 168"; end
         end
         -- coordinated_assault
@@ -577,7 +565,7 @@ local function APL()
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 238"; end
         end
         -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>30&dot.serpent_sting.remains>5*gcd
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Target:DebuffRemainsP(S.SerpentStingDebuff) > 5 * Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Target:DebuffRemainsP(S.SerpentStingDebuff) > 5 * Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 242"; end
         end
         -- chakrams,if=!buff.mongoose_fury.remains
@@ -601,7 +589,7 @@ local function APL()
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 274"; end
         end
         -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 280"; end
         end
     end
@@ -628,7 +616,7 @@ local function APL()
         end
         -- potion,if=buff.coordinated_assault.up&(buff.berserking.up|buff.blood_fury.up|!race.troll&!race.orc)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.CoordinatedAssaultBuff) and (Player:BuffP(S.BerserkingBuff) or Player:BuffP(S.BloodFuryBuff) or not Player:IsRace("Troll") and not Player:IsRace("Orc")) or Target:TimeToDie() < 61) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_agility 308"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 308"; end
         end
         -- aspect_of_the_eagle,if=target.distance>=6
         if S.AspectoftheEagle:IsCastableP() and not ShouldStop and HR.CDsON() and (not Target:IsInRange(8) and Target:IsInRange(40)) then
@@ -699,7 +687,7 @@ local function APL()
             if HR.Cast(S.Carve) then return "carve 379"; end
         end
         -- wildfire_bomb,if=!talent.guerrilla_tactics.enabled|full_recharge_time<gcd
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (not S.GuerrillaTactics:IsAvailable() or S.WildfireBomb:FullRechargeTimeP() < Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (not S.GuerrillaTactics:IsAvailable() or S.WildfireBomb:FullRechargeTimeP() < Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 383"; end
         end
         -- mongoose_bite,target_if=max:debuff.latent_poison.stack,if=debuff.latent_poison.stack=10
@@ -727,7 +715,7 @@ local function APL()
             if HR.Cast(S.FlankingStrike) then return "flanking_strike 445"; end
         end
         -- wildfire_bomb,if=dot.wildfire_bomb.refreshable|talent.wildfire_infusion.enabled
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (Target:DebuffRefreshableCP(S.WildfireBombDebuff) or S.WildfireInfusion:IsAvailable()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Target:DebuffRefreshableCP(S.WildfireBombDebuff) or S.WildfireInfusion:IsAvailable()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 453"; end
         end
         -- serpent_sting,target_if=min:remains,if=buff.vipers_venom.react
@@ -785,7 +773,7 @@ local function APL()
             if HR.Cast(S.SteelTrap) then return "steel_trap 577"; end
         end
         -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up)
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 587"; end
         end
         -- mongoose_bite,if=buff.mongoose_fury.stack>5&!cooldown.coordinated_assault.remains
@@ -813,7 +801,7 @@ local function APL()
             if HR.Cast(S.RaptorStrike) then return "raptor_strike 657"; end
         end
         -- wildfire_bomb,if=dot.wildfire_bomb.refreshable
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (Target:DebuffRefreshableCP(S.WildfireBombDebuff)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Target:DebuffRefreshableCP(S.WildfireBombDebuff)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 659"; end
         end
         -- serpent_sting,if=buff.vipers_venom.up
@@ -839,7 +827,7 @@ local function APL()
             if HR.Cast(S.SerpentSting) then return "serpent_sting 689"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max|(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 697"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max-focus.regen
@@ -855,7 +843,7 @@ local function APL()
             if HR.Cast(S.SteelTrap) then return "steel_trap 743"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 753"; end
         end
         -- coordinated_assault
@@ -871,7 +859,7 @@ local function APL()
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 769"; end
         end
         -- wildfire_bomb,if=next_wi_bomb.shrapnel&dot.serpent_sting.remains>5*gcd
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.ShrapnelBomb:IsLearned() and Target:DebuffRemainsP(S.SerpentStingDebuff) > 5 * Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.ShrapnelBomb:IsLearned() and Target:DebuffRemainsP(S.SerpentStingDebuff) > 5 * Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 775"; end
         end
         -- serpent_sting,if=refreshable
@@ -895,7 +883,7 @@ local function APL()
             if HR.Cast(S.SerpentSting) then return "serpent_sting 795"; end
         end
         -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel
-        if S.WildfireBomb:IsCastableP() and not ShouldStop and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 799"; end
         end
     end
@@ -912,16 +900,13 @@ local function APL()
         end	
 	end	
     
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
 	-- call DBM precombat
-    --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-   --         if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -939,7 +924,7 @@ local function APL()
         
   	    -- Muzzle
   	    if useKick and S.Muzzle:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Muzzle, true) then return "Muzzle 5"; end
          	else 
           	    return
@@ -1014,14 +999,20 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-
-
     if APL() then 
         return true 
-    end 
+    end
 	
-	--something if needed
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
 end
 
