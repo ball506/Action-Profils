@@ -1,12 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
 local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Racial
@@ -83,8 +93,6 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     AgonyDebuff                          = Action.Create({ Type = "Spell", ID = 980, Hidden = true}),
     CorruptionDebuff                     = Action.Create({ Type = "Spell", ID = 146739, Hidden = true     }),
     -- Trinkets
-    GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -269,46 +277,6 @@ local function DetermineEssenceRanks()
     S.VisionofPerfectionMinor = S.VisionofPerfectionMinor3:IsAvailable() and S.VisionofPerfectionMinor3 or S.VisionofPerfectionMinor
     S.GuardianofAzeroth = S.GuardianofAzeroth2:IsAvailable() and S.GuardianofAzeroth2 or S.GuardianofAzeroth
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
-end
-
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
 end
 
 local function num(val)
@@ -588,16 +556,6 @@ local function APL()
 	--print(VampiricTouchToRefresh)
 	local CanMultidot = HandleMultidots()
 	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
 	local function Precombat_DBM()
 	if Everyone.TargetIsValid() then
         -- summon_pet
@@ -703,7 +661,7 @@ local function APL()
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll"; end
         end
         -- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.ShiverVenomRelic:IsEquipped() and TrinketON() and not ShouldStop and I.ShiverVenomRelic:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.ShiverVenomRelic:IsEquipped() and TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
         end
         -- use_item,name=aquipotent_nautilus,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
@@ -967,7 +925,7 @@ local function APL()
         
 		-- PetKick
         if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 
-		    if Target:CastPercentage() >= randomInterrupt then
+		    if ActionUnit(unit):CanInterrupt(true) then
                 if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
             else 
                 return
@@ -1115,11 +1073,7 @@ local function APL()
         -- call_action_list,name=fillers
         if (true) and not ShouldStop then
             local ShouldReturn = Fillers(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- run_action_list,name=trinkets
-       -- if (true) and not ShouldStop then
-       --     local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-       -- end	
+        end	
     end
 end
 -- Finished
@@ -1134,8 +1088,17 @@ end
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
     end 
-
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
 end
 
 --[[
