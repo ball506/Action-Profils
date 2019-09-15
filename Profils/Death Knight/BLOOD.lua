@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
   -- Racial
@@ -57,8 +68,8 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
   -- Debuffs
   DancingRuneWeaponBuff                = Action.Create({ Type = "Spell", ID = 81256     }),  
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+  
+  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
@@ -203,46 +214,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-	
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function Init ()
   HL.RegisterNucleusAbility(50842, 10, 6)               -- Blood Boil
   HL.RegisterNucleusAbility(194844, 8, 6)               -- Bonestorm
@@ -261,16 +232,6 @@ local function APL()
 
     UpdateRanges()
     DetermineEssenceRanks()
-	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
 
     --- In Combat
     if Player:AffectingCombat() then
@@ -282,7 +243,7 @@ local function APL()
         
   	    -- MindFreeze
   	    if useKick and S.MindFreeze:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.MindFreeze, true) then return "MindFreeze 5"; end
          	else 
           	    return
@@ -291,7 +252,7 @@ local function APL()
 		
      	-- Asphyxiate
       	if useCC and S.Asphyxiate:IsReady() and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.Asphyxiate, true) then return "Asphyxiate 5"; end
      	    else 
      	        return
@@ -299,7 +260,7 @@ local function APL()
      	end 
 		-- Death Grip as kick if none available
 		if useKick and not S.MindFreeze:IsReady() and S.DeathGrip:IsReady() and Everyone.TargetIsValid() and Target:IsInterruptible() then
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.DeathGrip, true) then return "DeathGrip 5"; end
          	else 
           	    return
@@ -403,7 +364,7 @@ local function APL()
             if Action.GetToggle(2, "Consumption") then
                 if HR.Cast(S.Consumption) then return ""; end
             elseif Action.GetToggle(2, "ConsumptionSuggested") then
-                HR.CastSuggested(S.Consumption);
+                HR.Cast(S.Consumption);
             end
         end
         -- Death's Caress Pull
@@ -440,10 +401,19 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
-
