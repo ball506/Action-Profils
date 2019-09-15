@@ -131,6 +131,23 @@ function Player:InRaid()
 end
 
 -------------------------------------------------------------------------------
+-- Trinkets
+-------------------------------------------------------------------------------
+-- Trinkets checker
+function TrinketON(unit)
+    if not unit or unit == nil then 
+	    unit = "target"
+	end
+	if unit then
+        if Action.Trinket1:IsReady(unit) or Action.Trinket2:IsReady(unit) then
+            return true
+	    else
+	        return false
+		end
+	end
+end
+
+-------------------------------------------------------------------------------
 -- Multiunits
 -------------------------------------------------------------------------------
 function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, refreshTime, upTTD)
@@ -167,3 +184,4 @@ if petClass == "WARLOCK" then
 	    89751, --Felstorm
 	})
 end
+
