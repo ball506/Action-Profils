@@ -1,12 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
 local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_PRIEST_SHADOW] = {
     -- Racial
@@ -70,8 +80,8 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     VampiricTouchDebuff                   = Action.Create({ Type = "Spell", ID = 34914, Hidden = true     }),
     ShadowWordPainDebuff                  = Action.Create({ Type = "Spell", ID = 589, Hidden = true     }),
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -242,46 +252,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function HandleMultidots()
     local choice = Action.GetToggle(2, "AutoDotSelection")
        
@@ -390,15 +360,13 @@ local function APL()
 	local CanMultidot = HandleMultidots()	
 	--print(CanMultidot)
 	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end  
+	if Player:IsChanneling(S.MindFlay) then 
+	    ShouldStop = false
+	elseif Player:IsChanneling(S.MindSear) then 
+	    ShouldStop = false
+	else
+        ShouldStop = ShouldStop
+    end	
 
     local function Precombat_DBM()
         -- flask
@@ -430,10 +398,10 @@ local function APL()
             end
 			-- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and ((not S.ShadowWordVoid:IsAvailable() and Pull <= S.MindBlast:CastTime() + 1) or (S.ShadowWordVoid:IsAvailable() and Pull <= S.ShadowWordVoid:CastTime() + 1)) then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 4"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 4"; end
             end
             -- mind_blast,if=spell_targets.mind_sear<2|azerite.thought_harvester.rank=0
-            if S.MindBlast:IsReadyP() and not S.ShadowWordVoid:IsAvailable() and not ShouldStop and (EnemiesCount < 2 or S.ThoughtHarvester:AzeriteRank() == 0) and not Player:IsCasting(S.MindBlast) and Pull > 0.1 and Pull <= S.MindBlast:CastTime() then
+            if S.MindBlast:IsReadyP() and not S.ShadowWordVoid:IsAvailable() and (EnemiesCount < 2 or S.ThoughtHarvester:AzeriteRank() == 0) and not Player:IsCasting(S.MindBlast) and Pull > 0.1 and Pull <= S.MindBlast:CastTime() then
                 if HR.Cast(S.MindBlast) then return "mind_blast 54"; end
             end
             -- shadow_word_void (added)
@@ -451,7 +419,7 @@ local function APL()
 		if Everyone.TargetIsValid() then
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 4"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 4"; end
             end
             -- variable,name=mind_blast_targets,op=set,value=floor((4.5+azerite.whispers_of_the_damned.rank)%(1+0.27*azerite.searing_dialogue.rank))
             VarMindBlastTargets = math.floor ((4.5 + S.WhispersoftheDamned:AzeriteRank()) / (1 + 0.27 * S.SearingDialogue:AzeriteRank()))
@@ -474,7 +442,7 @@ local function APL()
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 50"; end
             end
             -- mind_blast,if=spell_targets.mind_sear<2|azerite.thought_harvester.rank=0
-            if S.MindBlast:IsReadyP() and not ShouldStop and (EnemiesCount < 2 or S.ThoughtHarvester:AzeriteRank() == 0) and not Player:IsCasting(S.MindBlast) then
+            if S.MindBlast:IsReadyP() and (EnemiesCount < 2 or S.ThoughtHarvester:AzeriteRank() == 0) and not Player:IsCasting(S.MindBlast) then
                 if HR.Cast(S.MindBlast) then return "mind_blast 54"; end
             end
             -- shadow_word_void (added)
@@ -561,9 +529,13 @@ local function APL()
             if HR.Cast(S.MindSear) then return "mind_sear 74"; end
         end
         -- void_bolt
-        if S.VoidBolt:IsReadyP() and not ShouldStop or Player:IsCasting(S.VoidEruption) then
+        if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.VoidBolt) then return "void_bolt 78"; end
         end
+        -- void_boltif channeling
+        if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
+        end		
         -- call_action_list,name=cds
         if (HR.CDsON()) then
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
@@ -587,7 +559,7 @@ local function APL()
         -- mind_blast,target_if=spell_targets.mind_sear<variable.mind_blast_targets
         if S.MindBlast:IsReadyP() and not ShouldStop and EvaluateCycleMindBlast103(Target) and not Player:IsCasting(S.MindBlast) then
             if HR.Cast(S.MindBlast) then return "mind_blast 107" end
-        end
+        end	
         -- shadow_word_void (added)
         if S.ShadowWordVoid:IsReadyP() and not ShouldStop and EvaluateCycleMindBlast103(Target) and not (Player:IsCasting(S.ShadowWordVoid) and S.ShadowWordVoid:ChargesP() == 1) then
             if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 107" end
@@ -636,9 +608,13 @@ local function APL()
             if HR.Cast(S.DarkAscension) then return "dark_ascension 178"; end
         end
         -- void_bolt
-        if S.VoidBolt:IsReadyP() and not ShouldStop or Player:IsCasting(S.VoidEruption) then
+        if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
         end
+        -- void_boltif channeling
+        if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
+        end			
         -- call_action_list,name=cds
         if (HR.CDsON()) then
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
@@ -672,7 +648,7 @@ local function APL()
             if HR.Cast(S.ShadowCrash) then return "shadow_crash 220"; end
         end
         -- mind_blast,if=variable.dots_up&((raid_event.movement.in>cast_time+0.5&raid_event.movement.in<4)|!talent.shadow_word_void.enabled|buff.voidform.down|buff.voidform.stack>14&(insanity<70|charges_fractional>1.33)|buff.voidform.stack<=14&(insanity<60|charges_fractional>1.33))
-        if S.MindBlast:IsReadyP() and not ShouldStop and (bool(VarDotsUp) and 
+        if S.MindBlast:IsReadyP() and (bool(VarDotsUp) and 
         (not S.ShadowWordVoid:IsAvailable() or Player:BuffDownP(S.VoidformBuff) or Player:BuffStackP(S.VoidformBuff) > 14 and 
             (Player:Insanity() < 70 or S.MindBlast:ChargesFractionalP() > 1.33) 
             or Player:BuffStackP(S.VoidformBuff) <= 14 and (Player:Insanity() < 60 or S.MindBlast:ChargesFractionalP() > 1.33))) 
@@ -723,6 +699,7 @@ local function APL()
             if ShouldReturn then return ShouldReturn; 
         end    
     end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -740,7 +717,7 @@ local function APL()
         
 		-- Silence
         if useKick and S.Silence:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		    if Target:CastPercentage() >= randomInterrupt then
+		    if ActionUnit(unit):CanInterrupt(true) then
                 if HR.Cast(S.Silence, true) then return "Silence 5"; end
             else 
                 return
@@ -764,14 +741,18 @@ local function APL()
 		end
         -- potion,if=buff.bloodlust.react|target.time_to_die<=80|target.health.pct<35
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:HasHeroism() or Target:TimeToDie() <= 80 or Target:HealthPercentage() < 35) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 283"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 283"; end
         end
         -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
         VarDotsUp = num(Target:DebuffP(S.ShadowWordPainDebuff) and Target:DebuffP(S.VampiricTouchDebuff))
         -- berserking
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "GCDasOffGCD")) then return "berserking 271"; end
-        end		
+        end	
+        -- MindBlast if channeling
+        if S.MindBlast:IsReadyP() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.MindBlast) then return "MindBlast 182"; end
+        end			
         -- run_action_list,name=cleave,if=active_enemies>1
         if (EnemiesCount > 1) then
             local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end
@@ -780,25 +761,30 @@ local function APL()
         if (EnemiesCount == 1) then
             local ShouldReturn = Single(); if ShouldReturn then return ShouldReturn; end
         end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
     end
 end
 -- Finished
-
 
 
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
     end 
-
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
 end
+
 
