@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_DRUID_GUARDIAN] = {
     -- Racial
@@ -75,8 +86,8 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     -- Misc
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -244,46 +255,6 @@ local function DetermineEssenceRanks()
 	S.Conflict = S.Conflict3:IsAvailable() and S.Conflict3 or S.Conflict
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 local function Swipe()
   if Player:Buff(S.CatForm) then
     return S.SwipeCat;
@@ -333,16 +304,6 @@ local function APL()
 	    ShouldStop = false
 	end
 	
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-    
     local function Precombat()
         -- flask
         -- food
@@ -358,13 +319,13 @@ local function APL()
         end
         -- potion
         if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.PotionofFocusedResolve) then return "battle_potion_of_agility 8"; end
+            if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 8"; end
         end
     end
     local function Cooldowns()
         -- potion
         if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.PotionofFocusedResolve) then return "battle_potion_of_agility 10"; end
+            if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 10"; end
         end
         -- heart_essence
         if S.HeartEssence:IsCastableP() and not ShouldStop then
@@ -455,7 +416,7 @@ local function APL()
         
   	    -- SkullBash
   	    if useKick and S.SkullBash:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.SkullBash, true) then return "SkullBash 5"; end
          	else 
           	    return
@@ -464,7 +425,7 @@ local function APL()
 	
      	 -- MightyBash
       	if useCC and S.MightyBash:IsAvailable() and S.MightyBash:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.MightyBash, true) then return "MightyBash 5"; end
      	    else 
      	        return
@@ -473,7 +434,7 @@ local function APL()
 
      	 -- IncapacitatingRoar
       	if useCC and (not S.MightyBash:IsAvailable() or not S.MightyBash:IsReady() and not ShouldStop) and S.IncapacitatingRoar:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.IncapacitatingRoar, true) then return "IncapacitatingRoar 5"; end
      	    else 
      	        return
@@ -482,7 +443,7 @@ local function APL()
 		-- Soothe
 		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if S.Soothe:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("player", "UseExpelEnrage", "Enrage") then
+        if S.Soothe:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") then
             if HR.Cast(S.Soothe) then return "" end
         end	
         
@@ -557,10 +518,20 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
