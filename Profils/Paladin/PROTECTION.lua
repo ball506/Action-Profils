@@ -247,8 +247,12 @@ local function APL()
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
                 if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
             end
+            -- Manual Add: Avenger's Shield, if pulling at range
+            if S.AvengersShield:IsCastableP() and Pull > 0.1 and Pull <= 0.3 then
+                if HR.Cast(S.AvengersShield) then return "avengers_shield 11"; end
+            end
             -- consecration
-            if S.Consecration:IsCastableP() and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) and Pull > 0.1 and Pull <= 0.3 then
+            if S.Consecration:IsCastableP() and Cache.EnemiesCount[8] > 0 and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) and Pull > 0.1 and Pull <= 0.3 then
                 if HR.Cast(S.Consecration) then return "consecration 6"; end
             end
         end
@@ -264,8 +268,12 @@ local function APL()
                 if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
             end
             -- consecration
-            if S.Consecration:IsCastableP() and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) then
+            if S.Consecration:IsCastableP() and Cache.EnemiesCount[8] > 0 and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) then
                 if HR.Cast(S.Consecration) then return "consecration 6"; end
+            end
+            -- Manual Add: Avenger's Shield, if pulling at range
+            if S.AvengersShield:IsCastableP() then
+                if HR.Cast(S.AvengersShield) then return "avengers_shield 11"; end
             end
             -- lights_judgment
             if S.LightsJudgment:IsCastableP() and not ShouldStop and HR.CDsON() then
@@ -273,6 +281,23 @@ local function APL()
             end
         end
     end
+    local function Defensives()
+        if S.ShieldoftheRighteous:IsCastableP() and (Player:BuffRefreshable(S.ShieldoftheRighteous, 4) and (Player:ActiveMitigationNeeded() or Player:HealthPercentage() <= Settings.Protection.ShieldoftheRighteousHP or (not S.AvengersShield:CooldownUp() and S.ShieldoftheRighteous:ChargesFractional() >= 2.65))) then
+            if HR.Cast(S.ShieldoftheRighteous, Settings.Protection.OffGCDasOffGCD.ShieldoftheRighteous) then return "shield_of_the_righteous defensive"; end
+        end
+        if Target:IsInRange(10) and not Player:HealingAbsorbed() then
+            if S.HandoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Settings.Protection.HandoftheProtectorHP) then
+                if HR.Cast(S.HandoftheProtector, Settings.Protection.GCDasOffGCD.HandoftheProtector) then 
+			        return "hand_of_the_protector defensive"; 
+			    end
+            end
+            if S.LightoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Settings.Protection.LightoftheProtectorHP) then
+                if HR.Cast(S.LightoftheProtector, Settings.Protection.GCDasOffGCD.LightoftheProtector) then 
+			        return "light_of_the_protector defensive"; 
+				end
+            end
+        end     
+	end
     local function Cooldowns()
         -- fireblood,if=buff.avenging_wrath.up
         if S.Fireblood:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.AvengingWrathBuff)) then
@@ -376,11 +401,11 @@ local function APL()
             if HR.Cast(S.ShieldoftheRighteous, Action.GetToggle(2, "OffGCDasOffGCD")) then return "shield_of_the_righteous 71"; end
         end
         -- shield_of_the_righteous,if=(buff.avenging_wrath.up&!talent.seraphim.enabled)|buff.seraphim.up&buff.avengers_valor.up
-        if S.ShieldoftheRighteous:IsCastableP() and not ShouldStop and ((Player:BuffP(S.AvengingWrathBuff) and not S.Seraphim:IsAvailable()) or Player:BuffP(S.SeraphimBuff) and Player:BuffP(S.AvengersValorBuff)) then
+        if S.ShieldoftheRighteous:IsCastableP() and Action.GetToggle(2, "UseSotROffensively") and not ShouldStop and ((Player:BuffP(S.AvengingWrathBuff) and not S.Seraphim:IsAvailable()) or Player:BuffP(S.SeraphimBuff) and Player:BuffP(S.AvengersValorBuff)) then
             if HR.Cast(S.ShieldoftheRighteous, Action.GetToggle(2, "OffGCDasOffGCD")) then return "shield_of_the_righteous 81"; end
         end
         -- shield_of_the_righteous,if=(buff.avenging_wrath.up&buff.avenging_wrath.remains<4&!talent.seraphim.enabled)|(buff.seraphim.remains<4&buff.seraphim.up)
-        if S.ShieldoftheRighteous:IsCastableP() and not ShouldStop and ((Player:BuffP(S.AvengingWrathBuff) and Player:BuffRemainsP(S.AvengingWrathBuff) < 4 and not S.Seraphim:IsAvailable()) or (Player:BuffRemainsP(S.SeraphimBuff) < 4 and Player:BuffP(S.SeraphimBuff))) then
+        if S.ShieldoftheRighteous:IsCastableP() and not ShouldStop and Action.GetToggle(2, "UseSotROffensively") and ((Player:BuffP(S.AvengingWrathBuff) and Player:BuffRemainsP(S.AvengingWrathBuff) < 4 and not S.Seraphim:IsAvailable()) or (Player:BuffRemainsP(S.SeraphimBuff) < 4 and Player:BuffP(S.SeraphimBuff))) then
             if HR.Cast(S.ShieldoftheRighteous, Action.GetToggle(2, "OffGCDasOffGCD")) then return "shield_of_the_righteous 91"; end
         end
         -- lights_judgment,if=buff.seraphim.up&buff.seraphim.remains<3
@@ -388,7 +413,7 @@ local function APL()
             if HR.Cast(S.LightsJudgment) then return "lights_judgment 103"; end
         end
         -- consecration,if=!consecration.up
-        if S.Consecration:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.ConsecrationBuff)) then
+        if S.Consecration:IsCastableP() and Cache.EnemiesCount[8] > 0 and not ShouldStop and (Player:BuffDownP(S.ConsecrationBuff)) then
             if HR.Cast(S.Consecration) then return "consecration 109"; end
         end
         -- judgment,if=(cooldown.judgment.remains<gcd&cooldown.judgment.charges_fractional>1&cooldown_react)|!talent.crusaders_judgment.enabled
@@ -424,7 +449,7 @@ local function APL()
             if HR.Cast(S.HammeroftheRighteous) then return "hammer_of_the_righteous 145"; end
         end
         -- consecration
-        if S.Consecration:IsCastableP() and not ShouldStop then
+        if S.Consecration:IsCastableP() and Cache.EnemiesCount[8] > 0 and not ShouldStop then
             if HR.Cast(S.Consecration) then return "consecration 147"; end
         end
         -- heart_essence,if=!essence.the_crucible_of_flame.major|!essence.worldvein_resonance.major|!essence.anima_of_life_and_death.major|!essence.memory_of_lucid_dreams.major

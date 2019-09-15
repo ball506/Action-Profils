@@ -312,6 +312,24 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseSotROffensively",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use SotR Offensively", 
+                        ruRU = "Use SotR Offensively",  
+                        frFR = "Use SotR Offensively", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable this setting if you want the addon to suggest Shield of the Righteous as an offensive ability.", 
+                        ruRU = "Enable this setting if you want the addon to suggest Shield of the Righteous as an offensive ability.", 
+                        frFR = "Enable this setting if you want the addon to suggest Shield of the Righteous as an offensive ability.",
+                    }, 
+                    M = {},
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
