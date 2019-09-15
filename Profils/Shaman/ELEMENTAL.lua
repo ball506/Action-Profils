@@ -927,7 +927,7 @@ local function APL()
          	end 
       	end	
      	-- CapacitorTotem
-      	if useCC and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
+      	if useCC and Action.GetToggle(2, "UseCapacitorTotem") and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
 	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.CapacitorTotem, true) then return "CapacitorTotem 5"; end
      	    else 
