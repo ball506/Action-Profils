@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     -- Racial
@@ -81,8 +92,8 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     HavocDebuff                           = Action.Create({ Type = "Spell", ID = 80240, Hidden = true     }),  
     RainofFireDebuff                      = Action.Create({ Type = "Spell", ID = 5740, Hidden = true     }),  
     -- Trinkets
-    GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    
+    
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -275,46 +286,6 @@ local function DetermineEssenceRanks()
     S.VisionofPerfectionMinor = S.VisionofPerfectionMinor3:IsAvailable() and S.VisionofPerfectionMinor3 or S.VisionofPerfectionMinor
     S.GuardianofAzeroth = S.GuardianofAzeroth2:IsAvailable() and S.GuardianofAzeroth2 or S.GuardianofAzeroth
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
-end
-
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
 end
 
 local function num(val)
@@ -525,17 +496,36 @@ local function APL()
         SummonPet = S.SummonSuccubus
     else
         print("No Pet Data") 
-    end	
-	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
     end
+
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- summon_pet
+        if SummonPet:IsCastableP() and not Pet:Exists() then
+            if HR.Cast(SummonPet) then return "summon_pet 3"; end
+        end
+        -- grimoire_of_sacrifice,if=talent.grimoire_of_sacrifice.enabled
+        if S.GrimoireofSacrifice:IsReadyP() then
+            if HR.Cast(S.GrimoireofSacrifice) then return "grimoire_of_sacrifice 5"; end
+        end
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 3 then
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 10"; end
+            end
+            -- soul_fire
+            if S.SoulFire:IsCastableP() and Pull > 0.1 and Pull <= S.SoulFire:CastTime() + S.SoulFire:TravelTime() then
+                if HR.Cast(S.SoulFire) then return "soul_fire 12"; end
+            end
+            -- incinerate,if=!talent.soul_fire.enabled
+            if S.Incinerate:IsCastableP() and (not S.SoulFire:IsAvailable()) and Pull > 0.1 and Pull <= S.Incinerate:CastTime() + S.Incinerate:TravelTime() then
+                if HR.Cast(CastIncinerate) then return "incinerate 14"; end
+            end
+        end
+    end	
 	
     local function Precombat()
         -- flask
@@ -583,7 +573,7 @@ local function APL()
             if HR.Cast(S.SummonInfernal) then return "summon_infernal 167"; end
         end
         -- guardian_of_azeroth,if=pet.infernal.active
-        if S.GuardianofAzeroth:IsCastableP() and (InfernalActive) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (InfernalActive) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 177"; end
         end
         -- dark_soul_instability,if=pet.infernal.active&(pet.infernal.remains<20.5|pet.infernal.remains<22&soul_shard>=3.6|!talent.grimoire_of_supremacy.enabled)
@@ -591,7 +581,7 @@ local function APL()
             if HR.Cast(S.DarkSoulInstability) then return "dark_soul_instability 179"; end
         end
         -- memory_of_lucid_dreams,if=pet.infernal.active&(pet.infernal.remains<15.5|soul_shard<3.5&(buff.dark_soul_instability.up|!talent.grimoire_of_supremacy.enabled&dot.immolate.remains>12))
-        if S.MemoryofLucidDreams:IsCastableP() and (InfernalActive and (InfernalRemains < 15.5 or Player:SoulShardsP() < 3.5 and (Player:BuffP(S.DarkSoulInstabilityBuff) or not S.GrimoireofSupremacy:IsAvailable() and Target:DebuffRemainsP(S.ImmolateDebuff) > 12))) then
+        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (InfernalActive and (InfernalRemains < 15.5 or Player:SoulShardsP() < 3.5 and (Player:BuffP(S.DarkSoulInstabilityBuff) or not S.GrimoireofSupremacy:IsAvailable() and Target:DebuffRemainsP(S.ImmolateDebuff) > 12))) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams 187"; end
         end
         -- summon_infernal,if=target.time_to_die>cooldown.summon_infernal.duration+30
@@ -599,7 +589,7 @@ local function APL()
             if HR.Cast(S.SummonInfernal) then return "summon_infernal 193"; end
         end
         -- guardian_of_azeroth,if=time>30&target.time_to_die>cooldown.guardian_of_azeroth.duration+30
-        if S.GuardianofAzeroth:IsCastableP() and (HL.CombatTime() > 30 and Target:TimeToDie() > S.GuardianofAzeroth:BaseDuration() + 30) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (HL.CombatTime() > 30 and Target:TimeToDie() > S.GuardianofAzeroth:BaseDuration() + 30) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 197"; end
         end
         -- summon_infernal,if=talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains>target.time_to_die
@@ -607,7 +597,7 @@ local function APL()
             if HR.Cast(S.SummonInfernal) then return "summon_infernal 201"; end
         end
         -- guardian_of_azeroth,if=cooldown.summon_infernal.remains>target.time_to_die
-        if S.GuardianofAzeroth:IsCastableP() and (S.SummonInfernal:CooldownRemainsP() > Target:TimeToDie()) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (S.SummonInfernal:CooldownRemainsP() > Target:TimeToDie()) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 207"; end
         end
         -- dark_soul_instability,if=cooldown.summon_infernal.remains>target.time_to_die&pet.infernal.remains<20.5
@@ -615,7 +605,7 @@ local function APL()
             if HR.Cast(S.DarkSoulInstability) then return "dark_soul_instability 211"; end
         end
         -- memory_of_lucid_dreams,if=cooldown.summon_infernal.remains>target.time_to_die&(pet.infernal.remains<15.5|buff.dark_soul_instability.up&soul_shard<3)
-        if S.MemoryofLucidDreams:IsCastableP() and (S.SummonInfernal:CooldownRemainsP() > Target:TimeToDie() and (InfernalRemains < 15.5 or Player:BuffP(S.DarkSoulInstabilityBuff) and Player:SoulShardsP() < 3)) then
+        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (S.SummonInfernal:CooldownRemainsP() > Target:TimeToDie() and (InfernalRemains < 15.5 or Player:BuffP(S.DarkSoulInstabilityBuff) and Player:SoulShardsP() < 3)) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams 215"; end
         end
         -- summon_infernal,if=target.time_to_die<30
@@ -623,7 +613,7 @@ local function APL()
             if HR.Cast(S.SummonInfernal) then return "summon_infernal 219"; end
         end
         -- guardian_of_azeroth,if=target.time_to_die<30
-        if S.GuardianofAzeroth:IsCastableP() and (Target:TimeToDie() < 30) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (Target:TimeToDie() < 30) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 221"; end
         end
         -- dark_soul_instability,if=target.time_to_die<21&target.time_to_die>4
@@ -631,19 +621,19 @@ local function APL()
             if HR.Cast(S.DarkSoulInstability) then return "dark_soul_instability 223"; end
         end
         -- memory_of_lucid_dreams,if=target.time_to_die<16&target.time_to_die>6
-        if S.MemoryofLucidDreams:IsCastableP() and (Target:TimeToDie() < 16 and Target:TimeToDie() > 6) then
+        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (Target:TimeToDie() < 16 and Target:TimeToDie() > 6) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams 225"; end
         end
         -- blood_of_the_enemy
-        if S.BloodoftheEnemy:IsCastableP() then
+        if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy 227"; end
         end
         -- worldvein_resonance
-        if S.WorldveinResonance:IsCastableP() then
+        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance 229"; end
         end
         -- ripple_in_space
-        if S.RippleInSpace:IsCastableP() then
+        if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.RippleInSpace) then return "ripple_in_space 231"; end
         end
         -- potion,if=pet.infernal.active|target.time_to_die<30
@@ -718,11 +708,11 @@ local function APL()
             if HR.Cast(CastRainOfFire) then return "rain_of_fire 96"; end
         end
         -- focused_azerite_beam
-        if S.FocusedAzeriteBeam:IsCastableP() then
+        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 98"; end
         end
         -- purifying_blast
-        if S.PurifyingBlast:IsCastableP() then
+        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast 100"; end
         end
         -- havoc,cycle_targets=1,if=!(target=self.target)&(!talent.grimoire_of_supremacy.enabled|!talent.inferno.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
@@ -833,11 +823,11 @@ local function APL()
     end
     
 	-- call DBM precombat
-  --  if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-  --      local ShouldReturn = Precombat_DBM(); 
-  --          if ShouldReturn then return ShouldReturn; 
-  --      end    
-  --  end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -857,7 +847,7 @@ local function APL()
         
 		-- PetKick
         if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 
-		    if Target:CastPercentage() >= randomInterrupt then
+		    if ActionUnit(unit):CanInterrupt(true) then
                 if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
             else 
                 return
@@ -888,19 +878,19 @@ local function APL()
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
         end
         -- focused_azerite_beam,if=!pet.infernal.active|!talent.grimoire_of_supremacy.enabled
-        if S.FocusedAzeriteBeam:IsCastableP() and (not InfernalActive or not S.GrimoireofSupremacy:IsAvailable()) then
+        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (not InfernalActive or not S.GrimoireofSupremacy:IsAvailable()) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 378"; end
         end
         -- the_unbound_force,if=buff.reckless_force.react
-        if S.TheUnboundForce:IsCastableP() and (Player:BuffP(S.RecklessForceBuff)) then
+        if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffP(S.RecklessForceBuff)) then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force 382"; end
         end
         -- purifying_blast
-        if S.PurifyingBlast:IsCastableP() then
+        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast 386"; end
         end
         -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight
-        if S.ConcentratedFlame:IsCastableP() and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight()) then
+        if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight()) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 388"; end
         end
         -- channel_demonfire
@@ -954,10 +944,6 @@ local function APL()
         -- incinerate
         if S.Incinerate:IsCastableP() then
             if HR.Cast(CastIncinerate) then return "incinerate 521"; end
-        end
-        -- run_action_list,name=trinkets
-        if (true) and not ShouldStop then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
         end	
     end
 end
@@ -973,8 +959,17 @@ end
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
     end 
-
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
 end
 
 --[[
