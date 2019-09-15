@@ -1,12 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
 local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     -- Racial
@@ -31,6 +41,7 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     TotemMastery                          = Action.Create({ Type = "Spell", ID = 210643     }),
     Stormkeeper                           = Action.Create({ Type = "Spell", ID = 191634     }),
     FireElemental                         = Action.Create({ Type = "Spell", ID = 198067     }),
+    EarthElemental                        = Action.Create({ Type = "Spell", ID = 198103     }),
     StormElemental                        = Action.Create({ Type = "Spell", ID = 192249     }),
     ElementalBlast                        = Action.Create({ Type = "Spell", ID = 117014     }),
     LavaBurst                             = Action.Create({ Type = "Spell", ID = 51505      }),
@@ -87,8 +98,8 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
 	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     -- Trinkets
-    GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    
+    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -211,47 +222,6 @@ local function DetermineEssenceRanks()
     S.CondensedLifeforce = S.CondensedLifeforce2:IsAvailable() and S.CondensedLifeforce2 or S.CondensedLifeforce
     S.CondensedLifeforce = S.CondensedLifeforce3:IsAvailable() and S.CondensedLifeforce3 or S.CondensedLifeforce
 end
-
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 
 local EnemyRanges = {40, 5}
 local function UpdateRanges()
@@ -469,16 +439,6 @@ local function APL()
 
 	local CanMultidot = HandleMultidots()
 	
-	-- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
-	
     local function Precombat_DBM()
         -- flask
         -- food
@@ -496,7 +456,7 @@ local function APL()
             end
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= (S.LavaBurst:CastTime() + S.LavaBurst:TravelTime() + 1) then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 27"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 27"; end
             end
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
             if S.LavaBurst:IsCastableP() and not ShouldStop and not Player:IsCasting(S.LavaBurst) and Pull > 0.1 and Pull <= (S.LavaBurst:CastTime() + S.LavaBurst:TravelTime()) then
@@ -520,7 +480,10 @@ local function APL()
                 if HR.Cast(S.TotemMastery) then return "totem_mastery 4"; end
             end
             -- earth_elemental,if=!talent.primal_elementalist.enabled
-            -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
+			if S.EarthElemental:IsCastableP() and not S.PrimalElementalist:IsAvailable() and Action.GetToggle(2, "UseEarthElemental") then
+			    if HR.Cast(S.EarthElemental) then return "EarthElemental 7"; end
+			end
+			-- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
             if S.Stormkeeper:IsCastableP() and not ShouldStop and Player:BuffDownP(S.StormkeeperBuff) and (S.Stormkeeper:IsAvailable() and ((EnemiesCount - 1) < 3)) then
                 if HR.Cast(S.Stormkeeper) then return "stormkeeper 7"; end
             end
@@ -534,7 +497,7 @@ local function APL()
             end
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 27"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 27"; end
             end
             -- elemental_blast,if=talent.elemental_blast.enabled
             if S.ElementalBlast:IsCastableP() and not ShouldStop and (S.ElementalBlast:IsAvailable()) then
@@ -587,6 +550,10 @@ local function APL()
         if S.Icefury:IsCastableP() and not ShouldStop and EnemiesCount < 4 and not Player:BuffP(S.AscendanceBuff) and not StormElementalIsActive() then
             if HR.Cast(S.Icefury) then return "icefury 116"; end
         end
+		-- 14 Lavaburst while moving
+        if S.LavaBurst:IsCastableP() and Player:IsMoving() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
+            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
+        end	
         -- frost_shock,if=spell_targets.chain_lightning<4&buff.icefury.up&!buff.ascendance.up
         if S.FrostShock:IsCastableP() and not ShouldStop and (EnemiesCount < 4 and Player:BuffP(S.IcefuryBuff) and not Player:BuffP(S.AscendanceBuff)) then
             if HR.Cast(S.FrostShock) then return "frost_shock 120"; end
@@ -913,9 +880,13 @@ local function APL()
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
         end
 		-- 14 Lavaburst while moving
-        if S.LavaBurst:IsCastableP() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
+        if S.LavaBurst:IsCastableP() and Player:IsMoving() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
-        end			
+        end		
+        -- 15 lightning_bolt while moving w buff sk
+        if S.LightningBolt:IsCastableP() and Player:IsMoving()  and Player:BuffP(S.StormkeeperBuff) then
+            if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
+        end		
 		-- 16 frost_shock  ,moving
         if S.FrostShock:IsCastableP() and Player:IsMoving() and not Player:BuffP(S.StormkeeperBuff) then
             if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 157"; end
@@ -951,7 +922,7 @@ local function APL()
         
   	    -- WindShear
   	    if useKick and S.WindShear:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
          	else 
           	    return
@@ -960,7 +931,7 @@ local function APL()
 	
      	-- CapacitorTotem
       	if useCC and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.CapacitorTotem, true) then return "CapacitorTotem 5"; end
      	    else 
      	        return
@@ -973,7 +944,7 @@ local function APL()
             if HR.Cast(S.Purge) then return "" end
         end	
 		-- Ghost Wolf
-		if Player:MovingFor() >= 2 and S.GhostWolf:IsReadyP() and not ShouldStop and not Player:BuffP(S.GhostWolfBuff) and Action.GetToggle(2, "UseGhostWolf") then
+		if Player:MovingFor() >= 2 and Target:MinDistanceToPlayer(true) > 40 and S.GhostWolf:IsReadyP() and not ShouldStop and not Player:BuffP(S.GhostWolfBuff) and Action.GetToggle(2, "UseGhostWolf") then
 		    if HR.Cast(S.GhostWolf) then return "GhostWolf 585"; end
 		end
 		-- Earth Shield
@@ -991,7 +962,7 @@ local function APL()
         -- bloodlust,if=azerite.ancestral_resonance.enabled
         -- potion,if=expected_combat_length-time<30|cooldown.fire_elemental.remains>120|cooldown.storm_elemental.remains>120
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Target:TimeToDie() < 30 or S.FireElemental:CooldownRemainsP() > 120 or S.StormElemental:CooldownRemainsP() > 120) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 577"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 577"; end
         end
         -- totem_mastery,if=talent.totem_mastery.enabled&buff.resonance_totem.remains<2
         if S.TotemMastery:IsReadyP() and not ShouldStop and ResonanceTotemTime() < 6 and (S.TotemMastery:IsAvailable() and not Player:BuffP(S.ResonanceTotemBuff)) then
@@ -1011,7 +982,10 @@ local function APL()
 		    if HR.Cast(S.EyeOfTheStorm) then return "EyeOfTheStorm"; end
         end
         -- earth_elemental,if=!talent.primal_elementalist.enabled|talent.primal_elementalist.enabled&(cooldown.fire_elemental.remains<120&!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120&talent.storm_elemental.enabled)
-        -- concentrated_flame
+		if S.EarthElemental:IsCastableP() and Action.GetToggle(2, "UseEarthElemental") then
+		    if HR.Cast(S.EarthElemental) then return "EarthElemental 7"; end
+		end
+		-- concentrated_flame
         if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
@@ -1083,10 +1057,6 @@ local function APL()
        -- if (true) then
        --     local ShouldReturn = SingleTarget(); if ShouldReturn then return ShouldReturn; end
        -- end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end
     end
 end
 -- Finished
@@ -1097,10 +1067,19 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
-
