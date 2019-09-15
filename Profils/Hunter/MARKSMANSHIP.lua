@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     -- Racials
@@ -74,8 +85,8 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     -- Potions
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
 	AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
@@ -272,45 +283,6 @@ local function DetermineEssenceRanks()
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
 
 -- Initiate Nucleus Ability registration
 local function Init ()
@@ -332,23 +304,28 @@ local function APL()
     GCDMax = Player:GCD() + 0.150
     EnemiesCount = GetEnemiesCount(10)
     DetermineEssenceRanks()
-
-    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
-        end
-    end
 	
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
 	else
 	    ShouldStop = false
 	end
-	
+    local function Precombat_DBM()
+        -- flask
+        -- augmentation
+        -- food
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 12"; end
+            end
+            -- aimed_shot,if=active_enemies<3
+            if S.AimedShot:IsReadyP() and not ShouldStop and (EnemiesCount < 3) and Pull > 0.1 and Pull <= 1 then
+                if HR.Cast(S.AimedShot) then return "aimed_shot 38"; end
+            end
+        end
+    end	
     local function Precombat()
         -- flask
         -- augmentation
@@ -357,7 +334,7 @@ local function APL()
         if Everyone.TargetIsValid() then
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_agility 12"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 12"; end
             end
             -- hunters_mark
             if S.HuntersMark:IsCastableP() and not ShouldStop and Target:DebuffDown(S.HuntersMarkDebuff) then
@@ -440,7 +417,7 @@ local function APL()
         end
         -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&ca_execute|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.TrueshotBuff) and Player:HasHeroism() or Player:BuffP(S.TrueshotBuff) and ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable()) or Target:TimeToDie() < 61) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "battle_potion_of_agility 104"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 104"; end
         end
         -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
         if S.Trueshot:IsCastableP() and not ShouldStop and (Player:Focus() > 60 and (Player:BuffDownP(S.PreciseShotsBuff) and S.RapidFire:CooldownRemainsP() > 0 and Target:TimeToDie() > S.Trueshot:CooldownRemainsP() + S.Trueshot:BaseDuration() or Target:HealthPercentage() < 20 or not S.CarefulAim:IsAvailable()) or Target:TimeToDie() < 15) then
@@ -592,16 +569,13 @@ local function APL()
         end	
 	end	
     
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
 	-- call DBM precombat
-    --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-   --         if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -619,7 +593,7 @@ local function APL()
         
   	    -- CounterShot
   	    if useKick and S.CounterShot:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.CounterShot, true) then return "CounterShot 5"; end
          	else 
           	    return
@@ -664,13 +638,21 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-
     if APL() then 
         return true 
-    end 
+    end
 	
-	--something if needed
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
+    end 
 end
+
 
