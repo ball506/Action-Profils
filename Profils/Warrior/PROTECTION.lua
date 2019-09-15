@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     -- Racial
@@ -61,8 +72,8 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     -- Debuffs 
     RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),	
     -- Trinkets
-	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+	
+    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -259,46 +270,6 @@ local function DetermineEssenceRanks()
     S.AnimaofLife = S.AnimaofLife3:IsAvailable() and S.AnimaofLife3 or S.AnimaofLife	
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 -- Initiate Nucleus Ability registration
 local function Init()
   HL.RegisterNucleusAbility(6343, 8, 6)               -- Thunder Clap
@@ -327,15 +298,31 @@ local function APL()
 	else
 	    ShouldStop = false
 	end
-    
-	-- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
+	
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+		if Everyone.TargetIsValid() then
+        -- snapshot_stats
+        -- use_item,name=azsharas_font_of_power
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+            if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power precombat"; end
         end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+        -- memory_of_lucid_dreams
+        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and Pull > 0.1 and Pull <= 2 then
+            if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams precombat"; end
         end
+        -- guardian_of_azeroth
+        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and Pull > 0.1 and Pull <= 2 then
+            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth precombat"; end
+        end
+        -- potion
+        if I.SuperiorBattlePotionofStrength:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull() > 0.1 + Player:GCD() and Pull() < 0.5 + Player:GCD() then
+            if HR.Cast(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength precombat"; end
+        end
+		
+		end
     end
 	
     local function Precombat()
@@ -358,7 +345,7 @@ local function APL()
         end
         -- potion
         if I.SuperiorBattlePotionofStrength:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.CastSuggested(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength precombat"; end
+            if HR.Cast(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength precombat"; end
         end
 		
 		end
@@ -476,17 +463,14 @@ local function APL()
             if HR.Cast(S.Devastate) then return "devastate 80"; end
         end
     end
-    
-    -- Protect against interrupt of channeled spells
-    if Player:IsCasting() and Player:CastRemains() >= ((select(4, GetNetStats()) / 1000 * 2) + 0.05) or Player:IsChanneling() or ShouldStop then
-        if HR.Cast(S.Channeling) then return "" end
-    end  
+   
 	-- call DBM precombat
-   --if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-    --    local ShouldReturn = Precombat_DBM(); 
-    --        if ShouldReturn then return ShouldReturn; 
-    --    end    
-    --end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
+	
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
@@ -509,7 +493,7 @@ local function APL()
         
   	    -- Pummel
   	    if useKick and S.Pummel:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
          	else 
           	    return
@@ -559,7 +543,7 @@ local function APL()
         end
         -- potion,if=buff.avatar.up|target.time_to_die<25
         if I.SuperiorBattlePotionofStrength:IsReady() and not ShouldStop and  Action.GetToggle(1, "Potion") and (Player:BuffP(S.AvatarBuff) or Target:TimeToDie() < 25) then
-            if HR.CastSuggested(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength 103"; end
+            if HR.Cast(I.SuperiorBattlePotionofStrength) then return "battle_potion_of_strength 103"; end
         end
         if Player:HealthPercentage() < 80 and S.VictoryRush:IsReady("Melee") and not ShouldStop then
             if HR.Cast(S.VictoryRush) then return "victory_rush defensive" end
@@ -604,13 +588,10 @@ local function APL()
         if (true) then
             local ShouldReturn = St(); if ShouldReturn then return ShouldReturn; end
         end
-        -- run_action_list,name=trinkets
-        if (true) then
-            local ShouldReturn = GeneralTrinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
     end
 end
 -- Finished
+
 
 
 
@@ -618,10 +599,20 @@ end
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
 
