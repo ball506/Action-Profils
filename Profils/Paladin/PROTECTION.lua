@@ -1,11 +1,22 @@
---------------------
+-----------------------------
 -- Taste TMW Action Rotation
--- Last Update : 05/08/2019
+-----------------------------
 
 local TMW = TMW 
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local Action = Action
+local TeamCache = Action.TeamCache
+local EnemyTeam = Action.EnemyTeam
+local FriendlyTeam = Action.FriendlyTeam
+--local HealingEngine = Action.HealingEngine
+local LoC = Action.LossOfControl
+local ActionPlayer = Action.Player 
+local MultiUnits = Action.MultiUnits
+local UnitCooldown = Action.UnitCooldown
+local ActionUnit = Action.Unit 
+--local Pet = LibStub("PetLibrary")
+--local Azerite = LibStub("AzeriteTraits")
 
 Action[ACTION_CONST_PALADIN_PROTECTION] = {
   -- Racial
@@ -51,8 +62,8 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
   -- Debuffs
   RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568     }),
   -- Trinkets
-  GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+  
+  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -206,46 +217,6 @@ local function DetermineEssenceRanks()
     S.LifebloodBuff = S.LifebloodBuff2:IsAvailable() and S.LifebloodBuff2 or S.LifebloodBuff
 end
 
--- Trinkets checker handler
-local function trinketReady(trinketPosition)
-    local inventoryPosition
-    
-	if trinketPosition == 1 then
-        inventoryPosition = 13
-    end
-    
-	if trinketPosition == 2 then
-        inventoryPosition = 14
-    end
-    
-	local start, duration, enable = GetInventoryItemCooldown("Player", inventoryPosition)
-    if enable == 0 then
-        return false
-    end
-
-    if start + duration - GetTime() > 0 then
-        return false
-    end
-	
-	if Action.GetToggle(1, "Trinkets")[1] == false then
-	    return false
-	end
-	
-   	if Action.GetToggle(1, "Trinkets")[2] == false then
-	    return false
-	end	
-	
-    return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
-end
-
 S.ConcentratedFlame:RegisterInFlight()
 
 --- ======= ACTION LISTS =======
@@ -256,7 +227,6 @@ local function APL()
 	local Pull = Action.BossMods_Pulling()
 	
 	-- Local functions remap
-    EnemiesCount = active_enemies()
     UpdateRanges() -- To populate Cache.Enemies[range] for CastCycles
     DetermineEssenceRanks()
 	local PlayerGCD = Player:GCD()
@@ -267,25 +237,31 @@ local function APL()
 	    ShouldStop = false
 	end
 	
-	    -- Handle all generics trinkets	
-	local function GeneralTrinkets()
-        if trinketReady(1) then
-        	if HR.Cast(I.GenericTrinket1) then return "GenericTrinket1"; end
-        end
-		if trinketReady(2) then
-            if HR.Cast(I.GenericTrinket2) then return "GenericTrinket2"; end
+    local function Precombat_DBM()
+        -- flask
+        -- food
+        -- augmentation
+        -- snapshot_stats
+        if Everyone.TargetIsValid() then
+            -- potion
+            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
+                if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
+            end
+            -- consecration
+            if S.Consecration:IsCastableP() and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) and Pull > 0.1 and Pull <= 0.3 then
+                if HR.Cast(S.Consecration) then return "consecration 6"; end
+            end
         end
     end
-	
     local function Precombat()
         -- flask
         -- food
         -- augmentation
         -- snapshot_stats
-        --if Everyone.TargetIsValid() then
+        if Everyone.TargetIsValid() then
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.CastSuggested(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
+                if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
             end
             -- consecration
             if S.Consecration:IsCastableP() and not ShouldStop and Player:BuffDownP(S.ConsecrationBuff) then
@@ -295,7 +271,7 @@ local function APL()
             if S.LightsJudgment:IsCastableP() and not ShouldStop and HR.CDsON() then
                 if HR.Cast(S.LightsJudgment) then return "lights_judgment 10"; end
             end
-        --end
+        end
     end
     local function Cooldowns()
         -- fireblood,if=buff.avenging_wrath.up
@@ -328,7 +304,7 @@ local function APL()
         end
         -- potion,if=buff.avenging_wrath.up
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.AvengingWrathBuff)) then
-            if HR.CastSuggested(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 38"; end
+            if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 38"; end
         end
         -- use_items,if=buff.seraphim.up|!talent.seraphim.enabled
         -- use_item,name=grongs_primal_rage,if=cooldown.judgment.full_recharge_time>4&cooldown.avengers_shield.remains>4&(buff.seraphim.up|cooldown.seraphim.remains+4+gcd>expected_combat_length-time)&consecration.up
@@ -350,11 +326,11 @@ local function APL()
     end
 
 	-- call DBM precombat
-   -- if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-   --     local ShouldReturn = Precombat_DBM(); 
-   --         if ShouldReturn then return ShouldReturn; 
-   --     end    
-   -- end
+    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
+        local ShouldReturn = Precombat_DBM(); 
+            if ShouldReturn then return ShouldReturn; 
+        end    
+    end
    
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
@@ -372,7 +348,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")          
   	    -- Rebuke
   	    if useKick and S.Rebuke:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if Target:CastPercentage() >= randomInterrupt then
+		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Rebuke, true) then return "Rebuke 5"; end
          	else 
           	    return
@@ -380,7 +356,7 @@ local function APL()
       	end 	
      	-- HammerofJustice
       	if useCC and S.HammerofJustice:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if Target:CastPercentage() >= randomInterrupt then
+	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.HammerofJustice, true) then return "HammerofJustice 5"; end
      	    else 
      	        return
@@ -392,7 +368,7 @@ local function APL()
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
         -- worldvein_resonance,if=buff.lifeblood.stack<3
-        if S.WorldveinResonance:IsCastableP() and not ShouldStop and (Player:BuffStackP(S.LifebloodBuff) < 3) then
+        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffStackP(S.LifebloodBuff) < 3) then
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- shield_of_the_righteous,if=(buff.avengers_valor.up&cooldown.shield_of_the_righteous.charges_fractional>=2.5)&(cooldown.seraphim.remains>gcd|!talent.seraphim.enabled)
@@ -428,7 +404,7 @@ local function APL()
             if HR.Cast(S.Judgment) then return "judgment 129"; end
         end
         -- concentrated_flame,if=buff.seraphim.up&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (Player:BuffP(S.SeraphimBuff) and Target:DebuffDownP(S.ConcentratedFlameBurn) or (S.ConcentratedFlame:ID() == 295373 or S.ConcentratedFlame:ID() == 299349)) then
+        if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(S.SeraphimBuff) and Target:DebuffDownP(S.ConcentratedFlameBurn) or (S.ConcentratedFlame:ID() == 295373 or S.ConcentratedFlame:ID() == 299349)) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
         -- lights_judgment,if=!talent.seraphim.enabled|buff.seraphim.up
@@ -436,7 +412,7 @@ local function APL()
             if HR.Cast(S.LightsJudgment) then return "lights_judgment 137"; end
         end
         -- anima_of_death
-        if S.AnimaofDeath:IsCastableP() and not ShouldStop then
+        if S.AnimaofDeath:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
             if HR.Cast(S.AnimaofDeath) then return "anima_of_death"; end
         end
         -- blessed_hammer,strikes=3
@@ -452,7 +428,7 @@ local function APL()
             if HR.Cast(S.Consecration) then return "consecration 147"; end
         end
         -- heart_essence,if=!essence.the_crucible_of_flame.major|!essence.worldvein_resonance.major|!essence.anima_of_life_and_death.major|!essence.memory_of_lucid_dreams.major
-        if S.HeartEssence:IsCastableP() and not ShouldStop and (not S.ConcentratedFlame:IsAvailable() or not S.WorldveinResonance:IsAvailable() or not S.AnimaofDeath:IsAvailable() or not S.MemoryofLucidDreams:IsAvailable()) then
+        if S.HeartEssence:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not S.ConcentratedFlame:IsAvailable() or not S.WorldveinResonance:IsAvailable() or not S.AnimaofDeath:IsAvailable() or not S.MemoryofLucidDreams:IsAvailable()) then
             if HR.Cast(S.HeartEssence) then return "heart_essence"; end
         end
     end
@@ -460,15 +436,25 @@ end
 -- Finished
 
 
-
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 
--- [3] Single Rotation
+-- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
     if APL() then 
         return true 
+    end
+	
+	local unit = "target"
+	-- Trinkets handler
+	if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket1:Show(icon)
+    end 
+            
+    if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+        return A.Trinket2:Show(icon)
     end 
 end
+
 
