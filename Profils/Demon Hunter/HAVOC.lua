@@ -83,9 +83,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   DarkSlashDebuff                       = Action.Create({ Type = "Spell", ID = 258860, Hidden = true}),
   RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568, Hidden = true}),
   ConductiveInkDebuff                   = Action.Create({ Type = "Spell", ID = 302565, Hidden = true}),
-  -- Trinkets
-  
-  
+  -- Trinkets  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
@@ -270,48 +268,6 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
-
-
--- Interrupts handler
---[[local function Interrupts(Target, ShouldStop)
-    local useKick, useCC, useRacial = Action.InterruptIsValid(Target, "TargetMouseover")    
-    
-	-- Disrupt
-    if useKick and Action.InterruptIsValid(Target, "TargetMouseover") and S.Disrupt:IsReadyP(15) and Action.Disrupt:AbsentImun(Target, {"TotalImun", "DamagePhysImun", "KickImun"}, true) then 
-        if Env.RandomKick(Target, true) then 
-			if HR.Cast(S.Disrupt) then return ""; end
-        else 
-            return false
-        end 
-    end 
-    
-	-- ChaosNova if Target casting in 5yd range and Disrupt not ready
-    if useCC and not ShouldStop and S.ChaosNova:IsReadyP(5) and Action.ChaosNova:AbsentImun(Target, {"StunImun", "CCTotalImun", "DamagePhysImun", "TotalImun"}, true) then  
-		if HR.Cast(S.ChaosNova) then return ""; end
-    end 
-	
-	-- FelEruption if talent is learned and no multiple Targets and not Disrupt ready
-    if useCC and not ShouldStop and S.FelEruption:IsAvailable() and S.FelEruption:IsCastableP(20) and not ShouldStop and Action.FelEruption:AbsentImun(Target, {"StunImun", "TotalImun", "DamagePhysImun", "CCTotalImun"}) then  
-       if HR.Cast(S.FelEruption) then return ""; end		
-    end             
-    -- Racials
-    if useRacial and Action.QuakingPalm:AutoRacial(Target, true) then 
-	    if HR.Cast(S.QuakingPalm) then return ""; end
-    end 
-    
-    if useRacial and Action.Haymaker:AutoRacial(Target, true) then 
-	    if HR.Cast(S.Haymaker) then return ""; end
-    end 
-    
-    if useRacial and Action.WarStomp:AutoRacial(Target, true) then 
-	    if HR.Cast(S.WarStomp) then return ""; end
-    end 
-    
-    if useRacial and Action.BullRush:AutoRacial(Target, true) then 
-	    if HR.Cast(S.BullRush) then return ""; end
-    end      
-end 
-Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)]]--
 
 S.ConcentratedFlame:RegisterInFlight()
 
@@ -702,15 +658,4 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end

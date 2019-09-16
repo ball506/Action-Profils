@@ -728,6 +728,7 @@ end
 -- Finished
 
 
+
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
@@ -737,16 +738,4 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end
-

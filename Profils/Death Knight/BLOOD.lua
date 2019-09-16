@@ -67,10 +67,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
   HaemostasisBuff                      = Action.Create({ Type = "Spell", ID = 235558     }),  
   -- Debuffs
   DancingRuneWeaponBuff                = Action.Create({ Type = "Spell", ID = 81256     }),  
-  -- Trinkets
-  
-  
-  AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+  -- Trinkets  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -406,15 +403,4 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end

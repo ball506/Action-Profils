@@ -334,26 +334,8 @@ local function CheckGoodBuffs()
         GotGoodBuff = (not S.SliceandDice:IsAvailable() and not Player:BuffP(S.RuthlessPrecision) and true) or false;
     elseif choice == "TRUEBEARING" then  
         GotGoodBuff = (not S.SliceandDice:IsAvailable() and not Player:BuffP(S.TrueBearing) and true) or false;
-    elseif choice == "SIMC" then  
-        if Player:BuffP(S.BladeFlurry) then
-            GotGoodBuff = (RtB_Buffs() - num(Player:BuffP(S.SkullandCrossbones)) < 2 and (Player:BuffP(S.LoadedDiceBuff) or
-            (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision) and not Player:BuffP(S.Broadside)))) and true or false;
-        elseif S.SnakeEyesPower:AzeriteRank() >= 2 then
-           GotGoodBuff = (RtB_Buffs() < 2) and true or false;
-            -- # Do not reroll if Snake Eyes is at 2+ stacks of the buff (1+ stack with Broadside up)
-            -- actions+=/variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
-            if Player:BuffStackP(S.SnakeEyesBuff) >= 2 - num(Player:BuffP(S.Broadside)) then
-                GotGoodBuff = true;
-            end
-        elseif S.Deadshot:AzeriteEnabled() or S.AceUpYourSleeve:AzeriteEnabled() then
-            GotGoodBuff = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
-            Player:BuffRemainsP(S.RuthlessPrecision) <= S.BetweentheEyes:CooldownRemainsP())) and true or false;
-        else
-            GotGoodBuff = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
-           (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision)))) and true or false;
-        end
 	else
-        print("No Dice Data")
+        return
     end
     return GotGoodBuff
 end
@@ -951,6 +933,7 @@ end
 
 
 
+
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
@@ -960,15 +943,4 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end

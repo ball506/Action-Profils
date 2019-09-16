@@ -72,7 +72,6 @@ Action[ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
     WindShear                             = Action.Create({ Type = "Spell", ID = 57994     }),
     Boulderfist                           = Action.Create({ Type = "Spell", ID = 246035     }),
     StrengthofEarth                       = Action.Create({ Type = "Spell", ID = 273461     }),
-    CapacitorTotem                        = Action.Create({ Type = "Spell", ID = 192058     }),
     ElementalSpirits                      = Action.Create({ Type = "Spell", ID = 262624     }),
     RecklessForceCounter                  = Action.Create({ Type = "Spell", ID = 302917     }),
     ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368     }),
@@ -401,10 +400,6 @@ local function APL()
             if S.LightningShield:IsCastableP() and not ShouldStop and Player:BuffDownP(S.LightningShield) then
                 if HR.Cast(S.LightningShield) then return "lightning_shield 6"; end
             end           
-		   -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 0.1 and Pull <= 6 then
-                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 8"; end
-            end
             -- potion
             if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
                 if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
@@ -428,10 +423,6 @@ local function APL()
             -- lightning_shield
             if S.LightningShield:IsCastableP() and not ShouldStop and Player:BuffDownP(S.LightningShield) then
                 if HR.Cast(S.LightningShield) then return "lightning_shield 6"; end
-            end
-            -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
-                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 8"; end
             end
             -- rockbiter,if=maelstrom<15&time<gcd
             if S.Rockbiter:IsCastableP() and not ShouldStop then
@@ -745,7 +736,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
 	
      	 -- WindShear
-      	if useCC and S.WindShear:IsReady() and not ShouldStop and Target:IsInterruptible() then 
+      	if useKick and S.WindShear:IsReady() and not ShouldStop and Target:IsInterruptible() then 
 	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
      	    else 
@@ -810,6 +801,7 @@ end
 -- Finished
 
 
+
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
@@ -819,15 +811,4 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end

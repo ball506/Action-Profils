@@ -76,6 +76,7 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Blind                                  = Action.Create({ Type = "Spell", ID = 2094     }),
     Kick                                   = Action.Create({ Type = "Spell", ID = 1766     }),
     Sprint                               = Action.Create({ Type = "Spell", ID = 2983       }),
+    CheapShot                               = Action.Create({ Type = "Spell", ID = 1833       }),
     -- Poisons
     CripplingPoison                        = Action.Create({ Type = "Spell", ID = 3408     }),
     DeadlyPoison                           = Action.Create({ Type = "Spell", ID = 2823     }),
@@ -1433,16 +1434,5 @@ A[3] = function(icon)
     if APL() then 
         return true 
     end
-	if Player:AffectingCombat() and Everyone.TargetIsValid() then
-	    local unit = "target"
-	    -- Trinkets handler
-	    if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end 
-            
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-		end
-    end 
 end
 

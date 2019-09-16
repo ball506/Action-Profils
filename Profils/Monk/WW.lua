@@ -806,11 +806,11 @@ A[3] = function(icon, isMulti)
                 
                 -- Trinkets
                 if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-                    return A.Trinket1:Show(icon)
+                    
                 end 
                 
                 if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-                    return A.Trinket2:Show(icon)
+                    
                 end                     
             end 
             
@@ -1305,11 +1305,11 @@ A[3] = function(icon, isMulti)
     -- Trinkets (Defensive)
     if Unit("player"):CombatTime() > 0 and Unit("player"):HealthPercent() <= A.GetToggle(2, "TrinketDefensive") then 
         if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then 
-            return A.Trinket1:Show(icon)
+            
         end 
         
         if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then 
-            return A.Trinket2:Show(icon)
+            
         end             
     end 
     
