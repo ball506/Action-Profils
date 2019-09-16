@@ -61,17 +61,18 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
   ConsecrationBuff                      = Action.Create({ Type = "Spell", ID = 188370     }),
   -- Debuffs
   RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568     }),
-  -- Trinkets
-  
-  
+  -- Defensives
+  LightoftheProtector                   = Action.Create({ Type = "Spell", ID = 184092     }),
+  HandoftheProtector                    = Action.Create({ Type = "Spell", ID = 213652     }),
+  -- Trinkets  
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
   GalecallersBoon                       = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
   PocketsizedComputationDevice          = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-  GrongsPrimalRage                     = Action.Create({ Type = "Trinket", ID = 165574, QueueForbidden = true }),
-  MerekthasFang                        = Action.Create({ Type = "Trinket", ID = 158367, QueueForbidden = true }),
-  RazdunksBigRedButton                 = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }),
+  GrongsPrimalRage                      = Action.Create({ Type = "Trinket", ID = 165574, QueueForbidden = true }),
+  MerekthasFang                         = Action.Create({ Type = "Trinket", ID = 158367, QueueForbidden = true }),
+  RazdunksBigRedButton                  = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }),
   -- Potions
   PotionofUnbridledFury                 = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
   PotionTest                            = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
@@ -282,17 +283,17 @@ local function APL()
         end
     end
     local function Defensives()
-        if S.ShieldoftheRighteous:IsCastableP() and (Player:BuffRefreshable(S.ShieldoftheRighteous, 4) and (Player:ActiveMitigationNeeded() or Player:HealthPercentage() <= Settings.Protection.ShieldoftheRighteousHP or (not S.AvengersShield:CooldownUp() and S.ShieldoftheRighteous:ChargesFractional() >= 2.65))) then
-            if HR.Cast(S.ShieldoftheRighteous, Settings.Protection.OffGCDasOffGCD.ShieldoftheRighteous) then return "shield_of_the_righteous defensive"; end
+        if S.ShieldoftheRighteous:IsCastableP() and (Player:BuffRefreshable(S.ShieldoftheRighteous, 4) and (Player:ActiveMitigationNeeded() or Player:HealthPercentage() <= Action.GetToggle(2, "ShieldoftheRighteousHP") or (not S.AvengersShield:CooldownUp() and S.ShieldoftheRighteous:ChargesFractional() >= 2.65))) then
+            if HR.Cast(S.ShieldoftheRighteous, Action.GetToggle(2, "OffGCDasOffGCD")) then return "shield_of_the_righteous defensive"; end
         end
         if Target:IsInRange(10) and not Player:HealingAbsorbed() then
-            if S.HandoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Settings.Protection.HandoftheProtectorHP) then
-                if HR.Cast(S.HandoftheProtector, Settings.Protection.GCDasOffGCD.HandoftheProtector) then 
+            if S.HandoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Action.GetToggle(2, "HandoftheProtectorHP")) then
+                if HR.Cast(S.HandoftheProtector, Action.GetToggle(2, "OffGCDasOffGCD")) then 
 			        return "hand_of_the_protector defensive"; 
 			    end
             end
-            if S.LightoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Settings.Protection.LightoftheProtectorHP) then
-                if HR.Cast(S.LightoftheProtector, Settings.Protection.GCDasOffGCD.LightoftheProtector) then 
+            if S.LightoftheProtector:IsCastableP() and (Player:HealthPercentage() <= Action.GetToggle(2, "LightoftheProtectorHP")) then
+                if HR.Cast(S.LightoftheProtector, Action.GetToggle(2, "OffGCDasOffGCD")) then 
 			        return "light_of_the_protector defensive"; 
 				end
             end
