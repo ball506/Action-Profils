@@ -135,15 +135,17 @@ end
 -------------------------------------------------------------------------------
 -- Trinkets checker
 function TrinketON(unit)
-    if not unit or unit == nil then 
+    if not unit then 
 	    unit = "target"
 	end
 	if unit then
         if Action.Trinket1:IsReady(unit) or Action.Trinket2:IsReady(unit) then
             return true
-	    else
+		else
 	        return false
 		end
+	else
+	    return false
 	end
 end
 
