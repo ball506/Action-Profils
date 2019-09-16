@@ -86,18 +86,18 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     --PoolEnergy                             = Action.Create({ Type = "Spell", ID = 9999000010   }),
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	
     -- Buffs
-    VigorTrinketBuff                       = Action.Create({ Type = "Spell", ID = 287916     }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295137     }),
-    HiddenBladesBuff                       = Action.Create({ Type = "Spell", ID = 270070     }),
-    BlindsideBuff                          = Action.Create({ Type = "Spell", ID = 121153     }),
-    VanishBuff                             = Action.Create({ Type = "Spell", ID = 11327     }),
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932     }),
+    VigorTrinketBuff                       = Action.Create({ Type = "Spell", ID = 287916, Hidden = true     }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295137, Hidden = true     }),
+    HiddenBladesBuff                       = Action.Create({ Type = "Spell", ID = 270070, Hidden = true     }),
+    BlindsideBuff                          = Action.Create({ Type = "Spell", ID = 121153 , Hidden = true     }),
+    VanishBuff                             = Action.Create({ Type = "Spell", ID = 11327 , Hidden = true     }),
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932 , Hidden = true     }),
     -- Debuffs 
-    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568     }),
-    WoundPoisonDebuff                      = Action.Create({ Type = "Spell", ID = 8680     }),
-    DeadlyPoisonDebuff                     = Action.Create({ Type = "Spell", ID = 2818     }),
-    BloodoftheEnemyDebuff                  = Action.Create({ Type = "Spell", ID = 297108     }),
-    ToxicBladeDebuff                       = Action.Create({ Type = "Spell", ID = 245389     }),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    WoundPoisonDebuff                      = Action.Create({ Type = "Spell", ID = 8680, Hidden = true     }),
+    DeadlyPoisonDebuff                     = Action.Create({ Type = "Spell", ID = 2818 , Hidden = true     }),
+    BloodoftheEnemyDebuff                  = Action.Create({ Type = "Spell", ID = 297108 , Hidden = true     }),
+    ToxicBladeDebuff                       = Action.Create({ Type = "Spell", ID = 245389, Hidden = true     }),
     -- Trinkets
 	GenericTrinket1                      = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
     GenericTrinket2                      = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
@@ -559,7 +559,46 @@ local Interrupts = {
     );
 
 ---------------------------------------------------
- 
+
+-- Master Assassin Remains Check
+local MasterAssassinBuff, NominalDuration = Spell(256735), 3;
+local function MasterAssassinRemains()
+    if Player:BuffRemains(MasterAssassinBuff) < 0 then
+        return Player:GCDRemains() + NominalDuration;
+    else
+        return Player:BuffRemainsP(MasterAssassinBuff);
+    end
+end
+
+function Poisoned (Unit)
+    return (Unit:Debuff(S.DeadlyPoisonDebuff) or Unit:Debuff(S.WoundPoisonDebuff)) and true or false;
+end
+
+function Bleeds ()
+    return (Target:Debuff(S.Garrote) and 1 or 0) + (Target:Debuff(S.Rupture) and 1 or 0)
+    + (Target:Debuff(S.CrimsonTempest) and 1 or 0) + (Target:Debuff(S.InternalBleeding) and 1 or 0);
+end
+  
+local PoisonedBleedsCount = 0;
+function PoisonedBleeds ()
+    PoisonedBleedsCount = 0;
+    for _, Unit in pairs(Cache.Enemies[50]) do
+      if Poisoned(Unit) then
+        -- TODO: For loop for this ? Not sure it's worth considering we would have to make 2 times spell object (Assa is init after Commons)
+        if Unit:Debuff(S.Garrote) then
+          PoisonedBleedsCount = PoisonedBleedsCount + 1;
+        end
+        if Unit:Debuff(S.InternalBleeding) then
+          PoisonedBleedsCount = PoisonedBleedsCount + 1;
+        end
+        if Unit:Debuff(S.Rupture) then
+          PoisonedBleedsCount = PoisonedBleedsCount + 1;
+        end
+      end
+    end
+    return PoisonedBleedsCount;
+end
+ ----------------------------------------------------
 
 local function DetermineEssenceRanks()
     S.BloodoftheEnemy = S.BloodoftheEnemy2:IsAvailable() and S.BloodoftheEnemy2 or S.BloodoftheEnemy
@@ -1256,11 +1295,6 @@ local function Direct ()
     return false;
 end
 
-
-local function Init()
-    S.RazorCoralDebuff:RegisterAuraTracking();
-end
-Init()
 --- ======= ACTION LISTS =======
 local function APL() 
     
@@ -1282,7 +1316,7 @@ local function APL()
     RuptureDMGThreshold = S.Envenom:Damage()*Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
     GarroteDMGThreshold = S.Mutilate:Damage()*Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
     PriorityRotation = UsePriorityRotation();
-
+    PoisonedBleeds()
     -- Defensives
     -- Crimson Vial
     ShouldReturn = CrimsonVial(S.CrimsonVial);
@@ -1367,7 +1401,7 @@ local function APL()
         if ShouldReturn then return ShouldReturn; end
 
         -- actions=variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*7%(2*spell_haste)
-        PoisonedBleeds = Everyone.PoisonedBleeds()
+        local PoisonedBleeds = PoisonedBleeds()
         Energy_Regen_Combined = Player:EnergyRegen() + PoisonedBleeds * 7 / (2 * Player:SpellHaste());
 
         -- Special Font of Power Handling
