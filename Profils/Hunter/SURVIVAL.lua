@@ -475,7 +475,7 @@ local function APL()
             if HR.Cast(S.FlankingStrike) then return "flanking_strike 34"; end
         end
         -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-10
-        if S.KillCommand:IsCastableP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 10) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 10) then
             if HR.Cast(S.KillCommand) then return "kill_command 42"; end
         end
         -- steel_trap,if=focus+cast_regen<focus.max
@@ -491,7 +491,7 @@ local function APL()
             if HR.Cast(S.SerpentSting) then return "serpent_sting 90"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max&(buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
-        if S.KillCommand:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() and (Player:BuffStackP(S.MongooseFuryBuff) < 5 or Player:Focus() < S.MongooseBite:Cost())) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() and (Player:BuffStackP(S.MongooseFuryBuff) < 5 or Player:Focus() < S.MongooseBite:Cost())) then
             if HR.Cast(S.KillCommand) then return "kill_command 96"; end
         end
         -- serpent_sting,if=refreshable&!buff.coordinated_assault.up&buff.mongoose_fury.stack<5
@@ -549,7 +549,7 @@ local function APL()
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 206"; end
         end
         -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-20
-        if S.KillCommand:IsCastableP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 20) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 20) then
             if HR.Cast(S.KillCommand) then return "kill_command 210"; end
         end
         -- steel_trap,if=focus+cast_regen<focus.max
@@ -577,7 +577,7 @@ local function APL()
             if HR.Cast(S.SerpentSting) then return "serpent_sting 250"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max&(buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
-        if S.KillCommand:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() and (Player:BuffStackP(S.MongooseFuryBuff) < 5 or Player:Focus() < S.MongooseBite:Cost())) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() and (Player:BuffStackP(S.MongooseFuryBuff) < 5 or Player:Focus() < S.MongooseBite:Cost())) then
             if HR.Cast(S.KillCommand) then return "kill_command 258"; end
         end
         -- raptor_strike
@@ -699,7 +699,7 @@ local function APL()
             if HR.Cast(S.Chakrams) then return "chakrams 408"; end
         end
         -- kill_command,target_if=min:bloodseeker.remains,if=focus+cast_regen<focus.max
-        if S.KillCommand:IsCastableP() and not ShouldStop and EvaluateTargetIfFilterKillCommand413(Target) and EvaluateTargetIfKillCommand426(Target) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and EvaluateTargetIfFilterKillCommand413(Target) and EvaluateTargetIfKillCommand426(Target) then
             if HR.Cast(S.KillCommand) then return "kill_command 428" end
         end
         -- butchery,if=full_recharge_time<gcd|!talent.wildfire_infusion.enabled|dot.shrapnel_bomb.ticking&dot.internal_bleeding.stack<3
@@ -765,7 +765,7 @@ local function APL()
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 567"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max
-        if S.KillCommand:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) + 15 < Player:FocusMax()) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) + 15 < Player:FocusMax()) then
             if HR.Cast(S.KillCommand) then return "kill_command 568"; end
         end
         -- steel_trap,if=focus+cast_regen<focus.max
@@ -831,7 +831,7 @@ local function APL()
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 697"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max-focus.regen
-        if S.KillCommand:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - Player:FocusRegen()) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - Player:FocusRegen()) then
             if HR.Cast(S.KillCommand) then return "kill_command 733"; end
         end
         -- a_murder_of_crows
