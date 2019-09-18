@@ -79,6 +79,10 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     -- Misc
     BurningRush                          = Action.Create({ Type = "Spell", ID = 278727     }),
     Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+    SummonImp                            = Action.Create({ Type = "Spell", ID = 688        }),    
+    SummonVoidwalker                     = Action.Create({ Type = "Spell", ID = 697        }),
+    SummonFelhunter                      = Action.Create({ Type = "Spell", ID = 691        }),
+    SummonSuccubus                       = Action.Create({ Type = "Spell", ID = 712        }),
     -- Buffs
     RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
     DarkSoulInstabilityBuff               = Action.Create({ Type = "Spell", ID = 113858, Hidden = true     }),
@@ -91,9 +95,7 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     ImmolateDebuff                        = Action.Create({ Type = "Spell", ID = 157736, Hidden = true     }),  
     HavocDebuff                           = Action.Create({ Type = "Spell", ID = 80240, Hidden = true     }),  
     RainofFireDebuff                      = Action.Create({ Type = "Spell", ID = 5740, Hidden = true     }),  
-    -- Trinkets
-    
-    
+    -- Trinkets    
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
