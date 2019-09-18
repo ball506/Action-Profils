@@ -537,15 +537,16 @@ local function APL()
             if HR.Cast(S.ChainLightning) then return "chain_lightning 100"; end
         end
         -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
-        if S.LavaBurst:IsCastableP() and not ShouldStop and (Player:BuffP(S.LavaSurgeBuff) and EnemiesCount < 4 and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120) and Target:DebuffP(S.FlameShockDebuff)) then
+        if S.LavaBurst:IsCastableP() and not StormElementalIsActive() and not ShouldStop and (Player:BuffP(S.LavaSurgeBuff) and EnemiesCount < 4 and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120) and Target:DebuffP(S.FlameShockDebuff)) then
             if HR.Cast(S.LavaBurst) then return "lava_burst 106"; end
         end
+		-- Disabled in AoE for better performances
         -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
-        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and EnemiesCount < 4 and not Player:BuffP(S.AscendanceBuff) and not StormElementalIsActive() then
-            if HR.Cast(S.Icefury) then return "icefury 116"; end
-        end
+        --if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and EnemiesCount < 4 and not Player:BuffP(S.AscendanceBuff) and not StormElementalIsActive() then
+        --    if HR.Cast(S.Icefury) then return "icefury 116"; end
+        --end
 		-- 14 Lavaburst while moving
-        if S.LavaBurst:IsCastableP() and Player:IsMoving() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
+        if S.LavaBurst:IsCastableP() and not StormElementalIsActive() and Player:IsMoving() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
         end	
         -- frost_shock,if=spell_targets.chain_lightning<4&buff.icefury.up&!buff.ascendance.up
