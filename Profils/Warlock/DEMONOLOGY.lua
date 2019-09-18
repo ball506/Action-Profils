@@ -1136,6 +1136,10 @@ local function APL()
     if (EnemiesCount > 1) and HR.AoEON() then
         local ShouldReturn = Implosion(); if ShouldReturn then return ShouldReturn; end
     end
+    -- hand_of_guldan,if=(azerite.baleful_invocation.enabled|talent.demonic_consumption.enabled)&prev_gcd.1.hand_of_guldan&cooldown.summon_demonic_tyrant.remains<2
+    if S.HandofGuldan:IsCastableP() and not ShouldStop and (EnemiesCount > 1) and HR.AoEON() and (FutureShard() >= 3 or Player:SoulShardsP() >= 3) then
+        if HR.Cast(S.HandofGuldan) then return "hand_of_guldan 435"; end
+    end
     -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
     if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and HR.CDsON() and (S.SummonDemonicTyrant:CooldownRemainsP() <= 15 or Target:TimeToDie() <= 30) then
         if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 408"; end
