@@ -387,7 +387,7 @@ local function RtB_Reroll()
             if Player:BuffP(S.BladeFlurry) then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() - num(Player:BuffP(S.SkullandCrossbones)) < 2 and (Player:BuffP(S.LoadedDiceBuff) or
                 (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision) and not Player:BuffP(S.Broadside)))) and true or false;
-            elseif S.SnakeEyesPower:AzeriteRank() >= 2 then
+            --[[elseif S.SnakeEyesPower:AzeriteRank() >= 2 then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2) and true or false;
                 -- # Do not reroll if Snake Eyes is at 2+ stacks of the buff (1+ stack with Broadside up)
                 -- actions+=/variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
@@ -396,7 +396,7 @@ local function RtB_Reroll()
                 end
             elseif S.Deadshot:AzeriteEnabled() or S.AceUpYourSleeve:AzeriteEnabled() then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
-                Player:BuffRemainsP(S.RuthlessPrecision) <= S.BetweentheEyes:CooldownRemainsP())) and true or false;
+                Player:BuffRemainsP(S.RuthlessPrecision) <= S.BetweentheEyes:CooldownRemainsP())) and true or false; ]]--
             else
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
                (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision)))) and true or false;
@@ -540,12 +540,6 @@ local function ToggleBurstMode()
 	end
 end
 
-local function Init()
-  S.RazorCoralDebuff:RegisterAuraTracking();
-  S.ConductiveInkDebuff:RegisterAuraTracking();
-end
-Init()
-
 --- ======= ACTION LISTS =======
 local function APL() 
     
@@ -572,10 +566,10 @@ local function APL()
 	-- Defensives
     -- Crimson Vial
     ShouldReturn = CrimsonVial(S.CrimsonVial);
-    if ShouldReturn then return ShouldReturn; end
+    if ShouldReturn and not ShouldStop then return ShouldReturn; end
     -- Feint
     ShouldReturn = Feint(S.Feint);
-    if ShouldReturn then return ShouldReturn; end
+    if ShouldReturn and not ShouldStop then return ShouldReturn; end
 	
 -- # Essences
 local function Essences()
@@ -621,7 +615,7 @@ end
 local function CDs()
     if Target:IsInRange(S.SinisterStrike) then
         -- actions.cds+=/call_action_list,name=essences,if=!stealthed.all
-        if HR.CDsON() and not Player:IsStealthedP(true, true) then
+        if HR.CDsON() and not ShouldStop and not Player:IsStealthedP(true, true) then
             ShouldReturn = Essences();
             if ShouldReturn then return ShouldReturn; end
         end
@@ -632,7 +626,7 @@ local function CDs()
         end
 
         -- actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit|((raid_event.adds.in>40|buff.true_bearing.remains>15-buff.adrenaline_rush.up*5)&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1)
-        if S.MarkedforDeath:IsCastable() then
+        if S.MarkedforDeath:IsCastable() and not ShouldStop  then
             -- Note: Increased the SimC condition by 50% since we are slower.
             if Target:FilteredTimeToDie("<", Player:ComboPointsDeficit()*1.5) or (Target:FilteredTimeToDie("<", 2) and Player:ComboPointsDeficit() > 0)
             or (((Player:BuffRemainsP(S.TrueBearing) > 15 - (Player:BuffP(S.AdrenalineRush) and 5 or 0)) or Target:IsDummy())
@@ -644,7 +638,7 @@ local function CDs()
         end
         if HR.CDsON() then
             -- actions.cds+=/blade_flurry,if=spell_targets.blade_flurry>=2&!buff.blade_flurry.up
-            if HR.AoEON() and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
+            if HR.AoEON() and not ShouldStop and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
                 if Action.GetToggle(2, "OffGCDasOffGCD") then
                     HR.Cast(S.BladeFlurry);
                 else
@@ -653,7 +647,7 @@ local function CDs()
             end
             if Blade_Flurry_Sync() then
                 -- actions.cds+=/ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
-                if S.GhostlyStrike:IsCastableP(S.SinisterStrike) and Player:ComboPointsDeficit() >= (1 + (Player:BuffP(S.Broadside) and 1 or 0)) then
+                if S.GhostlyStrike:IsCastableP(S.SinisterStrike) and not ShouldStop and Player:ComboPointsDeficit() >= (1 + (Player:BuffP(S.Broadside) and 1 or 0)) then
                     if HR.Cast(S.GhostlyStrike, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Ghostly Strike"; end
                 end
                 -- actions.cds+=/killing_spree,if=variable.blade_flurry_sync&(energy.time_to_max>5|energy<15)
@@ -661,18 +655,18 @@ local function CDs()
                     if HR.Cast(S.KillingSpree) then return "Cast Killing Spree"; end
                 end
                 -- actions.cds+=/blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1
-                if S.BladeRush:IsCastableP(S.SinisterStrike) and EnergyTimeToMaxRounded() > 1 then
+                if S.BladeRush:IsCastableP(S.SinisterStrike) and not ShouldStop and EnergyTimeToMaxRounded() > 1 then
                     if HR.Cast(S.BladeRush, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Blade Rush"; end
                 end
             end
-            if Action.GetToggle(2, "UseDPSVanish") and not Player:IsStealthedP(true, true) then
+            if Action.GetToggle(2, "UseDPSVanish") and not ShouldStop and not Player:IsStealthedP(true, true) then
                 -- # Using Vanish/Ambush is only a very tiny increase, so in reality, you're absolutely fine to use it as a utility spell.
                 -- actions.cds+=/vanish,if=!stealthed.all&variable.ambush_condition
                 if S.Vanish:IsCastable() and Ambush_Condition() then
                     if HR.Cast(S.Vanish, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Vanish"; end
                 end
                 -- actions.cds+=/shadowmeld,if=!stealthed.all&variable.ambush_condition
-                if S.Shadowmeld:IsCastable() and Ambush_Condition() then
+                if S.Shadowmeld:IsCastable() and not ShouldStop and Ambush_Condition() then
                     if HR.Cast(S.Shadowmeld, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Shadowmeld"; end
                 end
             end
@@ -717,7 +711,7 @@ local function CDs()
                         and Player:BuffRemainsP(S.AdrenalineRush) > 18 or (Target:IsInBossList() and Target:FilteredTimeToDie("<", 20));
                     end
                 end
-                if CastRazorCoral then
+                if CastRazorCoral and not ShouldStop then
                     if HR.Cast(I.RazorCoral) then return "Cast RazorCoral"; end
                 end
             end
@@ -728,7 +722,7 @@ local function CDs()
         end
 
         -- Racials
-        if HR.CDsON() then
+        if HR.CDsON() and not ShouldStop then
             -- actions.cds+=/blood_fury
             if S.BloodFury:IsCastable() then
                 if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Blood Fury"; end
@@ -761,7 +755,7 @@ end
 local function Finish()
     -- # BtE over RtB rerolls with 2+ Deadshot traits or Ruthless Precision.
     -- actions.finish=between_the_eyes,if=variable.bte_condition
-    if S.BetweentheEyes:IsCastableP(20) and BtECondition() then
+    if S.BetweentheEyes:IsCastableP(20) and not ShouldStop and BtECondition() then
         if HR.Cast(S.BetweentheEyes) then return "Cast Between the Eyes (Pre RtB)"; end
     end
     -- actions.finish=slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
@@ -772,31 +766,31 @@ local function Finish()
         if HR.Cast(S.SliceandDice) then return "Cast Slice and Dice"; end
     end
     -- actions.finish+=/roll_the_bones,if=buff.roll_the_bones.remains<=3|variable.rtb_reroll
-    if S.RolltheBones:IsCastable() and (RtB_BuffRemains() <= 3 or RtB_Reroll()) then
+    if S.RolltheBones:IsCastable() and not ShouldStop and (RtB_BuffRemains() <= 3 or RtB_Reroll()) then
         if HR.Cast(S.RolltheBones) then return "Cast Roll the Bones"; end
     end
     -- # BtE with the Ace Up Your Sleeve or Deadshot traits.
     -- actions.finish+=/between_the_eyes,if=azerite.ace_up_your_sleeve.enabled|azerite.deadshot.enabled
-    if S.BetweentheEyes:IsCastableP(20) and (S.AceUpYourSleeve:AzeriteEnabled() or S.Deadshot:AzeriteEnabled()) then
+    if S.BetweentheEyes:IsCastableP(20) and not ShouldStop and (S.AceUpYourSleeve:AzeriteEnabled() or S.Deadshot:AzeriteEnabled()) then
         if HR.Cast(S.BetweentheEyes) then return "Cast Between the Eyes"; end
     end
     -- actions.finish+=/dispatch
-    if S.Dispatch:IsCastable(S.Dispatch) then
+    if S.Dispatch:IsCastable(S.Dispatch) and not ShouldStop then
         if HR.Cast(S.Dispatch) then return "Cast Dispatch"; end
     end
     -- OutofRange BtE
-    if S.BetweentheEyes:IsCastableP(20) and not Target:IsInRange(10) then
+    if S.BetweentheEyes:IsCastableP(20) and not ShouldStop and not Target:IsInRange(10) then
         if HR.Cast(S.BetweentheEyes) then return "Cast Between the Eyes (OOR)"; end
     end
 end
 
 local function Build()
     -- actions.build=pistol_shot,if=buff.opportunity.up&(buff.keep_your_wits_about_you.stack<10|buff.deadshot.up|energy<45)
-    if S.PistolShot:IsCastable(20) and Player:BuffP(S.Opportunity) and (Player:BuffStackP(S.KeepYourWitsBuff) < 10 or Player:BuffP(S.DeadshotBuff) or Player:EnergyPredicted() < 45) then
+    if S.PistolShot:IsCastable(20) and not ShouldStop and Player:BuffP(S.Opportunity) and (Player:BuffStackP(S.KeepYourWitsBuff) < 10 or Player:BuffP(S.DeadshotBuff) or Player:EnergyPredicted() < 45) then
         if HR.Cast(S.PistolShot) then return "Cast Pistol Shot"; end
     end
     -- actions.build+=/sinister_strike
-    if S.SinisterStrike:IsCastable(S.SinisterStrike) then
+    if S.SinisterStrike:IsCastable(S.SinisterStrike) and not ShouldStop then
         if HR.Cast(S.SinisterStrike) then return "Cast Sinister Strike"; end
     end
 end
@@ -827,7 +821,7 @@ end
             end
         end
         -- Stealth
-        if not Player:Buff(S.VanishBuff) and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
+        if not Player:Buff(S.VanishBuff) and not ShouldStop and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
             if HR.Cast(S.Stealth, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Stealth (OOC)"; end
         end
         -- Flask
@@ -836,10 +830,10 @@ end
         -- PrePot w/ Bossmod Countdown
         -- Opener
         if Everyone.TargetIsValid() then
-            if Player:ComboPoints() >= 5 then
+            if Player:ComboPoints() >= 5 and not ShouldStop then
                 ShouldReturn = Finish();
                 if ShouldReturn then return "Finish: " .. ShouldReturn; end
-            elseif Target:IsInRange(S.SinisterStrike) then
+            elseif Target:IsInRange(S.SinisterStrike) and not ShouldStop then
                 if Player:IsStealthedP(true, true) and S.Ambush:IsCastable() then
                     if HR.Cast(S.Ambush) then return "Cast Ambush (Opener)"; end
                 elseif S.SinisterStrike:IsCastable() then
@@ -888,33 +882,33 @@ end
      	end 
 
         -- actions+=/call_action_list,name=stealth,if=stealthed.all
-        if Player:IsStealthedP(true, true) then
+        if Player:IsStealthedP(true, true) and not ShouldStop then
             ShouldReturn = Stealth();
             if ShouldReturn then return "Stealth: " .. ShouldReturn; end
         end
         -- actions.cds+=/blade_flurry,if=spell_targets.blade_flurry>=2&!buff.blade_flurry.up
-        if HR.AoEON() and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
+        if HR.AoEON() and not ShouldStop and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
            if HR.Cast(S.BladeFlurry) then return "Cast Blade Flurry"; end
         end
         -- actions+=/call_action_list,name=cds
         ShouldReturn = CDs();
-        if ShouldReturn and HR.CDsON() then return "CDs: " .. ShouldReturn; end
+        if ShouldReturn and not ShouldStop and HR.CDsON() then return "CDs: " .. ShouldReturn; end
         -- actions+=/run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))
         if Player:ComboPoints() >= CPMaxSpend() - (num(Player:BuffP(S.Broadside)) + num(Player:BuffP(S.Opportunity))) * num(S.QuickDraw:IsAvailable() and (not S.MarkedforDeath:IsAvailable() or S.MarkedforDeath:CooldownRemainsP() > 1)) then
             ShouldReturn = Finish();
-            if ShouldReturn then return "Finish: " .. ShouldReturn; end
+            if ShouldReturn and not ShouldStop then return "Finish: " .. ShouldReturn; end
             -- run_action_list forces the return
             return "Waiting to Finish..."
         end
         -- actions+=/call_action_list,name=build
         ShouldReturn = Build();
-        if ShouldReturn then return "Build: " .. ShouldReturn; end
+        if ShouldReturn and not ShouldStop then return "Build: " .. ShouldReturn; end
         -- actions+=/arcane_torrent,if=energy.deficit>=15+energy.regen
-        if S.ArcaneTorrent:IsCastableP(S.SinisterStrike) and Player:EnergyDeficitPredicted() > 15 + Player:EnergyRegen() then
+        if S.ArcaneTorrent:IsCastableP(S.SinisterStrike) and not ShouldStop and Player:EnergyDeficitPredicted() > 15 + Player:EnergyRegen() then
             if HR.Cast(S.ArcaneTorrent, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Arcane Torrent"; end
         end
         -- actions+=/arcane_pulse
-        if S.ArcanePulse:IsCastableP(S.SinisterStrike) then
+        if S.ArcanePulse:IsCastableP(S.SinisterStrike) and not ShouldStop then
             if HR.Cast(S.ArcanePulse) then return "Cast Arcane Pulse"; end
         end
         -- actions+=/lights_judgment
@@ -922,7 +916,7 @@ end
         --    if HR.Cast(S.LightsJudgment, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Lights Judgment"; end
         --end
         -- OutofRange Pistol Shot
-        if not Target:IsInRange(BladeFlurryRange) and S.PistolShot:IsCastable(20) and not Player:IsStealthedP(true, true)
+        if not Target:IsInRange(BladeFlurryRange) and not ShouldStop and S.PistolShot:IsCastable(20) and not Player:IsStealthedP(true, true)
             and Player:EnergyDeficitPredicted() < 25 and (Player:ComboPointsDeficit() >= 1 or EnergyTimeToMaxRounded() <= 1.2) then
             if HR.Cast(S.PistolShot) then return "Cast Pistol Shot (OOR)"; end
         end
