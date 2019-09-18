@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v1.14 (16.09.2019)",
+    DateTime = "v1.15 (18.09.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DRUID_FERAL] = {
