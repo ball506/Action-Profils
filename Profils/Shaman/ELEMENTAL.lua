@@ -497,17 +497,17 @@ local function APL()
             if S.ElementalBlast:IsCastableP() and not ShouldStop and (S.ElementalBlast:IsAvailable()) then
                 if HR.Cast(S.ElementalBlast) then return "elemental_blast 29"; end
             end
+            -- chain_lightning,if=spell_targets.chain_lightning>2
+            if S.ChainLightning:IsCastableP() and not ShouldStop and Cache.EnemiesCount[40] > 2 then
+                if HR.Cast(S.ChainLightning) then return "chain_lightning 37"; end
+            end
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
-            if S.LavaBurst:IsCastableP() and not ShouldStop and (not S.ElementalBlast:IsAvailable() and EnemiesCount < 3 and not Player:IsCasting(S.LavaBurst)) then
+            if S.LavaBurst:IsCastableP() and not ShouldStop and not S.ElementalBlast:IsAvailable() and EnemiesCount < 3 and not Player:IsCasting(S.LavaBurst) then
                 if HR.Cast(S.LavaBurst) then return "lava_burst 33"; end
             end
             -- Add Flame Shock as part of the "opener" 
             if S.FlameShock:IsCastableP() and not ShouldStop and ((not Target:DebuffP(S.FlameShockDebuff)) and (Player:IsCasting(S.LavaBurst) or Player:PrevGCDP(1, S.LavaBurst))) then
                 if HR.Cast(S.FlameShock) then return "flame_shock opener"; end
-            end
-            -- chain_lightning,if=spell_targets.chain_lightning>2
-            if S.ChainLightning:IsCastableP() and not Player:IsMoving() and not ShouldStop and (EnemiesCount > 2) then
-                if HR.Cast(S.ChainLightning) then return "chain_lightning 37"; end
             end
         end
     end
@@ -980,15 +980,15 @@ local function APL()
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
         -- blood_of_the_enemy
-        if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.BloodoftheEnemy:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.GuardianofAzeroth:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- focused_azerite_beam
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.FocusedAzeriteBeam:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- purifying_blast
@@ -996,11 +996,11 @@ local function APL()
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast"; end
         end
         -- the_unbound_force
-        if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.TheUnboundForce:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
         end
         -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- ripple_in_space
