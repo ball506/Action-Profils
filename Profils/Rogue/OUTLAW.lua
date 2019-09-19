@@ -387,7 +387,7 @@ local function RtB_Reroll()
             if Player:BuffP(S.BladeFlurry) then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() - num(Player:BuffP(S.SkullandCrossbones)) < 2 and (Player:BuffP(S.LoadedDiceBuff) or
                 (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision) and not Player:BuffP(S.Broadside)))) and true or false;
-            --[[elseif S.SnakeEyesPower:AzeriteRank() >= 2 then
+            elseif S.SnakeEyesPower:AzeriteRank() >= 2 then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2) and true or false;
                 -- # Do not reroll if Snake Eyes is at 2+ stacks of the buff (1+ stack with Broadside up)
                 -- actions+=/variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
@@ -396,12 +396,12 @@ local function RtB_Reroll()
                 end
             elseif S.Deadshot:AzeriteEnabled() or S.AceUpYourSleeve:AzeriteEnabled() then
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
-                Player:BuffRemainsP(S.RuthlessPrecision) <= S.BetweentheEyes:CooldownRemainsP())) and true or false; ]]--
+                Player:BuffRemainsP(S.RuthlessPrecision) <= S.BetweentheEyes:CooldownRemainsP())) and true or false;
             else
                 Cache.APLVar.RtB_Reroll = (RtB_Buffs() < 2 and (Player:BuffP(S.LoadedDiceBuff) or
                (not Player:BuffP(S.GrandMelee) and not Player:BuffP(S.RuthlessPrecision)))) and true or false;
             end
-			return true
+			return false
         end
     end
     return Cache.APLVar.RtB_Reroll;
