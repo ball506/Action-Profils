@@ -935,7 +935,7 @@ local function APL()
             if HR.Cast(S.Exhilaration, Action.GetToggle(2, "OffGCDasOffGCD")) then return "exhilaration"; end
         end
         -- mendpet
-        if S.MendPet:IsCastable() and Pet:IsActive() and Pet:HealthPercentage() > 0 and Pet:HealthPercentage() <= Action.GetToggle(2, "MendPet") and not Pet:Buff(S.MendPet) then
+        if S.MendPet:IsReady() and Pet:Exists() and Pet:HealthPercentage() > 0 and Pet:HealthPercentage() <= Action.GetToggle(2, "MendPet") and not Pet:Buff(S.MendPet) then
 			if HR.Cast(S.MendPet, true) then return "MendPet 5"; end
         end
 	    -- summon_pet if dead or ghost
@@ -947,6 +947,14 @@ local function APL()
         -- Self heal, if below setting value
         if S.Exhilaration:IsCastableP() and not ShouldStop and Player:HealthPercentage() <= Action.GetToggle(2, "ExhilarationHP") then
             if HR.Cast(S.Exhilaration, Action.GetToggle(2, "OffGCDasOffGCD")) then return "exhilaration"; end
+        end
+        -- concentrated_flame
+        if S.ConcentratedFlame:IsCastableP() and not ShouldStop then
+            if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 886"; end
+        end
+        -- arcane_torrent
+        if S.ArcaneTorrent:IsCastableP() and not ShouldStop and HR.CDsON() then
+            if HR.Cast(S.ArcaneTorrent, Action.GetToggle(2, "OffGCDasOffGCD")) then return "arcane_torrent 888"; end
         end
         -- auto_attack
         -- use_items
@@ -981,14 +989,6 @@ local function APL()
         -- call_action_list,name=cleave,if=active_enemies>1
         if (Cache.EnemiesCount[8] > 1) then
             local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- concentrated_flame
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 886"; end
-        end
-        -- arcane_torrent
-        if S.ArcaneTorrent:IsCastableP() and not ShouldStop and HR.CDsON() then
-            if HR.Cast(S.ArcaneTorrent, Action.GetToggle(2, "OffGCDasOffGCD")) then return "arcane_torrent 888"; end
         end
     end
 end
