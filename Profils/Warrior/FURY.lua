@@ -492,7 +492,7 @@ local function APL()
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=recklessness.buff
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffP(S.RecklessnessBuff) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
         -- blood_fury
