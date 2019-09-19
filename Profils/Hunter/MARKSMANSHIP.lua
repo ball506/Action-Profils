@@ -614,12 +614,24 @@ local function APL()
         end
         -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5
         if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.TrueshotBuff) and not S.BloodoftheEnemy:ID() == "298277" or Target:DebuffP(S.BloodoftheEnemy) or Target:TimeToDie() < 5) then
-            if Hr.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
+            if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
         end
         -- use_items,if=buff.trueshot.up|!talent.calling_the_shots.enabled|target.time_to_die<20
         -- call_action_list,name=cds
         if (HR.CDsON()) then
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
+        end
+        -- arcane_shot,if=moving
+        if S.ArcaneShot:IsCastableP() and not ShouldStop and Player:IsMoving() then
+            if HR.Cast(S.ArcaneShot) then return "arcane_shot 158"; end
+        end
+        -- arcane_shot,if=moving
+        if S.SteadyShot:IsCastableP() and not ShouldStop and Player:IsMoving() then
+            if HR.Cast(S.SteadyShot) then return "SteadyShot 158"; end
+        end
+        -- rapid_fire,if=buff.trueshot.down|focus<70
+        if S.RapidFire:IsCastableP() and not ShouldStop and Player:IsMoving() then
+            if HR.Cast(S.RapidFire) then return "rapid_fire 152"; end
         end
         -- call_action_list,name=st,if=active_enemies<3
         if (EnemiesCount < 3) then
