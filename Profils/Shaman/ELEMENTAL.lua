@@ -100,14 +100,39 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
 	-- Trinkets    
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice          = Action.Create({ Type = "Trinket", ID = 167555 }),
-    RotcrustedVoodooDoll                  = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                      = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                    = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                        = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     VialofStorms                          = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
 	AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    -- Trinkets    
+    TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
+    PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    HyperthreadWristwraps                = Action.Create({ Type = "Trinket", ID = 168989, QueueForbidden = true }),
+    NotoriousAspirantsBadge              = Action.Create({ Type = "Trinket", ID = 167528, QueueForbidden = true }),
+    NotoriousGladiatorsBadge             = Action.Create({ Type = "Trinket", ID = 167380, QueueForbidden = true }),
+    SinisterGladiatorsBadge              = Action.Create({ Type = "Trinket", ID = 165058, QueueForbidden = true }),
+    SinisterAspirantsBadge               = Action.Create({ Type = "Trinket", ID = 165223, QueueForbidden = true }),
+    DreadGladiatorsBadge                 = Action.Create({ Type = "Trinket", ID = 161902, QueueForbidden = true }),
+    DreadAspirantsBadge                  = Action.Create({ Type = "Trinket", ID = 162966, QueueForbidden = true }),
+    DreadCombatantsInsignia              = Action.Create({ Type = "Trinket", ID = 161676, QueueForbidden = true }),
+    NotoriousAspirantsMedallion          = Action.Create({ Type = "Trinket", ID = 167525, QueueForbidden = true }),
+    NotoriousGladiatorsMedallion         = Action.Create({ Type = "Trinket", ID = 167377, QueueForbidden = true }),
+    SinisterGladiatorsMedallion          = Action.Create({ Type = "Trinket", ID = 165055, QueueForbidden = true }),
+    SinisterAspirantsMedallion           = Action.Create({ Type = "Trinket", ID = 165220, QueueForbidden = true }),
+    DreadGladiatorsMedallion             = Action.Create({ Type = "Trinket", ID = 161674, QueueForbidden = true }),
+    DreadAspirantsMedallion              = Action.Create({ Type = "Trinket", ID = 162897, QueueForbidden = true }),
+    DreadCombatantsMedallion             = Action.Create({ Type = "Trinket", ID = 161811, QueueForbidden = true }),
+    IgnitionMagesFuse                    = Action.Create({ Type = "Trinket", ID = 159615, QueueForbidden = true }),
+    TzanesBarkspines                     = Action.Create({ Type = "Trinket", ID = 161411, QueueForbidden = true }),
+    AzurethoseSingedPlumage              = Action.Create({ Type = "Trinket", ID = 161377, QueueForbidden = true }),
+    AncientKnotofWisdomAlliance          = Action.Create({ Type = "Trinket", ID = 161417, QueueForbidden = true }),
+    AncientKnotofWisdomHorde             = Action.Create({ Type = "Trinket", ID = 166793, QueueForbidden = true }),
+    ShockbitersFang                      = Action.Create({ Type = "Trinket", ID = 169318, QueueForbidden = true }),
+    NeuralSynapseEnhancer                = Action.Create({ Type = "Trinket", ID = 168973, QueueForbidden = true }),
+    BalefireBranch                       = Action.Create({ Type = "Trinket", ID = 159630, QueueForbidden = true }),
     -- Potions
     PotionofUnbridledFury                 = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
     PotionofFocusedResolve                = Action.Create({ Type = "Potion", ID = 168506, QueueForbidden = true }),
@@ -810,6 +835,33 @@ local function APL()
         end
     end
 	
+	local function Trinkets()
+	    -- use_item,name=azsharas_font_of_power,if=cooldown.combustion.remains<=5+15*variable.font_double_on_use
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() then
+            if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power high_priority"; end
+        end
+        -- use_item,name=rotcrusted_voodoo_doll,if=cooldown.combustion.remains>variable.on_use_cutoff
+        if I.RotcrustedVoodooDoll:IsEquipped() and I.RotcrustedVoodooDoll:IsReady() and TrinketON() then
+            if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll high_priority"; end
+        end
+        -- use_item,name=aquipotent_nautilus,if=cooldown.combustion.remains>variable.on_use_cutoff
+        if I.AquipotentNautilus:IsEquipped() and I.AquipotentNautilus:IsReady() and TrinketON() then
+            if HR.Cast(I.AquipotentNautilus) then return "aquipotent_nautilus high_priority"; end
+        end
+        -- use_item,name=shiver_venom_relic,if=cooldown.combustion.remains>variable.on_use_cutoff
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() then
+            if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic high_priority"; end
+        end
+        -- use_item,effect_name=harmonic_dematerializer
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() then
+            if HR.Cast(I.PocketsizedComputationDevice) then return "harmonic_dematerializer high_priority"; end
+        end
+        -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
+        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TrinketON() then
+            if HR.Cast(I.BalefireBranch) then return "balefire_branch combustion"; end
+        end
+	end
+	
 	local function CustomST()
 	    -- 0 TotemMastery
         if S.TotemMastery:IsReadyP() and ResonanceTotemTime() < 6 and (S.TotemMastery:IsAvailable() and not Player:BuffP(S.ResonanceTotemBuff)) then
@@ -842,6 +894,7 @@ local function APL()
 		-- 6 Earth Elemental		
 		-- 7 Racials		
 		-- 8 Trinkets
+		local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
 		-- 9 Liquid Magma Totem
         if S.LiquidMagmaTotem:IsCastableP() and S.LiquidMagmaTotem:IsAvailable() then
             if HR.Cast(S.LiquidMagmaTotem) then return "liquid_magma_totem 88"; end
@@ -1030,7 +1083,7 @@ local function APL()
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and S.FlameShock:IsReadyP() and CanMultidot and (MissingFlameShock >= 1 or FlameShockToRefresh >= 1) and EnemiesCount > 1 and EnemiesCount < 4 and Target:DebuffRemainsP(S.FlameShockDebuff) >= 12 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
-        end			
+        end		
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
         if (EnemiesCount > 2) or Action.GetToggle(2, "AoE") then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
@@ -1039,6 +1092,10 @@ local function APL()
         if (EnemiesCount < 2) or not Action.GetToggle(2, "AoE") then
             local ShouldReturn = CustomST(); if ShouldReturn then return ShouldReturn; end
         end
+        -- Trinkets
+        if (true) then
+            local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
+        end	
         -- run_action_list,name=funnel,if=active_enemies>=2&(spell_targets.chain_lightning<2|spell_targets.lava_beam<2)
         if (EnemiesCount < 2) then
             local ShouldReturn = Funnel(); if ShouldReturn then return ShouldReturn; end
