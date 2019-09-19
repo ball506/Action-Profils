@@ -321,7 +321,7 @@ local function APL()
                 if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 12"; end
             end
             -- aimed_shot,if=active_enemies<3
-            if S.AimedShot:IsReadyP() and not ShouldStop and (EnemiesCount < 3) and Pull > 0.1 and Pull <= 1 then
+            if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (EnemiesCount < 3) and Pull > 0.1 and Pull <= 1 then
                 if HR.Cast(S.AimedShot) then return "aimed_shot 38"; end
             end
         end
@@ -365,7 +365,7 @@ local function APL()
                 if HR.Cast(S.Trueshot, Action.GetToggle(2, "OffGCDasOffGCD")) then return "trueshot 20"; end
             end
             -- aimed_shot,if=active_enemies<3
-            if S.AimedShot:IsReadyP() and not ShouldStop and (EnemiesCount < 3) then
+            if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (EnemiesCount < 3) then
                 if HR.Cast(S.AimedShot) then return "aimed_shot 38"; end
             end
         end
@@ -458,7 +458,7 @@ local function APL()
             if HR.Cast(S.ArcaneShot) then return "arcane_shot 158"; end
         end
         -- aimed_shot,if=buff.trueshot.up|(buff.double_tap.down|ca_execute)&buff.precise_shots.down|full_recharge_time<cast_time&cooldown.trueshot.remains
-        if S.AimedShot:IsReadyP() and not ShouldStop and (Player:BuffP(S.TrueshotBuff) or (Player:BuffDownP(S.DoubleTap) or ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable())) and Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() and bool(S.Trueshot:CooldownRemainsP())) then
+        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrueshotBuff) or (Player:BuffDownP(S.DoubleTap) or ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable())) and Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() and bool(S.Trueshot:CooldownRemainsP())) then
             if HR.Cast(S.AimedShot) then return "aimed_shot 170"; end
         end
         -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&buff.memory_of_lucid_dreams.up
@@ -500,7 +500,7 @@ local function APL()
             if HR.Cast(S.ExplosiveShot) then return "explosive_shot 212"; end
         end
         -- aimed_shot,if=buff.trick_shots.up&ca_execute&buff.double_tap.up
-        if S.AimedShot:IsReadyP() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable()) and Player:BuffP(S.DoubleTap)) then
+        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable()) and Player:BuffP(S.DoubleTap)) then
             if HR.Cast(S.AimedShot) then return "aimed_shot 213"; end
         end
         -- rapid_fire,if=buff.trick_shots.up&(azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled)
@@ -508,7 +508,7 @@ local function APL()
             if HR.Cast(S.RapidFire) then return "rapid_fire 214"; end
         end
         -- aimed_shot,if=buff.trick_shots.up&(buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up)
-        if S.AimedShot:IsReadyP() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and (Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() or Player:BuffP(S.TrueshotBuff))) then
+        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and (Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() or Player:BuffP(S.TrueshotBuff))) then
             if HR.Cast(S.AimedShot) then return "aimed_shot 226"; end
         end
         -- rapid_fire,if=buff.trick_shots.up
