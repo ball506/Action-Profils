@@ -77,6 +77,7 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Kick                                   = Action.Create({ Type = "Spell", ID = 1766     }),
     Sprint                                 = Action.Create({ Type = "Spell", ID = 2983       }),
     CheapShot                              = Action.Create({ Type = "Spell", ID = 1833       }),
+	ShadowStep                             = Action.Create({ Type = "Spell", ID = 36554       }),
 	-- PvP
 	Sap                                    = Action.Create({ Type = "Spell", ID = 6770       }),
 	Shiv                                   = Action.Create({ Type = "Spell", ID = 248744       }),
@@ -1059,7 +1060,7 @@ local function Direct ()
     --    if HR.Cast(S.Envenom) then return "Cast Envenom"; end
     --end
     -- actions.direct=envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
-    if S.Envenom:IsReady("Melee") and Player:ComboPoints() >= 4 + num(S.DeeperStratagem:IsAvailable()) and (Target:DebuffP(S.Vendetta) or Target:DebuffP(S.ToxicBladeDebuff) or Player:EnergyDeficit() <= 25 + Energy_Regen_Combined or Cache.EnemiesCount[10] >= 2) and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2 or not RubimRH.CDsON()) then
+    if S.Envenom:IsCastable("Melee") and ComboPoints >= 4 + (S.DeeperStratagem:IsAvailable() and 1 or 0) and Target:DebuffP(S.Rupture) then 
         if HR.Cast(S.Envenom) then return "Cast Envenom"; end
     end
 
@@ -1069,25 +1070,25 @@ local function Direct ()
         if HR.Cast(S.Envenom) then return "Cast Envenom"; end
     end
 
-	if S.Neuro:IsAvailable() and S.Neuro:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Unit("target"):InCC() and not Player:IsStealthed() and Player:AffectingCombat() then
-    	if not Target:IsImmune() and  Target:IsInRange("Melee")  and (Player:HealthPercentage() <= 75 and Target:IsTargeting(Player) or Target:IsBursting()) then
+	if S.Neuro:IsAvailable() and S.Neuro:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() and Player:AffectingCombat() then
+    	if Target:IsInRange("Melee")  and (Player:HealthPercentage() <= 75) then
 		       if HR.Cast(S.Neuro) then return "Cast Neuro"; end 
         end
 	end
 		
 	if S.Shiv:IsAvailable() and S.Shiv:CooldownUp() and Target:IsAPlayer() and Target:Exists() and Target:IsInRange("Melee") and Target:AffectingCombat() then
-        if Action.AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
-            if Action.AbsentImun("target", "DamagePhysImun", true) and S.Shiv:IsReady() and not Unit("target"):InCC() then
+        --if Action.AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
+            --if Action.AbsentImun("target", "DamagePhysImun", true) and S.Shiv:IsReady() and not Target:InCC() then
                 if HR.Cast(S.Shiv) then return "Cast Shiv"; end 
-            end
-        end
+            --end
+        --end
     end
 
 	if S.DFA:IsAvailable() and S.DFA:CooldownUp() and Target:IsAPlayer() and not Target:IsDeadOrGhost() and Player:CanAttack(Target) and Target:Exists() then
 		if Player:ComboPoints() >= 5 and Target:IsInRange(15) then
-            if Action.AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
+            --if Action.AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
                 if HR.Cast(S.DFA) then return "Cast DFA"; end 
-            end
+            --end
         end
     end	
 
@@ -1179,6 +1180,33 @@ local function APL()
 	else
 	    ShouldStop = false
 	end
+	
+	local function Defensives()
+        -- SmokeBomb
+		if S.SmokeBomb:IsAvailable() and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
+			if Target:IsInRange("Melee") and Target:AffectingCombat()  then
+			    if S.SmokeBomb:IsReady() and (Player:HealthPercentage() <= 40) then
+                    if HR.Cast(S.SmokeBomb) then return "SmokeBomb"; end
+                end
+			end
+	    end
+		--ShadowStep
+		if S.ShadowStep:IsReady() and Target:IsAPlayer() and not Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists()  then
+            if Target:IsInRange(S.ShadowStep) and not Target:IsInRange(15) then
+				if Player:HealthPercentage() <= 55 then
+                    if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
+                end
+            end
+	    end
+		-- Sap
+		if Target:Exists() and Target:IsAPlayer() and not Target:IsDeadOrGhost() then
+			if Player:IsStealthed() and  Target:IsInRange(10) and not Target:AffectingCombat() and (Player:CanAttack(Target)) then
+				if S.Sap:IsReady() then
+			        if HR.Cast(S.Sap) then return "Sap"; end			  
+				end
+			end
+		end	
+	end
    	
     -- Out of Combat
     if not Player:AffectingCombat() then
@@ -1265,10 +1293,19 @@ local function APL()
             ShouldReturn = Stealthed();
             if ShouldReturn then return ShouldReturn .. " (Stealthed)"; end
         end
+        -- Manually added, pvp defensives
+        ShouldReturn = Defensives();
+        if ShouldReturn then return ShouldReturn; end
+		
         -- actions+=/call_action_list,name=cds,if=(!talent.master_assassin.enabled|dot.garrote.ticking)&(!equipped.azsharas_font_of_power|!trinket.azsharas_font_of_power.cooldown.up)
         if not S.MasterAssassin:IsAvailable() or Target:DebuffP(S.Garrote) and (not TrinketON() or not I.FontOfPower:IsEquipped() or not I.FontOfPower:IsReady() and not ShouldStop) then
             ShouldReturn = CDs();
             if ShouldReturn then return ShouldReturn; end
+        end
+		-- Manually added Toxic blade
+        -- actions.cds+=/toxic_blade,if=dot.rupture.ticking
+        if S.ToxicBlade:IsCastable("Melee") and Target:DebuffP(S.Rupture) then
+            if HR.Cast(S.ToxicBlade) then return "Cast Toxic Blade"; end
         end
         -- actions+=/call_action_list,name=dot
         ShouldReturn = Dot();
