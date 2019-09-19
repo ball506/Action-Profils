@@ -174,7 +174,7 @@ A.Data.ProfileUI = {
                     DBV = 30, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(193316) .. " Leech HP (%)",
+                        ANY = A.GetSpellInfo(104773) .. " Leech HP (%)",
                     }, 
                     M = {},
                 },
@@ -386,7 +386,7 @@ A.Data.ProfileUI = {
                     DBV = 30, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(193316) .. " Leech HP (%)",
+                        ANY = A.GetSpellInfo(104773) .. " Leech HP (%)",
                     }, 
                     M = {},
                 },
