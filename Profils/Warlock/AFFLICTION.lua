@@ -933,7 +933,7 @@ local function APL()
         end   
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
-		and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and EnemiesCount > 1 and EnemiesCount <= 10 
+		and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and EnemiesCount > 2 and EnemiesCount <= 5 
 		and Target:DebuffRemainsP(S.AgonyDebuff) >= 8 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
         end		
