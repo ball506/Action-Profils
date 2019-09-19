@@ -1028,7 +1028,7 @@ local function APL()
             if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 633"; end
         end
 		-- Auto Multi Dot	  
-	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and S.FlameShock:IsReadyP() and CanMultidot and (MissingFlameShock >= 1 or FlameShockToRefresh >= 1) and EnemiesCount > 1 and EnemiesCount <= 7 and Target:DebuffRemainsP(S.FlameShockDebuff) >= 12 then
+	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and S.FlameShock:IsReadyP() and CanMultidot and (MissingFlameShock >= 1 or FlameShockToRefresh >= 1) and EnemiesCount > 1 and EnemiesCount < 4 and Target:DebuffRemainsP(S.FlameShockDebuff) >= 12 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
         end			
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
