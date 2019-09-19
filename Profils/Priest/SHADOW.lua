@@ -569,7 +569,7 @@ local function APL()
             if HR.Cast(S.ShadowCrash) then return "shadow_crash 108"; end
         end
         -- shadow_word_pain,target_if=refreshable&target.time_to_die>((-1.2+3.3*spell_targets.mind_sear)*variable.swp_trait_ranks_check*(1-0.012*azerite.searing_dialogue.rank*spell_targets.mind_sear)),if=!talent.misery.enabled
-        if S.ShadowWordPain:IsCastableP() and not ShouldStop and EvaluateCycleShadowWordPain114(Target) then
+        if S.ShadowWordPain:IsCastableP() and not S.Misery:IsAvailable() and not ShouldStop and EvaluateCycleShadowWordPain114(Target) then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 128" end
         end
         -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check*(1+0.10*azerite.searing_dialogue.rank*spell_targets.mind_sear))
@@ -593,7 +593,7 @@ local function APL()
             if HR.Cast(S.MindFlay) then return "mind_flay 172"; end
         end
         -- shadow_word_pain
-        if S.ShadowWordPain:IsCastableP() and not ShouldStop then
+        if S.ShadowWordPain:IsCastableP() and not S.Misery:IsAvailable() and not ShouldStop then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 174"; end
         end
     end
@@ -676,7 +676,7 @@ local function APL()
             if HR.Cast(S.MindFlay) then return "mind_flay 278"; end
         end
         -- shadow_word_pain
-        if S.ShadowWordPain:IsCastableP() and not ShouldStop then
+        if S.ShadowWordPain:IsCastableP() and not S.Misery:IsAvailable() and not ShouldStop then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
         end
     end
@@ -687,7 +687,7 @@ local function APL()
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
         end
         -- shadow_word_pain
-        if S.ShadowWordPain:IsCastableP() and not Player:PrevGCDP(1, S.ShadowWordPain) and not ShouldStop and Target:DebuffRemainsP(S.ShadowWordPainDebuff) <= 10 then
+        if S.ShadowWordPain:IsCastableP() and not S.Misery:IsAvailable() and not Player:PrevGCDP(1, S.ShadowWordPain) and not ShouldStop and Target:DebuffRemainsP(S.ShadowWordPainDebuff) <= 10 then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
         end
 
@@ -731,7 +731,7 @@ local function APL()
         end
 		
         -- Multidots checks
-        if Action.GetToggle(2, "AutoDot") and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) then
+        if Action.GetToggle(2, "AutoDot") and EnemiesCount > 2 and EnemiesCount <= 5 and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) then
             local ShouldReturn = MultidotsChecks(); if ShouldReturn then return ShouldReturn; end
         end       		
 		
