@@ -646,7 +646,7 @@ local function APL()
             if HR.Cast(S.FullMoon) then return "full_moon 365"; end
         end
         -- lunar_strike,if=buff.solar_empowerment.stack<3&(ap_check|buff.lunar_empowerment.stack=3)&((buff.warrior_of_elune.up|buff.lunar_empowerment.up|spell_targets>=2&!buff.solar_empowerment.up)&(!variable.az_ss|!buff.ca_inc.up)|variable.az_ss&buff.ca_inc.up&prev.solar_wrath)
-        if S.LunarStrike:IsCastableP() and not ShouldStop and (Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and (AP_Check(S.LunarStrike) or Player:BuffStackP(S.LunarEmpowermentBuff) == 3) and ((Player:BuffP(S.WarriorofEluneBuff) or Player:BuffP(S.LunarEmpowermentBuff) or EnemiesCount >= 2 and Player:BuffDownP(S.SolarEmpowermentBuff)) and (not bool(VarAzSs) or Player:BuffDownP(CaInc())) or bool(VarAzSs) and Player:BuffP(CaInc()) and Player:PrevGCDP(1, S.SolarWrath))) then
+        if S.LunarStrike:IsCastableP() and not ShouldStop and (Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and (AP_Check(S.LunarStrike) or Player:BuffStackP(S.LunarEmpowermentBuff) == 3) and ((Player:BuffP(S.WarriorofEluneBuff) or Player:BuffP(S.LunarEmpowermentBuff)) and (not bool(VarAzSs) or Player:BuffDownP(CaInc())) or bool(VarAzSs) and Player:BuffP(CaInc()) and Player:PrevGCDP(1, S.SolarWrath))) then
             if HR.Cast(S.LunarStrike) then return "lunar_strike 367"; end
         end
         -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
