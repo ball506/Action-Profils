@@ -1076,8 +1076,8 @@ local function Direct ()
 	end
 		
 	if S.Shiv:IsAvailable() and S.Shiv:CooldownUp() and Target:IsAPlayer() and Target:Exists() and Target:IsInRange("Melee") and Target:AffectingCombat() then
-        if S.Shiv:AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
-            if not Target:IsImmune() and S.Shiv:IsReady() and not Unit("target"):InCC() then
+        if Action.AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
+            if Action.AbsentImun("target", "DamagePhysImun", true) and S.Shiv:IsReady() and not Unit("target"):InCC() then
                 if HR.Cast(S.Shiv) then return "Cast Shiv"; end 
             end
         end
@@ -1085,7 +1085,7 @@ local function Direct ()
 
 	if S.DFA:IsAvailable() and S.DFA:CooldownUp() and Target:IsAPlayer() and not Target:IsDeadOrGhost() and Player:CanAttack(Target) and Target:Exists() then
 		if Player:ComboPoints() >= 5 and Target:IsInRange(15) then
-            if S.DFA:AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
+            if Action.AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
                 if HR.Cast(S.DFA) then return "Cast DFA"; end 
             end
         end
