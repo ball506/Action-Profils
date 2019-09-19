@@ -75,9 +75,15 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     -- Utility
     Blind                                  = Action.Create({ Type = "Spell", ID = 2094     }),
     Kick                                   = Action.Create({ Type = "Spell", ID = 1766     }),
-    Sprint                               = Action.Create({ Type = "Spell", ID = 2983       }),
-    CheapShot                               = Action.Create({ Type = "Spell", ID = 1833       }),
-    -- Poisons
+    Sprint                                 = Action.Create({ Type = "Spell", ID = 2983       }),
+    CheapShot                              = Action.Create({ Type = "Spell", ID = 1833       }),
+	-- PvP
+	Sap                                    = Action.Create({ Type = "Spell", ID = 6770       }),
+	Shiv                                   = Action.Create({ Type = "Spell", ID = 248744       }),
+	SmokeBomb                              = Action.Create({ Type = "Spell", ID = 212182       }),
+	DFA                                    = Action.Create({ Type = "Spell", ID = 269513       }),
+	Neuro                                  = Action.Create({ Type = "Spell", ID = 206328       }),    
+	-- Poisons
     CripplingPoison                        = Action.Create({ Type = "Spell", ID = 3408     }),
     DeadlyPoison                           = Action.Create({ Type = "Spell", ID = 2823     }),
     WoundPoison                            = Action.Create({ Type = "Spell", ID = 8679     }),
@@ -352,212 +358,6 @@ local Interrupts = {
       , "UNIT_DESTROYED"
     );
 
-  --- Finality Nightblade Handler
-    function HL.Finality (Unit)
-      BleedGUID = Unit:GUID();
-      if BleedGUID then
-        if HL.BleedTable.Subtlety.Nightblade[BleedGUID] then
-          return HL.BleedTable.Subtlety.Nightblade[BleedGUID];
-        end
-      end
-      return false;
-    end
-    -- Nightblade OnApply/OnRefresh Listener
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        DestGUID, _, _, _, SpellID = select(8, ...);
-
-        if SpellID == 195452 then
-          HL.BleedTable.Subtlety.Nightblade[DestGUID] = true;
-        end
-      end
-      , "SPELL_AURA_APPLIED"
-      , "SPELL_AURA_REFRESH"
-    );
-    -- Nightblade OnRemove Listener
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        DestGUID, _, _, _, SpellID = select(8, ...);
-
-        if SpellID == 195452 then
-          if HL.BleedTable.Subtlety.Nightblade[DestGUID] then
-            HL.BleedTable.Subtlety.Nightblade[DestGUID] = nil;
-          end
-        end
-      end
-      , "SPELL_AURA_REMOVED"
-    );
-    -- Nightblade OnUnitDeath Listener
-    HL:RegisterForCombatEvent(
-      function (...)
-        DestGUID = select(8, ...);
-
-        if HL.BleedTable.Subtlety.Nightblade[DestGUID] then
-          HL.BleedTable.Subtlety.Nightblade[DestGUID] = nil;
-        end
-      end
-      , "UNIT_DIED"
-      , "UNIT_DESTROYED"
-    );
-  --- Relentless Strikes Energy Prediction
-    -- Variables
-    Player.RSOffset = {
-      Offset = 0;
-      FinishDestGUID = nil;
-      FinishCount = 0;
-    };
-    -- Return RS adjusted Energy Predicted
-    function Player:EnergyPredictedWithRS()
-        return Player:EnergyPredicted() + Player.RSOffset.Offset;
-    end
-    -- Return RS adjusted Energy Deficit Predicted
-    function Player:EnergyDeficitPredictedWithRS()
-        return Player:EnergyDeficitPredicted() - Player.RSOffset.Offset;
-    end
-    -- Zero RSOffset after receiving relentless strikes energize
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        local rsspellid = select(12, ...)
-        if (rsspellid == 98440) then
-          Player.RSOffset.Offset = 0;
-        end
-      end
-      , "SPELL_ENERGIZE"
-    );
-    -- Running Combo Point tally to access after casting finisher
-    HL:RegisterForEvent(
-      function (...)
-        local type = select(3, ...)
-        if (type == "COMBO_POINTS") and (Player:ComboPoints() > 0) then
-          Player.RSOffset.Offsetvote = Player:ComboPoints()*6.0;
-        end
-      end
-      , "UNIT_POWER_UPDATE"
-    );
-    -- Set RSOffset when casting a finisher
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        local spellID = select(12, ...)
-        -- Evis & Nightblade & DfA spellIDs
-        if (spellID == 196819 or spellID == 195452 or spellID == 152150) then
-          Player.RSOffset.FinishDestGUID = select(8, ...);
-          Player.RSOffset.FinishCount = Player.RSOffset.FinishCount + 1;
-          Player.RSOffset.Offset = Player.RSOffset.Offsetvote;
-          -- Backup clear
-          C_Timer.After(2, function ()
-              if Player.RSOffset.FinishCount == 1 then
-                Player.RSOffset.Offset = 0;
-              end
-              Player.RSOffset.FinishCount = Player.RSOffset.FinishCount - 1;
-            end
-          );
-        end
-      end
-      , "SPELL_CAST_SUCCESS"
-    );
-    -- Prevent RSOffset getting stuck when target dies mid-finisher (mostly DfA)
-    HL:RegisterForCombatEvent(
-      function (...)
-        local DestGUID = select(8, ...);
-        if Player.RSOffset.FinishDestGUID == DestGUID then
-          Player.RSOffset.Offset = 0;
-        end
-      end
-      , "UNIT_DIED"
-      , "UNIT_DESTROYED"
-    );
-  --- Shadow Techniques Tracking
-    -- Variables
-    Player.ShadowTechniques = {
-      Counter = 0;
-      LastMH = 0;
-      LastOH = 0;
-    };
-    -- Return Time to x-th auto attack since last proc
-    function Player:TimeToSht(hit)
-      local mhSpeed, ohSpeed = UnitAttackSpeed("player");
-      local aaTable = {};
-      for i=1,5 do
-        table.insert(aaTable, Player.ShadowTechniques.LastMH + i * mhSpeed);
-        table.insert(aaTable, Player.ShadowTechniques.LastOH + i * ohSpeed);
-      end
-      table.sort(aaTable);
-      local hitInTable = min(5,max(1, hit - Player.ShadowTechniques.Counter));
-      return aaTable[hitInTable] - GetTime()
-    end
-    -- Reset on entering world
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        Player.ShadowTechniques.Counter = 0;
-        Player.ShadowTechniques.LastMH = GetTime();
-        Player.ShadowTechniques.LastOH = GetTime();
-      end
-      , "PLAYER_ENTERING_WORLD"
-    );
-    -- Reset counter on energize
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        SpellID = select(12, ...);
-        if SpellID == 196911 then
-          Player.ShadowTechniques.Counter = 0;
-        end
-      end
-      , "SPELL_ENERGIZE"
-    );
-    -- Increment counter on cast succcess for Shadow Blades
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        SpellID = select(12, ...);
-        -- Shadow Blade: MH 121473, OH 121474
-        if SpellID == 121473 then
-          Player.ShadowTechniques.LastMH = GetTime();
-          Player.ShadowTechniques.Counter = Player.ShadowTechniques.Counter + 1;
-        elseif SpellID == 121474 then
-          Player.ShadowTechniques.LastOH = GetTime();
-          Player.ShadowTechniques.Counter = Player.ShadowTechniques.Counter + 1;
-        end
-      end
-      , "SPELL_CAST_SUCCESS"
-    );
-    -- Increment counter on successful swings
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        Player.ShadowTechniques.Counter = Player.ShadowTechniques.Counter + 1;
-        local IsOffHand = select(24, ...);
-        if IsOffHand then
-          Player.ShadowTechniques.LastOH = GetTime();
-        else
-          Player.ShadowTechniques.LastMH = GetTime();
-        end
-      end
-      , "SWING_DAMAGE"
-    );
-    -- Remember timers on Shadow Blade fails
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        SpellID = select(12, ...);
-        -- Shadow Blade: MH 121473, OH 121474
-        if SpellID == 121473 then
-          Player.ShadowTechniques.LastMH = GetTime();
-        elseif SpellID == 121474 then
-          Player.ShadowTechniques.LastOH = GetTime();
-        end
-      end
-      , "SPELL_CAST_FAILED"
-    );
-    -- Remember timers on swing misses
-    HL:RegisterForSelfCombatEvent(
-      function (...)
-        local IsOffHand = select(16, ...);
-        if IsOffHand then
-          Player.ShadowTechniques.LastOH = GetTime();
-        else
-          Player.ShadowTechniques.LastMH = GetTime();
-        end
-      end
-      , "SWING_MISSED"
-    );
-
 ---------------------------------------------------
 
 -- Master Assassin Remains Check
@@ -625,6 +425,8 @@ local function DetermineEssenceRanks()
     S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
+--DetermineEssenceRanks = Action.MakeFunctionCachedStatic(DetermineEssenceRanks)
+DetermineEssenceRanks = Action.MakeFunctionCachedDynamic(DetermineEssenceRanks)
 
 -- HeroLib EnemiesCount handler
 local EnemyRanges = {"Melee", 6, 9}
@@ -793,6 +595,7 @@ local function SuggestCycleDoT(DoTSpell, DoTEvaluation, DoTMinTTD)
         end
     end
 end
+SuggestCycleDoT = Action.MakeFunctionCachedDynamic(SuggestCycleDoT)
 
 -- Target If handler
 -- Mode is "min", "max", or "first"
@@ -843,6 +646,7 @@ local function CheckTargetIfTarget(Mode, ModeEvaluation, IfEvaluation)
     end
     return nil
 end
+CheckTargetIfTarget = Action.MakeFunctionCachedDynamic(CheckTargetIfTarget)
 
 -- Master Assassin Remains Check
 local MasterAssassinBuff, NominalDuration = Spell(256735), 3;
@@ -967,6 +771,8 @@ local function Essences ()
     end
     return false;
 end
+Essences = Action.MakeFunctionCachedStatic(Essences)
+
 -- # Cooldowns
 local function CDs ()
     if Target:IsInRange("Melee") then
@@ -1099,6 +905,8 @@ local function CDs ()
     end
     return false;
 end
+CDs = Action.MakeFunctionCachedStatic(CDs)
+
 -- # Stealthed
 local function Stealthed ()
     -- actions.stealthed=rupture,if=combo_points>=4&(talent.nightstalker.enabled|talent.subterfuge.enabled&(talent.exsanguinate.enabled&cooldown.exsanguinate.remains<=2|!ticking)&variable.single_target)&target.time_to_die-remains>6
@@ -1107,6 +915,10 @@ local function Stealthed ()
         and (Target:FilteredTimeToDie(">", 6, -Target:DebuffRemainsP(S.Rupture)) or Target:TimeToDieIsNotValid()) then
         if HR.Cast(S.Rupture) then return "Cast Rupture (Exsanguinate)"; end
     end
+	-- actions.stealthed+=/envenom,if=combo_points>=cp_max_spend
+	if S.Envenom:IsReady("Melee") and ComboPoints >= CPMaxSpend() then
+		if HR.Cast(S.Envenom) then return "Cast Envenom"; end
+	end
     if S.Garrote:IsCastable("Melee") and S.Subterfuge:IsAvailable() then
         -- actions.stealthed+=/garrote,if=azerite.shrouded_suffocation.enabled&buff.subterfuge.up&buff.subterfuge.remains<1.3&!ss_buffed
         -- Not implemented because this is special for simc and we can have a shifting main target in reality where simc checks only a fix target on all normal abilities.
@@ -1164,6 +976,8 @@ local function Stealthed ()
         end
     end
 end
+Stealthed = Action.MakeFunctionCachedStatic(Stealthed)
+
 -- # Damage over time abilities
 local function Dot ()
     local SkipCycleGarrote, SkipCycleRupture, SkipRupture
@@ -1234,14 +1048,48 @@ local function Dot ()
     end
     return false;
 end
+Dot = Action.MakeFunctionCachedStatic(Dot)
+
 -- # Direct damage abilities
 local function Direct ()
     -- actions.direct=envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
-    if S.Envenom:IsCastable("Melee") and ComboPoints >= 4 + (S.DeeperStratagem:IsAvailable() and 1 or 0)
-        and (Target:DebuffP(S.Vendetta) or Target:DebuffP(S.ToxicBladeDebuff) or Player:EnergyDeficitPredicted() <= 25 + Energy_Regen_Combined or Cache.EnemiesCount[10] >= 2)
-        and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2 or not HR.CDsON()) then
+    --if S.Envenom:IsCastable("Melee") and ComboPoints >= 4 + (S.DeeperStratagem:IsAvailable() and 1 or 0)
+    --    and (Target:DebuffP(S.Vendetta) or Target:DebuffP(S.ToxicBladeDebuff) or Player:EnergyDeficitPredicted() <= 25 + Energy_Regen_Combined or Cache.EnemiesCount[10] >= 2)
+    --    and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2) then
+    --    if HR.Cast(S.Envenom) then return "Cast Envenom"; end
+    --end
+    -- actions.direct=envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|spell_targets.fan_of_knives>=2)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
+    if S.Envenom:IsReady("Melee") and Player:ComboPoints() >= 4 + num(S.DeeperStratagem:IsAvailable()) and (Target:DebuffP(S.Vendetta) or Target:DebuffP(S.ToxicBladeDebuff) or Player:EnergyDeficit() <= 25 + Energy_Regen_Combined or Cache.EnemiesCount[10] >= 2) and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2 or not RubimRH.CDsON()) then
         if HR.Cast(S.Envenom) then return "Cast Envenom"; end
     end
+
+    if S.Envenom:IsReady("Melee") and ComboPoints >= 4 + (S.DeeperStratagem:IsAvailable() and 1 or 0)
+            and (Target:DebuffP(S.Vendetta) or Target:DebuffP(S.ToxicBladeDebuff) or Player:EnergyDeficitPredicted() <= 25 + Energy_Regen_Combined or Cache.EnemiesCount[10] >= 2)
+            and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2) then
+        if HR.Cast(S.Envenom) then return "Cast Envenom"; end
+    end
+
+	if S.Neuro:IsAvailable() and S.Neuro:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Unit("target"):InCC() and not Player:IsStealthed() and Player:AffectingCombat() then
+    	if not Target:IsImmune() and  Target:IsInRange("Melee")  and (Player:HealthPercentage() <= 75 and Target:IsTargeting(Player) or Target:IsBursting()) then
+		       if HR.Cast(S.Neuro) then return "Cast Neuro"; end 
+        end
+	end
+		
+	if S.Shiv:IsAvailable() and S.Shiv:CooldownUp() and Target:IsAPlayer() and Target:Exists() and Target:IsInRange("Melee") and Target:AffectingCombat() then
+        if S.Shiv:AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
+            if not Target:IsImmune() and S.Shiv:IsReady() and not Unit("target"):InCC() then
+                if HR.Cast(S.Shiv) then return "Cast Shiv"; end 
+            end
+        end
+    end
+
+	if S.DFA:IsAvailable() and S.DFA:CooldownUp() and Target:IsAPlayer() and not Target:IsDeadOrGhost() and Player:CanAttack(Target) and Target:Exists() then
+		if Player:ComboPoints() >= 5 and Target:IsInRange(15) then
+            if S.DFA:AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
+                if HR.Cast(S.DFA) then return "Cast DFA"; end 
+            end
+        end
+    end	
 
     -------------------------------------------------------------------
     -------------------------------------------------------------------
@@ -1294,6 +1142,7 @@ local function Direct ()
     end
     return false;
 end
+Direct = Action.MakeFunctionCachedStatic(Direct)
 
 --- ======= ACTION LISTS =======
 local function APL() 
@@ -1313,10 +1162,9 @@ local function APL()
     ComboPoints = Player:ComboPoints();
     ComboPointsDeficit = Player:ComboPointsMax() - ComboPoints;
     RuptureThreshold = (4 + ComboPoints * 4) * 0.3;
-    RuptureDMGThreshold = S.Envenom:Damage()*Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
-    GarroteDMGThreshold = S.Mutilate:Damage()*Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
+    RuptureDMGThreshold = S.Envenom:Damage() * Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
+    GarroteDMGThreshold = S.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
     PriorityRotation = UsePriorityRotation();
-    PoisonedBleeds()
     -- Defensives
     -- Crimson Vial
     ShouldReturn = CrimsonVial(S.CrimsonVial);
@@ -1450,9 +1298,9 @@ local function APL()
             if HR.Cast(S.PoisonedKnife) then return "Cast Poisoned Knife"; end
         end
         -- Trick to take in consideration the Recovery Setting
-        if S.Mutilate:IsCastable("Melee") then
-            if HR.Cast(S.Channeling) then return "Normal Pooling"; end
-        end
+        --if S.Mutilate:IsCastable("Melee") then
+        --    if HR.Cast(S.Channeling) then return "Normal Pooling"; end
+        --end
     end    
 end
 -- Finished
