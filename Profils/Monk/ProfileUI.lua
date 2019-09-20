@@ -1,16 +1,24 @@
-ACTION_CONST_MONK_BM = 268
-ACTION_CONST_MONK_MW = 270
-ACTION_CONST_MONK_WW = 269
+local TMW                                             = TMW 
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local A = Action
-A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
-A.Data.ProfileUI = {    
-    DateTime = "v4 (28.07.2019)",
+local A                                             = Action
+local UnitCooldown                                    = A.UnitCooldown
+local Unit                                            = A.Unit 
+local Player                                        = A.Player 
+local Pet                                             = A.Pet
+local LoC                                             = A.LossOfControl
+local MultiUnits                                    = A.MultiUnits
+local EnemyTeam                                        = A.EnemyTeam
+local FriendlyTeam                                    = A.FriendlyTeam
+local TeamCache                                        = A.TeamCache
+local InstanceInfo                                    = A.InstanceInfo
+
+local select                                        = select
+
+A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
+A.Data.ProfileUI                                     = {    
+    DateTime = "v6 (17.09.2019)",
     [2] = {        
-        [ACTION_CONST_MONK_BM] = {             
+        [ACTION_CONST_MONK_BREWMASTER] = {             
             { -- [1]                            
                 {
                     E = "Checkbox", 
@@ -208,7 +216,7 @@ A.Data.ProfileUI = {
                 },
             }, 
         },
-        [ACTION_CONST_MONK_MW] = { 
+        [ACTION_CONST_MONK_MISTWEAVER] = { 
             LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },
             { -- [1]                             
                 {
@@ -388,7 +396,7 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "If 'Soothing Mist' casting > 3 and unit health percent\nlower than value specified for slider 'Soothing Mist'", 
-                        ruRU = "Если 'Успокаивающий туман' произновится > 3 и процент\nздоровья юнита меньше чем значение установленного для ползунка 'Успокаивающий туман'",
+                        ruRU = "Если 'Успокаивающий туман' произносится > 3 и процент\nздоровья юнита меньше чем значение установленного для ползунка 'Успокаивающий туман'",
                     }, 
                     M = {},                
                 },
@@ -416,7 +424,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [10]    
+            { -- [10]
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
@@ -432,6 +440,29 @@ A.Data.ProfileUI = {
                         ruRU = "Значение Процента Здоровья на котором начинать произносить 'Успокаивающий туман'", 
                     },
                     M = {},
+                },            
+            },
+            { -- [11]    
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@primary change", value = 1 },                    
+                        { text = "At max health ", value = 2 },
+                    },
+                    DB = "SoothingMistStopCast",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    MULT = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(115175) .. " " .. A.GetLocalization().TAB[1].STOPCAST .. " Mode",
+                    }, 
+                    TT = { 
+                        enUS = "Conditions works only if in first tab was enabled 'Stop Cast'", 
+                        ruRU = "Условия работают при наличии галочки в первой вкладке про 'Стоп Каст'", 
+                    },                    
+                    M = {},                    
                 },
                 {
                     E = "Dropdown",                                                         
@@ -454,7 +485,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [11]    
+            { -- [12]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
@@ -481,7 +512,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [12]    
+            { -- [13]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
@@ -508,7 +539,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [13]    
+            { -- [14]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
@@ -535,7 +566,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [14]    
+            { -- [15]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
@@ -562,7 +593,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [15]    
+            { -- [16]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
@@ -589,7 +620,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },            
-            { -- [16]
+            { -- [17]
                 {
                     E = "Header",
                     L = {
@@ -597,7 +628,7 @@ A.Data.ProfileUI = {
                     },
                 },
             }, 
-            { -- [17]
+            { -- [18]
                 {
                     E = "Checkbox", 
                     DB = "MouseButtonsCheck",
@@ -632,7 +663,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [18]
+            { -- [19]
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -678,7 +709,7 @@ A.Data.ProfileUI = {
                 },
             },     
         },
-        [ACTION_CONST_MONK_WW] = {
+        [ACTION_CONST_MONK_WINDWALKER] = {
             { -- [1]                            
                 {
                     E = "Checkbox", 
@@ -916,19 +947,21 @@ A.Data.ProfileUI = {
         },
     },
     [7] = {
-        [ACTION_CONST_MONK_BM] = { 
-            ["stun"] = { Enabled = true, Key = "LegSweep", LUA = [[
-                return     Unit("player"):HasBuffs(Action[PlayerSpec].ZenMeditation.ID, true) == 0 and 
+        [ACTION_CONST_MONK_BREWMASTER] = { 
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_BREWMASTER]
+                return     Unit("player"):HasBuffs(A.ZenMeditation.ID, true) == 0 and 
+                        A.LegSweep:IsReadyM(thisunit, true) and 
                         (
                             ( 
                                 not Unit(thisunit):IsEnemy() and 
                                 (
                                     (
-                                        not InPvP() and 
-                                        AoE(1, 5) 
+                                        not IsInPvP and 
+                                        MultiUnits:GetByRange(5, 1) >= 1    
                                     ) or 
                                     (
-                                        InPvP() and 
+                                        IsInPvP and 
                                         EnemyTeam():PlayersInRange(1, 5)
                                     ) 
                                 )
@@ -937,125 +970,122 @@ A.Data.ProfileUI = {
                                 Unit(thisunit):IsEnemy() and 
                                 Unit(thisunit):GetRange() <= 5 and 
                                 Unit(thisunit):IsControlAble("stun", 0) and
-                                Action[PlayerSpec].LegSweep:AbsentImun(thisunit, {"StunImun", "TotalImun", "DamagePhysImun", "CCTotalImun"}, true) 
+                                Unit(thisunit):HasDeBuffs("Stuned") <= GetCurrentGCD() and 
+                                A.LegSweep:AbsentImun(thisunit, {"StunImun", "TotalImun", "DamagePhysImun", "CCTotalImun"}, true) 
                             )                
                         ) 
             ]] },
-            ["kick"] = { Enabled = true, Key = "SpearHandStrike", LUA = [[
-                return     Unit("player"):HasBuffs(Action[PlayerSpec].ZenMeditation.ID, true) == 0 and
-                        SpellInRange(thisunit, Action[PlayerSpec].SpearHandStrike.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpearHandStrike:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) 
+            ["kick"] = { Enabled = true, Key = "SpearHandStrike", LUAVER = 6, LUA = [[
+                local A = Action[ACTION_CONST_MONK_BREWMASTER]
+                return     Unit("player"):HasBuffs(A.ZenMeditation.ID, true) == 0 and
+                        A.SpearHandStrike:IsReadyM(thisunit) and 
+                        A.SpearHandStrike:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0  
             ]] },
-            ["freedom"] = { Enabled = true, Key = "TigersLust", LUA = [[
-                return     Unit("player"):HasBuffs(Action[PlayerSpec].ZenMeditation.ID, true) == 0 and 
-                        TalentLearn(Action[PlayerSpec].TigersLust.ID) and 
-                        SpellInRange(thisunit, Action[PlayerSpec].TigersLust.ID) and 
-                        Action[PlayerSpec].TigersLust:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_BREWMASTER]
+                return     Unit("player"):HasBuffs(A.ZenMeditation.ID, true) == 0 and 
+                        A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0    
             ]] },
-            ["dispel"] = { Enabled = true, Key = "Detox", LUA = [[
-                return     Unit("player"):HasBuffs(Action[PlayerSpec].ZenMeditation.ID, true) == 0 and 
-                        SpellInRange(thisunit, Action[PlayerSpec].Detox.ID) and 
-                        Action.AuraIsValid(thisunit, "UseDispel", "Dispel") and                         
-                        Action[PlayerSpec].Detox:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
-            ]] },
-        },
-        [ACTION_CONST_MONK_MW] = {    
-            ["stun"] = { Enabled = true, Key = "LegSweep", LUA = [[
-                return     (
-                            not InPvP() and 
-                            AoE(1, 5 + (TalentLearn(Action[PlayerSpec].TigerTailSweep.ID) and 2 or 0)) 
-                        ) or 
-                        (
-                            InPvP() and 
-                            EnemyTeam():PlayersInRange(1, 5 + (TalentLearn(Action[PlayerSpec].TigerTailSweep.ID) and 2 or 0))
-                        )                                                     
-            ]] },
-            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUA = [[
-                return     GrappleWeaponIsReady(thisunit, true)
-            ]] },
-            ["freedom"] = { Enabled = true, Key = "TigersLust", LUA = [[
-                return     TalentLearn(Action[PlayerSpec].TigersLust.ID) and 
-                        SpellInRange(thisunit, Action[PlayerSpec].TigersLust.ID) and 
-                        Action[PlayerSpec].TigersLust:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
-            ]] },
-            ["dispel"] = { Enabled = true, Key = "Detox", LUA = [[
-                return     SpellInRange(thisunit, Action[PlayerSpec].Detox.ID) and 
-                        Action.AuraIsValid(thisunit, "UseDispel", "Dispel") and                         
-                        Action[PlayerSpec].Detox:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_BREWMASTER]
+                return     Unit("player"):HasBuffs(A.ZenMeditation.ID, true) == 0 and 
+                        A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0            
             ]] },
         },
-        [ACTION_CONST_MONK_WW] = {
-            ["stun"] = { Enabled = true, Key = "LegSweep", LUA = [[
-                return     (
-                            not InPvP() and 
-                            AoE(1, 5 + (TalentLearn(Action[PlayerSpec].TigerTailSweep.ID) and 2 or 0)) 
+        [ACTION_CONST_MONK_MISTWEAVER] = {    
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.LegSweep:IsReadyM(thisunit, true) and 
+                        (
+                            not IsInPvP and 
+                            MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1                            
                         ) or 
                         (
-                            InPvP() and 
-                            EnemyTeam():PlayersInRange(1, 5 + (TalentLearn(Action[PlayerSpec].TigerTailSweep.ID) and 2 or 0))
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
                         )                                                     
             ]] },
-            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUA = [[
+            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUAVER = 5, LUA = [[
                 return     GrappleWeaponIsReady(thisunit, true)
             ]] },
-            ["kick"] = { Enabled = true, Key = "SpearHandStrike", LUA = [[
-                return     SpellInRange(thisunit, Action[PlayerSpec].SpearHandStrike.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpearHandStrike:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) 
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },
-            ["freedom"] = { Enabled = true, Key = "TigersLust", LUA = [[
-                return     TalentLearn(Action[PlayerSpec].TigersLust.ID) and 
-                        SpellInRange(thisunit, Action[PlayerSpec].TigersLust.ID) and 
-                        Action[PlayerSpec].TigersLust:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },
-            ["dispel"] = { Enabled = true, Key = "Detox", LUA = [[
-                return     SpellInRange(thisunit, Action[PlayerSpec].Detox.ID) and 
-                        Action.AuraIsValid(thisunit, "UseDispel", "Dispel") and                         
-                        Action[PlayerSpec].Detox:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0
+        },
+        [ACTION_CONST_MONK_WINDWALKER] = {
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_WINDWALKER]
+                return     A.LegSweep:IsReadyM(thisunit, true) and 
+                        (
+                            not IsInPvP and 
+                            MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1                            
+                        ) or 
+                        (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
+                        )                                                             
+            ]] },
+            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUAVER = 5, LUA = [[
+                return     GrappleWeaponIsReady(thisunit, true)
+            ]] },
+            ["kick"] = { Enabled = true, Key = "SpearHandStrike", LUAVER = 6, LUA = [[
+                local A = Action[ACTION_CONST_MONK_WINDWALKER]
+                return     A.SpearHandStrike:IsReadyM(thisunit) and                         
+                        A.SpearHandStrike:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 
+            ]] },
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_WINDWALKER]
+                return     A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0            
+            ]] },
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_WINDWALKER]
+                return     A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },    
-            ["heal"] = { Enabled = true, Key = "ReverseHarm", LUA = [[
-                return     PvPTalentLearn(Action[PlayerSpec].ReverseHarm.ID) and
-                        SpellInRange(thisunit, Action[PlayerSpec].ReverseHarm.ID) and                                                     
-                        Action[PlayerSpec].ReverseHarm:AbsentImun(thisunit) and 
-                        Action.LossOfControlIsMissed("SILENCE") and 
-                        LossOfControlGet("SCHOOL_INTERRUPT", "NATURE") == 0 and 
-                        UNITHP(thisunit) <= 92
+            ["heal"] = { Enabled = true, Key = "ReverseHarm", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_WINDWALKER]
+                return     A.ReverseHarm:IsReadyM(thisunit) and                                                     
+                        A.ReverseHarm:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0 and 
+                        Unit(thisunit):HealthPercent() <= 92
             ]] },
         },
     },
 }
 
--- Shared 
-Env.PlayerMovementStarted = 0
-function Env.PlayerMoving()
-    if Env.UNITCurrentSpeed("player") > 0 then 
-        if Env.PlayerMovementStarted == 0 then 
-            Env.PlayerMovementStarted = TMW.time 
-        end 
-    else
-        Env.PlayerMovementStarted = 0
-    end 
-end 
-Env.PlayerMoving = A.MakeFunctionCachedStatic(Env.PlayerMoving)
-
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
-function Env.GrappleWeaponIsReady(unit, isMsg)
-    if A[Env.PlayerSpec].GrappleWeapon then 
+function A.GrappleWeaponIsReady(unit, isMsg, skipShouldStop)
+    if A[A.PlayerSpec].GrappleWeapon then 
         local unitID = A.GetToggle(2, "GrappleWeaponPvPunits")
         return     (
             (unit == "arena1" and unitID[1]) or 
@@ -1063,49 +1093,48 @@ function Env.GrappleWeaponIsReady(unit, isMsg)
             (unit == "arena3" and unitID[3]) or
             (not unit:match("arena") and unitID[4]) 
         ) and 
-        Env.InPvP() and
-        Env.PvPTalentLearn(A[Env.PlayerSpec].GrappleWeapon.ID) and 
-        Env.Unit(unit):IsEnemy() and  
+        A.IsInPvP and
+        Unit(unit):IsEnemy() and  
         (
             (
                 not isMsg and 
                 A.GetToggle(2, "GrappleWeaponPvP") ~= "OFF" and 
-                A[Env.PlayerSpec].GrappleWeapon:IsReady(unit) and 
-                Env.Unit(unit):IsMelee() and 
+                A[A.PlayerSpec].GrappleWeapon:IsReady(unit, nil, nil, skipShouldStop) and 
+                Unit(unit):IsMelee() and 
                 (
                     A.GetToggle(2, "GrappleWeaponPvP") == "ON COOLDOWN" or 
-                    Env.Unit(unit):HasBuffs("DamageBuffs") > 3 
+                    Unit(unit):HasBuffs("DamageBuffs") > 3 
                 )
             ) or 
             (
                 isMsg and 
-                A[Env.PlayerSpec].GrappleWeapon:IsReadyP(unit)                     
+                A[A.PlayerSpec].GrappleWeapon:IsReadyM(unit)                     
             )
         ) and 
-        UnitIsPlayer(unit) and                     
-        A[Env.PlayerSpec].GrappleWeapon:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
-        Env.Unit(unit):IsControlAble("disarm", 0) and 
-        Env.Unit(unit):HasDeBuffs("Disarmed") == 0
+        Unit(unit):IsPlayer() and                     
+        A[A.PlayerSpec].GrappleWeapon:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
+        Unit(unit):IsControlAble("disarm", 0) and 
+        Unit(unit):HasDeBuffs("Disarmed") == 0
     end 
 end 
 
-function Env.Main_CastBars(unit, list)
-    if not A.IsInitialized or Env.IamHealer or not Env.InPvP() then 
+function A.Main_CastBars(unit, list)
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
     
-    if A[Env.PlayerSpec] and A[Env.PlayerSpec].SpearHandStrike and A[Env.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+    if A[A.PlayerSpec] and A[A.PlayerSpec].SpearHandStrike and A[A.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[A.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
         return true         
     end 
 end 
 
-function Env.Second_CastBars(unit)
-    if not A.IsInitialized or not Env.InPvP() then 
+function A.Second_CastBars(unit)
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp")  then 
         return false 
     end 
     
     local Toggle = A.GetToggle(2, "ParalysisPvP")    
-    if Toggle and Toggle ~= "OFF" and A[Env.PlayerSpec] and A[Env.PlayerSpec].Paralysis and A[Env.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Env.Unit(unit):IsControlAble("incapacitate", 0) then 
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Paralysis and A[A.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else

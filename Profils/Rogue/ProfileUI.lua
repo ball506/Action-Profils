@@ -859,6 +859,36 @@ A.Data.ProfileUI = {
                     },
                 },
             },
+            { -- [2] 2nd Row
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "VanishDefensive",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1856) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "SmokeBombFinishComco",
+                    DBV = false,
+                    L = { 
+                        enUS = "Use Smoke Bomb Offensively", 
+                        ruRU = "Use Smoke Bomb Offensively",  
+                        frFR = "Use Smoke Bomb Offensively", 
+                    }, 
+                    TT = { 
+                        enUS = "Allow to use Smoke Bomb when enemy is low health.", 
+                        ruRU = "Allow to use Smoke Bomb when enemy is low health.",
+                        frFR = "Allow to use Smoke Bomb when enemy is low health.",
+                    }, 
+                    M = {},
+                },  						
+            },
             { -- [5] 5th Row     
                 {
                     E = "Dropdown",                                                         

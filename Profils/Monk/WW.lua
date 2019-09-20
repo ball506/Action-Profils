@@ -1,5 +1,3 @@
-local TMW                                     = TMW 
-
 local Action                                 = Action
 local TeamCache                                = Action.TeamCache
 local EnemyTeam                                = Action.EnemyTeam
@@ -96,11 +94,21 @@ Action[ACTION_CONST_MONK_WINDWALKER] = {
     GloryoftheDawn                            = Action.Create({ Type = "Spell", ID = 288634, Hidden = true }), -- Simcraft Azerite
     SwiftRoundhouse                            = Action.Create({ Type = "Spell", ID = 277669, Hidden = true }), -- Simcraft Azerite
     SwiftRoundhouseBuff                        = Action.Create({ Type = "Spell", ID = 278710, Hidden = true }), -- Simcraft Azerite
-    
 }
 
 Action:CreateEssencesFor(ACTION_CONST_MONK_WINDWALKER)
 local A = setmetatable(Action[ACTION_CONST_MONK_WINDWALKER], { __index = Action })
+
+local Temp                                     = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                        = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+    DisablePhys                                = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                                = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
 
 local IsIndoors, UnitIsUnit = 
 IsIndoors, UnitIsUnit
@@ -115,7 +123,7 @@ local function AntiFakeStun(unit)
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
     Unit(unit):IsControlAble("stun", 0) and 
-    A.LegSweepGreen:AbsentImun(unit, {"StunImun", "TotalImun", "DamagePhysImun", "CCTotalImun"}, true)          
+    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
     if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
@@ -148,11 +156,11 @@ A[2] = function(icon)
     if unit then         
         local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
         if castLeft > 0 then             
-            if not notKickAble and A.SpearHandStrikeGreen:IsReady(unit, nil, nil, true) and A.SpearHandStrikeGreen:AbsentImun(unit, {"KickImun", "DamagePhysImun", "TotalImun"}, true) then
+            if not notKickAble and A.SpearHandStrikeGreen:IsReady(unit, nil, nil, true) and A.SpearHandStrikeGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
                 return A.SpearHandStrikeGreen:Show(icon)                                                  
             end 
             
-            if A.ParalysisAntiFake:IsReady(unit, nil, nil, true) and A.ParalysisAntiFake:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then
+            if A.ParalysisAntiFake:IsReady(unit, nil, nil, true) and A.ParalysisAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then
                 return A.ParalysisAntiFake:Show(icon)                  
             end 
             
@@ -193,7 +201,7 @@ local function SelfDefensives()
             unit = "target"
         end     
         
-        if unit and A.TouchofKarma:IsReady(unit) and A.TouchofKarma:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}, true) then 
+        if unit and A.TouchofKarma:IsReady(unit) and A.TouchofKarma:AbsentImun(unit, Temp.TotalAndPhys, true) then 
             if     (
                 -- Auto 
                 (
@@ -353,11 +361,11 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.SpearHandStrike:IsReady(unit) and A.SpearHandStrike:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and Unit(unit):CanInterrupt(true) then 
+    if useKick and A.SpearHandStrike:IsReady(unit) and A.SpearHandStrike:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true) then 
         return A.SpearHandStrike
     end 
     
-    if useCC and A.Paralysis:IsReady(unit) and A.Paralysis:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+    if useCC and A.Paralysis:IsReady(unit) and A.Paralysis:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
         return A.Paralysis              
     end             
     
@@ -377,7 +385,7 @@ local function Interrupts(unit)
         return A.BullRush
     end      
     
-    if useCC and A.LegSweep:IsReady(unit, true) and Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and Unit(unit):IsCastingRemains() > A.GetCurrentGCD() + 0.1 and A.LegSweep:AbsentImun(unit, {"StunImun", "CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then
+    if useCC and A.LegSweep:IsReady(unit, true) and Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and Unit(unit):IsCastingRemains() > A.GetCurrentGCD() + 0.1 and A.LegSweep:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
         return A.LegSweep     
     end 
 end 
@@ -385,11 +393,18 @@ Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function GetAttackType()
     if A.TigereyeBrew:IsSpellLearned() and Unit("player"):HasBuffs(A.TigereyeBrew.ID, true, true) > 0 then 
-        return "DamageMagicImun"
+        return Temp.TotalAndMag
     end  
-    return "DamagePhysImun"
+    return Temp.TotalAndPhys
 end 
-GetAttackType = A.MakeFunctionCachedStatic(GetAttackType)
+--GetAttackType = A.MakeFunctionCachedStatic(GetAttackType)
+
+local function GetAttackTypeForDisable()
+    if A.TigereyeBrew:IsSpellLearned() and Unit("player"):HasBuffs(A.TigereyeBrew.ID, true, true) > 0 then 
+        return Temp.DisableMag
+    end  
+    return Temp.DisablePhys
+end 
 
 local useStormEarthAndFireFixate = false
 local function PLAYER_TARGET_CHANGED()
@@ -455,7 +470,7 @@ A[3] = function(icon, isMulti)
         -- Rskless --
         local function Rskless()
             -- whirling_dragon_punch
-            if     (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
+            if     (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -465,7 +480,7 @@ A[3] = function(icon, isMulti)
             end              
             
             -- fists_of_fury
-            if    (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, {"TotalImun", GetAttackType()}) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
+            if    (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, GetAttackType()) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -475,12 +490,12 @@ A[3] = function(icon, isMulti)
             end 
             
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=buff.storm_earth_and_fire.up|cooldown.whirling_dragon_punch.remains<4
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfRisingSunKick) then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfRisingSunKick) then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if     (isMulti or A.GetToggle(2, "AoE")) and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and not Unit(unit):IsTotem() and
+            if     (isMulti or A.GetToggle(2, "AoE")) and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and not Unit(unit):IsTotem() and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -490,7 +505,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 and not Unit(unit):IsTotem() then
+            if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 and not Unit(unit):IsTotem() then
                 local ReverseHarm = A.GetToggle(2, "ReverseHarm")
                 if (ReverseHarm >= 100 and Unit("player"):HealthPercent() <= 92) or (ReverseHarm < 100 and Unit("player"):HealthPercent() <= ReverseHarm) then
                     return A.ReverseHarm:Show(icon)
@@ -500,7 +515,7 @@ A[3] = function(icon, isMulti)
             -- fist_of_the_white_tiger,if=chi<=2
             --[[
             -- I commented this because no point of this since we already have condition for same thing above
-            if    (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, {"TotalImun", GetAttackType()}) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and Player:Chi() <= 2 and 
+            if    (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, GetAttackType()) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and Player:Chi() <= 2 and 
                 (
                     not A.IsInPvP or
                     not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -511,12 +526,12 @@ A[3] = function(icon, isMulti)
             ]]
             
             -- energizing_elixir,if=chi<=3&energy<50
-            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:Chi() <= 3 and Player:Energy() < 50 and not Unit(unit):IsTotem() then 
+            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, GetAttackType()) and Player:Chi() <= 3 and Player:Energy() < 50 and not Unit(unit):IsTotem() then 
                 return A.EnergizingElixir:Show(icon)
             end
             
             -- spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&buff.dance_of_chiji.up
-            if     (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and not Unit(unit):IsTotem() and
+            if     (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and not Unit(unit):IsTotem() and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -526,7 +541,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.blackout_kick&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm))
-            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.Utils.CastTargetIf(A.BlackoutKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfBlackoutKick) then 
+            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, GetAttackType()) and A.Utils.CastTargetIf(A.BlackoutKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfBlackoutKick) then 
                 return A.BlackoutKick:Show(icon)
             end 
             
@@ -551,7 +566,7 @@ A[3] = function(icon, isMulti)
             end     
             
             -- flying_serpent_kick,if=prev_gcd.1.blackout_kick&chi>3&buff.swift_roundhouse.stack<2,interrupt=1        
-            if  A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and             
+            if  A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, GetAttackType()) and             
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(25) 
@@ -571,17 +586,17 @@ A[3] = function(icon, isMulti)
             end 
             
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi<2
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfRisingSunKick2) then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfRisingSunKick2) then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.tiger_palm&chi.max-chi>=2
-            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.Utils.CastTargetIf(A.TigerPalm, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfTigerPalm) then
+            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, GetAttackType()) and A.Utils.CastTargetIf(A.TigerPalm, 8, "min", EvaluateTargetIfFilterMarkoftheCrane, EvaluateTargetIfTigerPalm) then
                 return A.TigerPalm:Show(icon)
             end 
             
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane) then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and A.Utils.CastTargetIf(A.RisingSunKick, 8, "min", EvaluateTargetIfFilterMarkoftheCrane) then 
                 return A.RisingSunKick:Show(icon)
             end 
         end 
@@ -589,22 +604,22 @@ A[3] = function(icon, isMulti)
         -- Serenity --
         local function Serenity()
             -- actions.serenity=rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=active_enemies<3|prev_gcd.1.spinning_crane_kick
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and (not A.GetToggle(2, "AoE") or MultiUnits:GetByRange(5, 3) < 3 or A.LastPlayerCastID == A.SpinningCraneKick.ID) then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and (not A.GetToggle(2, "AoE") or MultiUnits:GetByRange(5, 3) < 3 or A.LastPlayerCastID == A.SpinningCraneKick.ID) then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- actions.serenity+=/fists_of_fury,if=(buff.bloodlust.up&prev_gcd.1.rising_sun_kick&!azerite.swift_roundhouse.enabled)|buff.serenity.remains<1|(active_enemies>1&active_enemies<5)
-            if A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, {"TotalImun", GetAttackType()}) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and ((Unit("player"):HasBuffs("BurstHaste") > 0 and A.LastPlayerCastID == A.RisingSunKick.ID and A.SwiftRoundhouse:GetAzeriteRank() == 0) or Unit("player"):HasBuffs(A.Serenity.ID, true) < 1 or (not A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 5) < 5)) then
+            if A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, GetAttackType()) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and ((Unit("player"):HasBuffs("BurstHaste") > 0 and A.LastPlayerCastID == A.RisingSunKick.ID and A.SwiftRoundhouse:GetAzeriteRank() == 0) or Unit("player"):HasBuffs(A.Serenity.ID, true) < 1 or (not A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 5) < 5)) then
                 return A.FistsofFury:Show(icon)
             end 
             
             -- actions.serenity+=/spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&(active_enemies>=3|(active_enemies=2&prev_gcd.1.blackout_kick))
-            if A.GetToggle(2, "AoE") and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and (A.LastPlayerCastID ~= A.SpinningCraneKick.ID and (MultiUnits:GetByRange(8, 3) >= 3 or (MultiUnits:GetByRange(8, 3) >= 2 and A.LastPlayerCastID == A.BlackoutKick.ID))) then 
+            if A.GetToggle(2, "AoE") and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and (A.LastPlayerCastID ~= A.SpinningCraneKick.ID and (MultiUnits:GetByRange(8, 3) >= 3 or (MultiUnits:GetByRange(8, 3) >= 2 and A.LastPlayerCastID == A.BlackoutKick.ID))) then 
                 return A.SpinningCraneKick:Show(icon)
             end 
             
             -- actions.serenity+=/blackout_kick,target_if=min:debuff.mark_of_the_crane.remains
-            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) then 
+            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, GetAttackType()) then 
                 return A.BlackoutKick:Show(icon)
             end 
         end        
@@ -618,7 +633,7 @@ A[3] = function(icon, isMulti)
             local RippleinSpace, RushingJadeWind, ChiWave, ChiBurst
             
             -- Rushing Jade Wind
-            if     Pull > 0 and (isMulti or A.GetToggle(2, "AoE")) and A.RushingJadeWind:IsReady(unit, true, nil, true) and A.RushingJadeWind:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and 
+            if     Pull > 0 and (isMulti or A.GetToggle(2, "AoE")) and A.RushingJadeWind:IsReady(unit, true, nil, true) and A.RushingJadeWind:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and 
             (
                 not A.IsInPvP or 
                 (
@@ -720,19 +735,19 @@ A[3] = function(icon, isMulti)
             
             -- Leg Sweep
             -- Note: Stun nearest healer if in range without CC and stun DR
-            if EnemyHealerUnitID ~= "none" and not UnitIsUnit(unit, EnemyHealerUnitID) and A.LegSweep:IsReady(EnemyHealerUnitID, true) and A.LegSweep:AbsentImun(EnemyHealerUnitID, {"StunImun", "CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 50) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
+            if EnemyHealerUnitID ~= "none" and not UnitIsUnit(unit, EnemyHealerUnitID) and A.LegSweep:IsReady(EnemyHealerUnitID, true) and A.LegSweep:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 50) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
                 return A.LegSweep:Show(icon)     
             end 
             
             -- Paralysis
             -- Note: Stop running primary target
-            if not inMelee and Unit(unit):IsHealer() and A.Paralysis:IsReady(unit) and A.Paralysis:AbsentImun(EnemyHealerUnitID, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) and Unit(unit):HasBuffs("Speed") > 0 and Unit(unit):InCC() <= A.GetCurrentGCD() then
+            if not inMelee and Unit(unit):IsHealer() and A.Paralysis:IsReady(unit) and A.Paralysis:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) and Unit(unit):HasBuffs("Speed") > 0 and Unit(unit):InCC() <= A.GetCurrentGCD() then
                 return A.Paralysis:Show(icon)     
             end              
         end 
         
         -- Disable (slow)
-        if unit ~= "mouseover" and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.Disable:IsReady(unit) and A.Disable:AbsentImun(unit, {"TotalImun", GetAttackType(), "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
+        if unit ~= "mouseover" and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.Disable:IsReady(unit) and A.Disable:AbsentImun(unit, GetAttackTypeForDisable(), true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
             return A.Disable:Show(icon)
         end 
         
@@ -742,7 +757,7 @@ A[3] = function(icon, isMulti)
         end
         
         -- PvP Reverse Harm (opener)        
-        if A.Zone == "arena" and Unit("player"):CombatTime() > 0 and Unit("player"):CombatTime() <= 5 and A.ReverseHarmOpener:IsReady(unit, true) and A.ReverseHarmOpener:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and MultiUnits:GetByRange(5, 1) >= 1 and not EnemyTeam("HEALER"):IsBreakAble(5) and EnemyTeam():HasInvisibleUnits() and not Unit(unit):IsTotem() and Unit("player"):HealthPercent() <= 99 then
+        if A.Zone == "arena" and Unit("player"):CombatTime() > 0 and Unit("player"):CombatTime() <= 5 and A.ReverseHarmOpener:IsReady(unit, true) and A.ReverseHarmOpener:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and MultiUnits:GetByRange(5, 1) >= 1 and not EnemyTeam("HEALER"):IsBreakAble(5) and EnemyTeam():HasInvisibleUnits() and not Unit(unit):IsTotem() and Unit("player"):HealthPercent() <= 99 then
             return A.ReverseHarmOpener:Show(icon)         
         end 
         
@@ -752,7 +767,7 @@ A[3] = function(icon, isMulti)
         end 
         
         -- reverse_harm,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2))&chi.max-chi>=2
-        if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and not Unit(unit):IsTotem() and (Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Player:ChiDeficit() >= 2 then
+        if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and not Unit(unit):IsTotem() and (Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Player:ChiDeficit() >= 2 then
             local ReverseHarm = A.GetToggle(2, "ReverseHarm")
             if (ReverseHarm >= 100 and Unit("player"):HealthPercent() <= 92) or (ReverseHarm < 100 and Unit("player"):HealthPercent() <= ReverseHarm) then
                 return A.ReverseHarm:Show(icon)
@@ -760,7 +775,7 @@ A[3] = function(icon, isMulti)
         end         
         
         -- Bursting #1
-        if unit ~= "mouseover" and A.BurstIsON(unit) and inMelee and A.AbsentImun(nil, unit, {"TotalImun", GetAttackType()}) then 
+        if unit ~= "mouseover" and A.BurstIsON(unit) and inMelee and A.AbsentImun(nil, unit, GetAttackType()) then 
             -- potion,if=buff.serenity.up|buff.storm_earth_and_fire.up|(!talent.serenity.enabled&trinket.proc.agility.react)|buff.bloodlust.react|target.time_to_die<=60
             if A.PotionofUnbridledFury:IsReady(unit) and (Unit("player"):HasBuffs({A.Serenity.ID, A.StormEarthAndFire.ID}, true) > 0 or Unit("player"):HasBuffs("BurstHaste") > 0 or Unit(unit):TimeToDie() <= 60) then 
                 return A.PotionofUnbridledFury:Show(icon)
@@ -773,7 +788,7 @@ A[3] = function(icon, isMulti)
         end 
         
         -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2)|(energy.time_to_max<4&cooldown.fists_of_fury.remains<1.5))&chi.max-chi>=2&!prev_gcd.1.tiger_palm
-        if unit ~= "mouseover" and A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, {"TotalImun", GetAttackType()}) and ((Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Player:ChiDeficit() >= 2 and A.LastPlayerCastID ~= A.TigerPalm.ID) then
+        if unit ~= "mouseover" and A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, GetAttackType()) and ((Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Player:ChiDeficit() >= 2 and A.LastPlayerCastID ~= A.TigerPalm.ID) then
             return A.TigerPalm:Show(icon)
         end 
         
@@ -782,11 +797,11 @@ A[3] = function(icon, isMulti)
             -- Simcraft 
             -- Cooldowns --
             -- actions.cd=invoke_xuen_the_white_tiger
-            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.InvokeXuentheWhiteTiger:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() then 
+            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.InvokeXuentheWhiteTiger:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() then 
                 return A.InvokeXuentheWhiteTiger:Show(icon)
             end 
             
-            if inMelee and A.AbsentImun(nil, unit, {"TotalImun", GetAttackType()}) then 
+            if inMelee and A.AbsentImun(nil, unit, GetAttackType()) then 
                 -- Racials 
                 if A.BloodFury:AutoRacial(unit) then 
                     return A.BloodFury:Show(icon)
@@ -806,11 +821,11 @@ A[3] = function(icon, isMulti)
                 
                 -- Trinkets
                 if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-                    
+                    return A.Trinket1:Show(icon)
                 end 
                 
                 if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-                    
+                    return A.Trinket2:Show(icon)
                 end                     
             end 
             
@@ -820,17 +835,17 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.cd+=/touch_of_death,if=target.time_to_die>9
-            if A.TouchofDeath:IsReady(unit) and A.TouchofDeath:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):TimeToDie() > 9 then 
+            if A.TouchofDeath:IsReady(unit) and A.TouchofDeath:AbsentImun(unit, GetAttackType()) and Unit(unit):TimeToDie() > 9 then 
                 return A.TouchofDeath:Show(icon)
             end 
             
             -- actions.cd+=/storm_earth_and_fire,if=cooldown.storm_earth_and_fire.charges=2|(cooldown.fists_of_fury.remains<=6&chi>=3&cooldown.rising_sun_kick.remains<=1)|target.time_to_die<=15
-            if not A.Serenity:IsSpellLearned() and inMelee and A.StormEarthAndFire:IsReady(unit, true) and A.StormEarthAndFire:AbsentImun(unit, {"TotalImun", GetAttackType()}) and IsSchoolFree() and Unit("player"):HasBuffs(A.StormEarthAndFire.ID, true) == 0 and (A.StormEarthAndFire:GetSpellCharges() >= 2 or A.FistsofFury:GetCooldown() <= 6) and Player:Chi() >= 3 and (A.RisingSunKick:GetCooldown() <= 1 or Unit(unit):TimeToDie() <= 15) then 
+            if not A.Serenity:IsSpellLearned() and inMelee and A.StormEarthAndFire:IsReady(unit, true) and A.StormEarthAndFire:AbsentImun(unit, GetAttackType()) and IsSchoolFree() and Unit("player"):HasBuffs(A.StormEarthAndFire.ID, true) == 0 and (A.StormEarthAndFire:GetSpellCharges() >= 2 or A.FistsofFury:GetCooldown() <= 6) and Player:Chi() >= 3 and (A.RisingSunKick:GetCooldown() <= 1 or Unit(unit):TimeToDie() <= 15) then 
                 return A.StormEarthAndFire:Show(icon)
             end 
             
             -- actions.cd+=/serenity,if=cooldown.rising_sun_kick.remains<=2|target.time_to_die<=12
-            if inMelee and A.Serenity:IsReady(unit, true) and A.Serenity:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit("player"):HasBuffs(A.Serenity.ID, true) == 0 and (A.RisingSunKick:GetCooldown() <= 2 or Unit(unit):TimeToDie() <= 12) then
+            if inMelee and A.Serenity:IsReady(unit, true) and A.Serenity:AbsentImun(unit, GetAttackType()) and Unit("player"):HasBuffs(A.Serenity.ID, true) == 0 and (A.RisingSunKick:GetCooldown() <= 2 or Unit(unit):TimeToDie() <= 12) then
                 return A.Serenity:Show(icon)
             end 
             
@@ -885,12 +900,12 @@ A[3] = function(icon, isMulti)
             end             
             
             -- actions.aoe=rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=(talent.whirling_dragon_punch.enabled&cooldown.whirling_dragon_punch.remains<5)&cooldown.fists_of_fury.remains>3
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.WhirlingDragonPunch:IsSpellLearned() and A.WhirlingDragonPunch:GetCooldown() < 5 and A.FistsofFury:GetCooldown() > 3 then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and A.WhirlingDragonPunch:IsSpellLearned() and A.WhirlingDragonPunch:GetCooldown() < 5 and A.FistsofFury:GetCooldown() > 3 then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- actions.aoe=whirling_dragon_punch
-            if     A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, {"TotalImun", GetAttackType()}) and 
+            if     A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, GetAttackType()) and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -900,12 +915,12 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/energizing_elixir,if=!prev_gcd.1.tiger_palm&chi<=1&energy<50
-            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.LastPlayerCastID ~= A.TigerPalm.ID and Player:Chi() <= 1 and Player:EnergyPredicted() < 50 then 
+            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, GetAttackType()) and A.LastPlayerCastID ~= A.TigerPalm.ID and Player:Chi() <= 1 and Player:EnergyPredicted() < 50 then 
                 return A.EnergizingElixir:Show(icon)
             end 
             
             -- actions.aoe+=/fists_of_fury,if=energy.time_to_max>3
-            if    A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, {"TotalImun", GetAttackType()}) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and Player:EnergyTimeToMaxPredicted() > 3 and 
+            if    A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, GetAttackType()) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and Player:EnergyTimeToMaxPredicted() > 3 and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -915,7 +930,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/rushing_jade_wind,if=buff.rushing_jade_wind.down
-            if     A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and
+            if     A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -925,7 +940,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&((chi>3|cooldown.fists_of_fury.remains>6)&(chi>=5|cooldown.fists_of_fury.remains>2)|energy.time_to_max<=3)
-            if     A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and (A.LastPlayerCastID ~= A.SpinningCraneKick.ID and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3)) and
+            if     A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and (A.LastPlayerCastID ~= A.SpinningCraneKick.ID and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3)) and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -935,7 +950,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 then
+            if A.ReverseHarm:IsReady(unit, true) and MultiUnits:GetByRange(5, 1) >= 1 and A.ReverseHarm:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 then
                 local ReverseHarm = A.GetToggle(2, "ReverseHarm")
                 if (ReverseHarm >= 100 and Unit("player"):HealthPercent() <= 92) or (ReverseHarm < 100 and Unit("player"):HealthPercent() <= ReverseHarm) then
                     return A.ReverseHarm:Show(icon)
@@ -953,12 +968,12 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/fist_of_the_white_tiger,if=chi.max-chi>=3
-            if A.FistoftheWhiteTiger:IsReady(unit) and A.FistoftheWhiteTiger:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:ChiDeficit() >= 3 then 
+            if A.FistoftheWhiteTiger:IsReady(unit) and A.FistoftheWhiteTiger:AbsentImun(unit, GetAttackType()) and Player:ChiDeficit() >= 3 then 
                 return A.FistoftheWhiteTiger:Show(icon)
             end 
             
             -- actions.aoe+=/tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi>=2&(!talent.hit_combo.enabled|!prev_gcd.1.tiger_palm)
-            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:ChiDeficit() >= 2 and (not A.HitCombo:IsSpellLearned() or A.LastPlayerCastID ~= A.TigerPalm.ID) then
+            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, GetAttackType()) and Player:ChiDeficit() >= 2 and (not A.HitCombo:IsSpellLearned() or A.LastPlayerCastID ~= A.TigerPalm.ID) then
                 return A.TigerPalm:Show(icon)
             end 
             
@@ -973,7 +988,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/flying_serpent_kick,if=buff.bok_proc.down,interrupt=1
-            if     A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit("player"):HasBuffs(A.BlackoutKickBuff.ID, true) == 0 and             
+            if     A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, GetAttackType()) and Unit("player"):HasBuffs(A.BlackoutKickBuff.ID, true) == 0 and             
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(25) 
@@ -983,7 +998,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.aoe+=/blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.blackout_kick&(buff.bok_proc.up|(talent.hit_combo.enabled&prev_gcd.1.tiger_palm&chi<4))
-            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and (A.LastPlayerCastID ~= A.BlackoutKick.ID and (Unit("player"):HasBuffs(A.BlackoutKickBuff.ID, true) > 0 or (A.HitCombo:IsSpellLearned() and A.LastPlayerCastID == A.TigerPalm.ID and Player:Chi() < 4))) then 
+            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, GetAttackType()) and (A.LastPlayerCastID ~= A.BlackoutKick.ID and (Unit("player"):HasBuffs(A.BlackoutKickBuff.ID, true) > 0 or (A.HitCombo:IsSpellLearned() and A.LastPlayerCastID == A.TigerPalm.ID and Player:Chi() < 4))) then 
                 return A.BlackoutKick:Show(icon)
             end 
         end 
@@ -991,7 +1006,7 @@ A[3] = function(icon, isMulti)
         -- Custom 
         if unit == "mouseover" and not Unit(unit):IsTotem() then 
             -- actions.mouseover+=/whirling_dragon_punch
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -1001,7 +1016,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.mouseover+=/spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&buff.dance_of_chiji.up
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -1011,7 +1026,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.mouseover+=/rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if     A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and
+            if     A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -1049,7 +1064,7 @@ A[3] = function(icon, isMulti)
             end                         
             
             -- actions.st+=/whirling_dragon_punch
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.WhirlingDragonPunch:IsReady(unit, true) and A.WhirlingDragonPunch:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and not Unit(unit):IsTotem() and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -1059,12 +1074,12 @@ A[3] = function(icon, isMulti)
             end         
             
             -- actions.st+=/rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=chi>=5
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:Chi() >= 5 then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) and Player:Chi() >= 5 then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- actions.st+=/fists_of_fury,if=energy.time_to_max>3
-            if    (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, {"TotalImun", GetAttackType()}) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and Player:EnergyTimeToMaxPredicted() > 3 and not Unit(unit):IsTotem() and 
+            if    (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.FistsofFury:IsReady(unit, true) and A.FistsofFury:AbsentImun(unit, GetAttackType()) and LoC:IsMissed("DISARM") and Unit(unit):GetRange() <= 8 and Player:EnergyTimeToMaxPredicted() > 3 and not Unit(unit):IsTotem() and 
             (
                 not A.IsInPvP or
                 not EnemyTeam("HEALER"):IsBreakAble(8)
@@ -1074,12 +1089,12 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.st+=/rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains
-            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) then 
+            if A.RisingSunKick:IsReady(unit) and A.RisingSunKick:AbsentImun(unit, GetAttackType()) then 
                 return A.RisingSunKick:Show(icon)
             end 
             
             -- actions.st+=/rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if     A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and not Unit(unit):IsTotem() and
+            if     A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.RushingJadeWind:IsReady(unit, true) and A.RushingJadeWind:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Unit(unit):GetRange() <= 8 and Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 and not Unit(unit):IsTotem() and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -1089,7 +1104,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.st+=/reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit, true) and Unit(unit):GetRange() <= 5 and A.ReverseHarm:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 and not Unit(unit):IsTotem() then
+            if A.ReverseHarm:IsReady(unit, true) and Unit(unit):GetRange() <= 5 and A.ReverseHarm:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and not EnemyTeam("HEALER"):IsBreakAble(5) and Player:ChiDeficit() >= 2 and not Unit(unit):IsTotem() then
                 local ReverseHarm = A.GetToggle(2, "ReverseHarm")
                 if (ReverseHarm >= 100 and Unit("player"):HealthPercent() <= 92) or (ReverseHarm < 100 and Unit("player"):HealthPercent() <= ReverseHarm) then
                     return A.ReverseHarm:Show(icon)
@@ -1097,17 +1112,17 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.st+=/fist_of_the_white_tiger,if=chi<=2
-            if A.FistoftheWhiteTiger:IsReady(unit) and A.FistoftheWhiteTiger:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:Chi() <= 2 then 
+            if A.FistoftheWhiteTiger:IsReady(unit) and A.FistoftheWhiteTiger:AbsentImun(unit, GetAttackType()) and Player:Chi() <= 2 then 
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             
             -- actions.st+=/energizing_elixir,if=chi<=3&energy<50
-            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Player:Chi() <= 3 and Player:EnergyPredicted() < 50 and not Unit(unit):IsTotem() then 
+            if A.EnergizingElixir:IsReady("player") and A.EnergizingElixir:AbsentImun(unit, GetAttackType()) and Player:Chi() <= 3 and Player:EnergyPredicted() < 50 and not Unit(unit):IsTotem() then 
                 return A.EnergizingElixir:Show(icon)
             end
             
             -- actions.st+=/spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&buff.dance_of_chiji.up
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and not Unit(unit):IsTotem() and
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) and A.SpinningCraneKick:IsReady(unit, true) and A.SpinningCraneKick:AbsentImun(unit, GetAttackType()) and Unit(unit):GetRange() <= 8 and A.LastPlayerCastID ~= A.SpinningCraneKick.ID and Unit("player"):HasBuffs(A.DanceOfChijiBuff.ID, true) > 0 and not Unit(unit):IsTotem() and
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(8) 
@@ -1117,7 +1132,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.st+=/blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.blackout_kick&(cooldown.rising_sun_kick.remains>3|chi>=3)&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm)|(azerite.swift_roundhouse.rank>=2&active_enemies=1))&buff.swift_roundhouse.stack<2
-            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and (A.LastPlayerCastID ~= A.BlackoutKick.ID and (A.RisingSunKick:GetCooldown() > 3 or Player:Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and A.LastPlayerCastID == A.TigerPalm.ID) or (A.SwiftRoundhouse:GetAzeriteRank() >= 2 and MultiUnits:GetByRange(5, 2) < 2)) and Unit("player"):HasBuffs(A.SwiftRoundhouseBuff.ID, true) < 2) then 
+            if A.BlackoutKick:IsReady(unit) and A.BlackoutKick:AbsentImun(unit, GetAttackType()) and (A.LastPlayerCastID ~= A.BlackoutKick.ID and (A.RisingSunKick:GetCooldown() > 3 or Player:Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and A.LastPlayerCastID == A.TigerPalm.ID) or (A.SwiftRoundhouse:GetAzeriteRank() >= 2 and MultiUnits:GetByRange(5, 2) < 2)) and Unit("player"):HasBuffs(A.SwiftRoundhouseBuff.ID, true) < 2) then 
                 return A.BlackoutKick:Show(icon)
             end 
             
@@ -1142,12 +1157,12 @@ A[3] = function(icon, isMulti)
             end 
             
             -- actions.st+=/tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.tiger_palm&chi.max-chi>=2&(buff.rushing_jade_wind.down|energy>56)
-            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, {"TotalImun", GetAttackType()}) and A.LastPlayerCastID ~= A.TigerPalm.ID and Player:ChiDeficit() >= 2 and (Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 or Player:EnergyPredicted() > 56) then
+            if A.TigerPalm:IsReady(unit) and A.TigerPalm:AbsentImun(unit, GetAttackType()) and A.LastPlayerCastID ~= A.TigerPalm.ID and Player:ChiDeficit() >= 2 and (Unit("player"):HasBuffs(A.RushingJadeWind.ID, true) == 0 or Player:EnergyPredicted() > 56) then
                 return A.TigerPalm:Show(icon)
             end 
             
             -- actions.st+=/flying_serpent_kick,if=prev_gcd.1.blackout_kick&chi>3&buff.swift_roundhouse.stack<2,interrupt=1        
-            if  A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, {"TotalImun", GetAttackType()}) and             
+            if  A.FlyingSerpentKick:IsReady(unit, true) and A.FlyingSerpentKick:AbsentImun(unit, GetAttackType()) and             
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(25) 
@@ -1188,7 +1203,7 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Misc - Range         
-        if not isMoving and not inMelee and A.CracklingJadeLightning:IsReady(unit) and A.CracklingJadeLightning:AbsentImun(unit, {"TotalImun", "DamageMagicImun"}) and Unit(unit):GetRange() > 25 then 
+        if not isMoving and not inMelee and A.CracklingJadeLightning:IsReady(unit) and A.CracklingJadeLightning:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() > 25 then 
             return A.CracklingJadeLightning:Show(icon)
         end 
         
@@ -1305,11 +1320,11 @@ A[3] = function(icon, isMulti)
     -- Trinkets (Defensive)
     if Unit("player"):CombatTime() > 0 and Unit("player"):HealthPercent() <= A.GetToggle(2, "TrinketDefensive") then 
         if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then 
-            
+            return A.Trinket1:Show(icon)
         end 
         
         if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then 
-            
+            return A.Trinket2:Show(icon)
         end             
     end 
     
@@ -1420,7 +1435,7 @@ local function ArenaRotation(icon, unit)
             return A.GrappleWeapon:Show(icon)
         end         
         
-        if A.IsInPvP and A.GetToggle(1, "AutoTarget") and A.IsUnitEnemy("target") and not A.AbsentImun(nil, "target", {GetAttackType(), "TotalImun"}) and MultiUnits:GetByRangeInCombat(12, 2) >= 2 and not A.FrameHasSpell(TellMeWhen_Group1_Icon3, A.TigereyeBrew.ID) then 
+        if A.IsInPvP and A.GetToggle(1, "AutoTarget") and A.IsUnitEnemy("target") and not A.AbsentImun(nil, "target", GetAttackType()) and MultiUnits:GetByRangeInCombat(12, 2) >= 2 and not A.FrameHasSpell(TellMeWhen_Group1_Icon3, A.TigereyeBrew.ID) then 
             Action.TMWAPL(icon, "texture", ACTION_CONST_AUTOTARGET)             
             return true
         end         

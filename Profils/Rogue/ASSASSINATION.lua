@@ -206,12 +206,16 @@ local S, I = A:HeroCreate()
 Action.HeroSetHookAllTable(S, {
         [3] = "TellMeWhen_Group4_Icon3",
         [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6", 
+		[6] = "TellMeWhen_Group4_Icon6",
+        [7] = "TellMeWhen_Group4_Icon7",
+        [8] = "TellMeWhen_Group4_Icon8",
 })
 Action.HeroSetHookAllTable(I, {
         [3] = "TellMeWhen_Group4_Icon3",
         [4] = "TellMeWhen_Group4_Icon4",
 		[6] = "TellMeWhen_Group4_Icon6",
+        [7] = "TellMeWhen_Group4_Icon7",
+        [8] = "TellMeWhen_Group4_Icon8",
 })
 -- Adding manually missed staff
 --S.Brews                                 = Spell(115308)
@@ -437,6 +441,10 @@ local function UpdateRanges()
     end
 end
 
+local function Init ()
+  S.RazorCoralDebuff:RegisterAuraTracking();
+end
+Init()
 --- ======= SIMC CUSTOM FUNCTION / EXPRESSION =======
 -- cp_max_spend
 local function CPMaxSpend()
@@ -1145,6 +1153,7 @@ local function Direct ()
 end
 Direct = Action.MakeFunctionCachedStatic(Direct)
 
+
 --- ======= ACTION LISTS =======
 local function APL() 
     
@@ -1182,14 +1191,6 @@ local function APL()
 	end
 	
 	local function Defensives()
-        -- SmokeBomb
-		if S.SmokeBomb:IsAvailable() and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
-			if Target:IsInRange("Melee") and Target:AffectingCombat()  then
-			    if S.SmokeBomb:IsReady() and (Player:HealthPercentage() <= 40) then
-                    if HR.Cast(S.SmokeBomb) then return "SmokeBomb"; end
-                end
-			end
-	    end
 		--ShadowStep
 		if S.ShadowStep:IsReady() and Target:IsAPlayer() and not Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists()  then
             if Target:IsInRange(S.ShadowStep) and not Target:IsInRange(15) then
@@ -1343,15 +1344,378 @@ end
 -- Finished
 
 
+-----------------------------------------
+--           PVP ROTATION  
+-----------------------------------------
 
------------------------------------------
---                 ROTATION  
------------------------------------------
+local function PvPRotation(icon)
+
+    local unit = "target"
+    local isMoving = Player:IsMoving()
+    local inMelee = false
+
+	
+    -- Defensives
+    local function SelfDefensives()
+        if ActionUnit("player"):CombatTime() == 0 then 
+            return 
+        end 
+        -- Emergency Vanish
+        local Vanish = Action.GetToggle(2, "VanishDefensive")
+        if     Vanish >= 0 and A.Vanish:IsReady("player") and 
+        (
+            (   -- Auto 
+                Vanish >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Vanish < 100 and 
+                ActionUnit("player"):HealthPercent() <= Vanish
+            )
+        ) 
+        then 
+            return A.Vanish
+        end  
+		-- Kidney Shot on enemies burst
+        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+            return A.KidneyShot:Show(icon)
+        end 
+    end 
+    SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+	-- Interrupts
+    local function Interrupts(unit)
+        local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
+            return A.Kick
+        end 
+    
+        if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 3 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+            return A.KidneyShot              
+        end          
+	
+	    if useCC and A.Blind:IsReady(unit) and A.Blind:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("disorient", 0) then 
+            return A.Blind              
+        end
+    
+        if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+            return A.QuakingPalm
+        end 
+    
+        if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+        end 
+    
+        if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+        end 
+    
+        if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+        end      
+    end 
+    Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+
+    -- Passive 
+    local function FreezingTrapUsedByEnemy()
+        if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and 
+        UnitCooldown:IsSpellInFly("arena", 3355) and 
+        ActionUnit("player"):GetDR("incapacitate") >= 50 
+        then 
+            local Caster = UnitCooldown:GetUnitID("arena", 3355)
+            if Caster and ActionUnit(Caster):GetRange() <= 40 then 
+                return true 
+            end 
+        end 
+    end 
+	
+	-- DPS Rotation
+	local function EnemyRotation(unit)
+		
+		-- Variables
+        inMelee = A.Mutilate:IsInRange(unit)
+        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		
+		-- Interrupts
+        local Interrupt = Interrupts(unit)
+        if Interrupt then 
+            return Interrupt:Show(icon)
+        end  		
+				
+		-- Sap out of combat
+		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and not Target:DebuffP(S.Sap)  then
+			return A.Sap:Show(icon)
+		end		
+		
+        -- Marked for Death
+		if A.MarkedforDeath:IsReady(unit) and Player:ComboPoints() <= 1 and S.ToxicBlade:IsAvailable() and S.MarkedforDeath:IsAvailable() then
+			return A.MarkedforDeath:Show(icon)
+		end
+		
+		-- Garrote
+		if A.Garrote:IsReady(unit) and Player:ComboPoints() < 5  and (not ActionUnit(unit):HasDeBuffs(A.Garrote.ID) or ActionUnit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
+			return A.Garrote:Show(icon)
+		end	
+    	
+		-- Rupture
+		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 4 and ActionUnit(unit):HasDeBuffs(A.Garrote.ID) and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
+			return A.Rupture:Show(icon)
+		end	
+
+		-- Envenom
+		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+			return A.Envenom:Show(icon)
+		end	
+       
+	   -- Kidney Shot
+		if A.KidneyShot:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+            return A.KidneyShot:Show(icon)              
+        end
+		
+		-- Vendetta
+		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+			return A.Vendetta:Show(icon)
+		end		
+
+		-- Toxic Blade
+		if A.ToxicBlade:IsReady(unit) and S.ToxicBlade:IsAvailable() and Player:ComboPoints() < 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+			return A.ToxicBlade:Show(icon)
+		end	
+
+		-- Mutilate
+		if A.Mutilate:IsReady(unit) and Player:ComboPoints() < 5 then
+			return A.Mutilate:Show(icon)
+		end			
+
+		-- Mouseover KidneyShot on enemy trying to leave with less than 30% HP
+        if unit ~= "mouseover" and Player:ComboPoints() >= 4 and ActionUnit(unit):HealthPercent() <= 30 and  ActionUnit(unit):GetRange() <= 5 and (A.IsInPvP or (not ActionUnit(unit):IsBoss() and ActionUnit(unit):IsMovingOut())) and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and ActionUnit(unit):GetMaxSpeed() >= 100 and ActionUnit(unit):HasDeBuffs("Slowed") == 0 and not ActionUnit(unit):IsTotem() then 
+            return A.KidneyShot:Show(icon)
+        end	
+
+		-- AoE Fan of Knives to spread poisons
+		if A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady(unit, true) then
+			return A.FanofKnives:Show(icon)
+		end
+
+		-- PoisonedKnife
+		if A.PoisonedKnife:IsReady(unit) and ActionUnit("target"):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID) < 2  then
+			return A.PoisonedKnife:Show(icon)
+		end	
+
+		-- Bursting #2
+        if unit ~= "mouseover" and A.BurstIsON(unit) then                         
+            -- Simcraft 
+            -- Cooldowns --
+                        
+            if inMelee then 
+                -- Racials 
+                if A.BloodFury:AutoRacial(unit) then 
+                    return A.BloodFury:Show(icon)
+                end 
+                                
+                if A.Fireblood:AutoRacial(unit) then 
+                    return A.Fireblood:Show(icon)
+                end 
+                                
+                if A.AncestralCall:AutoRacial(unit) then 
+                    return A.AncestralCall:Show(icon)
+                end 
+                                
+                if A.Berserking:AutoRacial(unit) then 
+                    return A.Berserking:Show(icon)
+                end 
+                                
+                -- Trinkets
+                if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket1:Show(icon)
+                end 
+                                
+                if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket2:Show(icon)
+                end                                         
+            end 
+			
+            -- call_action_list,name=essences
+            if (isMulti or A.GetToggle(2, "AoE")) and A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) then                                                                 
+                return A.BloodoftheEnemy:Show(icon)                                                                                                 
+            end 
+                        
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit) then 
+                return A.FocusedAzeriteBeam:Show(icon)
+            end 
+                        
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) then 
+                return A.GuardianofAzeroth:Show(icon)
+            end 
+                        
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit) then 
+                return A.WorldveinResonance:Show(icon)
+            end 
+        end
+
+		-- Agressive CC Burst Rotation
+		if ActionUnit(unit):HealthPercent() <= 40 and ActionUnit(EnemyHealerUnitID):InCC() >= 3 then
+		    -- SmokeBomb under 20% HP
+		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
+		    	if inMelee then
+			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 20 then
+                        return A.SmokeBomb:Show(icon)
+                    end
+			    end
+	        end
+			-- call_action_list,name=essences
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
+                return A.BloodoftheEnemy:Show(icon)                                                                                                 
+            end 
+			-- Garrote 
+			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+				return A.Garrote:Show(icon)
+			end
+			-- Rupture
+			if inMelee and A.Rupture:IsReady(unit) and A.Rupture:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and (not Target:DebuffP(S.Rupture) or Target:DebuffRemainsP(S.Rupture) <= 2) then
+				return A.Rupture:Show(icon)
+			end
+			-- KidneyShot
+			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and Target:DebuffRemainsP(S.Rupture) >= 2 then
+				return A.KidneyShot:Show(icon)
+			end
+			-- Vendetta
+			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and HR.CDsON() and Target:DebuffRemainsP(S.Rupture) >= 2 then
+				return A.Vendetta:Show(icon)
+			end
+			-- ToxicBlade
+			if inMelee and S.ToxicBlade:IsAvailable() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Target:DebuffRemainsP(S.Rupture) >= 2 then
+				return A.ToxicBlade:Show(icon)
+			end
+			-- Envenom
+			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and Target:DebuffRemainsP(S.Rupture) >= 2 then
+				return A.Envenom:Show(icon)
+			end
+			-- MarkedforDeath
+			if inMelee and A.MarkedforDeath:IsReady(unit) and A.MarkedforDeath:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() <= 1 then
+				return A.MarkedforDeath:Show(icon)
+			end
+            -- Mutilate
+			if inMelee and A.Mutilate:IsReady(unit) and A.Mutilate:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() < 5 then
+				return A.Mutilate:Show(icon)
+			end
+		end
+
+        --...
+		--...
+ 	end 
+	
+	-- Stealth out of combat
+    if not Player:BuffP(S.VanishBuff) and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
+        return A.Stealth:Show(icon)
+    end
+
+	-- Defensive
+    local SelfDefensive = SelfDefensives()
+    if SelfDefensive then 
+        return SelfDefensive:Show(icon)
+    end 
+        
+    -- Trinkets (Defensive)
+    if ActionUnit("player"):CombatTime() > 0 and ActionUnit("player"):HealthPercent() <= 75 then --A.GetToggle(2, "TrinketDefensive") then 
+        if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then 
+            return A.Trinket1:Show(icon)
+        end 
+                
+        if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then 
+            return A.Trinket2:Show(icon)
+        end                         
+    end 
+        
+    -- Mouseover         
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+                
+        if EnemyRotation(unit) then 
+            return true 
+        end 
+    end 
+        
+    -- Target                         
+    if A.IsUnitEnemy("target") then 
+        unit = "target"
+                
+        if EnemyRotation(unit) then 
+            return true 
+        end 
+    end 
+        
+    -- Movement
+    -- If not moving or moving lower than 2.5 sec 
+    if ActionPlayer:IsMovingTime() < 2.5 then 
+        return 
+    end 	
+
+
+end
 
 -- [3] is Single rotation (supports all actions)
-A[3] = function(icon)
-    if APL() then 
+A[3] = function(icon, isMulti)
+    -- PvE Simc Rotation
+	if not Action.IsInPvP and APL() then 
         return true 
     end
+	
+	-- PvP Custom Rotation
+	if Action.IsInPvP then	    
+	    return PvPRotation(icon)		
+	end
+		
+end
+
+-----------------------------------------
+--           ARENA ROTATION  
+-----------------------------------------
+
+local function ArenaRotation(icon, unit)
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not ActionPlayer:IsMounted() then              
+        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		
+        if A.Blind:IsReady(EnemyHealerUnitID) and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("stun", 50) and ActionUnit(unit):HealthPercent() <= 30 then
+            return A.Blind:Show(icon)
+        end 
+		
+        if A.KidneyShot:IsReady(unit) and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+            return A.KidneyShot:Show(icon)
+        end          
+        
+    end 
+end 
+
+A[6] = function(icon)    
+    return ArenaRotation(icon, "arena1")
+end
+
+A[7] = function(icon)   
+    return ArenaRotation(icon, "arena2")
+end
+
+A[8] = function(icon)   
+    return ArenaRotation(icon, "arena3")
 end
 

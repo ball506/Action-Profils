@@ -673,6 +673,29 @@ local function CDs()
         end
 
         -- actions.cds=potion,if=buff.bloodlust.react|target.time_to_die<=60|buff.adrenaline_rush.up
+        -- Racials
+        if HR.CDsON() and not ShouldStop then
+            -- actions.cds+=/blood_fury
+            if S.BloodFury:IsCastable() then
+                if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Blood Fury"; end
+            end
+            -- actions.cds+=/berserking
+            if S.Berserking:IsCastable() then
+                if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Berserking"; end
+            end
+            -- actions.cds+=/fireblood
+            if S.Fireblood:IsCastable() then
+                if HR.Cast(S.Fireblood, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Fireblood"; end
+            end
+            -- actions.cds+=/ancestral_call
+            if S.AncestralCall:IsCastable() then
+                if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Ancestral Call"; end
+            end
+        end
+    end
+end
+
+local function Trinkets()
 
         -- Trinkets
         -- actions.cds+=/use_item,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
@@ -720,28 +743,8 @@ local function CDs()
                 if HR.Cast(I.VigorTrinket) then return "Cast VigorTrinket"; end
             end
         end
-
-        -- Racials
-        if HR.CDsON() and not ShouldStop then
-            -- actions.cds+=/blood_fury
-            if S.BloodFury:IsCastable() then
-                if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Blood Fury"; end
-            end
-            -- actions.cds+=/berserking
-            if S.Berserking:IsCastable() then
-                if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Berserking"; end
-            end
-            -- actions.cds+=/fireblood
-            if S.Fireblood:IsCastable() then
-                if HR.Cast(S.Fireblood, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Fireblood"; end
-            end
-            -- actions.cds+=/ancestral_call
-            if S.AncestralCall:IsCastable() then
-                if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Ancestral Call"; end
-            end
-        end
-    end
 end
+
 
 local function Stealth()
     if Target:IsInRange(S.SinisterStrike) then
