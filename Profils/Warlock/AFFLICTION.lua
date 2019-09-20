@@ -922,11 +922,11 @@ local function APL()
 	local function MouseoverRotation(unit)
 		
 		-- Variables
+		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover") 
         inRange = A.Agony:IsInRange(unit)
 		
 		-- PetKick
-        if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 
-		    if ActionUnit(unit):CanInterrupt(true) then
+        if useKick and S.PetKick:IsReady() and ActionUnit(unit):CanInterrupt(true) then 
                 if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
             else 
                 return
