@@ -914,6 +914,41 @@ local function APL()
         end	
 	end
 	
+	------------------------------------------------------
+	---------------- MOUSE OVER ROTATION -----------------
+	------------------------------------------------------
+	-- Mouseover DPS Rotation
+	-- Only handling mouseover multidots and dots refreshable
+	local function MouseoverRotation(unit)
+		
+		-- Variables
+        inRange = A.Agony:IsInRange(unit)
+		
+		-- PetKick
+        if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 
+		    if ActionUnit(unit):CanInterrupt(true) then
+                if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
+            else 
+                return
+            end 
+        end  	
+				
+		-- Agony
+		if A.Agony:IsReady(unit) and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.AgonyDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.AgonyDebuff.ID) == 0) and not Player:PrevGCDP(1, S.Agony) and ActionUnit(unit):TimeToDie() >= 15 then
+			if HR.Cast(S.Agony) then return "shadow_bolt 837" end
+		end	
+		
+		-- Corruption
+		if A.Corruption:IsReady(unit) and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.CorruptionDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.CorruptionDebuff.ID) == 0) and not Player:PrevGCDP(1, S.Corruption) and ActionUnit(unit):TimeToDie() >= 15 then
+			if HR.Cast(S.Corruption) then return "shadow_bolt 837" end
+		end	
+		
+		-- Siphon Life
+		if A.SiphonLife:IsReady(unit) and S.SiphonLife:IsAvailable() and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID) == 0) and not Player:PrevGCDP(1, S.SiphonLife) and ActionUnit(unit):TimeToDie() >= 15 then
+			if HR.Cast(S.SiphonLife) then return "shadow_bolt 837" end
+		end
+		
+	end
     
     --- In Combat
     if Player:AffectingCombat() and not PrepareAshvaneBurst() then
@@ -930,7 +965,17 @@ local function APL()
             else 
                 return
             end 
-        end   
+        end 
+
+        -- Mouseover         
+        if Action.IsUnitEnemy("mouseover") and Action.GetToggle(2, "mouseover") then 
+            unit = "mouseover"
+                
+            if MouseoverRotation(unit) then 
+                return true 
+            end 
+        end
+		
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
 		and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and EnemiesCount > 2 and EnemiesCount <= 5 
