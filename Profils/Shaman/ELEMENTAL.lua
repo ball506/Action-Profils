@@ -894,7 +894,7 @@ local function APL()
 		-- 6 Earth Elemental		
 		-- 7 Racials		
 		-- 8 Trinkets
-		local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
+		local ShouldReturn = Trinkets(); if ShouldReturn and HR.CDsON() then return ShouldReturn; end
 		-- 9 Liquid Magma Totem
         if S.LiquidMagmaTotem:IsCastableP() and S.LiquidMagmaTotem:IsAvailable() then
             if HR.Cast(S.LiquidMagmaTotem) then return "liquid_magma_totem 88"; end
