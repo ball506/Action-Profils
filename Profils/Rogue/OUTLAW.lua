@@ -893,6 +893,9 @@ end
         if HR.AoEON() and not ShouldStop and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
            if HR.Cast(S.BladeFlurry) then return "Cast Blade Flurry"; end
         end
+        -- actions+=/call_action_list,name=trinkets
+        ShouldReturn = Trinkets();
+        if ShouldReturn and not ShouldStop and HR.CDsON() then return "Trinkets: " .. ShouldReturn; end
         -- actions+=/call_action_list,name=cds
         ShouldReturn = CDs();
         if ShouldReturn and not ShouldStop and HR.CDsON() then return "CDs: " .. ShouldReturn; end
