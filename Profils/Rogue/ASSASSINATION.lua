@@ -1395,7 +1395,7 @@ local function PvPRotation(icon)
             return A.Vanish
         end  
 		-- Kidney Shot on enemies burst
-        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end 
     end 
@@ -1496,7 +1496,12 @@ local function PvPRotation(icon)
 		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
 			return A.Vendetta:Show(icon)
 		end		
-
+		
+		-- call_action_list,name=essences
+        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
+            return A.BloodoftheEnemy:Show(icon)                                                                                                 
+        end 
+		
 		-- Toxic Blade
 		if A.ToxicBlade:IsReady(unit) and S.ToxicBlade:IsAvailable() and Player:ComboPoints() < 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
 			return A.ToxicBlade:Show(icon)
@@ -1583,10 +1588,6 @@ local function PvPRotation(icon)
                     end
 			    end
 	        end
-			-- call_action_list,name=essences
-            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
-                return A.BloodoftheEnemy:Show(icon)                                                                                                 
-            end 
 			-- Garrote 
 			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
 				return A.Garrote:Show(icon)
@@ -1630,7 +1631,7 @@ local function PvPRotation(icon)
         return A.Stealth:Show(icon)
     end
 
-	-- Defensive
+    -- Defensive
     local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
