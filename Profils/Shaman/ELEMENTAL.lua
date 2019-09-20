@@ -523,7 +523,7 @@ local function APL()
                 if HR.Cast(S.ElementalBlast) then return "elemental_blast 29"; end
             end
             -- chain_lightning,if=spell_targets.chain_lightning>2
-            if S.ChainLightning:IsCastableP() and not ShouldStop and Cache.EnemiesCount[40] > 2 then
+            if S.ChainLightning:IsCastableP() and not ShouldStop and HR.AoEON() and Cache.EnemiesCount[40] > 2 then
                 if HR.Cast(S.ChainLightning) then return "chain_lightning 37"; end
             end
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
@@ -558,7 +558,7 @@ local function APL()
             if HR.Cast(S.Earthquake) then return "earthquake 92"; end
         end
         -- chain_lightning,if=buff.stormkeeper.remains<3*gcd*buff.stormkeeper.stack
-        if S.ChainLightning:IsCastableP() and not ShouldStop and (Player:BuffRemainsP(S.StormkeeperBuff) < 3 * Player:GCD() * Player:BuffStackP(S.StormkeeperBuff)) then
+        if S.ChainLightning:IsCastableP() and HR.AoEON() and not ShouldStop and (Player:BuffRemainsP(S.StormkeeperBuff) < 3 * Player:GCD() * Player:BuffStackP(S.StormkeeperBuff)) then
             if HR.Cast(S.ChainLightning) then return "chain_lightning 100"; end
         end
         -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
@@ -587,7 +587,7 @@ local function APL()
             if HR.Cast(S.LavaBeam) then return "lava_beam 134"; end
         end
         -- chain_lightning
-        if S.ChainLightning:IsCastableP() and not Player:IsMoving() and not ShouldStop then
+        if S.ChainLightning:IsCastableP() and HR.AoEON() and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.ChainLightning) then return "chain_lightning 138"; end
         end
         -- flame_shock,moving=1,target_if=refreshable
@@ -814,7 +814,7 @@ local function APL()
             if HR.Cast(S.FrostShock) then return "frost_shock 536"; end
         end
         -- chain_lightning,if=buff.tectonic_thunder.up&!buff.stormkeeper.up&spell_targets.chain_lightning>1
-        if S.ChainLightning:IsCastableP() and not ShouldStop and (Player:BuffP(S.TectonicThunderBuff) and not Player:BuffP(S.StormkeeperBuff) and EnemiesCount > 1) then
+        if S.ChainLightning:IsCastableP() and HR.AoEON() and not ShouldStop and (Player:BuffP(S.TectonicThunderBuff) and not Player:BuffP(S.StormkeeperBuff) and EnemiesCount > 1) then
             if HR.Cast(S.ChainLightning) then return "chain_lightning 550"; end
         end
         -- lightning_bolt
@@ -962,11 +962,10 @@ local function APL()
 		
 		-- WindShear
         if useKick and S.WindShear:IsReady() and ActionUnit(unit):CanInterrupt(true) then 
-                if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
-            else 
-                return
-            end 
-        end  	
+            if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
+        else 
+            return
+        end   	
 				
 		-- FlameShock
 		if A.FlameShock:IsReady(unit) and EnemiesCount <= 3 and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) == 0) and not Player:PrevGCDP(1, S.FlameShock) and ActionUnit(unit):TimeToDie() >= 15 then
@@ -1123,7 +1122,11 @@ local function APL()
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and S.FlameShock:IsReadyP() and CanMultidot and (MissingFlameShock >= 1 or FlameShockToRefresh >= 1) and EnemiesCount > 1 and EnemiesCount < 4 and Target:DebuffRemainsP(S.FlameShockDebuff) >= 12 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
-        end		
+        end
+        -- Trinkets with CDs check ON
+        if (true) and and HR.CDsON() then
+            local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
+        end			
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
         if (EnemiesCount > 2) or Action.GetToggle(2, "AoE") then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
@@ -1132,10 +1135,6 @@ local function APL()
         if (EnemiesCount < 2) or not Action.GetToggle(2, "AoE") then
             local ShouldReturn = CustomST(); if ShouldReturn then return ShouldReturn; end
         end
-        -- Trinkets
-        if (true) then
-            local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
-        end	
         -- run_action_list,name=funnel,if=active_enemies>=2&(spell_targets.chain_lightning<2|spell_targets.lava_beam<2)
         if (EnemiesCount < 2) then
             local ShouldReturn = Funnel(); if ShouldReturn then return ShouldReturn; end
