@@ -1077,28 +1077,7 @@ local function Direct ()
             and (not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() > 2) then
         if HR.Cast(S.Envenom) then return "Cast Envenom"; end
     end
-
-	if S.Neuro:IsAvailable() and S.Neuro:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() and Player:AffectingCombat() then
-    	if Target:IsInRange("Melee")  and (Player:HealthPercentage() <= 75) then
-		       if HR.Cast(S.Neuro) then return "Cast Neuro"; end 
-        end
-	end
-		
-	if S.Shiv:IsAvailable() and S.Shiv:CooldownUp() and Target:IsAPlayer() and Target:Exists() and Target:IsInRange("Melee") and Target:AffectingCombat() then
-        --if Action.AbsentImun("target", "DamagePhysImun", true) and Player:CanAttack(Target) and not Target:IsTargeting(Player)then
-            --if Action.AbsentImun("target", "DamagePhysImun", true) and S.Shiv:IsReady() and not Target:InCC() then
-                if HR.Cast(S.Shiv) then return "Cast Shiv"; end 
-            --end
-        --end
-    end
-
-	if S.DFA:IsAvailable() and S.DFA:CooldownUp() and Target:IsAPlayer() and not Target:IsDeadOrGhost() and Player:CanAttack(Target) and Target:Exists() then
-		if Player:ComboPoints() >= 5 and Target:IsInRange(15) then
-            --if Action.AbsentImun("target", "DamagePhysImun", true) and S.DFA:IsReady()  then
-                if HR.Cast(S.DFA) then return "Cast DFA"; end 
-            --end
-        end
-    end	
+	
 
     -------------------------------------------------------------------
     -------------------------------------------------------------------
@@ -1128,6 +1107,10 @@ local function Direct ()
                     if HR.Cast(S.FanofKnives) then return "Cast Fan of Knives (DP Refresh)"; end
                 end
             end
+        end
+        -- Manually Added Fan of Knives big aoe
+        if HR.AoEON() and Player:EnergyPredicted() >= 35 and Cache.EnemiesCount[10] >= 3 and Player:ComboPoints() <= 3 and not Player:PrevGCDP(1, S.FanofKnives) then
+            if HR.Cast(S.FanofKnives) then return "Cast Fan of Knives (Echoing Blades)"; end
         end
     end
     -- actions.direct+=/blindside,if=variable.use_filler&(buff.blindside.up|!talent.venom_rush.enabled&!azerite.double_dose.enabled)
@@ -1159,8 +1142,8 @@ local function APL()
     
 	-- Action specifics remap
 	local ShouldStop = Action.ShouldStop()
-	local Pull = Action.BossMods_Pulling()	
-
+	local Pull = Action.BossMods_Pulling()	   
+	
     -- Spell ID Changes check
     Stealth = S.Subterfuge:IsAvailable() and S.Stealth2 or S.Stealth; -- w/ or w/o Subterfuge Talent
     -- Unit Update
@@ -1176,6 +1159,13 @@ local function APL()
     GarroteDMGThreshold = S.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
     PriorityRotation = UsePriorityRotation();
     -- Defensives
+	
+	-- Black Water Behemot timerNextPhase
+	-- InstanceDifficulty - See https://wow.gamepedia.com/DifficultyID
+	--if Player:InstanceDifficulty() == 16 and Target:NPCID() == 154986 and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 2 and S.ShadowStep:IsReady() then
+	--    if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
+	--end    
+	
     -- Crimson Vial
     ShouldReturn = CrimsonVial(S.CrimsonVial);
     if ShouldReturn then return ShouldReturn; end
@@ -1310,7 +1300,7 @@ local function APL()
         end
         -- actions+=/call_action_list,name=dot
         ShouldReturn = Dot();
-        if ShouldReturn then return ShouldReturn; end
+        if ShouldReturn then return ShouldReturn; end		
         -- actions+=/call_action_list,name=direct
         ShouldReturn = Direct();
         if ShouldReturn then return ShouldReturn; end
@@ -1476,31 +1466,46 @@ local function PvPRotation(icon)
 		if A.Garrote:IsReady(unit) and Player:ComboPoints() < 5  and (not ActionUnit(unit):HasDeBuffs(A.Garrote.ID) or ActionUnit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
 			return A.Garrote:Show(icon)
 		end	
-    	
-		-- Rupture
-		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 4 and ActionUnit(unit):HasDeBuffs(A.Garrote.ID) and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
-			return A.Rupture:Show(icon)
-		end	
-
-		-- Envenom
+		
+   		-- Envenom
 		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
 			return A.Envenom:Show(icon)
-		end	
+		end
+		
+		-- Rupture
+		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Garrote.ID) and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
+			return A.Rupture:Show(icon)
+		end		
        
 	   -- Kidney Shot
-		if A.KidneyShot:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+		if A.KidneyShot:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 5 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
             return A.KidneyShot:Show(icon)              
         end
 		
 		-- Vendetta
-		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HealthPercent() <= 75 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
 			return A.Vendetta:Show(icon)
 		end		
 		
-		-- call_action_list,name=essences
-        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and Player:ComboPoints() >= 4 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
+		-- Blood of the Enemy
+        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and (ActionUnit(unit):HealthPercent() <= 30 or Player:PrevGCDP(1, S.Vendetta)) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
             return A.BloodoftheEnemy:Show(icon)                                                                                                 
         end 
+		
+		-- Neuro
+		if S.Neuro:IsAvailable() and S.Neuro:CooldownUp() and inMelee and ActionUnit(unit):HealthPercent() <= 75 and not Player:IsStealthed() then
+			return A.Neuro:Show(icon)
+		end
+		
+		-- Shiv
+		if S.Shiv:IsAvailable() and S.Shiv:CooldownUp() and inMelee and ActionUnit(unit):HealthPercent() <= 50 and Action.AbsentImun(unit, "DamagePhysImun", true) and A.Shiv:IsReady(unit) and not ActionUnit(unit):InCC()  then
+			return A.Shiv:Show(icon)
+   		end
+		
+        -- Death From Above
+		if S.DFA:IsAvailable() and A.DFA:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Target:IsInRange(15) and Action.AbsentImun("target", "DamagePhysImun", true) then
+			return A.DFA:Show(icon)
+   	    end		
 		
 		-- Toxic Blade
 		if A.ToxicBlade:IsReady(unit) and S.ToxicBlade:IsAvailable() and Player:ComboPoints() < 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
@@ -1516,15 +1521,15 @@ local function PvPRotation(icon)
         if unit ~= "mouseover" and Player:ComboPoints() >= 4 and ActionUnit(unit):HealthPercent() <= 30 and  ActionUnit(unit):GetRange() <= 5 and (A.IsInPvP or (not ActionUnit(unit):IsBoss() and ActionUnit(unit):IsMovingOut())) and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and ActionUnit(unit):GetMaxSpeed() >= 100 and ActionUnit(unit):HasDeBuffs("Slowed") == 0 and not ActionUnit(unit):IsTotem() then 
             return A.KidneyShot:Show(icon)
         end	
-
+		
+		-- PoisonedKnife
+		if A.PoisonedKnife:IsReady(unit) and ActionUnit(unit):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID) < 2  then
+			return A.PoisonedKnife:Show(icon)
+		end
+		
 		-- AoE Fan of Knives to spread poisons
 		if A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady(unit, true) then
 			return A.FanofKnives:Show(icon)
-		end
-
-		-- PoisonedKnife
-		if A.PoisonedKnife:IsReady(unit) and ActionUnit("target"):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID) < 2  then
-			return A.PoisonedKnife:Show(icon)
 		end	
 
 		-- Bursting #2
@@ -1579,38 +1584,38 @@ local function PvPRotation(icon)
         end
 
 		-- Agressive CC Burst Rotation
-		if ActionUnit(unit):HealthPercent() <= 40 and ActionUnit(EnemyHealerUnitID):InCC() >= 3 then
-		    -- SmokeBomb under 20% HP
+		if ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 4 then
+		    -- SmokeBomb under 30% HP
 		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
 		    	if inMelee then
-			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 20 then
+			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 30 then
                         return A.SmokeBomb:Show(icon)
                     end
 			    end
 	        end
 			-- Garrote 
-			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (not ActionUnit(unit):HasDeBuffs(A.Garrote.ID) or ActionUnit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
 				return A.Garrote:Show(icon)
 			end
 			-- Rupture
-			if inMelee and A.Rupture:IsReady(unit) and A.Rupture:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and (not Target:DebuffP(S.Rupture) or Target:DebuffRemainsP(S.Rupture) <= 2) then
+			if inMelee and A.Rupture:IsReady(unit) and A.Rupture:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
 				return A.Rupture:Show(icon)
 			end
 			-- KidneyShot
-			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and Target:DebuffRemainsP(S.Rupture) >= 2 then
+			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
 				return A.KidneyShot:Show(icon)
 			end
+			-- Envenom
+			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+				return A.Envenom:Show(icon)
+			end
 			-- Vendetta
-			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and HR.CDsON() and Target:DebuffRemainsP(S.Rupture) >= 2 then
+			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
 				return A.Vendetta:Show(icon)
 			end
 			-- ToxicBlade
-			if inMelee and S.ToxicBlade:IsAvailable() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Target:DebuffRemainsP(S.Rupture) >= 2 then
+			if inMelee and S.ToxicBlade:IsAvailable() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
 				return A.ToxicBlade:Show(icon)
-			end
-			-- Envenom
-			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and Target:DebuffRemainsP(S.Rupture) >= 2 then
-				return A.Envenom:Show(icon)
 			end
 			-- MarkedforDeath
 			if inMelee and A.MarkedforDeath:IsReady(unit) and A.MarkedforDeath:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() <= 1 then
