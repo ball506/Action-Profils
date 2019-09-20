@@ -942,6 +942,38 @@ local function APL()
 			
 		
 	end
+	
+	------------------------------------------------------
+	---------------- MOUSE OVER ROTATION -----------------
+	------------------------------------------------------
+	-- Mouseover DPS Rotation
+	-- Only handling mouseover multidots and dots refreshable
+	local function MouseoverRotation(unit)
+		
+		-- Variables
+        inRange = A.ChainLightning:IsInRange(unit)
+		
+		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
+        -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
+        -- Purge
+		if S.Purge:IsReady() and not ShouldStop and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+            if HR.Cast(S.Purge) then return "" end
+        end	
+		
+		-- WindShear
+        if useKick and S.WindShear:IsReady() and ActionUnit(unit):CanInterrupt(true) then 
+                if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
+            else 
+                return
+            end 
+        end  	
+				
+		-- FlameShock
+		if A.FlameShock:IsReady(unit) and EnemiesCount <= 3 and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) == 0) and not Player:PrevGCDP(1, S.FlameShock) and ActionUnit(unit):TimeToDie() >= 15 then
+			if HR.Cast(S.FlameShock) then return "FlameShock 837" end
+		end			
+		
+	end
     
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
@@ -980,10 +1012,18 @@ local function APL()
      	        return
      	    end 
      	end 
+        -- Mouseover         
+        if Action.IsUnitEnemy("mouseover") and Action.GetToggle(2, "mouseover") then 
+            unit = "mouseover"
+                
+            if MouseoverRotation(unit) then 
+                return true 
+            end 
+        end
 		-- Purge
 		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if S.Purge:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
+        if S.Purge:IsReady() and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
             if HR.Cast(S.Purge) then return "" end
         end	
 		-- Ghost Wolf
