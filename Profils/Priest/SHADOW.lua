@@ -71,6 +71,7 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     -- Misc
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
 	TargetEnemy                           = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                             = Action.Create({ Type = "Spell", ID = 125145, Hidden = true, Texture = 125145     }),	-- Return the stop cast icon (Fake Polymorph 61721)
     RecklessForceBuff                    = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
     -- Buffs
     ShadowformBuff                        = Action.Create({ Type = "Spell", ID = 232698, Hidden = true     }),
@@ -79,9 +80,7 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     -- Debuffs 
     VampiricTouchDebuff                   = Action.Create({ Type = "Spell", ID = 34914, Hidden = true     }),
     ShadowWordPainDebuff                  = Action.Create({ Type = "Spell", ID = 589, Hidden = true     }),
-    -- Trinkets
-	
-    
+    -- Trinkets 
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -532,10 +531,18 @@ local function APL()
         if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.VoidBolt) then return "void_bolt 78"; end
         end
-        -- void_boltif channeling
-        if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
-            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
-        end		
+        -- shadow_word_death channeling
+        if S.ShadowWordDeath:IsReadyP() and S.ShadowWordDeath:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.ShadowWordDeath) then return "MindBlast 182"; end
+        end	
+        -- mind_blast_if channeling
+        if Player:BuffP(S.VoidformBuff) and S.MindBlast:CooldownRemainsP() < 0.2 and S.MindBlast:IsReadyP() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.MindBlast) then return "MindBlast 182"; end
+        end	
+        -- void_bolt_if channeling
+        --if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+        --    if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
+        --end		
         -- call_action_list,name=cds
         if (HR.CDsON()) then
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
@@ -583,7 +590,7 @@ local function APL()
         -- void_torrent,if=buff.voidform.up
         if S.VoidTorrent:IsReadyP() and not ShouldStop and (Player:BuffP(S.VoidformBuff)) and not Player:IsCasting(S.VoidTorrent) then
             if HR.Cast(S.VoidTorrent) then return "void_torrent 161"; end
-        end
+        end		
         -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
         if S.MindSear:IsCastableP() and not ShouldStop and EvaluateCycleMindSear169(Target) then
             if HR.Cast(S.MindSear) then return "mind_sear 171" end
@@ -607,18 +614,26 @@ local function APL()
         if S.DarkAscension:IsReadyP() and not ShouldStop and (Player:BuffDownP(S.VoidformBuff)) and not Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.DarkAscension) then return "dark_ascension 178"; end
         end
+        -- shadow_word_death channeling
+        if S.ShadowWordDeath:IsReadyP() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.ShadowWordDeath) then return "MindBlast 182"; end
+        end	
+        -- mind_blast_if channeling
+        if S.MindBlast:IsReadyP() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.MindBlast) then return "MindBlast 182"; end
+        end	
         -- void_bolt
         if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
         end
-        -- void_boltif channeling
-        if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.2 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
-            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
-        end			
+        -- void_bolt_if channeling
+      --  if Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.1 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+      --      if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
+      --  end			
         -- call_action_list,name=cds
         if (HR.CDsON()) then
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
-        end
+        end		
         -- mind_sear,if=buff.harvested_thoughts.up&cooldown.void_bolt.remains>=1.5&azerite.searing_dialogue.rank>=1
         if S.MindSear:IsCastableP() and not ShouldStop and (Player:BuffP(S.HarvestedThoughtsBuff) and S.VoidBolt:CooldownRemainsP() >= 1.5 and S.SearingDialogue:AzeriteRank() >= 1) then
             if HR.Cast(S.MindSear) then return "mind_sear 184"; end
@@ -655,8 +670,8 @@ local function APL()
         and not Player:IsCasting(S.MindBlast) then
             if HR.Cast(S.MindBlast) then return "mind_blast 222"; end
         end
-        -- shadow_word_void (added)
-        if S.ShadowWordVoid:IsReadyP() and not ShouldStop and bool(VarDotsUp) and not Player:IsCasting(S.ShadowWordVoid) then
+        -- shadow_word_void (added)--and not Player:IsCasting(S.ShadowWordVoid)
+        if S.ShadowWordVoid:IsReadyP() and not ShouldStop and bool(VarDotsUp) then
             if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 222"; end
         end
         -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
@@ -681,7 +696,7 @@ local function APL()
         end
     end
 	
-	local function MultidotsChecks()
+	local function MultidotsRefresh()
 	    -- vampiric_touch
         if S.VampiricTouch:IsCastableP() and not ShouldStop and Target:DebuffRemainsP(S.VampiricTouchDebuff) <= 10 and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
@@ -692,6 +707,8 @@ local function APL()
         end
 
 	end
+	
+
     
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
@@ -722,19 +739,19 @@ local function APL()
             else 
                 return
             end 
-        end  
+        end 		
+		
+			
 		-- Auto Multi Dot	  
-	    if not Player:PrevGCDP(1, S.TargetEnemy) and not Player:PrevGCDP(2, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and CanMultidot 
-		and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (AppliedVampiricTouch < EnemiesCount or AppliedShadowWordPain < EnemiesCount) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) and EnemiesCount > 1 and EnemiesCount <= 10 
-		and Target:DebuffRemainsP(S.ShadowWordPainDebuff) >= 6 and Target:DebuffRemainsP(S.VampiricTouchDebuff) >= 6 then
+	    if S.TargetEnemy:TimeSinceLastCast() >= 2 and not Player:PrevGCDP(1, S.TargetEnemy) and not Player:PrevGCDP(2, S.TargetEnemy) and not Player:PrevGCDP(3, S.TargetEnemy) and not Player:PrevGCDP(4, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and CanMultidot 
+		and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (AppliedVampiricTouch < EnemiesCount or AppliedShadowWordPain < EnemiesCount) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) 
+		and EnemiesCount > 1 and EnemiesCount <= 10 and Target:DebuffRemainsP(S.ShadowWordPainDebuff) >= 6 and Target:DebuffRemainsP(S.VampiricTouchDebuff) >= 6 then
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
-        end
-		
-        -- Multidots checks
+        end	
+        -- Multidots Refresh
         if Action.GetToggle(2, "AutoDot") and EnemiesCount > 2 and EnemiesCount <= 5 and ((MissingShadowWordPain >= 1 or MissingVampiricTouch >= 1) or (VampiricTouchToRefresh >= 1 or ShadowWordPainToRefresh >= 1)) then
-            local ShouldReturn = MultidotsChecks(); if ShouldReturn then return ShouldReturn; end
-        end       		
-		
+            local ShouldReturn = MultidotsRefresh(); if ShouldReturn then return ShouldReturn; end
+        end 		
 		-- Dispersion if activated
 		if S.Dispersion:IsCastableP() and Player:HealthPercentage() <= Action.GetToggle(2, "DispersionHP") and Action.GetToggle(2, "UseDispersion") then
 		    if HR.Cast(S.Dispersion, true) then return "Dispersion 5"; end
@@ -748,17 +765,25 @@ local function APL()
         -- berserking
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "GCDasOffGCD")) then return "berserking 271"; end
-        end	
-        -- MindBlast if channeling
-        if S.MindBlast:IsReadyP() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
-            if HR.Cast(S.MindBlast) then return "MindBlast 182"; end
-        end			
+        end
+		-- Shadow Word Death allowed to cut Mindsear & Mindflay
+		if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and S.ShadowWordDeath:IsCastableP() then 
+		    if HR.Cast(S.ShadowWordDeath) then return "StopCast" end		
+		end
+		-- Mind Blast allowed to cut Mindsear & Mindflay
+		if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and S.MindBlast:CooldownRemainsP() < 0.1 then 
+		    if HR.Cast(S.MindBlast) then return "StopCast" end		
+		end
+		-- Void Bolt allowed to cut Mindsear & Mindflay
+		if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.1 then 
+		    if HR.Cast(S.VoidBolt) then return "StopCast" end		
+		end		
         -- run_action_list,name=cleave,if=active_enemies>1
-        if (EnemiesCount > 1) then
+        if (EnemiesCount > 1) and HR.AoEON() then
             local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end
         end
         -- run_action_list,name=single,if=active_enemies=1
-        if (EnemiesCount == 1) then
+        if (EnemiesCount == 1) or not HR.AoEON() then
             local ShouldReturn = Single(); if ShouldReturn then return ShouldReturn; end
         end
     end
