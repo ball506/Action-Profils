@@ -72,6 +72,8 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     -- Defensive
     CrimsonVial                            = Action.Create({ Type = "Spell", ID = 185311     }),
     Feint                                  = Action.Create({ Type = "Spell", ID = 1966     }),
+	CloakofShadow                          = Action.Create({ Type = "Spell", ID = 31224     }),
+	Evade                                  = Action.Create({ Type = "Spell", ID = 5277     }),
     -- Utility
     Blind                                  = Action.Create({ Type = "Spell", ID = 2094     }),
     Kick                                   = Action.Create({ Type = "Spell", ID = 1766     }),
@@ -1350,6 +1352,14 @@ local function PvPRotation(icon)
         if ActionUnit("player"):CombatTime() == 0 then 
             return 
         end 
+		-- Evade on enemies burst
+        if A.Evade:IsReady(unit) and ActionUnit(unit):IsMelee() and ActionUnit("player"):HealthPercent() <= 40 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
+            return A.Evade:Show(icon)
+        end		
+		-- Cloak of Shadow on enemies burst
+        if A.CloakofShadow:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 40 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
+            return A.CloakofShadow:Show(icon)
+        end
         -- Emergency Vanish
         local Vanish = Action.GetToggle(2, "VanishDefensive")
         if     Vanish >= 0 and A.Vanish:IsReady("player") and 
@@ -1385,7 +1395,7 @@ local function PvPRotation(icon)
             return A.Vanish
         end  
 		-- Kidney Shot on enemies burst
-        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):IsFocused("DAMAGER") then
             return A.KidneyShot:Show(icon)
         end 
     end 
@@ -1606,7 +1616,7 @@ local function PvPRotation(icon)
 				return A.KidneyShot:Show(icon)
 			end
 			-- Envenom
-			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable() and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
 				return A.Envenom:Show(icon)
 			end
 			-- Vendetta
@@ -1702,11 +1712,12 @@ local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not ActionPlayer:IsMounted() then              
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
 		
-        if A.Blind:IsReady(EnemyHealerUnitID) and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("stun", 50) and ActionUnit(unit):HealthPercent() <= 30 then
+		-- Blind on Enemy Healer
+        if A.Blind:IsReady(EnemyHealerUnitID) and ActionUnit(unit):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("stun", 50) and ActionUnit(unit):HealthPercent() <= 30 then
             return A.Blind:Show(icon)
         end 
-		
-        if A.KidneyShot:IsReady(unit) and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+		-- Kidney Shot on enemies burst
+        if A.KidneyShot:IsReady(unit) and inMelee and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end          
         
