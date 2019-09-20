@@ -1128,7 +1128,7 @@ local function APL()
             local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
         end			
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
-        if (EnemiesCount > 2) or Action.GetToggle(2, "AoE") then
+        if (EnemiesCount > 2) and Action.GetToggle(2, "AoE") then
             local ShouldReturn = Aoe(); if ShouldReturn then return ShouldReturn; end
         end
         -- CustomST
