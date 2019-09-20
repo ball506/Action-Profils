@@ -928,10 +928,9 @@ local function APL()
 		-- PetKick
         if useKick and S.PetKick:IsReady() and ActionUnit(unit):CanInterrupt(true) then 
                 if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
-            else 
-                return
-            end 
-        end  	
+        else 
+            return
+        end   	
 				
 		-- Agony
 		if A.Agony:IsReady(unit) and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.AgonyDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.AgonyDebuff.ID) == 0) and not Player:PrevGCDP(1, S.Agony) and ActionUnit(unit):TimeToDie() >= 15 then
