@@ -392,7 +392,7 @@ local function APL()
 		-- Behemoth 20 sec pre phase change or line up with last CDs on the phase.
         -- Black Water Behemot timerNextPhase
         -- InstanceDifficulty - See https://wow.gamepedia.com/DifficultyID
-        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Player:BuffDownP(S.RecklessnessBuff) then
+        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and Target:DebuffP(S.RazorCoralDebuff) and I.AshvanesRazorCoral:IsReady() and TrinketON() and Player:BuffDownP(S.RecklessnessBuff) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral behemot"; end
         end 
 		-- Ashvane - a bit pre 30%
