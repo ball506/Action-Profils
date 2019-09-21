@@ -379,6 +379,7 @@ local function APL()
         end
     end
 	
+	-- Razor Coral logic with Eternal Palace
 	local function RazorCoralUsage()
 		-- Sivara - a bit pre 30%
         if (Target:NPCID() == 151881 or Target:NPCID() == 155144) and Target:HealthPercentage() <= 33 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
