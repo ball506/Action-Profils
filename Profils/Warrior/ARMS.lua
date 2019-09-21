@@ -46,6 +46,7 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
 	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
 	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true    }), -- PvP Talent 
+	SpellReflection  					= Action.Create({ Type = "Spell", ID = 216890, isTalent = true    }), -- PvP Talent
 	-- Self Defensive
 	DiebytheSword						= Action.Create({ Type = "Spell", ID = 118038   }),
 	RallyingCry							= Action.Create({ Type = "Spell", ID = 97462    }),
@@ -1087,7 +1088,11 @@ local function ArenaRotation(icon, unit)
 		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.RendDebuff.ID) < 2  then
 			return A.Rend:Show(icon)
 		end	
-        
+		-- Reflect
+        if A.ReflectIsReady(unit) and not ActionUnit(unit):InLOS() then
+            return A.SpellReflection:Show(icon)
+        end
+        -- Disarm
         if A.DisarmIsReady(unit) and not ActionUnit(unit):InLOS() then
             return A.Disarm:Show(icon)
         end         

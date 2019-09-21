@@ -234,7 +234,27 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-            { -- [5] 5th Row     
+            { -- [5] Blind     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Only Heal", value = "Heal" },
+                        { text = "Only PvP", value = "PvP" },
+                        { text = "BOTH", value = "BOTH" },
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "BlindPvP",
+                    DBV = "BOTH",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(2094),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Blind\nMore custom config you can find in group by open /tmw", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [10] Dismantle
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -242,10 +262,10 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "DisarmPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782),
+                        ANY = "PvP " .. A.GetSpellInfo(207777),
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
@@ -262,7 +282,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "DisarmPvPunits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -270,7 +290,7 @@ A.Data.ProfileUI = {
                         [4] = true,
                     }, 
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782) .. " units",
+                        ANY = "PvP " .. A.GetSpellInfo(207777) .. " units",
                     }, 
                     TT = { 
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
@@ -551,7 +571,27 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-            { -- [5] 5th Row     
+            { -- [5] Blind     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Only Heal", value = "Heal" },
+                        { text = "Only PvP", value = "PvP" },
+                        { text = "BOTH", value = "BOTH" },
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "BlindPvP",
+                    DBV = "BOTH",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(2094),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Blind\nMore custom config you can find in group by open /tmw", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [10] Dismantle
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -559,10 +599,10 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "DisarmPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(2094),
+                        ANY = "PvP " .. A.GetSpellInfo(207777),
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
@@ -579,7 +619,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "DisarmPvPunits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -587,7 +627,7 @@ A.Data.ProfileUI = {
                         [4] = true,
                     }, 
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(2094) .. " units",
+                        ANY = "PvP " .. A.GetSpellInfo(207777) .. " units",
                     }, 
                     TT = { 
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
@@ -939,7 +979,27 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },
-            { -- [5] 5th Row     
+            { -- [5] Blind     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Only Heal", value = "Heal" },
+                        { text = "Only PvP", value = "PvP" },
+                        { text = "BOTH", value = "BOTH" },
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "BlindPvP",
+                    DBV = "BOTH",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(2094),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Blind\nMore custom config you can find in group by open /tmw", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [10] Dismantle
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -947,10 +1007,10 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "BlindPvP",
+                    DB = "DisarmPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(2094),
+                        ANY = "PvP " .. A.GetSpellInfo(207777),
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
@@ -967,7 +1027,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "BlindPvPUnits",
+                    DB = "DisarmPvPunits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -975,7 +1035,7 @@ A.Data.ProfileUI = {
                         [4] = true,
                     }, 
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(2094) .. " units",
+                        ANY = "PvP " .. A.GetSpellInfo(207777) .. " units",
                     }, 
                     TT = { 
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
@@ -990,187 +1050,119 @@ A.Data.ProfileUI = {
     [7] = {
         [ACTION_CONST_ROGUE_OUTLAW] = { 
             -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["stun"] = { Enabled = true, Key = "KidneyShot", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return  (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 20)
+                        )                                                             
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "Dismantle", LUAVER = 5, LUA = [[
+                return     DisarmIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["kick"] = { Enabled = true, Key = "Kick", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return     A.Kick:IsReadyM(thisunit) and                         
+                        A.Kick:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 and 
             ]] },
         },
         [ACTION_CONST_ROGUE_ASSASSINATION] = { 
             -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["stun"] = { Enabled = true, Key = "KidneyShot", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return  (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 20)
+                        )                                                             
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "Dismantle", LUAVER = 5, LUA = [[
+                return     DisarmIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["kick"] = { Enabled = true, Key = "Kick", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return     A.Kick:IsReadyM(thisunit) and                         
+                        A.Kick:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 and 
             ]] },
         },
         [ACTION_CONST_ROGUE_SUBTLETY] = { 
             -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["stun"] = { Enabled = true, Key = "KidneyShot", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return  (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 20)
+                        )                                                             
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "Dismantle", LUAVER = 5, LUA = [[
+                return     DisarmIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["kick"] = { Enabled = true, Key = "Kick", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return     A.Kick:IsReadyM(thisunit) and                         
+                        A.Kick:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 and 
             ]] },
         },
     },
 }
--- Shared 
-Env.PlayerMovementStarted = 0
-function Env.PlayerMoving()
-    if Env.UNITCurrentSpeed("player") > 0 then 
-        if Env.PlayerMovementStarted == 0 then 
-            Env.PlayerMovementStarted = TMW.time 
-        end 
-    else
-        Env.PlayerMovementStarted = 0
-    end 
-end 
-Env.PlayerMoving = A.MakeFunctionCachedStatic(Env.PlayerMoving)
 
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
-function Env.FearIsReady(unit, isMsg)
-    if A[Env.PlayerSpec].Fear then 
-        local unitID = A.GetToggle(2, "FearPvPunits")
+
+function A.DisarmIsReady(unit, isMsg, skipShouldStop)
+    if A[A.PlayerSpec].Dismantle then 
+        local unitID = A.GetToggle(2, "DisarmPvPunits")
         return     (
             (unit == "arena1" and unitID[1]) or 
             (unit == "arena2" and unitID[2]) or
             (unit == "arena3" and unitID[3]) or
             (not unit:match("arena") and unitID[4]) 
         ) and 
-        Env.InPvP() and
-        Env.PvPTalentLearn(A[Env.PlayerSpec].Fear.ID) and 
-        Env.Unit(unit):IsEnemy() and  
+        A.IsInPvP and
+        Unit(unit):IsEnemy() and  
         (
             (
                 not isMsg and 
-                A.GetToggle(2, "FearPvP") ~= "OFF" and 
-                A[Env.PlayerSpec].Fear:IsReady(unit) and 
-                Env.Unit(unit):IsMelee() and 
+                A.GetToggle(2, "DisarmPvP") ~= "OFF" and 
+                A[A.PlayerSpec].Dismantle:IsReady(unit, nil, nil, skipShouldStop) and 
+                Unit(unit):IsMelee() and 
                 (
-                    A.GetToggle(2, "FearPvP") == "ON COOLDOWN" or 
-                    Env.Unit(unit):HasBuffs("DamageBuffs") > 3 
+                    A.GetToggle(2, "DisarmPvP") == "ON COOLDOWN" or 
+                    Unit(unit):HasBuffs("DamageBuffs") > 3 
                 )
             ) or 
             (
                 isMsg and 
-                A[Env.PlayerSpec].Fear:IsReadyP(unit)                     
+                A[A.PlayerSpec].Dismantle:IsReadyM(unit)                     
             )
         ) and 
-        UnitIsPlayer(unit) and                     
-        A[Env.PlayerSpec].Fear:AbsentImun(unit, {"CCTotalImun", "DeffBuffsMagic", "TotalImun"}, true) and 
-        Env.Unit(unit):IsControlAble("incapacitate", 0)
+        Unit(unit):IsPlayer() and                     
+        A[A.PlayerSpec].Dismantle:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
+        Unit(unit):IsControlAble("disarm", 0) and 
+        Unit(unit):HasDeBuffs("Disarmed") == 0
     end 
-end 
+end
 
-function Env.Main_CastBars(unit, list)
-    if not A.IsInitialized or Env.IamHealer or not Env.InPvP() then 
+function A.Main_CastBars(unit, list)
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
     
-    if A[Env.PlayerSpec] and A[Env.PlayerSpec].SpearHandStrike and A[Env.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+    if A[A.PlayerSpec] and A[A.PlayerSpec].Kick and A[A.PlayerSpec].Kick:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Kick:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
         return true         
     end 
 end 
 
-function Env.Second_CastBars(unit)
-    if not A.IsInitialized or not Env.InPvP() then 
+function A.Second_CastBars(unit)
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp")  then 
         return false 
     end 
     
-    local Toggle = A.GetToggle(2, "ParalysisPvP")    
-    if Toggle and Toggle ~= "OFF" and A[Env.PlayerSpec] and A[Env.PlayerSpec].Paralysis and A[Env.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Env.Unit(unit):IsControlAble("incapacitate", 0) then 
+    local Toggle = A.GetToggle(2, "BlindPvP")    
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Blind and A[A.PlayerSpec].Blind:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Blind:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else
@@ -1178,5 +1170,3 @@ function Env.Second_CastBars(unit)
         end 
     end 
 end 
-
-
