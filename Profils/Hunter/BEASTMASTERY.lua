@@ -66,34 +66,33 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     -- Pet
     CallPet                               = Action.Create({ Type = "Spell", ID = 883 }),
     MendPet                               = Action.Create({ Type = "Spell", ID = 136 }),
-    RevivePet                             = Action.Create({ Type = "Spell", ID = 982 }),
+    SpiritShock                           = Action.Create({ Type = "Spell", ID = 264265 }),
+    SonicBlast                            = Action.Create({ Type = "Spell", ID = 264263 }),
 	-- Defensives
-	AspectoftheTurtle                    = Action.Create({ Type = "Spell", ID = 274441 }),
+	AspectoftheTurtle                     = Action.Create({ Type = "Spell", ID = 274441 }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
-    RecklessForceBuff                    = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
-    ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
-    CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 167672, Hidden = true     }),
-    HarmonicDematerializer               = Action.Create({ Type = "Spell", ID = 293512, Hidden = true     }),
-    RecklessForceCounter                 = Action.Create({ Type = "Spell", ID = 298409}),
-    RecklessForceCounter2                 = Action.Create({ Type = "Spell", ID = 302917}),
+    Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+    RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
+    ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
+    CyclotronicBlast                      = Action.Create({ Type = "Spell", ID = 167672, Hidden = true     }),
+    HarmonicDematerializer                = Action.Create({ Type = "Spell", ID = 293512, Hidden = true     }),
+    RecklessForceCounter                  = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),
+    RecklessForceCounter2                 = Action.Create({ Type = "Spell", ID = 302917, Hidden = true     }),
 	--PoolFocus                             = Action.Create({ Type = "Spell", ID = 9999000010, Hidden = true     }),
     -- Buffs
-    DanceofDeathBuff                      = Action.Create({ Type = "Spell", ID = 274443 }),
-    BeastCleaveBuff                       = Action.Create({ Type = "Spell", ID = 118455, "pet" }),
-    BloodFuryBuff                         = Action.Create({ Type = "Spell", ID = 20572 }),
-    BerserkingBuff                        = Action.Create({ Type = "Spell", ID = 26297 }),
-    BestialWrathBuff                      = Action.Create({ Type = "Spell", ID = 19574 }),
-    PrimalInstinctsBuff                   = Action.Create({ Type = "Spell", ID = 279810 }),
-    FrenzyBuff                            = Action.Create({ Type = "Spell", ID = 272790 }),
-    AspectoftheWildBuff                   = Action.Create({ Type = "Spell", ID = 193530 }),	
+    DanceofDeathBuff                      = Action.Create({ Type = "Spell", ID = 274443 , Hidden = true     }),
+    BeastCleaveBuff                       = Action.Create({ Type = "Spell", ID = 118455 , Hidden = true     }),
+    BloodFuryBuff                         = Action.Create({ Type = "Spell", ID = 20572 , Hidden = true     }),
+    BerserkingBuff                        = Action.Create({ Type = "Spell", ID = 26297 , Hidden = true     }),
+    BestialWrathBuff                      = Action.Create({ Type = "Spell", ID = 19574 , Hidden = true     }),
+    PrimalInstinctsBuff                   = Action.Create({ Type = "Spell", ID = 279810 , Hidden = true     }),
+    FrenzyBuff                            = Action.Create({ Type = "Spell", ID = 272790 , Hidden = true     }),
+    AspectoftheWildBuff                   = Action.Create({ Type = "Spell", ID = 193530 , Hidden = true     }),	
 	-- Debuffs 
-    RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568 }),	
+    RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568 , Hidden = true     }),	
     -- Potions
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
-    -- Trinkets
-	
-    
+    -- Trinkets    
 	AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
@@ -623,6 +622,18 @@ local function APL()
             return S.Exhilaration:Cast()
         end	
 	end	
+	
+	local function PurgeDispellMagic()
+		-- SpiritShock
+		if S.SpiritShock:IsCastable() and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+		    return S.SpiritShock:Cast()
+        end
+        -- SonicBlast
+        if S.SonicBlast:IsCastable() and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+            return S.SonicBlast:Cast()
+        end		
+	
+	end
     
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
