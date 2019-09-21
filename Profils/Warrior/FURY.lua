@@ -59,6 +59,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     IntimidatingShout                     = Action.Create({ Type = "Spell", ID = 5246    }),
     ColdSteelHotBlood                     = Action.Create({ Type = "Spell", ID = 288080    }),
 	ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368    }),
+	BattleShout                           = Action.Create({ Type = "Spell", ID = 6673    }),
     -- Defensive
 	RallyingCry                           = Action.Create({ Type = "Spell", ID = 97462    }),
     -- Misc
@@ -259,6 +260,9 @@ local function APL()
         -- flask
         -- food
         -- augmentation
+		if S.BattleShout:IsReady() and not Player:BuffP(S.BattleShout) then
+            if HR.Cast(S.BattleShout) then return "BattleShout"; end
+        end
 		if Everyone.TargetIsValid() then
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
@@ -288,6 +292,10 @@ local function APL()
         -- flask
         -- food
         -- augmentation
+        -- augmentation
+		if S.BattleShout:IsReady() and not Player:BuffP(S.BattleShout) then
+            if HR.Cast(S.BattleShout) then return "BattleShout"; end
+        end
 		if Everyone.TargetIsValid() then
         -- snapshot_stats
         -- use_item,name=azsharas_font_of_power
@@ -417,7 +425,10 @@ local function APL()
     --- In Combat
     if Player:AffectingCombat() then
         -- auto_attack
- 		
+        -- augmentation
+		if S.BattleShout:IsReady() and not Player:BuffP(S.BattleShout) then
+            if HR.Cast(S.BattleShout) then return "BattleShout"; end
+        end
 		-- Interrupt Handler
  	 	local randomInterrupt = math.random(25, 70)
   		local unit = "target"
