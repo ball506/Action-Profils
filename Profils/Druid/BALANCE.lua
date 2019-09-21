@@ -634,6 +634,14 @@ local function APL()
         if S.Moonfire:IsCastableP() and not ShouldStop and EvaluateCycleMoonfire313(Target) then
             if HR.Cast(S.Moonfire) then return "moonfire 343" end
         end
+        -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
+        if S.Sunfire:IsCastableP() and not ShouldStop and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Sunfire) or not S.StreakingStars:AzeriteEnabled()) and Player:IsMoving() then
+            if HR.Cast(S.Sunfire) then return "sunfire 308" end
+        end
+        -- moonfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=6&(!variable.az_ss|!buff.ca_inc.up|!prev.moonfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
+        if S.Moonfire:IsCastableP() and not ShouldStop and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Moonfire) or not S.StreakingStars:AzeriteEnabled()) and Player:IsMoving() then
+            if HR.Cast(S.Moonfire) then return "moonfire 343" end
+        end
         -- stellar_flare,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))>=5&(!variable.az_ss|!buff.ca_inc.up|!prev.stellar_flare)
         if S.StellarFlare:IsCastableP() and not ShouldStop and EvaluateCycleStellarFlare348(Target) then
             if HR.Cast(S.StellarFlare) then return "stellar_flare 360" end
