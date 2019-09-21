@@ -62,6 +62,7 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Subterfuge                             = Action.Create({ Type = "Spell", ID = 108208     }),
     ToxicBlade                             = Action.Create({ Type = "Spell", ID = 245388     }),
     VenomRush                              = Action.Create({ Type = "Spell", ID = 152152     }),
+	Dismantle                              = Action.Create({ Type = "Spell", ID = 207777     }), -- PvP Talent
     -- Azerite Traits
     DoubleDose                             = Action.Create({ Type = "Spell", ID = 273007     }),
     EchoingBlades                          = Action.Create({ Type = "Spell", ID = 287649     }),
@@ -2059,7 +2060,11 @@ local function ArenaRotation(icon, unit)
         if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end          
-        
+
+        -- Disarm
+        if A.DisarmIsReady(unit) and not ActionUnit(unit):InLOS() then
+            return A.Disarm:Show(icon)
+        end 
     end 
 end 
 

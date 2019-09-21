@@ -67,6 +67,7 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     Subterfuge                            = Action.Create({ Type = "Spell", ID = 108208     }),
     Vigor                                 = Action.Create({ Type = "Spell", ID = 14983     }),
     Weaponmaster                          = Action.Create({ Type = "Spell", ID = 193537     }),
+	Dismantle                              = Action.Create({ Type = "Spell", ID = 207777     }), -- PvP Talent
     -- Azerite Traits
     BladeInTheShadows                     = Action.Create({ Type = "Spell", ID = 275896     }),
     Inevitability                         = Action.Create({ Type = "Spell", ID = 278683     }),

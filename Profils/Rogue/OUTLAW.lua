@@ -59,6 +59,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     MarkedforDeath                       = Action.Create({ Type = "Spell", ID = 137619        }),
     QuickDraw                            = Action.Create({ Type = "Spell", ID = 196938        }),
     SliceandDice                         = Action.Create({ Type = "Spell", ID = 5171        }),
+	Dismantle                              = Action.Create({ Type = "Spell", ID = 207777     }), -- PvP Talent
     -- Azerite Traits
     AceUpYourSleeve                      = Action.Create({ Type = "Spell", ID = 278676        }),
     Deadshot                             = Action.Create({ Type = "Spell", ID = 272935        }),    
