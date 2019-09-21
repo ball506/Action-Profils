@@ -735,6 +735,14 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 				
             },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dots & Finishers -- ",
+                    },
+                },
+            },
 			{
                 {
                     E = "Slider",                                                     
@@ -748,9 +756,9 @@ A.Data.ProfileUI = {
                         ANY = "Envenom DMG Offset",
                     },
                     TT = { 
-                        enUS = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).", 
-                        ruRU = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).", 
-                        frFR = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).",
+                        enUS = "Used to check if Rupture is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Rupture on every mobs around.\n(Default value : 3).",
+                        ruRU = "Used to check if Rupture is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Rupture on every mobs around.\n(Default value : 3).",
+                        frFR = "Used to check if Rupture is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Rupture on every mobs around.\n(Default value : 3).",
 					},					
                     M = {},
                 },
@@ -766,9 +774,9 @@ A.Data.ProfileUI = {
                         ANY = "Mutilate DMG Offset",
                     },
                     TT = { 
-                        enUS = "Used as TTD Not Valid fallback since it's a generator. (Default 3).", 
-                        ruRU = "Used as TTD Not Valid fallback since it's a generator. (Default 3).",  
-                        frFR = "Used as TTD Not Valid fallback since it's a generator. (Default 3).", 
+                        enUS = "Used to check if Mutilate is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Mutilate on every mobs around.\n(Default value : 3).", 
+                        ruRU = "Used to check if Mutilate is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Mutilate on every mobs around.\n(Default value : 3).",
+                        frFR = "Used to check if Mutilate is worth to be casted since it's a finisher.\nConsider this as the expected damage calculation of Mutilate on every mobs around.\n(Default value : 3).", 
 					},					
                     M = {},
                 },
@@ -863,32 +871,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
-            { -- [7]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- PvP -- ",
-                    },
-                },
-            },
-            { -- [2] 2nd Row
-                {
-                    E = "Checkbox", 
-                    DB = "SmokeBombFinishComco",
-                    DBV = false,
-                    L = { 
-                        enUS = "Use Smoke Bomb Offensively", 
-                        ruRU = "Use Smoke Bomb Offensively",  
-                        frFR = "Use Smoke Bomb Offensively", 
-                    }, 
-                    TT = { 
-                        enUS = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
-                        ruRU = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
-                        frFR = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
-                    }, 
-                    M = {},
-                },  						
-            },
 			{
                 {
                     E = "Slider",                                                     
@@ -915,6 +897,48 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- PvP -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "SmokeBombFinishComco",
+                    DBV = false,
+                    L = { 
+                        enUS = "Use Smoke Bomb Offensively", 
+                        ruRU = "Use Smoke Bomb Offensively",  
+                        frFR = "Use Smoke Bomb Offensively", 
+                    }, 
+                    TT = { 
+                        enUS = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                        ruRU = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                        frFR = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "ShadowVanish",
+                    DBV = false,
+                    L = { 
+                        enUS = "Use Cloak of Shadow Defensively", 
+                        ruRU = "Use Cloak of Shadow Defensively",  
+                        frFR = "Use Cloak of Shadow Defensively", 
+                    }, 
+                    TT = { 
+                        enUS = "Allow to use Cloak of Shadow with Vanish in case of emergency.", 
+                        ruRU = "Allow to use Cloak of Shadow with Vanish in case of emergency.", 
+                        frFR = "Allow to use Cloak of Shadow with Vanish in case of emergency.",  
+                    }, 
+                    M = {},
+                },				
+            },
             { -- [5] 5th Row     
                 {
                     E = "Dropdown",                                                         

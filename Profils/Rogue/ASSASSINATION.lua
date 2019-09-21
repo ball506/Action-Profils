@@ -1552,7 +1552,42 @@ local function PvPRotation(icon)
         if ActionUnit("player"):CombatTime() == 0 then 
             return 
         end 
-
+		
+        -- Emergency CrimsonVial
+        local CrimsonVial = Action.GetToggle(2, "CrimsonVialHP")
+        if     CrimsonVial >= 0 and A.CrimsonVial:IsReady("player") and 
+        (
+            (   -- Auto 
+                CrimsonVial >= 100 and 
+                (
+                    -- HP lose per sec >= 10
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 10 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.10 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CrimsonVial < 100 and 
+                ActionUnit("player"):HealthPercent() <= CrimsonVial
+            )
+        ) 
+        then 
+            return A.CrimsonVial:Show(icon)
+        end 
+		
         -- Emergency Evade
         local Evade = Action.GetToggle(2, "EvadeHP")
         if     Evade >= 0 and A.Evade:IsReady("player") and 
@@ -1621,46 +1656,11 @@ local function PvPRotation(icon)
         ) 
         then 
             return A.Feint:Show(icon)
-        end  		
+        end  		 		
 
-        -- Emergency CrimsonVial
-        local CrimsonVial = Action.GetToggle(2, "CrimsonVialHP")
-        if     CrimsonVial >= 0 and A.CrimsonVial:IsReady("player") and 
-        (
-            (   -- Auto 
-                CrimsonVial >= 100 and 
-                (
-                    -- HP lose per sec >= 10
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 10 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.10 or 
-                    -- TTD 
-                    ActionUnit("player"):TimeToDieX(25) < 5 or 
-                    (
-                        A.IsInPvP and 
-                        (
-                            ActionUnit("player"):UseDeff() or 
-                            (
-                                ActionUnit("player", 5):HasFlags() and 
-                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                                ActionUnit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) and 
-                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
-            ) or 
-            (    -- Custom
-                CrimsonVial < 100 and 
-                ActionUnit("player"):HealthPercent() <= CrimsonVial
-            )
-        ) 
-        then 
-            return A.CrimsonVial:Show(icon)
-        end  		
-
-        -- Emergency Cloak of Shadow
+        -- Emergency Cloak of Shadow with Vanish
         local CloakofShadow = Action.GetToggle(2, "CloakofShadowHP")
-        if     CloakofShadow >= 0 and A.CloakofShadow:IsReady("player") and 
+        if     CloakofShadow >= 0 and A.CloakofShadow:IsReady("player") and Action.GetToggle(2, "ShadowVanish") and 
         (
             (   -- Auto 
                 CloakofShadow >= 100 and 
@@ -1809,7 +1809,7 @@ local function PvPRotation(icon)
 		end	
 
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
-        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and (ActionUnit(unit):HasBuffs("DamageBuffs") > 0 or (FriendlyTeam("HEALER"):GetCC() and FriendlyTeam("DAMAGER"):HealthPercent() <= 60)) then
+        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and (ActionUnit(unit):HasBuffs("DamageBuffs") > 0 or FriendlyTeam("HEALER"):GetCC()) then
             return A.KidneyShot:Show(icon)
         end   		
        
