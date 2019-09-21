@@ -1561,8 +1561,8 @@ local function PvPRotation(icon)
                 Evade >= 100 and 
                 (
                     -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 30 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.30 or 
                     -- TTD 
                     ActionUnit("player"):TimeToDieX(25) < 5 or 
                     (
@@ -1630,9 +1630,9 @@ local function PvPRotation(icon)
             (   -- Auto 
                 CrimsonVial >= 100 and 
                 (
-                    -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- HP lose per sec >= 10
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 10 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.10 or 
                     -- TTD 
                     ActionUnit("player"):TimeToDieX(25) < 5 or 
                     (
@@ -1665,9 +1665,9 @@ local function PvPRotation(icon)
             (   -- Auto 
                 CloakofShadow >= 100 and 
                 (
-                    -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- HP lose per sec >= 25
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 25 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.25 or 
                     -- TTD 
                     ActionUnit("player"):TimeToDieX(25) < 5 or 
                     (
@@ -1736,17 +1736,13 @@ local function PvPRotation(icon)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
 		
-        if useKick and A.Kick:IsReady("player") and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
+        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
             return A.Kick:Show(icon)
         end 
     
-        if useCC and A.KidneyShot:IsReady("player") and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+        if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
             return A.KidneyShot:Show(icon)              
         end  		
-	
-	    --if useCC and A.Blind:IsReady("player") and A.Blind:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("disorient", 0) then 
-        --    return A.Blind:Show(icon)              
-        --end
     
         if useRacial and A.QuakingPalm:AutoRacial(unit) then 
             return A.QuakingPalm:Show(icon)
@@ -1803,14 +1799,19 @@ local function PvPRotation(icon)
 		end	
 		
    		-- Envenom
-		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
 			return A.Envenom:Show(icon)
 		end
 		
 		-- Rupture
 		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Garrote.ID) and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
 			return A.Rupture:Show(icon)
-		end		
+		end	
+
+		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
+        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and (ActionUnit(unit):HasBuffs("DamageBuffs") > 0 or (FriendlyTeam("HEALER"):GetCC() and FriendlyTeam("DAMAGER"):HealthPercent() <= 60)) then
+            return A.KidneyShot:Show(icon)
+        end   		
        
 	   -- Kidney Shot
 		if A.KidneyShot:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 5 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
@@ -1919,7 +1920,7 @@ local function PvPRotation(icon)
         end
 
 		-- Agressive CC Burst Rotation
-		if ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 4 then
+		if (ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 3) then
 		    -- SmokeBomb under 30% HP
 		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
 		    	if inMelee then
@@ -1937,19 +1938,19 @@ local function PvPRotation(icon)
 				return A.Rupture:Show(icon)
 			end
 			-- KidneyShot
-			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
 				return A.KidneyShot:Show(icon)
 			end
 			-- Envenom
-			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable() and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable() and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
 				return A.Envenom:Show(icon)
 			end
 			-- Vendetta
-			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
 				return A.Vendetta:Show(icon)
 			end
 			-- ToxicBlade
-			if inMelee and S.ToxicBlade:IsAvailable() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) >= 2 then
+			if inMelee and S.ToxicBlade:IsAvailable() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
 				return A.ToxicBlade:Show(icon)
 			end
 			-- MarkedforDeath
@@ -2055,7 +2056,7 @@ local function ArenaRotation(icon, unit)
         end
 		
 		-- Kidney Shot on enemies with burst damage buff
-        if A.KidneyShot:IsReady(unit) and inMelee and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end          
         
