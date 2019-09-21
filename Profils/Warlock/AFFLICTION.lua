@@ -71,6 +71,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     PandemicInvocation                   = Action.Create({ Type = "Spell", ID = 289364     }),
     -- Defensive
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
+	SingeMagic                           = Action.Create({ Type = "Spell", ID = 89808, Color = "YELLOW", Desc = "YELLOW Color for Pet Target dispel"     }),
     -- Misc
     BurningRush                          = Action.Create({ Type = "Spell", ID = 278727     }),
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
@@ -948,6 +949,14 @@ local function APL()
 		end
 		
 	end
+	
+	-- Mouseover Dispel Magic
+    local function DispellMagic()
+    	-- SingeMagic
+	    if S.SingeMagic:IsCastable() and not ShouldStop and Action.AuraIsValid("mouseover", "UseDispel", "Magic") then
+	        if HR.Cast(S.SingeMagic) then return "SingeMagic 69" end
+        end	
+    end
     
     --- In Combat
     if Player:AffectingCombat() and not PrepareAshvaneBurst() then
@@ -965,16 +974,18 @@ local function APL()
                 return
             end 
         end 
-
-        -- Mouseover         
+        -- Mouseover rotation         
         if Action.IsUnitEnemy("mouseover") and Action.GetToggle(2, "mouseover") then 
             unit = "mouseover"
                 
             if MouseoverRotation(unit) then 
                 return true 
             end 
+        end		
+        -- Dispell Magic Mouseover
+        if Action.GetToggle(2, "mouseover") and not Action.IsUnitEnemy("mouseover") then
+            local ShouldReturn = DispellMagic(); if ShouldReturn then return ShouldReturn; end
         end
-		
 		-- Auto Multi Dot	  
 	    if not Player:PrevGCDP(1, S.TargetEnemy)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
 		and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and EnemiesCount > 2 and EnemiesCount <= 5 
