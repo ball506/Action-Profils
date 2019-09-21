@@ -895,7 +895,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "VanishDefensive",
-                    DBV = 40, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(1856) .. " (%)",
@@ -907,10 +907,10 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "CloakofShadowHP",
-                    DBV = 40, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(1856) .. " (%)",
+                        ANY = A.GetSpellInfo(31224) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -923,10 +923,10 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "BlindPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782),
+                        ANY = "PvP " .. A.GetSpellInfo(2094),
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
@@ -943,7 +943,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "BlindPvPUnits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -951,7 +951,7 @@ A.Data.ProfileUI = {
                         [4] = true,
                     }, 
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782) .. " units",
+                        ANY = "PvP " .. A.GetSpellInfo(2094) .. " units",
                     }, 
                     TT = { 
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 

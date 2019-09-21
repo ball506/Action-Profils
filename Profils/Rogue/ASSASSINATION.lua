@@ -561,6 +561,194 @@ function Feint(Feint)
     end
 end
 
+
+    -- Defensives
+    local function SelfDefensives(unit)
+	    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()
+		
+        if ActionUnit("player"):CombatTime() == 0 then 
+            return 
+        end 
+
+        -- Emergency Evade
+        local Evade = Action.GetToggle(2, "EvadeHP")
+        if     Evade >= 0 and A.Evade:IsReady("player") and 
+        (
+            (   -- Auto 
+                Evade >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Evade < 100 and 
+                ActionUnit("player"):HealthPercent() <= Evade
+            )
+        ) 
+        then 
+            if HR.Cast(S.Evade, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Evade (Defensives)"; end
+        end  
+		
+        -- Emergency Feint
+        local Feint = Action.GetToggle(2, "FeintHP")
+        if     Feint >= 0 and A.Feint:IsReady("player") and 
+        (
+            (   -- Auto 
+                Feint >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Feint < 100 and 
+                ActionUnit("player"):HealthPercent() <= Feint
+            )
+        ) 
+        then 
+            if HR.Cast(S.Feint, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Evade (Defensives)"; end
+        end  		
+
+        -- Emergency CrimsonVial
+        local CrimsonVial = Action.GetToggle(2, "CrimsonVialHP")
+        if     CrimsonVial >= 0 and A.CrimsonVial:IsReady("player") and 
+        (
+            (   -- Auto 
+                CrimsonVial >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CrimsonVial < 100 and 
+                ActionUnit("player"):HealthPercent() <= CrimsonVial
+            )
+        ) 
+        then 
+            if HR.Cast(S.CrimsonVial, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Evade (Defensives)"; end
+        end  		
+
+        -- Emergency Cloak of Shadow
+        local CloakofShadow = Action.GetToggle(2, "CloakofShadowHP")
+        if     CloakofShadow >= 0 and A.CloakofShadow:IsReady("player") and 
+        (
+            (   -- Auto 
+                CloakofShadow >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CloakofShadow < 100 and 
+                ActionUnit("player"):HealthPercent() <= CloakofShadow
+            )
+        ) 
+        then 
+            if HR.Cast(S.CloakofShadow, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Evade (Defensives)"; end
+        end 
+		
+        -- Emergency Vanish
+        local Vanish = Action.GetToggle(2, "VanishDefensive")
+        if     Vanish >= 0 and A.Vanish:IsReady("player") and 
+        (
+            (   -- Auto 
+                Vanish >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Vanish < 100 and 
+                ActionUnit("player"):HealthPercent() <= Vanish
+            )
+        ) 
+        then 
+            if HR.Cast(S.Vanish, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Evade (Defensives)"; end
+        end  
+
+    end 
+    SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+
 -- Check if the Priority Rotation variable should be set
 local function UsePriorityRotation()
     if Cache.EnemiesCount[10] < 2 then
@@ -1169,12 +1357,22 @@ local function APL()
 	--end    
 	
     -- Crimson Vial
-    ShouldReturn = CrimsonVial(S.CrimsonVial);
-    if ShouldReturn then return ShouldReturn; end
+    --ShouldReturn = CrimsonVial(S.CrimsonVial);
+    --if ShouldReturn then return ShouldReturn; end
     -- Feint
-    ShouldReturn = Feint(S.Feint);
-    if ShouldReturn then return ShouldReturn; end
+    --ShouldReturn = Feint(S.Feint);
+    --if ShouldReturn then return ShouldReturn; end
+	
+    -- Target                         
+    if A.IsUnitEnemy("target") then 
+        unit = "target"        		
 		
+	    -- Defensive
+        if SelfDefensives(unit) then 
+            return true
+        end 
+    end
+	
 	-- Anti channel interrupt
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
@@ -1354,22 +1552,147 @@ local function PvPRotation(icon)
         if ActionUnit("player"):CombatTime() == 0 then 
             return 
         end 
-		-- Evade on enemies burst
-        if A.Evade:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "EvadeHP") then
+
+        -- Emergency Evade
+        local Evade = Action.GetToggle(2, "EvadeHP")
+        if     Evade >= 0 and A.Evade:IsReady("player") and 
+        (
+            (   -- Auto 
+                Evade >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Evade < 100 and 
+                ActionUnit("player"):HealthPercent() <= Evade
+            )
+        ) 
+        then 
             return A.Evade:Show(icon)
-        end	
-		-- Feint on enemies burst
-        if A.Feint:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "FeintHP") then
+        end  
+		
+        -- Emergency Feint
+        local Feint = Action.GetToggle(2, "FeintHP")
+        if     Feint >= 0 and A.Feint:IsReady("player") and 
+        (
+            (   -- Auto 
+                Feint >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Feint < 100 and 
+                ActionUnit("player"):HealthPercent() <= Feint
+            )
+        ) 
+        then 
             return A.Feint:Show(icon)
-        end	
-		-- CrimsonVial on enemies burst
-        if A.CrimsonVial:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "CrimsonVialHP") then
+        end  		
+
+        -- Emergency CrimsonVial
+        local CrimsonVial = Action.GetToggle(2, "CrimsonVialHP")
+        if     CrimsonVial >= 0 and A.CrimsonVial:IsReady("player") and 
+        (
+            (   -- Auto 
+                CrimsonVial >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CrimsonVial < 100 and 
+                ActionUnit("player"):HealthPercent() <= CrimsonVial
+            )
+        ) 
+        then 
             return A.CrimsonVial:Show(icon)
-        end			
-		-- Cloak of Shadow on enemies burst
-        if A.CloakofShadow:IsReady(unit) and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "CloakofShadowHP") and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
+        end  		
+
+        -- Emergency Cloak of Shadow
+        local CloakofShadow = Action.GetToggle(2, "CloakofShadowHP")
+        if     CloakofShadow >= 0 and A.CloakofShadow:IsReady("player") and 
+        (
+            (   -- Auto 
+                CloakofShadow >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CloakofShadow < 100 and 
+                ActionUnit("player"):HealthPercent() <= CloakofShadow
+            )
+        ) 
+        then 
             return A.CloakofShadow:Show(icon)
-        end
+        end 
+		
         -- Emergency Vanish
         local Vanish = Action.GetToggle(2, "VanishDefensive")
         if     Vanish >= 0 and A.Vanish:IsReady("player") and 
@@ -1404,28 +1727,26 @@ local function PvPRotation(icon)
         then 
             return A.Vanish:Show(icon)
         end  
-		-- Kidney Shot on enemies burst
-        if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):IsFocused("DAMAGER") then
-            return A.KidneyShot:Show(icon)
-        end 
+
     end 
-    SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+    SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 	-- Interrupts
     local function Interrupts(unit)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
+        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		
+        if useKick and A.Kick:IsReady("player") and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
             return A.Kick:Show(icon)
         end 
     
-        if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 3 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+        if useCC and A.KidneyShot:IsReady("player") and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
             return A.KidneyShot:Show(icon)              
-        end          
+        end  		
 	
-	    if useCC and A.Blind:IsReady(unit) and A.Blind:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("disorient", 0) then 
-            return A.Blind:Show(icon)              
-        end
+	    --if useCC and A.Blind:IsReady("player") and A.Blind:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("disorient", 0) then 
+        --    return A.Blind:Show(icon)              
+        --end
     
         if useRacial and A.QuakingPalm:AutoRacial(unit) then 
             return A.QuakingPalm:Show(icon)
@@ -1465,18 +1786,7 @@ local function PvPRotation(icon)
 		-- Variables
         inMelee = A.Mutilate:IsInRange(unit)
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
-		
-		-- Interrupts
-        local Interrupt = Interrupts(unit)
-        if Interrupt then 
-            return Interrupt:Show(icon)
-        end  		
-		
-		-- Defensive
-        local SelfDefensive = SelfDefensives(unit)
-        if SelfDefensive then 
-            return SelfDefensive:Show(icon)
-        end 	
+			
 		-- Sap out of combat
 		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and not Target:DebuffP(S.Sap)  then
 			return A.Sap:Show(icon)
@@ -1680,11 +1990,23 @@ local function PvPRotation(icon)
             return true 
         end 
     end 
+	
         
     -- Target                         
     if A.IsUnitEnemy("target") then 
         unit = "target"
-                
+        
+		-- Interrupts
+        if Interrupts(unit) then 
+            return true
+        end  		
+		
+	    -- Defensive
+        if SelfDefensives(unit) then 
+            return true
+        end  
+
+        -- Rotation		
         if EnemyRotation(unit) then 
             return true 
         end 
@@ -1720,12 +2042,19 @@ end
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not ActionPlayer:IsMounted() then              
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		local useKickHeal, useCCHeal, useRacialHeal = A.InterruptIsValid(EnemyHealerUnitID, "TargetMouseover")  
 		
 		-- Blind on Enemy Healer
-        if A.Blind:IsReady(EnemyHealerUnitID) and ActionUnit(unit):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("stun", 50) and ActionUnit(unit):HealthPercent() <= 30 then
+        if A.Blind:IsReady(EnemyHealerUnitID) and not A.HonorMedallion:IsReadyP(EnemyHealerUnitID, true) and ActionUnit(EnemyHealerUnitID):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("disorient", 50) and ActionUnit(unit):HealthPercent() <= 30 then
             return A.Blind:Show(icon)
         end 
-		-- Kidney Shot on enemies burst
+		
+        -- Shadowstep into KidneyShot or Interrupt
+        if A.ShadowStep:IsReady(EnemyHealerUnitID) and ActionUnit(EnemyHealerUnitID):GetRange() <= 25 and ActionUnit(unit):HealthPercent() <= 30 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):InCC() < 1 then
+            return A.ShadowStep:Show(icon)              
+        end
+		
+		-- Kidney Shot on enemies with burst damage buff
         if A.KidneyShot:IsReady(unit) and inMelee and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end          
