@@ -749,7 +749,36 @@ end
     end 
     SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
-
+local function RefreshPoisons()
+    local choice = Action.GetToggle(2, "PoisonToUse")
+	
+	if Player:BuffRemainsP(S.CripplingPoison) <= 10 or not Player:BuffP(S.CripplingPoison) and not Player:PrevGCDP(1, S.CripplingPoison) and not Player:IsCasting(S.CripplingPoison) then
+	    if HR.Cast(S.CripplingPoison) then return "Refresh CripplingPoison"; end
+	end	
+	-- Wound Poison
+	if choice == "Wound Poison" then 
+	    if Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting(S.WoundPoison) then 
+		    if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
+        end
+	-- Deadly Poison
+	elseif choice == "Deadly Poison" then
+	    if Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison) and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting(S.DeadlyPoison) then 
+		    if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
+        end
+	elseif choice == "Auto" then
+	    -- Auto
+	    if Action.IsInPvP and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting(S.WoundPoison) then 		
+	        if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
+		else
+		    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Action.IsInPvP and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting(S.DeadlyPoison) then
+		        if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
+		    end
+	    end
+	else
+	    return
+	end	
+end
+	
 -- Check if the Priority Rotation variable should be set
 local function UsePriorityRotation()
     if Cache.EnemiesCount[10] < 2 then
@@ -1335,7 +1364,10 @@ local function APL()
 	local ShouldStop = Action.ShouldStop()
 	local Pull = Action.BossMods_Pulling()	   
 	
-    -- Spell ID Changes check
+	ShouldReturn = RefreshPoisons()
+    if ShouldReturn then return ShouldReturn; end
+    
+	-- Spell ID Changes check
     Stealth = S.Subterfuge:IsAvailable() and S.Stealth2 or S.Stealth; -- w/ or w/o Subterfuge Talent
     -- Unit Update
     HL.GetEnemies(50); -- Used for PoisonedBleeds()
@@ -1544,8 +1576,10 @@ local function PvPRotation(icon)
     local unit = "target"
     local isMoving = Player:IsMoving()
     local inMelee = false
-
+    
 	
+	ShouldReturn = RefreshPoisons()
+    if ShouldReturn then return ShouldReturn; end
     -- Defensives
     local function SelfDefensives(unit)
 	    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()

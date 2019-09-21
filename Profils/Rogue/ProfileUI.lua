@@ -1,10 +1,22 @@
 --------------------
 -- Taste TMW Action ProfileUI
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local A = Action
+local TMW                                             = TMW
+local A                                             = Action
+local UnitCooldown                                    = A.UnitCooldown
+local Unit                                            = A.Unit 
+local Player                                        = A.Player 
+local Pet                                             = A.Pet
+local LoC                                             = A.LossOfControl
+local MultiUnits                                    = A.MultiUnits
+local EnemyTeam                                        = A.EnemyTeam
+local FriendlyTeam                                    = A.FriendlyTeam
+local TeamCache                                        = A.TeamCache
+local InstanceInfo                                    = A.InstanceInfo
+local select                                        = select
+local HL                                            = HeroLib 
+local HeroUnit                                      = HL.Unit
+
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
     DateTime = "v1.16 (21.09.2019)",
@@ -783,6 +795,26 @@ A.Data.ProfileUI = {
                     },
                 },
             },
+            {   
+			    {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Deadly Poison", value = "Deadly Poison" },
+                        { text = "Wound Poison", value = "Wound Poison" },                    
+                        { text = "Auto", value = "Auto" },
+                    },
+                    DB = "PoisonToUse",
+                    DBV = "Auto",
+                    L = { 
+                        ANY = "Poisons",
+                    }, 
+                    TT = { 
+                        enUS = "Select the poison the rotation should always maintain.\nIf Auto then it will auto adapt : Deadly Poison in PvE and Wound Poison in PvP.", 
+                        ruRU = "Select the poison the rotation should always maintain.\nIf Auto then it will auto adapt : Deadly Poison in PvE and Wound Poison in PvP.", 
+                    }, 
+                    M = {},
+                },
+            },				
 			{
                 {
                     E = "Slider",                                                     
