@@ -346,7 +346,7 @@ local function APL()
             if HR.Cast(S.Bloodthirst) then return "bloodthirst 38"; end
         end
         -- dragon_roar,if=buff.enrage.up
-        if S.DragonRoar:IsCastableP(12) and not ShouldStop and (Player:BuffP(S.EnrageBuff)) then
+        if S.DragonRoar:IsCastableP(12) and not ShouldStop and (Player:BuffP(S.EnrageBuff)) and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
             if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
         end
         -- raging_blow,if=charges=2
