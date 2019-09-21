@@ -717,14 +717,30 @@ A.Data.ProfileUI = {
                         frFR = "Don't prevent Garrote suggestions when using Subterfuge and Vanish is ready. These should ideally be synced, but can be useful if holding Vanish for specific fights.",
                     }, 
                     M = {},
-                },  						
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "StealthOOC",
+                    DBV = true,
+                    L = { 
+                        enUS = "Stealth Reminder (OOC)", 
+                        ruRU = "Stealth Reminder (OOC)", 
+                        frFR = "Stealth Reminder (OOC)",
+                    }, 
+                    TT = { 
+                        enUS = "Show Stealth Reminder when out of combat.", 
+                        ruRU = "Show Stealth Reminder when out of combat.", 
+                        frFR = "Show Stealth Reminder when out of combat.",
+                    }, 
+                    M = {},
+                }, 				
             },
 			{
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
                     MAX = 5, 
-                    Precision = 0.25,					
+                    Precision = 1,					
                     DB = "EnvenomDMGOffset",
                     DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
@@ -732,9 +748,9 @@ A.Data.ProfileUI = {
                         ANY = "Envenom DMG Offset",
                     },
                     TT = { 
-                        enUS = "Used to check if Rupture is worth to be casted since it's a finisher.", 
-                        ruRU = "Used to check if Rupture is worth to be casted since it's a finisher.", 
-                        frFR = "Used to check if Rupture is worth to be casted since it's a finisher.",
+                        enUS = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).", 
+                        ruRU = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).", 
+                        frFR = "Used to check if Rupture is worth to be casted since it's a finisher. (Default 3).",
 					},					
                     M = {},
                 },
@@ -742,7 +758,7 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 5,  
-                    Precision = 0.25,					
+                    Precision = 1,					
                     DB = "MutilateDMGOffset",
                     DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
@@ -750,9 +766,9 @@ A.Data.ProfileUI = {
                         ANY = "Mutilate DMG Offset",
                     },
                     TT = { 
-                        enUS = "Used as TTD Not Valid fallback since it's a generator.", 
-                        ruRU = "Used as TTD Not Valid fallback since it's a generator.",  
-                        frFR = "Used as TTD Not Valid fallback since it's a generator.", 
+                        enUS = "Used as TTD Not Valid fallback since it's a generator. (Default 3).", 
+                        ruRU = "Used as TTD Not Valid fallback since it's a generator. (Default 3).",  
+                        frFR = "Used as TTD Not Valid fallback since it's a generator. (Default 3).", 
 					},					
                     M = {},
                 },
@@ -770,9 +786,9 @@ A.Data.ProfileUI = {
                         ANY = "OOC Poison Refresh",
                     },
                     TT = { 
-                        enUS = "Set the timer for the Poison Refresh (OOC)", 
-                        ruRU = "Set the timer for the Poison Refresh (OOC)", 
-                        frFR = "Set the timer for the Poison Refresh (OOC)",
+                        enUS = "Set the timer for the Poison Refresh (OOC). (Default 15).", 
+                        ruRU = "Set the timer for the Poison Refresh (OOC). (Default 15).", 
+                        frFR = "Set the timer for the Poison Refresh (OOC). (Default 15).",
 					},					
                     M = {},
                 },
@@ -788,9 +804,9 @@ A.Data.ProfileUI = {
                         ANY = "Combat Poison Refresh",
                     },
                     TT = { 
-                        enUS = "Set the timer for the Poison Refresh (In Combat)", 
-                        ruRU = "Set the timer for the Poison Refresh (In Combat)", 
-                        frFR = "Set the timer for the Poison Refresh (In Combat)",
+                        enUS = "Set the timer for the Poison Refresh (In Combat). (Default 3).", 
+                        ruRU = "Set the timer for the Poison Refresh (In Combat). (Default 3).", 
+                        frFR = "Set the timer for the Poison Refresh (In Combat). (Default 3).",
 					},					
                     M = {},
                 },
@@ -811,21 +827,17 @@ A.Data.ProfileUI = {
             },
             { -- [3] 3rd Row 
                 {
-                    E = "Checkbox", 
-                    DB = "StealthOOC",
-                    DBV = true,
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EvadeHP",
+                    DBV = 30, -- Set healthpercentage @70% life. 
+                    ONOFF = true,
                     L = { 
-                        enUS = "Stealth Reminder (OOC)", 
-                        ruRU = "Stealth Reminder (OOC)", 
-                        frFR = "Stealth Reminder (OOC)",
-                    }, 
-                    TT = { 
-                        enUS = "Show Stealth Reminder when out of combat.", 
-                        ruRU = "Show Stealth Reminder when out of combat.", 
-                        frFR = "Show Stealth Reminder when out of combat.",
+                        ANY = A.GetSpellInfo(5277) .. " (%)",
                     }, 
                     M = {},
-                }, 
+                },
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -861,6 +873,24 @@ A.Data.ProfileUI = {
             },
             { -- [2] 2nd Row
                 {
+                    E = "Checkbox", 
+                    DB = "SmokeBombFinishComco",
+                    DBV = false,
+                    L = { 
+                        enUS = "Use Smoke Bomb Offensively", 
+                        ruRU = "Use Smoke Bomb Offensively",  
+                        frFR = "Use Smoke Bomb Offensively", 
+                    }, 
+                    TT = { 
+                        enUS = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                        ruRU = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                        frFR = "Allow to use Smoke Bomb when enemy is low health and his healer CC or not in range.", 
+                    }, 
+                    M = {},
+                },  						
+            },
+			{
+                {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
@@ -873,22 +903,18 @@ A.Data.ProfileUI = {
                     M = {},
                 },
                 {
-                    E = "Checkbox", 
-                    DB = "SmokeBombFinishComco",
-                    DBV = false,
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "CloakofShadowHP",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
                     L = { 
-                        enUS = "Use Smoke Bomb Offensively", 
-                        ruRU = "Use Smoke Bomb Offensively",  
-                        frFR = "Use Smoke Bomb Offensively", 
-                    }, 
-                    TT = { 
-                        enUS = "Allow to use Smoke Bomb when enemy is low health.", 
-                        ruRU = "Allow to use Smoke Bomb when enemy is low health.",
-                        frFR = "Allow to use Smoke Bomb when enemy is low health.",
+                        ANY = A.GetSpellInfo(1856) .. " (%)",
                     }, 
                     M = {},
-                },  						
-            },
+                },
+			},
             { -- [5] 5th Row     
                 {
                     E = "Dropdown",                                                         

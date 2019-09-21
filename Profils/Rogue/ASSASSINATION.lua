@@ -1348,16 +1348,26 @@ local function PvPRotation(icon)
 
 	
     -- Defensives
-    local function SelfDefensives()
+    local function SelfDefensives(unit)
+	    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()
+		
         if ActionUnit("player"):CombatTime() == 0 then 
             return 
         end 
 		-- Evade on enemies burst
-        if A.Evade:IsReady(unit) and ActionUnit(unit):IsMelee() and ActionUnit("player"):HealthPercent() <= 40 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
+        if A.Evade:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "EvadeHP") then
             return A.Evade:Show(icon)
-        end		
+        end	
+		-- Feint on enemies burst
+        if A.Feint:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "FeintHP") then
+            return A.Feint:Show(icon)
+        end	
+		-- CrimsonVial on enemies burst
+        if A.CrimsonVial:IsReady(unit) and HPLoosePerSecond >= 20 and ActionUnit("player"):IsFocused("DAMAGER") and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "CrimsonVialHP") then
+            return A.CrimsonVial:Show(icon)
+        end			
 		-- Cloak of Shadow on enemies burst
-        if A.CloakofShadow:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 40 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
+        if A.CloakofShadow:IsReady(unit) and ActionUnit("player"):HealthPercent() <= Action.GetToggle(2, "CloakofShadowHP") and ((ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):HealthPercent() <= 35) or ActionUnit("player"):IsFocused("DAMAGER")) then
             return A.CloakofShadow:Show(icon)
         end
         -- Emergency Vanish
@@ -1392,7 +1402,7 @@ local function PvPRotation(icon)
             )
         ) 
         then 
-            return A.Vanish
+            return A.Vanish:Show(icon)
         end  
 		-- Kidney Shot on enemies burst
         if A.KidneyShot:IsReady(unit) and ActionUnit("player"):HealthPercent() <= 50 and not ActionUnit(unit):InLOS() and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 and ActionUnit("player"):IsFocused("DAMAGER") then
@@ -1406,31 +1416,31 @@ local function PvPRotation(icon)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
         if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
-            return A.Kick
+            return A.Kick:Show(icon)
         end 
     
         if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 3 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
-            return A.KidneyShot              
+            return A.KidneyShot:Show(icon)              
         end          
 	
 	    if useCC and A.Blind:IsReady(unit) and A.Blind:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("disorient", 0) then 
-            return A.Blind              
+            return A.Blind:Show(icon)              
         end
     
         if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-            return A.QuakingPalm
+            return A.QuakingPalm:Show(icon)
         end 
     
         if useRacial and A.Haymaker:AutoRacial(unit) then 
-            return A.Haymaker
+            return A.Haymaker:Show(icon)
         end 
     
         if useRacial and A.WarStomp:AutoRacial(unit) then 
-            return A.WarStomp
+            return A.WarStomp:Show(icon)
         end 
     
         if useRacial and A.BullRush:AutoRacial(unit) then 
-            return A.BullRush
+            return A.BullRush:Show(icon)
         end      
     end 
     Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
@@ -1461,7 +1471,12 @@ local function PvPRotation(icon)
         if Interrupt then 
             return Interrupt:Show(icon)
         end  		
-				
+		
+		-- Defensive
+        local SelfDefensive = SelfDefensives(unit)
+        if SelfDefensive then 
+            return SelfDefensive:Show(icon)
+        end 	
 		-- Sap out of combat
 		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and not Target:DebuffP(S.Sap)  then
 			return A.Sap:Show(icon)
@@ -1644,13 +1659,7 @@ local function PvPRotation(icon)
 	-- Stealth out of combat
     if not Player:BuffP(S.VanishBuff) and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
         return A.Stealth:Show(icon)
-    end
-
-    -- Defensive
-    local SelfDefensive = SelfDefensives()
-    if SelfDefensive then 
-        return SelfDefensive:Show(icon)
-    end 
+    end  
         
     -- Trinkets (Defensive)
     if ActionUnit("player"):CombatTime() > 0 and ActionUnit("player"):HealthPercent() <= 75 then --A.GetToggle(2, "TrinketDefensive") then 
