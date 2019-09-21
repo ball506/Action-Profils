@@ -1124,7 +1124,7 @@ local function APL()
             if HR.Cast(S.TargetEnemy) then return "TargetEnemy 69" end
         end
         -- Trinkets with CDs check ON
-        if (true) and and HR.CDsON() then
+        if (true) and HR.CDsON() then
             local ShouldReturn = Trinkets(); if ShouldReturn then return ShouldReturn; end
         end			
         -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
