@@ -449,7 +449,7 @@ local function APL()
                 if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 54"; end
             end
             -- vampiric_touch
-            if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(S.VampiricTouch) and not ShouldStop and Player:DebuffDownP(S.VampiricTouchDebuff) then
+            if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) and not ShouldStop and Player:DebuffDownP(S.VampiricTouchDebuff) then
                 if HR.Cast(S.VampiricTouch) then return "vampiric_touch 54"; end
             end
 		end
@@ -520,7 +520,7 @@ local function APL()
             if HR.Cast(S.DarkAscension) then return "dark_ascension 60"; end
         end
         -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-        if S.VampiricTouch:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.VampiricTouchDebuff) and S.ThoughtHarvester:AzeriteRank() >= 1)  and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(S.VampiricTouch) then
+        if S.VampiricTouch:IsCastableP() and not ShouldStop and (not Target:DebuffP(S.VampiricTouchDebuff) and S.ThoughtHarvester:AzeriteRank() >= 1)  and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 64"; end
         end
         -- mind_sear,if=buff.harvested_thoughts.up
@@ -580,11 +580,11 @@ local function APL()
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 128" end
         end
         -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check*(1+0.10*azerite.searing_dialogue.rank*spell_targets.mind_sear))
-        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(S.VampiricTouch)  and not ShouldStop and EvaluateCycleVampiricTouch133(Target) then
+        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch)  and not ShouldStop and EvaluateCycleVampiricTouch133(Target) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 145" end
         end
         -- vampiric_touch,target_if=dot.shadow_word_pain.refreshable,if=(talent.misery.enabled&target.time_to_die>((1.0+2.0*spell_targets.mind_sear)*variable.vt_mis_trait_ranks_check*(variable.vt_mis_sd_check*spell_targets.mind_sear)))
-        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(S.VampiricTouch) and not ShouldStop and EvaluateCycleVampiricTouch150(Target) then
+        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) and not ShouldStop and EvaluateCycleVampiricTouch150(Target) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 160" end
         end
         -- void_torrent,if=buff.voidform.up
@@ -683,7 +683,7 @@ local function APL()
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 254"; end
         end
         -- vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(S.VampiricTouch) and not ShouldStop and (Target:DebuffRefreshableCP(S.VampiricTouchDebuff) and Target:TimeToDie() > 6 or (S.Misery:IsAvailable() and Target:DebuffRefreshableCP(S.ShadowWordPainDebuff))) and not Player:IsCasting(S.VampiricTouch) then
+        if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) and not ShouldStop and (Target:DebuffRefreshableCP(S.VampiricTouchDebuff) and Target:TimeToDie() > 6 or (S.Misery:IsAvailable() and Target:DebuffRefreshableCP(S.ShadowWordPainDebuff))) and not Player:IsCasting(S.VampiricTouch) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
         end
         -- mind_flay,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2&(cooldown.void_bolt.up|cooldown.mind_blast.up)
