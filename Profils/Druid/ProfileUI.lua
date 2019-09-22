@@ -1,10 +1,22 @@
 --------------------
 -- Taste TMW Action ProfileUI
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local A = Action
+local TMW                                             = TMW
+local A                                             = Action
+local UnitCooldown                                    = A.UnitCooldown
+local Unit                                            = A.Unit 
+local Player                                        = A.Player 
+local Pet                                             = A.Pet
+local LoC                                             = A.LossOfControl
+local MultiUnits                                    = A.MultiUnits
+local EnemyTeam                                        = A.EnemyTeam
+local FriendlyTeam                                    = A.FriendlyTeam
+local TeamCache                                        = A.TeamCache
+local InstanceInfo                                    = A.InstanceInfo
+local select                                        = select
+local HL                                            = HeroLib 
+local HeroUnit                                      = HL.Unit
+
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
     DateTime = "v1.16 (21.09.2019)",
@@ -1094,117 +1106,99 @@ A.Data.ProfileUI = {
     -- MSG Actions UI
     [7] = {
         [ACTION_CONST_DRUID_FERAL] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.LegSweep:IsReadyM(thisunit, true) and 
                         (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+                            not IsInPvP and 
+                            MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1                            
+                        ) or 
+                        (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
+                        )                                                     
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUAVER = 5, LUA = [[
+                return     GrappleWeaponIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+            ]] },
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },
         },
         [ACTION_CONST_DRUID_GUARDIAN] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.LegSweep:IsReadyM(thisunit, true) and 
                         (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+                            not IsInPvP and 
+                            MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1                            
+                        ) or 
+                        (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
+                        )                                                     
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUAVER = 5, LUA = [[
+                return     GrappleWeaponIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+            ]] },
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },
         },
         [ACTION_CONST_DRUID_BALANCE] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
+            ["stun"] = { Enabled = true, Key = "LegSweep", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.LegSweep:IsReadyM(thisunit, true) and 
                         (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+                            not IsInPvP and 
+                            MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1                            
+                        ) or 
+                        (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
+                        )                                                     
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["disarm"] = { Enabled = true, Key = "GrappleWeapon", LUAVER = 5, LUA = [[
+                return     GrappleWeaponIsReady(thisunit, true)
             ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ["freedom"] = { Enabled = true, Key = "TigersLust", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.TigersLust:IsReadyM(thisunit) and 
+                        A.TigersLust:AbsentImun(thisunit) and 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+            ]] },
+            ["dispel"] = { Enabled = true, Key = "Detox", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_MONK_MISTWEAVER]
+                return     A.Detox:IsReadyM(thisunit) and 
+                        A.Detox:AbsentImun(thisunit) and 
+                        AuraIsValid(thisunit, "UseDispel", "Dispel") and                                                 
+                        LossOfControl:IsMissed("SILENCE") and 
+                        LossOfControl:Get("SCHOOL_INTERRUPT", "NATURE") == 0
             ]] },
         },
         [ACTION_CONST_DRUID_RESTORATION] = {    
@@ -1241,18 +1235,6 @@ A.Data.ProfileUI = {
         },
     },
 }
--- Shared 
-Env.PlayerMovementStarted = 0
-function Env.PlayerMoving()
-    if Env.UNITCurrentSpeed("player") > 0 then 
-        if Env.PlayerMovementStarted == 0 then 
-            Env.PlayerMovementStarted = TMW.time 
-        end 
-    else
-        Env.PlayerMovementStarted = 0
-    end 
-end 
-Env.PlayerMoving = A.MakeFunctionCachedStatic(Env.PlayerMoving)
 
 -----------------------------------------
 --                   PvP  
@@ -1326,28 +1308,37 @@ function A.GrappleWeaponIsReady(unit, isMsg, skipShouldStop)
 end  
 
 function A.Main_CastBars(unit, list)
-    if not A.IsInitialized or Env.IamHealer or not Env.InPvP() then 
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
     
-    if A[Env.PlayerSpec] and A[Env.PlayerSpec].SpearHandStrike and A[Env.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+    if A[A.PlayerSpec] and A[A.PlayerSpec].Kick and A[A.PlayerSpec].Kick:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Kick:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
         return true         
     end 
 end 
 
 function A.Second_CastBars(unit)
-    if not A.IsInitialized or not Env.InPvP() then 
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp")  then 
         return false 
     end 
     
     local Toggle = A.GetToggle(2, "CyclonePvP")    
-    if Toggle and Toggle ~= "OFF" and A[Env.PlayerSpec] and A[Env.PlayerSpec].Paralysis and A[Env.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Env.Unit(unit):IsControlAble("disorient", 0) then 
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Cyclone and A[A.PlayerSpec].Cyclone:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Cyclone:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else
             return select(2, A.InterruptIsValid(unit, Toggle, true))         
         end 
+    end
+    local Toggle2 = A.GetToggle(2, "MightyBashPvP")    
+    if Toggle2 and Toggle2 ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Cyclone and A[A.PlayerSpec].Cyclone:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Cyclone:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
+        if Toggle2 == "BOTH" then 
+            return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
+        else
+            return select(2, A.InterruptIsValid(unit, Toggle2, true))         
+        end 
     end 
+	
 end 
 
 
