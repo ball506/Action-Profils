@@ -668,7 +668,7 @@ local function APL()
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- focused_azerite_beam,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Target:DebuffP(S.ColossusSmashDebuff) and not Player:BuffP(S.TestofMightBuff)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- concentrated_flame,if=!debuff.colossus_smash.up&!buff.test_of_might.up&dot.concentrated_flame_burn.remains=0

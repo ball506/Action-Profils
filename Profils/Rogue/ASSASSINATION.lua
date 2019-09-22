@@ -975,7 +975,7 @@ local function Essences ()
         end
     end
     -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-    if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:EnergyPredicted() < 70 then
+    if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Player:EnergyPredicted() < 70 then
         if HR.Cast(S.FocusedAzeriteBeam) then return "Cast FocusedAzeriteBeam"; end
     end
     -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60

@@ -903,7 +903,7 @@ local function APL()
         if HR.Cast(S.BilescourgeBombers) then return "bilescourge_bombers 178"; end
     end
     -- focused_azerite_beam
-    if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and EnemiesCount >= 3 then
+    if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
         if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam implosion"; end
     end
     -- purifying_blast

@@ -710,7 +710,7 @@ local function APL()
             if HR.Cast(CastRainOfFire) then return "rain_of_fire 96"; end
         end
         -- focused_azerite_beam
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") then
+        if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 98"; end
         end
         -- purifying_blast

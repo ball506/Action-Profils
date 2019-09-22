@@ -534,7 +534,7 @@ local function APL()
             if HR.Cast(S.Sundering, Action.GetToggle(2, "OffGCDasOffGCD")) then return "sundering 178"; end
         end
         -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffDownP(S.AscendanceBuff) and Player:BuffDownP(S.MoltenWeaponBuff) and Player:BuffDownP(S.IcyEdgeBuff) and Player:BuffDownP(S.CracklingSurgeBuff) and not Target:DebuffP(S.EarthenSpikeDebuff)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffDownP(S.AscendanceBuff) and Player:BuffDownP(S.MoltenWeaponBuff) and Player:BuffDownP(S.IcyEdgeBuff) and Player:BuffDownP(S.CracklingSurgeBuff) and not Target:DebuffP(S.EarthenSpikeDebuff)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 188"; end
         end
         -- purifying_blast,if=raid_event.adds.in>60
