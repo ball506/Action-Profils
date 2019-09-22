@@ -577,8 +577,8 @@ end
 local function AntiFakeStun(unit) 
     return 
     A.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 5 and 
-    Unit(unit):IsControlAble("stun", 0) and 
+    ActionUnit(unit):GetRange() <= 5 and 
+    ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
@@ -610,13 +610,13 @@ A[2] = function(icon)
     end 
     
     if unit then         
-        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        local castLeft, _, _, _, notKickAble = ActionUnit(unit):IsCastingRemains()
         if castLeft > 0 then             
             if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
                 return A.PummelGreen:Show(icon)                                                  
             end 
             
-            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then
+            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("stun", 0) then
                 return A.StormBoltAntiFake:Show(icon)                  
             end 
             
