@@ -39,9 +39,10 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     PetKick                              = Action.Create({ Type = "Spell", ID = 47482, Color = "RED", Desc = "RED" }),  
     -- CrowdControl
 	StormBolt							= Action.Create({ Type = "Spell", ID = 107570    }),
-	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
+	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", Hidden = true, QueueForbidden = true }),
+	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
 	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
-	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),  
+	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }), 
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
 	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
 	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
@@ -589,17 +590,16 @@ local function APL()
     --- In Combat
     if Player:AffectingCombat() then
         -- auto_attack
- 		
+
 		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+  
   	    -- Pummel
-  	    if useKick and S.Pummel:IsReady() and not ShouldStop and Target:IsInterruptible() then 
+  	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop and Target:IsInterruptible() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
-         	else 
+			else 
           	    return
          	end 
       	end 
@@ -711,6 +711,72 @@ end
 -----------------------------------------
 --           PVP ROTATION  
 -----------------------------------------
+-- [1] CC AntiFake Rotation
+local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 5 and 
+    Unit(unit):IsControlAble("stun", 0) and 
+    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if     A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target") and                     
+            (
+                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
+                (not A.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
+            )
+        )
+    )
+    then 
+        return A.StormBoltGreen:Show(icon)         
+    end                                                                     
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
+                return A.PummelGreen:Show(icon)                                                  
+            end 
+            
+            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then
+                return A.StormBoltAntiFake:Show(icon)                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
 
 local function PvPRotation(icon)
 
@@ -763,7 +829,8 @@ local function PvPRotation(icon)
 
     local function Interrupts(unit)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
+ 
+	
         if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
             return A.Pummel
         end 
@@ -811,7 +878,7 @@ local function PvPRotation(icon)
 	local function EnemyRotation(unit)
 		-- Variables
         inMelee = A.MortalStrike:IsInRange(unit)
-
+		
 		-- Interrupts
         local Interrupt = Interrupts(unit)
         if Interrupt then 
@@ -995,6 +1062,7 @@ local function PvPRotation(icon)
         end 	
  	end 
 
+	
 	-- Defensive
     local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
@@ -1089,7 +1157,7 @@ local function ArenaRotation(icon, unit)
 			return A.Rend:Show(icon)
 		end	
 		-- Reflect
-        if A.ReflectIsReady(unit) and not ActionUnit(unit):InLOS() then
+        if A.ReflectIsReady(unit) and Unit(unit):ShouldReflect() then
             return A.SpellReflection:Show(icon)
         end
         -- Disarm
