@@ -27,38 +27,38 @@ local ActionUnit = Action.Unit
 ---------------------------------------------------
 
 --- Reflect Spells List
-PvPReflect = {
-    Spell(161372), -- Poly
-    Spell(190319), -- Combustion
-    Spell(161372), -- Polymorph
-    Spell(203286), -- Greater Pyroblast
-    Spell(199786), --  Glacial Spike
-    Spell(257537), -- Ebonbolt
-    Spell(161372), -- Polymorph
-    Spell(210714), -- Icefury
-    Spell(191634), -- Stormkeeper
-    Spell(116858) -- Chaos Bolt
+local pvpReflect = {
+    161372, -- Poly
+    190319, -- Combustion
+    161372, -- Polymorph
+    203286, -- Greater Pyroblast
+    199786, --  Glacial Spike
+    257537, -- Ebonbolt
+    210714, -- Icefury
+    191634, -- Stormkeeper
+    116858, -- Chaos Bolt
+	118, -- Poly
 }
-
 
 ---------------------------------------------------
 -------------------- FUNCTIONS --------------------
 ---------------------------------------------------
-
--- Used to check spells to reflect
-function ActionUnit:IsCastingDangerousSpell()
-    local importantCast = false
-    local spellName = Action.Unit(unitID):IsCasting()
-	
-    for _, key in pairs(PvPReflect) do
-        if self:IsCasting(key) then
-            importantCast = true
-            break
+function Action.ShouldReflect(unit)	
+	local GoodToReflect = false
+	for p = 1, #pvpReflect do
+	    -- Get the spell name of every id in our list	    
+		if not unit or unit == nil then 
+		    unit = "target"
+		end
+		local currentUnit = ActionUnit(unit)
+		local currentCast = currentUnit:IsCasting()
+		
+        if currentCast == GetSpellInfo(pvpReflect[p]) then
+            GoodToReflect = true
+		else
+		    GoodToReflect = false
         end
     end
-
-    if importantCast then
-        return true
-    end
-    return false
+    return GoodToReflect
 end
+
