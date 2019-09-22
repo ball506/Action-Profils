@@ -64,8 +64,9 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     Exhilaration                          = Action.Create({ Type = "Spell", ID = 109304 }),
     DanceofDeath                          = Action.Create({ Type = "Spell", ID = 274441 }),
     -- Pet
-    CallPet                               = Action.Create({ Type = "Spell", ID = 883, Texture = 132179 }),
-    MendPet                               = Action.Create({ Type = "Spell", ID = 136, Texture = 132179 }),
+    CallPet                               = Action.Create({ Type = "Spell", ID = 883 }),
+    MendPet                               = Action.Create({ Type = "Spell", ID = 136 }),
+    RevivePet                             = Action.Create({ Type = "Spell", ID = 982 }),
     SpiritShock                           = Action.Create({ Type = "Spell", ID = 264265 }),
     SonicBlast                            = Action.Create({ Type = "Spell", ID = 264263 }),
 	-- Defensives
@@ -229,6 +230,13 @@ local function UpdateRanges()
   end
 end
 
+S.CallPet.TextureSpellID = { S.MendPet:ID() }
+S.RevivePet.TextureSpellID = { S.MendPet:ID() }
+
+
+local function cacheOverwrite()
+    Cache.Persistent.SpellLearned.Player[S.MendPet.SpellID] = true
+end
 
 -- AoE Detection Mode
 local function GetEnemiesCount(range)
@@ -327,6 +335,7 @@ local function APL()
 	--print(EnemiesCount)
     HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
     DetermineEssenceRanks()
+	cacheOverwrite()
 	
 	if Player:IsCasting() or Player:IsChanneling() then
 	    ShouldStop = true
