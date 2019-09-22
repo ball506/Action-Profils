@@ -608,13 +608,13 @@ local function APL()
         if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and (S.Trueshot:CooldownRemainsP() < 18 or Target:TimeToDie() < 40) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
         end
+		-- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.TrueshotBuff) or Target:DebuffP(S.BloodoftheEnemy)) then
+            if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
+        end
         -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major.rank3&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
         if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Player:BuffP(S.TrueshotBuff) and ((S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or not Spell(299358):IsAvailable() and (Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80)) or Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToDie() < 20) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
-        end
-        -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.TrueshotBuff) and not S.BloodoftheEnemy:ID() == "298277" or Target:DebuffP(S.BloodoftheEnemy) or Target:TimeToDie() < 5) then
-            if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
         end
         -- use_items,if=buff.trueshot.up|!talent.calling_the_shots.enabled|target.time_to_die<20
         -- call_action_list,name=cds

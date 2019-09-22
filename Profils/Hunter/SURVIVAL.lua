@@ -630,6 +630,10 @@ local function APL()
         if I.GalecallersBoon:IsEquipReady() and TrinketON() and (bool(S.MemoryofLucidDreams:CooldownRemainsP()) or S.WildfireInfusion:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP()) or bool(I.PocketsizedComputationDevice:CooldownRemainsP()) or not S.MemoryofLucidDreams:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP())) then
             if HR.Cast(I.GalecallersBoon) then return "galecallers_boon 322"; end
         end
+        -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
+            if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 8"; end
+        end
         -- use_item,name=azsharas_font_of_power
         if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 323"; end
