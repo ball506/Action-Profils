@@ -708,15 +708,35 @@ end
 -- Finished
 
 
+
 -----------------------------------------
 --           PVP ROTATION  
 -----------------------------------------
+-- Locals
+local Temp                                     = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                        = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+    DisablePhys                                = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                                = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = 
+IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+    return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+end 
+
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
     A.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 5 and 
-    Unit(unit):IsControlAble("stun", 0) and 
+    ActionUnit(unit):GetRange() <= 5 and 
+    ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
@@ -748,13 +768,13 @@ A[2] = function(icon)
     end 
     
     if unit then         
-        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        local castLeft, _, _, _, notKickAble = ActionUnit(unit):IsCastingRemains()
         if castLeft > 0 then             
             if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
                 return A.PummelGreen:Show(icon)                                                  
             end 
             
-            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then
+            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("stun", 0) then
                 return A.StormBoltAntiFake:Show(icon)                  
             end 
             
@@ -827,6 +847,16 @@ local function PvPRotation(icon)
     end 
     SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+	local function Reflects(unit)
+	    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover") 
+		
+		-- Reflect
+   		if A.SpellReflection:IsReady(unit) and Action.ShouldReflect(unit) then
+    	    return A.SpellReflection:Show(icon)
+    	end	
+	end
+	Reflects = A.MakeFunctionCachedDynamic(Reflects)
+	
     local function Interrupts(unit)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
  
@@ -878,13 +908,8 @@ local function PvPRotation(icon)
 	local function EnemyRotation(unit)
 		-- Variables
         inMelee = A.MortalStrike:IsInRange(unit)
+		--print(Action.ShouldReflect(unit))
 		
-		-- Interrupts
-        local Interrupt = Interrupts(unit)
-        if Interrupt then 
-            return Interrupt:Show(icon)
-        end  
-
 		if A.VictoryRush:IsReady(unit) and ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") then
 			return A.VictoryRush:Show(icon)
 		end
@@ -892,6 +917,10 @@ local function PvPRotation(icon)
 		--if A.ExecuteDefault:IsReady(unit)  then
 		--	return A.ExecuteDefault:Show(icon)
 		--end
+		-- Reflect
+   		if A.SpellReflection:IsReady(unit) and Action.ShouldReflect(unit) then
+    	    return A.SpellReflection:Show(icon)
+    	end
 
 		-- Hamstring (slow)
         if unit ~= "mouseover" and  ActionUnit(unit):GetRange() <= 14 and (A.IsInPvP or (not ActionUnit(unit):IsBoss() and ActionUnit(unit):IsMovingOut())) and A.Hamstring:IsReady(unit) and A.Hamstring:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and ActionUnit(unit):GetMaxSpeed() >= 100 and ActionUnit(unit):HasDeBuffs("Slowed") == 0 and not ActionUnit(unit):IsTotem() then 
@@ -1061,7 +1090,6 @@ local function PvPRotation(icon)
             end 
         end 	
  	end 
-
 	
 	-- Defensive
     local SelfDefensive = SelfDefensives()
@@ -1083,7 +1111,15 @@ local function PvPRotation(icon)
     -- Mouseover         
     if A.IsUnitEnemy("mouseover") then 
         unit = "mouseover"
-                
+        -- Interrupts
+        if Interrupts(unit) then 
+            return true
+        end 
+        -- Reflect		
+        if Reflects(unit) then 
+            return true
+        end 
+		-- Rotation
         if EnemyRotation(unit) then 
             return true 
         end 
@@ -1092,10 +1128,18 @@ local function PvPRotation(icon)
     -- Target                         
     if A.IsUnitEnemy("target") then 
         unit = "target"
-                
+        -- Interrupts
+        if Interrupts(unit) then 
+            return true
+        end 
+        -- Reflect		
+        if Reflects(unit) then 
+            return true
+        end 
+		-- Rotation
         if EnemyRotation(unit) then 
             return true 
-        end 
+        end  
     end 
         
     -- Movement
@@ -1156,10 +1200,7 @@ local function ArenaRotation(icon, unit)
 		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and ActionUnit(unit):HasDeBuffs(A.RendDebuff.ID) < 2  then
 			return A.Rend:Show(icon)
 		end	
-		-- Reflect
-        if A.ReflectIsReady(unit) and Unit(unit):ShouldReflect() then
-            return A.SpellReflection:Show(icon)
-        end
+		
         -- Disarm
         if A.DisarmIsReady(unit) and not ActionUnit(unit):InLOS() then
             return A.Disarm:Show(icon)
