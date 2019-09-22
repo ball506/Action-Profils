@@ -723,6 +723,27 @@ local function APL()
             if ShouldReturn then return ShouldReturn; 
         end    
     end
+
+	------------------------------------------------------
+	---------------- MOUSE OVER ROTATION -----------------
+	------------------------------------------------------
+	-- Mouseover DPS Rotation
+	-- Only handling mouseover multidots and dots refreshable
+	local function MouseoverRotation(unit)
+		
+		-- Variables
+        inRange = A.VampiricTouch:IsInRange(unit)
+				
+		-- Vampiric Touch
+        if A.VampiricTouch:IsReady(unit) and not ShouldStop and ActionUnit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID) <= 10 and not Player:PrevGCDP(1, S.VampiricTouch) then
+            if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
+        end
+        -- shadow_word_pain
+        if A.ShadowWordPain:IsReady(unit) and not S.Misery:IsAvailable() and not Player:PrevGCDP(1, S.ShadowWordPain) and not ShouldStop and ActionUnit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID) <= 10 then
+            if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 280"; end
+        end
+		
+	end
     
     --- In Combat
     if Player:AffectingCombat() then
@@ -741,6 +762,15 @@ local function APL()
             end 
         end 		
 		
+		-- Mouseover rotation         
+        if Action.IsUnitEnemy("mouseover") and Action.GetToggle(2, "mouseover") then 
+            unit = "mouseover"
+                
+            if MouseoverRotation(unit) then 
+                return true 
+            end 
+
+        end	
 			
 		-- Auto Multi Dot	  
 	    if S.TargetEnemy:TimeSinceLastCast() >= 2 and not Player:PrevGCDP(1, S.TargetEnemy) and not Player:PrevGCDP(2, S.TargetEnemy) and not Player:PrevGCDP(3, S.TargetEnemy) and not Player:PrevGCDP(4, S.TargetEnemy) and Action.GetToggle(2, "AutoDot") and CanMultidot 
