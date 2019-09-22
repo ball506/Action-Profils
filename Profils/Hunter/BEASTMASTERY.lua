@@ -64,8 +64,8 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     Exhilaration                          = Action.Create({ Type = "Spell", ID = 109304 }),
     DanceofDeath                          = Action.Create({ Type = "Spell", ID = 274441 }),
     -- Pet
-    CallPet                               = Action.Create({ Type = "Spell", ID = 883 }),
-    MendPet                               = Action.Create({ Type = "Spell", ID = 136 }),
+    CallPet                               = Action.Create({ Type = "Spell", ID = 883, Texture = 132179 }),
+    MendPet                               = Action.Create({ Type = "Spell", ID = 136, Texture = 132179 }),
     SpiritShock                           = Action.Create({ Type = "Spell", ID = 264265 }),
     SonicBlast                            = Action.Create({ Type = "Spell", ID = 264263 }),
 	-- Defensives
@@ -299,11 +299,6 @@ local function DetermineEssenceRanks()
     S.MemoryofLucidDreamsMinor = S.MemoryofLucidDreamsMinor3:IsAvailable() and S.MemoryofLucidDreamsMinor3 or S.MemoryofLucidDreamsMinor
 	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
 end
-
-
-
-S.CallPet.TextureSpellID = { S.MendPet:ID() }
-S.RevivePet.TextureSpellID = { S.MendPet:ID() }
 
 -- Initiate Nucleus Ability registration
 local function Init()

@@ -585,7 +585,7 @@ function Env.FearIsReady(unit, isMsg)
     end 
 end 
 
-function Env.Main_CastBars(unit, list)
+function A.Main_CastBars(unit, list)
     if not A.IsInitialized or Env.IamHealer or not Env.InPvP() then 
         return false 
     end 
@@ -595,7 +595,7 @@ function Env.Main_CastBars(unit, list)
     end 
 end 
 
-function Env.Second_CastBars(unit)
+function A.Second_CastBars(unit)
     if not A.IsInitialized or not Env.InPvP() then 
         return false 
     end 
