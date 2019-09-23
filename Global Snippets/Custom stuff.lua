@@ -249,8 +249,8 @@ if DogTag then
 			end 
         end,
         ret = "string",
-        doc = "Displays Notification Message",
-		example = '[ActionBurst] => "Show custom notifications"',
+        doc = "Displays Notification Icon",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
     })
@@ -266,18 +266,13 @@ if DogTag then
         end,
         ret = "string",
         doc = "Displays Notification Message",
-		example = '[ActionBurst] => "Show custom notifications"',
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
     })		
 	
 	-- The biggest problem of TellMeWhen what he using :setup on frames which use DogTag and it's bring an error
 	TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
-		TMW:Fire("TMW_ACTION_MODE_CHANGED")
-		TMW:Fire("TMW_ACTION_BURST_CHANGED")
-		TMW:Fire("TMW_ACTION_AOE_CHANGED")
-		-- Taste's 
-		TMW:Fire("TMW_ACTION_CD_MODE_CHANGED")		
-		TMW:Fire("TMW_ACTION_AOE_MODE_CHANGED")
+		TMW:Fire("TMW_ACTION_NOTIFICATION")
 	end)
 end
