@@ -472,15 +472,15 @@ local function APL()
     end
     local function Essences()
         -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:RuneTimeToX(1) > Player:GCD() and Player:RunicPower() < 40) then
+        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:RuneTimeToX(1) > Player:GCD() and Player:RunicPower() < 40) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-        if S.BloodoftheEnemy:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and ((bool(S.DeathandDecay:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Defile:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Apocalypse:CooldownRemainsP()) and S.DeathandDecay:IsCastableP() and not ShouldStop)) then
+        if S.BloodoftheEnemy:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and ((bool(S.DeathandDecay:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Defile:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Apocalypse:CooldownRemainsP()) and S.DeathandDecay:IsCastableP() and not ShouldStop)) then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- guardian_of_azeroth,if=cooldown.apocalypse.remains<6
-        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (S.Apocalypse:CooldownRemainsP() < 6) then
+        if S.GuardianofAzeroth:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (S.Apocalypse:CooldownRemainsP() < 6) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
@@ -488,7 +488,7 @@ local function APL()
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
         end
         -- focused_azerite_beam,if=!death_and_decay.ticking
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not Player:BuffP(S.DeathandDecayBuff)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
@@ -659,11 +659,11 @@ local function APL()
             if HR.Cast(S.Outbreak) then return "outbreak 307" end
         end
         -- call_action_list,name=essences
-        if (true) then
+        if (true) and HR.CDsON() then
             local ShouldReturn = Essences(); if ShouldReturn then return ShouldReturn; end
         end
         -- call_action_list,name=cooldowns
-        if (true) then
+        if (true) and Action.GetToggle(1, "HeartOfAzeroth") then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
         -- run_action_list,name=aoe,if=active_enemies>=2
