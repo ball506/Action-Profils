@@ -187,3 +187,97 @@ if petClass == "WARLOCK" then
 	})
 end
 
+-------------------------------------------------------------------------------
+-- DogTags
+-------------------------------------------------------------------------------
+local DogTag = LibStub("LibDogTag-3.0", true)
+
+-- /run Action.SendNotification("test", 22812, 2)
+------------------------------------
+--------- NOTIFICATIONS API -------
+------------------------------------
+--Action.SendNotification(message, spell, delay)	
+-- Return a tost notification directly in game with status information from rotation
+-- Useful for custom events announcer	
+-- @Parameters : Message and Spell id are mandaroty settings. 
+-- Delay is optional 	
+function Action.SendNotification(message, spell, delay)
+    if not message then
+	    return
+	end
+	if not delay then
+	   delay = 0
+	end
+	
+	local timer = HL.GetTime()
+	local endtimer = timer + 2 + delay	
+	Action.NotificationMessage = ""
+	Action.NotificationSpellID = 0
+	Action.NotificationIsValid = false
+    Action.NotificationIsValidUntil = endtimer
+	Action.CurrentNotificationIcon = GetSpellTexture(spell)
+	
+	if message and spell then 
+	    if HL.GetTime() <= endtimer then 
+	        Action.NotificationIsValid = true
+	        Action.NotificationMessage = message            
+            TMW:Fire("TMW_ACTION_NOTIFICATION")	
+        else
+		    Action.NotificationIsValid = false
+		end			
+	end
+	
+    return Action.NotificationMessage, Action.NotificationSpellID, Action.NotificationIsValidUntil
+	
+end
+			
+-- Taste's 
+TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
+
+local function removeLastChar(text)
+	return text:sub(1, -2)
+end
+
+if DogTag then
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationIcon", {
+        code = function()
+			if Action.NotificationSpellID and Action.NotificationIsValid then
+				return Action.CurrentNotificationIcon
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Notification Message",
+		example = '[ActionBurst] => "Show custom notifications"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })
+
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationMessage", {
+        code = function()
+			if Action.NotificationMessage and Action.NotificationIsValid then				
+				return Action.NotificationMessage
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Notification Message",
+		example = '[ActionBurst] => "Show custom notifications"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })		
+	
+	-- The biggest problem of TellMeWhen what he using :setup on frames which use DogTag and it's bring an error
+	TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
+		TMW:Fire("TMW_ACTION_MODE_CHANGED")
+		TMW:Fire("TMW_ACTION_BURST_CHANGED")
+		TMW:Fire("TMW_ACTION_AOE_CHANGED")
+		-- Taste's 
+		TMW:Fire("TMW_ACTION_CD_MODE_CHANGED")		
+		TMW:Fire("TMW_ACTION_AOE_MODE_CHANGED")
+	end)
+end
