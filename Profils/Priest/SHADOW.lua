@@ -343,7 +343,7 @@ local function APL()
 	
 	-- Local functions remap
     local InsanityDrain = InsanityDrain()
-    EnemiesCount = GetEnemiesCount(10)
+    EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40, true) -- To populate Cache.Enemies[40] for CastCycles
     DetermineEssenceRanks()
 	-- Multidots var
