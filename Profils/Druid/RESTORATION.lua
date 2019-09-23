@@ -680,10 +680,17 @@ local function MaintainRejuvenation(unit)
         local MinRaidRejuvUnits = HealingEngine.GetMinimumUnits(6, 20)
 		local MinPartyRejuvenationUnits = HealingEngine.GetMinimumUnits(3, 5)
         local currentMembers = GetNumGroupMembers() --TeamCache.Friendly.Size
+		local RejuvenationCount = 0
 		print(currentMembers)
+		-- Get total rejuvenation
+		for i = 1, #totalMembers do 
+    		if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 1 then            	
+				RejuvenationCount = RejuvenationCount + 1						
+            end
+		end
 		-- Party
 		if currentMembers > 1 and currentMembers <= 7 then
-		    local RejuvenationCount = 0
+		    
 		    -- Get members without Rejuvenation active
             for i = 1, #totalMembers do 
                 if Unit(totalMembers[i].Unit):GetRange() <= 40 and RejuvenationCount < currentMembers then 
@@ -695,9 +702,7 @@ local function MaintainRejuvenation(unit)
                     if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then            	
 						return A.Rejuvenation:Show(icon)						
                     end
-                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 1 then            	
-						RejuvenationCount = RejuvenationCount + 1						
-                    end                   					
+                    Action.SendNotification("Pre Rejuvenation in progress", A.Rejuvenation.ID, 2)					
                 end 			
             end
 		-- In Raid	
@@ -714,9 +719,7 @@ local function MaintainRejuvenation(unit)
                     if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then 
 						return A.Rejuvenation:Show(icon)
                     end	
-                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 1 then            	
-						RejuvenationCount = RejuvenationCount + 1						
-                    end   					
+                    Action.SendNotification("Pre Rejuvenation in progress", A.Rejuvenation.ID, 2)   					
                 end 			
             end
         end			
@@ -905,8 +908,9 @@ end
             end 
             -- Pre Rejuvenation on 1/3 of our party / raid
             if (Unit(unit):HasBuffs(A.Rejuvenation.ID) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID) == 0) and Unit(unit):InGroup() and not Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 40 then 
-                return A.Rejuvenation:Show(icon)
+                return A.Rejuvenation:Show(icon)				
             end 
+			
 			-- BossMods
             local Pull = A.BossMods_Pulling()  
             if Pull > 0 then 
@@ -1164,6 +1168,7 @@ end
                 end                
             end
 			return A.Swiftmend:Show(icon)
+			Action.SendNotification("Medium emergency detected", A.Rejuvenation.ID, 2)
         end 
 		
         -- Innervate Bomb combo
