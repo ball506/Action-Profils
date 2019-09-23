@@ -1,7 +1,14 @@
 local TMW                             = TMW
 local A                             = Action
 local Unit                             = A.Unit 
-
+local TeamCache                                = Action.TeamCache
+local EnemyTeam                                = Action.EnemyTeam
+local FriendlyTeam                            = Action.FriendlyTeam
+local HealingEngine                            = Action.HealingEngine
+local LoC                                     = Action.LossOfControl
+local Player                                = Action.Player 
+local MultiUnits                            = Action.MultiUnits
+local UnitCooldown                            = Action.UnitCooldown
 local RESTO                           = A[ACTION_CONST_DRUID_RESTORATION]
 
 function A:PredictHeal(NAME, UNIT, VARIATION)   
@@ -78,7 +85,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
             total = 0
         else
             local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            total = A.GetSpellDescription(204066)[1] * variation + (HPS*8) + pre_heal - (DMG*8)
+            total = A.GetSpellDescription(204066)[1] * variation + (HPS * 8) + pre_heal - (DMG * 8)
         end
     end
     
@@ -96,7 +103,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
                 hot = 1.75
             end
             
-            total = WildGrowth[1] * variation * hot + pre_heal + (HPS*7) -- - (DMG*7)
+            total = WildGrowth[1] * variation * hot + pre_heal + (HPS * 7) -- - (DMG*7)
         end
     end
     
@@ -105,7 +112,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
             total = 0
         else
             local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            total = A.GetSpellDescription(33763)[1] * variation + pre_heal + (HPS*15) -- - (DMG*15)
+            total = A.GetSpellDescription(33763)[1] * variation + pre_heal + (HPS * 15) -- - (DMG*15)
         end
     end
     
@@ -118,7 +125,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
             if Unit("player"):CombatTime() == 0 then
                 total = 0
             else
-                total = A.GetSpellDescription(102351)[1] * variation + (HPS*8) + pre_heal -- - (DMG*8)
+                total = A.GetSpellDescription(102351)[1] * variation + (HPS * 8) + pre_heal -- - (DMG*8)
             end
             
         end
@@ -130,10 +137,10 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
         else
             local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
             local raid_hot = 1
-            if Player:IsInRaid() then
+            if IsInRaid() then
                 raid_hot = 2
             end
-            total = A.GetSpellDescription(740)[1] + (A.GetSpellDescription(740)[2] * 5 * raid_hot) + pre_heal + (HPS*15.1) - (DMG*15.1)
+            total = A.GetSpellDescription(740)[1] + (A.GetSpellDescription(740)[2] * 5 * raid_hot) + pre_heal + (HPS * 15.1) - (DMG * 15.1)
         end
     end    
     
@@ -174,7 +181,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
                     RN = RN * 2
                 end
                 -- Average heal dur: (15 + 15 + 12 + 7) / 4 = 12.25
-                total = pre_heal + RG + WG + LB + RN + (HPS*12.25) - (DMG*12.25)
+                total = pre_heal + RG + WG + LB + RN + (HPS * 12.25) - (DMG * 12.25)
             else 
                 total = 88888888888888 -- skip
             end
