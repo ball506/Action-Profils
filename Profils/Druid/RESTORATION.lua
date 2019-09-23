@@ -625,44 +625,6 @@ local function ShouldRejuvenation()
 end 
 ShouldRejuvenation = A.MakeFunctionCachedStatic(ShouldRejuvenation)
 
-local function PreRejuvenation()
-    if A.Rejuvenation:IsReady(unit, true, nil, true) and IsSchoolFree() then 
-        local totalMembers = HealingEngine.GetMembersAll()		 
-        local RejuvenationUnits = HealingEngine.GetMinimumUnits(2, 4)
-        local currentMembers = TeamCache.Friendly.Size
-		
-        if RejuvenationUnits < 2 and not A.IsInPvP then 
-            return false 
-        end
-		
-        local RejuvenationCount = 0
-		
-		-- Get number of Rejuvenation & members count in range
-        for i = 1, #totalMembers do 
-            if Unit(totalMembers[i].Unit):GetRange() <= 40 then 
-			    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 0 then
-				    RejuvenationCount = RejuvenationCount + 1                  					
-				end				
-            end 			
-        end 
-		
-        -- If in raid		
-		if currentMembers > 5 then
-			-- Pre Rejuv 1/3 of our raid / party
-            if RejuvenationCount < (currentMembers / 3) then    
-                return true
-			end
-        -- In Party
-		else
-		    -- Make sure we got all 5 player with hot
-            if RejuvenationCount < 5 then    
-                return true
-            end			
-        end 
-    end 
-    return false 
-end 
-PreRejuvenation = A.MakeFunctionCachedStatic(PreRejuvenation)
 
 local function ResfreshRejuvenation()
     if A.Rejuvenation:IsReady(unit, true, nil, true) and IsSchoolFree() then 
@@ -710,8 +672,57 @@ A[3] = function(icon, isMulti)
     --local true = Unit(unit):IsCastingRemains(A.SoothingMist.ID) > 0
     local inRange                 = false
     Efflorescence()
-	--print(Efflorescence())
+	--/ run Action.SendNotification("TESSSSSSSSSSSSSSST", 8921, 2)
 	
+local function MaintainRejuvenation(unit)
+    if A.Rejuvenation:IsReady(unit, true, nil, true) and IsSchoolFree() then 
+        local totalMembers = HealingEngine.GetMembersAll()		 
+        local MinRaidRejuvUnits = HealingEngine.GetMinimumUnits(6, 20)
+		local MinPartyRejuvenationUnits = HealingEngine.GetMinimumUnits(3, 5)
+        local currentMembers = GetNumGroupMembers() --TeamCache.Friendly.Size
+		print(currentMembers)
+		-- Party
+		if currentMembers > 1 and currentMembers <= 7 then
+		    local RejuvenationCount = 0
+		    -- Get members without Rejuvenation active
+            for i = 1, #totalMembers do 
+                if Unit(totalMembers[i].Unit):GetRange() <= 40 and RejuvenationCount < currentMembers then 
+			        -- SetTarget on member missing buff
+				    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then
+				        HealingEngine.SetTarget(totalMembers[i].Unit, 1)                  					
+				    end
+		            -- Rejuvenation
+                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then            	
+						return A.Rejuvenation:Show(icon)						
+                    end
+                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 1 then            	
+						RejuvenationCount = RejuvenationCount + 1						
+                    end                   					
+                end 			
+            end
+		-- In Raid	
+        else
+    		-- Get members without Rejuvenation active
+			local RejuvenationCount = 0
+            for i = 1, #totalMembers do 
+                if Unit(totalMembers[i].Unit):GetRange() <= 40 and currentMembers > 7 and RejuvenationCount < (currentMembers / 3) then 
+			        -- SetTarget on member missing buff
+				    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then
+				        HealingEngine.SetTarget(totalMembers[i].Unit, 1)                  					
+				    end
+		            -- Rejuvenation
+                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then 
+						return A.Rejuvenation:Show(icon)
+                    end	
+                    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 1 then            	
+						RejuvenationCount = RejuvenationCount + 1						
+                    end   					
+                end 			
+            end
+        end			
+    end 
+end 
+
     local function DamageRotation(unit)
         inRange = A.Sunfire:IsInRange(unit)
         
@@ -1291,8 +1302,7 @@ A[3] = function(icon, isMulti)
     
     -- Mouseover 
     if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-        
+        unit = "mouseover"		
         if DamageRotation(unit) then 
             return true 
         end 
@@ -1300,7 +1310,9 @@ A[3] = function(icon, isMulti)
     
     if A.IsUnitFriendly("mouseover") then 
         unit = "mouseover"    
-        
+        if MaintainRejuvenation(unit) then
+		    return true
+		end
         if HealingRotation(unit) then 
             return true 
         end             
@@ -1317,7 +1329,9 @@ A[3] = function(icon, isMulti)
     
     if A.IsUnitFriendly("target") then 
         unit = "target"
-        
+        if MaintainRejuvenation(unit) then
+		    return true
+		end       
         if HealingRotation(unit) then 
             return true 
         end 
