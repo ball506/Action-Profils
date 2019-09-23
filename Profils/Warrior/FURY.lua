@@ -577,11 +577,21 @@ end
 -- Finished
 
 
-
-
 -----------------------------------------
 --           PVP ROTATION  
 -----------------------------------------
+-- Locals
+local Temp                                     = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                        = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+    DisablePhys                                = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                                = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
