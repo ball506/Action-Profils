@@ -44,6 +44,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
 	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
 	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }), 
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
+	IntimidatingShoutAntiFake           = Action.Create({ Type = "Spell", ID = 5246, Desc = "[2] Kick", QueueForbidden = true    }),
 	PiercingHowl						= Action.Create({ Type = "Spell", ID = 12323    }),
 	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
 	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true    }), -- PvP Talent 
@@ -72,6 +73,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     -- Defensive
 	RallyingCry                           = Action.Create({ Type = "Spell", ID = 97462    }),
     -- Misc
+	BerserkerRage						 = Action.Create({ Type = "Spell", ID = 18499    }),
     Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
     Victorious                           = Action.Create({ Type = "Spell", ID = 32216, Hidden = true     }),
     VictoryRush                          = Action.Create({ Type = "Spell", ID = 34428, Hidden = true     }),
@@ -475,6 +477,14 @@ local function APL()
         if S.RallyingCry:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "RallyingCry")then
             if HR.Cast(S.RallyingCry) then return ""; end
         end
+
+		-- Misc - Supportive 
+        if A.BerserkerRage:IsReady("player") then 
+            if ActionUnit("player"):HasDeBuffs("Fear") >= 4 then 
+                return A.BerserkerRage:Show(icon)
+            end 
+        end 
+
         -- Interrupts
         -- run_action_list,name=movement,if=movement.distance>5
         -- heroic_leap,if=(raid_event.movement.distance>25&raid_event.movement.in>45)
@@ -639,6 +649,10 @@ A[2] = function(icon)
             if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("stun", 0) then
                 return A.StormBoltAntiFake:Show(icon)                  
             end 
+
+			if A.IntimidatingShoutAntiFake:IsReady(unit, nil, nil, true) and A.IntimidatingShoutAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("fear", 0) then
+				return A.IntimidatingShoutAntiFake:Show(icon)
+			end
             
             -- Racials 
             if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
