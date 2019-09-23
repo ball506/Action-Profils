@@ -16,7 +16,7 @@ local next, pairs, type, print  = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib = LibStub("PetLibrary")
-
+local ActionUnit    = Action.Unit 
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ local DogTag = LibStub("LibDogTag-3.0", true)
 -- Useful for custom events announcer	
 -- @Parameters : Message and Spell id are mandaroty settings. 
 -- Delay is optional 	
-function Action.SendNotification(message, spell, delay)
+function Action.SendNotification(message, spell, delay, incombat)
     if not message then
 	    return
 	end
@@ -209,6 +209,7 @@ function Action.SendNotification(message, spell, delay)
 	   delay = 0
 	end
 	
+	local combatcheck = false
 	local timer = HL.GetTime()
 	local endtimer = timer + 2 + delay	
 	Action.NotificationMessage = ""
@@ -217,7 +218,17 @@ function Action.SendNotification(message, spell, delay)
     Action.NotificationIsValidUntil = endtimer
 	Action.CurrentNotificationIcon = GetSpellTexture(spell)
 	
-	if message and spell then 
+	if incombat then	
+	    if ActionUnit("player"):CombatTime() == 0  then
+		    combatcheck = false
+		else
+		    combatcheck = true
+		end
+    else
+        combatcheck = true	
+	end
+	
+	if message and spell and combatcheck then 
 	    if HL.GetTime() <= endtimer then 
 	        Action.NotificationIsValid = true
 	        Action.NotificationMessage = message            
