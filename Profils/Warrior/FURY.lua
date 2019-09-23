@@ -37,6 +37,17 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     PetKick                              = Action.Create({ Type = "Spell", ID = 47482, Color = "RED", Desc = "RED" }),  
+	-- CrowdControl
+	StormBolt							= Action.Create({ Type = "Spell", ID = 107570    }),
+	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", Hidden = true, QueueForbidden = true }),
+	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
+	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
+	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }), 
+	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
+	PiercingHowl						= Action.Create({ Type = "Spell", ID = 12323    }),
+	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
+	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true    }), -- PvP Talent 
+	SpellReflection  					= Action.Create({ Type = "Spell", ID = 216890, isTalent = true    }), -- PvP Talent
     -- Generics Spells
     Recklessness                          = Action.Create({ Type = "Spell", ID = 1719    }),
     FuriousSlash                          = Action.Create({ Type = "Spell", ID = 100130    }),
@@ -55,8 +66,6 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     Whirlwind                             = Action.Create({ Type = "Spell", ID = 190411    }),
     Charge                                = Action.Create({ Type = "Spell", ID = 100    }),
     LightsJudgment                        = Action.Create({ Type = "Spell", ID = 255647    }),
-    Pummel                                = Action.Create({ Type = "Spell", ID = 6552    }),
-    IntimidatingShout                     = Action.Create({ Type = "Spell", ID = 5246    }),
     ColdSteelHotBlood                     = Action.Create({ Type = "Spell", ID = 288080    }),
 	ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368    }),
 	BattleShout                           = Action.Create({ Type = "Spell", ID = 6673    }),
@@ -581,6 +590,7 @@ local function AntiFakeStun(unit)
     ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
+
 A[1] = function(icon)    
     if     A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
     (
