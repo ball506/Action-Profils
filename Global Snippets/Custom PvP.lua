@@ -43,6 +43,40 @@ local pvpReflect = {
 ---------------------------------------------------
 -------------------- FUNCTIONS --------------------
 ---------------------------------------------------
+
+-- Local Randomizer
+local randomChannel = math.random(5, 15)
+local randomInterrupt = math.random(40, 90)
+local randomReflect = math.random(90, 100)
+local randomSeconds = math.random(0.3, 0.5)
+
+local randomTimer = HL.GetTime()
+local function Randomizer(option)
+    if GetTime() - randomTimer >= 1 then
+        randomInterrupt = math.random(40, 90)
+        randomChannel = math.random(20, 30)
+        randomReflect = math.random(90, 100)
+        randomSeconds = math.random(0.25, 0.75)
+        randomTimer = GetTime()
+    end
+
+    if option == "Interrupt" then
+        return randomInterrupt
+    end
+    if option == "Channel" then
+        return randomChannel
+    end
+
+    if option == "Seconds" then
+        return randomSeconds
+    end
+
+    if option == "Reflect" then
+        return randomReflect
+    end
+end
+
+-- Should Reflect behavior
 function Action.ShouldReflect(unit)	
 	local GoodToReflect = false
 	for p = 1, #pvpReflect do
@@ -54,9 +88,11 @@ function Action.ShouldReflect(unit)
 		local currentCast = currentUnit:IsCasting()
 		
         if currentCast == GetSpellInfo(pvpReflect[p]) then
-            GoodToReflect = true
-		else
-		    GoodToReflect = false
+		    if ActionUnit(unit):IsCastingRemains() >= Randomizer("Reflect") then
+                GoodToReflect = true
+            else
+		        GoodToReflect = false
+			end
         end
     end
     return GoodToReflect
