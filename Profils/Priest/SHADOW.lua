@@ -480,9 +480,9 @@ local function APL()
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth cds"; end
         end
         -- focused_azerite_beam,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam cds"; end
-        end
+		if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (EnemiesCount >= 4 or ActionUnit("target"):IsBoss()) then
+			if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam implosion"; end
+		end
         -- purifying_blast,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
         if S.PurifyingBlast:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (EnemiesCount >= 2) then
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast cds"; end
@@ -704,10 +704,7 @@ local function APL()
         if S.SurrenderToMadness:IsReadyP() and not ShouldStop and (Player:BuffStackP(S.VoidformBuff) > 10 + (10 * num(Player:HasHeroism()))) then
             if HR.Cast(S.SurrenderToMadness, Action.GetToggle(2, "GCDasOffGCD")) then return "surrender_to_madness 200"; end
         end
-        -- dark_void,if=raid_event.adds.in>10
-        if S.DarkVoid:IsReadyP() and not ShouldStop and not Player:BuffP(S.VoidformBuff) then
-            if HR.Cast(S.DarkVoid) then return "dark_void 204"; end
-        end
+        
         -- mindbender,if=talent.mindbender.enabled|(buff.voidform.stack>18|target.time_to_die<15)
         if S.Mindbender:IsReadyP() and not ShouldStop and (S.MindbenderTalent:IsAvailable() or (Player:BuffStackP(S.VoidformBuff) > 18 or Target:TimeToDie() < 15)) then
             if HR.Cast(S.Mindbender, Action.GetToggle(2, "GCDasOffGCD")) then return "mindbender 206"; end
@@ -732,6 +729,12 @@ local function APL()
         if S.ShadowWordVoid:IsReadyP() and not ShouldStop and not  Player:IsMoving() and bool(VarDotsUp) then
             if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 222"; end
         end
+		
+		-- dark_void,if=raid_event.adds.in>10
+        if S.DarkVoid:IsReadyP() and not ShouldStop and not Player:BuffP(S.VoidformBuff) then
+            if HR.Cast(S.DarkVoid) then return "dark_void 204"; end
+        end
+		
         -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
         if S.VoidTorrent:IsReadyP() and not ShouldStop and (Target:DebuffRemainsP(S.ShadowWordPainDebuff) > 4 and Target:DebuffRemainsP(S.VampiricTouchDebuff) > 4 and Player:BuffP(S.VoidformBuff)) then
             if HR.Cast(S.VoidTorrent) then return "void_torrent 246"; end
