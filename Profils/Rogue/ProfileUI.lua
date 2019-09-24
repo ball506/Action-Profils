@@ -19,7 +19,7 @@ local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v1.16 (21.09.2019)",
+    DateTime = "v1.17 (24.09.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {       

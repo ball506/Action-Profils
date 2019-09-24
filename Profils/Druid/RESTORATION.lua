@@ -548,7 +548,7 @@ local function CanFlourish()
                 counter = counter + 1
             end 
             
-            if (counter >= FlourishUnits) and Emergency then 
+            if (counter >= FlourishUnits) then 
                 return true 
             end 
         end 
@@ -557,7 +557,7 @@ local function CanFlourish()
 end 
 CanFlourish = A.MakeFunctionCachedStatic(CanFlourish)
 
-local function CanWildGrowth()
+local function CanWildGrowth(unit)
     if A.WildGrowth:IsReady(unit) and IsSchoolFree() then 
         local WildGrowthHP = A.GetToggle(2, "WildGrowth")
         local WildGrowthUnits = A.GetToggle(2, "WildGrowthUnits") 
@@ -595,17 +595,9 @@ end
 CanWildGrowth = A.MakeFunctionCachedStatic(CanWildGrowth)
 
 local function ActivesRejuvenations()
-    if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
-        local totalMembers = HealingEngine.GetMembersAll()		 
-        local RejuvenationUnits = HealingEngine.GetMinimumUnits(2, 4)
-        local currentMembers = TeamCache.Friendly.Size
-		
-        if RejuvenationUnits < 2 and not A.IsInPvP then 
-            return false 
-        end
-		
+    if ActionUnit("player"):CombatTime() > 1 then 
+        local totalMembers = HealingEngine.GetMembersAll()		 	
         local RejuvenationCount = 0
-        local counter = 0 
 		
 		-- Get number of Rejuvenation for all members
         for i = 1, #totalMembers do 
@@ -620,8 +612,60 @@ local function ActivesRejuvenations()
 end 
 ActivesRejuvenations = A.MakeFunctionCachedDynamic(ActivesRejuvenations)
 
+local function MaintainRejuvenation(unit)
+    if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
+        local totalMembers = HealingEngine.GetMembersAll()		 
+        local MinRaidRejuvUnits = HealingEngine.GetMinimumUnits(6, 20)
+        local MinPartyRejuvenationUnits = HealingEngine.GetMinimumUnits(3, 5)
+        local currentMembers = TeamCache.Friendly.Size		
+		local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
 
-local function ResfreshRejuvenation()
+		-- Arena
+		if (currentMembers == 2 or currentMembers == 3) then	
+			-- Get members without Rejuvenation active
+            for i = 1, #totalMembers do 
+                if Unit(totalMembers[i].Unit):GetRange() <= 30 and not Unit(unit):InLOS() and currentMembers > 5 and RejuvenationCount <= currentMembers then  
+			        -- SetTarget on member missing buff
+				    if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
+				        HealingEngine.SetTarget(totalMembers[i].Unit)                  					
+				    end
+				    -- Notification					
+                    Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. currentMembers, A.Rejuvenation.ID) 					
+                end				
+            end
+	    -- Party
+		elseif currentMembers == 5 then		    
+		    -- Get members without Rejuvenation active
+            for i = 1, #totalMembers do 
+                if Unit(totalMembers[i].Unit):GetRange() <= 30 and not Unit(unit):InLOS() then 
+			   	    if RejuvenationCount < 3 then
+			   		    -- SetTarget on member missing buff
+			   	        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
+			                HealingEngine.SetTarget(totalMembers[i].Unit)                  					
+			            end
+				        -- Notification					
+                        Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/3.", A.Rejuvenation.ID)
+                    end					
+                end				
+            end
+		-- In Raid	
+        else
+    	-- Get members without Rejuvenation active
+            for i = 1, #totalMembers do 
+                if Unit(totalMembers[i].Unit):GetRange() <= 30 and not Unit(unit):InLOS() and currentMembers > 5 and RejuvenationCount <= (currentMembers / 3) then  
+		         -- SetTarget on member missing buff
+			        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
+			            HealingEngine.SetTarget(totalMembers[i].Unit)                  					
+			        end
+			        -- Notification					
+                    Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. round((currentMembers / 3), 0), A.Rejuvenation.ID) 					
+                end				
+            end
+        end			
+    end 
+end
+
+local function ResfreshRejuvenation(unit)
     if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
         local totalMembers = HealingEngine.GetMembersAll()		 
         local RejuvenationUnits = HealingEngine.GetMinimumUnits(2, 4)
@@ -640,16 +684,17 @@ local function ResfreshRejuvenation()
 				    RejuvenationToRefresh = RejuvenationToRefresh + 1                  					
 				end				
             end
-		    -- In Party        		
-		    if currentMembers == 5 then
-		        -- Make sure we got all 5 player with hot
-                if RejuvenationToRefresh < 5 then    
+			-- Party and Arena
+			if currentMembers <= 5 then
+		        -- Make sure we got all player with hot
+                if RejuvenationToRefresh >= 1 then    
                     return true
                 end	
+			 
             -- In raid
 		    else
                 -- Pre Rejuv 1/3 of our raid / party
-                if RejuvenationToRefresh < (currentMembers / 3) then    
+                if RejuvenationToRefresh > (currentMembers / 3) then    
                     return true
 			    end		
             end 			
@@ -672,70 +717,7 @@ A[3] = function(icon, isMulti)
 	--/ run Action.SendNotification("TESSSSSSSSSSSSSSST", 8921, 2)
 	
 	
-    local function MaintainRejuvenation(unit)
-        if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
-            local totalMembers = HealingEngine.GetMembersAll()		 
-            local MinRaidRejuvUnits = HealingEngine.GetMinimumUnits(6, 20)
-		    local MinPartyRejuvenationUnits = HealingEngine.GetMinimumUnits(3, 5)
-            local currentMembers = TeamCache.Friendly.Size		
-		    local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
 
-		    -- Arena
-			if (currentMembers == 2 or currentMembers == 3) then	
-			    -- Get members without Rejuvenation active
-                for i = 1, #totalMembers do 
-                    if Unit(totalMembers[i].Unit):GetRange() <= 30 and currentMembers > 5 and RejuvenationCount <= currentMembers then  
-			            -- SetTarget on member missing buff
-				        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
-				            HealingEngine.SetTarget(totalMembers[i].Unit)                  					
-				        end
-		               -- Rejuvenation
-                        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then 
-					    	return A.Rejuvenation:Show(icon)
-                        end 
-				        -- Notification					
-                        Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. currentMembers, A.Rejuvenation.ID) 					
-                    end				
-                end
-			-- Party
-		    elseif currentMembers == 5 then		    
-		        -- Get members without Rejuvenation active
-                for i = 1, #totalMembers do 
-                    if Unit(totalMembers[i].Unit):GetRange() <= 30 then 
-			    	    if RejuvenationCount < 3 then
-			    		    -- SetTarget on member missing buff
-			    	        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
-				                HealingEngine.SetTarget(totalMembers[i].Unit)                  					
-				            end
-					        -- Rejuvenation
-                            if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then            	
-					        	return A.Rejuvenation:Show(icon)						
-                            end	
-					        -- Notification					
-                            Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/3.", A.Rejuvenation.ID)
-                        end					
-                    end				
-                end
-		   -- In Raid	
-           else
-    		    -- Get members without Rejuvenation active
-                for i = 1, #totalMembers do 
-                    if Unit(totalMembers[i].Unit):GetRange() <= 30 and currentMembers > 5 and RejuvenationCount <= (currentMembers / 3) then  
-			            -- SetTarget on member missing buff
-				        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then
-				            HealingEngine.SetTarget(totalMembers[i].Unit)                  					
-				        end
-		               -- Rejuvenation
-                        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID) == 0 then 
-					    	return A.Rejuvenation:Show(icon)
-                        end 
-				        -- Notification					
-                        Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. round((currentMembers / 3), 0), A.Rejuvenation.ID) 					
-                    end				
-                end
-            end			
-        end 
-    end
 
     -- DPS Rotation
     local function DamageRotation(unit)
@@ -1317,7 +1299,7 @@ A[3] = function(icon, isMulti)
         end 
 		
         if not isMulti and not isMoving and A.GetToggle(2, "AoE") then 
-            if CanWildGrowth() then
+            if CanWildGrowth(unit) then
                 return A.WildGrowth:Show(icon)
             end  
         end
