@@ -317,7 +317,7 @@ local function EvaluateCycleVampiricTouch150(Target)
 end
 
 local function EvaluateCycleMindSear169(Target)
-  return EnemiesCount > 3
+  return EnemiesCount > 1
 end
 
 local function InsanityDrain()
@@ -515,20 +515,20 @@ local function APL()
         if S.VampiricTouch:IsCastableP() and not Player:IsCasting(S.VampiricTouch) and not Player:PrevGCDP(1, S.VampiricTouch) and not ShouldStop and not  Player:IsMoving() and (Target:DebuffRefreshableCP(S.VampiricTouchDebuff) and Target:TimeToDie() > 6 or (S.Misery:IsAvailable() and Target:DebuffRefreshableCP(S.ShadowWordPainDebuff))) and not Player:IsCasting(S.VampiricTouch) then
             if HR.Cast(S.VampiricTouch) then return "vampiric_touch 266"; end
         end
-
+		
+		-- dark_void,if=raid_event.adds.in>10&(dot.shadow_word_pain.refreshable|target.time_to_die>30)
+        if S.DarkVoid:IsReadyP() and not ShouldStop and not  Player:IsMoving() and (Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) or Target:TimeToDie() > 30) and not Player:IsCasting(S.DarkVoid) then
+            if HR.Cast(S.DarkVoid) then return "dark_void 93"; end
+        end
+		
 		-- shadow_word_pain,if=refreshable&target.time_to_die>4&!talent.misery.enabled&!talent.dark_void.enabled
-        if S.ShadowWordPain:IsCastableP() and not ShouldStop and (Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) and Target:TimeToDie() > 4 and not S.Misery:IsAvailable() and not S.DarkVoid:IsAvailable()) or (Player:IsMoving() and Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) and Target:TimeToDie() > 4) then
+        if S.ShadowWordPain:IsCastableP() and not ShouldStop and (Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) and Target:TimeToDie() > 4 and not S.Misery:IsAvailable() and (not S.DarkVoid:IsAvailable() or S.DarkVoid:CooldownRemainsP() > 2)) or (Player:IsMoving() and Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) and Target:TimeToDie() > 4) then
             if HR.Cast(S.ShadowWordPain) then return "shadow_word_pain 254"; end
         end
 		
 		-- void_eruption
-        if S.VoidEruption:IsReadyP() and not ShouldStop and Player:Insanity() >= InsanityThreshold() and not Player:IsCasting(S.VoidEruption) then
+        if S.VoidEruption:IsReadyP() and not ShouldStop and not  Player:IsMoving() and Player:Insanity() >= InsanityThreshold() and not Player:IsCasting(S.VoidEruption) then
             if HR.Cast(S.VoidEruption, Action.GetToggle(2, "GCDasOffGCD")) then return "void_eruption 58"; end
-        end
-		
-		-- void_bolt
-        if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
-            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
         end
 		
 		-- dark_ascension,if=buff.voidform.down
@@ -536,25 +536,59 @@ local function APL()
             if HR.Cast(S.DarkAscension) then return "dark_ascension 60"; end
         end
 		
-		-- dark_void,if=raid_event.adds.in>10&(dot.shadow_word_pain.refreshable|target.time_to_die>30)
-        if S.DarkVoid:IsReadyP() and not ShouldStop and (Target:DebuffRefreshableCP(S.ShadowWordPainDebuff) or Target:TimeToDie() > 30) and not Player:IsCasting(S.DarkVoid) then
-            if HR.Cast(S.DarkVoid) then return "dark_void 93"; end
+		-- mind_sear,if=buff.harvested_thoughts.up
+        if S.MindSear:IsCastableP() and not ShouldStop and (Player:BuffP(S.HarvestedThoughtsBuff)) then
+            if HR.Cast(S.MindSear) then return "mind_sear 74"; end
+        end
+		
+		-- void_bolt
+        if S.VoidBolt:IsReadyP() or Player:IsCasting(S.VoidEruption) then
+            if HR.Cast(S.VoidBolt) then return "void_bolt 182"; end
         end
 		
 		-- shadow_crash,if=(raid_event.adds.in>5&raid_event.adds.duration<2)|raid_event.adds.duration>2
-        if S.ShadowCrash:IsReadyP() and not ShouldStop and not Player:IsCasting(S.ShadowCrash) then
+        if S.ShadowCrash:IsReadyP() and not ShouldStop and Player:IsMoving() and not Player:IsCasting(S.ShadowCrash) then
             if HR.Cast(S.ShadowCrash) then return "shadow_crash 108"; end
         end
 		
-        -- mind_blast_if channeling
-        if S.MindBlast:IsReadyP() and EnemiesCount < 4 and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+		-- shadow_word_death channeling
+        if S.ShadowWordDeath:IsReadyP() and EnemiesCount < 4 and S.ShadowWordDeath:CooldownRemainsP() < 0.2 and not Player:IsMoving() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
+            if HR.Cast(S.ShadowWordDeath) then return "MindBlast 182"; end
+        end	
+		
+		-- mind_blast_if channeling
+        if Player:BuffP(S.VoidformBuff) and EnemiesCount < 4 and S.MindBlast:CooldownRemainsP() < 0.2 and S.MindBlast:IsReadyP() and not Player:IsMoving() and (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) then
             if HR.Cast(S.MindBlast) then return "MindBlast 182"; end
         end	
 		
+		if (HR.CDsON()) then
+            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
+        end
+		
+		-- surrender_to_madness,if=buff.voidform.stack>10+(10*buff.bloodlust.up)
+        if S.SurrenderToMadness:IsReadyP() and not ShouldStop and (Player:BuffStackP(S.VoidformBuff) > 10 + (10 * num(Player:HasHeroism()))) then
+            if HR.Cast(S.SurrenderToMadness, Action.GetToggle(2, "GCDasOffGCD")) then return "surrender_to_madness 89"; end
+        end
+		
+		-- mindbender
+        if S.Mindbender:IsReadyP() and not ShouldStop then
+            if HR.Cast(S.Mindbender, Action.GetToggle(2, "GCDasOffGCD")) then return "mindbender 97"; end
+        end
+		
+		-- mind_blast,target_if=spell_targets.mind_sear<variable.mind_blast_targets
+        if S.MindBlast:IsReadyP() and not ShouldStop and EnemiesCount < 4 and not Player:IsMoving() and EvaluateCycleMindBlast103(Target) and not Player:IsCasting(S.MindBlast) then
+            if HR.Cast(S.MindBlast) then return "mind_blast 107" end
+        end	
+		
+        -- shadow_word_void (added)
+        if S.ShadowWordVoid:IsReadyP() and not ShouldStop and EnemiesCount < 4 andEvaluateCycleMindBlast103(Target) and not (Player:IsCasting(S.ShadowWordVoid) and not Player:IsMoving() and S.ShadowWordVoid:ChargesP() == 1) then
+            if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 107" end
+        end
+		
 		-- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
-        if S.MindSear:IsCastableP() and not ShouldStop then
+        if S.MindSear:IsCastableP() and not ShouldStop and EvaluateCycleMindSear169(Target) then
             if HR.Cast(S.MindSear) then return "mind_sear 171" end
-        end		
+        end	
 	end
 	
     local function Cleave()
