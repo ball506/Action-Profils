@@ -159,7 +159,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
             total = 88888888888888 -- don't use out of combat
         else
             -- REFRESH ABLE: Wild growth and Lifebloom
-            if UNIT:DebuffRefreshableCP(48438) and UNIT:DebuffRefreshableCP(33763) then 
+            if Unit(UNIT):HasDeBuffs(48438) < 3 and Unit(UNIT):HasDeBuffs(48438) < 3 then 
                 local SoulOfForest = Unit(UNIT):HasBuffs(114108, true) > 0
                 local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
                 -- LifeBloom 15sec
