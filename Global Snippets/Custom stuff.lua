@@ -191,59 +191,58 @@ end
 -- DogTags
 -------------------------------------------------------------------------------
 local DogTag = LibStub("LibDogTag-3.0", true)
+-- Taste's 
+TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 
--- /run Action.SendNotification("test", 22812, 2)
+
 ------------------------------------
 --------- NOTIFICATIONS API -------
 ------------------------------------
---Action.SendNotification(message, spell, delay)	
 -- Return a tost notification directly in game with status information from rotation
 -- Useful for custom events announcer	
--- @Parameters : Message and Spell id are mandaroty settings. 
--- Delay is optional 	
+-- @Parameters : Message and Spell are mandaroty settings. 
+-- @optional Parameters : Delay and incombat can be nil 
+-- Usage : /run Action.SendNotification("test", 22812, 2, false)	
 function Action.SendNotification(message, spell, delay, incombat)
     if not message then
 	    return
 	end
 	if not delay then
-	   delay = 0
+	   delay = 2
 	end
-	
-	local combatcheck = false
+	if not incombat then
+	   incombat = false
+	else
+	   incombat = true
+	end
+	-- Variables
 	local timer = HL.GetTime()
-	local endtimer = timer + 2 + delay	
+	local endtimer = timer + delay	
 	Action.NotificationMessage = ""
-	Action.NotificationSpellID = 0
 	Action.NotificationIsValid = false
     Action.NotificationIsValidUntil = endtimer
 	Action.CurrentNotificationIcon = GetSpellTexture(spell)
-	
-	if incombat then	
-	    if ActionUnit("player"):CombatTime() == 0  then
-		    combatcheck = false
-		else
-		    combatcheck = true
+	-- Option 1 : Combat only		
+	if message and spell and incombat then 
+	    if (HL.GetTime() <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
+	        Action.NotificationIsValid = true
+	        Action.NotificationMessage = message 				
+        else
+		    Action.NotificationIsValid = false
 		end
-    else
-        combatcheck = true	
-	end
-	
-	if message and spell and combatcheck then 
+	-- Option 2 : Everytime
+    elseif message and spell and not incombat then 	
 	    if HL.GetTime() <= endtimer then 
 	        Action.NotificationIsValid = true
 	        Action.NotificationMessage = message            
-            TMW:Fire("TMW_ACTION_NOTIFICATION")	
         else
 		    Action.NotificationIsValid = false
-		end			
+		end
 	end
+	TMW:Fire("TMW_ACTION_NOTIFICATION")	
+    return Action.NotificationMessage, Action.CurrentNotificationIcon, Action.NotificationIsValid, Action.NotificationIsValidUntil
 	
-    return Action.NotificationMessage, Action.NotificationSpellID, Action.NotificationIsValidUntil
-	
-end
-			
--- Taste's 
-TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
+end			
 
 local function removeLastChar(text)
 	return text:sub(1, -2)
@@ -253,7 +252,7 @@ if DogTag then
 	-- Custom Notifications
 	DogTag:AddTag("TMW", "ActionNotificationIcon", {
         code = function()
-			if Action.NotificationSpellID and Action.NotificationIsValid then
+			if Action.CurrentNotificationIcon and Action.NotificationIsValid then
 				return Action.CurrentNotificationIcon
 			else 
 				return ""
