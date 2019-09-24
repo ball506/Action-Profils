@@ -1725,6 +1725,8 @@ local function PvPRotation(icon)
             )
         ) 
         then 
+		    -- Notification					
+            Action.SendNotification("Offensive Cloak of Shadow", A.CloakofShadow.ID)
             return A.CloakofShadow:Show(icon)
         end 
 		
@@ -1760,6 +1762,8 @@ local function PvPRotation(icon)
             )
         ) 
         then 
+			-- Notification					
+            Action.SendNotification("Emergency Vanish", A.Vanish.ID)
             return A.Vanish:Show(icon)
         end  
 
@@ -1820,6 +1824,8 @@ local function PvPRotation(icon)
 			
 		-- Sap out of combat
 		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and not Target:DebuffP(S.Sap)  then
+			-- Notification					
+            Action.SendNotification("Sapping out of combat : " .. UnitName(unit), A.Sap.ID)
 			return A.Sap:Show(icon)
 		end		
 		
@@ -1845,7 +1851,9 @@ local function PvPRotation(icon)
 
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
         if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and (ActionUnit(unit):HasBuffs("DamageBuffs") > 0 or FriendlyTeam("HEALER"):GetCC()) then
-            return A.KidneyShot:Show(icon)
+   			-- Notification					
+            Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
+			return A.KidneyShot:Show(icon)
         end   		
        
 	   -- Kidney Shot
@@ -1956,10 +1964,14 @@ local function PvPRotation(icon)
 
 		-- Agressive CC Burst Rotation
 		if (ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 3) then
+		    -- Notification					
+            Action.SendNotification("Smart Burst on : " .. UnitName(unit), A.Vendetta.ID)
 		    -- SmokeBomb under 30% HP
 		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
 		    	if inMelee then
 			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 30 then
+					    -- Notification					
+                        Action.SendNotification("Offensive Smoke Bomb", A.Vendetta.ID)
                         return A.SmokeBomb:Show(icon)
                     end
 			    end
@@ -2004,6 +2016,8 @@ local function PvPRotation(icon)
 	
 	-- Stealth out of combat
     if not Player:BuffP(S.VanishBuff) and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
+		-- Notification					
+        Action.SendNotification("Auto Stealthing", A.Sap.ID)
         return A.Stealth:Show(icon)
     end  
         
