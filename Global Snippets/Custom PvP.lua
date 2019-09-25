@@ -49,20 +49,15 @@ local randomChannel = math.random(5, 15)
 local randomInterrupt = math.random(40, 90)
 local randomReflect = math.random(90, 100)
 local randomSeconds = math.random(0.3, 0.5)
-
 local randomTimer = HL.GetTime()
+
+-- Randomizer
 local function Randomizer(option)
-    if GetTime() - randomTimer >= 1 then
-        randomInterrupt = math.random(40, 90)
-        randomChannel = math.random(20, 30)
-        randomReflect = math.random(90, 100)
-        randomSeconds = math.random(0.25, 0.75)
-        randomTimer = GetTime()
-    end
 
     if option == "Interrupt" then
         return randomInterrupt
     end
+	
     if option == "Channel" then
         return randomChannel
     end
@@ -84,11 +79,14 @@ function Action.ShouldReflect(unit)
 		if not unit or unit == nil then 
 		    unit = "target"
 		end
-		local currentUnit = ActionUnit(unit)
-		local currentCast = currentUnit:IsCasting()
+		local currentCast = ActionUnit(unit):IsCasting()
+		-- [1] Total Casting Time (@number)
+		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
+		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
+		local castingTime, castingLeftSec, castingDonePer  = ActionUnit(unit):CastTime()
 		
         if currentCast == GetSpellInfo(pvpReflect[p]) then
-		    if ActionUnit(unit):IsCastingRemains() >= Randomizer("Reflect") then
+		    if  castingDonePer >= Randomizer("Reflect") then
                 GoodToReflect = true
             else
 		        GoodToReflect = false
