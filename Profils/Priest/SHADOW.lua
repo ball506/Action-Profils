@@ -581,7 +581,7 @@ local function APL()
         end	
 		
         -- shadow_word_void (added)
-        if S.ShadowWordVoid:IsReadyP() and not ShouldStop and EnemiesCount < 4 andEvaluateCycleMindBlast103(Target) and not (Player:IsCasting(S.ShadowWordVoid) and not Player:IsMoving() and S.ShadowWordVoid:ChargesP() == 1) then
+        if S.ShadowWordVoid:IsReadyP() and not ShouldStop and EnemiesCount < 4 and EvaluateCycleMindBlast103(Target) and not (Player:IsCasting(S.ShadowWordVoid) and not Player:IsMoving() and S.ShadowWordVoid:ChargesP() == 1) then
             if HR.Cast(S.ShadowWordVoid) then return "shadow_word_void added 107" end
         end
 		
