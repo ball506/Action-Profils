@@ -974,10 +974,15 @@ A[3] = function(icon, isMulti)
 			end
         end 
 
-        -- Rejuvenation while moving
+        -- Rejuvenation
         if A.Rejuvenation:IsReady(unit) and MaintainRejuvenation and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID) == 0) then             
             return A.Rejuvenation:Show(icon)
-        end	 		
+        end	
+
+        -- Rejuvenation with Germination
+        if A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
+            return A.Rejuvenation:Show(icon)
+        end		
         
 		-- Low Emergency targeting
 		--if Unit(unit):TimeToDieX(50) < 10 and Unit(unit):HealthPercent() <= 80 then
@@ -1018,6 +1023,23 @@ A[3] = function(icon, isMulti)
             end 
             
             -- Single 
+            if CanTranquility() and Emergency then 
+                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    return A.OverchargeMana:Show(icon)
+                end 
+                    
+                return A.Tranquility:Show(icon)
+            end 
+            -- Flourish burst
+            if CanFlourish() and Emergency then 
+                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    return A.OverchargeMana:Show(icon)
+                end 
+                -- Notification					
+                Action.SendNotification("Activated Flourish burst", A.Flourish.ID)                    
+                return A.Flourish:Show(icon)
+            end
+            -- Iron Bark			
             if A.Ironbark:IsReady(unit) and A.Ironbark:AbsentImun(unit) and IsSchoolFree() then 
                 local Ironbark = A.GetToggle(2, "Ironbark")
                 
@@ -1077,7 +1099,8 @@ A[3] = function(icon, isMulti)
                     if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
-                    
+                    -- Notification					
+                    Action.SendNotification("Activated Tranquility burst", A.Tranquility.ID)                                      
                     return A.Tranquility:Show(icon)
                 end 
                 
@@ -1141,8 +1164,10 @@ A[3] = function(icon, isMulti)
         end 
         
 		-- Dash
-        if A.Dash:IsReady("player") and IsSchoolFree() and Unit("player"):TimeToDie() > 6 then 
-            if Unit("player"):HasDeBuffs("Rooted") > 1.5 then 
+        if A.Dash:IsReady("player") and Unit("player"):TimeToDie() > 6 then 
+            if (Unit("player"):HasDeBuffs("Rooted") > 0 or Unit(unit):GetRange() > 40 or Unit(unit):InLOS()) then 
+                -- Notification					
+                Action.SendNotification("Emergency Dash", A.Dash.ID)			
                 return A.Dash:Show(icon)
             end 
             
@@ -1282,7 +1307,7 @@ A[3] = function(icon, isMulti)
         end 
 
         -- Rejuvenation refresher
-        if MaintainRejuvenation	and A.Rejuvenation:IsReady(unit) and IsSchoolFree() then             
+        if isMoving and MaintainRejuvenation	and A.Rejuvenation:IsReady(unit) and IsSchoolFree() then             
             return A.Rejuvenation:Show(icon)
         end	
 		
