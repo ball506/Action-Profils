@@ -481,7 +481,7 @@ local function APL()
         end
         -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
         if S.GuardianofAzeroth:IsCastableP() and ((S.Apocalypse:CooldownRemainsP() < 6 and S.ArmyoftheDead:CooldownRemainsP() > S.GuardianofAzeroth:CooldownRemainsP()) or S.ArmyoftheDead:CooldownRemainsP() < 2) then
-		    if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azerot"; end
+		    if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
 		
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
@@ -641,6 +641,7 @@ local function APL()
             -- use_item,name=ashvanes_razor_coral,if=cooldown.apocalypse.ready&(essence.condensed_lifeforce.major&target.1.time_to_die<cooldown.condensed_lifeforce.remains+20|!essence.condensed_lifeforce.major)
             if I.AshvanesRazorCoral:IsEquipReady() and (S.Apocalypse:CooldownUpP() and (S.GuardianofAzeroth:IsAvailable() and Target:TimeToDie() < S.GuardianofAzeroth:CooldownRemainsP() + 20 or not S.GuardianofAzeroth:IsAvailable())) then
                 if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 264"; end
+			end
             -- use_item,name=ashvanes_razor_coral,if=target.1.time_to_die<cooldown.apocalypse.remains+20
 			if I.AshvanesRazorCoral:IsEquipReady() and (Target:TimeToDie() < S.Apocalypse:CooldownRemainsP() + 20) then
 			    if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 265"; end
