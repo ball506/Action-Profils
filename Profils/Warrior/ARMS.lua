@@ -908,7 +908,6 @@ local function PvPRotation(icon)
 	local function EnemyRotation(unit)
 		-- Variables
         inMelee = A.MortalStrike:IsInRange(unit)
-		--print(Action.ShouldReflect(unit))
 		
 		if A.VictoryRush:IsReady(unit) and ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") then
 			return A.VictoryRush:Show(icon)

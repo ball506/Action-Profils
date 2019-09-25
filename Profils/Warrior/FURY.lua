@@ -365,7 +365,7 @@ local function APL()
             if HR.Cast(S.Bloodthirst) then return "bloodthirst 38"; end
         end
         -- dragon_roar,if=buff.enrage.up
-        if S.DragonRoar:IsCastableP(12) and not ShouldStop and (Player:BuffP(S.EnrageBuff)) and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
+        if S.DragonRoar:IsCastableP(12) and not ShouldStop and (Player:BuffP(S.EnrageBuff)) and not HR.AoEON() then
             if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
         end
         -- raging_blow,if=charges=2
@@ -538,6 +538,10 @@ local function APL()
         -- Reck if rage is > 90 and SiegebreakerDebuff
         if S.Recklessness:IsCastableP() and not ShouldStop and HR.CDsON() and (Target:DebuffRemainsP(S.SiegebreakerDebuff) > 1 or not S.Siegebreaker:IsAvailable()) and ( S.GuardianofAzeroth:CooldownRemainsP() > 20 or not S.GuardianofAzeroth:IsAvailable() ) then
             if HR.Cast(S.Recklessness, Action.GetToggle(2, "OffGCDasOffGCD")) then return "recklessness 112"; end
+        end
+        -- dragon_roar,if=buff.enrage.up
+        if S.DragonRoar:IsCastableP(12) and not ShouldStop and HR.AoEON() and (Player:BuffP(S.EnrageBuff)) and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
+            if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
         end
         -- recklessness,if=!essence.condensed_lifeforce.major&!essence.blood_of_the_enemy.major|cooldown.guardian_of_azeroth.remains>20|buff.guardian_of_azeroth.up|cooldown.blood_of_the_enemy.remains<gcd
         ---if S.Recklessness:IsCastableP() and not ShouldStop and HR.CDsON() and (not S.CondensedLifeforce:IsAvailable() and not S.BloodoftheEnemy:IsAvailable() or S.GuardianofAzeroth:CooldownRemainsP() > 20 or Player:BuffP(S.GuardianofAzeroth) or S.BloodoftheEnemy:CooldownRemainsP() < Player:GCD()) then
