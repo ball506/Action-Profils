@@ -79,6 +79,7 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	-- Talents
 	SouloftheForest                           = Action.Create({ Type = "Spell", ID = 102351, isTalent = true, Hidden = true     }),
 	IncarnationTreeofLife                       = Action.Create({ Type = "Spell", ID = 33891, isTalent = true     }),
+	IncarnationTreeofLifeBuff                       = Action.Create({ Type = "Spell", ID = 117679, Hidden = true     }),
 	Flourish                                   = Action.Create({ Type = "Spell", ID = 197721, isTalent = true     }),
 	Photosynthesis                           = Action.Create({ Type = "Spell", ID = 274902, isTalent = true, Hidden = true     }),
 	Germination                           = Action.Create({ Type = "Spell", ID = 155675, isTalent = true, Hidden = true     }),
@@ -132,7 +133,8 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
     -- Movememnt    
 
     -- Items
-    PotionofReconstitution                     = Action.Create({ Type = "Potion", ID = 168502     }), 
+    PotionofReconstitution                     = Action.Create({ Type = "Potion", ID = 168502     }),     
+    CoastalManaPotion                        = Action.Create({ Type = "Potion", ID = 152495     }), 
     -- Hidden 
 	ClearCasting                                 = Action.Create({ Type = "Spell", ID = 16870,    Hidden = true }), -- 4/1 Talent +2y increased range of LegSweep  
     TigerTailSweep                            = Action.Create({ Type = "Spell", ID = 264348,     isTalent = true, Hidden = true }), -- 4/1 Talent +2y increased range of LegSweep    
@@ -354,33 +356,33 @@ local function SelfDefensives()
     
 	-- Iron Bark
     local Ironbark = A.GetToggle(2, "Ironbark")
-    if     Ironbark >= 0 and A.Ironbark:IsReady("player", nil, nil, true) and
+    if     Ironbark >= 0 and A.Ironbark:IsReady(unit, nil, nil, true) and A.IsUnitFriendly(unit) and
     (
         (     -- Auto 
             Ironbark >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                Unit(unit):GetDMG() * 100 / Unit(unit):HealthMax() >= 20 or 
+                Unit(unit):GetRealTimeDMG() >= Unit(unit):HealthMax() * 0.25 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 3 or 
+                Unit(unit):TimeToDieX(25) < 3 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(unit):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(unit, 5):HasFlags() and 
+                            Unit(unit):GetRealTimeDMG() > 0 and 
+                            Unit(unit):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(unit):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             Ironbark < 100 and 
-            Unit("player"):HealthPercent() <= Ironbark
+            Unit(unit):HealthPercent() <= Ironbark
         )
     ) 
     then 
@@ -389,14 +391,13 @@ local function SelfDefensives()
     
 	-- Bear Form
     local BearForm = A.GetToggle(2, "BearForm")
-    if     BearForm >= 0 and A.BearForm:IsReady("player", nil, nil, true) and
+    if     BearForm >= 0 and Unit("player"):HasBuffs(A.BearForm.ID) == 0 and A.BearForm:IsReady("player", nil, nil, true) and
     (
         (     -- Auto 
             BearForm >= 100 and 
-            Unit("player"):TimeToDieMagicX(35) < 4 and 
+            Unit("player"):IsFocused("MELEE") and 
             -- Magic Damage still appear
-            Unit("player"):GetRealTimeDMG(4) > 0 and 
-            Unit("player"):HasBuffs("DeffBuffsMagic") == 0
+            Unit("player"):GetRealTimeDMG(1) > 7000 and Unit("player"):HealthPercent() <= 50
         ) or 
         (    -- Custom
             BearForm < 100 and 
@@ -567,7 +568,7 @@ local function CanWildGrowth(unit)
         if WildGrowthUnits > 6 then 
             WildGrowthUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 3 or 5, 25)
         end
-        
+		
         if WildGrowthUnits < 3 and not A.IsInPvP then 
             return false 
         end 
@@ -576,7 +577,7 @@ local function CanWildGrowth(unit)
         for i = 1, #totalMembers do 
             if Unit(totalMembers[i].Unit):GetRange() <= 40 then 
                 -- Auto HP 
-                if WildGrowthHP >= 100 and A.WildGrowth:PredictHeal("WildGrowth", totalMembers[i].Unit) and Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) > 0 then 
+                if WildGrowthHP >= 100 and (A.WildGrowth:PredictHeal("WildGrowth", totalMembers[i].Unit) or totalMembers[i].HP <= 75) then 
                     counter = counter + 1
                 end 
                 
@@ -734,16 +735,10 @@ A[3] = function(icon, isMulti)
         if Interrupt then 
             return Interrupt:Show(icon)
         end         
-		
-        -- PvP MightyBash (@targettarget)
-        if unit == "target" and A.IsUnitEnemy("targettarget") and A.MightyBashIsReady("targettarget", false, true) then 
-            return A.MightyBash:Show(icon)
-        end 
-        
+			
         -- PvP MightyBash (Enemy Healer)
         if A.IsInPvP and A.MightyBash:IsReady(nil, nil, nil, true) then 
             local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(25)
-            
             if EnemyHealerUnitID ~= "none" and A.MightyBash:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 0) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
                 return A.MightyBash:Show(icon)     
             end 
@@ -804,26 +799,26 @@ A[3] = function(icon, isMulti)
 			--end	
 		
 		-- Feral Affinity rotation
-        if A.FeralAffinity:IsSpellLearned() and IsEnoughHPS(unit) then 
+        if A.FeralAffinity:IsSpellLearned() and A.IsUnitEnemy("target") then 
 		    -- CatForm
 			if A.CatForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
 			    return A.CatForm:Show(icon)
 			end			
 		    -- Rake
-			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) <= 2 then
+			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Player:ComboPoints() < 5 then
 			    return A.Rake:Show(icon)
 			end			
 			-- Rip
-			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 5 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
+			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
 			    return A.Rip:Show(icon)
 			end
 			-- FerociousBite
-   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 5 and MultiUnits:GetByRange(25, 3) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
+   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(5, 5) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
 			    return A.FerociousBite:Show(icon)
 			end
 			-- Swipe aoe
-   			if A.Shred:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(25, 3) >= 3  then
-			    return A.Shred:Show(icon)
+   			if A.Swipe:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
+			    return A.Swipe:Show(icon)
 			end
 		    -- Shred
 			if A.Shred:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 40 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
@@ -950,35 +945,6 @@ A[3] = function(icon, isMulti)
             end 
         end 
 
-		-- Catweaving rotation (@targettarget)
-        if unit == "target" and A.IsUnitEnemy("targettarget") and A.FeralAffinity:IsSpellLearned() then 
-		    inRange = A.Rake:IsInRange("targettarget")
-			
-		    -- CatForm
-			if A.CatForm:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
-			    return A.CatForm:Show(icon)
-			end	
-			-- Prowl
-			if A.Prowl:IsReady(unit) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
-			    return A.Prowl:Show(icon)
-			end				
-		    -- Rake
-			if A.Rake:IsReady(unit) and Unit(unit):HasDeBuffs(A.Rake.ID, true) <= 2 then
-			    return A.Rake:Show(icon)
-			end			
-			-- Rip
-			if A.Rip:IsReady(unit) and Unit(unit):HasDeBuffs(A.Rake.ID, true) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
-			    return A.Rip:Show(icon)
-			end
-			-- FerociousBite
-   			if A.FerociousBite:IsReady(unit, nil, nil, true) and MultiUnits:GetByRange(25, 3) < 2 and Unit(unit):HasDeBuffs(A.Rake.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
-			    return A.FerociousBite:Show(icon)
-			end
-			-- Shred aoe
-   			if A.Shred:IsReady(unit, nil, nil, true) and MultiUnits:GetByRange(25, 3) >= 3  then
-			    return A.Shred:Show(icon)
-			end
-        end 
         
 		-- Low Emergency targeting
 		--if Unit(unit):TimeToDieX(50) < 10 and Unit(unit):HealthPercent() <= 80 then
@@ -990,8 +956,8 @@ A[3] = function(icon, isMulti)
         -- Bursting 
         if A.BurstIsON(unit) then 
 		    
-			local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60
-		    local SuperEmergency = Unit(unit):TimeToDieX(25) < 3 and Unit(unit):HealthPercent() <= 50
+			local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60 and A.IsUnitFriendly(unit)
+		    local SuperEmergency = (Unit(unit):TimeToDieX(25) < 3 or Unit(unit):HealthPercent() <= 50) and A.IsUnitFriendly(unit)
             
 			-- Multi (for [4])
             if isMulti then 
@@ -1016,9 +982,31 @@ A[3] = function(icon, isMulti)
                 if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and Emergency then 
                     return A.LifeBindersInvocation:Show(icon)
                 end             
+            end
+			
+        
+            -- Rotation      
+		    -- Purge
+		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
+            -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")		
+            if A.NaturesCure:IsReady(unit) and A.AuraIsValid(unit, "UseDispel", "Dispel") then
+                -- Notification					
+                Action.SendNotification("Detected dispell on :" .. UnitName(unit), A.NaturesCure.ID)
+                return A.NaturesCure:Show(icon)
             end 
             
             -- Single 
+            if SuperEmergency and A.IncarnationTreeofLife:IsReady("player") and IsSchoolFree() and Unit("player"):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) == 0  then 
+                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    return A.OverchargeMana:Show(icon)
+                end 
+                -- Notification					
+                Action.SendNotification("Activated Tree of Life burst", A.IncarnationTreeofLife.ID)                   
+                return A.IncarnationTreeofLife:Show(icon)
+            end
+			
+
+			
             if CanTranquility() and Emergency then 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                     return A.OverchargeMana:Show(icon)
@@ -1040,7 +1028,7 @@ A[3] = function(icon, isMulti)
                 local Ironbark = A.GetToggle(2, "Ironbark")
                 
                 -- Auto 
-                if     Ironbark >= 100 and Emergency and Unit(unit):HasBuffs("DeffBuffs") == 0 and (
+                if     Ironbark >= 100 and A.IsUnitFriendly(unit) and Emergency and Unit(unit):HasBuffs("DeffBuffs") == 0 and (
                     (Unit(unit):TimeToDieX(25) < 3 and Unit(unit):HealthPercent() < 60) or 
                     (A.IsInPvP and Unit(unit):HealthPercent() < 80 and (Unit(unit):HasDeBuffs("DamageDeBuffs") > 5 or Unit(unit):IsExecuted()))
                 ) 
@@ -1049,11 +1037,29 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 -- Custom 
-                if Ironbark < 100 and Unit(unit):HealthPercent() <= Ironbark then 
+                if Ironbark < 100 and A.IsUnitFriendly(unit) and Unit(unit):HealthPercent() <= Ironbark then 
                     return A.Ironbark:Show(icon)
                 end 
             end                         
-            
+             -- TreeOfLife rotation
+            if Unit("player"):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 then 
+			    
+				if A.Regrowth:IsReady(unit) and (Unit(unit):HealthPercent() <= 60 or Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 0 or Unit(unit):TimeToDieX(30) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) > 3 or not A.Germination:IsSpellLearned())  then 
+                    return A.Regrowth:Show(icon) 
+			    end 
+				
+ 			    if CanWildGrowth(unit) then         
+                    return A.WildGrowth:Show(icon)
+                end
+				
+				if A.Rejuvenation:IsReady(unit) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 then 
+                    return A.Rejuvenation:Show(icon) 
+			    end                
+                -- Rejuvenation with Germination
+                if A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
+                    return A.Rejuvenation:Show(icon)
+                end	
+            end           
             -- Azerite Essence
             if A.Standstill:AutoHeartOfAzeroth(unit, true) then 
                 return A.Standstill:Show(icon)
@@ -1119,19 +1125,7 @@ A[3] = function(icon, isMulti)
         -- PvP MightyBash (@targettarget)
         if unit == "target" and A.IsUnitEnemy("targettarget") and A.MightyBashIsReady("targettarget", false, true) then 
             return A.MightyBash:Show(icon)
-        end 
-        
-        -- PvP MightyBash (Enemy Healer)
-        if A.IsInPvP and A.MightyBash:IsReady(nil, nil, nil, true) then 
-            local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(25)
-            
-            if EnemyHealerUnitID ~= "none" and A.MightyBash:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 0) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
-                -- Notification					
-                Action.SendNotification("Detected potential interrupt on :" .. UnitName(unit), A.MightyBash.ID)
-				return A.MightyBash:Show(icon)     
-            end 
-        end 
-		
+        end    
 		
         -- Racial 
         if A.GiftofNaaru:AutoRacial(unit, nil, nil, true) and Unit(unit):HealthPercent() <= A.GetToggle(2, "RacialBurstHealing") then 
@@ -1148,16 +1142,6 @@ A[3] = function(icon, isMulti)
                 return A.Trinket2:Show(icon)
             end     
         end     
-        
-        -- Rotation      
-		-- Purge
-		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
-        -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")		
-        if A.NaturesCure:IsReady(unit) and A.AuraIsValid(unit, "UseDispel", "Dispel") then
-            -- Notification					
-            Action.SendNotification("Detected dispell on :" .. UnitName(unit), A.NaturesCure.ID)
-            return A.NaturesCure:Show(icon)
-        end 
         
 		-- Dash
         if A.Dash:IsReady("player") and Unit("player"):TimeToDie() > 6 then 
@@ -1203,12 +1187,12 @@ A[3] = function(icon, isMulti)
         
         -- Super Emergency 
         local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60
-		local MediumEmergency = Unit(unit):TimeToDieX(25) < 8 and Unit(unit):HealthPercent() <= 70
-		local SuperEmergency = Unit(unit):TimeToDieX(25) < 3 and Unit(unit):HealthPercent() <= 50
+		local MediumEmergency = Unit(unit):HealthPercent() <= 70 and A.IsUnitFriendly(unit)
+		local SuperEmergency = Unit(unit):TimeToDieX(25) < 3 and Unit(unit):HealthPercent() <= 50 
 		local Swiftmend = A.GetToggle(2, "SwiftmendHP")
 		
         if MediumEmergency and A.Swiftmend:IsReady(unit) and Unit(unit):DeBuffCyclone() == 0 and IsSchoolFree() and ((Swiftmend >= 100 and Unit(unit):HealthPercent() <= 50 ) or (Swiftmend < 100 and Unit(unit):HealthPercent() <= Swiftmend)) then 
-            if Emergency and A.Ironbark:IsReady(unit) and Unit(unit):TimeToDie() > 3 then 
+            if Emergency and A.IsUnitFriendly(unit) and A.Ironbark:IsReady(unit) and Unit(unit):TimeToDie() > 3 then 
 			    -- Notification
 			    Action.SendNotification("Emergency Iron Bark on : " .. UnitName(unit), A.Ironbark.ID, 2)
                 return A.Ironbark:Show(icon)
@@ -1283,17 +1267,44 @@ A[3] = function(icon, isMulti)
 				return A.Lifebloom:Show(icon)
             end
         end
+		
+		-- Swiftmend for low moderate damage
+		if A.Swiftmend:IsReady(unit) and Unit(unit):GetRange() <= 40 and (Unit(unit):TimeToDieX(50) < 4 or A.Swiftmend:PredictHeal("Swiftmend", unit)) and Unit(unit):HealthPercent() <= 75 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 2 then		
+		    -- Notification
+			Action.SendNotification("Emergency Swiftmend on : " .. UnitName(unit), A.Swiftmend.ID, 2)
+			return A.Swiftmend:Show(icon)
+        end 
+		
+        if not isMulti and not isMoving and A.GetToggle(2, "AoE") then 
+            if CanWildGrowth(unit) then
+                return A.WildGrowth:Show(icon)
+            end  
+        end
 
 		-- PvP Overgrowth (Enemy Healer)
-		local Emergency = (Unit(unit):TimeToDieX(20) < 5 or Unit(unit):HealthPercent() <= 35)
+		local Emergency = (Unit(unit):TimeToDieX(20) < 5 and Unit(unit):HealthPercent() <= 35)
         if A.IsInPvP and Unit(unit):GetRange() <= 40 and A.Overgrowth:IsReady(unit) and A.Overgrowth:PredictHeal("Overgrowth", unit) then		    
-			if Emergency and A.Ironbark:IsReady(unit) then 
+			if Emergency and A.Ironbark:IsReady(unit) and A.IsUnitFriendly(unit) then 
                 return A.Ironbark:Show(icon) 
 			end
 		    -- Notification
 			Action.SendNotification("Emergency Overgrowth on : " .. UnitName(unit), A.Overgrowth.ID, 2)
 			return A.Overgrowth:Show(icon)
 		end	
+		
+		-- Regrowth with ClearCasting buff
+		if A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 0 and (Unit(unit):HealthPercent() <= 90 or Unit(unit):TimeToDieX(60) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 5 then
+       		-- Notification
+			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
+            return A.Regrowth:Show(icon)
+        end
+		
+		-- Regrowth without ClearCasting buff
+		if A.Regrowth:IsReady(unit) and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit) or Unit(unit):TimeToDieX(40) < 4) and Unit(unit):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
+       		-- Notification
+			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
+            return A.Regrowth:Show(icon)
+        end  	
 		
 		-- Rejuvenation
         if A.Rejuvenation:IsReady(unit) and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
@@ -1320,35 +1331,7 @@ A[3] = function(icon, isMulti)
         -- Rejuvenation while moving Germination
         if isMoving and A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  and IsSchoolFree() then             
             return A.Rejuvenation:Show(icon)
-        end
-		
-		-- Swiftmend for low moderate damage
-		if A.Swiftmend:IsReady(unit) and Unit(unit):GetRange() <= 40 and (Unit(unit):TimeToDieX(50) < 4 or A.Swiftmend:PredictHeal("Swiftmend", unit)) and Unit(unit):HealthPercent() <= 75 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 2 then		
-		    -- Notification
-			Action.SendNotification("Emergency Swiftmend on : " .. UnitName(unit), A.Swiftmend.ID, 2)
-			return A.Swiftmend:Show(icon)
-        end 
-		
-        if not isMulti and not isMoving and A.GetToggle(2, "AoE") then 
-            if CanWildGrowth(unit) then
-                return A.WildGrowth:Show(icon)
-            end  
-        end
-		
-        -- Continue Rotation
-		-- Regrowth without ClearCasting buff
-		if A.Regrowth:IsReady(unit) and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit) or Unit(unit):TimeToDieX(50) < 4) and Unit(unit):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HealthPercent() <= 50 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
-       		-- Notification
-			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
-            return A.Regrowth:Show(icon)
-        end 
-		
-		-- Regrowth with ClearCasting buff
-		if A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 0 and Unit(unit):HealthPercent() <= 90 and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 5 then
-       		-- Notification
-			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
-            return A.Regrowth:Show(icon)
-        end 			       
+        end      
         
         -- Azerite Essences 
         if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Unit("player"):PowerPercent() < 85 then 
@@ -1468,7 +1451,7 @@ end
 local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", ACTION_CONST_SPELLID_FREEZING_TRAP) > UnitCooldown:GetMaxDuration("arena", ACTION_CONST_SPELLID_FREEZING_TRAP) - 2 and 
     UnitCooldown:IsSpellInFly("arena", ACTION_CONST_SPELLID_FREEZING_TRAP) and 
-    Unit("plauer"):GetDR("incapacitate") > 0 
+    Unit("player"):GetDR("incapacitate") > 0 
     then 
         local Caster = UnitCooldown:GetUnitID("arena", ACTION_CONST_SPELLID_FREEZING_TRAP)
         if Caster and Unit(Caster):GetRange() <= 40 then 
@@ -1482,12 +1465,15 @@ local function ArenaRotation(unit)
         --local remainCast = Unit("player"):IsCastingRemains(A.SoothingMist.ID) > 0
         
         -- Note: "arena1" is just identification of meta 6
-        --if unit == "arena1" and (Unit("playr"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then                 
-        --    return 
-        --end 
+        if unit == "arena1" and (Unit("playrr"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then                 
+            -- PvP Cyclone
+            if A.Cyclone:IsReady(unit, nil, nil, true) and not Unit(unit):InLOS() and Unit(unit):GetDR("disorient") > 25 then
+                return A.Cyclone
+            end  
+        end 
         
         -- PvP Disarm 
-        if A.MightyBashIsReady(unit, false, true) and not Unit(unit):InLOS() then
+        if A.MightyBashIsReady(unit, false, true) and not Unit(unit):InLOS() and Unit(unit):GetDR("incapacitate") > 25  then
             return A.MightyBash
         end         
     end 
@@ -1495,9 +1481,12 @@ end
 
 local function PartyRotation(unit)
     --local castRemain = Unit("player"):IsCastingRemains(A.SoothingMist.ID) > 0
-    
+    -- NaturesCure   -- and not Unit(unit):InLOS()
+    if A.NaturesCure:IsReady(unit, nil, nil, true) and IsSchoolFree() and A.AuraIsValid(unit, "UseDispel", "Dispel")  then                         
+        return A.NaturesCure
+    end 
     -- Dash
-    if A.Dash:IsReady(unit, nil, nil, true) and IsSchoolFree() and not Unit("player", 5):HasFlags() and (Unit(unit):IsMelee() or Unit(unit):IsFocused(nil, true) or Unit(unit):HasBuffs("DamageBuffs") > 0) and not Unit(unit):InLOS() then 
+    if A.Dash:IsReady("player", nil, nil, true) and not Unit("player", 5):HasFlags() and (Unit(unit):IsMelee() or Unit("player"):IsFocused(nil, true) or Unit(unit):HasBuffs("DamageBuffs") > 0) and not Unit(unit):InLOS() then 
         if Unit(unit):HasDeBuffs("Rooted") > A.GetGCD() then 
             return A.Dash
         end 
@@ -1508,10 +1497,7 @@ local function PartyRotation(unit)
         end 
     end 
     
-    -- NaturesCure   -- and not Unit(unit):InLOS()
-    if A.NaturesCure:IsReady(unit, nil, nil, true) and IsSchoolFree() and A.AuraIsValid(unit, "UseDispel", "Dispel")  then                         
-        return A.NaturesCure
-    end     
+    
 end 
 
 A[6] = function(icon)    
