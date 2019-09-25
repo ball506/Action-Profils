@@ -502,8 +502,8 @@ local function APL()
         if S.AMurderofCrows:IsCastableP() and not ShouldStop and (not Player:BuffP(S.CoordinatedAssaultBuff)) then
             if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 122"; end
         end
-        -- coordinated_assault
-        if S.CoordinatedAssault:IsCastableP() and not ShouldStop and HR.CDsON() then
+        -- coordinated_assault,if=!buff.coordinated_assault.up
+        if S.CoordinatedAssault:IsCastableP() and HR.CDsON() and (Player:BuffDownP(S.CoordinatedAssaultBuff)) then
             if HR.Cast(S.CoordinatedAssault, Action.GetToggle(2, "OffGCDasOffGCD")) then return "coordinated_assault 126"; end
         end
         -- mongoose_bite,if=buff.mongoose_fury.up|focus+cast_regen>focus.max-10|buff.coordinated_assault.up
@@ -614,19 +614,19 @@ local function APL()
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (S.CoordinatedAssault:CooldownRemainsP() > 60 or Target:TimeToDie() < 13) then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 298"; end
         end
-        -- potion,if=buff.coordinated_assault.up&(buff.berserking.up|buff.blood_fury.up|!race.troll&!race.orc)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)
-        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.CoordinatedAssaultBuff) and (Player:BuffP(S.BerserkingBuff) or Player:BuffP(S.BloodFuryBuff) or not Player:IsRace("Troll") and not Player:IsRace("Orc")) or Target:TimeToDie() < 61) then
-            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 308"; end
+        -- potion,if=buff.guardian_of_azeroth.up&(buff.berserking.up|buff.blood_fury.up|!race.troll)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)|!essence.condensed_lifeforce.major&buff.coordinated_assault.up
+        if I.PotionofUnbridledFury:IsReady() and Action.GetToggle(1, "Potion") and (S.GuardianofAzeroth:CooldownRemainsP() > 150 and (Player:BuffP(S.BerserkingBuff) or Player:BuffP(S.BloodFuryBuff) or not Player:IsRace("Troll")) or Target:TimeToDie() < 61 or not S.GuardianofAzeroth:IsAvailable() and Player:BuffP(S.CoordinatedAssaultBuff)) then       
+		    if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 308"; end
         end
         -- aspect_of_the_eagle,if=target.distance>=6
         if S.AspectoftheEagle:IsCastableP() and not ShouldStop and HR.CDsON() and (not Target:IsInRange(8) and Target:IsInRange(40)) then
             if HR.Cast(S.AspectoftheEagle, Action.GetToggle(2, "OffGCDasOffGCD")) then return "aspect_of_the_eagle 320"; end
         end
-        -- use_item,name=ashvanes_razor_coral,if=equipped.dribbling_inkpod&(debuff.razor_coral_debuff.down|time_to_pct_30<1|(health.pct<30&buff.guardian_of_azeroth.up|buff.memory_of_lucid_dreams.up))|(!equipped.dribbling_inkpod&(buff.memory_of_lucid_dreams.up|buff.guardian_of_azeroth.up)|debuff.razor_coral_debuff.down)|target.time_to_die<20
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (I.DribblingInkpod:IsEquipped() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToX(30) < 1 or (Target:HealthPercentage() < 30 and (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or Player:BuffP(S.MemoryofLucidDreams))) or (not I.DribblingInkpod:IsEquipped() and (Player:BuffP(S.MemoryofLucidDreams) or (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150)) or Target:DebuffDownP(S.RazorCoralDebuff)) or Target:TimeToDie() < 20) then
+        -- use_item,name=ashvanes_razor_coral,if=equipped.dribbling_inkpod&(debuff.razor_coral_debuff.down|time_to_pct_30<1|(health.pct<30&buff.guardian_of_azeroth.up|buff.memory_of_lucid_dreams.up))|(!equipped.dribbling_inkpod&(buff.memory_of_lucid_dreams.up|buff.guardian_of_azeroth.up&cooldown.guardian_of_azeroth.remains>175)|debuff.razor_coral_debuff.down)|target.time_to_die<20
+        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (I.DribblingInkpod:IsEquipped() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToX(30) < 1 or (Target:HealthPercentage() < 30 and (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or Player:BuffP(S.MemoryofLucidDreams))) or (not I.DribblingInkpod:IsEquipped() and (Player:BuffP(S.MemoryofLucidDreams) or (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 175)) or Target:DebuffDownP(S.RazorCoralDebuff)) or Target:TimeToDie() < 20) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 321"; end
-        end
-        -- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
+        end       
+		-- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
         if I.GalecallersBoon:IsEquipReady() and TrinketON() and (bool(S.MemoryofLucidDreams:CooldownRemainsP()) or S.WildfireInfusion:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP()) or bool(I.PocketsizedComputationDevice:CooldownRemainsP()) or not S.MemoryofLucidDreams:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP())) then
             if HR.Cast(I.GalecallersBoon) then return "galecallers_boon 322"; end
         end
@@ -792,8 +792,8 @@ local function APL()
         if S.AMurderofCrows:IsCastableP() and not ShouldStop and (not Player:BuffP(S.CoordinatedAssaultBuff)) then
             if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 629"; end
         end
-        -- coordinated_assault
-        if S.CoordinatedAssault:IsCastableP() and not ShouldStop and HR.CDsON() then
+        -- coordinated_assault,if=!buff.coordinated_assault.up
+        if S.CoordinatedAssault:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffDownP(S.CoordinatedAssaultBuff)) then
             if HR.Cast(S.CoordinatedAssault, Action.GetToggle(2, "OffGCDasOffGCD")) then return "coordinated_assault 633"; end
         end
         -- mongoose_bite,if=buff.mongoose_fury.up|focus+cast_regen>focus.max-20&talent.vipers_venom.enabled|focus+cast_regen>focus.max-1&talent.terms_of_engagement.enabled|buff.coordinated_assault.up
