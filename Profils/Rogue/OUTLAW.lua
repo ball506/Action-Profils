@@ -741,7 +741,7 @@ local function Trinkets()
                         CastRazorCoral = (S.RazorCoralDebuff:MaxDebuffStackP() >= 20 - 10 * num(Target:DebuffP(S.BloodoftheEnemyDebuff)) or Target:FilteredTimeToDie("<", 60))
                         and Player:BuffRemainsP(S.AdrenalineRush) > 18 or (Target:IsInBossList() and Target:FilteredTimeToDie("<", 20));
                     end
-                end]]--
+                end
                 if CastRazorCoral and not ShouldStop then
                     if HR.Cast(I.RazorCoral) then return "Cast RazorCoral"; end
                 end
