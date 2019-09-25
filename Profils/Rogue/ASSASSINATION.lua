@@ -447,6 +447,7 @@ end
 local function Init ()
   S.RazorCoralDebuff:RegisterAuraTracking();
 end
+
 Init()
 --- ======= SIMC CUSTOM FUNCTION / EXPRESSION =======
 -- cp_max_spend

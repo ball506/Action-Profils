@@ -541,6 +541,13 @@ local function ToggleBurstMode()
 	end
 end
 
+local function Init ()
+  S.RazorCoralDebuff:RegisterAuraTracking();
+  S.ConductiveInkDebuff:RegisterAuraTracking();
+end
+
+Init()
+
 --- ======= ACTION LISTS =======
 local function APL() 
     
@@ -721,7 +728,7 @@ local function Trinkets()
             end
             -- actions.cds+=/use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<32&target.health.pct>=30|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=20-10*debuff.blood_of_the_enemy.up|target.time_to_die<60)&buff.adrenaline_rush.remains>18
             if I.RazorCoral:IsEquipped() and I.RazorCoral:IsReady() and not ShouldStop and TrinketON() then
-            local CastRazorCoral;
+                local CastRazorCoral;
                 if S.RazorCoralDebuff:ActiveCount() == 0 then
                     CastRazorCoral = true;
                 else
@@ -734,7 +741,7 @@ local function Trinkets()
                         CastRazorCoral = (S.RazorCoralDebuff:MaxDebuffStackP() >= 20 - 10 * num(Target:DebuffP(S.BloodoftheEnemyDebuff)) or Target:FilteredTimeToDie("<", 60))
                         and Player:BuffRemainsP(S.AdrenalineRush) > 18 or (Target:IsInBossList() and Target:FilteredTimeToDie("<", 20));
                     end
-                end
+                end]]--
                 if CastRazorCoral and not ShouldStop then
                     if HR.Cast(I.RazorCoral) then return "Cast RazorCoral"; end
                 end
