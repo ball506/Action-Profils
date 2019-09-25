@@ -396,8 +396,7 @@ local function SelfDefensives()
         (     -- Auto 
             BearForm >= 100 and 
             Unit("player"):IsFocused("MELEE") and 
-            -- Magic Damage still appear
-            Unit("player"):GetRealTimeDMG(1) > 7000 and Unit("player"):HealthPercent() <= 50
+            Unit("player"):GetRealTimeDMG(1) > 100 and Unit("player"):HealthPercent() <= 50
         ) or 
         (    -- Custom
             BearForm < 100 and 
@@ -478,10 +477,12 @@ local function CanTranquility()
         local TranquilityHP = A.GetToggle(2, "Tranquility")
         local TranquilityUnits = A.GetToggle(2, "TranquilityUnits") 
         local totalMembers = HealingEngine.GetMembersAll()
+		local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 2)
+		local currentMembers = TeamCache.Friendly.Size		
 		
         -- Auto Counter
         if TranquilityUnits > 40 then 
-            TranquilityUnits = HealingEngine.GetMinimumUnits(1)
+            TranquilityUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 8 or 11, 25)
             -- Reduce size in raid by 20%
             if TranquilityUnits > 5 then 
                 TranquilityUnits = TranquilityUnits - (#totalMembers * 0.2)
@@ -498,7 +499,7 @@ local function CanTranquility()
         local counter = 0 
         for i = 1, #totalMembers do 
             -- Auto HP 
-            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit, 10) then 
+            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit) and (RejuvenationCount >= (currentMembers / 3.5)) and (Unit(totalMembers[i].Unit):TimeToDieX(20) < 8 or totalMembers[i].HP <= 35) and Unit("player"):GetHPS() < Unit(totalMembers[i].Unit):GetDMG() then 
                 counter = counter + 1
             end 
             
@@ -521,13 +522,15 @@ local function CanFlourish()
         local FlourishHP = A.GetToggle(2, "Flourish")
         local FlourishUnits = A.GetToggle(2, "FlourishUnits") 
         local totalMembers = HealingEngine.GetMembersAll()
+		local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 2)
+		local currentMembers = TeamCache.Friendly.Size
 		
         -- Auto Counter
         if FlourishUnits > 40 then 
-            FlourishUnits = HealingEngine.GetMinimumUnits(1)
-            -- Reduce size in raid by 35%
+            FlourishUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 5 or 8, 25)
+            -- Reduce size in raid by 20%
             if FlourishUnits > 5 then 
-                FlourishUnits = FlourishUnits - (#totalMembers * 0.35)
+                FlourishUnits = FlourishUnits - (#totalMembers * 0.20)
             end 
             -- If user typed counter higher than max available members 
         elseif FlourishUnits >= TeamCache.Friendly.Size then 
@@ -541,7 +544,7 @@ local function CanFlourish()
         local counter = 0 
         for i = 1, #totalMembers do 
             -- Auto HP 
-            if FlourishHP >= 100 and A.Flourish:PredictHeal("Flourish", totalMembers[i].Unit, 5) then 
+            if FlourishHP >= 100 and (RejuvenationCount >= (currentMembers / 3)) and (Unit(totalMembers[i].Unit):TimeToDieX(20) < 8 or totalMembers[i].HP <= 35) and Unit("player"):GetHPS() < Unit(totalMembers[i].Unit):GetDMG() then 
                 counter = counter + 1
             end 
             
@@ -620,7 +623,7 @@ local function MaintainRejuvenation(unit)
         local MinRaidRejuvUnits = HealingEngine.GetMinimumUnits(6, 20)
         local MinPartyRejuvenationUnits = HealingEngine.GetMinimumUnits(3, 5)
         local currentMembers = TeamCache.Friendly.Size		
-		local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
+		local RejuvenationCount = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 2)
 
 		-- Arena
 		if (currentMembers == 2 or currentMembers == 3) then	
@@ -778,7 +781,7 @@ A[3] = function(icon, isMulti)
         end     
         
 		-- Balance Affinity rotation
-        if A.BalanceAffinity:IsSpellLearned() and IsEnoughHPS(unit) then 
+        if A.BalanceAffinity:IsSpellLearned() and IsEnoughHPS(unit) and not IsSaveManaPhase() then 
 		    -- MoonkinForm
 			if A.MoonkinForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) == 0 then
 			    return A.MoonkinForm:Show(icon)
@@ -827,12 +830,12 @@ A[3] = function(icon, isMulti)
         end 
 		
 		-- Sunfire
-        if A.Sunfire:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
+        if A.Sunfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
             return A.Sunfire:Show(icon)
         end 
 		
         -- Moonfire
-        if A.Moonfire:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
+        if A.Moonfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
             return A.Moonfire:Show(icon)
         end 
 		
@@ -1005,8 +1008,7 @@ A[3] = function(icon, isMulti)
                 return A.IncarnationTreeofLife:Show(icon)
             end
 			
-
-			
+			-- Tranquility
             if CanTranquility() and Emergency then 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                     return A.OverchargeMana:Show(icon)
@@ -1014,6 +1016,7 @@ A[3] = function(icon, isMulti)
                     
                 return A.Tranquility:Show(icon)
             end 
+			
             -- Flourish burst
             if CanFlourish() and Emergency then 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
@@ -1023,6 +1026,7 @@ A[3] = function(icon, isMulti)
                 Action.SendNotification("Activated Flourish burst", A.Flourish.ID)                    
                 return A.Flourish:Show(icon)
             end
+			
             -- Iron Bark			
             if A.Ironbark:IsReady(unit) and A.Ironbark:AbsentImun(unit) and IsSchoolFree() then 
                 local Ironbark = A.GetToggle(2, "Ironbark")
@@ -1040,7 +1044,8 @@ A[3] = function(icon, isMulti)
                 if Ironbark < 100 and A.IsUnitFriendly(unit) and Unit(unit):HealthPercent() <= Ironbark then 
                     return A.Ironbark:Show(icon)
                 end 
-            end                         
+            end   
+			
              -- TreeOfLife rotation
             if Unit("player"):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 then 
 			    
@@ -1059,7 +1064,8 @@ A[3] = function(icon, isMulti)
                 if A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
                     return A.Rejuvenation:Show(icon)
                 end	
-            end           
+            end    
+			
             -- Azerite Essence
             if A.Standstill:AutoHeartOfAzeroth(unit, true) then 
                 return A.Standstill:Show(icon)
@@ -1162,7 +1168,7 @@ A[3] = function(icon, isMulti)
                 return A.VitalityConduit:Show(icon)
             end
             
-            if CanWildGrowth(unit) then                 
+            if CanWildGrowth(unit) and not IsSaveManaPhase() then                 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
@@ -1173,14 +1179,14 @@ A[3] = function(icon, isMulti)
         
         -- Multi (for [4])
         if isMulti then 
-            if CanWildGrowth(unit) then                 
+            if CanWildGrowth(unit) and not IsSaveManaPhase() then                 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
                 return A.WildGrowth:Show(icon)
             end 
-            if Efflorescence() <= 3 and Player:IsStayingTime() > 2 then 
+            if Efflorescence() <= 3 and Player:IsStayingTime() > 2 and not IsSaveManaPhase()  then 
                 return A.Efflorescence:Show(icon)
             end 
         end
@@ -1197,7 +1203,7 @@ A[3] = function(icon, isMulti)
 			    Action.SendNotification("Emergency Iron Bark on : " .. UnitName(unit), A.Ironbark.ID, 2)
                 return A.Ironbark:Show(icon)
             end     
-            if not isMoving then
+            if not isMoving and not IsSaveManaPhase() then
                 if A.Regrowth:IsReady(unit) then 
                     return A.Regrowth:Show(icon)
                 end                
@@ -1275,8 +1281,9 @@ A[3] = function(icon, isMulti)
 			return A.Swiftmend:Show(icon)
         end 
 		
+		-- Wild Growth
         if not isMulti and not isMoving and A.GetToggle(2, "AoE") then 
-            if CanWildGrowth(unit) then
+            if CanWildGrowth(unit) and not IsSaveManaPhase() then
                 return A.WildGrowth:Show(icon)
             end  
         end
@@ -1293,26 +1300,26 @@ A[3] = function(icon, isMulti)
 		end	
 		
 		-- Regrowth with ClearCasting buff
-		if A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 0 and (Unit(unit):HealthPercent() <= 90 or Unit(unit):TimeToDieX(60) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 5 then
+		if A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 1 and (Unit(unit):HealthPercent() <= 90 or Unit(unit):TimeToDieX(60) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 5 then
        		-- Notification
 			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
             return A.Regrowth:Show(icon)
         end
 		
 		-- Regrowth without ClearCasting buff
-		if A.Regrowth:IsReady(unit) and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit) or Unit(unit):TimeToDieX(40) < 4) and Unit(unit):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
+		if A.Regrowth:IsReady(unit) and not IsSaveManaPhase() and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit) or Unit(unit):TimeToDieX(40) < 4) and Unit(unit):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
        		-- Notification
 			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
             return A.Regrowth:Show(icon)
         end  	
 		
 		-- Rejuvenation
-        if A.Rejuvenation:IsReady(unit) and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
+        if A.Rejuvenation:IsReady(unit) and not IsSaveManaPhase() and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
             return A.Rejuvenation:Show(icon)
         end	
 
         -- Rejuvenation with Germination
-        if A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
+        if A.Rejuvenation:IsReady(unit) and not IsSaveManaPhase() and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
             return A.Rejuvenation:Show(icon)
         end	
 		
@@ -1321,17 +1328,7 @@ A[3] = function(icon, isMulti)
 		    -- Notification
 			Action.SendNotification("Cenarion Ward on : " .. UnitName(unit), A.CenarionWard.ID, 2)
             return A.CenarionWard:Show(icon)
-        end 
-
-        -- Rejuvenation refresher
-        if A.Rejuvenation:IsReady(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.Rejuvenation.ID) <= 2 then             
-            return A.Rejuvenation:Show(icon)
-        end	
-		
-        -- Rejuvenation while moving Germination
-        if isMoving and A.Rejuvenation:IsReady(unit) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  and IsSchoolFree() then             
-            return A.Rejuvenation:Show(icon)
-        end      
+        end    
         
         -- Azerite Essences 
         if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Unit("player"):PowerPercent() < 85 then 
@@ -1367,16 +1364,16 @@ A[3] = function(icon, isMulti)
             return A.Refreshment:Show(icon)
         end        		                 
         
-        -- Damage Rotation 
-        if unit == "target" and A.IsUnitEnemy("targettarget") then 
-            local CanMakeDamage = DamageRotation("targettarget")
+        -- Target Damage Rotation 
+        if unit == "target" and A.IsUnitEnemy("target") then 
+            local CanMakeDamage = DamageRotation("target")
             if CanMakeDamage then 
                 return true 
             end 
         end 
         
         -- Totally nothing to do 
-        if not isMulti and A.SolarWrath:IsReady(unit) and IsSchoolFree() then 
+        if not isMulti and A.SolarWrath:IsReady(unit) and IsSaveManaPhase() and IsSchoolFree() then 
             if Unit("player"):CombatTime() > 0 and HealingEngine.GetIncomingDMGAVG() <= 3 then
                 return A.SolarWrath:Show(icon)
             end            
@@ -1384,7 +1381,7 @@ A[3] = function(icon, isMulti)
     end 
     
     -- Defensive
-    local SelfDefensive = SelfDefensives(true)
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -1405,7 +1402,6 @@ A[3] = function(icon, isMulti)
         end 
     end 
     
-    
     -- DPS Target     
     if A.IsUnitEnemy("target") then 
         unit = "target"
@@ -1414,6 +1410,7 @@ A[3] = function(icon, isMulti)
             return true 
         end 
     end 
+	
     -- Heal Target 
     if A.IsUnitFriendly("target") then 
         unit = "target"      
@@ -1427,15 +1424,11 @@ A[3] = function(icon, isMulti)
         return A.Nourish:Show(icon)
     end     
     
-    if A.Zone == "arena" and Unit("player"):CombatTime() == 0 and not Player:IsMounted() and A.Sunfire:IsReady() and (isMulti or A.GetToggle(2, "AoE")) and EnemyTeam():HasInvisibleUnits() and not EnemyTeam("HEALER"):IsBreakAble(8) then 
-        return A.Sunfire:Show(icon)         
-    end 
-    
     -- Movement
     -- If not moving or moving lower than 2.5 sec 
-    if Player:IsMovingTime() < 2.5 then 
-        return 
-    end 
+    --if Player:IsMovingTime() < 2.5 then 
+    --    return 
+    --end 
         
 end 
 
