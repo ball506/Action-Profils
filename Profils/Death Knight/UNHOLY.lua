@@ -681,11 +681,11 @@ local function APL()
             if HR.Cast(S.Outbreak) then return "outbreak 307" end
         end
         -- call_action_list,name=essences
-        if (true) and HR.CDsON() then
+        if (true) then
             local ShouldReturn = Essences(); if ShouldReturn then return ShouldReturn; end
         end
         -- call_action_list,name=cooldowns
-        if (true) and Action.GetToggle(1, "HeartOfAzeroth") then
+        if (true) and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
         -- run_action_list,name=aoe,if=active_enemies>=2
