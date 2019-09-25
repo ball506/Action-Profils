@@ -438,7 +438,7 @@ local function APL()
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
-         if S.GuardianofAzeroth:IsCastableP() and (S.AspectoftheWild:CooldownRemainsP() < 10 or Target:TimeToDie() > 180 + S.GuardianofAzeroth:BaseDuration() or Target:TimeToDie() < 30) then
+         if S.GuardianofAzeroth:IsCastableP() and (S.AspectoftheWild:CooldownRemainsP() < 10 or Target:TimeToDie() > 180 + 30 or Target:TimeToDie() < 30) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- ripple_in_space
@@ -613,6 +613,10 @@ local function APL()
         if S.BarbedShot:IsCastableP() and not ShouldStop and (S.BarbedShot:ChargesFractionalP() > 1.4) then
             if HR.Cast(S.BarbedShot) then return "barbed_shot 235"; end
         end
+		-- call_action_list,name=cds
+        if (HR.CDsON()) then
+            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
+        end
     end
 	
 	-- Survivability handler
@@ -685,16 +689,12 @@ local function APL()
         -- auto_shot
         -- use_items
         -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and Player:BuffDownP(S.BestialWrathBuff) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
         if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and (Target:DebuffP(S.RazorCoralDebuff) and (Player:PrevGCDP(1, S.AspectoftheWild) and Player:BuffP(S.AspectoftheWildBuff)) or (Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToDie() < 26) and Target:TimeToDie() > (24 * num(S.CyclotronicBlast:CooldownRemainsP() + 4 < Target:TimeToDie()))) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
-        end
-        -- call_action_list,name=cds
-        if (HR.CDsON()) then
-            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
         end
         -- call_action_list,name=st,if=active_enemies<2
         if (EnemiesCount < 2) then
@@ -704,8 +704,12 @@ local function APL()
         if (EnemiesCount > 1) then
             local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end
         end
+        -- call_action_list,name=cds
+        if (HR.CDsON()) then
+            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
+        end
 		-- Pool icon
-        if HR.Cast(S.Channeling) then return "Pooling Focus"; end
+        --if HR.Cast(S.Channeling) then return "Pooling Focus"; end
 
     end
 end
