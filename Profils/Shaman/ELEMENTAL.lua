@@ -975,7 +975,7 @@ local function APL()
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- focused_azerite_beam
-        if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
+        if S.FocusedAzeriteBeam:IsCastableP() and (EnemiesCount >= 4 or ActionUnit("target"):IsBoss()) and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not Player:IsMoving() and not ShouldStop then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- purifying_blast

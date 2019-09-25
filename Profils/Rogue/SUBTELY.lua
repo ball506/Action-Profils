@@ -582,7 +582,7 @@ local function Essences ()
     if HR.Cast(S.GuardianofAzeroth) then return "Cast GuardianofAzeroth"; end
   end
   -- actions.essences+=/focused_azerite_beam,if=(spell_targets.shuriken_storm>=2|raid_event.adds.in>60)&!cooldown.symbols_of_death.up&!buff.symbols_of_death.up&energy.deficit>=30
-  if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and not ShouldStop and not S.SymbolsofDeath:CooldownUpP() and not Player:BuffP(S.SymbolsofDeath) and Player:EnergyDeficitPredicted() >= 30 then
+  if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[10] >= 4 or ActionUnit("target"):IsBoss()) and not ShouldStop and not S.SymbolsofDeath:CooldownUpP() and not Player:BuffP(S.SymbolsofDeath) and Player:EnergyDeficitPredicted() >= 30 then
     if HR.Cast(S.FocusedAzeriteBeam) then return "Cast FocusedAzeriteBeam"; end
   end
   -- purifying_blast

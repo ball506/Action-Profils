@@ -437,7 +437,7 @@ end
 DetermineEssenceRanks = Action.MakeFunctionCachedDynamic(DetermineEssenceRanks)
 
 -- HeroLib EnemiesCount handler
-local EnemyRanges = {"Melee", 6, 9}
+local EnemyRanges = {"Melee", 6, 8, 9}
 local function UpdateRanges()
     for _, i in ipairs(EnemyRanges) do
         HL.GetEnemies(i);
