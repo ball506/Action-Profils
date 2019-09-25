@@ -800,7 +800,7 @@ local function APL()
             if HR.Cast(S.Ascendance, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ascendance 202"; end
         end	
 		-- 13 EarthShock
-		if S.EarthShock:IsReadyP() and FutureMaelstromPower() >= 60 and ((S.MasteroftheElements:IsAvailable() and Player:BuffP(S.MasteroftheElementsBuff)) or not S.MasteroftheElements:IsAvailable())
+		if S.EarthShock:IsReadyP() and FutureMaelstromPower() >= 60 and ((S.MasteroftheElements:IsAvailable() and Player:BuffP(S.MasteroftheElementsBuff)) or not S.MasteroftheElements:IsAvailable()) then
 		    if HR.Cast(S.EarthShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "EarthShock 33"; end
 		end
         -- 17 frost_shock MasteroftheElements
