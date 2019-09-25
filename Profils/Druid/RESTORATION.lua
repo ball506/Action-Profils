@@ -799,9 +799,9 @@ A[3] = function(icon, isMulti)
 		
 		-- Feral Affinity rotation
         if A.FeralAffinity:IsSpellLearned() and IsEnoughHPS(unit) then 
-		    -- Catform
-			if A.Catform:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
-			    return A.Catform:Show(icon)
+		    -- CatForm
+			if A.CatForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
+			    return A.CatForm:Show(icon)
 			end	
 			-- Prowl
 			if A.Prowl:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
@@ -948,9 +948,9 @@ A[3] = function(icon, isMulti)
         if unit == "target" and A.IsUnitEnemy("targettarget") and A.FeralAffinity:IsSpellLearned() then 
 		    inRange = A.Rake:IsInRange("targettarget")
 			
-		    -- Catform
-			if A.Catform:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID) == 0 then
-			    return A.Catform:Show(icon)
+		    -- CatForm
+			if A.CatForm:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID) == 0 then
+			    return A.CatForm:Show(icon)
 			end	
 			-- Prowl
 			if A.Prowl:IsReady(unit) and Unit("player"):HasBuffs(A.Prowl.ID) == 0 then
