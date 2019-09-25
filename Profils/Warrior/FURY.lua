@@ -364,10 +364,6 @@ local function APL()
         if S.Bloodthirst:IsCastableP("Melee") and not ShouldStop and (Player:BuffDownP(S.EnrageBuff) or S.ColdSteelHotBlood:AzeriteRank() > 1) then
             if HR.Cast(S.Bloodthirst) then return "bloodthirst 38"; end
         end
-        -- dragon_roar,if=buff.enrage.up
-        if S.DragonRoar:IsCastableP(12) and not ShouldStop and (Player:BuffP(S.EnrageBuff)) and not HR.AoEON() then
-            if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
-        end
         -- raging_blow,if=charges=2
         if S.RagingBlow:IsCastableP("Melee") and not ShouldStop and (S.RagingBlow:ChargesP() == 2) then
             if HR.Cast(S.RagingBlow) then return "raging_blow 42"; end
@@ -539,8 +535,12 @@ local function APL()
         if S.Recklessness:IsCastableP() and not ShouldStop and HR.CDsON() and (Target:DebuffRemainsP(S.SiegebreakerDebuff) > 1 or not S.Siegebreaker:IsAvailable()) and ( S.GuardianofAzeroth:CooldownRemainsP() > 20 or not S.GuardianofAzeroth:IsAvailable() ) then
             if HR.Cast(S.Recklessness, Action.GetToggle(2, "OffGCDasOffGCD")) then return "recklessness 112"; end
         end
-        -- dragon_roar,if=buff.enrage.up
-        if S.DragonRoar:IsCastableP(12) and not ShouldStop and HR.AoEON() and (Player:BuffP(S.EnrageBuff)) and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) then
+        -- dragonroar with aoe check or target is boss
+        if S.DragonRoar:IsCastableP(12) and not ShouldStop and Player:BuffP(S.EnrageBuff) and (Cache.EnemiesCount[8] > 2 or ActionUnit("target"):IsBoss()) then
+            if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
+        end
+        -- dragonroar pure single target and NOT AoE activated (so we force single target)
+        if S.DragonRoar:IsCastableP(12) and not HR.AoEON() and not ShouldStop and Player:BuffP(S.EnrageBuff) then
             if HR.Cast(S.DragonRoar) then return "dragon_roar 39"; end
         end
         -- recklessness,if=!essence.condensed_lifeforce.major&!essence.blood_of_the_enemy.major|cooldown.guardian_of_azeroth.remains>20|buff.guardian_of_azeroth.up|cooldown.blood_of_the_enemy.remains<gcd
