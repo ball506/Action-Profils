@@ -479,10 +479,11 @@ local function APL()
         if S.BloodoftheEnemy:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and ((bool(S.DeathandDecay:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Defile:CooldownRemainsP()) and Cache.EnemiesCount[8] > 1) or (bool(S.Apocalypse:CooldownRemainsP()) and S.DeathandDecay:IsCastableP() and not ShouldStop)) then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
-        -- guardian_of_azeroth,if=cooldown.apocalypse.remains<6
-        if S.GuardianofAzeroth:IsCastableP() and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (S.Apocalypse:CooldownRemainsP() < 6) then
-            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
+        -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
+        if S.GuardianofAzeroth:IsCastableP() and ((S.Apocalypse:CooldownRemainsP() < 6 and S.ArmyoftheDead:CooldownRemainsP() > S.GuardianofAzeroth:CooldownRemainsP()) or S.ArmyoftheDead:CooldownRemainsP() < 2) then
+		    if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azerot"; end
         end
+		
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
         if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 11) then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
@@ -608,8 +609,8 @@ local function APL()
         if S.BloodFury:IsCastableP() and not ShouldStop and HR.CDsON() and (S.SummonGargoyle:TimeSinceLastCast() <= 35 or not S.SummonGargoyle:IsAvailable()) then
             if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "blood_fury 252"; end
         end
-        -- berserking,if=buff.unholy_frenzy.up|pet.gargoyle.active|!talent.summon_gargoyle.enabled
-        if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.UnholyFrenzyBuff) or S.SummonGargoyle:TimeSinceLastCast() <= 35 or not S.SummonGargoyle:IsAvailable()) then
+        -- berserking,if=buff.unholy_frenzy.up|pet.gargoyle.active|(talent.army_of_the_damned.enabled&pet.apoc_ghoul.active)
+        if S.Berserking:IsCastableP() and HR.CDsON() and (Player:BuffP(S.UnholyFrenzyBuff) or S.SummonGargoyle:TimeSinceLastCast() <= 35 or (S.ArmyoftheDamned:IsAvailable() and S.Apocalypse:TimeSinceLastCast() <= 15)) then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 256"; end
         end
         if (TrinketON()) then
@@ -617,21 +618,41 @@ local function APL()
             if I.AzsharasFontofPower:IsEquipReady() and (HL.CombatTime() > 20 or not I.RampingAmplitudeGigavoltEngine:IsEquipped() or not I.VisionofDemise:IsEquipped()) then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 258"; end
             end
+            -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.major&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.major)
+            if I.AzsharasFontofPower:IsEquipReady() and ((S.VisionofPerfection:IsAvailable() and not S.UnholyFrenzy:IsAvailable()) or (not S.GuardianofAzeroth:IsAvailable() and not S.VisionofPerfection:IsAvailable())) then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 259"; end
+            end
+            -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.major&talent.unholy_frenzy.enabled)
+            if I.AzsharasFontofPower:IsEquipReady() and (S.Apocalypse:CooldownRemainsP() < 14 and (S.GuardianofAzeroth:IsAvailable() or S.VisionofPerfection:IsAvailable() and S.UnholyFrenzy:IsAvailable())) then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 260"; end
+            end
+            -- use_item,name=azsharas_font_of_power,if=target.1.time_to_die<cooldown.apocalypse.remains+34
+            if I.AzsharasFontofPower:IsEquipReady() and (Target:TimeToDie() < S.Apocalypse:CooldownRemainsP() + 34) then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 261"; end
+            end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack<1
             if I.AshvanesRazorCoral:IsEquipReady() and (Target:DebuffDownP(S.RazorCoralDebuff)) then
-                if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 260"; end
+                if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 262"; end
             end
-            -- use_item,name=ashvanes_razor_coral,if=(pet.guardian_of_azeroth.active&pet.apoc_ghoul.active)|(cooldown.apocalypse.remains<gcd&!essence.condensed_lifeforce.enabled&!talent.unholy_frenzy.enabled)|(target.1.time_to_die<cooldown.apocalypse.remains+20)|(cooldown.apocalypse.remains<gcd&target.1.time_to_die<cooldown.condensed_lifeforce.remains+20)|(buff.unholy_frenzy.up&!essence.condensed_lifeforce.enabled)
-            if I.AshvanesRazorCoral:IsEquipReady() and (((S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) and S.Apocalypse:CooldownRemainsP() > 75) or (S.Apocalypse:CooldownRemainsP() < Player:GCD() and not S.GuardianofAzeroth:IsAvailable() and not S.UnholyFrenzy:IsAvailable()) or (Target:TimeToDie() < S.Apocalypse:CooldownRemainsP() + 20) or (S.Apocalypse:CooldownRemainsP() < Player:GCD() and Target:TimeToDie() < S.GuardianofAzeroth:CooldownRemainsP() + 20) or (Player:BuffP(S.UnholyFrenzyBuff) and not S.GuardianofAzeroth:IsAvailable())) then
-                if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 261"; end
+            -- use_item,name=ashvanes_razor_coral,if=pet.guardian_of_azeroth.active&pet.apoc_ghoul.active
+            if I.AshvanesRazorCoral:IsEquipReady() and ((S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) and S.Apocalypse:TimeSinceLastCast() <= 15) then
+                if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 263"; end
             end
+            -- use_item,name=ashvanes_razor_coral,if=cooldown.apocalypse.ready&(essence.condensed_lifeforce.major&target.1.time_to_die<cooldown.condensed_lifeforce.remains+20|!essence.condensed_lifeforce.major)
+            if I.AshvanesRazorCoral:IsEquipReady() and (S.Apocalypse:CooldownUpP() and (S.GuardianofAzeroth:IsAvailable() and Target:TimeToDie() < S.GuardianofAzeroth:CooldownRemainsP() + 20 or not S.GuardianofAzeroth:IsAvailable())) then
+                if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 264"; end
+            -- use_item,name=ashvanes_razor_coral,if=target.1.time_to_die<cooldown.apocalypse.remains+20
+			if I.AshvanesRazorCoral:IsEquipReady() and (Target:TimeToDie() < S.Apocalypse:CooldownRemainsP() + 20) then
+			    if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 265"; end
+			end
+			
             -- use_item,name=vision_of_demise,if=(cooldown.apocalypse.ready&debuff.festering_wound.stack>=4&essence.vision_of_perfection.enabled)|buff.unholy_frenzy.up|pet.gargoyle.active
             if I.VisionofDemise:IsEquipReady() and ((S.Apocalypse:CooldownUpP() and Target:DebuffStackP(S.FesteringWoundDebuff) >= 4 and S.VisionofPerfection:IsAvailable()) or Player:BuffP(S.UnholyFrenzyBuff) or S.SummonGargoyle:TimeSinceLastCast() <= 35) then
-                if HR.Cast(I.VisionofDemise) then return "vision_of_demise 262"; end
+                if HR.Cast(I.VisionofDemise) then return "vision_of_demise 266"; end
             end
             -- use_item,name=ramping_amplitude_gigavolt_engine,if=cooldown.apocalypse.remains<2|talent.army_of_the_damned.enabled|raid_event.adds.in<5
             if I.RampingAmplitudeGigavoltEngine:IsEquipReady() and (S.Apocalypse:CooldownRemainsP() < 2 or S.ArmyoftheDamned:IsAvailable()) then
-                if HR.Cast(I.RampingAmplitudeGigavoltEngine) then return "ramping_amplitude_gigavolt_engine 263"; end
+                if HR.Cast(I.RampingAmplitudeGigavoltEngine) then return "ramping_amplitude_gigavolt_engine 267"; end
             end
             -- use_item,name=bygone_bee_almanac,if=cooldown.summon_gargoyle.remains>60|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
             if I.BygoneBeeAlmanac:IsEquipReady() and (S.SummonGargoyle:CooldownRemainsP() > 60 or not S.SummonGargoyle:IsAvailable() and HL.CombatTime() > 20 or not I.RampingAmplitudeGigavoltEngine:IsEquipped()) then
