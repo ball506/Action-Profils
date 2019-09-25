@@ -204,14 +204,26 @@ TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 -- @optional Parameters : Delay and incombat can be nil 
 -- Usage : /run Action.SendNotification("test", 22812, 2, false)	
 function Action.SendNotification(message, spell, delay, incombat)
-    if not message then
+   	local DelaySetting = Action.GetToggle(2, "AnnouncerDelay")
+	local InCombatSetting = Action.GetToggle(2, "AnnouncerInCombatOnly")
+	local Enabled = Action.GetToggle(2, "UseAnnouncer")
+	
+	if not message then
 	    return
 	end
 	if not delay then
-	   delay = 2
+	    if DelaySetting then 
+		    delay = DelaySetting
+		else
+	        delay = 2
+		end
 	end
 	if not incombat then
-	   incombat = false
+        if InCombatSetting then 
+            incombat = InCombatSetting
+		else		
+	        incombat = false
+		end
 	else
 	   incombat = true
 	end
@@ -222,22 +234,25 @@ function Action.SendNotification(message, spell, delay, incombat)
 	Action.NotificationIsValid = false
     Action.NotificationIsValidUntil = endtimer
 	Action.CurrentNotificationIcon = GetSpellTexture(spell)
-	-- Option 1 : Combat only		
-	if message and spell and incombat then 
-	    if (HL.GetTime() <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
-	        Action.NotificationIsValid = true
-	        Action.NotificationMessage = message 				
-        else
-		    Action.NotificationIsValid = false
-		end
-	-- Option 2 : Everytime
-    elseif message and spell and not incombat then 	
-	    if HL.GetTime() <= endtimer then 
-	        Action.NotificationIsValid = true
-	        Action.NotificationMessage = message            
-        else
-		    Action.NotificationIsValid = false
-		end
+	-- Check if enabled
+	if Enabled then
+	    -- Option 1 : Combat only		
+	    if message and spell and incombat then 
+	        if (HL.GetTime() <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
+	            Action.NotificationIsValid = true
+	            Action.NotificationMessage = message 				
+            else
+		        Action.NotificationIsValid = false
+		    end
+	    -- Option 2 : Everytime
+        elseif message and spell and not incombat then 	
+	        if HL.GetTime() <= endtimer then 
+	            Action.NotificationIsValid = true
+	            Action.NotificationMessage = message            
+            else
+		        Action.NotificationIsValid = false
+	    	end
+	    end
 	end
 	TMW:Fire("TMW_ACTION_NOTIFICATION")	
     return Action.NotificationMessage, Action.CurrentNotificationIcon, Action.NotificationIsValid, Action.NotificationIsValidUntil
