@@ -126,7 +126,8 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	Shred                               = Action.Create({ Type = "Spell", ID = 5221     }),
 	Rip                               = Action.Create({ Type = "Spell", ID = 1079     }),
 	FerociousBite                               = Action.Create({ Type = "Spell", ID = 22568     }),
-	Rake                               = Action.Create({ Type = "Spell", ID = 1822     }),	
+	Rake                               = Action.Create({ Type = "Spell", ID = 1822     }),
+	RakeDebuff                               = Action.Create({ Type = "Spell", ID = 155722	,    Hidden = true }),
 	Swipe                              = Action.Create({ Type = "Spell", ID = 106785 }),
     -- Movememnt    
 
@@ -809,15 +810,15 @@ A[3] = function(icon, isMulti)
 			    return A.CatForm:Show(icon)
 			end			
 		    -- Rake
-			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Unit(unit):HasDeBuffs(A.Rake.ID) <= 2 then
+			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) <= 2 then
 			    return A.Rake:Show(icon)
 			end			
 			-- Rip
-			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 5 and Unit(unit):HasDeBuffs(A.Rake.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
+			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 5 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
 			    return A.Rip:Show(icon)
 			end
 			-- FerociousBite
-   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 5 and MultiUnits:GetByRange(25, 3) < 2 and Unit(unit):HasDeBuffs(A.Rake.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
+   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 5 and MultiUnits:GetByRange(25, 3) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
 			    return A.FerociousBite:Show(icon)
 			end
 			-- Swipe aoe
@@ -826,7 +827,7 @@ A[3] = function(icon, isMulti)
 			end
 		    -- Shred
 			if A.Shred:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 40 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
-			    return A.Rake:Show(icon)
+			    return A.Shred:Show(icon)
 			end
         end 
 		
