@@ -591,7 +591,7 @@ local function APL()
             if HR.Cast(S.SummonInfernal) then return "summon_infernal 193"; end
         end
         -- guardian_of_azeroth,if=time>30&target.time_to_die>cooldown.guardian_of_azeroth.duration+30
-        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (HL.CombatTime() > 30 and Target:TimeToDie() > S.GuardianofAzeroth:BaseDuration() + 30) then
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and (HL.CombatTime() > 30 and Target:TimeToDie() > 30 + 30) then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 197"; end
         end
         -- summon_infernal,if=talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains>target.time_to_die
