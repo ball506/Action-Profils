@@ -752,25 +752,25 @@ end
 local function RefreshPoisons()
     local choice = Action.GetToggle(2, "PoisonToUse")
 	
-	if Player:BuffRemainsP(S.CripplingPoison) <= 10 or not Player:BuffP(S.CripplingPoison) and not Player:PrevGCDP(1, S.CripplingPoison) and not Player:IsCasting(S.CripplingPoison) then
+	if (Player:BuffRemainsP(S.CripplingPoison) <= 10 or not Player:BuffP(S.CripplingPoison)) and not Player:PrevGCDP(1, S.CripplingPoison) and not Player:IsCasting() then
 	    if HR.Cast(S.CripplingPoison) then return "Refresh CripplingPoison"; end
 	end	
 	-- Wound Poison
 	if choice == "Wound Poison" then 
-	    if Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting(S.WoundPoison) then 
+	    if (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 
 		    if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
         end
 	-- Deadly Poison
 	elseif choice == "Deadly Poison" then
-	    if Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison) and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting(S.DeadlyPoison) then 
+	    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then 
 		    if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
         end
 	elseif choice == "Auto" then
 	    -- Auto
-	    if Action.IsInPvP and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting(S.WoundPoison) then 		
+	    if Action.IsInPvP and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 		
 	        if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
 		else
-		    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Action.IsInPvP and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting(S.DeadlyPoison) then
+		    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Action.IsInPvP and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then
 		        if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
 		    end
 	    end
@@ -1365,7 +1365,11 @@ local function APL()
 	local Pull = Action.BossMods_Pulling()	   
 	
 	ShouldReturn = RefreshPoisons()
-    if ShouldReturn then return ShouldReturn; end
+    if ShouldReturn then
+        -- Notification					
+        Action.SendNotification("Auto refreshing poisons", A.CripplingPoison.ID)	
+	    return ShouldReturn; 
+	end
     
 	-- Spell ID Changes check
     Stealth = S.Subterfuge:IsAvailable() and S.Stealth2 or S.Stealth; -- w/ or w/o Subterfuge Talent
@@ -1579,8 +1583,13 @@ local function PvPRotation(icon)
     
 	
 	ShouldReturn = RefreshPoisons()
-    if ShouldReturn then return ShouldReturn; end
-    -- Defensives
+    if ShouldReturn then
+        -- Notification					
+        Action.SendNotification("Auto refreshing poisons", A.CripplingPoison.ID)	
+	    return ShouldReturn; 
+	end
+    
+	-- Defensives
     local function SelfDefensives(unit)
 	    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()
 		
@@ -1620,6 +1629,8 @@ local function PvPRotation(icon)
             )
         ) 
         then 
+		    -- Notification					
+            Action.SendNotification("Defensive Crimson Vial", A.CrimsonVial.ID)
             return A.CrimsonVial:Show(icon)
         end 
 		
@@ -1630,7 +1641,7 @@ local function PvPRotation(icon)
             (   -- Auto 
                 Evade >= 100 and 
                 (
-                    -- HP lose per sec >= 20
+                    -- HP lose per sec >= 30
                     ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 30 or 
                     ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.30 or 
                     -- TTD 
@@ -1654,7 +1665,9 @@ local function PvPRotation(icon)
                 ActionUnit("player"):HealthPercent() <= Evade
             )
         ) 
-        then 
+        then
+		    -- Notification					
+            Action.SendNotification("Defensive Evade", A.Evade.ID)
             return A.Evade:Show(icon)
         end  
 		
@@ -1665,9 +1678,9 @@ local function PvPRotation(icon)
             (   -- Auto 
                 Feint >= 100 and 
                 (
-                    -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- HP lose per sec >= 10
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 10 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.10 or 
                     -- TTD 
                     ActionUnit("player"):TimeToDieX(25) < 5 or 
                     (
@@ -1690,6 +1703,8 @@ local function PvPRotation(icon)
             )
         ) 
         then 
+		    -- Notification					
+            Action.SendNotification("Defensive Feint", A.Feint.ID)
             return A.Feint:Show(icon)
         end  		 		
 
@@ -1726,7 +1741,7 @@ local function PvPRotation(icon)
         ) 
         then 
 		    -- Notification					
-            Action.SendNotification("Offensive Cloak of Shadow", A.CloakofShadow.ID)
+            Action.SendNotification("Defensive Cloak of Shadow", A.CloakofShadow.ID)
             return A.CloakofShadow:Show(icon)
         end 
 		
@@ -1776,10 +1791,14 @@ local function PvPRotation(icon)
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
 		
         if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and ActionUnit(unit):CanInterrupt(true) then 
+		    -- Notification					
+            Action.SendNotification("Interrupting with Kick on : " .. UnitName(unit), A.Kick.ID)		
             return A.Kick:Show(icon)
         end 
     
-        if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
+        if useCC and A.KidneyShot:IsReady(unit) and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then
+		    -- Notification					
+            Action.SendNotification("Interrupting with Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)		
             return A.KidneyShot:Show(icon)              
         end  		
     
@@ -1820,14 +1839,28 @@ local function PvPRotation(icon)
 		
 		-- Variables
         inMelee = A.Mutilate:IsInRange(unit)
-        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)	
 			
+	    -- Stealth out of combat
+        if ActionUnit("player"):HasBuffs(A.Vanish.ID) > 0 and Action.GetToggle(2, "StealthOOC") and A.Sap:IsReady(unit) and not Player:IsStealthed() then
+		    -- Notification					
+            Action.SendNotification("Auto Stealthing", A.Stealth.ID)
+            return A.Stealth:Show(icon)
+        end
 		-- Sap out of combat
-		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and not Target:DebuffP(S.Sap)  then
-			-- Notification					
-            Action.SendNotification("Sapping out of combat : " .. UnitName(unit), A.Sap.ID)
-			return A.Sap:Show(icon)
-		end		
+		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and ActionUnit(unit):IsControlAble("incapacitate") and ActionUnit("player"):GetDR("incapacitate") > 25 then
+		    if ActionUnit(unit):HasDeBuffs(A.Sap.ID) == 0 then 
+			    -- Notification					
+                Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
+			    return A.Sap:Show(icon)
+			else 
+			    if ActionUnit(unit):HasDeBuffs(A.Sap.ID) > 0 and ActionUnit(unit):HasDeBuffs(A.Sap.ID) <= 1 then
+    			    -- Notification					
+                    Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
+			        return A.Sap:Show(icon)
+				end
+			end
+		end			
 		
         -- Marked for Death
 		if A.MarkedforDeath:IsReady(unit) and Player:ComboPoints() <= 1 and S.ToxicBlade:IsAvailable() and S.MarkedforDeath:IsAvailable() then
@@ -1850,24 +1883,24 @@ local function PvPRotation(icon)
 		end	
 
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
-        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and (ActionUnit(unit):HasBuffs("DamageBuffs") > 0 or FriendlyTeam("HEALER"):GetCC()) then
+        if A.KidneyShot:IsReady(unit) and inMelee and Player:ComboPoints() >= 4 and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
    			-- Notification					
             Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
 			return A.KidneyShot:Show(icon)
-        end   		
+        end	
        
-	   -- Kidney Shot
+	   -- Full Kidney Shot
 		if A.KidneyShot:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 5 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and ActionUnit(unit):IsControlAble("stun", 0) then 
             return A.KidneyShot:Show(icon)              
         end
 		
 		-- Vendetta
-		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HealthPercent() <= 75 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+		if A.Vendetta:IsReady(unit) and Player:ComboPoints() >= 5 and ActionUnit(unit):HealthPercent() <= 75 and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 4 then
 			return A.Vendetta:Show(icon)
 		end		
 		
 		-- Blood of the Enemy
-        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and (ActionUnit(unit):HealthPercent() <= 30 or Player:PrevGCDP(1, S.Vendetta)) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then                                                                 
+        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and (ActionUnit(unit):HealthPercent() <= 30 or Player:PrevGCDP(1, S.Vendetta)) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 4 then                                                                 
             return A.BloodoftheEnemy:Show(icon)                                                                                                 
         end 
 		
@@ -1887,7 +1920,7 @@ local function PvPRotation(icon)
    	    end		
 		
 		-- Toxic Blade
-		if A.ToxicBlade:IsReady(unit) and S.ToxicBlade:IsAvailable() and Player:ComboPoints() < 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) then
+		if A.ToxicBlade:IsReady(unit) and S.ToxicBlade:IsAvailable() and Player:ComboPoints() < 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then
 			return A.ToxicBlade:Show(icon)
 		end	
 
@@ -1964,14 +1997,12 @@ local function PvPRotation(icon)
 
 		-- Agressive CC Burst Rotation
 		if (ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 3) then
-		    -- Notification					
-            Action.SendNotification("Smart Burst on : " .. UnitName(unit), A.Vendetta.ID)
 		    -- SmokeBomb under 30% HP
-		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") and S.SmokeBomb:CooldownUp() and Target:IsAPlayer() and Target:Exists() and not Player:IsStealthed() then
+		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") then
 		    	if inMelee then
-			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 30 then
+			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):TimeToDieX(1) < 6 and ActionUnit(unit):HealthPercent() <= 30 then
 					    -- Notification					
-                        Action.SendNotification("Offensive Smoke Bomb", A.Vendetta.ID)
+                        Action.SendNotification("Offensive Smoke Bomb", A.SmokeBomb.ID)
                         return A.SmokeBomb:Show(icon)
                     end
 			    end
@@ -2013,13 +2044,7 @@ local function PvPRotation(icon)
         --...
 		--...
  	end 
-	
-	-- Stealth out of combat
-    if not Player:BuffP(S.VanishBuff) and Action.GetToggle(2, "StealthOOC") and S.Stealth:IsCastable() and not Player:IsStealthed() then
-		-- Notification					
-        Action.SendNotification("Auto Stealthing", A.Sap.ID)
-        return A.Stealth:Show(icon)
-    end  
+  
         
     -- Trinkets (Defensive)
     if ActionUnit("player"):CombatTime() > 0 and ActionUnit("player"):HealthPercent() <= 75 then --A.GetToggle(2, "TrinketDefensive") then 
