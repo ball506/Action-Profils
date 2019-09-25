@@ -858,7 +858,7 @@ function A.ReflectIsReady(unit, isMsg, skipShouldStop)
                 A[A.PlayerSpec].SpellReflection:IsReady(unit, nil, nil, skipShouldStop) and
                 (
                     A.GetToggle(2, "ReflectPvP") == "ON COOLDOWN" or 
-                    (A.GetToggle(2, "ReflectPvP") == "DANGEROUS CAST" and Unit(unit):ShouldReflect())
+                    (A.GetToggle(2, "ReflectPvP") == "DANGEROUS CAST" and Action.ShouldReflect(unit))
                 )
             ) or 
             (

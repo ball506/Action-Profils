@@ -696,72 +696,28 @@ A.Data.ProfileUI = {
         },
     },
 }
--- Shared 
-Env.PlayerMovementStarted = 0
-function Env.PlayerMoving()
-    if Env.UNITCurrentSpeed("player") > 0 then 
-        if Env.PlayerMovementStarted == 0 then 
-            Env.PlayerMovementStarted = TMW.time 
-        end 
-    else
-        Env.PlayerMovementStarted = 0
-    end 
-end 
-Env.PlayerMoving = A.MakeFunctionCachedStatic(Env.PlayerMoving)
 
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
-function Env.PolyIsReady(unit, isMsg)
-    if A[Env.PlayerSpec].Polymorph then 
-        local unitID = A.GetToggle(2, "PolymorphPvPunits")
-        return     (
-            (unit == "arena1" and unitID[1]) or 
-            (unit == "arena2" and unitID[2]) or
-            (unit == "arena3" and unitID[3]) or
-            (not unit:match("arena") and unitID[4]) 
-        ) and 
-        Env.InPvP() and
-        Env.Unit(unit):IsEnemy() and  
-        (
-            (
-                not isMsg and 
-                A.GetToggle(2, "PolymorphPvP") ~= "OFF" and 
-                A[Env.PlayerSpec].Polymorph:IsReady(unit) and 
-                Env.Unit(unit):IsMelee() and 
-                (
-                    A.GetToggle(2, "PolymorphPvP") == "ON COOLDOWN" or 
-                    Env.Unit(unit):HasBuffs("DamageBuffs") > 3 
-                )
-            ) or 
-            (
-                isMsg and 
-                A[Env.PlayerSpec].Polymorph:IsReadyP(unit)                     
-            )
-        ) and 
-        UnitIsPlayer(unit) and                     
-        A[Env.PlayerSpec].Polymorph:AbsentImun(unit, {"CCTotalImun", "DeffBuffsMagic", "TotalImun"}, true) and 
-        Env.Unit(unit):IsControlAble("incapacitate", 0)
-    end 
-end 
 
 function A.Main_CastBars(unit, list)
-    if not A.IsInitialized or Env.IamHealer or not Env.InPvP() then 
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
     
-    if A[Env.PlayerSpec] and A[Env.PlayerSpec].Counterspell and A[Env.PlayerSpec].Counterspell:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].Counterspell:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+    if A[A.PlayerSpec] and A[A.PlayerSpec].Counterspell and A[A.PlayerSpec].Counterspell:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Counterspell:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
         return true         
     end 
 end 
 
 function A.Second_CastBars(unit)
-    if not A.IsInitialized or not Env.InPvP() then 
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
     
     local Toggle = A.GetToggle(2, "PolymorphPvP")    
-    if Toggle and Toggle ~= "OFF" and A[Env.PlayerSpec] and A[Env.PlayerSpec].Polymorph and A[Env.PlayerSpec].Polymorph:IsReadyP(unit, nil, true) and A[Env.PlayerSpec].Polymorph:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Env.Unit(unit):IsControlAble("incapacitate", 0) then 
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Polymorph and A[A.PlayerSpec].Polymorph:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Polymorph:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else

@@ -1331,40 +1331,7 @@ function A.MightyBashIsReady(unit, isMsg, skipShouldStop)
         Unit(unit):HasDeBuffs("Stunned") == 0
     end 
 end
-
-function A.GrappleWeaponIsReady(unit, isMsg, skipShouldStop)
-    if A[A.PlayerSpec].GrappleWeapon then 
-        local unitID = A.GetToggle(2, "GrappleWeaponPvPunits")
-        return     (
-            (unit == "arena1" and unitID[1]) or 
-            (unit == "arena2" and unitID[2]) or
-            (unit == "arena3" and unitID[3]) or
-            (not unit:match("arena") and unitID[4]) 
-        ) and 
-        A.IsInPvP and
-        Unit(unit):IsEnemy() and  
-        (
-            (
-                not isMsg and 
-                A.GetToggle(2, "GrappleWeaponPvP") ~= "OFF" and 
-                A[A.PlayerSpec].GrappleWeapon:IsReady(unit, nil, nil, skipShouldStop) and 
-                Unit(unit):IsMelee() and 
-                (
-                    A.GetToggle(2, "GrappleWeaponPvP") == "ON COOLDOWN" or 
-                    Unit(unit):HasBuffs("DamageBuffs") > 3 
-                )
-            ) or 
-            (
-                isMsg and 
-                A[A.PlayerSpec].GrappleWeapon:IsReadyM(unit)                     
-            )
-        ) and 
-        Unit(unit):IsPlayer() and                     
-        A[A.PlayerSpec].GrappleWeapon:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
-        Unit(unit):IsControlAble("disarm", 0) and 
-        Unit(unit):HasDeBuffs("Disarmed") == 0
-    end 
-end  
+ 
 
 function A.Main_CastBars(unit, list)
     if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
