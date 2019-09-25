@@ -990,7 +990,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "UseAnnouncer",
-                    DBV = false,
+                    DBV = true,
                     L = { 
                         enUS = "Use Smart Announcer", 
                         ruRU = "Use Smart Announcer",  
