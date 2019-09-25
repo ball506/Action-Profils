@@ -599,7 +599,7 @@ local function APL()
         end
         -- celestial_alignment,if=!buff.ca_inc.up&(buff.memory_of_lucid_dreams.up|(ap_check&astral_power>=40))&(!azerite.lively_spirit.enabled|buff.lively_spirit.up)&(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))
         -- and (not Player:BuffP(CaInc())   
-        if S.CelestialAlignment:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.MemoryOfLucidDreams) or (AP_Check(S.CelestialAlignment) and FutureAstralPower() >= 40)) and (Target:DebuffRemainsP(S.SunfireDebuff) > 2 and Target:DebuffP(S.MoonfireDebuff) and (Target:DebuffP(S.StellarFlareDebuff) or not S.StellarFlare:IsAvailable())) then
+        if S.CelestialAlignment:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.MemoryofLucidDreams) or (AP_Check(S.CelestialAlignment) and FutureAstralPower() >= 40)) and (Target:DebuffRemainsP(S.SunfireDebuff) > 2 and Target:DebuffP(S.MoonfireDebuff) and (Target:DebuffP(S.StellarFlareDebuff) or not S.StellarFlare:IsAvailable())) then
             if HR.Cast(S.CelestialAlignment, Action.GetToggle(2, "GCDasOffGCD")) then return "celestial_alignment 253" end
         end
         -- fury_of_elune,if=(buff.ca_inc.up|cooldown.ca_inc.remains>30)&solar_wrath.ap_check
