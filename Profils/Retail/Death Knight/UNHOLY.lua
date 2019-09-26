@@ -282,7 +282,6 @@ end
 Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
 local function Init ()
-  S.VirulentPlagueDebuff:RegisterAuraTracking();
   HL.RegisterNucleusAbility(152280, 8, 6)               -- Defile
   HL.RegisterNucleusAbility(115989, 8, 6)               -- Unholy Blight
   HL.RegisterNucleusAbility(43265, 8, 6)                -- Death and Decay
@@ -336,7 +335,7 @@ local function APL()
             if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
         end
         -- raise_dead
-        if S.RaiseDead:IsCastableP() and not ShouldStop then
+        if S.RaiseDead:IsCastableP() and not Pet:IsActive() and not ShouldStop then
             if HR.Cast(S.RaiseDead) then return "raise_dead 6"; end
         end
         if Everyone.TargetIsValid() then
