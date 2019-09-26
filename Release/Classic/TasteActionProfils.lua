@@ -78,7 +78,7 @@ TellMeWhenDB = {
 		},
 		["Groups"] = {
 			{
-				["BackdropColor"] = "cb000000",
+				["GUID"] = "TMW:group:1TQgp5sK81OZ",
 				["Point"] = {
 					["y"] = -30,
 					["relativeTo"] = "TargetFrame",
@@ -118,7 +118,7 @@ TellMeWhenDB = {
 					}, -- [1]
 					["n"] = 1,
 				},
-				["GUID"] = "TMW:group:1TQgp5sK81OZ",
+				["BackdropColor"] = "cb000000",
 				["View"] = "bar",
 			}, -- [1]
 		},
@@ -153,7 +153,12 @@ TellMeWhenDB = {
 			["HideBlizzCDBling"] = false,
 			["Groups"] = {
 				{
-					["TimerBar_MiddleColor"] = "ff000000",
+					["Point"] = {
+						["y"] = 12,
+						["x"] = -29,
+						["point"] = "TOPLEFT",
+						["relativePoint"] = "TOPLEFT",
+					},
 					["Scale"] = 0.600000023841858,
 					["TimerBar_CompleteColor"] = "ff000000",
 					["TimerBar_StartColor"] = "ff000000",
@@ -557,16 +562,16 @@ TellMeWhenDB = {
 					},
 					["Name"] = "Shown Main",
 					["GUID"] = "TMW:group:1Rhh0xLqd4g8",
+					["TimerBar_MiddleColor"] = "ff000000",
+				}, -- [1]
+				{
+					["GUID"] = "TMW:group:1Rhh36arfTf9",
 					["Point"] = {
-						["y"] = 12,
-						["x"] = -29,
+						["y"] = 17.0009765625,
+						["x"] = 507.000061035156,
 						["point"] = "TOPLEFT",
 						["relativePoint"] = "TOPLEFT",
 					},
-				}, -- [1]
-				{
-					["View"] = "bar",
-					["TimerBar_MiddleColor"] = "ff00ff00",
 					["Scale"] = 0.25,
 					["Rows"] = 2,
 					["TextureName"] = "Flat",
@@ -1636,16 +1641,17 @@ TellMeWhenDB = {
 							["SizeX"] = 420.333292643229,
 						},
 					},
-					["GUID"] = "TMW:group:1Rhh36arfTf9",
+					["View"] = "bar",
+					["TimerBar_MiddleColor"] = "ff00ff00",
+				}, -- [2]
+				{
+					["GUID"] = "TMW:group:1Rhh2tX4EUTk",
 					["Point"] = {
-						["y"] = 17.0009765625,
-						["x"] = 507.000061035156,
+						["y"] = -8.10552978515625,
+						["x"] = 70,
 						["point"] = "TOPLEFT",
 						["relativePoint"] = "TOPLEFT",
 					},
-				}, -- [2]
-				{
-					["View"] = "bar",
 					["Rows"] = 2,
 					["TextureName"] = "Flat",
 					["Locked"] = true,
@@ -1654,15 +1660,15 @@ TellMeWhenDB = {
 						{
 							["Unit"] = "arena1",
 							["Type"] = "TheAction - UnitCasting",
-							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
+							["UnitConditions"] = {
 								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
+									["Type"] = "UNITISUNIT",
+									["Name"] = "target",
+									["Level"] = 1,
 								}, -- [1]
 								["n"] = 1,
 							},
+							["TimerBar_StartColor"] = "ff00ff00",
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1Rhh2tW=TZ4A",
@@ -1678,6 +1684,18 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
+							["Conditions"] = {
+								{
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
+								}, -- [1]
+								["n"] = 1,
+							},
+							["Enabled"] = true,
+						}, -- [1]
+						{
+							["Unit"] = "arena2",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -1686,19 +1704,7 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [1]
-						{
-							["Unit"] = "arena2",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
-								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
-								}, -- [1]
-								["n"] = 1,
-							},
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1T1fyEs_KnQR",
@@ -1714,6 +1720,18 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
+							["Conditions"] = {
+								{
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
+								}, -- [1]
+								["n"] = 1,
+							},
+							["Enabled"] = true,
+						}, -- [2]
+						{
+							["Unit"] = "arena3",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -1722,19 +1740,7 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [2]
-						{
-							["Unit"] = "arena3",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
-								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
-								}, -- [1]
-								["n"] = 1,
-							},
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1T1fyLZpCvXj",
@@ -1750,14 +1756,14 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
-							["UnitConditions"] = {
+							["Conditions"] = {
 								{
-									["Type"] = "UNITISUNIT",
-									["Name"] = "target",
-									["Level"] = 1,
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\", true)",
 								}, -- [1]
 								["n"] = 1,
 							},
+							["Enabled"] = true,
 						}, -- [3]
 						{
 							["Unit"] = "arena1",
@@ -2758,16 +2764,15 @@ TellMeWhenDB = {
 						}, -- [1]
 						["n"] = 1,
 					},
-					["GUID"] = "TMW:group:1Rhh2tX4EUTk",
+					["View"] = "bar",
+				}, -- [3]
+				{
 					["Point"] = {
-						["y"] = -8.10552978515625,
-						["x"] = 70,
+						["y"] = 50,
+						["x"] = -29.0000038146973,
 						["point"] = "TOPLEFT",
 						["relativePoint"] = "TOPLEFT",
 					},
-				}, -- [3]
-				{
-					["TimerBar_MiddleColor"] = "ff000000",
 					["Scale"] = 0.600000023841858,
 					["TimerBar_CompleteColor"] = "ff000000",
 					["TimerBar_StartColor"] = "ff000000",
@@ -3273,12 +3278,7 @@ TellMeWhenDB = {
 					},
 					["Name"] = "Hidden APL",
 					["GUID"] = "TMW:group:1T0KXe2TsCkW",
-					["Point"] = {
-						["y"] = 50,
-						["x"] = -29.0000038146973,
-						["point"] = "TOPLEFT",
-						["relativePoint"] = "TOPLEFT",
-					},
+					["TimerBar_MiddleColor"] = "ff000000",
 				}, -- [4]
 				{
 					["GUID"] = "TMW:group:1P3cu8AAtSYM",
@@ -3319,8 +3319,8 @@ TellMeWhenDB = {
 				{
 					["Point"] = {
 						["y"] = -0.199651536357123,
-						["relativeTo"] = "TMW:group:1P3cu8AAtSYM",
 						["x"] = 4.781340248882770e-05,
+						["relativeTo"] = "TMW:group:1P3cu8AAtSYM",
 					},
 					["Locked"] = true,
 					["Level"] = 11,
@@ -3372,7 +3372,13 @@ TellMeWhenDB = {
 					["GUID"] = "TMW:group:1TMvhh5X05mC",
 				}, -- [6]
 				{
-					["View"] = "bar",
+					["GUID"] = "TMW:group:1TU4r3gUgkWv",
+					["Point"] = {
+						["y"] = -8.10552978515625,
+						["x"] = 3.52900862693787,
+						["point"] = "TOPLEFT",
+						["relativePoint"] = "TOPLEFT",
+					},
 					["Rows"] = 3,
 					["TextureName"] = "Flat",
 					["Locked"] = true,
@@ -3381,15 +3387,15 @@ TellMeWhenDB = {
 						{
 							["Unit"] = "arena1",
 							["Type"] = "TheAction - UnitCasting",
-							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
+							["UnitConditions"] = {
 								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
+									["Type"] = "UNITISUNIT",
+									["Name"] = "target",
+									["Level"] = 1,
 								}, -- [1]
 								["n"] = 1,
 							},
+							["TimerBar_StartColor"] = "ff00ff00",
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gTq44v",
@@ -3405,6 +3411,18 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
+							["Conditions"] = {
+								{
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
+								}, -- [1]
+								["n"] = 1,
+							},
+							["Enabled"] = true,
+						}, -- [1]
+						{
+							["Unit"] = "arena2",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -3413,19 +3431,7 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [1]
-						{
-							["Unit"] = "arena2",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
-								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
-								}, -- [1]
-								["n"] = 1,
-							},
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gTvDmY",
@@ -3441,6 +3447,18 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
+							["Conditions"] = {
+								{
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
+								}, -- [1]
+								["n"] = 1,
+							},
+							["Enabled"] = true,
+						}, -- [2]
+						{
+							["Unit"] = "arena3",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -3449,19 +3467,7 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [2]
-						{
-							["Unit"] = "arena3",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ff00ff00",
-							["Enabled"] = true,
-							["Conditions"] = {
-								{
-									["Type"] = "LUA",
-									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
-								}, -- [1]
-								["n"] = 1,
-							},
 							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gTxbKc",
@@ -3477,14 +3483,14 @@ TellMeWhenDB = {
 							["TimerBar_MiddleColor"] = "ff00ff00",
 							["FakeHidden"] = true,
 							["Interruptible"] = true,
-							["UnitConditions"] = {
+							["Conditions"] = {
 								{
-									["Type"] = "UNITISUNIT",
-									["Name"] = "target",
-									["Level"] = 1,
+									["Type"] = "LUA",
+									["Name"] = "return Action.Main_CastBars(thisobj.Unit, \"Heal\")",
 								}, -- [1]
 								["n"] = 1,
 							},
+							["Enabled"] = true,
 						}, -- [3]
 						{
 							["Unit"] = "arena1",
@@ -3597,10 +3603,18 @@ TellMeWhenDB = {
 						{
 							["Unit"] = "arena1",
 							["Type"] = "TheAction - UnitCasting",
+							["UnitConditions"] = {
+								{
+									["Type"] = "UNITISUNIT",
+									["Name"] = "target",
+									["Level"] = 1,
+								}, -- [1]
+								["n"] = 1,
+							},
 							["TimerBar_StartColor"] = "ffffff00",
 							["FakeHidden"] = true,
-							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
+							["BarDisplay_Invert"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gU5t86",
 							["SettingsPerView"] = {
 								["bar"] = {
@@ -3612,6 +3626,10 @@ TellMeWhenDB = {
 							},
 							["CustomTex"] = "5967",
 							["TimerBar_CompleteColor"] = "ffffff00",
+						}, -- [7]
+						{
+							["Unit"] = "arena2",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -3620,14 +3638,10 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [7]
-						{
-							["Unit"] = "arena2",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ffffff00",
 							["FakeHidden"] = true,
-							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
+							["BarDisplay_Invert"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gU9GKh",
 							["SettingsPerView"] = {
 								["bar"] = {
@@ -3639,6 +3653,10 @@ TellMeWhenDB = {
 							},
 							["CustomTex"] = "5967",
 							["TimerBar_CompleteColor"] = "ffffff00",
+						}, -- [8]
+						{
+							["Unit"] = "arena3",
+							["Type"] = "TheAction - UnitCasting",
 							["UnitConditions"] = {
 								{
 									["Type"] = "UNITISUNIT",
@@ -3647,14 +3665,10 @@ TellMeWhenDB = {
 								}, -- [1]
 								["n"] = 1,
 							},
-						}, -- [8]
-						{
-							["Unit"] = "arena3",
-							["Type"] = "TheAction - UnitCasting",
 							["TimerBar_StartColor"] = "ffffff00",
 							["FakeHidden"] = true,
-							["BarDisplay_Invert"] = true,
 							["TimerBar_EnableColors"] = true,
+							["BarDisplay_Invert"] = true,
 							["GUID"] = "TMW:icon:1TU4r3gUBk8o",
 							["SettingsPerView"] = {
 								["bar"] = {
@@ -3666,14 +3680,6 @@ TellMeWhenDB = {
 							},
 							["CustomTex"] = "5967",
 							["TimerBar_CompleteColor"] = "ffffff00",
-							["UnitConditions"] = {
-								{
-									["Type"] = "UNITISUNIT",
-									["Name"] = "target",
-									["Level"] = 1,
-								}, -- [1]
-								["n"] = 1,
-							},
 						}, -- [9]
 						{
 							["ShowTimerText"] = true,
@@ -4563,13 +4569,7 @@ TellMeWhenDB = {
 						}, -- [1]
 						["n"] = 1,
 					},
-					["GUID"] = "TMW:group:1TU4r3gUgkWv",
-					["Point"] = {
-						["y"] = -8.10552978515625,
-						["x"] = 3.52900862693787,
-						["point"] = "TOPLEFT",
-						["relativePoint"] = "TOPLEFT",
-					},
+					["View"] = "bar",
 				}, -- [7]
 			},
 			["Locked"] = true,
