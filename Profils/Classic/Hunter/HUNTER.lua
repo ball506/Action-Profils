@@ -18,7 +18,7 @@ local UnitIsUnit                            = UnitIsUnit
 local IsUsableSpell                            = IsUsableSpell
 
 -- All spells and action
-Action[Action.HUNTER] = {
+Action[Action.PlayerClass] = {
     -- Night elf 
     Shadowmeld = Action.Create({ Type = "Spell", ID = 20580 }),
     -- Dwarf     
@@ -27,29 +27,29 @@ Action[Action.HUNTER] = {
     Berserking = Action.Create({ Type = "Spell", ID = 20554 }), 
 
     -- Damager 
-    Aimedshot = Action.Create({ Type = "Spell", ID = 19434, useMaxRank = true, isTalent = true }), 
-    Multishot = Action.Create({ Type = "Spell", ID = 2643, useMaxRank = true }), 
+    Aimedshot = Action.Create({ Type = "Spell", ID = 19434, useMaxRank = false, isTalent = true }), 
+    Multishot = Action.Create({ Type = "Spell", ID = 2643, useMaxRank = false }), 
     Autoshot = Action.Create({ Type = "Spell", ID = 75 }),
-    Volley = Action.Create({ Type = "Spell", ID = 14295, useMaxRank = true }),
-    Serpentsting = Action.Create({ Type = "Spell", ID = 1976, useMaxRank = true }),	
+    Volley = Action.Create({ Type = "Spell", ID = 14295, useMaxRank = false }),
+    --Serpentsting = Action.Create({ Type = "Spell", ID = 1976, useMaxRank = false }),	
 
 	-- DropCombat
-	Disengage = Action.Create({ Type = "Spell", ID = 781, useMaxRank = true }),
+	Disengage = Action.Create({ Type = "Spell", ID = 781, useMaxRank = false }),
 	FeignDeath = Action.Create({ Type = "Spell", ID = 5384 }),
 	
 	-- Buff
-	Trueshot = Action.Create({ Type = "Spell", ID = 19506, useMaxRank = true, isTalent = true }),
-	Hawk = Action.Create({ Type = "Spell", ID = 13165, useMaxRank = true }),
-	Mark = Action.Create({ Type = "Spell", ID = 1130, useMaxRank = true }),
+	Trueshot = Action.Create({ Type = "Spell", ID = 19506, useMaxRank = false, isTalent = true }),
+	Hawk = Action.Create({ Type = "Spell", ID = 13165, useMaxRank = false }),
+	Mark = Action.Create({ Type = "Spell", ID = 1130, useMaxRank = false }),
 	
 	-- Slow
-	Wingclip = Action.Create({ Type = "Spell", ID = 2974, useMaxRank = true }),
+	Wingclip = Action.Create({ Type = "Spell", ID = 2974, useMaxRank = false }),
 	
 	-- Healpet
-	Mendpet = Action.Create({ Type = "Spell", ID = 136, useMaxRank = true }),
+	Mendpet = Action.Create({ Type = "Spell", ID = 136, useMaxRank = false }),
 	
 	-- Melee
-	Raptorstrike = Action.Create({ Type = "Spell", ID = 2973, useMaxRank = true }),
+	Raptorstrike = Action.Create({ Type = "Spell", ID = 2973, useMaxRank = false }),
 
     -- Potions
     MajorManaPotion = Action.Create({ Type = "Potion", ID = 13444 }),
@@ -60,7 +60,7 @@ Action[Action.HUNTER] = {
     -- ZandalarianHeroCharm                    = Action.Create({ Type = "Trinket",          ID = 19950                                                                }), -- not used in APL but can Queue 
 
 }    
-local A = setmetatable(Action[Action.HUNTER], { __index = Action })
+local A = setmetatable(Action[Action.PlayerClass], { __index = Action })
 
 -- For racials use following values as Key from racial key:
 local RacialKeys = {
@@ -127,43 +127,7 @@ local function SelfDefensives()
         return A.FeignDeath
     end 
     
-    -- Stoneform on deffensive
-    local Stoneform = A.GetToggle(2, "Stoneform")
-    if     Stoneform >= 0 and A.Stoneform:IsRacialReadyP("player", nil, nil, true) and 
-    (
-        (     -- Auto 
-            Stoneform >= 100 and 
-            (
-                (
-                    not A.IsInPvP and                         
-                    Unit("player"):TimeToDieX(65) < 3 
-                ) or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit("player"):UseDeff() or 
-                        (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused(nil, true)                                 
-                        )
-                    )
-                )
-            ) 
-        ) or 
-        (    -- Custom
-            Stoneform < 100 and 
-            Unit("player"):HealthPercent() <= Stoneform
-        )
-    ) 
-    then 
-        return A.Stoneform
-    end     
-    
-    -- Stoneform on self dispel (only PvE)
-    if A.Stoneform:AutoRacial("player", true, nil, true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
-        return A.Stoneform
-    end 
+ 
 end 
 
 -- Interrupts
@@ -215,27 +179,32 @@ A[3] = function(icon)
         local Interrupt = Interrupts(unit, isSoothingMistCasting)
         if Interrupt then 
             return Interrupt:Show(icon)
-        end 
+        end
+		
+        -- Test lvl 1 Raptorstrike
+        if A.Raptorstrike:IsReady(unit) and Unit(unit):InRange() then 
+            return A.Raptorstrike:Show(icon)
+        end 		
 		
         -- Trueshot Aura 
-        if A.trueshot:IsReady("player") and (Unit("player"):HasBuffs(A.Trueshot.ID, false) <= A.GetGCD() or Unit("player"):HasBuffsStacks(A.InnerFire.ID, true) <= 1) then 
+        if A.Trueshot:IsReady(unit) and (Unit("player"):HasBuffs(A.Trueshot.ID, false) <= A.GetGCD() or Unit("player"):HasBuffsStacks(A.InnerFire.ID, true) <= 1) then 
             return A.Trueshot:Show(icon)
         end 
 		
         -- Autoshot
-        if A.Autoshot:IsReady(unitID) and A.Autoshot:AbsentImun(unitID, Temp.AttackTypes) Player:IsStaying() then 
+        if A.Autoshot:IsReady(unit) and A.Autoshot:AbsentImun(unit, Temp.AttackTypes) then 
             return A.Autoshot:Show(icon)
         end 
         
         -- Aimedshot
-        if A.Aimedshot:IsReady(unitID) and A.Aimedshot:AbsentImun(unitID, Temp.AttackTypes) Player:IsStaying() then 
+        if A.Aimedshot:IsReady(unit) and A.Aimedshot:AbsentImun(unit, Temp.AttackTypes) and Player:IsStaying() then 
             return A.Aimedshot:Show(icon)
         end 
          
         -- CD's
-        if A.BurstIsON(unitID) and A.AbsentImun(nil, unitID) then 
+        if A.BurstIsON(unit) and A.AbsentImun(nil, unit) then 
             -- Racials 
-            if A.Berserking:AutoRacial(unitID) and Unit(unitID):InRange() then 
+            if A.Berserking:AutoRacial(unit) and Unit(unit):InRange() then 
 
                     return A.Berserking:Show(icon)
                 end                 
@@ -261,19 +230,19 @@ A[3] = function(icon)
         
         
         -- Out of combat: Self Buffer 
-        if not inCombat and PlayerRebuff() then 
-            return true 
-        end 
+        --if not inCombat and PlayerRebuff() then 
+        --    return true 
+        --end 
         
         -- Runes 
-        if inCombat and A.CanUseManaRune(icon) then 
-            return true 
-        end 
+        --if inCombat and A.CanUseManaRune(icon) then 
+        --    return true 
+        --end 
         
         -- Mana Potion 
-        if inCombat and A.MajorManaPotion:IsReady("player") and Unit("player"):PowerPercent() <= A.GetToggle(2, "ManaPotion") then 
-            return A.MajorManaPotion:Show(icon)
-        end         
+        --if inCombat and A.MajorManaPotion:IsReady("player") and Unit("player"):PowerPercent() <= A.GetToggle(2, "ManaPotion") then 
+        --    return A.MajorManaPotion:Show(icon)
+        --end         
     end 
 	
     -- Defensive
