@@ -541,13 +541,6 @@ local function ToggleBurstMode()
 	end
 end
 
-local function Init ()
-  S.RazorCoralDebuff:RegisterAuraTracking();
-  S.ConductiveInkDebuff:RegisterAuraTracking();
-end
-
-Init()
-
 --- ======= ACTION LISTS =======
 local function APL() 
     
