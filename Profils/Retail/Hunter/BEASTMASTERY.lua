@@ -355,6 +355,10 @@ local function APL()
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
         end
+        -- guardian_of_azeroth
+        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 1 and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") then
+            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
+        end
         -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
         if S.BestialWrath:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 1 and (S.PrimalInstincts:AzeriteEnabled() and not S.FocusedAzeriteBeam:IsAvailable() and (I.AzsharasFontofPower:IsEquipped() or not S.CyclotronicBlast:IsAvailable())) then
             if HR.Cast(S.BestialWrath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "bestial_wrath 16"; end
@@ -381,7 +385,7 @@ local function APL()
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
+        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- memory_of_lucid_dreams
@@ -438,7 +442,7 @@ local function APL()
             if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
         end
         -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
-         if S.GuardianofAzeroth:IsCastableP() then
+         if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- ripple_in_space
