@@ -18,7 +18,12 @@ local Target = Unit.Target;
 local Spell = HL.Spell;
 local Item = HL.Item;
 -- Lua
-local pairs = pairs;
+local next, pairs, type, print  = next, pairs, type, print
+local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
+local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
+local PetLib = LibStub("PetLibrary")
+local ActionUnit = Action.Unit 
+
 -- File Locals
 HR.Commons = {};
 local Commons = {};
@@ -56,3 +61,17 @@ function Commons.CanDoTUnit (Unit, HealthThreshold)
     return Unit:Health() >= HealthThreshold or Unit:IsDummy();
 end
 
+-- Load default profils for each class
+local currentClass = select(2, UnitClass("player"))
+
+if currentClass == "DEATHKNIGHT" then
+    -- Unholy Virulent Plague Debuff
+    if ActionUnit("player"):HasSpec(252) then 
+        Spell(191587):RegisterAuraTracking();
+	end
+end
+
+if currentClass == "ROGUE" then
+    Spell(303568):RegisterAuraTracking();
+	Spell(302565):RegisterAuraTracking();
+end
