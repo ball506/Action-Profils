@@ -1836,9 +1836,9 @@ local function PvPRotation(icon)
 		-- Variables
         inMelee = A.Mutilate:IsInRange(unit)
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)	
-			
-	    -- Stealth out of combat
-        if ActionUnit("player"):HasBuffs(A.Vanish.ID) > 0 and Action.GetToggle(2, "StealthOOC") and A.Sap:IsReady(unit) and not Player:IsStealthed() then
+	    
+		-- Stealth out of combat
+        if ActionUnit("player"):HasBuffs(A.Vanish.ID) > 0 and Action.GetToggle(2, "StealthOOC") and A.Stealth:IsReady(unit) and not Player:IsStealthed() then
 		    -- Notification					
             Action.SendNotification("Auto Stealthing", A.Stealth.ID)
             return A.Stealth:Show(icon)
