@@ -306,19 +306,22 @@ local function APL()
         -- food
         -- snapshot_stats
         -- potion
-		if Everyone.TargetIsValid() then
-        -- Immolation Aura
-        if S.ImmolationAura:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.ImmolationAura) then return "immolation_aura 5"; end
+        if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 then
+            if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 4"; end
         end
-        -- metamorphosis,if=!azerite.chaotic_transformation.enabled
-        if S.Metamorphosis:IsCastableP(40) and not ShouldStop and (Player:BuffDownP(S.MetamorphosisBuff) and not S.ChaoticTransformation:AzeriteEnabled()) then
-            if HR.Cast(S.Metamorphosis, Action.GetToggle(2, "OffGCDasOffGCD")) then return "metamorphosis 6"; end
-        end
-        -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and not ShouldStop then
-            if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
-        end
+		if Player:CanAttack(Target) then
+            -- Immolation Aura
+            if S.ImmolationAura:IsCastableP() and not ShouldStop then
+                if HR.Cast(S.ImmolationAura) then return "immolation_aura 5"; end
+            end
+            -- metamorphosis,if=!azerite.chaotic_transformation.enabled
+            if S.Metamorphosis:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.MetamorphosisBuff) and not S.ChaoticTransformation:AzeriteEnabled()) then
+                if HR.Cast(S.Metamorphosis, Action.GetToggle(2, "OffGCDasOffGCD")) then return "metamorphosis 6"; end
+            end
+            -- use_item,name=azsharas_font_of_power
+            if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and not ShouldStop then
+                if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
+            end
 		end
     end
     

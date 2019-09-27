@@ -395,8 +395,7 @@ local function SelfDefensives()
     (
         (     -- Auto 
             BearForm >= 100 and 
-            Unit("player"):IsFocused("MELEE") and 
-            Unit("player"):GetRealTimeDMG(1) > 100 and Unit("player"):HealthPercent() <= 40
+            (EnemyTeam():IsReshiftAble() or (Unit("player"):HasDeBuffs(78675) > 0 and Unit("player"):HasDeBuffs("Rooted") > 0))
         ) or 
         (    -- Custom
             BearForm < 100 and 
@@ -515,7 +514,7 @@ local function CanTranquility()
     end 
     return false 
 end 
-CanTranquility = A.MakeFunctionCachedStatic(CanTranquility)
+CanTranquility = A.MakeFunctionCachedDynamic(CanTranquility)
 
 local function CanFlourish()
     if A.Flourish:IsReady("player") and IsSchoolFree() then 
@@ -560,7 +559,7 @@ local function CanFlourish()
     end 
     return false 
 end 
-CanFlourish = A.MakeFunctionCachedStatic(CanFlourish)
+CanFlourish = A.MakeFunctionCachedDynamic(CanFlourish)
 
 local function CanWildGrowth(unit)
     if A.WildGrowth:IsReady(unit) and IsSchoolFree() and not Player:IsMoving() then 
@@ -669,6 +668,7 @@ local function MaintainRejuvenation(unit)
         end			
     end 
 end
+MaintainRejuvenation = A.MakeFunctionCachedDynamic(MaintainRejuvenation)
 
 local function ResfreshRejuvenation(unit)
     if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
@@ -894,7 +894,7 @@ A[3] = function(icon, isMulti)
                 return A.Revive:Show(icon)
             end 
             -- Efflorescence out of combat
-            if A.Efflorescence:IsReady(unit, true, nil, true) and A.GetToggle(2,"AoE") and Efflorescence() <= 5 and Unit(unit):InGroup() and Unit(unit):GetRange() <= 30 and IsSchoolFree() then 
+            if not A.IsInPvP and A.Efflorescence:IsReady(unit) and A.GetToggle(2,"AoE") and Efflorescence() <= 2 then 
                 -- Notification					
                 Action.SendNotification("Pre casting Efflorescence", A.Efflorescence.ID)
 				return A.Efflorescence:Show(icon)
@@ -1048,7 +1048,7 @@ A[3] = function(icon, isMulti)
                     return A.Regrowth:Show(icon) 
 			    end 
 				
- 			    if CanWildGrowth(unit) then         
+ 			    if CanWildGrowth(unit) and (isMulti or A.GetToggle(2,"AoE")) then         
                     return A.WildGrowth:Show(icon)
                 end
 				
@@ -1159,30 +1159,35 @@ A[3] = function(icon, isMulti)
         end          
         
 		-- Wild Growth
-        if (isMulti or A.GetToggle(2, "AoE")) and A.WildGrowth:PredictHeal("Wild Growth", unit) then 
+        if (not isMulti or A.GetToggle(2, "AoE")) and A.WildGrowth:PredictHeal("Wild Growth", unit) then 
             if A.VitalityConduit:AutoHeartOfAzeroth(unit, true) then 
                 return A.VitalityConduit:Show(icon)
             end
-            
-            if CanWildGrowth(unit) and not IsSaveManaPhase() then                 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
-                    return A.OverchargeMana:Show(icon)
-                end 
-                
-                return A.WildGrowth:Show(icon)
-            end 
-        end 
-        
-        -- Multi (for [4])
-        if isMulti then 
             if CanWildGrowth(unit) and not IsSaveManaPhase() and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
                 return A.WildGrowth:Show(icon)
-            end 
-            if Efflorescence() <= 3 and Player:IsStayingTime() > 2 and not IsSaveManaPhase()  then 
+            end           
+            if Efflorescence() <= 2 and Player:IsStayingTime() > 2 and not IsSaveManaPhase() and A.Efflorescence:PredictHeal("Efflorescence", unit) then 
+                return A.Efflorescence:Show(icon)
+            end
+        end 
+        
+        -- Multi (for [4])
+        if isMulti then 
+            if A.VitalityConduit:AutoHeartOfAzeroth(unit, true) then 
+                return A.VitalityConduit:Show(icon)
+            end
+            if CanWildGrowth(unit) and not IsSaveManaPhase() and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
+                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
+                    return A.OverchargeMana:Show(icon)
+                end 
+                
+                return A.WildGrowth:Show(icon)
+            end           
+            if Efflorescence() <= 2 and Player:IsStayingTime() > 2 and not IsSaveManaPhase() and A.Efflorescence:PredictHeal("Efflorescence", unit) then 
                 return A.Efflorescence:Show(icon)
             end 
         end
@@ -1219,19 +1224,19 @@ A[3] = function(icon, isMulti)
                 return A.Innervate:Show(icon)
             end	
             -- Refresh Efflorescence
-			if Unit("player"):HasBuffs(A.Innervate.ID, true) > 10 then
+			if Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 and Efflorescence() <= 2 then
                 return A.Efflorescence:Show(icon)
             end			
 			-- Maximize Rejuvenation on group
-			if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) and Unit(unit):GetRange() <= 40 and Unit("player"):HasBuffs(A.Innervate.ID, true) >= 5 then 
+			if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) and Unit(unit):GetRange() <= 40 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then 
                 return A.Rejuvenation:Show(icon)
             end 
             -- Then Apply Wild Growth            
-            if CanWildGrowth(unit) and HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10 and Unit("player"):HasBuffs(A.Innervate.ID, true) >= 2 then
+            if CanWildGrowth(unit) and HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then
                 return A.WildGrowth:Show(icon)
             end
             -- and use Flourish for burst			
-            if Unit("player"):GetSpellLastCast(A.WildGrowth.ID, true) <= 5 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0.1  then
+            if Unit("player"):GetSpellLastCast(A.WildGrowth.ID, true) <= 5 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then
                 return A.Flourish:Show(icon)
             end	
         end 
@@ -1269,6 +1274,13 @@ A[3] = function(icon, isMulti)
 				return A.Lifebloom:Show(icon)
             end
         end
+		
+		-- Innervate
+		if A.Innervate:IsReady("player") and Unit("player"):HasBuffs(A.Innervate.ID, true) == 0 and IsSaveManaPhase() then
+		    -- Notification
+		    Action.SendNotification("Low mana : Using Innervate", A.Innervate.ID, 2)
+            return A.Innervate:Show(icon)
+        end	
 		
 		-- Rejuvenation
         if A.Rejuvenation:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
@@ -1320,16 +1332,12 @@ A[3] = function(icon, isMulti)
         end 
 		
 		-- Regrowth without ClearCasting buff
-		if not isMoving and A.Regrowth:IsReady(unit) and not IsSaveManaPhase() and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit) or Unit(unit):TimeToDieX(40) < 4) and Unit(unit):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
+		if not isMoving and A.Regrowth:IsReady(unit) and not IsSaveManaPhase() and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit, 5) or Unit(unit):TimeToDieX(25) < 4) and Unit("player"):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
        		-- Notification
 			--Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
             return A.Regrowth:Show(icon)
         end  	
 		
-
-		
-
-
 		-- Photosynthesis Lifebloom on player to increase healing by 20%
         if A.Lifebloom:IsReady("player") and Unit("player"):HasBuffs(A.Lifebloom.ID, true) < 3 and A.Photosynthesis:IsSpellLearned() then		    
 		    -- Notification
