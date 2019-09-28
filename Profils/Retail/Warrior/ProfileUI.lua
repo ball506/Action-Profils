@@ -236,13 +236,13 @@ A.Data.ProfileUI                                     = {
                         { text = "OFF", value = "OFF" },
                     },
                     DB = "ReflectPvP",
-                    DBV = "ON MELEE BURST",
+                    DBV = "DANGEROUS CAST",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(216890),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
-                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                     }, 
                     M = {},
                 },
@@ -270,8 +270,8 @@ A.Data.ProfileUI                                     = {
                         ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
                     }, 
                     M = {},
-                },
-            },			
+                },	
+            },				
         }, 
 
 		[ACTION_CONST_WARRIOR_ARMS] = {
@@ -315,7 +315,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "VictoryRush",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(34428) .. " (%)",
@@ -327,7 +327,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "ImpendingVictory",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(202168) .. " (%)",
@@ -341,7 +341,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "RallyingCry",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(97462) .. " (%)",
@@ -353,7 +353,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "DiebytheSword",
-                    DBV = 50, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(118038) .. " (%)",
@@ -488,13 +488,13 @@ A.Data.ProfileUI                                     = {
                         { text = "OFF", value = "OFF" },
                     },
                     DB = "ReflectPvP",
-                    DBV = "ON MELEE BURST",
+                    DBV = "DANGEROUS CAST",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(216890),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
-                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                     }, 
                     M = {},
                 },
@@ -752,7 +752,10 @@ A.Data.ProfileUI                                     = {
                         )                                                             
             ]] },
             ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
-                return     DisarmPvPIsReady(thisunit, true)
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
             ]] },
             ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
@@ -770,7 +773,10 @@ A.Data.ProfileUI                                     = {
                         )                                                             
             ]] },
             ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
-                return     DisarmPvPIsReady(thisunit, true)
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
             ]] },
             ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
@@ -788,7 +794,10 @@ A.Data.ProfileUI                                     = {
                         )                                                             
             ]] },
             ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
-                return     DisarmPvPIsReady(thisunit, true)
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
             ]] },
             ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]

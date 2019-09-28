@@ -813,14 +813,50 @@ local function PvPRotation(icon)
     local unit = "player"
     local isMoving = Player:IsMoving()
     local inMelee = false
-
-	
+    UpdateExecuteID()
+	ExecuteRange()
 
     local function SelfDefensives()
         if ActionUnit("player"):CombatTime() == 0 then 
             return 
         end 
-    
+        
+		-- DiebytheSword
+	    local DiebytheSword = Action.GetToggle(2, "DiebytheSword")
+        if     DiebytheSword >= 0 and A.DiebytheSword:IsReady("player") and 
+        (
+            (         -- Auto 
+                DiebytheSword >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused("MELEE") 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                DiebytheSword < 100 and 
+                ActionUnit("player"):HealthPercent() <= DiebytheSword
+            )
+        ) 
+        then 
+            return A.DiebytheSword
+        end
+	    
+		-- RallyingCry
         local RallyingCry = Action.GetToggle(2, "RallyingCry")
         if     RallyingCry >= 0 and A.RallyingCry:IsReady("player") and 
         (
@@ -919,12 +955,21 @@ local function PvPRotation(icon)
 		-- Variables
         inMelee = A.MortalStrike:IsInRange(unit)
 		
-		if A.VictoryRush:IsReady(unit) and ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") then
+		-- Victory Rush -> Buff about to expire or under UI value
+		if A.VictoryRush:IsReady(unit) and ((A.GetToggle(2, "VictoryRush") >= 100 and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) <= 3) or (Unit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) > 0)) then
 			return A.VictoryRush:Show(icon)
 		end
+		
+		-- Impending Victory 
+		if A.ImpendingVictory:IsReady(unit) and (A.GetToggle(2, "ImpendingVictory") >= 100 or Unit("player"):HealthPercent() <= A.GetToggle(2, "ImpendingVictory")) then
+			return A.ImpendingVictory:Show(icon)
+		end
+		
+		-- Execute SuddenDeath Buff
 		if A.Execute:IsReady(unit) and ActionUnit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 1 then
 			return A.Execute:Show(icon)
 		end
+		
 		-- Reflect
    		if A.SpellReflection:IsReady(unit) and Action.ShouldReflect(unit) then
     	    return A.SpellReflection:Show(icon)
