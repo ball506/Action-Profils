@@ -1577,13 +1577,22 @@ local function PvPRotation(icon)
     local isMoving = Player:IsMoving()
     local inMelee = false
     
-	
+	-- Poisons Refresh
 	ShouldReturn = RefreshPoisons()
     if ShouldReturn then
         -- Notification					
         Action.SendNotification("Auto refreshing poisons", A.CripplingPoison.ID)	
 	    return ShouldReturn; 
 	end
+	
+    CurrentStealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent
+		
+	-- Stealth out of combat
+    if ActionUnit("player"):HasBuffs(A.VanishBuff.ID) == 0 and Action.GetToggle(2, "StealthOOC") and CurrentStealth:IsReady("player") and ActionUnit("player"):HasBuffs(CurrentStealth.ID) == 0 then
+        -- Notification					
+        Action.SendNotification("Auto Stealthing", A.Stealth.ID)
+        return CurrentStealth:Show(icon)
+    end
     
 	-- Defensives
     local function SelfDefensives(unit)
@@ -1836,13 +1845,8 @@ local function PvPRotation(icon)
 		-- Variables
         inMelee = A.Mutilate:IsInRange(unit)
         local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)	
-	    
-		-- Stealth out of combat
-        if ActionUnit("player"):HasBuffs(A.Vanish.ID) > 0 and Action.GetToggle(2, "StealthOOC") and A.Stealth:IsReady(unit) and not Player:IsStealthed() then
-		    -- Notification					
-            Action.SendNotification("Auto Stealthing", A.Stealth.ID)
-            return A.Stealth:Show(icon)
-        end
+		
+		
 		-- Sap out of combat
 		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and ActionUnit(unit):IsControlAble("incapacitate") and ActionUnit("player"):GetDR("incapacitate") > 25 then
 		    if ActionUnit(unit):HasDeBuffs(A.Sap.ID) == 0 then 
@@ -2116,7 +2120,7 @@ local function ArenaRotation(icon, unit)
 		local useKickHeal, useCCHeal, useRacialHeal = A.InterruptIsValid(EnemyHealerUnitID, "TargetMouseover")  
 		
 		-- Blind on Enemy Healer
-        if A.Blind:IsReady(EnemyHealerUnitID) and not A.HonorMedallion:IsReadyP(EnemyHealerUnitID, true) and ActionUnit(EnemyHealerUnitID):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("disorient", 50) and ActionUnit(unit):HealthPercent() <= 30 then
+        if A.Blind:IsReady(EnemyHealerUnitID) and not A.HonorMedallion:IsReady(EnemyHealerUnitID, true) and ActionUnit(EnemyHealerUnitID):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("disorient", 50) and ActionUnit(unit):HealthPercent() <= 30 then
             return A.Blind:Show(icon)
         end 
 		
