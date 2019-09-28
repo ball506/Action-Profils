@@ -420,7 +420,7 @@ local function APL()
         if S.Obliterate:IsCastableP("Melee") and not ShouldStop and ((Target:DebuffStackP(S.RazoriceDebuff) < 5 or Target:DebuffRemainsP(S.RazoriceDebuff) < 10) and Player:RunicPower() <= 30 and not S.Frostscythe:IsAvailable()) then
             if HR.Cast(S.Obliterate) then return ""; end
         end
-        -- obliterate,if=runic_power<=30
+        -- obliterate,if=runic_power<=32
         if S.Obliterate:IsCastableP("Melee") and not ShouldStop and (Player:RunicPower() <= 32) then
             if HR.Cast(S.Obliterate) then return ""; end
         end
@@ -507,6 +507,11 @@ local function APL()
             -- use_item,name=cyclotronic_blast,if=!buff.pillar_of_frost.up
             if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and (Player:BuffDownP(S.PillarofFrostBuff)) then
                 if HR.Cast(I.PocketsizedComputationDevice) then return ""; end
+            end			
+            -- use_items,if=(cooldown.pillar_of_frost.ready|cooldown.pillar_of_frost.remains>20)&(!talent.breath_of_sindragosa.enabled|cooldown.empower_rune_weapon.remains>95)
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down
+            if I.AshvanesRazorCoral:IsEquipReady() and (Target:DebuffDownP(S.RazorCoralDebuff)) then
+                if HR.Cast(I.AshvanesRazorCoral) then return ""; end
             end
             -- use_items,if=(cooldown.pillar_of_frost.ready|cooldown.pillar_of_frost.remains>20)&(!talent.breath_of_sindragosa.enabled|cooldown.empower_rune_weapon.remains>95)
             -- use_item,name=ashvanes_razor_coral,if=cooldown.empower_rune_weapon.remains>90&debuff.razor_coral_debuff.up&variable.other_on_use_equipped|buff.breath_of_sindragosa.up&debuff.razor_coral_debuff.up&!variable.other_on_use_equipped|buff.empower_rune_weapon.up&debuff.razor_coral_debuff.up&!talent.breath_of_sindragosa.enabled|target.1.time_to_die<21
