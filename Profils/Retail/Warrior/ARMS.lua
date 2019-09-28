@@ -731,6 +731,16 @@ local function IsSchoolFree()
     return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
 end 
 
+local function UpdateExecuteID()
+    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
+end
+
+local function ExecuteRange()
+	return A.Massacre:IsSpellLearned() and 35 or 20;
+end
+	
+
+
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
@@ -766,19 +776,6 @@ A[2] = function(icon)
     elseif A.IsUnitEnemy("target") then 
         unit = "target"
     end 
-	
-
-local function UpdateExecuteID()
-    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
-end
-
-local function ExecuteRange()
-	return A.Massacre:IsSpellLearned() and 35 or 20;
-end
-	
-	
-	UpdateExecuteID()
-	ExecuteRange()
     
     if unit then         
         local castLeft, _, _, _, notKickAble = ActionUnit(unit):IsCastingRemains()
