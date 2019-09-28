@@ -72,6 +72,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     Blind                                = Action.Create({ Type = "Spell", ID = 2094       }),
     CheapShot                            = Action.Create({ Type = "Spell", ID = 1833       }),
     KidneyShot                           = Action.Create({ Type = "Spell", ID = 408       }),
+    Gouge                                = Action.Create({ Type = "Spell", ID = 1776       }),
     Sprint                               = Action.Create({ Type = "Spell", ID = 2983       }),
 	-- Roll the Bones
     Broadside                            = Action.Create({ Type = "Spell", ID = 193356       }),
@@ -875,9 +876,18 @@ end
           	    return
          	end 
       	end 
+		
+     	 -- Gouge
+      	if useCC and S.Gouge:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 25 then 
+	  		if ActionUnit(unit):CanInterrupt(true) then
+     	        if HR.Cast(S.Gouge, true) then return "Gouge 5"; end
+     	    else 
+     	        return
+     	    end 
+     	end 
 	
      	 -- CheapShot
-      	if useCC and S.CheapShot:IsReady() and not ShouldStop and Target:IsInterruptible() and Player:EnergyPredicted() >= 40 then 
+      	if useCC and S.CheapShot:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 40 then 
 	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
      	    else 
