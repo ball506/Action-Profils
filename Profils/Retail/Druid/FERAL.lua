@@ -359,10 +359,6 @@ local function APL()
         if S.Berserk:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:EnergyPredicted() >= 30 and (S.TigersFury:CooldownRemainsP() > 5 or Player:BuffP(S.TigersFuryBuff))) then
             if HR.Cast(S.Berserk,  Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserk 30"; end
         end
-        -- tigers_fury,if=energy.deficit>=60
-        if S.TigersFury:IsCastableP() and not ShouldStop and (Player:EnergyDeficitPredicted() >= 60) then
-            if HR.Cast(S.TigersFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "tigers_fury 36"; end
-        end
         -- berserking
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 38"; end
@@ -679,6 +675,10 @@ local function APL()
         -- rake,if=buff.prowl.up|buff.shadowmeld.up
         if S.Rake:IsCastableP() and not ShouldStop and (Player:BuffP(S.ProwlBuff) or Player:BuffP(S.ShadowmeldBuff)) then
             if HR.Cast(S.Rake) then return "rake 406"; end
+        end
+        -- tigers_fury,if=energy.deficit>=60
+        if S.TigersFury:IsCastableP() and not ShouldStop and (Player:EnergyDeficitPredicted() >= 60) then
+            if HR.Cast(S.TigersFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "tigers_fury 36"; end
         end
         -- call_action_list,name=cooldowns
         if (HR.CDsON()) then
