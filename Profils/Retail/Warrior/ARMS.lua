@@ -766,6 +766,19 @@ A[2] = function(icon)
     elseif A.IsUnitEnemy("target") then 
         unit = "target"
     end 
+	
+
+local function UpdateExecuteID()
+    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
+end
+
+local function ExecuteRange()
+	return A.Massacre:IsSpellLearned() and 35 or 20;
+end
+	
+	
+	UpdateExecuteID()
+	ExecuteRange()
     
     if unit then         
         local castLeft, _, _, _, notKickAble = ActionUnit(unit):IsCastingRemains()
@@ -912,10 +925,9 @@ local function PvPRotation(icon)
 		if A.VictoryRush:IsReady(unit) and ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") then
 			return A.VictoryRush:Show(icon)
 		end
-		--if A.ExecuteDefault:IsReady(unit) and (Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 1) then
-		--if A.ExecuteDefault:IsReady(unit)  then
-		--	return A.ExecuteDefault:Show(icon)
-		--end
+		if A.Execute:IsReady(unit) and ActionUnit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 1 then
+			return A.Execute:Show(icon)
+		end
 		-- Reflect
    		if A.SpellReflection:IsReady(unit) and Action.ShouldReflect(unit) then
     	    return A.SpellReflection:Show(icon)
@@ -1011,16 +1023,16 @@ local function PvPRotation(icon)
 				return A.MortalStrike:Show(icon)
 			end
 
-			if A.ExecuteDefault:IsReady(unit)  then
-				return A.ExecuteDefault:Show(icon)
+			if A.Execute:IsReady(unit)  then
+				return A.Execute:Show(icon)
 			end
 
 			if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
 				return A.Overpower:Show(icon)
 			end
 
-			if A.ExecuteDefault:IsReady(unit)  then
-				return A.ExecuteDefault:Show(icon)
+			if A.Execute:IsReady(unit)  then
+				return A.Execute:Show(icon)
 			end
 		end
 
@@ -1067,7 +1079,7 @@ local function PvPRotation(icon)
 		end
 
 		if A.Whirlwind:IsReady(unit) and A.Whirlwind:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (A.FervorofBattle:IsSpellLearned() and ActionUnit("player"):HasBuffs(A.DeadlyCalmBuff.ID) > 0) then
-			return Whirlwind:Show(icon)
+			return A.Whirlwind:Show(icon)
 		end
 
 		if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
@@ -1075,7 +1087,7 @@ local function PvPRotation(icon)
 		end
 		
 		if A.Whirlwind:IsReady(unit) and A.Whirlwind:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (A.FervorofBattle:IsSpellLearned()) then
-			return Whirlwind:Show(icon)
+			return A.Whirlwind:Show(icon)
 		end
 
 		if A.Slam:IsReady(unit) and A.Slam:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() > 50 and not A.FervorofBattle:IsSpellLearned()) then
