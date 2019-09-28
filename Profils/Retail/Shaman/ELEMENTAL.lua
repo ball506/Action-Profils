@@ -735,7 +735,7 @@ local function APL()
             if HR.Cast(S.LiquidMagmaTotem) then return "liquid_magma_totem 246"; end
         end
         -- lightning_bolt,if=buff.stormkeeper.up&spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack)<26&(buff.master_of_the_elements.up&!talent.surge_of_power.enabled|buff.surge_of_power.up)
-        if S.LightningBolt:IsCastableP() and not ShouldStop and Player:BuffP(S.StormkeeperBuff) then
+        if S.LightningBolt:IsCastableP() and not ShouldStop and Player:BuffP(S.StormkeeperBuff) and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 252"; end
         end
         -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled|spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack<26)&buff.stormkeeper.up&cooldown.lava_burst.remains<=gcd)
@@ -771,7 +771,7 @@ local function APL()
             if HR.Cast(S.LavaBurst) then return "lava_burst 433"; end
         end
         -- lightning_bolt,if=buff.surge_of_power.up
-        if S.LightningBolt:IsCastableP() and not ShouldStop and (Player:BuffP(S.SurgeofPowerBuff)) then
+        if S.LightningBolt:IsCastableP() and not ShouldStop and (Player:BuffP(S.SurgeofPowerBuff)) and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 457"; end
         end
         -- lava_burst,if=cooldown_react&!talent.master_of_the_elements.enabled
@@ -811,7 +811,7 @@ local function APL()
             if HR.Cast(S.ChainLightning) then return "chain_lightning 550"; end
         end
         -- lightning_bolt
-        if S.LightningBolt:IsCastableP() and not ShouldStop then
+        if S.LightningBolt:IsCastableP() and not ShouldStop and FutureMaelstromPower() <= 90 then
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
         end
         -- flame_shock,moving=1,target_if=refreshable
