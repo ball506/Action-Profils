@@ -463,7 +463,7 @@ local function APL()
 		    if HR.Cast(S.VictoryRush) then return ""; end
         end
 		-- execute,if=buff.enrage.up
-        if S.Execute:IsCastable("Melee") and not ShouldStop and Player:BuffRemainsP(S.SuddenDeathBuff) > 1 then
+        if S.Execute:IsCastable("Melee") and not S.Rampage:IsReadyP("Melee") and not ShouldStop and Player:BuffRemainsP(S.SuddenDeathBuff) > 1 then
 		    if HR.Cast(S.Execute) then return ""; end
         end
         if S.RallyingCry:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "RallyingCry")then
