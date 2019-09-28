@@ -739,7 +739,7 @@ local function APL()
             if HR.Cast(S.LightningBolt) then return "lightning_bolt 252"; end
         end
         -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled|spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack<26)&buff.stormkeeper.up&cooldown.lava_burst.remains<=gcd)
-        if S.EarthShock:IsReadyP() and not ShouldStop and S.MasteroftheElements:IsAvailable() and Player:BuffP(S.MasteroftheElementsBuff) then
+        if S.EarthShock:IsReadyP() and not ShouldStop and S.MasteroftheElements:IsAvailable() and Player:BuffP(S.MasteroftheElementsBuff) and FutureMaelstromPower() >= 60  then
             if HR.Cast(S.EarthShock) then return "earth_shock 294"; end
         end
         -- earth_shock,if=!talent.master_of_the_elements.enabled&!(azerite.igneous_potential.rank>2&buff.ascendance.up)&(buff.stormkeeper.up|maelstrom>=90+30*talent.call_the_thunder.enabled|!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)&expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)>=30*(1+(azerite.echo_of_the_elementals.rank>=2)))
@@ -779,7 +779,7 @@ local function APL()
             if HR.Cast(S.LavaBurst) then return "lava_burst 461"; end
         end
         -- icefury,if=talent.icefury.enabled&!(maelstrom>75&cooldown.lava_burst.remains<=0)&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (Player:Maelstrom() > 75 and S.LavaBurst:CooldownRemainsP() <= 0) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
+        if S.Icefury:IsCastableP() and not Player:IsMoving() and not ShouldStop and not StormElementalIsActive() and (S.Icefury:IsAvailable() and not (FutureMaelstromPower() > 75 and S.LavaBurst:CooldownRemainsP() <= 0) and (not S.StormElemental:IsAvailable() or S.StormElemental:CooldownRemainsP() < 120)) then
             if HR.Cast(S.Icefury) then return "icefury 469"; end
         end
         -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
