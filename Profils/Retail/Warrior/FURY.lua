@@ -602,6 +602,13 @@ local Temp                                     = {
     DisableMag                                = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
 
+local IsIndoors, UnitIsUnit = 
+IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+    return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+end 
+
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
@@ -610,7 +617,6 @@ local function AntiFakeStun(unit)
     ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
-
 A[1] = function(icon)    
     if     A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
     (
