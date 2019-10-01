@@ -44,6 +44,7 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
 	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }), 
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
+	IntimidatingShoutAntiFake           = Action.Create({ Type = "Spell", ID = 5246, Desc = "[2] Kick", QueueForbidden = true    }),
 	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
 	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
 	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true    }), -- PvP Talent 
@@ -787,6 +788,10 @@ A[2] = function(icon)
             if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("stun", 0) then
                 return A.StormBoltAntiFake:Show(icon)                  
             end 
+			
+			if A.IntimidatingShoutAntiFake:IsReady(unit, nil, nil, true) and A.IntimidatingShoutAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("fear", 0) then
+				return A.IntimidatingShoutAntiFake:Show(icon)
+			end
             
             -- Racials 
             if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 

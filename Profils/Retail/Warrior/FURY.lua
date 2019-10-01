@@ -443,7 +443,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
   	    -- Pummel
-  	    if useKick and S.Pummel:IsReady() and Target:IsInterruptible() then 
+  	    if useKick and S.Pummel:IsReady() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
          	else 
