@@ -961,12 +961,12 @@ local function PvPRotation(icon)
         inMelee = A.MortalStrike:IsInRange(unit)
 		
 		-- Victory Rush -> Buff about to expire or under UI value
-		if A.VictoryRush:IsReady(unit) and ((A.GetToggle(2, "VictoryRush") >= 100 and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) <= 3) or (Unit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) > 0)) then
+		if A.VictoryRush:IsReady(unit) and ((A.GetToggle(2, "VictoryRush") >= 100 and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) <= 3) or (ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "VictoryRush") and ActionUnit("player"):HasBuffs(A.Victorious.ID, true) > 0)) then
 			return A.VictoryRush:Show(icon)
 		end
 		
 		-- Impending Victory 
-		if A.ImpendingVictory:IsReady(unit) and (A.GetToggle(2, "ImpendingVictory") >= 100 or Unit("player"):HealthPercent() <= A.GetToggle(2, "ImpendingVictory")) then
+		if A.ImpendingVictory:IsReady(unit) and (A.GetToggle(2, "ImpendingVictory") >= 100 or ActionUnit("player"):HealthPercent() <= A.GetToggle(2, "ImpendingVictory")) then
 			return A.ImpendingVictory:Show(icon)
 		end
 		
