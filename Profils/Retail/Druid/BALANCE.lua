@@ -328,10 +328,6 @@ local function EvaluateCyclePocketsizedComputationDevice103(Target)
     return (Target:DebuffP(S.MoonfireDebuff) and Target:DebuffP(S.SunfireDebuff) and (not S.StellarFlare:IsAvailable() or Target:DebuffP(S.StellarFlareDebuff))) and (I.PocketsizedComputationDevice:IsEquipped() and Player:BuffDownP(CaInc()))
 end
 
-local function EvaluateCycleShiverVenomRelic104(Target)
-    return (Player:BuffDownP(CaInc()) and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5)
-end
-
 local function EvaluateCycleMemoryofLucidDreams135(Target)
     return (Target:DebuffRemainsP(S.SunfireDebuff) > 10 and Target:DebuffRemainsP(S.MoonfireDebuff) > 10 and (not S.StellarFlare:IsAvailable() or Target:DebuffRemainsP(S.StellarFlareDebuff) > 10)) and (Player:BuffDownP(CaInc()) and (FutureAstralPower() < 25 or CaInc():CooldownRemainsP() > 30))
 end
@@ -535,7 +531,7 @@ local function APL()
             if HR.CastCycle(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 117" end
         end
         -- use_item,name=shiver_venom_relicif=!buff.ca_inc.up,target_if=dot.shiver_venom.stack>=5
-        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and EvaluateCycleShiverVenomRelic104(Target) then
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
             if HR.CastCycle(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
         end
         -- blood_of_the_enemy,if=cooldown.ca_inc.remains>30
