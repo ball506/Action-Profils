@@ -343,6 +343,16 @@ local function APL()
             end
         end
     end
+    local function Movement()
+        -- blink,if=movement.distance>10
+        if BlinkAny:IsCastableP() and (not Target:IsInRange(S.Frostbolt:MaximumRange())) then
+            if HR.Cast(BlinkAny) then return "blink 111"; end
+        end
+        -- ice_floes,if=buff.ice_floes.down
+        if S.IceFloes:IsCastableP() and (Player:BuffDownP(S.IceFloesBuff)) then
+            if HR.Cast(S.IceFloes, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ice_floes 113"; end
+        end
+    end
     local function Essences()
         -- focused_azerite_beam,if=buff.rune_of_power.down|active_enemies>3
         if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.RuneofPowerBuff) or EnemiesCount > 3) then
@@ -497,16 +507,6 @@ local function APL()
             if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 109"; end
         end
     end
-    local function Movement()
-        -- blink,if=movement.distance>10
-        if BlinkAny:IsCastableP() and not ShouldStop and (not Target:IsInRange(S.Frostbolt:MaximumRange())) then
-            if HR.Cast(BlinkAny) then return "blink 111"; end
-        end
-        -- ice_floes,if=buff.ice_floes.down
-        if S.IceFloes:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.IceFloesBuff)) then
-            if HR.Cast(S.IceFloes, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ice_floes 113"; end
-        end
-    end
     local function Single()
         -- ice_nova,if=cooldown.ice_nova.ready&debuff.winters_chill.up
         if S.IceNova:IsCastableP() and not ShouldStop and (S.IceNova:CooldownUpP() and Target:DebuffP(S.WintersChillDebuff)) then
@@ -571,9 +571,9 @@ local function APL()
             if HR.Cast(S.Frostbolt) then return "frostbolt 219"; end
         end
         -- call_action_list,name=movement
-        -- if (true) then
-        --     local ShouldReturn = Movement(); if ShouldReturn then return ShouldReturn; end
-        -- end
+        if (true) then
+            local ShouldReturn = Movement(); if ShouldReturn then return ShouldReturn; end
+        end
         -- ice_lance
         if S.IceLance:IsCastableP() and not ShouldStop then
             if HR.Cast(S.IceLance) then return "ice_lance 223"; end
