@@ -247,7 +247,7 @@ local function DetermineEssenceRanks()
     S.CondensedLifeforce = S.CondensedLifeforce3:IsAvailable() and S.CondensedLifeforce3 or S.CondensedLifeforce
 end
 
-local EnemyRanges = {40, 5}
+local EnemyRanges = {40, 30, 5}
 local function UpdateRanges()
   for _, i in ipairs(EnemyRanges) do
     HL.GetEnemies(i);
@@ -455,6 +455,7 @@ local function APL()
 	-- Local functions remap
     EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40) -- For CastCycle calls
+    HL.GetEnemies(30) -- For WindShear
 	DetermineEssenceRanks()
 	FutureMaelstromPower()
     AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(40, 5, 188389) --MultiDots(40, S.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
@@ -949,19 +950,19 @@ local function APL()
 		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
         -- Purge
-		if S.Purge:IsReady() and not ShouldStop and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+		if S.Purge:IsReady() and Action.GetToggle(2, "mouseover") and not ShouldStop and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
             if HR.Cast(S.Purge) then return "" end
         end	
 		
 		-- WindShear
-        if useKick and S.WindShear:IsReady() and ActionUnit(unit):CanInterrupt(true) then 
+        if useKick and Action.GetToggle(2, "mouseover") and S.WindShear:IsReadyP(30) and ActionUnit(unit):CanInterrupt(true) then 
             if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
         else 
             return
         end   	
 				
 		-- FlameShock
-		if A.FlameShock:IsReady(unit) and EnemiesCount <= 3 and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) == 0) and not Player:PrevGCDP(1, S.FlameShock) and ActionUnit(unit):TimeToDie() >= 15 then
+		if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and EnemiesCount <= 3 and not ShouldStop and (ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) <= 5 or ActionUnit(unit):HasDeBuffs(A.FlameShockDebuff.ID) == 0) and not Player:PrevGCDP(1, S.FlameShock) and ActionUnit(unit):TimeToDie() >= 15 then
 			if HR.Cast(S.FlameShock) then return "FlameShock 837" end
 		end			
 		
@@ -989,7 +990,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
   	    -- WindShear
-  	    if useKick and S.WindShear:IsReady() and not ShouldStop and Target:IsInterruptible() then 
+  	    if useKick and S.WindShear:IsReadyP(30) and not ShouldStop and Target:IsInterruptible() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
          	else 
@@ -997,7 +998,7 @@ local function APL()
          	end 
       	end	
      	-- CapacitorTotem
-      	if useCC and Action.GetToggle(2, "UseCapacitorTotem") and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
+      	if useCC and Action.GetToggle(2, "UseCapacitorTotem") and not S.WindShear:IsReadyP(30) and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop and Target:IsInterruptible() then 
 	  		if ActionUnit(unit):CanInterrupt(true) then
      	        if HR.Cast(S.CapacitorTotem, true) then return "CapacitorTotem 5"; end
      	    else 
