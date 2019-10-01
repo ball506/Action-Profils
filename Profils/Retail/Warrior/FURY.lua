@@ -463,7 +463,7 @@ local function APL()
 		    if HR.Cast(S.VictoryRush) then return ""; end
         end
 		-- execute,if=buff.enrage.up
-        if S.Execute:IsCastable("Melee") and not S.Rampage:IsReadyP("Melee") and not ShouldStop and Player:BuffRemainsP(S.SuddenDeathBuff) > 1 then
+        if S.Execute:IsCastable("Melee") and not ShouldStop and Player:BuffRemainsP(S.SuddenDeathBuff) > 1 then
 		    if HR.Cast(S.Execute) then return ""; end
         end
         if S.RallyingCry:IsReady() and Player:HealthPercentage() <= Action.GetToggle(2, "RallyingCry")then
@@ -544,9 +544,9 @@ local function APL()
         ---    if HR.Cast(S.Recklessness, Action.GetToggle(2, "OffGCDasOffGCD")) then return "recklessness 112"; end
         --end
         -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-        if S.Whirlwind:IsCastableP("Melee") and not ShouldStop and (Cache.EnemiesCount[8] > 1 and not Player:BuffP(S.MeatCleaverBuff)) then
-            if HR.Cast(S.Whirlwind) then return "whirlwind 114"; end
-        end
+       -- if S.Whirlwind:IsCastableP("Melee") and not ShouldStop and (Cache.EnemiesCount[8] > 1 and not Player:BuffP(S.MeatCleaverBuff)) then
+       --     if HR.Cast(S.Whirlwind) then return "whirlwind 114"; end
+       -- end
 		local currentZoneID = select(8, GetInstanceInfo())
         -- Eternal Palace Razor Coral usage
         if Player:InRaid() and currentZoneID == 2164 then
@@ -554,6 +554,10 @@ local function APL()
                 if ShouldReturn then return ShouldReturn; 
 			end
         end 	
+        -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(buff.guardian_of_azeroth.up|!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
+        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Target:HealthPercentage() < 30 and Target:DebuffP(S.ConductiveInkDebuff)) or (Target:DebuffDownP(S.ConductiveInkDebuff) and Player:BuffP(S.MemoryofLucidDreams) or Player:PrevGCDP(2, S.GuardianofAzeroth) or Player:PrevGCDP(2, S.Recklessness) and (Player:BuffP(S.GuardianofAzeroth) or not S.MemoryofLucidDreams:IsAvailable() and not S.GuardianofAzeroth:IsAvailable()))) then
+            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 114"; end
+        end
         -- use_item,name=ashvanes_razor_coral,if=recklessness.buff
         if I.AshvanesRazorCoral:IsEquipped() and not Player:InRaid() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
