@@ -1025,7 +1025,7 @@ local function CDs ()
                 and (not TrinketON() or not I.FontOfPower:IsEquipped() or S.ShroudedSuffocation:AzeriteEnabled() or S.RazorCoralDebuff:ActiveCount() == 0 or I.RazorCoral:CooldownRemains() < 10 and S.ToxicBlade:CooldownRemainsP() <= 1) then
                 if HR.Cast(S.Vendetta, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Vendetta"; end
             end
-            if S.Vanish:IsCastable() and not Player:IsTanking(Target) then
+            if S.Vanish:IsCastable() and not Player:IsTanking(Target) and Target:DebuffRemainsP(S.Rupture) > 3 then
                 local VanishSuggested = false;
                 -- actions.cds+=/vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&spell_targets.fan_of_knives<2)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
                 if not VanishSuggested and S.Exsanguinate:IsAvailable() and (S.Nightstalker:IsAvailable() or S.Subterfuge:IsAvailable() and Cache.EnemiesCount[10] < 2)
@@ -1072,7 +1072,7 @@ local function CDs ()
                 end
             end
             -- actions.cds+=/toxic_blade,if=dot.rupture.ticking
-            if S.ToxicBlade:IsCastable("Melee") and Target:DebuffP(S.Rupture) then
+            if S.ToxicBlade:IsCastable("Melee") and Target:DebuffP(S.Rupture) and Player:ComboPoints() < Player:ComboPointsMax() then
                 if HR.Cast(S.ToxicBlade) then return "Cast Toxic Blade"; end
             end
         end
@@ -1528,7 +1528,7 @@ local function APL()
         end
 		-- Manually added Toxic blade
         -- actions.cds+=/toxic_blade,if=dot.rupture.ticking
-        if S.ToxicBlade:IsCastable("Melee") and Target:DebuffP(S.Rupture) then
+        if S.ToxicBlade:IsCastable("Melee") and Target:DebuffP(S.Rupture) and Player:ComboPoints() < Player:ComboPointsMax() then
             if HR.Cast(S.ToxicBlade) then return "Cast Toxic Blade"; end
         end
         -- actions+=/call_action_list,name=dot
@@ -1553,7 +1553,7 @@ local function APL()
             end
         end
         -- Poisoned Knife Out of Range [EnergyCap] or [PoisonRefresh]
-        if S.PoisonedKnife:IsCastable(30) and not Player:IsStealthedP(true, true)
+        if S.PoisonedKnife:IsCastable(30) and not Player:IsStealthedP(true, true) and Player:ComboPoints() < Player:ComboPointsMax()
             and ((not Target:IsInRange(10) and Player:EnergyTimeToMax() <= Player:GCD()*1.2)
                 or (not Target:IsInRange("Melee") and Target:DebuffRefreshableP(S.DeadlyPoisonDebuff, 4))) then
             if HR.Cast(S.PoisonedKnife) then return "Cast Poisoned Knife"; end
@@ -1883,7 +1883,7 @@ local function PvPRotation(icon)
 		end	
 
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
-        if A.KidneyShot:IsReady(unit) and inMelee and Player:ComboPoints() >= 4 and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.KidneyShot:IsReady(unit) and inMelee and Player:ComboPoints() >= 4 and ActionUnit(unit):IsControlAble("stun", 25) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
    			-- Notification					
             Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
 			return A.KidneyShot:Show(icon)
@@ -1900,7 +1900,7 @@ local function PvPRotation(icon)
 		end		
 		
 		-- Blood of the Enemy
-        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and (ActionUnit(unit):HealthPercent() <= 30 or Player:PrevGCDP(1, S.Vendetta)) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 4 then                                                                 
+        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) and (ActionUnit(unit):HealthPercent() <= 40 or Player:PrevGCDP(1, S.Vendetta)) and HR.CDsON() and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 4 then                                                                 
             return A.BloodoftheEnemy:Show(icon)                                                                                                 
         end 
 		
@@ -1996,11 +1996,11 @@ local function PvPRotation(icon)
         end
 
 		-- Agressive CC Burst Rotation
-		if (ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 3) then
+		if (ActionUnit(unit):HealthPercent() <= 40 or ActionUnit(EnemyHealerUnitID):InCC() >= 5) then
 		    -- SmokeBomb under 30% HP
 		    if S.SmokeBomb:IsAvailable() and Action.GetToggle(2, "SmokeBombFinishComco") then
 		    	if inMelee then
-			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):TimeToDieX(1) < 6 and ActionUnit(unit):HealthPercent() <= 30 then
+			        if A.SmokeBomb:IsReady(unit) and ActionUnit(unit):TimeToDieX(30) < 6 and ActionUnit(unit):HealthPercent() <= 30 then
 					    -- Notification					
                         Action.SendNotification("Offensive Smoke Bomb", A.SmokeBomb.ID)
                         return A.SmokeBomb:Show(icon)
@@ -2011,13 +2011,13 @@ local function PvPRotation(icon)
 			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (not ActionUnit(unit):HasDeBuffs(A.Garrote.ID) or ActionUnit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
 				return A.Garrote:Show(icon)
 			end
+			-- KidneyShot
+			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 0 then
+				return A.KidneyShot:Show(icon)
+			end
 			-- Rupture
 			if inMelee and A.Rupture:IsReady(unit) and A.Rupture:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and (not ActionUnit(unit):HasDeBuffs(A.Rupture.ID) or ActionUnit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
 				return A.Rupture:Show(icon)
-			end
-			-- KidneyShot
-			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
-				return A.KidneyShot:Show(icon)
 			end
 			-- Envenom
 			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((S.ToxicBlade:IsAvailable() and ActionUnit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not S.ToxicBlade:IsAvailable()) and ActionUnit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
@@ -2120,7 +2120,7 @@ local function ArenaRotation(icon, unit)
 		local useKickHeal, useCCHeal, useRacialHeal = A.InterruptIsValid(EnemyHealerUnitID, "TargetMouseover")  
 		
 		-- Blind on Enemy Healer
-        if A.Blind:IsReady(EnemyHealerUnitID) and not A.HonorMedallion:IsReady(EnemyHealerUnitID, true) and ActionUnit(EnemyHealerUnitID):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("disorient", 50) and ActionUnit(unit):HealthPercent() <= 30 then
+        if A.Blind:IsReady(EnemyHealerUnitID) and ActionUnit(EnemyHealerUnitID):GetRange() <= 15 and not ActionUnit(EnemyHealerUnitID):InLOS() and ActionUnit(EnemyHealerUnitID):IsControlAble("disorient", 25) and ActionUnit(unit):HealthPercent() <= 30 then
             return A.Blind:Show(icon)
         end 
 		
@@ -2130,7 +2130,7 @@ local function ArenaRotation(icon, unit)
         end
 		
 		-- Kidney Shot on enemies with burst damage buff
-        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 50) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.KidneyShot:IsReady(unit) and inMelee and ActionUnit(unit):IsControlAble("stun", 25) and ActionUnit(unit):HasBuffs("DamageBuffs") > 0 then
             return A.KidneyShot:Show(icon)
         end          
 
