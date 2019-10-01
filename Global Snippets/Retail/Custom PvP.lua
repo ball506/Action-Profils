@@ -72,6 +72,8 @@ local function Randomizer(option)
 end
 
 -- Should Reflect behavior
+-- Parameter "unit" is mandatory
+-- @ return Boolean
 function Action.ShouldReflect(unit)	
 	local GoodToReflect = false
 	for p = 1, #pvpReflect do
@@ -96,3 +98,33 @@ function Action.ShouldReflect(unit)
     return GoodToReflect
 end
 
+-- Enemy Gladiator Medallion tracker
+-- Parameter "unit" is mandatory
+-- @ return [1] Boolean (Is Gladiator Medallion up for unit)
+-- @ return [2] Number (Remaining cooldown time)
+function Action.UpdateGladiatorTrinket(unit)
+
+	C_PvP.RequestCrowdControlSpell(unit)
+	
+	local spellID, startTime, duration = C_PvP.GetArenaCrowdControlInfo(unit)
+	local EnemyTrinketIsReady = true
+	local RemainingCD = 0
+	
+	if spellID == ACTION_CONST_SPELLID_GLADIATORS_MEDALLION then 
+	    if duration < 0 then 
+	        EnemyTrinketIsReady = true
+	    else
+	        EnemyTrinketIsReady = false
+			RemainingCD = duration
+	    end	
+	elseif spellID == ACTION_CONST_SPELLID_HONOR_MEDALLION then
+	    if duration < 0 then 
+	        EnemyTrinketIsReady = true
+	    else
+	        EnemyTrinketIsReady = false
+			RemainingCD = duration
+	    end	
+	end
+	
+	return EnemyTrinketIsReady, RemainingCD 
+end
