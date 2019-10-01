@@ -1,10 +1,22 @@
 --------------------
 -- Taste TMW Action ProfileUI
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local A = Action
+local TMW                                             = TMW
+local A                                             = Action
+local UnitCooldown                                    = A.UnitCooldown
+local Unit                                            = A.Unit 
+local Player                                        = A.Player 
+local Pet                                             = A.Pet
+local LoC                                             = A.LossOfControl
+local MultiUnits                                    = A.MultiUnits
+local EnemyTeam                                        = A.EnemyTeam
+local FriendlyTeam                                    = A.FriendlyTeam
+local TeamCache                                        = A.TeamCache
+local InstanceInfo                                    = A.InstanceInfo
+local select                                        = select
+local HL                                            = HeroLib 
+local HeroUnit                                      = HL.Unit
+
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
     DateTime = "v1.18 (28.09.2019)",
@@ -675,118 +687,22 @@ A.Data.ProfileUI = {
     -- MSG Actions UI
     [7] = {
         [ACTION_CONST_WARLOCK_AFFLICTION] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+                return     DispelIsReady(thisunit, true)
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
+
         },
         [ACTION_CONST_WARLOCK_DESTRUCTION] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+                return     DispelIsReady(thisunit, true)
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
+
         },
         [ACTION_CONST_WARLOCK_DEMONOLOGY] = { 
-            -- MSG Action Pet Dispell
-            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
-                return     A.DispellMagic:IsReady(unit, true) and 
-                        (
-                            ( 
-                                not Unit(thisunit):IsEnemy() and 
-                                (
-                                    (
-                                        not InPvP() and 
-                                        Env.Dispel(unit)
-                                    ) or 
-                                    (
-                                        InPvP() and 
-                                        EnemyTeam():PlayersInRange(1, 5)
-                                    ) 
-                                )
-                            ) or 
-                            ( 
-                                Unit(thisunit):IsEnemy() and 
-                                Unit(thisunit):GetRange() <= 5 and 
-                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
-                            )                
-                        ) 
+            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+                return     DispelIsReady(thisunit, true)
             ]] },
-            -- MSG Action Pet Kick
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
-            -- MSG Action Fear
-            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
-                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
-                        select(2, CastTime(nil, thisunit)) > 0 and 
-                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
-            ]] },
+
         },
     },
 }
@@ -795,15 +711,31 @@ A.Data.ProfileUI = {
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
+-- SingeMagic
+function A.DispelIsReady(unit, isMsg, skipShouldStop)
+    if Unit(unit):IsPlayer() then 
+        return not Unit(unit):IsEnemy() and not Unit(unit):InLOS() and  
+        (
+            (
+                not isMsg and 
+                A[A.PlayerSpec].SingeMagic:IsReady(unit, nil, nil, true) and A.AuraIsValid(unit, "UseDispel", "Dispel")
+            ) or 
+            (
+                isMsg and 
+                A[A.PlayerSpec].SingeMagic:IsReadyM(unit)                     
+            )
+        )
+    end 
+end 
 
 function A.Main_CastBars(unit, list)
     if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
-    
-    if A[A.PlayerSpec] and A[A.PlayerSpec].SpearHandStrike and A[A.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[A.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
-        return true         
-    end 
+    -- SingeMagic Queue Message 
+    --if A[A.PlayerSpec] and A[A.PlayerSpec].SingeMagic:IsReadyM(unit) then                         
+    --    return true         
+    --end   
 end 
 
 function A.Second_CastBars(unit)

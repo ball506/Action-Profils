@@ -37,6 +37,8 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     PetKick                              = Action.Create({ Type = "SpellSingleColor", ID = 119910, Color = "RED", Desc = "RED Color for Pet Target kick" }),  
+    SingeMagic                           = Action.Create({ Type = "SpellSingleColor", ID = 119905, Color = "YELLOW", Desc = "YELLOW Color for Party dispel"     }),
+    CommandDemon                         = Action.Create({ Type = "Spell", ID = 119898     }),
     -- Generics Spells
     SummonPet                             = Action.Create({ Type = "Spell", ID = 688     }),
     GrimoireofSacrifice                   = Action.Create({ Type = "Spell", ID = 108503     }),
@@ -60,20 +62,20 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     CrashingChaos                         = Action.Create({ Type = "Spell", ID = 277644     }),
     Eradication                           = Action.Create({ Type = "Spell", ID = 196412     }),  
     ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368     }),
-	-- Colorized Spell
-    IncinerateAuto			              = Action.Create({ Type = "Spell", ID = 29722 , Hidden = true     }),
-    IncinerateOrange 		              = Action.Create({ Type = "Spell", ID = 40239 , Hidden = true     }),
-    IncinerateGreen 	                  = Action.Create({ Type = "Spell", ID = 124472 , Hidden = true     }),
-    ImmolateAuto 		                 = Action.Create({ Type = "Spell", ID = 348  , Hidden = true     }),
-    ImmolateOrange 		                 = Action.Create({ Type = "Spell", ID = 118297 , Hidden = true     }),
-    ImmolateGreen 			             = Action.Create({ Type = "Spell", ID = 124470 , Hidden = true     }),
-    ImmolateDebuff 			             = Action.Create({ Type = "Spell", ID = 157736, Hidden = true     }),
-    ConflagrateAuto			             = Action.Create({ Type = "Spell", ID = 17962 , Hidden = true     }),
-    ConflagrateOrange 		             = Action.Create({ Type = "Spell", ID = 156960 , Hidden = true     }),
-    ConflagrateGreen 		             = Action.Create({ Type = "Spell", ID = 124480 , Hidden = true     }),
-    RainOfFireAuto 		              	 = Action.Create({ Type = "Spell", ID = 5740 , Hidden = true     }),
-    RainOfFireOrange 	              	 = Action.Create({ Type = "Spell", ID = 42023 , Hidden = true     }),
-    RainOfFireGreen 	              	 = Action.Create({ Type = "Spell", ID = 173561, Hidden = true     }),
+    -- Colorized Spell
+    IncinerateAuto                          = Action.Create({ Type = "Spell", ID = 29722 , Hidden = true     }),
+    IncinerateOrange                       = Action.Create({ Type = "Spell", ID = 40239 , Hidden = true     }),
+    IncinerateGreen                       = Action.Create({ Type = "Spell", ID = 124472 , Hidden = true     }),
+    ImmolateAuto                          = Action.Create({ Type = "Spell", ID = 348  , Hidden = true     }),
+    ImmolateOrange                          = Action.Create({ Type = "Spell", ID = 118297 , Hidden = true     }),
+    ImmolateGreen                          = Action.Create({ Type = "Spell", ID = 124470 , Hidden = true     }),
+    ImmolateDebuff                          = Action.Create({ Type = "Spell", ID = 157736, Hidden = true     }),
+    ConflagrateAuto                         = Action.Create({ Type = "Spell", ID = 17962 , Hidden = true     }),
+    ConflagrateOrange                      = Action.Create({ Type = "Spell", ID = 156960 , Hidden = true     }),
+    ConflagrateGreen                      = Action.Create({ Type = "Spell", ID = 124480 , Hidden = true     }),
+    RainOfFireAuto                            = Action.Create({ Type = "Spell", ID = 5740 , Hidden = true     }),
+    RainOfFireOrange                        = Action.Create({ Type = "Spell", ID = 42023 , Hidden = true     }),
+    RainOfFireGreen                        = Action.Create({ Type = "Spell", ID = 173561, Hidden = true     }),
     -- Defensive
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
     -- Misc
@@ -88,7 +90,7 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     DarkSoulInstabilityBuff               = Action.Create({ Type = "Spell", ID = 113858, Hidden = true     }),
     BackdraftBuff                         = Action.Create({ Type = "Spell", ID = 117828, Hidden = true     }),
     CrashingChaosBuff                     = Action.Create({ Type = "Spell", ID = 277706 , Hidden = true     }),
-     -- Debuffs 
+    -- Debuffs 
     EradicationDebuff                     = Action.Create({ Type = "Spell", ID = 196414, Hidden = true     }),
     ShiverVenomDebuff                     = Action.Create({ Type = "Spell", ID = 301624, Hidden = true     }),
     ShadowburnDebuff                      = Action.Create({ Type = "Spell", ID = 17877, Hidden = true     }),  
@@ -180,12 +182,12 @@ local S, I = A:HeroCreate()
 Action.HeroSetHookAllTable(S, {
         [3] = "TellMeWhen_Group4_Icon3",
         [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6", 
+        [6] = "TellMeWhen_Group4_Icon6", 
 })
 Action.HeroSetHookAllTable(I, {
         [3] = "TellMeWhen_Group4_Icon3",
         [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6",
+        [6] = "TellMeWhen_Group4_Icon6",
 })
 -- Adding manually missed staff
 --S.Brews                                 = Spell(115308)
@@ -254,11 +256,11 @@ local function GetEnemiesCount(range)
     -- Unit Update - Update differently depending on if splash data is being used
     if HR.AoEON() then
         if Action.GetToggle(2, "AoeDetectionMode") == "USE COMBAT LOGS" then
-	       return active_enemies()
-	    elseif Action.GetToggle(2, "AoeDetectionMode") == "USE SPLASH DATA" then
-	        HL.GetEnemies(range, nil, true, Target)
+            return active_enemies()
+        elseif Action.GetToggle(2, "AoeDetectionMode") == "USE SPLASH DATA" then
+            HL.GetEnemies(range, nil, true, Target)
             return Cache.EnemiesCount[range]
-	    else 
+        else 
             UpdateRanges()
             return Cache.EnemiesCount[40]
         end
@@ -302,14 +304,14 @@ end
 local VarPoolSoulShards = 0;
 
 HL:RegisterForEvent(function()
-  VarPoolSoulShards = 0
+        VarPoolSoulShards = 0
 end, "PLAYER_REGEN_ENABLED")
 
 local EnemyRanges = {40}
 local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
+    for _, i in ipairs(EnemyRanges) do
+        HL.GetEnemies(i);
+    end
 end
 
 -- AoE Detection Mode
@@ -317,11 +319,11 @@ local function GetEnemiesCount(range)
     -- Unit Update - Update differently depending on if splash data is being used
     if HR.AoEON() then
         if Action.GetToggle(2, "AoeDetectionMode") == "USE COMBAT LOGS" then
-	       return active_enemies()
-	    elseif Action.GetToggle(2, "AoeDetectionMode") == "USE SPLASH DATA" then
-	        HL.GetEnemies(range, nil, true, Target)
+            return active_enemies()
+        elseif Action.GetToggle(2, "AoeDetectionMode") == "USE SPLASH DATA" then
+            HL.GetEnemies(range, nil, true, Target)
             return Cache.EnemiesCount[range]
-	    else 
+        else 
             UpdateRanges()
             return Cache.EnemiesCount[40]
         end
@@ -334,41 +336,41 @@ S.ConcentratedFlame:RegisterInFlight()
 S.ChaosBolt:RegisterInFlight()
 
 local function num(val)
-  if val then return 1 else return 0 end
+    if val then return 1 else return 0 end
 end
 
 local function bool(val)
-  return val ~= 0
+    return val ~= 0
 end
 
 local function FutureShard()
-  local Shard = Player:SoulShards()
-  if not Player:IsCasting() then
-    return Shard
-  else
-    if Player:IsCasting(S.UnstableAffliction) 
+    local Shard = Player:SoulShards()
+    if not Player:IsCasting() then
+        return Shard
+    else
+        if Player:IsCasting(S.UnstableAffliction) 
         or Player:IsCasting(S.SeedOfCorruption) then
-      return Shard - 1
-    elseif Player:IsCasting(S.SummonDoomGuard) 
+            return Shard - 1
+        elseif Player:IsCasting(S.SummonDoomGuard) 
         or Player:IsCasting(S.SummonDoomGuardSuppremacy) 
         or Player:IsCasting(S.SummonInfernal) 
         or Player:IsCasting(S.SummonInfernalSuppremacy) 
         or Player:IsCasting(S.GrimoireFelhunter) 
         or Player:IsCasting(S.SummonFelhunter) then
-      return Shard - 1
-    else
-      return Shard
+            return Shard - 1
+        else
+            return Shard
+        end
     end
-  end
 end
 
 local function EnemyHasHavoc()
-  for _, Value in pairs(Cache.Enemies[40]) do
-    if Value:Debuff(S.Havoc) then
-      return Value:DebuffRemainsP(S.Havoc)
+    for _, Value in pairs(Cache.Enemies[40]) do
+        if Value:Debuff(S.Havoc) then
+            return Value:DebuffRemainsP(S.Havoc)
+        end
     end
-  end
-  return 0
+    return 0
 end
 
 --------------------------
@@ -384,12 +386,12 @@ HL.ImmolationTable = {
 -- Immolate OnApply/OnRefresh Listener
 HL:RegisterForSelfCombatEvent(
     function (...)
-    DestGUID, _, _, _, SpellID = select(8, ...);
-       --- Record the Immolate
+        DestGUID, _, _, _, SpellID = select(8, ...);
+        --- Record the Immolate
         if SpellID == 157736 then
-          HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = 0;
+            HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = 0;
         end
-      end
+    end
     , "SPELL_AURA_APPLIED"
     , "SPELL_AURA_REFRESH"
 );
@@ -397,12 +399,12 @@ HL:RegisterForSelfCombatEvent(
 HL:RegisterForSelfCombatEvent(
     function (...)
         DestGUID, _, _, _, SpellID = select(8, ...);
-
+        
         -- Removes the Unit from Immolate Table
         if SpellID == 157736 then
-          if HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] then
-               HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = nil;
-          end
+            if HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] then
+                HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = nil;
+            end
         end
     end
     , "SPELL_AURA_REMOVED"
@@ -413,7 +415,7 @@ HL:RegisterForCombatEvent(
         DestGUID = select(8, ...);
         -- Removes the Unit from Immolate Table
         if HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] then
-          HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = nil;
+            HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = nil;
         end
     end
     , "UNIT_DIED"
@@ -422,67 +424,124 @@ HL:RegisterForCombatEvent(
 -- Conflagrate Listener
 HL:RegisterForSelfCombatEvent(
     function (...)
-       DestGUID, _, _, _, SpellID = select(8, ...);
-
+        DestGUID, _, _, _, SpellID = select(8, ...);
+        
         -- Add a stack to the table
         if SpellID == 17962 then
-          if HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] then
-               HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID]+1;
-          end
+            if HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] then
+                HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID] = HL.ImmolationTable.Destruction.ImmolationDebuff[DestGUID]+1;
+            end
         end
     end
     , "SPELL_CAST_SUCCESS"
 );
 
+local PetType = {
+    [89] = {"Infernal", 30},
+};
+
+HL.DestroGuardiansTable = {
+    --{PetType,petID,dateEvent,UnitPetGUID,CastsLeft}
+    Pets = {
+    },
+    PetList={
+        [89]="Infernal",
+    }
+};
+
+HL:RegisterForSelfCombatEvent(
+    function (...)
+        local dateEvent,_,_,_,_,_,_,UnitPetGUID=select(1,...)
+        local t={} ; i=1
+        
+        for str in string.gmatch(UnitPetGUID, "([^-]+)") do
+            t[i] = str
+            i = i + 1
+        end
+        local PetType=HL.DestroGuardiansTable.PetList[tonumber(t[6])]
+        if PetType then
+            table.insert(HL.DestroGuardiansTable.Pets,{PetType,tonumber(t[6]),GetTime(),UnitPetGUID,5})
+        end
+    end
+    , "SPELL_SUMMON"
+);
+
+-- Summoned pet duration
+local function PetDuration(PetType)
+    if not PetType then 
+        return 0 
+    end
+    local PetsInfo = {
+        [89] = {"Infernal", 30},
+    }
+    local maxduration = 0
+    for key, Value in pairs(HL.DestroGuardiansTable.Pets) do
+        if HL.DestroGuardiansTable.Pets[key][1] == PetType then
+            if (PetsInfo[HL.DestroGuardiansTable.Pets[key][2]][2] - (GetTime() - HL.DestroGuardiansTable.Pets[key][3])) > maxduration then
+                maxduration = HL.OffsetRemains((PetsInfo[HL.DestroGuardiansTable.Pets[key][2]][2] - (GetTime() - HL.DestroGuardiansTable.Pets[key][3])), "Auto" );
+            end
+        end
+    end
+    return maxduration
+end
+
+local function InfernalIsActive()
+    if PetDuration("Infernal") > 1 then
+        return true
+    else
+        return false
+    end
+end
+
 local function EvaluateCycleImmolate46(TargetUnit)
-  return TargetUnit:DebuffRemainsP(S.ImmolateDebuff) < 5 and (not S.Cataclysm:IsAvailable() or S.Cataclysm:CooldownRemainsP() > TargetUnit:DebuffRemainsP(S.ImmolateDebuff))
+    return TargetUnit:DebuffRemainsP(S.ImmolateDebuff) < 5 and (not S.Cataclysm:IsAvailable() or S.Cataclysm:CooldownRemainsP() > TargetUnit:DebuffRemainsP(S.ImmolateDebuff))
 end
 
 local function EvaluateCycleHavoc71(TargetUnit)
-  return not (TargetUnit == Target) and Cache.EnemiesCount[40] < 4
+    return not (TargetUnit == Target) and Cache.EnemiesCount[40] < 4
 end
 
 local function EvaluateCycleHavoc106(TargetUnit)
-  return not (TargetUnit == Target) and (not S.GrimoireofSupremacy:IsAvailable() or not S.Inferno:IsAvailable() or S.GrimoireofSupremacy:IsAvailable() and InfernalRemains <= 10)
+    return not (TargetUnit == Target) and (not S.GrimoireofSupremacy:IsAvailable() or not S.Inferno:IsAvailable() or S.GrimoireofSupremacy:IsAvailable() and InfernalRemains <= 10)
 end
 
 local function EvaluateCycleImmolate337(TargetUnit)
-  return TargetUnit:DebuffRefreshableCP(S.ImmolateDebuff) and (not S.Cataclysm:IsAvailable() or S.Cataclysm:CooldownRemainsP() > TargetUnit:DebuffRemainsP(S.ImmolateDebuff))
+    return TargetUnit:DebuffRefreshableCP(S.ImmolateDebuff) and (not S.Cataclysm:IsAvailable() or S.Cataclysm:CooldownRemainsP() > TargetUnit:DebuffRemainsP(S.ImmolateDebuff))
 end
 
 local function EvaluateCycleHavoc402(TargetUnit)
-  return not (TargetUnit == Target) and (TargetUnit:DebuffRemainsP(S.ImmolateDebuff) > S.ImmolateDebuff:BaseDuration() * 0.5 or not S.InternalCombustion:IsAvailable()) and (not S.SummonInfernal:CooldownUpP() or not S.GrimoireofSupremacy:IsAvailable() or S.GrimoireofSupremacy:IsAvailable() and InfernalRemains <= 10)
+    return not (TargetUnit == Target) and (TargetUnit:DebuffRemainsP(S.ImmolateDebuff) > S.ImmolateDebuff:BaseDuration() * 0.5 or not S.InternalCombustion:IsAvailable()) and (not S.SummonInfernal:CooldownUpP() or not S.GrimoireofSupremacy:IsAvailable() or S.GrimoireofSupremacy:IsAvailable() and InfernalRemains <= 10)
 end
 
 local function Init ()
-  HL.RegisterNucleusAbility(42223, 8, 6)               -- Rain of Fire
-  HL.RegisterNucleusAbility(152108, 8, 6)              -- Cataclysm
-  HL.RegisterNucleusAbility(22703, 10, 6)               -- Summon Infernal
+    HL.RegisterNucleusAbility(42223, 8, 6)               -- Rain of Fire
+    HL.RegisterNucleusAbility(152108, 8, 6)              -- Cataclysm
+    HL.RegisterNucleusAbility(22703, 10, 6)               -- Summon Infernal
 end
 Init()
 
 --- ======= ACTION LISTS =======
 local function APL() 
-	-- Action specifics remap
-	local ShouldStop = Action.ShouldStop()
-	local Pull = Action.BossMods_Pulling()
-	
-	-- Local functions remap
+    -- Action specifics remap
+    local ShouldStop = Action.ShouldStop()
+    local Pull = Action.BossMods_Pulling()
+    
+    -- Local functions remap
     EnemiesCount = GetEnemiesCount(10)
     HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
-    InfernalActive = (S.SummonInfernal:CooldownRemainsP() > 150) and true or false
-    InfernalRemains = InfernalActive and (30 - (180 - S.SummonInfernal:CooldownRemainsP())) or 0
+    InfernalActive = InfernalIsActive() --(S.SummonInfernal:CooldownRemainsP() > 150) and true or false
+    InfernalRemains = PetDuration("Infernal") --InfernalActive and (30 - (180 - S.SummonInfernal:CooldownRemainsP())) or 0
     DetermineEssenceRanks()
     HandlePetChoice()
     HandleSettings()
-	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
     
-	-- Pet Selection Menu
+    if Player:IsCasting() or Player:IsChanneling() then
+        ShouldStop = true
+    else
+        ShouldStop = false
+    end
+    
+    -- Pet Selection Menu
     local PetSpell = HandlePetChoice()    
     if PetSpell == "IMP" then
         --print("IMP")
@@ -499,7 +558,7 @@ local function APL()
     else
         print("No Pet Data") 
     end
-
+    
     local function Precombat_DBM()
         -- flask
         -- food
@@ -527,8 +586,8 @@ local function APL()
                 if HR.Cast(CastIncinerate) then return "incinerate 14"; end
             end
         end
-    end	
-	
+    end    
+    
     local function Precombat()
         -- flask
         -- food
@@ -664,7 +723,7 @@ local function APL()
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll 249"; end
         end
         -- use_item,name=shiver_venom_relic,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.ShiverVenomRelic:IsEquipReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.ShiverVenomRelic:IsEquipReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic 250"; end
         end
         -- use_item,name=aquipotent_nautilus,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
@@ -746,7 +805,7 @@ local function APL()
             if HR.Cast(CastIncinerate) then return "incinerate 157"; end
         end
     end
-
+    
     local function GoSupInfernal()
         -- rain_of_fire,if=soul_shard=5&!buff.backdraft.up&buff.memory_of_lucid_dreams.up&buff.grimoire_of_supremacy.stack<=10
         if S.RainofFire:IsReadyP() and EnemiesCount >= 5 and (Player:SoulShardsP() == 5 and Player:BuffDownP(S.BackdraftBuff) and Player:BuffP(S.MemoryofLucidDreams) and Player:BuffStackP(S.GrimoireofSupremacy) <= 10) then
@@ -824,32 +883,32 @@ local function APL()
         end
     end
     
-	-- call DBM precombat
+    -- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
         local ShouldReturn = Precombat_DBM(); 
-            if ShouldReturn then return ShouldReturn; 
+        if ShouldReturn then return ShouldReturn; 
         end    
     end
     -- call non DBM precombat
     if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
         local ShouldReturn = Precombat(); 
-            if ShouldReturn then return ShouldReturn; 
+        if ShouldReturn then return ShouldReturn; 
         end    
     end
-	
-	
+    
+    
     
     --- In Combat
-     if Everyone.TargetIsValid() then
-	
-	    -- Interrupt Handler
+    if Everyone.TargetIsValid() then
+        
+        -- Interrupt Handler
         local randomInterrupt = math.random(25, 70)
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
-		-- PetKick
+        -- PetKick
         if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 
-		    if ActionUnit(unit):CanInterrupt(true) then
+            if ActionUnit(unit):CanInterrupt(true) then
                 if HR.Cast(S.PetKick, true) then return "PetKick 5"; end
             else 
                 return
@@ -946,16 +1005,16 @@ local function APL()
         -- incinerate
         if S.Incinerate:IsCastableP() then
             if HR.Cast(CastIncinerate) then return "incinerate 521"; end
-        end	
+        end    
     end
 end
 -- Finished
 
 
-
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
+
 
 -- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
@@ -964,28 +1023,6 @@ A[3] = function(icon)
     end
 end
 
---[[
--- [6] is Passive rotation (limited actions, usually @player, @raid1, @arena1)
-A[6] = function(icon)    
-    return ArenaRotation(icon, "arena1")
-end
 
--- [7] is Passive rotation (limited actions, usually @party1, @raid2, @arena2)
-A[7] = function(icon)
-    local Party = PartyRotation("party1") 
-    if Party then 
-        return Party:Show(icon)
-    end 
-    
-    return ArenaRotation(icon, "arena2")
-end
 
--- [8] is Passive rotation (limited actions, usually @party2, @raid3, @arena3)
-A[8] = function(icon)
-    local Party = PartyRotation("party2") 
-    if Party then 
-        return Party:Show(icon)
-    end     
-    
-    return ArenaRotation(icon, "arena3")
-end]]--
+
