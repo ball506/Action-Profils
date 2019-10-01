@@ -87,6 +87,7 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555 }),
     RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
     ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    ShiverVenomDebuff                     = Action.Create({ Type = "Spell", ID = 301624, Hidden = true}),		
     AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     VialofStorms                         = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
@@ -879,6 +880,10 @@ local function APL()
         if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:HasHeroism() or Target:TimeToDie() <= 80 or Target:HealthPercentage() < 35) then
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 283"; end
         end
+        -- use_item,name=shiver_venom_relicif=!buff.ca_inc.up,target_if=dot.shiver_venom.stack>=5
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
+            if HR.CastCycle(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
+        end
         -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
         VarDotsUp = num(Target:DebuffP(S.ShadowWordPainDebuff) and Target:DebuffP(S.VampiricTouchDebuff))
         -- berserking
@@ -895,9 +900,9 @@ local function APL()
 		end
 
 		-- Void Form allowed to cut Mindsear & Mindflay
-		if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and S.VoidEruption:CooldownRemainsP() < 0.1 then 
-		    if HR.Cast(S.MindBlast) then return "StopCast" end		
-		end
+		--if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and S.VoidEruption:CooldownRemainsP() < 0.1 then 
+		--    if HR.Cast(S.StopCast) then return "StopCast" end		
+		--end
 
 		-- Void Bolt allowed to cut Mindsear & Mindflay
 		if (Player:IsChanneling(S.MindSear) or Player:IsChanneling(S.MindFlay)) and Player:BuffP(S.VoidformBuff) and S.VoidBolt:CooldownRemainsP() < 0.1 then 
