@@ -37,7 +37,8 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     PetKick                              = Action.Create({ Type = "SpellSingleColor", ID = 119910, Color = "RED", Desc = "RED Color for Pet Target kick" }),  
-    SingeMagic                           = Action.Create({ Type = "SpellSingleColor", ID = 119905, Color = "YELLOW", Desc = "YELLOW Color for Party dispel"     }),
+    SingeMagicParty                      = Action.Create({ Type = "SpellSingleColor", ID = 119905, Color = "YELLOW", Desc = "YELLOW Color for Party dispel"     }),
+    SingeMagic                           = Action.Create({ Type = "Spell", ID = 89808, Texture = 59752    }), -- Use Human Racial texture because SingeMagic with Xerath Codex (Green Spells) dont work
     CommandDemon                         = Action.Create({ Type = "Spell", ID = 119898     }),
     -- Generics Spells
     SummonPet                             = Action.Create({ Type = "Spell", ID = 688     }),

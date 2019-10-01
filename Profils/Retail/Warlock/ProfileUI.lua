@@ -16,6 +16,7 @@ local InstanceInfo                                    = A.InstanceInfo
 local select                                        = select
 local HL                                            = HeroLib 
 local HeroUnit                                      = HL.Unit
+local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
@@ -463,6 +464,65 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- PvP -- ",
                     },
                 },
@@ -688,19 +748,19 @@ A.Data.ProfileUI = {
     [7] = {
         [ACTION_CONST_WARLOCK_AFFLICTION] = { 
             ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
-                return     DispelIsReady(thisunit, true)
+                return     DispelIsReady(thisunit, true, true)
             ]] },
 
         },
         [ACTION_CONST_WARLOCK_DESTRUCTION] = { 
             ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
-                return     DispelIsReady(thisunit, true)
+                return     DispelIsReady(thisunit, true, true)
             ]] },
 
         },
         [ACTION_CONST_WARLOCK_DEMONOLOGY] = { 
             ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
-                return     DispelIsReady(thisunit, true)
+                return     DispelIsReady(thisunit, true, true)
             ]] },
 
         },
@@ -713,18 +773,16 @@ A.Data.ProfileUI = {
 -----------------------------------------
 -- SingeMagic
 function A.DispelIsReady(unit, isMsg, skipShouldStop)
-    if Unit(unit):IsPlayer() then 
-        return not Unit(unit):IsEnemy() and not Unit(unit):InLOS() and  
-        (
-            (
-                not isMsg and 
-                A[A.PlayerSpec].SingeMagic:IsReady(unit, nil, nil, true) and A.AuraIsValid(unit, "UseDispel", "Dispel")
-            ) or 
-            (
-                isMsg and 
-                A[A.PlayerSpec].SingeMagic:IsReadyM(unit)                     
-            )
-        )
+	if Unit(unit):IsPlayer() then 
+        if not isMsg then		
+            return not Unit(unit):IsEnemy() and not Unit(unit):InLOS() and A[A.PlayerSpec].SingeMagic:IsReady(unit, nil, nil, true) and A.AuraIsValid(unit, "UseDispel", "Dispel")
+		else
+		    -- Notification			
+			-- Mate in raid need to create a macro with their Index by doing this in game : /script print(UnitInRaid("player"))	
+            -- 	
+            A.SendNotification("Dispel requested by : " .. UnitName(unit), 119905)
+		    return A[A.PlayerSpec].SingeMagic:IsReadyM(unit) 
+		end
     end 
 end 
 
