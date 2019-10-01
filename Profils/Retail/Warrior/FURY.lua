@@ -544,9 +544,9 @@ local function APL()
         ---    if HR.Cast(S.Recklessness, Action.GetToggle(2, "OffGCDasOffGCD")) then return "recklessness 112"; end
         --end
         -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-       -- if S.Whirlwind:IsCastableP("Melee") and not ShouldStop and (Cache.EnemiesCount[8] > 1 and not Player:BuffP(S.MeatCleaverBuff)) then
-       --     if HR.Cast(S.Whirlwind) then return "whirlwind 114"; end
-       -- end
+        if S.Whirlwind:IsCastableP("Melee") and not ShouldStop and HR.AoEON() and (Cache.EnemiesCount[8] > 1 and not Player:BuffP(S.MeatCleaverBuff)) then
+            if HR.Cast(S.Whirlwind) then return "whirlwind 114"; end
+        end
 		local currentZoneID = select(8, GetInstanceInfo())
         -- Eternal Palace Razor Coral usage
         if Player:InRaid() and currentZoneID == 2164 then
