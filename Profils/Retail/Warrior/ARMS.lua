@@ -749,7 +749,7 @@ end
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
-    A.IsUnitEnemy(unit) and  
+    Action.IsUnitEnemy(unit) and  
     ActionUnit(unit):GetRange() <= 5 and 
     ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
@@ -760,11 +760,11 @@ A[1] = function(icon)
         AntiFakeStun("mouseover") or 
         AntiFakeStun("target") or 
         (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target") and                     
+            not Action.IsUnitEnemy("mouseover") and 
+            not Action.IsUnitEnemy("target") and                     
             (
-                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
+                (Action.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
+                (not Action.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
             )
         )
     )
@@ -843,7 +843,7 @@ local function PvPRotation(icon)
                     -- TTD 
                     ActionUnit("player"):TimeToDieX(25) < 5 or 
                     (
-                        A.IsInPvP and 
+                        Action.IsInPvP and 
                         (
                             ActionUnit("player"):UseDeff() or 
                             (
@@ -900,17 +900,17 @@ local function PvPRotation(icon)
             return A.RallyingCry
         end  
     end 
-    SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+    SelfDefensives = Action.MakeFunctionCachedStatic(SelfDefensives)
 
 	local function Reflects(unit)
-	    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover") 
+	    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover") 
 		
 		-- Reflect
    		if A.SpellReflection:IsReady(unit) and Action.ShouldReflect(unit) then
     	    return A.SpellReflection:Show(icon)
     	end	
 	end
-	Reflects = A.MakeFunctionCachedDynamic(Reflects)
+	Reflects = Action.MakeFunctionCachedDynamic(Reflects)
 	
     local function Interrupts(unit)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
@@ -944,7 +944,7 @@ local function PvPRotation(icon)
             return A.BullRush
         end      
     end 
-    Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+    Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
 
     -- Passive 
@@ -1171,7 +1171,7 @@ local function PvPRotation(icon)
     end 
         
     -- Mouseover         
-    if A.IsUnitEnemy("mouseover") then 
+    if Action.IsUnitEnemy("mouseover") then 
         unit = "mouseover"
         -- Interrupts
         if Interrupts(unit) then 
@@ -1188,7 +1188,7 @@ local function PvPRotation(icon)
     end 
         
     -- Target                         
-    if A.IsUnitEnemy("target") then 
+    if Action.IsUnitEnemy("target") then 
         unit = "target"
         -- Interrupts
         if Interrupts(unit) then 
