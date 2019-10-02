@@ -198,7 +198,7 @@ local StunInterrupts = {
   {S.IntimidatingShout, "Cast Intimidating Shout (Interrupt)", function () return true; end},
 };
 
-local EnemyRanges = {8, "Melee"}
+local EnemyRanges = {5, 8, "Melee"}
 local function UpdateRanges()
   for _, i in ipairs(EnemyRanges) do
     HL.GetEnemies(i);
@@ -443,7 +443,7 @@ local function APL()
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
   	    
 		-- Pummel
-  	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop and Target:IsInterruptible() then 
+  	    if useKick and S.Pummel:IsReady() and Target:IsInRange("Melee") and not ShouldStop and Target:IsInterruptible() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
 			else 
@@ -612,7 +612,7 @@ end
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
-    A.IsUnitEnemy(unit) and  
+    Action.IsUnitEnemy(unit) and  
     ActionUnit(unit):GetRange() <= 5 and 
     ActionUnit(unit):IsControlAble("stun", 0) and 
     A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
@@ -623,11 +623,11 @@ A[1] = function(icon)
         AntiFakeStun("mouseover") or 
         AntiFakeStun("target") or 
         (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target") and                     
+            not Action.IsUnitEnemy("mouseover") and 
+            not Action.IsUnitEnemy("target") and                     
             (
-                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
+                (Action.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
+                (not Action.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
             )
         )
     )
@@ -639,9 +639,9 @@ end
 -- [2] Kick AntiFake Rotation
 A[2] = function(icon)        
     local unit
-    if A.IsUnitEnemy("mouseover") then 
+    if Action.IsUnitEnemy("mouseover") then 
         unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
+    elseif Action.IsUnitEnemy("target") then 
         unit = "target"
     end 
     
