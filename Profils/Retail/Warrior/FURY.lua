@@ -441,12 +441,12 @@ local function APL()
  	 	local randomInterrupt = math.random(25, 70)
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
-  	    -- Pummel
-  	    if useKick and S.Pummel:IsReady() then 
+  	    
+		-- Pummel
+  	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop and Target:IsInterruptible() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
-         	else 
+			else 
           	    return
          	end 
       	end 
@@ -549,17 +549,13 @@ local function APL()
         end
 		local currentZoneID = select(8, GetInstanceInfo())
         -- Eternal Palace Razor Coral usage
-        if Player:InRaid() and currentZoneID == 2164 then
-            local ShouldReturn = RazorCoralUsage(); 
-                if ShouldReturn then return ShouldReturn; 
-			end
-        end 	
-        -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(buff.guardian_of_azeroth.up|!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Target:HealthPercentage() < 30 and Target:DebuffP(S.ConductiveInkDebuff)) or (Target:DebuffDownP(S.ConductiveInkDebuff) and Player:BuffP(S.MemoryofLucidDreams) or Player:PrevGCDP(2, S.GuardianofAzeroth) or Player:PrevGCDP(2, S.Recklessness) and (Player:BuffP(S.GuardianofAzeroth) or not S.MemoryofLucidDreams:IsAvailable() and not S.GuardianofAzeroth:IsAvailable()))) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 114"; end
-        end
+        --if Player:InRaid() and currentZoneID == 2164 then
+        --    local ShouldReturn = RazorCoralUsage(); 
+        --        if ShouldReturn then return ShouldReturn; 
+		--	end
+        --end 	
         -- use_item,name=ashvanes_razor_coral,if=recklessness.buff
-        if I.AshvanesRazorCoral:IsEquipped() and not Player:InRaid() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and ((not Target:DebuffP(S.RazorCoralDebuff) and ActionUnit("target"):IsBoss()) or (Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() < 31 or S.BloodoftheEnemy:CooldownRemainsP() <= 2 and Target:DebuffP(S.RazorCoralDebuff))) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
         -- blood_fury
