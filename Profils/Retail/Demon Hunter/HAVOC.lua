@@ -20,7 +20,7 @@ local ActionUnit = Action.Unit
 
 Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   -- Racial
-  ArcaneTorrent                        = Action.Create({ Type = "Spell", ID = 50613     }),
+  ArcaneTorrent                        = Action.Create({ Type = "Spell", ID = 202719     }),
   BloodFury                            = Action.Create({ Type = "Spell", ID = 20572      }),
   Fireblood                            = Action.Create({ Type = "Spell", ID = 265221     }),
   AncestralCall                        = Action.Create({ Type = "Spell", ID = 274738     }),
@@ -391,7 +391,7 @@ local function APL()
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast 57"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and not ShouldStop and (Target:DebuffDownP(S.RazorCoralDebuff) and ActionUnit("target"):IsBoss()) or (Target:DebuffP(S.RazorCoralDebuff) and Target:DebuffP(S.ConductiveInkDebuff) or Player:BuffRemainsP(S.MetamorphosisBuff) > 20 and Target:HealthPercentage() < 31) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and not ShouldStop and ( (Target:DebuffDownP(S.RazorCoralDebuff) and ActionUnit("target"):IsBoss()) or (Target:DebuffP(S.RazorCoralDebuff) and Target:DebuffP(S.ConductiveInkDebuff)) or (ActionUnit("target"):IsBoss() and Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() < 31) ) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
         -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
@@ -603,7 +603,7 @@ local function APL()
         end	
 		
         -- Arcane Torrent dispell or if FuryDeficit >= 30
-        if S.ArcaneTorrent:IsReady() and Action.GetToggle(1, "Racial") and not ShouldStop and (Action.AuraIsValid("target", "UseDispel", "Dispel") or Player:FuryDeficit() >= 30) then
+        if S.ArcaneTorrent:IsCastableP() and Action.GetToggle(1, "Racial") and HL.CombatTime() >= 7 and not ShouldStop and (Action.AuraIsValid("target", "UseDispel", "Dispel") or Player:FuryDeficit() > 30) then
             if HR.Cast(S.ArcaneTorrent) then return "" end
         end		
 
