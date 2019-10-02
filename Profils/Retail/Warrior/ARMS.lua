@@ -688,6 +688,10 @@ local function APL()
         if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (not S.Warbreaker:IsAvailable() and S.ColossusSmash:CooldownRemainsP() < 3 or S.Warbreaker:CooldownRemainsP() < 3) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
+        -- execute,if=buff.sudden_death.react
+        if S.Execute:IsReady("Melee") and not ShouldStop and (Player:BuffP(S.SuddenDeathBuff)) then
+            if HR.Cast(S.Execute) then return "execute 298"; end
+        end
         -- run_action_list,name=hac,if=raid_event.adds.exists
         if (Cache.EnemiesCount[8] > 1) then
             return Hac();
