@@ -823,6 +823,18 @@ local function APL()
         if S.FlameShock:IsCastableP() and not ShouldStop and Player:IsMoving() and Player:MovingFor() > 6 then
             if HR.Cast(S.FlameShock) then return "flame_shock 571"; end
         end
+		-- 14 Lavaburst while moving
+        if S.LavaBurst:IsCastableP() and Player:IsMoving() and Target:DebuffRemainsP(S.FlameShockDebuff) >= S.LavaBurst:CastTime() and Player:BuffP(S.LavaSurgeBuff) and FutureMaelstromPower() <= 90 then
+            if HR.Cast(S.LavaBurst) then return "lava_burst 734"; end
+        end		
+        -- 15 lightning_bolt while moving w buff sk
+        if S.LightningBolt:IsCastableP() and Player:IsMoving()  and Player:BuffP(S.StormkeeperBuff) then
+            if HR.Cast(S.LightningBolt) then return "lightning_bolt 556"; end
+        end		
+		-- 16 frost_shock  ,moving
+        if S.FrostShock:IsCastableP() and Player:IsMoving() and not Player:BuffP(S.StormkeeperBuff) then
+            if HR.Cast(S.FrostShock, Action.GetToggle(2, "OffGCDasOffGCD")) then return "frost_shock 157"; end
+        end	
         -- frost_shock,moving=1
         if S.FrostShock:IsCastableP() and not ShouldStop and Player:IsMoving() then
             if HR.Cast(S.FrostShock) then return "frost_shock 573"; end
