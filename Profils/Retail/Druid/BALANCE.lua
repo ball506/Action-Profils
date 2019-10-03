@@ -373,12 +373,6 @@ local function APL()
     HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
 	DetermineEssenceRanks()
 	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
   	local function Precombat_DBM()	    
         -- flask
         -- food
@@ -611,23 +605,23 @@ local function APL()
             if HR.Cast(S.Starfall, Action.GetToggle(2, "GCDasOffGCD")) then return "starfall 164"; end
         end
         -- starsurge,if=(talent.starlord.enabled&(buff.starlord.stack<3|buff.starlord.remains>=5&buff.arcanic_pulsar.stack<8)|!talent.starlord.enabled&(buff.arcanic_pulsar.stack<8|buff.ca_inc.up))&spell_targets.starfall<variable.sf_targets&buff.lunar_empowerment.stack+buff.solar_empowerment.stack<4&buff.solar_empowerment.stack<3&buff.lunar_empowerment.stack<3&(!variable.az_ss|!buff.ca_inc.up|!prev.starsurge)|target.time_to_die<=execute_time*astral_power%40|!solar_wrath.ap_check
-        if S.Starsurge:IsReadyP() and ((S.Starlord:IsAvailable() and (Player:BuffStackP(S.StarlordBuff) < 3 or Player:BuffRemainsP(S.StarlordBuff) >= 5 and Player:BuffStackP(S.ArcanicPulsarBuff) < 8) or not S.Starlord:IsAvailable() and (Player:BuffStackP(S.ArcanicPulsarBuff) < 8 or Player:BuffP(CaInc()))) and EnemiesCount < VarSfTargets and Player:BuffStackP(S.LunarEmpowermentBuff) + Player:BuffStackP(S.SolarEmpowermentBuff) < 4 and Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and Player:BuffStackP(S.LunarEmpowermentBuff) < 3 and (not bool(VarAzSs) or Player:BuffDownP(CaInc()) or not Player:PrevGCDP(1, S.Starsurge)) or Target:TimeToDie() <= S.Starsurge:ExecuteTime() * FutureAstralPower() / 40 or not AP_Check(S.SolarWrath)) then
+        if S.Starsurge:IsReadyP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Starsurge) or not S.StreakingStars:AzeriteEnabled()) and ((S.Starlord:IsAvailable() and (Player:BuffStackP(S.StarlordBuff) < 3 or Player:BuffRemainsP(S.StarlordBuff) >= 5 and Player:BuffStackP(S.ArcanicPulsarBuff) < 8) or not S.Starlord:IsAvailable() and (Player:BuffStackP(S.ArcanicPulsarBuff) < 8 or Player:BuffP(CaInc()))) and EnemiesCount < VarSfTargets and Player:BuffStackP(S.LunarEmpowermentBuff) + Player:BuffStackP(S.SolarEmpowermentBuff) < 4 and Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and Player:BuffStackP(S.LunarEmpowermentBuff) < 3 and (not bool(VarAzSs) or Player:BuffDownP(CaInc()) or not Player:PrevGCDP(1, S.Starsurge)) or Target:TimeToDie() <= S.Starsurge:ExecuteTime() * FutureAstralPower() / 40 or not AP_Check(S.SolarWrath)) then
             if HR.Cast(S.Starsurge) then return "starsurge 188"; end
         end
         -- sunfire,if=buff.ca_inc.up&buff.ca_inc.remains<gcd.max&variable.az_ss&dot.moonfire.remains>remains
-        if S.Sunfire:IsCastableP() and not ShouldStop and (Player:BuffP(CaInc()) and Player:BuffRemainsP(CaInc()) < Player:GCD() and bool(VarAzSs) and Target:DebuffRemainsP(S.MoonfireDebuff) > Target:DebuffRemainsP(S.SunfireDebuff)) then
+        if S.Sunfire:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Sunfire) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and (Player:BuffP(CaInc()) and Player:BuffRemainsP(CaInc()) < Player:GCD() and bool(VarAzSs) and Target:DebuffRemainsP(S.MoonfireDebuff) > Target:DebuffRemainsP(S.SunfireDebuff)) then
             if HR.Cast(S.Sunfire) then return "sunfire 222"; end
         end
         -- moonfire,if=buff.ca_inc.up&buff.ca_inc.remains<gcd.max&variable.az_ss
-        if S.Moonfire:IsCastableP() and not ShouldStop and (Player:BuffP(CaInc()) and Player:BuffRemainsP(CaInc()) < Player:GCD() and bool(VarAzSs)) then
+        if S.Moonfire:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Moonfire) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and (Player:BuffP(CaInc()) and Player:BuffRemainsP(CaInc()) < Player:GCD() and bool(VarAzSs)) then
             if HR.Cast(S.Moonfire) then return "moonfire 238"; end
         end
         -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
-        if S.Sunfire:IsCastableP() and not ShouldStop and EvaluateCycleSunfire250(Target) then
+        if S.Sunfire:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Sunfire) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and EvaluateCycleSunfire250(Target) then
             if HR.Cast(S.Sunfire) then return "sunfire 308" end
         end
         -- moonfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=6&(!variable.az_ss|!buff.ca_inc.up|!prev.moonfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
-        if S.Moonfire:IsCastableP() and not ShouldStop and EvaluateCycleMoonfire313(Target) then
+        if S.Moonfire:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Moonfire) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and EvaluateCycleMoonfire313(Target) then
             if HR.Cast(S.Moonfire) then return "moonfire 343" end
         end
         -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
@@ -639,7 +633,7 @@ local function APL()
             if HR.Cast(S.Moonfire) then return "moonfire 343" end
         end
         -- stellar_flare,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))>=5&(!variable.az_ss|!buff.ca_inc.up|!prev.stellar_flare)
-        if S.StellarFlare:IsCastableP() and not ShouldStop and EvaluateCycleStellarFlare348(Target) then
+        if S.StellarFlare:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.StellarFlare) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and EvaluateCycleStellarFlare348(Target) then
             if HR.Cast(S.StellarFlare) then return "stellar_flare 360" end
         end
         -- new_moon,if=ap_check
@@ -655,15 +649,15 @@ local function APL()
             if HR.Cast(S.FullMoon) then return "full_moon 365"; end
         end
         -- lunar_strike,if=buff.solar_empowerment.stack<3&(ap_check|buff.lunar_empowerment.stack=3)&((buff.warrior_of_elune.up|buff.lunar_empowerment.up|spell_targets>=2&!buff.solar_empowerment.up)&(!variable.az_ss|!buff.ca_inc.up)|variable.az_ss&buff.ca_inc.up&prev.solar_wrath)
-        if S.LunarStrike:IsCastableP() and not ShouldStop and (Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and (AP_Check(S.LunarStrike) or Player:BuffStackP(S.LunarEmpowermentBuff) == 3) and ((Player:BuffP(S.WarriorofEluneBuff) or Player:BuffP(S.LunarEmpowermentBuff)) and (not bool(VarAzSs) or Player:BuffDownP(CaInc())) or bool(VarAzSs) and Player:BuffP(CaInc()) and Player:PrevGCDP(1, S.SolarWrath))) then
+        if S.LunarStrike:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.LunarStrike) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and (Player:BuffStackP(S.SolarEmpowermentBuff) < 3 and (AP_Check(S.LunarStrike) or Player:BuffStackP(S.LunarEmpowermentBuff) == 3) and ((Player:BuffP(S.WarriorofEluneBuff) or Player:BuffP(S.LunarEmpowermentBuff)) and (not bool(VarAzSs) or Player:BuffDownP(CaInc())) or bool(VarAzSs) and Player:BuffP(CaInc()) and Player:PrevGCDP(1, S.SolarWrath))) then
             if HR.Cast(S.LunarStrike) then return "lunar_strike 367"; end
         end
         -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
-        if S.SolarWrath:IsCastableP() and not ShouldStop and (VarAzSs < 3 or Player:BuffDownP(CaInc()) or not Player:PrevGCDP(1, S.SolarWrath)) then
+        if S.SolarWrath:IsCastableP() and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.SolarWrath) or not S.StreakingStars:AzeriteEnabled()) and not ShouldStop and (VarAzSs < 3 or Player:BuffDownP(CaInc()) or not Player:PrevGCDP(1, S.SolarWrath)) then
             if HR.Cast(S.SolarWrath) then return "solar_wrath 393"; end
         end
         -- sunfire
-        if S.Sunfire:IsCastableP() and not ShouldStop then
+        if S.Sunfire:IsCastableP() and not ShouldStop and (S.StreakingStars:AzeriteEnabled() and not Player:PrevGCDP(1, S.Sunfire) or not S.StreakingStars:AzeriteEnabled()) then
             if HR.Cast(S.Sunfire) then return "sunfire 399"; end
         end	
     end
