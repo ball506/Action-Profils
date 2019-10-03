@@ -389,29 +389,29 @@ local function APL()
 	-- Razor Coral logic with Eternal Palace
 	local function RazorCoralUsage()
 		-- Sivara - a bit pre 30%
-        if (Target:NPCID() == 151881 or Target:NPCID() == 155144) and Target:HealthPercentage() <= 33 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+        if (Target:NPCID() == 151881 or Target:NPCID() == 155144) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Radiance - I think also a bit pre 30%
-        if Target:NPCID() == 152364 and Target:HealthPercentage() <= 33 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+        if Target:NPCID() == 152364 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Behemoth 20 sec pre phase change or line up with last CDs on the phase.
         -- Black Water Behemot timerNextPhase
         -- InstanceDifficulty - See https://wow.gamepedia.com/DifficultyID
-        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and Target:DebuffP(S.RazorCoralDebuff) and I.AshvanesRazorCoral:IsReady() and TrinketON() and Player:BuffDownP(S.RecklessnessBuff) then
+        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) and I.AshvanesRazorCoral:IsReady() and TrinketON() then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral behemot"; end
         end 
 		-- Ashvane - a bit pre 30%
-        if (Target:NPCID() == 153142 or Target:NPCID() == 152236) and Target:HealthPercentage() <= 33 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+        if (Target:NPCID() == 153142 or Target:NPCID() == 152236) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
-		-- Orgozoa - every trash fight I guess.
-        if ((Target:NPCID() == 152128 and Action.DBM_GetTimer("warnCallofTender") > 0 and Action.DBM_GetTimer("warnCallofTender") <= 2) or Target:NPCID() == 152159) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+		-- Orgozoa - keep for end fight in lower realm
+        if Target:NPCID() == 152128 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Court -  a bit pre 30%
-        if (Target:NPCID() == 152853 or Target:NPCID() == 152852) and Target:HealthPercentage() <= 33 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffDownP(S.RecklessnessBuff) then
+        if (Target:NPCID() == 152853 or Target:NPCID() == 152852) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 	end
@@ -549,13 +549,13 @@ local function APL()
         end
 		local currentZoneID = select(8, GetInstanceInfo())
         -- Eternal Palace Razor Coral usage
-        --if Player:InRaid() and currentZoneID == 2164 then
-        --    local ShouldReturn = RazorCoralUsage(); 
-        --        if ShouldReturn then return ShouldReturn; 
-		--	end
-        --end 	
+        if Player:InRaid() and currentZoneID == 2164 then
+            local ShouldReturn = RazorCoralUsage(); 
+                if ShouldReturn then return ShouldReturn; 
+			end
+        end 	
         -- use_item,name=ashvanes_razor_coral,if=recklessness.buff
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and ((not Target:DebuffP(S.RazorCoralDebuff) and ActionUnit("target"):IsBoss()) or (Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() < 31 or S.BloodoftheEnemy:CooldownRemainsP() <= 2 and Target:DebuffP(S.RazorCoralDebuff))) then
+        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or S.RazorCoralDebuff:ActiveCount() > 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
         -- blood_fury
