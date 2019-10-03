@@ -1130,7 +1130,7 @@ local function CDs ()
     end
     return false;
 end
-CDs = Action.MakeFunctionCachedStatic(CDs)
+CDs = Action.MakeFunctionCachedDynamic(CDs)
 
 -- # Stealthed
 local function Stealthed ()
@@ -1139,7 +1139,7 @@ local function Stealthed ()
         and (S.Nightstalker:IsAvailable() or (S.Subterfuge:IsAvailable() and (S.Exsanguinate:IsAvailable() and S.Exsanguinate:CooldownRemainsP() <= 2 or not Target:DebuffP(S.Rupture)) and Cache.EnemiesCount[10] < 2))
         and (Target:FilteredTimeToDie(">", 6, -Target:DebuffRemainsP(S.Rupture)) or Target:TimeToDieIsNotValid()) then
         if HR.Cast(S.Rupture) then return "Cast Rupture (Exsanguinate)"; end
-    end
+    end    
 	-- actions.stealthed+=/envenom,if=combo_points>=cp_max_spend
 	if S.Envenom:IsReady("Melee") and ComboPoints >= CPMaxSpend() then
 		if HR.Cast(S.Envenom) then return "Cast Envenom"; end
@@ -1201,7 +1201,7 @@ local function Stealthed ()
         end
     end
 end
-Stealthed = Action.MakeFunctionCachedStatic(Stealthed)
+Stealthed = Action.MakeFunctionCachedDynamic(Stealthed)
 
 -- # Damage over time abilities
 local function Dot ()
@@ -1273,7 +1273,7 @@ local function Dot ()
     end
     return false;
 end
-Dot = Action.MakeFunctionCachedStatic(Dot)
+Dot = Action.MakeFunctionCachedDynamic(Dot)
 
 -- # Direct damage abilities
 local function Direct ()
@@ -1350,7 +1350,7 @@ local function Direct ()
     end
     return false;
 end
-Direct = Action.MakeFunctionCachedStatic(Direct)
+Direct = Action.MakeFunctionCachedDynamic(Direct)
 
 
 --- ======= ACTION LISTS =======
@@ -1416,7 +1416,7 @@ local function APL()
 	local function Defensives()
 		--ShadowStep
 		if S.ShadowStep:IsReady() and Target:IsAPlayer() and not Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists()  then
-            if Target:IsInRange(S.ShadowStep) and not Target:IsInRange(15) then
+            if not Target:IsInRange("Melee") and Target:IsInRange(25) then
 				if Player:HealthPercentage() <= 55 then
                     if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
                 end
@@ -1443,9 +1443,22 @@ local function APL()
         -- Rune
         -- PrePot w/ Bossmod Countdown
         -- Opener
+		-- ShadowStep with DBM opener
+        if Everyone.TargetIsValid() and  S.ShadowStep:IsReady() and Action.GetToggle(1, "DBM") and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() and Pull > 0 and Pull < 0.2 then
+            if Target:IsInRange(25) then
+                if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
+            end
+        end
+		
+	    -- Garrote
+	    if Everyone.TargetIsValid() and S.Garrote:IsCastableP() and (Player:Buff(S.VanishBuff) or (Player:IsStealthed() and Player:PrevGCDP(1, S.ShadowStep))) and not Player:PrevGCDP(1, S.Garrote) then
+		    if HR.Cast(S.Garrote) then return "Cast Garrote"; end
+	    end
+
         if Everyone.TargetIsValid() and Target:IsInRange("Melee") then
             -- Precombat CDs
             if HR.CDsON() then
+
                 if S.MarkedforDeath:IsCastableP() and not ShouldStop and Player:ComboPointsDeficit() >= CPMaxSpend() then
                     if HR.Cast(S.MarkedforDeath, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Marked for Death (OOC)"; end
                 end
@@ -1456,6 +1469,8 @@ local function APL()
             end
         end
     end
+	
+
     
 	-- In Combat
     -- MfD Sniping
@@ -1475,6 +1490,13 @@ local function APL()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
+		-- ShadowStep in combat and not in range
+        if S.ShadowStep:IsReady() and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() then
+            if not Target:IsInRange("Melee") and Target:IsInRange(25) then
+                if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
+            end
+        end
+		
   	    -- Kick
   	    if useKick and S.Kick:IsReady() and not ShouldStop and Target:IsInterruptible() then 
 		  	if ActionUnit(unit):CanInterrupt(true) then
@@ -1499,7 +1521,7 @@ local function APL()
         -- Training Scenario
         ShouldReturn = TrainingScenario();
         if ShouldReturn then return ShouldReturn; end
-
+		
         -- actions=variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*7%(2*spell_haste)
         local PoisonedBleeds = PoisonedBleeds()
         Energy_Regen_Combined = Player:EnergyRegen() + PoisonedBleeds * 7 / (2 * Player:SpellHaste());
@@ -1788,7 +1810,7 @@ local function PvPRotation(icon)
         end  
 
     end 
-    SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+    SelfDefensives = Action.MakeFunctionCachedDynamic(SelfDefensives)
 
 	-- Interrupts
     local function Interrupts(unit)
@@ -1823,7 +1845,7 @@ local function PvPRotation(icon)
             return A.BullRush:Show(icon)
         end      
     end 
-    Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+    Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
 
     -- Passive 
@@ -1848,7 +1870,7 @@ local function PvPRotation(icon)
 		
 		
 		-- Sap out of combat
-		if A.Sap:IsReady(unit) and ActionUnit(unit):CombatTime() == 0 and ActionUnit(unit):IsControlAble("incapacitate") and ActionUnit("player"):GetDR("incapacitate") > 25 then
+		if A.Sap:IsReady(unit) and Player:IsStealthed() and ActionUnit(unit):CombatTime() == 0 and ActionUnit(unit):IsControlAble("incapacitate") and ActionUnit("player"):GetDR("incapacitate") > 25 then
 		    if ActionUnit(unit):HasDeBuffs(A.Sap.ID) == 0 then 
 			    -- Notification					
                 Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
@@ -1861,6 +1883,22 @@ local function PvPRotation(icon)
 				end
 			end
 		end			
+		
+		-- ShadowStep
+		if ActionUnit(unit):CombatTime() > 0 and A.ShadowStep:IsReady(unit) and ActionUnit(unit):GetRange() > 7 and ActionUnit(unit):GetRange() <= 25 then
+			-- ShadowStep
+		    if A.ShadowStep:IsReady(unit) then
+			    return A.ShadowStep:Show(icon)
+		    end			
+		end		
+		
+		-- Vanish to garrote when in fight
+		if Player:IsStealthed() and ActionUnit(unit):CombatTime() > 0 then
+			-- Garrote
+		    if A.Garrote:IsReady(unit) then
+			    return A.Garrote:Show(icon)
+		    end			
+		end
 		
         -- Marked for Death
 		if A.MarkedforDeath:IsReady(unit) and Player:ComboPoints() <= 1 and S.ToxicBlade:IsAvailable() and S.MarkedforDeath:IsAvailable() then
@@ -1915,7 +1953,7 @@ local function PvPRotation(icon)
    		end
 		
         -- Death From Above
-		if S.DFA:IsAvailable() and A.DFA:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Target:IsInRange(15) and Action.AbsentImun("target", "DamagePhysImun", true) then
+		if S.DFA:IsAvailable() and A.DFA:IsReady(unit) and ActionUnit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and ActionUnit(unit):GetRange() <= 15 and Action.AbsentImun("target", "DamagePhysImun", true) then
 			return A.DFA:Show(icon)
    	    end		
 		
