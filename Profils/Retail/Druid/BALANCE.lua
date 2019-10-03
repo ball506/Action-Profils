@@ -528,11 +528,11 @@ local function APL()
         end
         -- use_item,effect_name=cyclotronic_blast,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
         if I.PocketsizedComputationDevice:IsEquipped() and EvaluateCyclePocketsizedComputationDevice103(Target) and I.PocketsizedComputationDevice:IsReady() and S.CyclotronicBlast:IsAvailable() and TrinketON() then
-            if HR.CastCycle(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 117" end
+            if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 117" end
         end
         -- use_item,name=shiver_venom_relicif=!buff.ca_inc.up,target_if=dot.shiver_venom.stack>=5
         if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
-            if HR.CastCycle(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
+            if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
         end
         -- blood_of_the_enemy,if=cooldown.ca_inc.remains>30
         if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and Action.GetToggle(1, "HeartOfAzeroth") and (CaInc():CooldownRemainsP() > 30) then
