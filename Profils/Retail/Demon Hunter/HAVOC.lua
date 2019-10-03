@@ -394,6 +394,10 @@ local function APL()
         if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and ActionUnit("target"):IsBoss() and (S.RazorCoralDebuff:ActiveCount() == 0 or S.RazorCoralDebuff:ActiveCount() > 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
+        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
+        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() >= 5 and Target:TimeToDie() >= 10)) then
+            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
+        end
         -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
         if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and not ShouldStop and (S.Metamorphosis:CooldownRemainsP() < 10 or S.Metamorphosis:CooldownRemainsP() > 60) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 60"; end
