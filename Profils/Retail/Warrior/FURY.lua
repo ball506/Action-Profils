@@ -554,9 +554,9 @@ local function APL()
                 if ShouldReturn then return ShouldReturn; 
 			end
         end 	
-        -- use_item,name=ashvanes_razor_coral,if=recklessness.buff
-        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or S.RazorCoralDebuff:ActiveCount() > 10) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
+        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
+        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
+            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
         -- blood_fury
         if S.BloodFury:IsCastableP() and not ShouldStop and HR.CDsON() then
