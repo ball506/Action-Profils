@@ -83,6 +83,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     WarriorofEluneBuff                    = Action.Create({ Type = "Spell", ID = 202425     }),	
     AzsharasFontofPowerBuff               = Action.Create({ Type = "Spell", ID = 296962     }),
     RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932     }),	
+    OwlkinFrenzyBuff                      = Action.Create({ Type = "Spell", ID = 157228     }),	
 	-- Debuffs 
     SunfireDebuff                         = Action.Create({ Type = "Spell", ID = 164815     }),
     MoonfireDebuff                        = Action.Create({ Type = "Spell", ID = 164812     }),
@@ -90,8 +91,31 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     ShiverVenomDebuff                     = Action.Create({ Type = "Spell", ID = 301624     }),		
     -- Misc
     Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	
-    -- Trinkets
-    
+    -- Trinkets    
+    MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835}),
+    HyperthreadWristwraps                = Action.Create({ Type = "Trinket", ID = 168989}),
+    NotoriousAspirantsBadge              = Action.Create({ Type = "Trinket", ID = 167528}),
+    NotoriousGladiatorsBadge             = Action.Create({ Type = "Trinket", ID = 167380}),
+    SinisterGladiatorsBadge              = Action.Create({ Type = "Trinket", ID = 165058}),
+    SinisterAspirantsBadge               = Action.Create({ Type = "Trinket", ID = 165223}),
+    DreadGladiatorsBadge                 = Action.Create({ Type = "Trinket", ID = 161902}),
+    DreadAspirantsBadge                  = Action.Create({ Type = "Trinket", ID = 162966}),
+    DreadCombatantsInsignia              = Action.Create({ Type = "Trinket", ID = 161676}),
+    NotoriousAspirantsMedallion          = Action.Create({ Type = "Trinket", ID = 167525}),
+    NotoriousGladiatorsMedallion         = Action.Create({ Type = "Trinket", ID = 167377}),
+    SinisterGladiatorsMedallion          = Action.Create({ Type = "Trinket", ID = 165055}),
+    SinisterAspirantsMedallion           = Action.Create({ Type = "Trinket", ID = 165220}),
+    DreadGladiatorsMedallion             = Action.Create({ Type = "Trinket", ID = 161674}),
+    DreadAspirantsMedallion              = Action.Create({ Type = "Trinket", ID = 162897}),
+    DreadCombatantsMedallion             = Action.Create({ Type = "Trinket", ID = 161811}),
+    IgnitionMagesFuse                    = Action.Create({ Type = "Trinket", ID = 159615}),
+    TzanesBarkspines                     = Action.Create({ Type = "Trinket", ID = 161411}),
+    AzurethoseSingedPlumage              = Action.Create({ Type = "Trinket", ID = 161377}),
+    AncientKnotofWisdomAlliance          = Action.Create({ Type = "Trinket", ID = 161417}),
+    AncientKnotofWisdomHorde             = Action.Create({ Type = "Trinket", ID = 166793}),
+    ShockbitersFang                      = Action.Create({ Type = "Trinket", ID = 169318}),
+    NeuralSynapseEnhancer                = Action.Create({ Type = "Trinket", ID = 168973}),
+    BalefireBranch                       = Action.Create({ Type = "Trinket", ID = 159630}),    
     
     TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -266,7 +290,7 @@ local function FutureAstralPower()
 end
 
 local function CaInc()
-    if HR.Cast(S.Incarnation:IsAvailable() and S.Incarnation or S.CelestialAlignment
+    return S.Incarnation:IsAvailable() and S.Incarnation or S.CelestialAlignment
 end
 
 local function AP_Check(spell)
@@ -372,6 +396,7 @@ local function APL()
     EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
 	DetermineEssenceRanks()
+	CaInc()
 	
   	local function Precombat_DBM()	    
         -- flask
@@ -482,42 +507,46 @@ local function APL()
     end
 	
 	-- Cooldows
-	local function CDs ()
+	local function CDs()
 	    -- actions.cds+=/call_action_list,name=essences
 
         -- Suggest moonkin form if you're not in it.
         -- potion,if=buff.celestial_alignment.up|buff.incarnation.up
         -- blood_fury,if=buff.celestial_alignment.up|buff.incarnation.up
-        if S.BloodFury:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignmentBuff) or Player:BuffP(S.IncarnationBuff)) then
+        if S.BloodFury:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignment) or Player:BuffP(S.Incarnation)) then
             if HR.Cast(S.BloodFury) then return "" end
         end
         -- arcane_torrent,if=buff.celestial_alignment.up|buff.incarnation.up
-        if S.ArcaneTorrent:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignmentBuff) or Player:BuffP(S.IncarnationBuff)) then
+        if S.ArcaneTorrent:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignment) or Player:BuffP(S.Incarnation)) then
             if HR.Cast(S.ArcaneTorrent) then return "" end
         end
         -- lights_judgment,if=buff.celestial_alignment.up|buff.incarnation.up
-        if S.LightsJudgment:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignmentBuff) or Player:BuffP(S.IncarnationBuff)) then
+        if S.LightsJudgment:IsReady() and HR.CDsON() and (Player:BuffP(S.CelestialAlignment) or Player:BuffP(S.Incarnation)) then
             if HR.Cast(S.LightsJudgment) then return "" end
         end
         -- warrior_of_elune
-        if S.WarriorofElune:IsReady() and not Player:Buff(S.WarriorofElune) then
+        if S.WarriorofElune:IsReady() and not Player:BuffP(S.WarriorofElune) then
             if HR.Cast(S.WarriorofElune) then return "" end
         end	
         -- incarnation,if=dot.sunfire.remains>8&dot.moonfire.remains>12&(dot.stellar_flare.remains>6|!talent.stellar_flare.enabled)&(buff.memory_of_lucid_dreams.up|ap_check)&!buff.ca_inc.up
-        if S.Incarnation:IsCastableP() and (Target:DebuffRemainsP(S.SunfireDebuff) > 8 and Target:DebuffRemainsP(S.MoonfireDebuff) > 12 and (Target:DebuffRemainsP(S.StellarFlareDebuff) > 6 or not S.StellarFlare:IsAvailable()) and (Player:BuffP(S.MemoryOfLucidDreams) or AP_Check(S.Incarnation)) and not Player:BuffP(CaInc())) then
+        if S.Incarnation:IsCastableP() and (Target:DebuffRemainsP(S.SunfireDebuff) > 8 and Target:DebuffRemainsP(S.MoonfireDebuff) > 12 and (Target:DebuffRemainsP(S.StellarFlareDebuff) > 6 or not S.StellarFlare:IsAvailable()) and (Player:BuffP(S.MemoryofLucidDreams) or AP_Check(S.Incarnation)) and not Player:BuffP(CaInc())) then
             if HR.Cast(S.Incarnation) then return "" end
         end
         -- celestial_alignment,if=!buff.ca_inc.up&(buff.memory_of_lucid_dreams.up|(ap_check&astral_power>=40))&(!azerite.lively_spirit.enabled|buff.lively_spirit.up)&(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))
-        -- and (not Player:BuffP(CaInc())   
-       if S.CelestialAlignment:IsCastableP() and (Player:BuffP(S.MemoryOfLucidDreams) or (AP_Check(S.CelestialAlignment) and FutureAstralPower() >= 40)) and (Target:DebuffRemainsP(S.SunfireDebuff) > 2 and Target:DebuffP(S.MoonfireDebuff) and (Target:DebuffP(S.StellarFlareDebuff) or not S.StellarFlare:IsAvailable())) then
+        -- and   
+        if S.CelestialAlignment:IsCastableP() and not Player:BuffP(CaInc()) and (Player:BuffP(S.MemoryofLucidDreams) or (AP_Check(S.CelestialAlignment) and FutureAstralPower() >= 40)) and (Target:DebuffRemainsP(S.SunfireDebuff) > 2 and Target:DebuffP(S.MoonfireDebuff) and (Target:DebuffP(S.StellarFlareDebuff) or not S.StellarFlare:IsAvailable())) then
            if HR.Cast(S.CelestialAlignment) then return "" end
         end
+        -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
+        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TrinketON() then
+            if HR.Cast(I.BalefireBranch) then return "balefire_branch combustion"; end
+        end
 	    -- fury_of_elune,if=(buff.celestial_alignment.up|buff.incarnation.up)|(cooldown.celestial_alignment.remains>30|cooldown.incarnation.remains>30)
-        if S.FuryofElune:IsReady() and ((Player:BuffP(S.CelestialAlignmentBuff) or Player:BuffP(S.IncarnationBuff)) or (S.CelestialAlignment:CooldownRemainsP() > 30 or S.Incarnation:CooldownRemainsP() > 30)) then
+        if S.FuryofElune:IsReady() and ((Player:BuffP(CaInc())) or (S.CelestialAlignment:CooldownRemainsP() > 30 or S.Incarnation:CooldownRemainsP() > 30)) then
             if HR.Cast(S.FuryofElune) then return "" end
         end
         -- force_of_nature,if=(buff.celestial_alignment.up|buff.incarnation.up)|(cooldown.celestial_alignment.remains>30|cooldown.incarnation.remains>30)
-        if S.ForceofNature:IsReady() and ((Player:BuffP(S.CelestialAlignmentBuff) or Player:BuffP(S.IncarnationBuff)) or (S.CelestialAlignment:CooldownRemainsP() > 30 or S.Incarnation:CooldownRemainsP() > 30)) then
+        if S.ForceofNature:IsReady() and ((Player:BuffP(CaInc())) or (S.CelestialAlignment:CooldownRemainsP() > 30 or S.Incarnation:CooldownRemainsP() > 30)) then
             if HR.Cast(S.ForceofNature) then return "" end
        end
 	    -- call_action_list,name=essences
@@ -575,7 +604,7 @@ local function APL()
         end
     end
 	
-    local function Dot ()
+    local function Dot()
         -- TODO(mrdmnd): add conditions on azerite traits
         -- Code largely lifted from assassination implmentation.
         --actions+=/sunfire,
@@ -609,7 +638,7 @@ local function APL()
         end
     end
 	
-	local function EmpowermentCapCheck ()
+	local function EmpowermentCapCheck()
         -- TODO(mrdmnd) - add conditions on azerite traits
         --actions+=/lunar_strike,
         --          if=astral_power.deficit>=16&
