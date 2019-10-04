@@ -28,28 +28,44 @@ Action[Action.PlayerClass] = {
 
     -- Damager 
     SoulFire = Action.Create({ Type = "Spell", ID = 6353, useMaxRank = true }), 
-    Multishot = Action.Create({ Type = "Spell", ID = 2643, useMaxRank = true }), 
-    Autoshot = Action.Create({ Type = "Spell", ID = 75 }),
-    Volley = Action.Create({ Type = "Spell", ID = 14295, useMaxRank = true }),
-    --Serpentsting = Action.Create({ Type = "Spell", ID = 1976, useMaxRank = true }),	
-
-	-- DropCombat
-	Disengage = Action.Create({ Type = "Spell", ID = 781, useMaxRank = true }),
-	FeignDeath = Action.Create({ Type = "Spell", ID = 5384 }),
+    Corruption = Action.Create({ Type = "Spell", ID = 172, useMaxRank = true }), 
+    SiphonLife = Action.Create({ Type = "Spell", ID = 18265, useMaxRank = true }),
+    Immolate = Action.Create({ Type = "Spell", ID = 348, useMaxRank = true }),
+	ShadowBolt = Action.Create({ Type = "Spell", ID = 686, useMaxRank = true }),
+	RainofFire = Action.Create({ Type = "Spell", ID = 5740, useMaxRank = true }),
+	ShadowBurn = Action.Create({ Type = "Spell", ID = 17877, useMaxRank = true }),
+	Conflagrate = Action.Create({ Type = "Spell", ID = 17962, useMaxRank = true }),
+	HellFire = Action.Create({ Type = "Spell", ID = 11684, useMaxRank = true }),
+    CurseofDoom = Action.Create({ Type = "Spell", ID = 603, useMaxRank = true }), -- Don't work on players
+	DrainLife = Action.Create({ Type = "Spell", ID = 689, useMaxRank = true }),
+	DrainSoul = Action.Create({ Type = "Spell", ID = 1120, useMaxRank = true }),
+	SearingPain = Action.Create({ Type = "Spell", ID = 5676, useMaxRank = true }),
+	
+	-- Curses
+	CurseofWeakness = Action.Create({ Type = "Spell", ID = 702, useMaxRank = true }),
+	CurseofAgony = Action.Create({ Type = "Spell", ID = 980, useMaxRank = true }),
+	CurseofRecklessness = Action.Create({ Type = "Spell", ID = 704, useMaxRank = true }),
+	CurseofTongues = Action.Create({ Type = "Spell", ID = 1714, useMaxRank = true }),
+	CurseoftheElements = Action.Create({ Type = "Spell", ID = 1490, useMaxRank = true }),
+	CurseofShadow = Action.Create({ Type = "Spell", ID = 17862, useMaxRank = true }),
+	
+    -- Pets
+    SummonImp = Action.Create({ Type = "Spell", ID = 688, useMaxRank = true }),   
+    SummonVoidwalker = Action.Create({ Type = "Spell", ID = 697, useMaxRank = true }),
+    SummonFelhunter = Action.Create({ Type = "Spell", ID = 691, useMaxRank = true }),
+    SummonSuccubus = Action.Create({ Type = "Spell", ID = 712, useMaxRank = true }),
+    HealthFunnel = Action.Create({ Type = "Spell", ID = 755, useMaxRank = true }),
+	
+    -- Utilities
+	Banish = Action.Create({ Type = "Spell", ID = 710, useMaxRank = true }),
+    EnslaveDemon = Action.Create({ Type = "Spell", ID = 1098, useMaxRank = true }),
+	LifeTap = Action.Create({ Type = "Spell", ID = 1454, useMaxRank = true }),
+	HowlofTerror = Action.Create({ Type = "Spell", ID = 5484, useMaxRank = true }),
+	Fear = Action.Create({ Type = "Spell", ID = 5782, useMaxRank = true }),
+	ShadowWard = Action.Create({ Type = "Spell", ID = 6229, useMaxRank = true }),	
 	
 	-- Buff
-	Trueshot = Action.Create({ Type = "Spell", ID = 19506, useMaxRank = true, isTalent = true }),
-	Hawk = Action.Create({ Type = "Spell", ID = 13165, useMaxRank = true }),
-	Mark = Action.Create({ Type = "Spell", ID = 1130, useMaxRank = true }),
-	
-	-- Slow
-	Wingclip = Action.Create({ Type = "Spell", ID = 2974, useMaxRank = true }),
-	
-	-- Healpet
-	Mendpet = Action.Create({ Type = "Spell", ID = 136, useMaxRank = true }),
-	
-	-- Melee
-	Raptorstrike = Action.Create({ Type = "Spell", ID = 2973, useMaxRank = true }),
+	DemonSkin = Action.Create({ Type = "Spell", ID = 687, useMaxRank = true }),	
 
     -- Potions
     MajorManaPotion = Action.Create({ Type = "Potion", ID = 13444 }),
@@ -84,6 +100,36 @@ local Temp                                  = {
     TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
 }
 
+local function HandlePetChoice()
+    local choice = Action.GetToggle(2, "PetChoice")
+    local currentspell = "Spell(688)"
+    
+    if choice == "IMP" then
+        --print("IMP")
+        currentspell = "Spell(688)"    
+    elseif choice == "VOIDWALKER" then
+        --print("VOIDWALKER")
+        currentspell = "Spell(697)"
+    elseif choice == "FELHUNTER" then 
+        --print("FELHUNTER")    
+        currentspell = "Spell(691)"
+    elseif choice == "SUCCUBUS" then 
+        --print("SUCCUBUS")    
+        currentspell = "Spell(712)"
+    else
+        print("No Pet Data")
+    end
+    return choice
+end
+HandlePetChoice = Action.MakeFunctionCachedDynamic(HandlePetChoice)
+
+local function HandleCurseChoice()
+    local choice = Action.GetToggle(2, "CurseChoice")
+    
+    return choice
+end
+HandleCurseChoice = Action.MakeFunctionCachedDynamic(HandleCurseChoice)
+
 -- Defensives abilities
 local function SelfDefensives()
     if Unit("player"):CombatTime() == 0 then 
@@ -93,7 +139,7 @@ local function SelfDefensives()
     -- FeignDeath on large burst damage
 	
 	-- Get the FeignDeath setting from ProfileUI : FeignDeathHP
-    local FeignDeath = A.GetToggle(2, "FeignDeathHP")
+    --[[ local FeignDeath = A.GetToggle(2, "FeignDeathHP")
     if     FeignDeath >= 0 and A.FeignDeath:IsReady("player") and
     (
         (     -- Auto 
@@ -125,10 +171,11 @@ local function SelfDefensives()
     ) 
     then 
         return A.FeignDeath
-    end 
+    end ]]--
     
  
 end 
+SelfDefensives = Action.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- Interrupts
 local function Interrupts(unit, isSoothingMistCasting)
@@ -163,7 +210,7 @@ local function Interrupts(unit, isSoothingMistCasting)
     end      
      
 end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
 
 -- [3] Rotation 
@@ -171,90 +218,126 @@ A[3] = function(icon)
     local combatTime       = Unit("player"):CombatTime()
     local inCombat         = combatTime > 0
     local inRaidPvE        = TeamCache.Friendly.Type == "raid" and not A.IsInPvP
- 
-    -- DPS Rotation
+    local SoulShardsCount = GetItemCount(6265)
+	
+	-- Initialize Pet Choice handler
+	HandlePetChoice()
+    -- Pet Selection Menu
+    local PetSpell = HandlePetChoice()    
+    if PetSpell == "IMP" then
+        --print("IMP")
+        SummonPet = A.SummonImp    
+    elseif PetSpell == "VOIDWALKER" then
+        --print("VOIDWALKER")
+        SummonPet = A.SummonVoidwalker
+    elseif PetSpell == "FELHUNTER" then 
+        --print("FELHUNTER")    
+        SummonPet = A.SummonFelhunter
+    elseif PetSpell == "SUCCUBUS" then 
+        --print("SUCCUBUS")    
+        SummonPet = A.SummonSuccubus
+    else
+        return
+    end
+
+	-- Initialize Curse Choice handler
+	HandleCurseChoice()
+    -- Curse Selection Menu
+    local CurseSpell = HandleCurseChoice()    
+    if CurseSpell == "CurseofWeakness" then
+        --print("IMP")
+        SelectedCurse = A.CurseofWeakness    
+    elseif CurseSpell == "CurseofAgony" then
+        --print("VOIDWALKER")
+        SelectedCurse = A.CurseofAgony
+    elseif CurseSpell == "CurseofRecklessness" then 
+        --print("FELHUNTER")    
+        SelectedCurse = A.CurseofRecklessness
+    elseif CurseSpell == "CurseofTongues" then 
+        --print("SUCCUBUS")    
+        SelectedCurse = A.CurseofTongues
+    elseif CurseSpell == "CurseoftheElements" then 
+        --print("SUCCUBUS")    
+        SelectedCurse = A.CurseoftheElements
+    elseif CurseSpell == "CurseofShadow" then 
+        --print("SUCCUBUS")    
+        SelectedCurse = A.CurseofShadow
+    else
+        return
+    end		
+	
+	-- Summon Pet if missing 
+    if SummonPet:IsReady("player") and not Pet:IsActive() and not SummonPet:IsSpellLastGCD() then
+        return SummonPet:Show(icon)
+    end	
+	
+	-- DPS Rotation
     local function DamageRotation(unit)
         
         -- Interrupts
-        local Interrupt = Interrupts(unit, isSoothingMistCasting)
-        if Interrupt then 
-            return Interrupt:Show(icon)
-        end
+        local Interrupt = Interrupts(unit)
+        --if Interrupt then 
+        --    return Interrupt:Show(icon)
+        --end	
+
+        -- Precombat SoulFire
+        --if not inCombat then
+	    --    if A.SoulFire:IsReady(unit) and SoulShardsCount > 0 then
+		--        return A.SoulFire:Show(icon)
+		--    else 
+		--        if A.Corruption:IsReady(unit) then 
+        --            return A.Corruption:Show(icon)
+        --        end 
+	    --    end 
+	    --end		
 		
-        -- Precombat
-		if not inCombat then
-		     if A.SoulFire:IsReady(unit) and Player:IsStaying() and A.Player:GetBag(name)
-		end
+		-- Curse to Apply depending on user choice
+		-- Apply your assigned curse ( Curse of the Elements,  Curse of Shadow,  Curse of Recklessness)
+        if SelectedCurse:IsReady(unit) then 
+            return SelectedCurse:Show(icon)
+        end 	
 		
-        -- Test lvl 1 Raptorstrike
-        if A.Raptorstrike:IsReady(unit) and Unit(unit):InRange() then 
-            return A.Raptorstrike:Show(icon)
+		-- Apply Corruption if allowed
+        if A.Corruption:IsReady(unit) and Action.GetToggle(2, "CorruptionAllow") and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= Unit(unit):CastTime(S.Corruption.ID)) then 
+            return A.Corruption:Show(icon)
+        end 	
+
+		-- Conflagrate
+        if A.Conflagrate:IsReady(unit) then 
+            return A.Conflagrate:Show(icon)
+        end 
+
+		-- Immolate
+        if A.Immolate:IsReady(unit) and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) > 0 or not Action.GetToggle(2, "CorruptionAllow"))  and (Unit(unit):HasDeBuffs(A.Immolate.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Immolate.ID, true) <= Unit(unit):CastTime(S.Immolate.ID)) then 
+            return A.Immolate:Show(icon)
+        end 
+
+		-- SiphonLife
+        if A.SiphonLife:IsReady(unit) and not IsInRaid() then 
+            return A.SiphonLife:Show(icon)
         end 		
 		
-        -- Trueshot Aura 
-        if A.Trueshot:IsReady(unit) and (Unit("player"):HasBuffs(A.Trueshot.ID, false) <= A.GetGCD() or Unit("player"):HasBuffsStacks(A.InnerFire.ID, true) <= 1) then 
-            return A.Trueshot:Show(icon)
-        end 
-		
-        -- Autoshot
-        if A.Autoshot:IsReady(unit) and A.Autoshot:AbsentImun(unit, Temp.AttackTypes) then 
-            return A.Autoshot:Show(icon)
+		-- Cast Shadow Bolt as filler 
+        if A.ShadowBolt:IsReady(unit) then 
+            return A.ShadowBolt:Show(icon)
         end 
         
-        -- Aimedshot
-        if A.Aimedshot:IsReady(unit) and A.Aimedshot:AbsentImun(unit, Temp.AttackTypes) and Player:IsStaying() then 
-            return A.Aimedshot:Show(icon)
-        end 
-         
-        -- CD's
-        if A.BurstIsON(unit) and A.AbsentImun(nil, unit) then 
-            -- Racials 
-            if A.Berserking:AutoRacial(unit) and Unit(unit):InRange() then 
-
-                    return A.Berserking:Show(icon)
-                end                 
-            end     
-                  
-
-        
-        -- PvE: Stoneform (self dispel)
-        if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and (A.AuraIsValid("player", "UseDispel", "Poison") or A.AuraIsValid("player", "UseDispel", "Bleed") or A.AuraIsValid("player", "UseDispel", "Disease")) then 
-            return A.Stoneform:Show(icon)
-        end     
-
-        
-        -- PvE: FeignDeath (agro dump)
-        if inCombat and not A.IsInPvP and A.Zone ~= "none" and TeamCache.Friendly.Type and A.FeignDeath:IsReady("player") and (Unit("player"):IsTankingAoE()) then 
-            return A.FeignDeath:Show(icon)
-        end 
-        
-        -- PvE: Shadowmeld (agro dump)
-        if inCombat and not A.IsInPvP and A.Zone ~= "none" and TeamCache.Friendly.Type and A.PlayerRace == "NightElf" and A.Shadowmeld:IsRacialReady("player") and Unit("player"):IsTankingAoE() then 
-            return A.Shadowmeld:Show(icon)
-        end 
-        
-        
-        -- Out of combat: Self Buffer 
-        --if not inCombat and PlayerRebuff() then 
-        --    return true 
-        --end 
-        
-        -- Runes 
-        --if inCombat and A.CanUseManaRune(icon) then 
-        --    return true 
-        --end 
-        
-        -- Mana Potion 
-        --if inCombat and A.MajorManaPotion:IsReady("player") and Unit("player"):PowerPercent() <= A.GetToggle(2, "ManaPotion") then 
-        --    return A.MajorManaPotion:Show(icon)
-        --end         
     end 
 	
     -- Defensive
-    local SelfDefensive = SelfDefensives()
-    if SelfDefensive then 
-        return SelfDefensive:Show(icon)
-    end 
+   -- local SelfDefensive = SelfDefensives()
+   -- if SelfDefensive then 
+   --     return SelfDefensive:Show(icon)
+   -- end
+
+    -- Function to execute if our target is hostile
+    if A.IsUnitEnemy("target") then 
+        unit = "target"
+        
+        if DamageRotation(unit) then 
+            return true 
+        end 
+    end    
     
     -- Function to execute if our mouseover is hostile
     if A.IsUnitEnemy("mouseover") then 
@@ -265,12 +348,4 @@ A[3] = function(icon)
         end 
     end 
     
-    -- Function to execute if our target is hostile
-    if A.IsUnitEnemy("target") then 
-        unit = "target"
-        
-        if DamageRotation(unit) then 
-            return true 
-        end 
-    end 
 end 
