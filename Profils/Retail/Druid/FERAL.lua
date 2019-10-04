@@ -478,9 +478,9 @@ local function APL()
             if HR.Cast(S.FerociousBiteMaxEnergy) then return "ferocious_bite 168"; end
         end
         -- Pool if nothing else to do
-        if (true) then
-            if HR.Cast(S.Channeling) then return "pool_resource"; end
-        end
+        --if (true) then
+        --    if HR.Cast(S.Channeling) then return "pool_resource"; end
+        --end
     end
 	
     local function Generators()
@@ -573,9 +573,9 @@ local function APL()
             if HR.Cast(S.Shred) then return "shred 347"; end
         end
         -- Pool if nothing else to do
-        if (true) then
-            if HR.Cast(S.Channeling) then return "Channeling"; end
-        end
+        --if (true) then
+        --    if HR.Cast(S.Channeling) then return "Channeling"; end
+        --end
     end
 	
     local function Opener()
