@@ -11,7 +11,7 @@ local MultiUnits                            = Action.MultiUnits
 local UnitCooldown                            = Action.UnitCooldown
 local Unit                                    = Action.Unit 
 --local Pet                                     = LibStub("PetLibrary")
---local Azerite                                 = LibStub("AzeriteTraits")
+local Azerite                                 = LibStub("AzeriteTraits")
 
 local setmetatable                            = setmetatable
 
@@ -34,103 +34,70 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
     WilloftheForsaken                          = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
     EscapeArtist                              = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                          = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
-    -- Roots   
-    EntanglingRoots                                = Action.Create({ Type = "Spell", ID = 339    }),
-    MassEntanglement                        = Action.Create({ Type = "Spell", ID = 102359, isTalent = true   }), 
-    -- Disorient
-	Cyclone                                    = Action.Create({ Type = "Spell", ID = 33786, isTalent = true   }), -- PvP Talent
-	-- Stun
-	MightyBash                                = Action.Create({ Type = "Spell", ID = 5211, isTalent = true   }),
-	-- Knockbacks
-	Typhoon                                    = Action.Create({ Type = "Spell", ID = 132469, isTalent = true   }),
-    -- Hots
-    Lifebloom                                  = Action.Create({ Type = "Spell", ID = 33763     }),
-	Rejuvenation                                   = Action.Create({ Type = "Spell", ID = 774     }),
-	RejuvenationGermimation                        = Action.Create({ Type = "Spell", ID = 155777    }),
-    WildGrowth                                  = Action.Create({ Type = "Spell", ID = 48438     }),
-	CenarionWard                                  = Action.Create({ Type = "Spell", ID = 102351, isTalent = true     }),
-	-- Direct Heals
-	Regrowth                                   = Action.Create({ Type = "Spell", ID = 8936     }),
-	Swiftmend                                  = Action.Create({ Type = "Spell", ID = 18562     }),
-    -- Self Defensives
-    Barkskin                                  = Action.Create({ Type = "Spell", ID = 22812     }),
-	-- Cooldowns
-	Ironbark                                   = Action.Create({ Type = "Spell", ID = 102342     }),
-	Tranquility                                   = Action.Create({ Type = "Spell", ID = 740     }),
-    Innervate                                   = Action.Create({ Type = "Spell", ID = 29166     }),
-    -- Shapeshift
-    TravelForm                                   = Action.Create({ Type = "Spell", ID = 783     }), 
-    BearForm                                     = Action.Create({ Type = "Spell", ID = 5487     }), 
-    CatForm                                     = Action.Create({ Type = "Spell", ID = 768     }), 
-    AquaticForm                                   = Action.Create({ Type = "Spell", ID = 276012     }), 	
-    -- Utilities
-	UrsolVortex                                   = Action.Create({ Type = "Spell", ID = 102793     }),
-    NaturesCure                                   = Action.Create({ Type = "Spell", ID = 88423     }),  
-	Dash                                   = Action.Create({ Type = "Spell", ID = 1850     }), 
-	Rebirth                                   = Action.Create({ Type = "Spell", ID = 20484     }),  -- Combat Rez
-	Revive                                   = Action.Create({ Type = "Spell", ID = 50769     }), 
-	Hibernate                                   = Action.Create({ Type = "Spell", ID = 2637     }), 
-	Soothe                                   = Action.Create({ Type = "Spell", ID = 50769     }), 
-	Prowl                                   = Action.Create({ Type = "Spell", ID = 2908     }), 
-	Revitalize                               = Action.Create({ Type = "Spell", ID = 212040     }), 
-    -- Healing Spells      
-    Efflorescence                                   = Action.Create({ Type = "Spell", ID = 145205     }),
-	Renewal                                   = Action.Create({ Type = "Spell", ID = 108238, isTalent = true     }),
-	-- Talents
-	SouloftheForest                           = Action.Create({ Type = "Spell", ID = 102351, isTalent = true, Hidden = true     }),
-	IncarnationTreeofLife                       = Action.Create({ Type = "Spell", ID = 33891, isTalent = true     }),
-	IncarnationTreeofLifeBuff                       = Action.Create({ Type = "Spell", ID = 117679, Hidden = true     }),
-	Flourish                                   = Action.Create({ Type = "Spell", ID = 197721, isTalent = true     }),
-	Photosynthesis                           = Action.Create({ Type = "Spell", ID = 274902, isTalent = true, Hidden = true     }),
-	Germination                           = Action.Create({ Type = "Spell", ID = 155675, isTalent = true, Hidden = true     }),
-	GuardianAffinity                         = Action.Create({ Type = "Spell", ID = 197491, isTalent = true, Hidden = true     }),
-	FeralAffinity                           = Action.Create({ Type = "Spell", ID = 197490, isTalent = true, Hidden = true     }),
-	BalanceAffinity                           = Action.Create({ Type = "Spell", ID = 197632, isTalent = true, Hidden = true     }),	
-	InnerPeace                           = Action.Create({ Type = "Spell", ID = 197073, isTalent = true, Hidden = true     }),
-	Stonebark                           = Action.Create({ Type = "Spell", ID = 197061, isTalent = true, Hidden = true     }),
-	Prosperity                           = Action.Create({ Type = "Spell", ID = 200383, isTalent = true, Hidden = true     }),
-	Abundance 	                                = Action.Create({ Type = "Spell", ID = 207383, isTalent = true, Hidden = true     }),
-	SpringBlossoms                           = Action.Create({ Type = "Spell", ID = 207385, isTalent = true, Hidden = true     }),
-	Cultivation                             = Action.Create({ Type = "Spell", ID = 200390, isTalent = true, Hidden = true     }),
-    -- PvP Talents
-	Disentanglement                                   = Action.Create({ Type = "Spell", ID = 233673, isTalent = true, Hidden = true     }),
-	EntanglingBark                                   = Action.Create({ Type = "Spell", ID = 247543, isTalent = true, Hidden = true     }),
-	EarlySpring                                   = Action.Create({ Type = "Spell", ID = 203624, isTalent = true, Hidden = true     }),
-	Nourish                                   = Action.Create({ Type = "Spell", ID = 289022, isTalent = true     }),
-	Overgrowth                                   = Action.Create({ Type = "Spell", ID = 203651, isTalent = true     }),
-	Thorns                                   = Action.Create({ Type = "Spell", ID = 305497, isTalent = true     }),
-	DeepRoots                                   = Action.Create({ Type = "Spell", ID = 233755, isTalent = true, Hidden = true     }),		
-    MarkoftheWild                                   = Action.Create({ Type = "Spell", ID = 289318, isTalent = true     }),
-	FocusedGrowth                                   = Action.Create({ Type = "Spell", ID = 203553, isTalent = true, Hidden = true     }),
-	MasterShapeshifter                                   = Action.Create({ Type = "Spell", ID = 289237, isTalent = true     }),
-	-- Azerites
-    AutumnLeaves                                   = Action.Create({ Type = "Spell", ID = 274432, Hidden = true     }),
-	EarlyHarvest                                   = Action.Create({ Type = "Spell", ID = 287251, Hidden = true     }),
-	GroveTending                                   = Action.Create({ Type = "Spell", ID = 279778, Hidden = true     }),
-	LivelySpirit                                   = Action.Create({ Type = "Spell", ID = 279642, Hidden = true     }),
-	RampantGrowth                                   = Action.Create({ Type = "Spell", ID = 278515, Hidden = true     }),
-	WakingDream                                   = Action.Create({ Type = "Spell", ID = 278513, Hidden = true     }),
-	-- Offensives Spells
-    Moonfire                                   = Action.Create({ Type = "Spell", ID = 164812     }),
-	Sunfire                                   = Action.Create({ Type = "Spell", ID = 93402     }),
-	SolarWrath                                   = Action.Create({ Type = "Spell", ID = 5176     }),
-	-- Offensives abilities with Affinity
-	-- Boomkin
-	Starsurge                               = Action.Create({ Type = "Spell", ID = 5176     }),
-	LunarStrike                               = Action.Create({ Type = "Spell", ID = 194153     }),
-	MoonkinForm                               = Action.Create({ Type = "Spell", ID = 24858     }),
-	-- Guardian
-	FrenziedRegeneration                               = Action.Create({ Type = "Spell", ID = 22842     }),
-	Ironfur                               = Action.Create({ Type = "Spell", ID = 192081     }),
-	Thrash                               = Action.Create({ Type = "Spell", ID = 106832     }),
-	-- Feral
-	Shred                               = Action.Create({ Type = "Spell", ID = 5221     }),
-	Rip                               = Action.Create({ Type = "Spell", ID = 1079     }),
-	FerociousBite                               = Action.Create({ Type = "Spell", ID = 22568     }),
-	Rake                               = Action.Create({ Type = "Spell", ID = 1822     }),
-	RakeDebuff                               = Action.Create({ Type = "Spell", ID = 155722	,    Hidden = true }),
-	Swipe                              = Action.Create({ Type = "Spell", ID = 106785 }),
-    -- Movememnt    
+     -- Racials
+    ArcaneTorrent                                             = Action.Create({ Type = "Spell", ID = 25046     }),
+    GiftoftheNaaru                                             = Action.Create({ Type = "Spell", ID = 59547     }),
+
+    --Spells
+    Cleanse                                             = Action.Create({ Type = "Spell", ID = 4987     }),
+    Judgement                                             = Action.Create({ Type = "Spell", ID = 275773     }),
+    CrusaderStrike                                             = Action.Create({ Type = "Spell", ID = 35395     }),
+    Consecration                                             = Action.Create({ Type = "Spell", ID = 26573     }),
+    LightoftheMartyr                                             = Action.Create({ Type = "Spell", ID = 183998     }),
+    LightoftheMartyrStack                                             = Action.Create({ Type = "Spell", ID = 223316     }),
+    FlashofLight                                             = Action.Create({ Type = "Spell", ID = 19750     }),
+    HolyShock                                             = Action.Create({ Type = "Spell", ID = 20473     }),
+    InfusionofLight                                             = Action.Create({ Type = "Spell", ID = 54149     }),
+    BeaconofLight                                             = Action.Create({ Type = "Spell", ID = 53563     }),
+    BeaconofVirtue                                             = Action.Create({ Type = "Spell", ID = 200025     }),
+    LightofDawn                                             = Action.Create({ Type = "Spell", ID = 85222     }),
+	AuraMastery                                             = Action.Create({ Type = "Spell", ID = 31821     }),
+	AvengingWrath                                             = Action.Create({ Type = "Spell", ID = 31884     }),
+	HolyAvenger                                             = Action.Create({ Type = "Spell", ID = 105809     }),
+	BestowFaith                                             = Action.Create({ Type = "Spell", ID = 223306     }),
+	AvengingCrusader                                             = Action.Create({ Type = "Spell", ID = 216331     }),
+	JudgmentOfLightHoly                                             = Action.Create({ Type = "Spell", ID = 183778     }),
+	BlessingOfSacrifice                                             = Action.Create({ Type = "Spell", ID = 6940     }),
+	BeaconOfFaith                                             = Action.Create({ Type = "Spell", ID = 156910     }),
+	JudgementofLight                                             = Action.Create({ Type = "Spell", ID = 183778     }),
+	CrusadersMight                                             = Action.Create({ Type = "Spell", ID = 196926     }),
+	ConsecrationUp                                             = Action.Create({ Type = "Spell", ID = 204242     }),
+	JudgmentUp                                             = Action.Create({ Type = "Spell", ID = 214222     }),
+	HolyPrism                                             = Action.Create({ Type = "Spell", ID = 114165     }),
+	LightsHammer                                             = Action.Create({ Type = "Spell", ID = 114158     }),
+
+    --Azerite
+    DivineRevelations                                             = Action.Create({ Type = "Spell", ID = 275469     }),
+	GlimmerofLight                                             = Action.Create({ Type = "Spell", ID = 287268     }),
+	
+	--Heart Essences
+	ConcentratedFlameHeal                                             = Action.Create({ Type = "Spell", ID = 295373     }),
+	ConcentratedFlameHeal2                                             = Action.Create({ Type = "Spell", ID = 168612     }),
+	ConcentratedFlameHeal3                                             = Action.Create({ Type = "Spell", ID = 168613     }),
+	LifeBindersInvocation                                             = Action.Create({ Type = "Spell", ID = 293032     }),
+	LifeBindersInvocation2                                             = Action.Create({ Type = "Spell", ID = 299943     }),
+	LifeBindersInvocation3                                             = Action.Create({ Type = "Spell", ID = 299944     }),
+	OverchargeMana                                             = Action.Create({ Type = "Spell", ID = 296072     }),
+	OverchargeMana2                                             = Action.Create({ Type = "Spell", ID = 299875     }),
+	OverchargeMana3                                             = Action.Create({ Type = "Spell", ID = 299876     }),
+	Refreshment                                             = Action.Create({ Type = "Spell", ID = 296197     }),
+	Refreshment2                                             = Action.Create({ Type = "Spell", ID = 299932     }),
+	Refreshment3                                             = Action.Create({ Type = "Spell", ID = 299933     }),
+	UnleashHeartofAzeroth                                             = Action.Create({ Type = "Spell", ID = 280431     }),
+	VitalityConduit                                             = Action.Create({ Type = "Spell", ID = 296230     }),
+	VitalityConduit2                                             = Action.Create({ Type = "Spell", ID = 299958     }),
+	VitalityConduit3                                             = Action.Create({ Type = "Spell", ID = 299959     }),
+	MemoryOfLucidDreams                                             = Action.Create({ Type = "Spell", ID = 298357     }),
+	MemoryOfLucidDreams2                                             = Action.Create({ Type = "Spell", ID = 299372     }),
+	MemoryOfLucidDreams3                                             = Action.Create({ Type = "Spell", ID = 299374     }),
+
+    --Healing
+    BlessingofProtection                                             = Action.Create({ Type = "Spell", ID = 1022     }),
+    HolyLight                                             = Action.Create({ Type = "Spell", ID = 82326     }),
+    LayOnHands                                             = Action.Create({ Type = "Spell", ID = 633     }),
+    Forbearance                                             = Action.Create({ Type = "Spell", ID = 25771     }),
+    DivineProtection                                             = Action.Create({ Type = "Spell", ID = 498     }),
+    DivineShield                                             = Action.Create({ Type = "Spell", ID = 642     }),
 
     -- Items
     PotionofReconstitution                     = Action.Create({ Type = "Potion", ID = 168502     }),     
@@ -726,27 +693,31 @@ A[3] = function(icon, isMulti)
 
     -- DPS Rotation
     local function DamageRotation(unit)
-        inRange = A.Sunfire:IsInRange(unit)
-        
-        -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit, nil, nil, true) then 
-            return A.ArcaneTorrent:Show(icon)
-        end             
-        
-        -- Interrupts
-        local Interrupt = Interrupts(unit, true)
-        if Interrupt then 
-            return Interrupt:Show(icon)
-        end         
-			
-        -- PvP MightyBash (Enemy Healer)
-        if A.IsInPvP and A.MightyBash:IsReady(nil, nil, nil, true) then 
-            local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(25)
-            if EnemyHealerUnitID ~= "none" and A.MightyBash:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 0) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
-                return A.MightyBash:Show(icon)     
-            end 
-        end 
-        
+
+		if A.Judgement:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+			return A.Judgement:Show(icon)
+		end
+
+		if A.HolyShock:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+			return A.HolyShock:Show(icon)
+		end
+		
+		if A.CrusaderStrike:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+			return A.CrusaderStrike:Show(icon)
+		end
+		
+		if A.Consecration:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) and not Unit(unit):HasDeBuffs(A.ConsecrationUp.ID) then
+			return A.Consecration:Show(icon)
+		end
+		
+		if A.Judgement:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+			return A.Judgement:Show(icon)
+		end
+
+		if A.CrusaderStrike:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+			return A.CrusaderStrike:Show(icon)
+		end
+		
         -- Bursting 
         if A.BurstIsON(unit) and inRange and A.AbsentImun(nil, unit, Temp.TotalAndPhys) then 
             
@@ -778,67 +749,7 @@ A[3] = function(icon, isMulti)
             if A.Trinket2:IsReady(unit, nil, nil, true) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end     
-        end     
-        
-		-- Balance Affinity rotation
-        if A.BalanceAffinity:IsSpellLearned() and IsEnoughHPS(unit) and not IsSaveManaPhase() then 
-		    -- MoonkinForm
-			if A.MoonkinForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) == 0 then
-			    return A.MoonkinForm:Show(icon)
-			end			
-			-- Starsurge
-			if A.Starsurge:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) and Player:AstralPower() >= 40 then
-			    return A.Starsurge:Show(icon)
-			end
-			-- LunarStrike
-   			if A.LunarStrike:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) then
-			    return A.LunarStrike:Show(icon)
-			end
         end
-		
-			-- Prowl
-			--if A.Prowl:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
-			--    return A.Prowl:Show(icon)
-			--end	
-		
-		-- Feral Affinity rotation
-        if A.FeralAffinity:IsSpellLearned() and A.IsUnitEnemy("target") then 
-		    -- CatForm
-			--if A.CatForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
-			--    return A.CatForm:Show(icon)
-			--end
-			-- Swipe aoe
-   			if A.Swipe:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
-			    return A.Swipe:Show(icon)
-			end			
-		    -- Rake
-			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Player:ComboPoints() < 5 then
-			    return A.Rake:Show(icon)
-			end			
-			-- Rip
-			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
-			    return A.Rip:Show(icon)
-			end
-			-- FerociousBite
-   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(5, 5) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
-			    return A.FerociousBite:Show(icon)
-			end
-
-		    -- Shred
-			if A.Shred:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 40 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
-			    return A.Shred:Show(icon)
-			end
-        end 
-		
-		-- Sunfire
-        if A.Sunfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
-            return A.Sunfire:Show(icon)
-        end 
-		
-        -- Moonfire
-        if A.Moonfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
-            return A.Moonfire:Show(icon)
-        end 
 		
         -- Azerite Essence 
         if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) then 
@@ -857,12 +768,210 @@ A[3] = function(icon, isMulti)
         -- Continue Rotation 
         if (isMulti or A.GetToggle(2, "AoE")) and A.ArcanePulse:AutoRacial(unit, true, nil, true) then 
             return A.ArcanePulse:Show(icon)
-        end         
-                   
-    end 
+        end 
+		
+    end
+
     
 	-- Healing Rotation
     local function HealingRotation(unit)
+	    -- Variables
+        local totalMembers = HealingEngine.GetMembersAll()
+		local currentTanks = HealingEngine.GetMembersByMode("TANK")
+        local ChiBurstUnits = HealingEngine.GetMinimumUnits(2, 4)
+		
+		--Save yourself
+		if A.DivineShield:IsReady(unit, nil, nil, true) and Unit("player"):HealthPercent() <= 75 and not Unit("player"):HasDeBuffs(A.Forbearance.ID) then
+			return A.DivineShield:Show(icon)
+		end	
+
+        --Tank Emergency
+        if A.LayOnHands:IsReady(unit, nil, nil, true) and Unit(unit):HealthPercent() < 50 and not Unit(unit):HasDeBuffs(A.Forbearance.ID) then
+            return A.LayOnHands:Show(icon)
+        end
+		
+		--Custom Beacon - Need to add specific Target in UI
+        if A.BeaconofLight:IsReady(unit, nil, nil, true) and not Unit(unit):HasBuffs(A.BeaconofLight.ID, true) and Unit(unit):HealthPercent() < 99 then
+            return A.BeaconofLight:Show(icon)
+        end
+		--Dispell
+		--if not Player:CanAttack(Target) and A.Cleanse:IsReady(unit, nil, nil, true) and Target:HasDispelableDebuff("Magic", "Poison", "Disease") then
+			--return A.Cleanse:Show(icon)
+		--end
+
+    --Manuel Cooldown and NOT Glimmer of Light
+	if HR.CDsON() and not Azerite:GetRank(A.GlimmerofLight.ID) > 0 then
+		if A.AvengingWrath:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AuraMastery.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+            return A.AvengingWrath:Show(icon)
+        end
+
+		if A.AvengingCrusader:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AuraMastery.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+            return A.AvengingCrusader:Show(icon)
+        end		
+		
+		if A.HolyAvenger:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AuraMastery.ID, true) and not Unit("player"):HasBuffs(A.AvengingWrath.ID, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) then
+            return A.HolyAvenger:Show(icon)
+        end
+
+		if A.AuraMastery:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingWrath.ID, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+			return A.AuraMastery:Show(icon)
+		end
+		
+		if A.LifeBindersInvocation:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(85) >= 5 then
+			return A.LifeBindersInvocation:Show(icon)
+		end
+		
+		if A.OverchargeMana:IsReady(unit, nil, nil, true) then
+			return A.OverchargeMana:Show(icon)
+		end
+	end
+		
+		if A.MemoryOfLucidDreams:IsReady(unit, nil, nil, true) and Player:Mana() < Player:ManaMax() * 0.85 then
+			return A.MemoryOfLucidDreams:Show(icon)
+		end
+		
+	--Manuel Cooldown and Glimmer of Light
+	if HR.CDsON() and Azerite:GetRank(A.GlimmerofLight.ID) > 0 then
+		if A.AvengingWrath:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AuraMastery.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+            return A.AvengingWrath:Show(icon)
+        end
+		
+		if A.HolyAvenger:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AuraMastery.ID, true) then
+            return A.HolyAvenger:Show(icon)
+        end
+
+		if A.AuraMastery:IsReady(unit, nil, nil, true) and not Unit("player"):HasBuffs(A.AvengingWrath.ID, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+			return A.AuraMastery:Show(icon)
+		end
+		
+		if A.LifeBindersInvocation:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(85) >= 5 then
+			return A.LifeBindersInvocation:Show(icon)
+		end
+		
+		if A.OverchargeMana:IsReady(unit, nil, nil, true) then
+			return A.OverchargeMana:Show(icon)
+		end
+	end
+		-- Memory of Lucid Dreams if current mana <= 85% maximum mana
+		if A.MemoryOfLucidDreams:IsReady(unit, nil, nil, true) and Unit("player"):Mana() < Unit("player"):ManaMax() * 0.85 then
+			return A.UnleashHeartofAzeroth:Show(icon)
+		end
+		
+		--AuraMastery settings
+        if A.AuraMastery:IsReady(unit, nil, nil, true) and HR.CDsON() and not Unit("player"):HasBuffs(A.AvengingWrath.ID, true) and not Unit("player"):HasBuffs(A.AvengingCrusader.ID, true) and not Unit("player"):HasBuffs(A.HolyAvenger.ID, true) then
+            return A.AuraMastery:Show(icon)
+        end		
+
+        --Beacon of Virtue
+        if A.BeaconofVirtue:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(85) >= 3 then
+			return A.BeaconofVirtue:Show(icon)
+		end
+
+        --Light of Dawn
+        if A.LightofDawn:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(85) >= 3 then
+			return A.LightofDawn:Show(icon)
+        end
+
+		--Holy Shock
+        if A.HolyShock:IsReady(unit, nil, nil, true) then
+            if LowestAlly("ALL", "HP") <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_holyshock"]["value"] then
+                ForceHealingTarget("ALL")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_holyshock"]["value"] then
+                return A.HolyShock:Show(icon)
+            end
+
+        end
+
+        --Judgment Of Light
+        if RubimRH.AoEON() and A.Judgement:IsReady(unit, nil, nil, true) and A.JudgementofLight:IsAvailable() and Player:AffectingCombat() then
+            return A.Judgement:Show(icon)
+        end
+		
+		if RubimRH.AoEON() and A.LightsHammer:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(75) >= 5 then
+			return A.LightsHammer:Show(icon)
+		end
+		
+		--Holy Prism
+		if RubimRH.AoEON() and A.HolyPrism:IsReady(unit, nil, nil, true) and HealingEngine.GetBelowHealthPercentercentUnits(75) >= 3 then
+			return A.HolyPrism:Show(icon)
+		end
+		
+        --Bestow Faith
+        if A.BestowFaith:IsAvailable() and A.BestowFaith:IsReady(unit, nil, nil, true) then
+            if LowestAlly("TANK", "HP") <= 95 then
+                ForceHealingTarget("TANK")
+            end
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() <= 95 then
+                return A.BestowFaith:Show(icon)
+            end
+        end
+		
+		--Concentrated Flame Heal
+        if A.ConcentratedFlameHeal:IsReady(unit, nil, nil, true) then
+            if LowestAlly("ALL", "HP") <= 75 then
+                ForceHealingTarget("ALL")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() <= 75 then
+                return A.UnleashHeartofAzeroth:Show(icon)
+            end
+        end
+		
+		--Vitality Conduit
+        if A.VitalityConduit:IsReady(unit, nil, nil, true) then
+            if LowestAlly("TANK", "HP") <= 75 then
+                ForceHealingTarget("TANK")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() <= 75 then
+                return A.UnleashHeartofAzeroth:Show(icon)
+            end
+        end
+		
+        --Flash of Light
+        if A.FlashofLight:IsReady(unit, nil, nil, true) and not Player:IsMoving() then
+            if LowestAlly("ALL", "HP") <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_flashlight"]["value"] then
+                ForceHealingTarget("ALL")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_flashlight"]["value"] then
+                return A.FlashofLight:Show(icon)
+            end
+        end
+
+        --Crusader Strike
+        if RubimRH.AoEON() and A.CrusaderStrike:IsReady(unit, nil, nil, true) and A.CrusadersMight:IsAvailable() and not A.HolyShock:IsReady(unit, nil, nil, true) and Player:AffectingCombat() then
+            return A.CrusaderStrike:Show(icon)
+        end
+
+        --Holy Light
+        if A.HolyLight:IsReady(unit, nil, nil, true) and not Player:IsMoving() then
+            if LowestAlly("ALL", "HP") <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_holylight"]["value"] then
+                ForceHealingTarget("ALL")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_holylight"]["value"] then
+                return A.HolyLight:Show(icon)
+            end
+        end
+		
+        --Light of the Martyr
+        if A.LightoftheMartyr:IsReady(unit, nil, nil, true) and Player:IsMoving() and Unit(unit):HealthPercent() > 75 then
+            if LowestAlly("ALL", "HP") <= RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_martyr"]["value"] then
+                ForceHealingTarget("ALL")
+            end
+
+            if not BadDebuffOnTarget() and Target:GUID() == LowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() < RubimRH.db.profile.mainOption.classprofiles[65][RubimRH.db.profile.mainOption.selectedProfile]["raid_martyr"]["value"] then
+                return A.LightoftheMartyr:Show(icon)
+            end
+        end
+
+    end   
+
+	
+	local function HealingRotation(unit)
         -- local
 		local ActivesRejuvenations = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
         local MaintainRejuvenation = MaintainRejuvenation(unit)
