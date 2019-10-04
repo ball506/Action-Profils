@@ -1018,7 +1018,7 @@ local function APL()
      	    end 
      	end 
         -- Mouseover         
-        if Action.IsUnitEnemy("mouseover") and Action.GetToggle(2, "mouseover") then 
+        if Action.IsUnitEnemy("mouseover") and not ActionUnit("mouseover"):IsDead() and Action.GetToggle(2, "mouseover") then 
             unit = "mouseover"
                 
             if MouseoverRotation(unit) then 
