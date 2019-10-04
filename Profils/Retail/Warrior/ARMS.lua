@@ -359,7 +359,7 @@ local function APL()
             if HR.Cast(S.ColossusSmash) then return "colossus_smash 22"; end
         end
         -- warbreaker,if=!essence.memory_of_lucid_dreams.major|(buff.memory_of_lucid_dreams.up|cooldown.memory_of_lucid_dreams.remains>10)
-        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and HR.CDsON() and (not S.MemoryofLucidDreams:IsAvailable() or (Player:BuffP(S.MemoryofLucidDreams) or S.MemoryofLucidDreams:CooldownRemainsP() > 10)) then
+        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and (not S.MemoryofLucidDreams:IsAvailable() or (Player:BuffP(S.MemoryofLucidDreams) or S.MemoryofLucidDreams:CooldownRemainsP() > 10)) then
             if HR.Cast(S.Warbreaker, Action.GetToggle(2, "OffGCDasOffGCD")) then return "warbreaker 26"; end
         end
         -- deadly_calm
@@ -409,7 +409,7 @@ local function APL()
             if HR.Cast(S.ColossusSmash) then return "colossus_smash 70"; end
         end
         -- warbreaker,if=debuff.colossus_smash.down
-        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and HR.CDsON() and (Target:DebuffDownP(S.ColossusSmashDebuff)) then
+        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and (Target:DebuffDownP(S.ColossusSmashDebuff)) then
             if HR.Cast(S.Warbreaker, Action.GetToggle(2, "OffGCDasOffGCD")) then return "warbreaker 74"; end
         end
         -- bladestorm,if=buff.sweeping_strikes.down&(!talent.deadly_calm.enabled|buff.deadly_calm.down)&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
@@ -471,7 +471,7 @@ local function APL()
             if HR.Cast(S.ColossusSmash) then return "colossus_smash 188"; end
         end
         -- warbreaker,if=raid_event.adds.up|raid_event.adds.in>40|(raid_event.adds.in>20&talent.anger_management.enabled)
-        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and HR.CDsON() and ((Cache.EnemiesCount[8] > 1) or 10000000000 > 40 or (10000000000 > 20 and S.AngerManagement:IsAvailable())) then
+        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and ((Cache.EnemiesCount[8] > 1) or 10000000000 > 40 or (10000000000 > 20 and S.AngerManagement:IsAvailable())) then
             if HR.Cast(S.Warbreaker, Action.GetToggle(2, "OffGCDasOffGCD")) then return "warbreaker 194"; end
         end
         -- bladestorm,if=(debuff.colossus_smash.up&raid_event.adds.in>target.time_to_die)|raid_event.adds.up&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
@@ -529,7 +529,7 @@ local function APL()
             if HR.Cast(S.ColossusSmash) then return "colossus_smash 288"; end
         end
         -- warbreaker,if=!essence.memory_of_lucid_dreams.major|(buff.memory_of_lucid_dreams.up|cooldown.memory_of_lucid_dreams.remains>10)
-        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and HR.CDsON() and (not S.MemoryofLucidDreams:IsAvailable() or (Player:BuffP(S.MemoryofLucidDreams) or S.MemoryofLucidDreams:CooldownRemainsP() > 10)) then
+        if S.Warbreaker:IsCastableP("Melee") and not ShouldStop and (not S.MemoryofLucidDreams:IsAvailable() or (Player:BuffP(S.MemoryofLucidDreams) or S.MemoryofLucidDreams:CooldownRemainsP() > 10)) then
             if HR.Cast(S.Warbreaker, Action.GetToggle(2, "OffGCDasOffGCD")) then return "warbreaker 292"; end
         end
         -- deadly_calm
