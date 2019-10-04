@@ -258,6 +258,12 @@ local function APL()
     UpdateRanges() -- To populate Cache.Enemies[range] for CastCycles
     DetermineEssenceRanks()
 	
+	if Player:IsCasting() or Player:IsChanneling() then
+	    ShouldStop = true
+	else
+	    ShouldStop = false
+	end
+	
     local function Precombat()
         -- flask
         -- food
@@ -285,6 +291,7 @@ local function APL()
             end
         end
     end
+	
     local function Aoe()
         -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targets.remorseless_winter>=3&!buff.rime.up)
         if S.RemorselessWinter:IsCastableP() and not ShouldStop and (S.GatheringStorm:IsAvailable() or (bool(S.FrozenTempest:AzeriteRank()) and Cache.EnemiesCount[8] >= 3 and not Player:BuffP(S.RimeBuff))) then
@@ -594,11 +601,11 @@ local function APL()
     end
     local function Essences()
         -- blood_of_the_enemy,if=buff.pillar_of_frost.remains<10&cooldown.breath_of_sindragosa.remains|buff.pillar_of_frost.remains<10&!talent.breath_of_sindragosa.enabled
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and (Player:BuffRemainsP(S.PillarofFrostBuff) < 10 and bool(S.BreathofSindragosa:CooldownRemainsP()) or Player:BuffRemainsP(S.PillarofFrostBuff) < 10 and not S.BreathofSindragosa:IsAvailable()) then
+        if S.BloodoftheEnemy:IsCastableP() and HR.CDsON() and not ShouldStop and (Player:BuffRemainsP(S.PillarofFrostBuff) < 10 and bool(S.BreathofSindragosa:CooldownRemainsP()) or Player:BuffRemainsP(S.PillarofFrostBuff) < 10 and not S.BreathofSindragosa:IsAvailable()) then
             if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy"; end
         end
         -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop then
+        if S.GuardianofAzeroth:IsCastableP() and HR.CDsON() and not ShouldStop then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- chill_streak,if=buff.pillar_of_frost.remains<5|target.1.time_to_die<5
@@ -606,11 +613,11 @@ local function APL()
             if HR.Cast(S.ChillStreak) then return "chill_streak"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-        if S.TheUnboundForce:IsCastableP() and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 11) then
+        if S.TheUnboundForce:IsCastableP() and HR.CDsON() and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 11) then
             if HR.Cast(S.TheUnboundForce) then return "the_unbound_force"; end
         end
         -- focused_azerite_beam,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and (not Player:BuffP(S.PillarofFrostBuff) and not Player:BuffP(S.BreathofSindragosa)) then
+        if S.FocusedAzeriteBeam:IsCastableP() and HR.CDsON() and not ShouldStop and (not Player:BuffP(S.PillarofFrostBuff) and not Player:BuffP(S.BreathofSindragosa)) then
             if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
         end
         -- concentrated_flame,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up&dot.concentrated_flame_burn.remains=0
@@ -630,7 +637,7 @@ local function APL()
             if HR.Cast(S.RippleInSpace) then return "ripple_in_space"; end
         end
         -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and (Player:BuffRemainsP(S.EmpowerRuneWeaponBuff) < 5 and Player:BuffP(S.BreathofSindragosa) or (Player:RuneTimeToX(2) > Player:GCD() and Player:RunicPower() < 50)) then
+        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and not ShouldStop and (Player:BuffRemainsP(S.EmpowerRuneWeaponBuff) < 5 and Player:BuffP(S.BreathofSindragosa) or (Player:RuneTimeToX(2) > Player:GCD() and Player:RunicPower() < 50)) then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
     end
