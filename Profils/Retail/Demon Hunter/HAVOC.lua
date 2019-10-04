@@ -35,9 +35,14 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   Stoneform                            = Action.Create({ Type = "Spell", ID = 20594    }), 
   WilloftheForsaken                    = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
   EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-  EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
-  PetKick                              = Action.Create({ Type = "Spell", ID = 47482, Color = "RED", Desc = "RED" }),
-  Imprison                             = Action.Create({ Type = "Spell", ID = 217832}),
+  EveryManforHimself                    = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+  PetKick                               = Action.Create({ Type = "Spell", ID = 47482, Color = "RED", Desc = "RED" }),
+  Imprison                              = Action.Create({ Type = "Spell", ID = 217832}),
+  ImprisonAntiFake                      = Action.Create({ Type = "Spell", ID = 217832, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
+  Disrupt                               = Action.Create({ Type = "Spell", ID = 183752}),
+  DisruptGreen							= Action.Create({ Type = "SpellSingleColor", ID = 183752, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }),
+  ChaosNova                             = Action.Create({ Type = "Spell", ID = 179057}),
+  ChaosNovaGreen						= Action.Create({ Type = "SpellSingleColor", ID = 179057, Color = "GREEN", Desc = "[1] CC", Hidden = true, QueueForbidden = true }),
   Metamorphosis                         = Action.Create({ Type = "Spell", ID = 191427}),
   ChaoticTransformation                 = Action.Create({ Type = "Spell", ID = 288754}),
   Demonic                               = Action.Create({ Type = "Spell", ID = 213410}),
@@ -62,9 +67,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   BlindFury                             = Action.Create({ Type = "Spell", ID = 203550}),
   FirstBlood                            = Action.Create({ Type = "Spell", ID = 206416}),
   TrailofRuin                           = Action.Create({ Type = "Spell", ID = 258881}),  
-  Disrupt                               = Action.Create({ Type = "Spell", ID = 183752}),
   FelEruption                           = Action.Create({ Type = "Spell", ID = 211881}),
-  ChaosNova                             = Action.Create({ Type = "Spell", ID = 179057}),
   Blur                                  = Action.Create({ Type = "Spell", ID = 198589}),
   ConsumeMagic                          = Action.Create({ Type = "Spell", ID = 278326}),
   Darkness                              = Action.Create({ Type = "Spell", ID = 196718}),
@@ -661,6 +664,106 @@ local function APL()
 end
 -- Finished
 
+-----------------------------------------
+--           PVP ROTATION  
+-----------------------------------------
+-- Locals
+local Temp                                     = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                        = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+    DisablePhys                                = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                                = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = 
+IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+    return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
+end 
+
+local function UpdateExecuteID()
+    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
+end
+
+local function ExecuteRange()
+	return A.Massacre:IsSpellLearned() and 35 or 20;
+end
+	
+
+
+-- [1] CC AntiFake Rotation
+local function AntiFakeStun(unit) 
+    return 
+    Action.IsUnitEnemy(unit) and  
+    ActionUnit(unit):GetRange() <= 5 and 
+    ActionUnit(unit):IsControlAble("stun", 0) and 
+    A.ChaosNovaGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if     A.ChaosNovaGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not Action.IsUnitEnemy("mouseover") and 
+            not Action.IsUnitEnemy("target") and                     
+            (
+                (Action.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
+                (not Action.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
+            )
+        )
+    )
+    then 
+        return A.ChaosNovaGreen:Show(icon)         
+    end                                                                     
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if Action.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif Action.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = ActionUnit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            -- Disrupt
+			if not notKickAble and A.DisruptGreen:IsReady(unit, nil, nil, true) and A.DisruptGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
+                return A.DisruptGreen:Show(icon)                                                  
+            end 
+			
+            -- Imprison
+            if A.ImprisonAntiFake:IsReady(unit, nil, nil, true) and A.ImprisonAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and ActionUnit(unit):IsControlAble("incapacitate", 0) then
+                return A.ImprisonAntiFake:Show(icon)                  
+            end			
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
 
 -----------------------------------------
 --                 ROTATION  
