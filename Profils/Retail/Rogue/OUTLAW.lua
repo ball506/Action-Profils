@@ -557,13 +557,6 @@ local function APL()
     ToggleBurstMode()
 	CheckGoodBuffs()
 	--print(Cache.EnemiesCount[BladeFlurryRange])
-	
-	-- Anti channel interrupt
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
     
 	-- Defensives
     -- Crimson Vial
@@ -832,14 +825,24 @@ end
         -- Flask
         -- Food
         -- Rune
-        -- PrePot w/ Bossmod Countdown
+        -- Pre BladeFlurry OOC
+        if Everyone.TargetIsValid() then
+            -- actions.cds+=/blade_flurry,if=spell_targets.blade_flurry>=2&!buff.blade_flurry.up
+            if HR.AoEON() and not ShouldStop and S.BladeFlurry:IsCastable() and Cache.EnemiesCount[BladeFlurryRange] >= 2 and not Player:BuffP(S.BladeFlurry) then
+                if Action.GetToggle(2, "OffGCDasOffGCD") then
+                    HR.Cast(S.BladeFlurry);
+                else
+                    if HR.Cast(S.BladeFlurry) then return "Cast Blade Flurry"; end
+                end
+            end
+		end
         -- Opener
         if Everyone.TargetIsValid() then
             if Player:ComboPoints() >= 5 and not ShouldStop then
                 ShouldReturn = Finish();
                 if ShouldReturn then return "Finish: " .. ShouldReturn; end
             elseif Target:IsInRange(S.SinisterStrike) and not ShouldStop then
-                if Player:IsStealthedP(true, true) and S.Ambush:IsCastable() then
+                if Player:IsStealthed() and S.Ambush:IsCastable() then
                     if HR.Cast(S.Ambush) then return "Cast Ambush (Opener)"; end
                 elseif S.SinisterStrike:IsCastable() then
                     if HR.Cast(S.SinisterStrike) then return "Cast Sinister Strike (Opener)"; end
