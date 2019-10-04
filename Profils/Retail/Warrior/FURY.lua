@@ -281,11 +281,11 @@ local function APL()
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
             end
             -- memory_of_lucid_dreams
-            if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Pull > 0.1 and Pull <= 2 then
+            if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and HR.CDsON() and not ShouldStop and Pull > 0.1 and Pull <= 2 then
                 if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
             end
             -- guardian_of_azeroth
-            if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Pull > 0.1 and Pull <= 2 then
+            if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and HR.CDsON() and not ShouldStop and Pull > 0.1 and Pull <= 2 then
                 if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
             end
             -- potion
@@ -314,11 +314,11 @@ local function APL()
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
         end
         -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop then
+        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and HR.CDsON()  then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop then
+        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and HR.CDsON()  then
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- recklessness
