@@ -134,19 +134,8 @@ end
 -- Trinkets
 -------------------------------------------------------------------------------
 -- Trinkets checker
-function TrinketON(unit)
-    if not unit then 
-	    unit = "target"
-	end
-	if unit then
-        if Action.Trinket1:IsReady(unit) or Action.Trinket2:IsReady(unit) then
-            return true
-		else
-	        return false
-		end
-	else
-	    return false
-	end
+function TrinketON()
+  return ((Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) and true) or false
 end
 
 -------------------------------------------------------------------------------
