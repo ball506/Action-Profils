@@ -296,6 +296,10 @@ local function APL(icon)
         if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 then
             if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 4"; end
         end
+        -- potion
+        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 then
+            if HR.Cast(I.PotionofUnbridledFury) then return "PotionofUnbridledFury 4"; end
+        end
         -- metamorphosis,if=!azerite.chaotic_transformation.enabled
         if S.Metamorphosis:IsCastableP(40) and not ShouldStop and (Player:BuffDownP(S.MetamorphosisBuff) and not S.ChaoticTransformation:AzeriteEnabled()) and Pull > 0.1 and Pull <= 0.2 then
             if HR.Cast(S.Metamorphosis, Action.GetToggle(2, "OffGCDasOffGCD")) then return "metamorphosis 6"; end
@@ -311,6 +315,11 @@ local function APL(icon)
         if I.PotionofFocusedResolve:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 then
             if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 4"; end
         end
+        -- potion
+        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 then
+            if HR.Cast(I.PotionofUnbridledFury) then return "PotionofUnbridledFury 4"; end
+        end
+		
 		if Player:CanAttack(Target) then
             -- Immolation Aura
             if S.ImmolationAura:IsCastableP() and not ShouldStop then
