@@ -317,7 +317,7 @@ end
 Init()
 
 --- ======= ACTION LISTS =======
-local function APL() 
+local function APL(icon) 
     
 	-- Action specifics remap
 	local ShouldStop = Action.ShouldStop()
@@ -823,7 +823,42 @@ local function APL()
             if ShouldReturn then return ShouldReturn; 
         end    
     end
-    
+	
+	-- Make use of all trinkets of the game
+	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
+	local function TrinketsRotation(icon)
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket1.ID == I.AzsharasFontofPower or 
+		   A.Trinket1.ID == I.PocketsizedComputationDevice or 
+		   A.Trinket1.ID == I.AzsharasFontofPower or 
+		   A.Trinket1.ID == I.ShiverVenomRelic then
+		    forbiddenTrinket1 = true   
+	    else 
+		    forbiddenTrinket1 = false   
+		end
+		
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket2.ID == I.AzsharasFontofPower or 
+		   A.Trinket2.ID == I.PocketsizedComputationDevice or 
+		   A.Trinket2.ID == I.AzsharasFontofPower or 
+		   A.Trinket2.ID == I.ShiverVenomRelic then
+		    forbiddenTrinket2 = true   
+	    else 
+		    forbiddenTrinket2 = false   
+		end
+		
+       	   	-- Trinkets
+       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	       	return A.Trinket1:Show(icon)
+   	       	end 
+               
+   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	       	return A.Trinket2:Show(icon)
+   	       	end
+   	   	
+     	
+   	end
+	
     --- In Combat
     if Player:AffectingCombat() then
 
@@ -909,6 +944,10 @@ local function APL()
         if HR.CDsON() and ((S.RuneofPower:IsAvailable() and S.Combustion:CooldownRemainsP() <= S.RuneofPower:CastTime() or S.Combustion:CooldownUpP()) and not bool(S.Firestarter:ActiveStatus()) or Player:BuffP(S.CombustionBuff)) then
             local ShouldReturn = CombustionPhase(); if ShouldReturn then return ShouldReturn; end
         end
+		-- Non SIMC Custom Trinkets
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	        return TrinketsRotation(icon)		
+	    end
         -- fire_blast,use_while_casting=1,use_off_gcd=1,if=(essence.memory_of_lucid_dreams.major|essence.memory_of_lucid_dreams.minor&azerite.blaster_master.enabled)&charges=max_charges&!buff.hot_streak.react&!(buff.heating_up.react&(buff.combustion.up&(action.fireball.in_flight|action.pyroblast.in_flight|action.scorch.executing)|target.health.pct<=30&action.scorch.executing))&!(!buff.heating_up.react&!buff.hot_streak.react&buff.combustion.down&(action.fireball.in_flight|action.pyroblast.in_flight))
         if S.FireBlast:IsReady() and ((S.MemoryofLucidDreams:IsAvailable() or S.MemoryofLucidDreamsMinor:IsAvailable() and S.BlasterMaster:AzeriteEnabled()) and S.FireBlast:ChargesP() == S.FireBlast:MaxCharges() and not Player:BuffP(S.HotStreakBuff) and not (Player:BuffP(S.HeatingUpBuff) and (Player:BuffP(S.CombustionBuff) and (S.Fireball:InFlight() or S.Pyroblast:InFlight() or Player:IsCasting(S.Scorch)) or Target:HealthPercentage() <= 30 and Player:IsCasting(S.Scorch))) and not (not Player:BuffP(S.HeatingUpBuff) and not Player:BuffP(S.HotStreakBuff) and Player:BuffDownP(S.CombustionBuff) and (S.Fireball:InFlight() or S.Pyroblast:InFlight()))) then
             if HR.Cast(S.FireBlast, Action.GetToggle(2, "OffGCDasOffGCD")) then return "fire_blast 830"; end
@@ -940,7 +979,7 @@ end
 
 -- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-    if APL() then 
+    if APL(icon) then 
         return true 
     end
 end

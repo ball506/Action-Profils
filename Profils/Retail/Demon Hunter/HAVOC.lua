@@ -274,7 +274,7 @@ end
 S.ConcentratedFlame:RegisterInFlight()
 
 --- ======= ACTION LISTS =======
-local function APL() 
+local function APL(icon) 
     
 	-- Action specifics remap
 	local ShouldStop = Action.ShouldStop()
@@ -365,7 +365,7 @@ local function APL()
             if HR.Cast(S.MemoryofLucidDreams, Action.GetToggle(2, "OffGCDasOffGCD")) then return "memory_of_lucid_dreams"; end
         end
     end
-    
+	
 	local function Cooldown()
         -- metamorphosis,if=!(talent.demonic.enabled|variable.pooling_for_meta|variable.waiting_for_nemesis)|target.time_to_die<25
         if S.Metamorphosis:IsCastableP(40) and not ShouldStop and (Player:BuffDownP(S.MetamorphosisBuff) and not (S.Demonic:IsAvailable() or bool(VarPoolingForMeta) or bool(VarWaitingForNemesis)) or Target:TimeToDie() < 25) then
@@ -392,6 +392,7 @@ local function APL()
         if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
+
         -- use_item,name=galecallers_boon,if=!talent.fel_barrage.enabled|cooldown.fel_barrage.ready
         if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and TrinketON() and not ShouldStop and (not S.FelBarrage:IsAvailable() or S.FelBarrage:CooldownUpP()) then
             if HR.Cast(I.GalecallersBoon) then return "galecallers_boon 56"; end
@@ -559,6 +560,38 @@ local function APL()
             if HR.Cast(S.ThrowGlaive) then return "throw_glaive 267"; end
         end
     end
+	
+	
+	-- Make use of all trinkets of the game
+	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
+	local function TrinketsRotation(icon)
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
+		    forbiddenTrinket1 = true   
+	    else 
+		    forbiddenTrinket1 = false   
+		end
+		
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
+		    forbiddenTrinket2 = true   
+	    else 
+		    forbiddenTrinket2 = false   
+		end
+		
+       	   	-- Trinkets
+       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	       	return A.Trinket1:Show(icon)
+   	       	end 
+               
+   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	       	return A.Trinket2:Show(icon)
+   	       	end
+   	   	
+     	
+   	end	
+	
+
     
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
@@ -642,6 +675,11 @@ local function APL()
         if HR.CDsON() then
             local ShouldReturn = Cooldown(); if ShouldReturn then return ShouldReturn; end
         end
+		
+		-- Non SIMC Custom Trinkets
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	        return TrinketsRotation(icon)		
+	    end
 
         -- pick_up_fragment,if=fury.deficit>=35&(!azerite.eyes_of_rage.enabled|cooldown.eye_beam.remains>1.4)
         -- TODO: Can't detect when orbs actually spawn, we could possibly show a suggested icon when we DON'T want to pick up souls so people can avoid moving?
@@ -660,6 +698,9 @@ local function APL()
         if (true) then
             local ShouldReturn = Normal(); if ShouldReturn then return ShouldReturn; end
         end	
+    
+
+	
     end
 end
 -- Finished
@@ -771,7 +812,17 @@ end
 
 -- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-    if APL() then 
+	
+	
+	-- PvP Custom Rotation
+	--if Action.IsInPvP then	    
+	--    return PvPRotation(icon)		
+	--end
+		
+	-- Return rest of the rotation
+	if APL(icon) then 
         return true 
     end
+	
+
 end

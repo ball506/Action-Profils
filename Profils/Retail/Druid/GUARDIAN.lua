@@ -278,7 +278,7 @@ end
 Init()
 
 --- ======= ACTION LISTS =======
-local function APL() 
+local function APL(icon) 
     
 	-- Action specifics remap
 	local ShouldStop = Action.ShouldStop()
@@ -405,6 +405,35 @@ local function APL()
             if ShouldReturn then return ShouldReturn; 
         end    
     end
+
+	-- Make use of all trinkets of the game
+	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
+	local function TrinketsRotation(icon)
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
+		    forbiddenTrinket1 = true   
+	    else 
+		    forbiddenTrinket1 = false   
+		end
+		
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
+		    forbiddenTrinket2 = true   
+	    else 
+		    forbiddenTrinket2 = false   
+		end
+		
+       	   	-- Trinkets
+       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	       	return A.Trinket1:Show(icon)
+   	       	end 
+               
+   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	       	return A.Trinket2:Show(icon)
+   	       	end
+   	   	
+     	
+   	end	
 	    
     --- In Combat
     if Player:AffectingCombat() then	
@@ -457,6 +486,10 @@ local function APL()
         if (true) then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
+		-- Non SIMC Custom Trinkets
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	        return TrinketsRotation(icon)		
+	    end
         -- maul,if=rage.deficit<10&active_enemies<4
         if S.Maul:IsReadyP() and not ShouldStop and (Player:RageDeficit() < 10 and EnemiesCount < 4) then
             if HR.Cast(S.Maul) then return "maul 41"; end
@@ -520,7 +553,7 @@ end
 
 -- [3] is Single rotation (supports all actions)
 A[3] = function(icon)
-    if APL() then 
+    if APL(icon) then 
         return true 
     end
 end

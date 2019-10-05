@@ -272,7 +272,7 @@ Init()
 -----------------------------------------
 
 --- ======= ACTION LISTS =======
-local function APL() 
+local function APL(icon) 
     
 	-- Action specifics remap
 	local ShouldStop = Action.ShouldStop()
@@ -587,7 +587,36 @@ local function APL()
             if ShouldReturn then return ShouldReturn; 
         end    
     end
-	    
+	
+	-- Make use of all trinkets of the game
+	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
+	local function TrinketsRotation(icon)
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
+		    forbiddenTrinket1 = true   
+	    else 
+		    forbiddenTrinket1 = false   
+		end
+		
+    	-- Add trinkets we dont want to use on cd here :
+	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
+		    forbiddenTrinket2 = true   
+	    else 
+		    forbiddenTrinket2 = false   
+		end
+		
+       	   	-- Trinkets
+       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	       	return A.Trinket1:Show(icon)
+   	       	end 
+               
+   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	       	return A.Trinket2:Show(icon)
+   	       	end
+   	   	
+     	
+   	end	
+	
     --- In Combat
     if Player:AffectingCombat() then
         -- auto_attack
@@ -648,6 +677,10 @@ local function APL()
         if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
+		-- Non SIMC Custom Trinkets
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	        return TrinketsRotation(icon)		
+	    end
         -- avatar,if=cooldown.colossus_smash.remains<8|(talent.warbreaker.enabled&cooldown.warbreaker.remains<8)
         if S.Avatar:IsCastableP() and not ShouldStop and HR.CDsON() and (S.ColossusSmash:CooldownRemainsP() < 8 or (S.Warbreaker:IsAvailable() and S.Warbreaker:CooldownRemainsP() < 8)) then
             if HR.Cast(S.Avatar, Action.GetToggle(2, "OffGCDasOffGCD")) then return "avatar 382"; end
