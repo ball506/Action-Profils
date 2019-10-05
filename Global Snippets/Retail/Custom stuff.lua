@@ -135,7 +135,7 @@ end
 -------------------------------------------------------------------------------
 -- Trinkets checker
 function TrinketON()
-  return ((Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) and true) or false
+  return ((Action.GetToggle(1, "Trinkets")[1])  or (Action.GetToggle(1, "Trinkets")[2]) and true) or false
 end
 
 -------------------------------------------------------------------------------
