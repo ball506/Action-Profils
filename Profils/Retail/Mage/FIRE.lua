@@ -367,7 +367,7 @@ local function APL(icon)
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 12"; end
         end
         -- pyroblast
-        if S.Pyroblast:IsCastableP() and not Player:PrevGCDP(1, S.Pyroblast) and not ShouldStop then
+        if S.Pyroblast:IsCastableP() and not Player:PrevGCDP(1, S.Pyroblast) and Pull > 0 and Pull <= (S.Pyroblast:CastTime() + S.Pyroblast:TravelTime()) and not ShouldStop then
             if HR.Cast(S.Pyroblast) then return "pyroblast 14"; end
         end
 		end
