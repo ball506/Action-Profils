@@ -721,12 +721,8 @@ local function APL(icon)
         end
         -- auto_shot
         -- use_items
-        -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
-            if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast"; end
-        end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffP(S.BestialWrathBuff) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffP(S.BestialWrathBuff) and Target:HealthPercentage() <= 31 and Target:TimeToDie() >= 10 then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
@@ -746,7 +742,7 @@ local function APL(icon)
             local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
         end
 		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
 	        return TrinketsRotation(icon)		
 	    end
 		-- Pool icon

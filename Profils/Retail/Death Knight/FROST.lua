@@ -828,7 +828,7 @@ local function APL(icon)
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
 		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
 	        return TrinketsRotation(icon)		
 	    end
         -- run_action_list,name=bos_pooling,if=talent.breath_of_sindragosa.enabled&((cooldown.breath_of_sindragosa.remains=0&cooldown.pillar_of_frost.remains<10)|(cooldown.breath_of_sindragosa.remains<20&target.time_to_die<35))

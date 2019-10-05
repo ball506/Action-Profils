@@ -677,7 +677,7 @@ local function APL(icon)
         end
 		
 		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
 	        return TrinketsRotation(icon)		
 	    end
 

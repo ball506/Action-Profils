@@ -942,7 +942,7 @@ end
         ShouldReturn = CDs();
         if ShouldReturn and not ShouldStop and HR.CDsON() then return "CDs: " .. ShouldReturn; end
 		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
 	        return TrinketsRotation(icon)		
 	    end
         -- actions+=/run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))

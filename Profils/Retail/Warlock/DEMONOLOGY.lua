@@ -1129,7 +1129,7 @@ local function APL(icon)
         if HR.Cast(I.VialofStorms) then return "vial_of_storms"; end
     end
 	-- Non SIMC Custom Trinkets
-	if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("player"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("player")) then	    
+	if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
 	    return TrinketsRotation(icon)		
 	end
     -- call_action_list,name=opener,if=!talent.nether_portal.enabled&time<30&!cooldown.summon_demonic_tyrant.remains
