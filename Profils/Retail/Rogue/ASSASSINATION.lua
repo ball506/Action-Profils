@@ -1641,7 +1641,7 @@ local function PvPRotation(icon)
     CurrentStealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent
 		
 	-- Stealth out of combat
-    if ActionUnit("player"):HasBuffs(A.VanishBuff.ID) == 0 and Action.GetToggle(2, "StealthOOC") and CurrentStealth:IsReady("player") and ActionUnit("player"):HasBuffs(CurrentStealth.ID) == 0 then
+    if ActionUnit("player"):HasBuffs(A.VanishBuff.ID) == 0 and Action.GetToggle(2, "StealthOOC") and not ActionUnit("player"):HasFlags() and CurrentStealth:IsReady("player") and ActionUnit("player"):HasBuffs(CurrentStealth.ID) == 0 then
         -- Notification					
         Action.SendNotification("Auto Stealthing", A.Stealth.ID)
         return CurrentStealth:Show(icon)
@@ -1805,7 +1805,7 @@ local function PvPRotation(icon)
 		
         -- Emergency Vanish
         local Vanish = Action.GetToggle(2, "VanishDefensive")
-        if     Vanish >= 0 and A.Vanish:IsReady("player") and 
+        if     Vanish >= 0 and A.Vanish:IsReady("player") and not ActionUnit("player"):HasFlags() and
         (
             (   -- Auto 
                 Vanish >= 100 and 
