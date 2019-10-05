@@ -74,6 +74,7 @@ Action[ACTION_CONST_MAGE_FROST] = {
     CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 167672, Hidden = true     }),
     HarmonicDematerializer               = Action.Create({ Type = "Spell", ID = 293512, Hidden = true     }),
     -- Buffs
+	IncantersFlowBuff                     = Action.Create({ Type = "Spell", ID = 116267     }),
     GlacialSpikeBuff                      = Action.Create({ Type = "Spell", ID = 199844     }),
     IceFloesBuff                          = Action.Create({ Type = "Spell", ID = 108839     }),
     RuneofPowerBuff                       = Action.Create({ Type = "Spell", ID = 116014     }),
@@ -205,7 +206,7 @@ local ForceOffGCD = {true, false};
 local Everyone = HR.Commons.Everyone;
 local EnemiesCount;
 
-local EnemyRanges = {35, 10}
+local EnemyRanges = {40, 35, 12, 10}
 local function UpdateRanges()
   for _, i in ipairs(EnemyRanges) do
     HL.GetEnemies(i);
@@ -242,6 +243,7 @@ end
 
 S.FrozenOrb.EffectID = 84721
 S.Frostbolt:RegisterInFlight()
+
 
 local function DetermineEssenceRanks()
     S.BloodoftheEnemy = S.BloodoftheEnemy2:IsAvailable() and S.BloodoftheEnemy2 or S.BloodoftheEnemy
@@ -287,7 +289,8 @@ local function APL(icon)
 	
 	-- Local functions remap
     local BlinkAny = S.Shimmer:IsAvailable() and S.Shimmer or S.Blink
-    EnemiesCount = GetEnemiesCount(8)
+    UpdateRanges()   
+    EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40, 12) -- For interrupts
     DetermineEssenceRanks()
 		
@@ -407,11 +410,11 @@ local function APL(icon)
             if HR.Cast(S.IceNova) then return "ice_nova 22"; end
         end
         -- flurry,if=prev_gcd.1.ebonbolt|buff.brain_freeze.react&(prev_gcd.1.frostbolt&(buff.icicles.stack<4|!talent.glacial_spike.enabled)|prev_gcd.1.glacial_spike)
-        if S.Flurry:IsCastableP() and (Player:PrevGCDP(1, S.Ebonbolt) or bool(Player:BuffStackP(S.BrainFreezeBuff)) and (Player:PrevGCDP(1, S.Frostbolt) and (Player:BuffStackP(S.IciclesBuff) < 4 or not S.GlacialSpike:IsAvailable()) or Player:PrevGCDP(1, S.GlacialSpike))) then
+        if S.Flurry:IsCastableP() and (Player:PrevGCDP(1, S.Ebonbolt) or Player:BuffP(S.BrainFreezeBuff)) and (Player:PrevGCDP(1, S.Frostbolt) and (Player:BuffStackP(S.IciclesBuff) < 4 or not S.GlacialSpike:IsAvailable()) or Player:PrevGCDP(1, S.GlacialSpike)) then
             if HR.Cast(S.Flurry) then return "flurry 24"; end
         end
         -- ice_lance,if=buff.fingers_of_frost.react
-        if S.IceLance:IsCastableP() and not ShouldStop and (bool(Player:BuffStackP(S.FingersofFrostBuff))) then
+        if S.IceLance:IsCastableP() and not ShouldStop and Player:BuffP(S.FingersofFrostBuff) then
             if HR.Cast(S.IceLance) then return "ice_lance 38"; end
         end
         -- ray_of_frost
@@ -513,19 +516,19 @@ local function APL(icon)
             if HR.Cast(S.IceNova) then return "ice_nova 117"; end
         end
         -- flurry,if=talent.ebonbolt.enabled&prev_gcd.1.ebonbolt&(!talent.glacial_spike.enabled|buff.icicles.stack<4|buff.brain_freeze.react)
-        if S.Flurry:IsCastableP() and (S.Ebonbolt:IsAvailable() and Player:PrevGCDP(1, S.Ebonbolt) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4 or bool(Player:BuffStackP(S.BrainFreezeBuff)))) then
+        if S.Flurry:IsCastableP() and (S.Ebonbolt:IsAvailable() and Player:PrevGCDP(1, S.Ebonbolt) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4 or Player:BuffP(S.BrainFreezeBuff))) then
             if HR.Cast(S.Flurry) then return "flurry 123"; end
         end
         -- flurry,if=talent.glacial_spike.enabled&prev_gcd.1.glacial_spike&buff.brain_freeze.react
-        if S.Flurry:IsCastableP() and (S.GlacialSpike:IsAvailable() and Player:PrevGCDP(1, S.GlacialSpike) and bool(Player:BuffStackP(S.BrainFreezeBuff))) then
+        if S.Flurry:IsCastableP() and S.GlacialSpike:IsAvailable() and Player:PrevGCDP(1, S.GlacialSpike) and Player:BuffP(S.BrainFreezeBuff) then
             if HR.Cast(S.Flurry) then return "flurry 135"; end
         end
         -- flurry,if=prev_gcd.1.frostbolt&buff.brain_freeze.react&(!talent.glacial_spike.enabled|buff.icicles.stack<4)
-        if S.Flurry:IsCastableP() and (Player:PrevGCDP(1, S.Frostbolt) and bool(Player:BuffStackP(S.BrainFreezeBuff)) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4)) then
+        if S.Flurry:IsCastableP() and Player:PrevGCDP(1, S.Frostbolt) and Player:BuffP(S.BrainFreezeBuff) and (not S.GlacialSpike:IsAvailable() or Player:BuffStackP(S.IciclesBuff) < 4) then
             if HR.Cast(S.Flurry) then return "flurry 135"; end
         end
         -- Manual addition of Ice Lance with Flurry as PrevGCDP
-        if S.IceLance:IsCastableP() and not ShouldStop and Player:PrevGCDP(1, S.Flurry) then
+        if S.IceLance:IsCastableP() and not ShouldStop and (Player:PrevGCDP(1, S.Flurry) or Player:BuffP(S.FingersofFrostBuff)) then
             if HR.Cast(S.IceLance) then return "ice_lance 218"; end
         end
         -- call_action_list,name=essences
@@ -546,8 +549,9 @@ local function APL(icon)
         if S.Ebonbolt:IsCastableP() and not ShouldStop and Player:BuffStackP(S.IciclesBuff) == 5 and Player:BuffDownP(S.BrainFreezeBuff) then
             if HR.Cast(S.Ebonbolt) then return "ebonbolt 181"; end
         end
-        -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|active_enemies>1&talent.splitting_ice.enabled
-        if S.GlacialSpike:IsReadyP() and Player:BuffStackP(S.IciclesBuff) == 5 and (Player:Buff(S.BrainFreezeBuff) or Player:PrevGCDP(1, S.Ebonbolt) and S.SplittingIce:IsAvailable()) then
+        -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down
+        -- TODO: Add handling for the Incanter's Flow conditions
+        if S.GlacialSpike:IsReadyP() and Player:BuffStackP(S.IciclesBuff) == 5 and (Player:BuffP(S.BrainFreezeBuff) or Player:PrevGCDP(1, S.Ebonbolt) and S.SplittingIce:IsAvailable()) then
             if HR.Cast(S.GlacialSpike) then return "glacial_spike 182"; end
         end
         -- ice_nova
