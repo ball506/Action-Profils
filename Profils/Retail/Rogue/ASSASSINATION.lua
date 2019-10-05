@@ -2168,7 +2168,7 @@ end
 -- [3] is Single rotation (supports all actions)
 A[3] = function(icon, isMulti)
     -- PvE Simc Rotation
-	if not Action.IsInPvP and APL() then 
+	if not Action.IsInPvP and APL(icon) then 
         return true 
     end
 	
