@@ -1518,11 +1518,11 @@ local function APL(icon)
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
 		-- ShadowStep in combat and not in range
-        if S.ShadowStep:IsReady() and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() then
-            if not Target:IsInRange("Melee") and Target:IsInRange(25) then
-                if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
-            end
-        end
+        --if S.ShadowStep:IsReady() and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() then
+        --    if not Target:IsInRange("Melee") and Target:IsInRange(25) then
+        --        if HR.Cast(S.ShadowStep) then return "ShadowStep"; end
+        --    end
+        --end
 		
   	    -- Kick
   	    if useKick and S.Kick:IsReady() and not ShouldStop and Target:IsInterruptible() then 
@@ -1916,12 +1916,12 @@ local function PvPRotation(icon)
 		end			
 		
 		-- ShadowStep
-		if ActionUnit(unit):CombatTime() > 0 and A.ShadowStep:IsReady(unit) and ActionUnit(unit):GetRange() > 7 and ActionUnit(unit):GetRange() <= 25 then
+		--if ActionUnit(unit):CombatTime() > 0 and A.ShadowStep:IsReady(unit) and ActionUnit(unit):GetRange() > 7 and ActionUnit(unit):GetRange() <= 25 then
 			-- ShadowStep
-		    if A.ShadowStep:IsReady(unit) then
-			    return A.ShadowStep:Show(icon)
-		    end			
-		end		
+		--    if A.ShadowStep:IsReady(unit) then
+		--	    return A.ShadowStep:Show(icon)
+		--    end			
+		--end		
 		
 		-- Vanish to garrote when in fight
 		if Player:IsStealthed() and ActionUnit(unit):CombatTime() > 0 then
