@@ -520,11 +520,11 @@ local function APL()
             if HR.Cast(S.TheUnboundForce, Action.GetToggle(2, "OffGCDasOffGCD")) then return "the_unbound_force"; end
         end
         -- guardian_of_azeroth,if=!buff.recklessness.up
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffDownP(S.RecklessnessBuff)) then
+        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffDownP(S.RecklessnessBuff)) then
             if HR.Cast(S.GuardianofAzeroth, Action.GetToggle(2, "OffGCDasOffGCD")) then return "guardian_of_azeroth"; end
         end
         -- memory_of_lucid_dreams,if=!buff.recklessness.up
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffDownP(S.RecklessnessBuff)) then
+        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffDownP(S.RecklessnessBuff)) then
             if HR.Cast(S.MemoryofLucidDreams, Action.GetToggle(2, "OffGCDasOffGCD")) then return "memory_of_lucid_dreams"; end
         end
         -- Reck if rage is > 90 and SiegebreakerDebuff
