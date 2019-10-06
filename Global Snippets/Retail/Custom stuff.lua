@@ -189,7 +189,7 @@ end
 -- Trinkets checker
 function TrinketON()
   local Trinket1Allowed, Trinket2IsAllowed = TrinketIsAllowed()
-  return ((Action.GetToggle(1, "Trinkets")[1] and Trinket1IsAllowed) or (Action.GetToggle(1, "Trinkets")[2] and Trinket2IsAllowed)) or false
+  return ((Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]))
 end
 
 -------------------------------------------------------------------------------
