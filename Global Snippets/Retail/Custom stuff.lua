@@ -136,60 +136,33 @@ end
 
 -- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
 local BlackListedTrinkets = {
-    -- Range Trinkets
-    Range = {
-        168905, -- Shiver Venom Relic
-		169314, -- Azsharas Font of Power
-    },
-	-- Melee Trinkets
-    Melee = {
-        169311, -- AshvanesRazorCoral
-		169314, -- Azsharas Font of Power
-    },
+
+    [1] = 169311, -- Shiver Venom Relic
+	[2] = 169314, -- Azsharas Font of Power
+    [3] = 169311, -- AshvanesRazorCoral
+	[4]	= 159628, -- Azsharas Font of Power
 }
 
 function TrinketIsAllowed()
-    local EquipedTrinket1 = Action.Trinket1.ID
-    local EquipedTrinket2 = Action.Trinket2.ID
-    Trinket1IsAllowed = false
-	Trinket2IsAllowed = false
-    
-	-- Range
-    if not ActionUnit("player"):IsMelee() then
-        for i = 1, #BlackListedTrinkets.Range do 
-            if EquipedTrinket1 == BlackListedTrinkets.Range[i] then
-                Trinket1IsAllowed = false	
-            else
-                Trinket1IsAllowed = true				
-            end
-            if EquipedTrinket2 == BlackListedTrinkets.Range[i] then
-                Trinket2IsAllowed = false		
-            else
-                Trinket2IsAllowed = true				
+    local Trinket1IsAllowed = true
+	local Trinket2IsAllowed = true
+     
+   	    for i = 1, #BlackListedTrinkets do
+            if Action.Trinket1.ID == BlackListedTrinkets[i] then
+                Trinket1IsAllowed = false				
+            break
+			end
+            if Action.Trinket2.ID == BlackListedTrinkets[i] then
+                Trinket2IsAllowed = false	
+            break				
             end
         end
-	else
-	    -- Melee
-    	for i = 1, #BlackListedTrinkets.Melee do 
-            if EquipedTrinket1 == BlackListedTrinkets.Melee[i] then
-                Trinket1IsAllowed = false	
-            else
-                Trinket1IsAllowed = true			
-            end
-            if EquipedTrinket2 == BlackListedTrinkets.Melee[i] then
-                Trinket2IsAllowed = false
-            else
-                Trinket2IsAllowed = true				
-            end
-        end
-	end
 	return Trinket1IsAllowed, Trinket2IsAllowed
 end
-
+    
 -- Trinkets checker
 function TrinketON()
-  local Trinket1Allowed, Trinket2IsAllowed = TrinketIsAllowed()
-  return ((Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]))
+  return ( (Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]) )
 end
 
 -------------------------------------------------------------------------------
