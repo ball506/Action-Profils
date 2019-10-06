@@ -498,7 +498,7 @@ local function CanTranquility()
         local counter = 0 
         for i = 1, #totalMembers do 
             -- Auto HP 
-            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit) and (RejuvenationCount >= (currentMembers / 3.5)) and (Unit(totalMembers[i].Unit)::TimeToDie() < 8 or totalMembers[i].HP <= 35) then 
+            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit) and (RejuvenationCount >= (currentMembers / 3.5)) and (Unit(totalMembers[i].Unit):TimeToDie() < 8 or totalMembers[i].HP <= 35) then 
                 counter = counter + 1
             end 
             
