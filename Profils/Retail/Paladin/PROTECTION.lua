@@ -368,29 +368,17 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
    	end	  
 	
@@ -398,23 +386,21 @@ local function APL(icon)
     if Player:AffectingCombat() then
         -- auto_attack
 		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
+ 	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")          
-  	    -- Rebuke
-  	    if useKick and S.Rebuke:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+  	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		
+        -- Rebuke
+  	    if useKick and S.Rebuke:IsReady() and not ShouldStop then 
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.Rebuke, true) then return "Rebuke 5"; end
-         	else 
-          	    return
          	end 
       	end 	
      	-- HammerofJustice
-      	if useCC and S.HammerofJustice:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+      	if useCC and S.HammerofJustice:IsReady() and not ShouldStop then 
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.HammerofJustice, true) then return "HammerofJustice 5"; end
-     	    else 
-     	        return
      	    end 
      	end 		
         -- auto_attack
@@ -422,9 +408,18 @@ local function APL(icon)
         if (HR.CDsON()) then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- worldvein_resonance,if=buff.lifeblood.stack<3
         if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffStackP(S.LifebloodBuff) < 3) then

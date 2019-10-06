@@ -363,6 +363,10 @@ local function APL(icon)
         if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 38"; end
         end
+        -- GuardianofAzeroth
+        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and HR.CDsON() then
+            if HR.Cast(S.GuardianofAzeroth, Action.GetToggle(2, "OffGCDasOffGCD")) then return "GuardianofAzeroth 38"; end
+        end
         -- thorns,if=active_enemies>desired_targets|raid_event.adds.in>45
         if S.Thorns:IsCastableP() and not ShouldStop and (Cache.EnemiesCount[8] > 1) then
             if HR.Cast(S.Thorns) then return "thorns"; end
@@ -626,64 +630,47 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end	
+   	end
 	    
     --- In Combat
     if Player:AffectingCombat() then	
 		
 		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
+ 	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		
   	    -- SkullBash
-  	    if useKick and S.SkullBash:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+  	    if useKick and S.SkullBash:IsReady() and not ShouldStop then 
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.SkullBash, true) then return "SkullBash 5"; end
-         	else 
-          	    return
          	end 
       	end 
 	
      	 -- MightyBash
-      	if useCC and S.MightyBash:IsAvailable() and S.MightyBash:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+      	if useCC and S.MightyBash:IsAvailable() and S.MightyBash:IsReady() and not ShouldStop then 
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.MightyBash, true) then return "MightyBash 5"; end
-     	    else 
-     	        return
      	    end 
      	end 
 
      	 -- IncapacitatingRoar
-      	if useCC and (not S.MightyBash:IsAvailable() or not S.MightyBash:IsReady() and not ShouldStop) and S.IncapacitatingRoar:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+      	if useCC and (not S.MightyBash:IsAvailable() or not S.MightyBash:IsReady() and not ShouldStop) and S.IncapacitatingRoar:IsReady() and not ShouldStop then 
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.IncapacitatingRoar, true) then return "IncapacitatingRoar 5"; end
-     	    else 
-     	        return
      	    end 
      	end 		
 		-- Soothe
@@ -713,9 +700,18 @@ local function APL(icon)
         if (HR.CDsON()) then
             local ShouldReturn = Cooldowns(); if ShouldReturn then return ShouldReturn; end
         end
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
         if S.FerociousBite:IsReadyP() and not ShouldStop and Player:ComboPoints() > 0 and EvaluateCycleFerociousBite418(Target) then

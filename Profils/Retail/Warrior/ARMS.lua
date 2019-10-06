@@ -591,29 +591,17 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
    	end	
 	
@@ -624,13 +612,12 @@ local function APL(icon)
 		-- Interrupt Handler
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-  
+        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		
   	    -- Pummel
-  	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+  	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop then 
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.Pummel, true) then return "Pummel 5"; end
-			else 
-          	    return
          	end 
       	end 
         -- charge
@@ -677,9 +664,18 @@ local function APL(icon)
         if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- avatar,if=cooldown.colossus_smash.remains<8|(talent.warbreaker.enabled&cooldown.warbreaker.remains<8)
         if S.Avatar:IsCastableP() and not ShouldStop and HR.CDsON() and (S.ColossusSmash:CooldownRemainsP() < 8 or (S.Warbreaker:IsAvailable() and S.Warbreaker:CooldownRemainsP() < 8)) then

@@ -1035,40 +1035,23 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AzsharasFontofPower or 
-		   A.Trinket1.ID == I.PocketsizedComputationDevice or 
-		   A.Trinket1.ID == I.AzsharasFontofPower or 
-		   A.Trinket1.ID == I.ShiverVenomRelic then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AzsharasFontofPower or 
-		   A.Trinket2.ID == I.PocketsizedComputationDevice or 
-		   A.Trinket2.ID == I.AzsharasFontofPower or 
-		   A.Trinket2.ID == I.ShiverVenomRelic then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end
+   	end	
     
     --- In Combat
     if Player:AffectingCombat() then
+	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
         -- Interrupts
     --Everyone.Interrupt(40, S.SpellLock, Settings.Commons.OffGCDasOffGCD.SpellLock, StunInterrupts);
     -- potion,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
@@ -1128,10 +1111,19 @@ local function APL(icon)
     if I.VialofStorms:IsEquipped() and I.VialofStorms:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.VialofStorms) then return "vial_of_storms"; end
     end
-	-- Non SIMC Custom Trinkets
-	if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	    return TrinketsRotation(icon)		
-	end
+	-- Non SIMC Custom Trinket1
+    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+   	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+   	   	    return A.Trinket1:Show(icon)
+        end 		
+    end
+		
+	-- Non SIMC Custom Trinket2
+    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+   	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+   	   	    return A.Trinket2:Show(icon)
+        end 	
+    end
     -- call_action_list,name=opener,if=!talent.nether_portal.enabled&time<30&!cooldown.summon_demonic_tyrant.remains
     if (not S.NetherPortal:IsAvailable() and HL.CombatTime() < 30 and not bool(S.SummonDemonicTyrant:CooldownRemainsP())) then
         local ShouldReturn = Opener(); if ShouldReturn then return ShouldReturn; end

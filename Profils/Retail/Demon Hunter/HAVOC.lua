@@ -87,7 +87,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
   RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568, Hidden = true}),
   ConductiveInkDebuff                   = Action.Create({ Type = "Spell", ID = 302565, Hidden = true}),
   -- Trinkets  
-  AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+  AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
   GalecallersBoon                       = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
@@ -574,34 +574,22 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
    	end	
 	
 
-    
+   
 	-- call DBM precombat
     if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
         local ShouldReturn = Precombat_DBM(); 
@@ -621,26 +609,23 @@ local function APL(icon)
     if Player:AffectingCombat() then
         
 		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
+ 	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		
   	    -- Disrupt
   	    if useKick and S.Disrupt:IsReady() and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.Disrupt, true) then return "Disrupt 5"; end
-         	else 
-          	    return
          	end 
       	end 
 	
      	 -- ChaosNova
       	if useCC and S.ChaosNova:IsReady() and Target:IsInterruptible() then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.ChaosNova, true) then return "ChaosNova 5"; end
-     	    else 
-     	        return
-     	    end 
+			end
      	end 
 		
 		-- Purge
@@ -685,9 +670,18 @@ local function APL(icon)
             local ShouldReturn = Cooldown(); if ShouldReturn then return ShouldReturn; end
         end
 		
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
 
         -- pick_up_fragment,if=fury.deficit>=35&(!azerite.eyes_of_rage.enabled|cooldown.eye_beam.remains>1.4)

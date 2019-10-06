@@ -93,9 +93,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     -- Debuffs 
     RazorCoralDebuff                     = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
 	ConductiveInkDebuff                  = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),	
-    -- Trinkets
-	
-    
+    -- Trinkets  
     TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
     AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
@@ -855,31 +853,20 @@ end
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end	
+   	end
+	
     -- In Combat
     -- MfD Sniping
     MfDSniping(S.MarkedforDeath);
@@ -895,34 +882,29 @@ end
         if ShouldReturn then return ShouldReturn; end
         
  		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
+ 	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		        
   	    -- Kick
-  	    if useKick and S.Kick:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+  	    if useKick and S.Kick:IsReady() and not ShouldStop then 
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.Kick, true) then return "Kick 5"; end
-         	else 
-          	    return
          	end 
       	end 
 		
      	 -- Gouge
       	if useCC and S.Gouge:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 25 then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.Gouge, true) then return "Gouge 5"; end
-     	    else 
-     	        return
      	    end 
      	end 
 	
      	 -- CheapShot
       	if useCC and S.CheapShot:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 40 then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
-     	    else 
-     	        return
      	    end 
      	end 
 
@@ -941,9 +923,18 @@ end
         -- actions+=/call_action_list,name=cds
         ShouldReturn = CDs();
         if ShouldReturn and not ShouldStop and HR.CDsON() then return "CDs: " .. ShouldReturn; end
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- actions+=/run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))
         if Player:ComboPoints() >= CPMaxSpend() - (num(Player:BuffP(S.Broadside)) + num(Player:BuffP(S.Opportunity))) * num(S.QuickDraw:IsAvailable() and (not S.MarkedforDeath:IsAvailable() or S.MarkedforDeath:CooldownRemainsP() > 1)) then

@@ -929,31 +929,19 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end	
+   	end
         -- In Combat
         -- MfD Sniping
         MfDSniping(S.MarkedforDeath);
@@ -961,25 +949,22 @@ local function APL(icon)
 		if Player:AffectingCombat() then
         
  			-- Interrupt Handler
- 	 		local randomInterrupt = math.random(25, 70)
+ 	 		
   			local unit = "target"
    			local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		        
   	    	-- Kick
-  	    	if useKick and S.Kick:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-			  	if ActionUnit(unit):CanInterrupt(true) then
+  	    	if useKick and S.Kick:IsReady() and not ShouldStop then 
+			  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
       	    	    if HR.Cast(S.Kick, true) then return "Kick 5"; end
-      		   	else 
-       		   	    return
         	 	end 
       		end 
 	
      		 -- CheapShot
       		if useCC and S.CheapShot:IsReady() and not ShouldStop and Target:IsInterruptible() and Player:EnergyPredicted() >= 40 then 
-	  			if ActionUnit(unit):CanInterrupt(true) then
+	  			if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	       		if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
-     	   		else 
-     	        	return
      	    	end 
      		end 
 
@@ -995,9 +980,18 @@ local function APL(icon)
             ShouldReturn = CDs();
             if ShouldReturn then return "CDs: " .. ShouldReturn; end
 		    
-			-- Non SIMC Custom Trinkets
-	        if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	            return TrinketsRotation(icon)		
+		    -- Non SIMC Custom Trinket1
+	        if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	        if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	        return A.Trinket1:Show(icon)
+   	            end 		
+	        end
+		
+		    -- Non SIMC Custom Trinket2
+	        if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	        if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	        return A.Trinket2:Show(icon)
+   	            end 	
 	        end
             -- SPECIAL HACK FOR SHURIKEN TORNADO
             -- Show a finisher if we can assume we will have enough CP with the next global

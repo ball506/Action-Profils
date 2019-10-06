@@ -838,52 +838,33 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AzsharasFontofPower or 
-		   A.Trinket1.ID == I.PocketsizedComputationDevice or 
-		   A.Trinket1.ID == I.AzsharasFontofPower or 
-		   A.Trinket1.ID == I.ShiverVenomRelic then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AzsharasFontofPower or 
-		   A.Trinket2.ID == I.PocketsizedComputationDevice or 
-		   A.Trinket2.ID == I.AzsharasFontofPower or 
-		   A.Trinket2.ID == I.ShiverVenomRelic then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end    
+   	end	    
 	
     --- In Combat
     if Player:AffectingCombat() then
 	
 	    -- Interrupt Handler
-        local randomInterrupt = math.random(25, 70)
+        
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        
+        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		
 		-- Silence
-        if useKick and S.Silence:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		    if ActionUnit(unit):CanInterrupt(true) then
+        if useKick and S.Silence:IsReady() and not ShouldStop then 
+		    if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
                 if HR.Cast(S.Silence, true) then return "Silence 5"; end
-            else 
-                return
             end 
         end 		
 		
@@ -919,9 +900,18 @@ local function APL(icon)
         if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
             if HR.CastCycle(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
         end
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
         VarDotsUp = num(Target:DebuffP(S.ShadowWordPainDebuff) and Target:DebuffP(S.VampiricTouchDebuff))

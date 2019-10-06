@@ -233,63 +233,45 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket1.ID == I.AshvanesRazorCoral  then
-		    forbiddenTrinket1 = true   
-	    else 
-		    forbiddenTrinket1 = false   
-		end
+	    --print(Trinket1IsAllowed)	
+        -- print(Trinket2IsAllowed)
 		
-    	-- Add trinkets we dont want to use on cd here :
-	   	if A.Trinket2.ID == I.AshvanesRazorCoral then
-		    forbiddenTrinket2 = true   
-	    else 
-		    forbiddenTrinket2 = false   
-		end
-		
-       	   	-- Trinkets
-       	   	if A.Trinket1:IsReady("target") and not forbiddenTrinket1 and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	       	return A.Trinket1:Show(icon)
-   	       	end 
-               
-   		   	if A.Trinket2:IsReady("target") and not forbiddenTrinket2 and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	       	return A.Trinket2:Show(icon)
-   	       	end
-   	   	
+       	-- Trinkets
+       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	return A.Trinket1:Show(icon)
+   	    end 
+              
+   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+       	   	return A.Trinket2:Show(icon)
+   	    end  	   	
      	
-   	end	
+   	end		
 
     --- In Combat
     if Player:AffectingCombat() then
         
 		-- Interrupt Handler
- 	 	local randomInterrupt = math.random(25, 70)
+ 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
   	    -- MindFreeze
-  	    if useKick and S.MindFreeze:IsReady() and not ShouldStop and Target:IsInterruptible() then 
-		  	if ActionUnit(unit):CanInterrupt(true) then
+  	    if useKick and S.MindFreeze:IsReady() and not ShouldStop then 
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.MindFreeze, true) then return "MindFreeze 5"; end
-         	else 
-          	    return
          	end 
       	end 
 		
      	-- Asphyxiate
       	if useCC and S.Asphyxiate:IsReady() and Target:IsInterruptible() then 
-	  		if ActionUnit(unit):CanInterrupt(true) then
+	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
      	        if HR.Cast(S.Asphyxiate, true) then return "Asphyxiate 5"; end
-     	    else 
-     	        return
      	    end 
      	end 
 		-- Death Grip as kick if none available
 		if useKick and not S.MindFreeze:IsReady() and S.DeathGrip:IsReady() and Everyone.TargetIsValid() and Target:IsInterruptible() then
-		  	if ActionUnit(unit):CanInterrupt(true) then
+		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
           	    if HR.Cast(S.DeathGrip, true) then return "DeathGrip 5"; end
-         	else 
-          	    return
          	end 
       	end 		
 		
@@ -303,9 +285,18 @@ local function APL(icon)
         end
 
         --- Defensives
-		-- Non SIMC Custom Trinkets
-	    if (Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target"))  or (Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target")) then	    
-	        return TrinketsRotation(icon)		
+		-- Non SIMC Custom Trinket1
+	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
+       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket1:Show(icon)
+   	        end 		
+	    end
+		
+		-- Non SIMC Custom Trinket2
+	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
+       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+      	   	    return A.Trinket2:Show(icon)
+   	        end 	
 	    end
         -- Rune Tap Emergency
         if S.RuneTap:IsReady() and not ShouldStop and Player:HealthPercentage() <= 40 and Player:Rune() >= 3 and S.RuneTap:Charges() > 1 and not Player:Buff(S.RuneTap) then
