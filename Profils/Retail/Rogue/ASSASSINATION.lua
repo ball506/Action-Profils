@@ -749,25 +749,25 @@ end
 local function RefreshPoisons()
     local choice = Action.GetToggle(2, "PoisonToUse")
 	
-	if (Player:BuffRemainsP(S.CripplingPoison) <= 10 or not Player:BuffP(S.CripplingPoison)) and not Player:PrevGCDP(1, S.CripplingPoison) and not Player:IsCasting() then
+	if S.CripplingPoison:IsCastableP() and (Player:BuffRemainsP(S.CripplingPoison) <= 10 or not Player:BuffP(S.CripplingPoison)) and not Player:PrevGCDP(1, S.CripplingPoison) and not Player:IsCasting() then
 	    if HR.Cast(S.CripplingPoison) then return "Refresh CripplingPoison"; end
 	end	
 	-- Wound Poison
 	if choice == "Wound Poison" then 
-	    if (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 
+	    if S.WoundPoison:IsCastableP() and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 
 		    if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
         end
 	-- Deadly Poison
 	elseif choice == "Deadly Poison" then
-	    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then 
+	    if S.DeadlyPoison:IsCastableP() and (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then 
 		    if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
         end
 	elseif choice == "Auto" then
 	    -- Auto
-	    if Action.IsInPvP and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 		
+	    if Action.IsInPvP and S.WoundPoison:IsCastableP() and (Player:BuffRemainsP(S.WoundPoison) <= 10 or not Player:BuffP(S.WoundPoison)) and not Player:PrevGCDP(1, S.WoundPoison) and not Player:IsCasting() then 		
 	        if HR.Cast(S.WoundPoison) then return "Refresh WoundPoison"; end
 		else
-		    if (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Action.IsInPvP and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then
+		    if S.DeadlyPoison:IsCastableP() and (Player:BuffRemainsP(S.DeadlyPoison) <= 10 or not Player:BuffP(S.DeadlyPoison)) and not Action.IsInPvP and not Player:PrevGCDP(1, S.DeadlyPoison) and not Player:IsCasting() then
 		        if HR.Cast(S.DeadlyPoison) then return "Refresh DeadlyPoison"; end
 		    end
 	    end
