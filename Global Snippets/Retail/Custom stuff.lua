@@ -133,9 +133,63 @@ end
 -------------------------------------------------------------------------------
 -- Trinkets
 -------------------------------------------------------------------------------
+
+-- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
+local BlackListedTrinkets = {
+    -- Range Trinkets
+    Range = {
+        168905, -- Shiver Venom Relic
+		169314, -- Azsharas Font of Power
+    },
+	-- Melee Trinkets
+    Melee = {
+        169311, -- AshvanesRazorCoral
+		169314, -- Azsharas Font of Power
+    },
+}
+
+function TrinketIsAllowed()
+    local EquipedTrinket1 = Action.Trinket1.ID
+    local EquipedTrinket2 = Action.Trinket2.ID
+    Trinket1IsAllowed = false
+	Trinket2IsAllowed = false
+    
+	-- Range
+    if not ActionUnit("player"):IsMelee() then
+        for i = 1, #BlackListedTrinkets.Range do 
+            if EquipedTrinket1 == BlackListedTrinkets.Range[i] then
+                Trinket1IsAllowed = false	
+            else
+                Trinket1IsAllowed = true				
+            end
+            if EquipedTrinket2 == BlackListedTrinkets.Range[i] then
+                Trinket2IsAllowed = false		
+            else
+                Trinket2IsAllowed = true				
+            end
+        end
+	else
+	    -- Melee
+    	for i = 1, #BlackListedTrinkets.Melee do 
+            if EquipedTrinket1 == BlackListedTrinkets.Melee[i] then
+                Trinket1IsAllowed = false	
+            else
+                Trinket1IsAllowed = true			
+            end
+            if EquipedTrinket2 == BlackListedTrinkets.Melee[i] then
+                Trinket2IsAllowed = false
+            else
+                Trinket2IsAllowed = true				
+            end
+        end
+	end
+	return Trinket1IsAllowed, Trinket2IsAllowed
+end
+
 -- Trinkets checker
 function TrinketON()
-  return ((Action.GetToggle(1, "Trinkets")[1])  or (Action.GetToggle(1, "Trinkets")[2]) and true) or false
+  local Trinket1Allowed, Trinket2IsAllowed = TrinketIsAllowed()
+  return ((Action.GetToggle(1, "Trinkets")[1] and Trinket1IsAllowed) or (Action.GetToggle(1, "Trinkets")[2] and Trinket2IsAllowed)) or false
 end
 
 -------------------------------------------------------------------------------
