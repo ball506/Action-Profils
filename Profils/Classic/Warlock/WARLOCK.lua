@@ -1,21 +1,21 @@
-------------------------------------------------------------
----------------- Wolftech Action Hunter Classic -------------
-------------------------------------------------------------
--- locals
 local Action                                = Action
+
 local TeamCache                                = Action.TeamCache
 local EnemyTeam                                = Action.EnemyTeam
 local FriendlyTeam                            = Action.FriendlyTeam
+local HealingEngine                            = Action.HealingEngine
 local LoC                                     = Action.LossOfControl
 local Player                                = Action.Player 
 local MultiUnits                            = Action.MultiUnits
 local UnitCooldown                            = Action.UnitCooldown
 local Unit                                    = Action.Unit 
 local Pet                                    = LibStub("PetLibrary")
+
 local setmetatable, pairs, select, wipe        = setmetatable, pairs, select, wipe
 local UnitPowerType                         = UnitPowerType 
 local UnitIsUnit                            = UnitIsUnit
 local IsUsableSpell                            = IsUsableSpell
+
 
 -- All spells and action
 Action[Action.PlayerClass] = {
@@ -178,34 +178,34 @@ end
 SelfDefensives = Action.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- Interrupts
-local function Interrupts(unit, isSoothingMistCasting)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")
     -- Your interrupt
-    if useKick and A.YourInterruptSpell:IsReady(unit) and A.YourInterruptSpell:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
-        if ActionUnit(unit):CanInterrupt(true) then 
-		    return A.YourInterruptSpel
-        end			
-    end 
+  --  if useKick and A.YourInterruptSpell:IsReady(unit) and A.YourInterruptSpell:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
+  --      if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then 
+	--	    return A.YourInterruptSpel
+  --      end			
+  --  end 
      -- Your CC
-    if useCC and A.YourCCSpell:IsReady(unit) and A.YourCCSpell:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
-        if ActionUnit(unit):CanInterrupt(true) then 
-		    return A.YourCCSpell
-        end			
-    end 	
+   -- if useCC and A.YourCCSpell:IsReady(unit) and A.YourCCSpell:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
+   --     if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then 
+	--	    return A.YourCCSpell
+   --     end			
+   -- end 	
     
-    if useRacial and A.QuakingPalm:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
     end 
     
-    if useRacial and A.Haymaker:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
         return A.Haymaker
     end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
         return A.WarStomp
     end 
     
-    if useRacial and A.BullRush:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.BullRush:AutoRacial(unit) then 
         return A.BullRush
     end      
      
@@ -220,100 +220,102 @@ A[3] = function(icon)
     local inRaidPvE        = TeamCache.Friendly.Type == "raid" and not A.IsInPvP
     local SoulShardsCount = GetItemCount(6265)
 	
-	-- Initialize Pet Choice handler
-	HandlePetChoice()
-    -- Pet Selection Menu
-    local PetSpell = HandlePetChoice()    
-    if PetSpell == "IMP" then
-        --print("IMP")
-        SummonPet = A.SummonImp    
-    elseif PetSpell == "VOIDWALKER" then
-        --print("VOIDWALKER")
-        SummonPet = A.SummonVoidwalker
-    elseif PetSpell == "FELHUNTER" then 
-        --print("FELHUNTER")    
-        SummonPet = A.SummonFelhunter
-    elseif PetSpell == "SUCCUBUS" then 
-        --print("SUCCUBUS")    
-        SummonPet = A.SummonSuccubus
-    else
-        return
-    end
-
-	-- Initialize Curse Choice handler
-	HandleCurseChoice()
-    -- Curse Selection Menu
-    local CurseSpell = HandleCurseChoice()    
-    if CurseSpell == "CurseofWeakness" then
-        --print("IMP")
-        SelectedCurse = A.CurseofWeakness    
-    elseif CurseSpell == "CurseofAgony" then
-        --print("VOIDWALKER")
-        SelectedCurse = A.CurseofAgony
-    elseif CurseSpell == "CurseofRecklessness" then 
-        --print("FELHUNTER")    
-        SelectedCurse = A.CurseofRecklessness
-    elseif CurseSpell == "CurseofTongues" then 
-        --print("SUCCUBUS")    
-        SelectedCurse = A.CurseofTongues
-    elseif CurseSpell == "CurseoftheElements" then 
-        --print("SUCCUBUS")    
-        SelectedCurse = A.CurseoftheElements
-    elseif CurseSpell == "CurseofShadow" then 
-        --print("SUCCUBUS")    
-        SelectedCurse = A.CurseofShadow
-    else
-        return
-    end		
 	
-	-- Summon Pet if missing 
-    if SummonPet:IsReady("player") and not Pet:IsActive() and not SummonPet:IsSpellLastGCD() then
-        return SummonPet:Show(icon)
+	local function PreBuff(unit)
+		-- Initialize Pet Choice handler
+		HandlePetChoice()
+    	-- Pet Selection Menu
+    	local PetSpell = HandlePetChoice()    
+    	if PetSpell == "IMP" then
+       		--print("IMP")
+        	SummonPet = A.SummonImp    
+    	elseif PetSpell == "VOIDWALKER" then
+       		--print("VOIDWALKER")
+        	SummonPet = A.SummonVoidwalker
+    	elseif PetSpell == "FELHUNTER" then 
+       		--print("FELHUNTER")    
+        	SummonPet = A.SummonFelhunter
+    	elseif PetSpell == "SUCCUBUS" then 
+       		--print("SUCCUBUS")    
+       		SummonPet = A.SummonSuccubus
+    	else
+        	print("No Pet Data")
+    	end	
+	
+		-- Summon Pet if missing 
+    	if SummonPet:IsReady("player") and not Pet:IsActive() and not SummonPet:IsSpellLastGCD() then
+        	return SummonPet:Show(icon)
+    	end
     end	
+
+    -- Precombat SoulFire
+    if not inCombat and A.IsUnitEnemy("target") then
+        if A.SoulFire:IsReady(unit) and SoulShardsCount > 0 then
+	        return A.SoulFire:Show(icon)
+	    else 
+	        if A.ShadowBolt:IsReady(unit) then 
+                return A.ShadowBolt:Show(icon)
+            end 
+        end 
+    end		
 	
 	-- DPS Rotation
     local function DamageRotation(unit)
         
         -- Interrupts
-        local Interrupt = Interrupts(unit)
+        --local Interrupt = Interrupts(unit)
         --if Interrupt then 
         --    return Interrupt:Show(icon)
         --end	
-
-        -- Precombat SoulFire
-        --if not inCombat then
-	    --    if A.SoulFire:IsReady(unit) and SoulShardsCount > 0 then
-		--        return A.SoulFire:Show(icon)
-		--    else 
-		--        if A.Corruption:IsReady(unit) then 
-        --            return A.Corruption:Show(icon)
-        --        end 
-	    --    end 
-	    --end		
+		-- Initialize Curse Choice handler
+		HandleCurseChoice()
+    	-- Curse Selection Menu
+    	local CurseSpell = HandleCurseChoice()    
+    	if CurseSpell == "CurseofWeakness" then
+        	--print("IMP")
+        	SelectedCurse = A.CurseofWeakness    
+    	elseif CurseSpell == "CurseofAgony" then
+        	--print("VOIDWALKER")
+        	SelectedCurse = A.CurseofAgony
+    	elseif CurseSpell == "CurseofRecklessness" then 
+        	--print("FELHUNTER")    
+        	SelectedCurse = A.CurseofRecklessness
+    	elseif CurseSpell == "CurseofTongues" then 
+        	--print("SUCCUBUS")    
+        	SelectedCurse = A.CurseofTongues
+    	elseif CurseSpell == "CurseoftheElements" then 
+        	--print("SUCCUBUS")    
+        	SelectedCurse = A.CurseoftheElements
+    	elseif CurseSpell == "CurseofShadow" then 
+        	--print("SUCCUBUS")    
+        	SelectedCurse = A.CurseofShadow
+    	else
+        	print("No Curse Selected")
+    	end	
+	
+		
+		-- Apply Corruption if allowed
+        if A.Corruption:IsReady(unit) and not A.Corruption:IsSpellLastGCD() and Action.GetToggle(2, "CorruptionAllow") and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= Unit(unit):CastTime(A.Corruption.ID)) then 
+            return A.Corruption:Show(icon)
+        end 
+		-- Immolate
+        if A.Immolate:IsReady(unit) and not A.Immolate:IsSpellLastGCD() and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) > 0 or not Action.GetToggle(2, "CorruptionAllow"))  and (Unit(unit):HasDeBuffs(A.Immolate.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Immolate.ID, true) <= Unit(unit):CastTime(A.Immolate.ID)) then 
+            return A.Immolate:Show(icon)
+        end 
 		
 		-- Curse to Apply depending on user choice
 		-- Apply your assigned curse ( Curse of the Elements,  Curse of Shadow,  Curse of Recklessness)
-        if SelectedCurse:IsReady(unit) then 
+        if SelectedCurse:IsReady(unit) and not SelectedCurse:IsSpellLastGCD() and SelectedCurse:IsSpellLearned() then 
             return SelectedCurse:Show(icon)
-        end 	
-		
-		-- Apply Corruption if allowed
-        if A.Corruption:IsReady(unit) and Action.GetToggle(2, "CorruptionAllow") and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= Unit(unit):CastTime(S.Corruption.ID)) then 
-            return A.Corruption:Show(icon)
         end 	
 
 		-- Conflagrate
-        if A.Conflagrate:IsReady(unit) then 
+        if A.Conflagrate:IsReady(unit) and not A.Conflagrate:IsSpellLastGCD() then 
             return A.Conflagrate:Show(icon)
         end 
 
-		-- Immolate
-        if A.Immolate:IsReady(unit) and (Unit(unit):HasDeBuffs(A.Corruption.ID, true) > 0 or not Action.GetToggle(2, "CorruptionAllow"))  and (Unit(unit):HasDeBuffs(A.Immolate.ID, true) == 0 or Unit(unit):HasDeBuffs(A.Immolate.ID, true) <= Unit(unit):CastTime(S.Immolate.ID)) then 
-            return A.Immolate:Show(icon)
-        end 
-
 		-- SiphonLife
-        if A.SiphonLife:IsReady(unit) and not IsInRaid() then 
+        if A.SiphonLife:IsReady(unit) and not A.SiphonLife:IsSpellLastGCD() and not IsInRaid() then 
             return A.SiphonLife:Show(icon)
         end 		
 		
@@ -329,23 +331,23 @@ A[3] = function(icon)
    -- if SelfDefensive then 
    --     return SelfDefensive:Show(icon)
    -- end
-
-    -- Function to execute if our target is hostile
-    if A.IsUnitEnemy("target") then 
-        unit = "target"
-        
-        if DamageRotation(unit) then 
-            return true 
-        end 
-    end    
-    
-    -- Function to execute if our mouseover is hostile
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-        
-        if DamageRotation(unit) then 
-            return true 
-        end 
+   
+    if not Pet:IsActive() then 
+        return PreBuff("target")
+    --elseif A.IsUnitFriendly("target") then
+    --    return Friendly("target")
     end 
+
+    if A.IsUnitEnemy("mouseover") then 
+        return DamageRotation("mouseover")
+    --elseif A.IsUnitFriendly("mouseover") then 
+    --    return Friendly("mouseover")
+    end 
+    
+    if A.IsUnitEnemy("target") then 
+        return DamageRotation("target")
+    --elseif A.IsUnitFriendly("target") then
+    --    return Friendly("target")
+    end  
     
 end 
