@@ -469,7 +469,7 @@ local function Interrupts(unit)
     end      
     
 end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
 local function CanTranquility()
     if A.Tranquility:IsReady("player") and IsSchoolFree() then 
@@ -481,7 +481,7 @@ local function CanTranquility()
 		
         -- Auto Counter
         if TranquilityUnits > 40 then 
-            TranquilityUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 8 or 11, 25)
+            TranquilityUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 4 or 7, 40)
             -- Reduce size in raid by 20%
             if TranquilityUnits > 5 then 
                 TranquilityUnits = TranquilityUnits - (#totalMembers * 0.2)
@@ -498,7 +498,7 @@ local function CanTranquility()
         local counter = 0 
         for i = 1, #totalMembers do 
             -- Auto HP 
-            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit) and (RejuvenationCount >= (currentMembers / 3.5)) and (Unit(totalMembers[i].Unit):TimeToDieX(20) < 8 or totalMembers[i].HP <= 35) and Unit("player"):GetHPS() < Unit(totalMembers[i].Unit):GetDMG() then 
+            if TranquilityHP >= 100 and A.Tranquility:PredictHeal("Tranquility", totalMembers[i].Unit) and (RejuvenationCount >= (currentMembers / 3.5)) and (Unit(totalMembers[i].Unit)::TimeToDie() < 8 or totalMembers[i].HP <= 35) then 
                 counter = counter + 1
             end 
             
@@ -514,7 +514,7 @@ local function CanTranquility()
     end 
     return false 
 end 
-CanTranquility = A.MakeFunctionCachedDynamic(CanTranquility)
+CanTranquility = Action.MakeFunctionCachedDynamic(CanTranquility)
 
 local function CanFlourish()
     if A.Flourish:IsReady("player") and IsSchoolFree() then 
@@ -526,7 +526,7 @@ local function CanFlourish()
 		
         -- Auto Counter
         if FlourishUnits > 40 then 
-            FlourishUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 5 or 8, 25)
+            FlourishUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 4 or 7, 40)
             -- Reduce size in raid by 20%
             if FlourishUnits > 5 then 
                 FlourishUnits = FlourishUnits - (#totalMembers * 0.20)
@@ -543,7 +543,7 @@ local function CanFlourish()
         local counter = 0 
         for i = 1, #totalMembers do 
             -- Auto HP 
-            if FlourishHP >= 100 and (RejuvenationCount >= (currentMembers / 3)) and (Unit(totalMembers[i].Unit):TimeToDieX(20) < 8 or totalMembers[i].HP <= 35) and Unit("player"):GetHPS() < Unit(totalMembers[i].Unit):GetDMG() then 
+            if FlourishHP >= 100 and (RejuvenationCount >= (currentMembers / 3)) and (Unit(totalMembers[i].Unit):TimeToDie() < 8 or totalMembers[i].HP <= 35) then 
                 counter = counter + 1
             end 
             
@@ -559,16 +559,16 @@ local function CanFlourish()
     end 
     return false 
 end 
-CanFlourish = A.MakeFunctionCachedDynamic(CanFlourish)
+CanFlourish = Action.MakeFunctionCachedDynamic(CanFlourish)
 
 local function CanWildGrowth(unit)
-    if A.WildGrowth:IsReady(unit) and IsSchoolFree() and not Player:IsMoving() then 
+    if A.WildGrowth:IsReady(unit) and IsSchoolFree() and (not Player:IsMoving() or A.EarlySpring:IsSpellLearned())   then 
         local WildGrowthHP = A.GetToggle(2, "WildGrowth")
         local WildGrowthUnits = A.GetToggle(2, "WildGrowthUnits") 
         local totalMembers = HealingEngine.GetMembersAll()
         -- Auto Counter
         if WildGrowthUnits > 6 then 
-            WildGrowthUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 3 or 5, 25)
+            WildGrowthUnits = HealingEngine.GetMinimumUnits(IsSaveManaPhase() and 3 or 5, 40)
         end
 		
         if WildGrowthUnits < 3 and not A.IsInPvP then 
@@ -579,7 +579,7 @@ local function CanWildGrowth(unit)
         for i = 1, #totalMembers do 
             if Unit(totalMembers[i].Unit):GetRange() <= 40 then 
                 -- Auto HP 
-                if WildGrowthHP >= 100 and (A.WildGrowth:PredictHeal("WildGrowth", totalMembers[i].Unit) or totalMembers[i].HP <= 75) then 
+                if WildGrowthHP >= 100 and (A.WildGrowth:PredictHeal("WildGrowth", totalMembers[i].Unit) or HealingEngine.GetBelowHealthPercentercentUnits(75) or totalMembers[i].HP <= 75) then 
                     counter = counter + 1
                 end 
                 
@@ -596,7 +596,7 @@ local function CanWildGrowth(unit)
     end 
     return false 
 end 
-CanWildGrowth = A.MakeFunctionCachedDynamic(CanWildGrowth)
+CanWildGrowth = Action.MakeFunctionCachedDynamic(CanWildGrowth)
 
 local function ActivesRejuvenations()
     if ActionUnit("player"):CombatTime() > 1 then 
@@ -614,7 +614,7 @@ local function ActivesRejuvenations()
     end 
     return RejuvenationCount 
 end 
-ActivesRejuvenations = A.MakeFunctionCachedDynamic(ActivesRejuvenations)
+ActivesRejuvenations = Action.MakeFunctionCachedDynamic(ActivesRejuvenations)
 
 local function MaintainRejuvenation(unit)
     if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
@@ -656,19 +656,19 @@ local function MaintainRejuvenation(unit)
         else
     	-- Get members without Rejuvenation active
             for i = 1, #totalMembers do 
-                if Unit(totalMembers[i].Unit):GetRange() <= 30 and not Unit(unit):InLOS() and currentMembers > 5 and RejuvenationCount <= (currentMembers / 3) then  
+                if Unit(totalMembers[i].Unit):GetRange() <= 30 and not Unit(unit):InLOS() and currentMembers > 5 and RejuvenationCount <= (currentMembers / 4) then  
 		         -- SetTarget on member missing buff
 			        if Unit(totalMembers[i].Unit):HasBuffs(A.Rejuvenation.ID, true) == 0 then
 			            HealingEngine.SetTarget(totalMembers[i].Unit)                  					
 			        end
 			        -- Notification					
-                    Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. round((currentMembers / 3), 0), A.Rejuvenation.ID) 					
+                    Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. round((currentMembers / 4), 0), A.Rejuvenation.ID) 					
                 end				
             end
         end			
     end 
 end
-MaintainRejuvenation = A.MakeFunctionCachedDynamic(MaintainRejuvenation)
+MaintainRejuvenation = Action.MakeFunctionCachedDynamic(MaintainRejuvenation)
 
 local function ResfreshRejuvenation(unit)
     if A.Rejuvenation:IsReady(unit) and IsSchoolFree() then 
@@ -708,7 +708,7 @@ local function ResfreshRejuvenation(unit)
     end 
     return false 
 end 
-ResfreshRejuvenation = A.MakeFunctionCachedDynamic(ResfreshRejuvenation)
+ResfreshRejuvenation = Action.MakeFunctionCachedDynamic(ResfreshRejuvenation)
 
 
 local StopCast = false 
@@ -864,8 +864,7 @@ A[3] = function(icon, isMulti)
 	-- Healing Rotation
     local function HealingRotation(unit)
         -- local
-		local ActivesRejuvenations = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
-        local MaintainRejuvenation = MaintainRejuvenation(unit)
+		local ActivesNumberRejuvenations = HealingEngine.GetBuffsCount(A.Rejuvenation.ID, 1)
 		-- Stopcasting 
         --if A.GetToggle(1, "StopCast") and true and ((A.GetToggle(2, "SoothingMistStopCast")[1] and not isAffectedBySoothingMist) or (A.GetToggle(2, "SoothingMistStopCast")[2] and isAffectedBySoothingMist and Unit(unit):HealthPercent() >= 100 and IsEnoughHPS(unit))) then 
         --    StopCast = true -- passing to A[6]
@@ -1099,7 +1098,7 @@ A[3] = function(icon, isMulti)
 		    local SuperEmergency = Unit(unit):TimeToDieX(20) < 2 and Unit(unit):HealthPercent() <= 50
 			
             if not isMulti and A.GetToggle(2, "AoE") then 
-                if CanTranquility() and Emergency then 
+                if CanTranquility() then 
                     if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
@@ -1164,7 +1163,7 @@ A[3] = function(icon, isMulti)
             if A.VitalityConduit:AutoHeartOfAzeroth(unit, true) then 
                 return A.VitalityConduit:Show(icon)
             end
-            if CanWildGrowth(unit) and not IsSaveManaPhase() and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
+            if CanWildGrowth(unit) and (not IsSaveManaPhase() or A.IsInPvP) and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
                 if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
@@ -1282,14 +1281,14 @@ A[3] = function(icon, isMulti)
 		    Action.SendNotification("Low mana : Using Innervate", A.Innervate.ID, 2)
             return A.Innervate:Show(icon)
         end	
-		
+				
 		-- Rejuvenation
-        if A.Rejuvenation:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
+        if A.Rejuvenation:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and (MaintainRejuvenation(unit) or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
             return A.Rejuvenation:Show(icon)
         end	
 
         -- Rejuvenation with Germination
-        if A.Rejuvenation:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
+        if A.Rejuvenation:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) >= 2 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
             return A.Rejuvenation:Show(icon)
         end	
 		
@@ -1312,7 +1311,7 @@ A[3] = function(icon, isMulti)
 		end	
 				
 		-- Regrowth with ClearCasting buff
-		if not isMoving and A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 1 and (Unit(unit):HealthPercent() <= 90 or Unit(unit):TimeToDieX(60) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 5 then
+		if not isMoving and A.Regrowth:IsReady(unit) and Unit("player"):HasBuffs(A.ClearCasting.ID, true) > 1 and (Unit(unit):HealthPercent() <= 95 or Unit(unit):TimeToDieX(60) < 4) and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) >= 2 then
        		-- Notification
 			Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
             return A.Regrowth:Show(icon)
@@ -1320,7 +1319,7 @@ A[3] = function(icon, isMulti)
 		
 		-- Wild Growth
         if not isMulti and not isMoving and A.GetToggle(2, "AoE") then 
-            if CanWildGrowth(unit) and not IsSaveManaPhase() then
+            if CanWildGrowth(unit) and (not IsSaveManaPhase() or A.IsInPvP) then
                 return A.WildGrowth:Show(icon)
             end  
         end
@@ -1333,12 +1332,12 @@ A[3] = function(icon, isMulti)
         end 
 		
 		-- Regrowth without ClearCasting buff
-		if not isMoving and A.Regrowth:IsReady(unit) and not IsSaveManaPhase() and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit, 5) or Unit(unit):TimeToDieX(25) < 4) and Unit("player"):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 5 then
+		if not isMoving and A.Regrowth:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and not isMoving and (A.Regrowth:PredictHeal("Regrowth", unit, 5) or Unit(unit):TimeToDieX(35) < 4) and Unit("player"):HasBuffs(A.ClearCasting.ID) == 0 and Unit(unit):HasBuffs(A.Rejuvenation.ID) >= 2 then
        		-- Notification
 			--Action.SendNotification("Clear Casting buff up, regrowth on : " .. UnitName(unit), A.ClearCasting.ID)		
             return A.Regrowth:Show(icon)
         end  	
-		
+		 
 		-- Photosynthesis Lifebloom on player to increase healing by 20%
         if A.Lifebloom:IsReady("player") and Unit("player"):HasBuffs(A.Lifebloom.ID, true) < 3 and A.Photosynthesis:IsSpellLearned() then		    
 		    -- Notification
