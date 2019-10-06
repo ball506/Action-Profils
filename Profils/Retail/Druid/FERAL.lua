@@ -725,6 +725,15 @@ local function APL(icon)
         if (Player:ComboPoints() > 4) then
             return Finishers();
         end
+        -- pool_resource,for_next=1
+        -- thrash_cat,if=refreshable&((variable.use_thrash=2&(!buff.incarnation.up|azerite.wild_fleshrending.enabled))|spell_targets.thrash_cat>1)
+        if S.ThrashCat:IsCastableP() and not ShouldStop and Target:DebuffRefreshableCP(S.ThrashCatDebuff) and ((VarUseThrash == 2) or Cache.EnemiesCount[8] > 1) then
+            if S.ThrashCat:IsUsablePPool() then
+                if HR.Cast(S.ThrashCat) then return "thrash_cat 312"; end
+            else
+                if HR.Cast(S.Channeling) then return "pool_resource 313"; end
+            end
+        end
         -- run_action_list,name=generators
         if (true) then
             return Generators();
