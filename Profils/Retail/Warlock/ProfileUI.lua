@@ -20,7 +20,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v1.19 (05.10.2019)",
+    DateTime = "v1.20 (06.10.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
