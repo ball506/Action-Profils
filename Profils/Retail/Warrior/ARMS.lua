@@ -1170,13 +1170,15 @@ local function PvPRotation(icon)
 			return A.Overpower:Show(icon)
 		end
 		
+		if A.Slam:IsReady(unit) and A.Slam:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() > 50 and not A.FervorofBattle:IsSpellLearned()) then
+			return A.Slam:Show(icon)
+		end
+		
 		if A.Whirlwind:IsReady(unit) and A.Whirlwind:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (A.FervorofBattle:IsSpellLearned()) then
 			return A.Whirlwind:Show(icon)
 		end
 
-		if A.Slam:IsReady(unit) and A.Slam:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() > 50 and not A.FervorofBattle:IsSpellLearned()) then
-			return A.Slam:Show(icon)
-		end
+
 
 		-- Misc - Supportive 
         if A.BerserkerRage:IsReady("player") then 
