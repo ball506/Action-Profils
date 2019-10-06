@@ -223,7 +223,7 @@ HL:RegisterForEvent(function()
     VarOnUseCutoff = 0
 end, "PLAYER_REGEN_ENABLED")
 
-local EnemyRanges = {40}
+local EnemyRanges = {40, 12}
 local function UpdateRanges()
     for _, i in ipairs(EnemyRanges) do
         HL.GetEnemies(i);
@@ -327,6 +327,7 @@ local function APL(icon)
     EnemiesCount = GetEnemiesCount(40)
     HL.GetEnemies(40, 12) -- For interrupts
     DetermineEssenceRanks()
+	UpdateRanges()
 	
 	local function Precombat_DBM()
         -- flask
@@ -726,7 +727,7 @@ local function APL(icon)
 	
     local function StandardRotation()
         -- flamestrike,if=((talent.flame_patch.enabled&active_enemies>1&!firestarter.active)|active_enemies>4)&buff.hot_streak.react
-        if S.Flamestrike:IsCastableP() and not ShouldStop and (((S.FlamePatch:IsAvailable() and EnemiesCount > 1 and not bool(S.Firestarter:ActiveStatus())) or EnemiesCount > 4) and Player:BuffP(S.HotStreakBuff)) then
+        if S.Flamestrike:IsCastableP() and not ShouldStop and (((S.FlamePatch:IsAvailable() and EnemiesCount > 1 and not bool(S.Firestarter:ActiveStatus())) or EnemiesCount >= 4) and Player:BuffP(S.HotStreakBuff)) then
             if HR.Cast(S.Flamestrike) then return "flamestrike 582"; end
         end
         -- pyroblast,if=buff.hot_streak.react&buff.hot_streak.remains<action.fireball.execute_time
@@ -790,7 +791,7 @@ local function APL(icon)
             if HR.Cast(S.FireBlast) then return "fire_blast 781"; end
         end
         -- flamestrike,if=talent.flame_patch.enabled&active_enemies>2|active_enemies>9
-        if S.Flamestrike:IsCastableP() and (S.FlamePatch:IsAvailable() and EnemiesCount > 2 or EnemiesCount > 9) then
+        if S.Flamestrike:IsCastableP() and ((S.FlamePatch:IsAvailable() and EnemiesCount > 2) or EnemiesCount > 5) then
             if HR.Cast(S.Flamestrike) then return "flamestrike 783"; end
         end
         -- scorch
