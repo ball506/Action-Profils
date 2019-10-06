@@ -140,7 +140,6 @@ local BlackListedTrinkets = {
     [1] = 169311, -- Shiver Venom Relic
 	[2] = 169314, -- Azsharas Font of Power
     [3] = 169311, -- AshvanesRazorCoral
-	[4]	= 159628, -- Azsharas Font of Power
 }
 
 function TrinketIsAllowed()
