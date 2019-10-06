@@ -1474,8 +1474,7 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-	    --print(Trinket1IsAllowed)	
-        -- print(Trinket2IsAllowed)
+	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		
        	-- Trinkets
        	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
@@ -1506,7 +1505,7 @@ local function APL(icon)
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
-		        
+		     
 		-- ShadowStep in combat and not in range
         --if S.ShadowStep:IsReady() and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() then
         --    if not Target:IsInRange("Melee") and Target:IsInRange(25) then
