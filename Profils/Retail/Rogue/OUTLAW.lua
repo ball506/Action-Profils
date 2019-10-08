@@ -883,29 +883,34 @@ end
         
  		-- Interrupt Handler
  	 	
-  		local unit = "target"
-   		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+  		local randomInterrupt = math.random(25, 70)
+        local unit = "target"
+        local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")  
         local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
-		        
+			 
   	    -- Kick
-  	    if useKick and S.Kick:IsReady() and not ShouldStop then 
-		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-          	    if HR.Cast(S.Kick, true) then return "Kick 5"; end
-         	end 
+  	    if useKick and S.Kick:IsReady() and Target:IsInRange("Melee") and not ShouldStop and ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then 
+			if HR.Cast(S.Kick, true) then return "Kick 5"; end
+			
       	end 
 		
-     	 -- Gouge
-      	if useCC and S.Gouge:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 25 then 
-	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-     	        if HR.Cast(S.Gouge, true) then return "Gouge 5"; end
-     	    end 
-     	end 
+		
+		if useCC and S.Gouge:IsReady() and Player:EnergyPredicted() >= 25 and Target:IsInRange("Melee") and ActionUnit(unit):IsControlAble("incapacitate", 0) and not ShouldStop then 
+			if useKick and S.Kick:IsReady() and Target:IsInRange("Melee") and not ShouldStop and ActionUnit(unit):CanInterrupt(true) then
+
+			elseif not Player:PrevGCDP(1, S.Kick) then
+				return A.Gouge:Show(icon)
+			end
+		end
+     	 -- Gouge --and ActionUnit(unit):CanInterrupt(true, nil, 25, 70)
+      	--if useCC and S.Gouge:IsReady() and Player:EnergyPredicted() >= 25 and Target:IsInRange("Melee") and ActionUnit(unit):IsControlAble("incapacitate", 0) and not ShouldStop and 
+		--(not S.Kick:IsReady() and ActionUnit(unit):CanInterrupt(true) or not Player:PrevGCDP(1, S.Kick)) then
+		--	return A.Gouge:Show(icon)   
+     	--end 
 	
      	 -- CheapShot
-      	if useCC and S.CheapShot:IsReady() and not S.Kick:IsReady() and not ShouldStop and ActionUnit(unit):CanInterrupt(true) and Player:EnergyPredicted() >= 40 then 
-	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-     	        if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
-     	    end 
+      	if useCC and S.CheapShot:IsReady() and Player:EnergyPredicted() >= 40 and Target:IsInRange("Melee") and ActionUnit(unit):IsControlAble("stun", 0)  and not ShouldStop  then 
+			if HR.Cast(S.CheapShot, true) then return "CheapShot 5"; end
      	end 
 
         -- actions+=/call_action_list,name=stealth,if=stealthed.all
