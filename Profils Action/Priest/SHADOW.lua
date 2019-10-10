@@ -166,6 +166,10 @@ A[3] = function(icon, isMulti)
 			return A.VoidEruption:Show(icon)
 		end
 		
+		if A.DarkAscension:IsReady() and not inVoidForm and IsSchoolShadowUP() and not isMoving then
+			return A.DarkAscension:Show(icon)
+		end
+		
 		if Unit(unitID):IsTotem() then 
 			if A.ShadowWordPain:IsReady(unitID) and IsSchoolShadowUP() and A.ShadowWordPain:AbsentImun(unitID, Temp.AttackTypes) and (EvaluateCycleShadowWordPain(unitID) or (isMoving and (not inVoidForm or A.VoidBolt:GetCooldown() >= A.GetGCD()))) then
 				return A.ShadowWordPain:Show(icon)
@@ -174,11 +178,11 @@ A[3] = function(icon, isMulti)
 		
 		if unitID == "mouseover" and not Unit(unitID):IsTotem() then 		
 			if A.ShadowWordPain:IsReady(unitID) and IsSchoolShadowUP() and A.ShadowWordPain:AbsentImun(unitID, Temp.AttackTypes) and 
-			(EvaluateCycleShadowWordPain(unitID) and Unit(unitID):TimeToDie() > 4 and not Aw.Misery:IsSpellLearned() or (isMoving and (not inVoidForm or A.VoidBolt:GetCooldown() >= A.GetGCD()))) then
+			(EvaluateCycleShadowWordPain(unitID) and Unit(unitID):TimeToDie() > 4 and not A.Misery:IsSpellLearned() or (isMoving and (not inVoidForm or A.VoidBolt:GetCooldown() >= A.GetGCD()))) then
 				return A.ShadowWordPain:Show(icon)
 			end
 		
-			if A.VampiricTouch:IsReady(unitID) and EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0) 
+			if A.VampiricTouch:IsReady(unitID) and ((EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6) or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0)) 
 			and not isMoving and IsSchoolShadowUP() and A.VampiricTouch:AbsentImun(unitID, Temp.AttackTypes) then
 				return A.VampiricTouch:Show(icon)
 			end
@@ -198,9 +202,7 @@ A[3] = function(icon, isMulti)
 			
 			if A.MindSear:IsReady(unitID) and A.MindSear:AbsentImun(unitID, Temp.AttackTypes) and IsDotsUP(unitID) and IsSchoolShadowUP() and not isMoving and (Unit("player"):HasBuffs(A.HarvestedThoughtsBuff.ID, true) > 0 and A.VoidBolt:GetCooldown() >= 1.5) then 
 				return A.MindSear:Show(icon)
-			end
-			
-			
+			end		
 			
 			if unitID ~= "mouseover" and A.BurstIsON(unitID) then
 				local InsanityDrain = InsanityDrain()
@@ -209,7 +211,11 @@ A[3] = function(icon, isMulti)
 					return A.MemoryofLucidDreams:Show(icon)
 				end	
 				
-				if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (Unit(unitID):IsBoss() or MultiUnits:GetActiveEnemies() >= 3) then 
+				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
+					return A.GuardianofAzeroth:Show(icon)
+				end
+				
+				if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (Unit(unitID):IsBoss() or MultiUnits:GetActiveEnemies() >= 2) then 
 					return A.FocusedAzeriteBeam:Show(icon)
 				end
 		
@@ -219,9 +225,17 @@ A[3] = function(icon, isMulti)
 				end
 			end
 			
+			if A.ShadowCrash:IsReady(unit, true) and IsDotsUP(unitID) then 
+				return A.ShadowCrash:Show(icon)
+			end
+			
 			if A.ShadowWordVoid:IsReady(unitID, nil, nil, A.GetToggle(2, "ByPassSpells")) and IsDotsUP(unitID) and IsSchoolShadowUP() and A.ShadowWordVoid:AbsentImun(unitID, Temp.AttackTypes) and not isMoving and
 			((A.GetToggle(2, "SpellsTiming")) or (not A.GetToggle(2, "SpellsTiming") and A.VoidBolt:GetCooldown() >= A.GetGCD() + 0.5 or not inVoidForm)) and MultiUnits:GetActiveEnemies() < 6 and not A.FocusedAzeriteBeam:IsSpellInCasting() then
 				return A.ShadowWordVoid:Show(icon)
+			end
+			
+			if A.DarkVoid:IsReady(unitID) and A.DarkVoid:AbsentImun(unitID, Temp.AttackTypes) and IsSchoolShadowUP() and not isMoving and (A.VoidBolt:GetCooldown() >= A.GetGCD() + 0.5 or not inVoidForm) then
+				return A.DarkVoid:Show(icon)
 			end
 			
 			--actions.cleave+=/shadow_word_pain,target_if=refreshable&target.time_to_die>((-1.2+3.3*spell_targets.mind_sear)*variable.swp_trait_ranks_check*(1-0.012*azerite.searing_dialogue.rank*spell_targets.mind_sear)),if=!talent.misery.enabled
@@ -236,7 +250,7 @@ A[3] = function(icon, isMulti)
 			end
 		
 			--actions.single+=/vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-			if A.VampiricTouch:IsReady(unitID) and EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0) 
+			if A.VampiricTouch:IsReady(unitID) and ((EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6) or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0)) 
 			and not isMoving and IsSchoolShadowUP() and A.VampiricTouch:AbsentImun(unitID, Temp.AttackTypes) then
 				return A.VampiricTouch:Show(icon)
 			end
@@ -265,7 +279,11 @@ A[3] = function(icon, isMulti)
 					return A.MemoryofLucidDreams:Show(icon)
 				end
 				
-				if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (Unit(unitID):IsBoss() or MultiUnits:GetActiveEnemies() >= 3) then 
+				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
+					return A.GuardianofAzeroth:Show(icon)
+				end
+				
+				if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (Unit(unitID):IsBoss() or MultiUnits:GetActiveEnemies() >= 2) then 
 					return A.FocusedAzeriteBeam:Show(icon)
 				end
 				
@@ -281,13 +299,21 @@ A[3] = function(icon, isMulti)
 			A.VoidBolt:GetCooldown() >= 1.5 and A.SearingDialogue:GetAzeriteRank() >= 1) then 
 				return A.MindSear:Show(icon)
 			end
+			
+			if A.ShadowCrash:IsReady(unit, true) and IsDotsUP(unitID) then 
+				return A.ShadowCrash:Show(icon)
+			end
 
 			if A.ShadowWordVoid:IsReady(unitID, nil, nil, A.GetToggle(2, "ByPassSpells")) and IsDotsUP(unitID) and IsSchoolShadowUP() and A.ShadowWordVoid:AbsentImun(unitID, Temp.AttackTypes) and not isMoving and
 			((A.GetToggle(2, "SpellsTiming")) or (not A.GetToggle(2, "SpellsTiming") and A.VoidBolt:GetCooldown() >= A.GetGCD() + 0.5 or not inVoidForm)) and not A.FocusedAzeriteBeam:IsSpellInCasting() then
 				return A.ShadowWordVoid:Show(icon)
 			end
+			
+			if A.DarkVoid:IsReady(unitID) and A.DarkVoid:AbsentImun(unitID, Temp.AttackTypes) and IsSchoolShadowUP() and not isMoving and not inVoidForm and  EvaluateCycleShadowWordPain(unitID) then
+				return A.DarkVoid:Show(icon)
+			end
 		
-			if A.PowerWordShield:IsReady("player") and Player:IsMoving() and Unit("player"):HasDeBuffs(A.WeakenedSoulDebuff.ID) == 0 then
+			if A.PowerWordShield:IsReady("player") and Player:IsMoving() and Unit("player"):HasDeBuffs(A.WeakenedSoulDebuff.ID) == 0 then 
 				return A.PowerWordShield:Show(icon)
 			end
 	
@@ -297,7 +323,7 @@ A[3] = function(icon, isMulti)
 			end
 		
 			--actions.single+=/vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-			if A.VampiricTouch:IsReady(unitID) and EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0) 
+			if A.VampiricTouch:IsReady(unitID) and ((EvaluateCycleVampiricTouch(unitID) and Unit(unitID):TimeToDie() > 6) or (A.Misery:IsSpellLearned() and EvaluateCycleShadowWordPain(unitID) and Unit(unitID):HasDeBuffs(A.VampiricTouchDebuff.ID) > 0)) 
 			and not isMoving and IsSchoolShadowUP() and A.VampiricTouch:AbsentImun(unitID, Temp.AttackTypes) then
 				return A.VampiricTouch:Show(icon)
 			end

@@ -16,7 +16,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v0 (06.10.2019)",
+    DateTime = "v0.10 (10.10.2019)",
     [2] = {        
         [ACTION_CONST_PRIEST_SHADOW] = {             
             { -- [1]                            
