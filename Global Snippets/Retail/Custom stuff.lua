@@ -137,7 +137,7 @@ end
 -- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
 local BlackListedTrinkets = {
 
-    [1] = 169311, -- Shiver Venom Relic
+    [1] = 168905, -- Shiver Venom Relic
 	[2] = 169314, -- Azsharas Font of Power
     [3] = 169311, -- AshvanesRazorCoral
 }

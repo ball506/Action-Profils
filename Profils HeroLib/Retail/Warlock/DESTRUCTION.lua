@@ -716,7 +716,7 @@ local function APL(icon)
         end
         -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
         -- use_item,name=pocketsized_computation_device,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 248"; end
         end
         -- use_item,name=rotcrusted_voodoo_doll,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
@@ -724,7 +724,7 @@ local function APL(icon)
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll 249"; end
         end
         -- use_item,name=shiver_venom_relic,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.ShiverVenomRelic:IsEquipReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.ShiverVenomRelic:IsEquipped() and TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic 250"; end
         end
         -- use_item,name=aquipotent_nautilus,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)

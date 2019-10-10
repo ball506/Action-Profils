@@ -1033,8 +1033,7 @@ local function APL(icon)
        	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
       	   	    return A.Trinket1:Show(icon)
    	        end 		
-	    end
-		
+	    end		
 		-- Non SIMC Custom Trinket2
 	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
        	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
