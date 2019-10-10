@@ -343,7 +343,7 @@ end
 -- RtB rerolling strategy, return true if we should reroll
 local function RtB_Reroll()
 
-    if not Cache.APLVar.RtB_Reroll then
+    if not Cache.APLVar.RtB_Reroll and not Player:BuffP(S.BladeFlurry) then
 	
         -- Defensive Override : Grand Melee if HP < 60
         if Action.GetToggle(2, "SoloMode") and Player:HealthPercentage() < Action.GetToggle(2, "RolltheBonesLeechHP") then
@@ -567,7 +567,7 @@ local function APL(icon)
 -- # Essences
 local function Essences()
     -- blood_of_the_enemy,if=variable.blade_flurry_sync&cooldown.between_the_eyes.up&variable.bte_condition
-    if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and Blade_Flurry_Sync() and S.BetweentheEyes:CooldownUpP() and BtECondition() then
+    if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and Blade_Flurry_Sync() and S.BetweentheEyes:CooldownUpP() and BtECondition() and Player:ComboPoints() >= 5 then
         if HR.Cast(S.BloodoftheEnemy) then return "Cast BloodoftheEnemy"; end
     end
     -- concentrated_flame,if=energy.time_to_max>1&!buff.blade_flurry.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
