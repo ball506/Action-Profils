@@ -149,11 +149,9 @@ function TrinketIsAllowed()
    	    for i = 1, #BlackListedTrinkets do
             if Action.Trinket1.ID == BlackListedTrinkets[i] then
                 Trinket1IsAllowed = false				
-            break
 			end
             if Action.Trinket2.ID == BlackListedTrinkets[i] then
-                Trinket2IsAllowed = false	
-            break				
+                Trinket2IsAllowed = false					
             end
         end
 	return Trinket1IsAllowed, Trinket2IsAllowed
