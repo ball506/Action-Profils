@@ -261,12 +261,6 @@ local function APL(icon)
 	ExecuteRange()
 	DetermineEssenceRanks()
 	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
     local function Precombat_DBM()
         -- flask
         -- food
@@ -345,7 +339,7 @@ local function APL(icon)
             if HR.Cast(S.Siegebreaker, Action.GetToggle(2, "OffGCDasOffGCD")) then return "siegebreaker 18"; end
         end
         -- rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-        if S.Rampage:IsReadyP("Melee") and not ShouldStop and ((Player:BuffP(S.RecklessnessBuff) or Player:BuffP(S.MemoryofLucidDreams)) or (S.FrothingBerserker:IsAvailable() or S.Carnage:IsAvailable() and (Player:BuffRemainsP(S.EnrageBuff) < Player:GCD() or Player:Rage() > 90) or S.Massacre:IsAvailable() and (Player:BuffRemainsP(S.EnrageBuff) < Player:GCD() or Player:Rage() > 90))) then
+        if S.Rampage:IsReadyP("Melee") and ((Player:BuffP(S.RecklessnessBuff) or Player:BuffP(S.MemoryofLucidDreams)) or (S.FrothingBerserker:IsAvailable() or S.Carnage:IsAvailable() and (Player:BuffRemainsP(S.EnrageBuff) < Player:GCD() or Player:Rage() > 90) or S.Massacre:IsAvailable() and (Player:BuffRemainsP(S.EnrageBuff) < Player:GCD() or Player:Rage() > 90))) then
             if HR.Cast(S.Rampage) then return "rampage 20"; end
         end
         -- execute
@@ -504,7 +498,7 @@ local function APL(icon)
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_strength 84"; end
         end
         -- rampage,if=cooldown.recklessness.remains<3
-        if S.Rampage:IsReadyP("Melee") and not ShouldStop and (S.Recklessness:CooldownRemainsP() < 3) then
+        if S.Rampage:IsReadyP("Melee") and (S.Recklessness:CooldownRemainsP() < 3) then
             if HR.Cast(S.Rampage) then return "rampage 108"; end
         end
         -- blood_of_the_enemy,if=buff.recklessness.up
