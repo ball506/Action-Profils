@@ -55,7 +55,15 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   Consecration                         = Action.Create({ Type = "Spell", ID = 205228     }),
   CrusaderStrike                       = Action.Create({ Type = "Spell", ID = 35395     }),
   Rebuke                               = Action.Create({ Type = "Spell", ID = 96231     }),
-  HammerofJustice                      = Action.Create({ Type = "Spell", ID = 853     }),
+  HammerofJustice                      = Action.Create({ Type = "Spell", ID = 198054     }),
+  Repentance                           = Action.Create({ Type = "Spell", ID = 20066     }), 
+  Cavalier                             = Action.Create({ Type = "Spell", ID = 198054     }),  
+  BlessingofProtection                 = Action.Create({ Type = "Spell", ID = 1022     }), 
+  WordofGlory                          = Action.Create({ Type = "Spell", ID = 210191     }),
+  BlessingofFreedom                    = Action.Create({ Type = "Spell", ID = 1044     }),
+  -- PvP
+  HammerofReckoning                    = Action.Create({ Type = "Spell", ID = 247675     }),
+  BlessingofSanctuary                  = Action.Create({ Type = "Spell", ID = 210256     }),
   -- Buffs
   DivinePurposeBuff                    = Action.Create({ Type = "Spell", ID = 223819, Hidden = true     }),
   EmpyreanPowerBuff                    = Action.Create({ Type = "Spell", ID = 286393, Hidden = true     }),
@@ -70,8 +78,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
   RazorCoralDebuff                     = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
   -- Trinkets
-  
-  
+
   AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
   DribblingInkpod                       = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
   AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
