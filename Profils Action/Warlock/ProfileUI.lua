@@ -91,27 +91,71 @@ A.Data.ProfileUI = {
                 }, 
                 
             },  
-            { -- [2] 2nd Row 
-				-- Splash Data
+            { -- [2]
+                {
+                    E = "Checkbox", 
+                    DB = "PredictSpells",
+                    DBV = true,
+                    L = { 
+                        enUS = "Dots Refresh Prediction", 
+                        ruRU = "Прогноз обновления точек", 
+                        frFR = "Prédiction des dots",
+                    }, 
+                    TT = { 
+                        enUS = "Will predict next urgent spell to refresh.\nMainly used by dots refresh and Contagion.",
+                        ruRU = "Предскажет следующее срочное обновление заклинания. \nВ основном используется обновлениями точек и заражением.", 
+                        frFR = "Préviendra le prochain sort urgent à rafraîchir. \nPrincipalement utilisé pour le rafraichissement des dots et Contagion",
+                    }, 
+                    M = {},
+                },         
+                {
+                    E = "Checkbox", 
+                    DB = "PlayerLatency",
+                    DBV = true,
+                    L = { 
+                        enUS = "Check Player Latency",
+                        ruRU = "Проверьте задержку игрока", 
+                        frFR = "Vérifier la latence du joueur",
+                    }, 
+                    TT = { 
+                        enUS = "Will check current Player latency in order to predict spells in advance. \n Can be useful if you got high latency value.",
+                        ruRU = "Проверяет текущую задержку игрока, чтобы заранее предсказывать заклинания. \n Может быть полезно, если вы получили высокое значение задержки.", 
+                        frFR = "Vérifie la latence actuelle du joueur afin de prédire les sorts à l'avance. \n Peut être utile si vous avez une valeur de latence élevée.",
+                    }, 
+                    M = {},
+                },
+            },		
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "USE COMBAT LOGS", value = "USE COMBAT LOGS" }, 
-                        { text = "USE SPLASH DATA", value = "USE SPLASH DATA" },                   
-                        { text = "USE NAMEPLATES", value = "USE NAMEPLATES" },
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
                     },
-                    DB = "AoeDetectionMode",
-                    DBV = "USE COMBAT LOGS",
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
                     L = { 
-                        ANY = "AoE Detection Mode",
+                        ANY = "Party Units",
                     }, 
                     TT = { 
-                        enUS = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                        ruRU = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
                     }, 
                     M = {},
-                },	
-            },
+                },            
+            }, 			
             { -- [4] 4th Row
 
                 {
@@ -138,8 +182,8 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
-                        ruRU = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
-                        frFR = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Автоматически многоточечные юниты.\nУбедитесь, что вы находитесь перед именной табличкой врагов, на которую должен нацелиться бот. \nУбедитесь, что вы правильно связали клавишу TargetEnemy в игре и в GG.",
+                        frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
                     }, 
                     M = {},
                 },
@@ -159,7 +203,7 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
-                        ruRU = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
                     }, 
                     M = {},
                 },				
@@ -184,10 +228,10 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "UnendingResolve",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(104773) .. " Leech HP (%)",
+                        ANY = A.GetSpellInfo(104773) .. " HP (%)",
                     }, 
                     M = {},
                 },
@@ -286,6 +330,51 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [11] Spell Reflect
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "DANGEROUS CAST", value = "DANGEROUS CAST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "ReflectPvP",
+                    DBV = "DANGEROUS CAST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(212295),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@ arena1-3, @target, @mouseover, @targettarget \ nDANGEROUS CAST - Только если цель или юнит арены разыгрывает заклинание, которое считается опасным. (CC или Большой урон). \ NON COOLDOWN - означает, что будет использоваться всегда во всех приведениях. \ NOFF - Вырезать из вращения, но все еще разрешать работу через системы Очереди и MSG \ nЕсли вы хотите полностью выключить его, то вы должны включить SetBlocker в ' Вкладка Действия", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "ReflectPvPunits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(212295) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },	
         },
         [ACTION_CONST_WARLOCK_DESTRUCTION] = {  
             { -- [7]
@@ -747,20 +836,28 @@ A.Data.ProfileUI = {
     -- MSG Actions UI
     [7] = {
         [ACTION_CONST_WARLOCK_AFFLICTION] = { 
-            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+            ["dispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
                 return     DispelIsReady(thisunit, true, true)
             ]] },
-
+            ["reflect"] = { Enabled = true, Key = "NetherWard", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true, true)
+            ]] },
         },
         [ACTION_CONST_WARLOCK_DESTRUCTION] = { 
-            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+            ["dispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
                 return     DispelIsReady(thisunit, true, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "NetherWard", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true, true)
             ]] },
 
         },
         [ACTION_CONST_WARLOCK_DEMONOLOGY] = { 
-            ["tastedispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
+            ["dispel"] = { Enabled = true, Key = "SingeMagic", LUAVER = 5, LUA = [[
                 return     DispelIsReady(thisunit, true, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "NetherWard", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true, true)
             ]] },
 
         },
@@ -786,23 +883,54 @@ function A.DispelIsReady(unit, isMsg, skipShouldStop)
     end 
 end 
 
+-- NetherWard spell Reflect
+function A.ReflectIsReady(unit, isMsg, skipShouldStop)
+    if A[A.PlayerSpec].NetherWard then 
+        local unitID = A.GetToggle(2, "ReflectPvPunits")
+        return     (
+            (unit == "arena1" and unitID[1]) or 
+            (unit == "arena2" and unitID[2]) or
+            (unit == "arena3" and unitID[3]) or
+            (not unit:match("arena") and unitID[4]) 
+        ) and 
+        A.IsInPvP and
+        Unit(unit):IsEnemy() and  
+        (
+            (
+                not isMsg and 
+                A.GetToggle(2, "ReflectPvP") ~= "OFF" and 
+                A[A.PlayerSpec].NetherWard:IsReady(unit, nil, nil, skipShouldStop) and
+                (
+                    A.GetToggle(2, "ReflectPvP") == "ON COOLDOWN" or 
+                    (A.GetToggle(2, "ReflectPvP") == "DANGEROUS CAST" and EnemyTeam():IsCastingBreakAble(0.25))
+                )
+            ) or 
+            (
+                isMsg and 
+                A[A.PlayerSpec].NetherWard:IsReadyM(unit)                     
+            )
+        ) and 
+        Unit(unit):IsPlayer()
+    end 
+end 
+
 function A.Main_CastBars(unit, list)
     if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
     end 
-    -- SingeMagic Queue Message 
-    --if A[A.PlayerSpec] and A[A.PlayerSpec].SingeMagic:IsReadyM(unit) then                         
-    --    return true         
-    --end   
+    
+    if A[A.PlayerSpec] and A[A.PlayerSpec].PetKick and A[A.PlayerSpec].PetKick:IsReadyP(unit, nil, true) and A[A.PlayerSpec].PetKick:AbsentImun(unit, {"KickImun", "TotalImun", "TotalAndMag"}, true) and A.InterruptIsValid(unit, list) then 
+        return true         
+    end 
 end 
 
 function A.Second_CastBars(unit)
-    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp")  then 
         return false 
     end 
     
-    local Toggle = A.GetToggle(2, "ParalysisPvP")    
-    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Paralysis and A[A.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+    local Toggle = A.GetToggle(2, "FearPvP")    
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Fear and A[A.PlayerSpec].Fear:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Fear:AbsentImun(unit, {"CCTotalImun", "TotalImun", "TotalAndMag"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else
@@ -810,5 +938,3 @@ function A.Second_CastBars(unit)
         end 
     end 
 end 
-
-
