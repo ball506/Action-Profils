@@ -159,7 +159,7 @@ end
 
 
 local function SelfDefensives()
-    if Unit("player"):CombatTime() == 0 then 
+    if Unit("player"):CombatTime() == 0 then  
         return 
     end
 	

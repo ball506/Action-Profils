@@ -16,7 +16,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v0.10 (10.10.2019)",
+    DateTime = "v0 (06.10.2019)",
     [2] = {        
         [ACTION_CONST_PRIEST_SHADOW] = {             
             { -- [1]                            
@@ -71,6 +71,40 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 },  
             },
+			{ -- [3]
+                {
+                    E = "Header",
+                    L = {
+                        enUS = " -- Defensives -- ",
+                    },
+                },
+            }, 
+            { -- [4]     
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "VampiricEmbrace",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(15286) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "Dispersion",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(47585) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            }, 
         },
     },
 }
