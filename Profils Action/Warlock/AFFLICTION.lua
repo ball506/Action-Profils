@@ -856,7 +856,7 @@ A[3] = function(icon, isMulti)
         local function Spenders(unit)
 		
             -- unstable_affliction,if=cooldown.summon_darkglare.remains<=soul_shard*(execute_time+azerite.dreadful_calling.rank)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=soul_shard*execute_time)&(talent.sow_the_seeds.enabled|dot.phantom_singularity.remains|dot.vile_taint.remains)
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving)  and not ShouldStop and A.SummonDarkglare:GetCooldown() <= Player:SoulShardsP() * (A.UnstableAffliction:GetSpellCastTime() + A.DreadfulCalling:GetAzeriteRank()) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime()) and (A.SowtheSeeds:IsSpellLearned() or Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true)) then
+            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving)  and not ShouldStop and A.SummonDarkglare:GetCooldown() <= Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime() and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime()) and (A.SowtheSeeds:IsSpellLearned() or Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true)) then
                 return A.UnstableAffliction:Show(icon)
             end
 			
@@ -873,14 +873,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unstable_affliction,if=!variable.use_seed&!prev_gcd.1.summon_darkglare&(talent.deathbolt.enabled&cooldown.deathbolt.remains<=execute_time&!azerite.cascading_calamity.enabled|(soul_shard>=5&spell_targets.seed_of_corruption_aoe<2|soul_shard>=2&spell_targets.seed_of_corruption_aoe>=2)&target.time_to_die>4+execute_time&spell_targets.seed_of_corruption_aoe=1|target.time_to_die<=8+execute_time*soul_shard)
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving) and not ShouldStop and not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare.ID, true) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() >= 1 or (Player:SoulShardsP() >= 5 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or Player:SoulShardsP() >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP()) then
+            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving) and not ShouldStop and not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare.ID, true) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() or (Player:SoulShardsP() >= 5 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or Player:SoulShardsP() >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP()) then
                 return A.UnstableAffliction:Show(icon)
             end
 			
             -- unstable_affliction,if=!variable.use_seed&contagion<=cast_time+variable.padding
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving)  and not ShouldStop and not bool(VarUseSeed) and contagion <= A.UnstableAffliction:GetSpellCastTime() then
-                return A.UnstableAffliction:Show(icon)
-            end
+           -- if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving)  and not ShouldStop and not bool(VarUseSeed) and contagion <= A.UnstableAffliction:GetSpellCastTime() then
+          --      return A.UnstableAffliction:Show(icon)
+          --  end
 			
 		    -- unstable_affliction,cycle_targets=1,if=!variable.use_seed&(!talent.deathbolt.enabled|cooldown.deathbolt.remains>time_to_shard|soul_shard>1)&(!talent.vile_taint.enabled|soul_shard>1)&contagion<=cast_time+variable.padding&(!azerite.cascading_calamity.enabled|buff.cascading_calamity.remains>time_to_shard)
             if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving)  and not ShouldStop and A.CascadingCalamity:GetAzeriteRank() >= 1 and (not Unit("player"):HasBuffs(A.CascadingCalamityBuff.ID, true) or Unit("player"):HasBuffs(A.CascadingCalamityBuff.ID, true) <= (A.UnstableAffliction:GetSpellCastTime() + A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER))  and ActiveUAs(unit) >= 1 then
@@ -903,10 +903,10 @@ A[3] = function(icon, isMulti)
                     return A.PetKick:Show(icon)
                 end 
             end 
-		
+			
 		    -- Auto Multi Dot	  
 	        if not Unit("player"):GetSpellLastCast(A.TargetEnemy.ID, true)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
-		    and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 5 
+		    and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 5 
 		    and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 8 then
                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
             end	
@@ -1115,9 +1115,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unstable_affliction,target_if=!contagion&target.time_to_die<=8
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (A.SummonDarkglare:GetCooldown() >= time_to_shard * (5 - Player:SoulShardsP()) or not A.BurstIsON(unit)) and (not isMoving) and not ShouldStop and contagion <= (A.UnstableAffliction:GetSpellCastTime() + A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) then
-                return A.UnstableAffliction:Show(icon)
-            end
+          --  if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (A.SummonDarkglare:GetCooldown() >= time_to_shard * (5 - Player:SoulShardsP()) or not A.BurstIsON(unit)) and (not isMoving) and not ShouldStop and contagion <= (A.UnstableAffliction:GetSpellCastTime() + A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) then
+          --      return A.UnstableAffliction:Show(icon)
+          --  end
 		
             -- unstable_affliction,target_if=min:contagion,if=!variable.use_seed&soul_shard=5
             if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving) and not ShouldStop and Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateTargetIfFilterUnstableAffliction865, EvaluateTargetIfUnstableAffliction870) then
