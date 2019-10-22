@@ -389,12 +389,12 @@ local function APL(icon)
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
+        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
             if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists&(trinket.1.has_cooldown+trinket.2.has_cooldown<2|equipped.variable_intensity_gigavolt_oscillating_reactor)
         -- Needs to be updated to the 2nd half of the condition
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and S.CyclotronicBlast:IsAvailable() and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipped() and HR.CDsON() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and S.CyclotronicBlast:IsAvailable() and TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast precombat"; end
         end
         -- focused_azerite_beam,if=!raid_event.invulnerable.exists
