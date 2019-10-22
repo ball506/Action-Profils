@@ -57,7 +57,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   Rebuke                               = Action.Create({ Type = "Spell", ID = 96231     }),
   HammerofJustice                      = Action.Create({ Type = "Spell", ID = 198054     }),
   Repentance                           = Action.Create({ Type = "Spell", ID = 20066     }), 
-  Cavalier                             = Action.Create({ Type = "Spell", ID = 198054     }),  
+  Cavalier                             = Action.Create({ Type = "Spell", ID = 190784     }),  
   BlessingofProtection                 = Action.Create({ Type = "Spell", ID = 1022     }), 
   WordofGlory                          = Action.Create({ Type = "Spell", ID = 210191     }),
   BlessingofFreedom                    = Action.Create({ Type = "Spell", ID = 1044     }),
@@ -340,7 +340,7 @@ local function APL(icon)
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast"; end
         end
         -- avenging_wrath,if=(!talent.inquisition.enabled|buff.inquisition.up)&holy_power>=3
-        if S.AvengingWrath:IsCastableP() and not ShouldStop and HR.CDsON() and ((not S.Inquisition:IsAvailable() or Player:BuffP(S.InquisitionBuff)) and Player:HolyPower() >= 3) then
+        if S.AvengingWrath:IsCastableP() and not ShouldStop and HR.CDsON() and not Player:BuffP(S.AvengingWrathBuff) and ((not S.Inquisition:IsAvailable() or Player:BuffP(S.InquisitionBuff)) and Player:HolyPower() >= 3) then
             if HR.Cast(S.AvengingWrath, Action.GetToggle(2, "GCDasOffGCD")) then return "avenging_wrath 32"; end
         end
         -- crusade,if=holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled
@@ -375,7 +375,7 @@ local function APL(icon)
             if HR.Cast(S.TemplarsVerdict) then return "templars_verdict 92"; end
         end
         -- templars_verdict fallback, in case the user is saving AW/Crusade/ExecutionSentence
-        if S.TemplarsVerdict:IsReadyP() and not ShouldStop and (not HR.CDsON()) then
+        if S.TemplarsVerdict:IsReadyP() and not ShouldStop and Player:HolyPower() >= 4 then
             if HR.Cast(S.TemplarsVerdict) then return "templars_verdict 93"; end
         end
     end
