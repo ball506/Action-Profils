@@ -1,3 +1,6 @@
+-----------------------------
+-- ZakLL TMW Action Rotation
+-----------------------------
 local Action								= Action
 local TeamCache								= Action.TeamCache
 local EnemyTeam								= Action.EnemyTeam
@@ -273,24 +276,20 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
-local function RampageRage ()
-	if A.Carnage:IsSpellLearned() then
-		return 75
-	elseif A.FrothingBerserker:IsSpellLearned() then
-		return 95
-	else 
-		return 85
-	end
+local function WWAllowed() --and ((A.Massacre:IsSpellLearned() and  Player:Rage() < 80) or (A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90))
+	return A.Siegebreaker:GetCooldown() > A.GetGCD() and A.Bloodthirst:GetCooldown() > A.GetGCD()
 end
-
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
-    local unitID = "player"
-    local isMoving = Player:IsMoving()
-    local inMelee = false
+    local unitID 				= "player"
+    local isMoving 				= Player:IsMoving()
+    local inMelee 				= false
+	local inAoE					= A.GetToggle(2, "AoE")
+	local inHoldAoE			 	= A.GetToggle(2, "holdAoE")
+	local minHoldAoE			= A.GetToggle(2, "holdAoENum")
     local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 			
 	local function EnemyRotation(unitID)
@@ -324,9 +323,11 @@ A[3] = function(icon, isMulti)
             -- Simcraft 
             -- Cooldowns --						
 			--blood_of_the_enemy,if=buff.recklessness.up
-			if (A.BloodoftheEnemy:AutoHeartOfAzeroth(unitID) or A.BloodoftheEnemy:AutoHeartOfAzeroth(unitID, nil, Unit(unitID):IsBoss())) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 then                                 
+			if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) then                             
                 return A.BloodoftheEnemy:Show(icon)                                                 
-            end 
+            elseif not inHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 then 
+				return A.BloodoftheEnemy:Show(icon)   
+			end 
 
 			--purifying_blast,if=!buff.recklessness.up&!buff.siegebreaker.up
 			if (isMulti or A.GetToggle(2, "AoE")) and A.PurifyingBlast:AutoHeartOfAzeroth(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 and	Unit(unitID):HasDeBuffs(A.SiegebreakerDebuff.ID) <= 0 then 
@@ -339,7 +340,7 @@ A[3] = function(icon, isMulti)
 			end 
 			
 			--guardian_of_azeroth,if=!buff.recklessness.up
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 then 
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 then 
                 return A.GuardianofAzeroth:Show(icon)
             end 
 			
@@ -400,6 +401,11 @@ A[3] = function(icon, isMulti)
             end 
         end
 		
+		--whirlwind
+		if inAoE and MultiUnits:GetByRange(8, 2) >= 2 and A.Whirlwind:IsReady(unitID, true) and A.Whirlwind:AbsentImun(unitID, Temp.TotalAndPhys) and Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true) == 0 and A.LastPlayerCastID ~= A.Whirlwind.ID then
+			return A.Whirlwind:Show(icon)
+		end
+
 		-- Single SimC 01/08/2019
 		--siegebreaker
 		if A.Siegebreaker:IsReady(unitID) and A.Siegebreaker:AbsentImun(unitID, Temp.TotalAndPhys) then
@@ -407,21 +413,22 @@ A[3] = function(icon, isMulti)
         end 
 		
 		-- execute,if=buff.enrage.up
-        if A.Execute:IsReady(unitID) and not ShouldStop and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > A.GetGCD() + A.GetPing() then
+        if A.Execute:IsReady(unitID) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
 		    return A.Execute:Show(icon)
         end
 		
-		--rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-		if A.Rampage:IsReady(unitID) and A.Rampage:AbsentImun(unitID, Temp.TotalAndPhys) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 or  Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0) or 
-		(A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) <= A.GetGCD() or Player:Rage() > 90) or 
-		A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) <= A.GetGCD() or Player:Rage() > 90))) then
-			return A.Rampage:Show(icon)
-		end
-		
-		--whirlwind
-		if A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.Whirlwind:IsReady(unitID, true) and A.Whirlwind:AbsentImun(unitID, Temp.TotalAndPhys) and Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true) == 0 then
-			return A.Whirlwind:Show(icon)
-		end
+		if A.GetToggle(2, "RampageLogic") == "Simcraft Logic" then
+			--rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
+			if A.Rampage:IsReady(unitID) and A.Rampage:AbsentImun(unitID, Temp.TotalAndPhys) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 or  Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0) or 
+			(A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90) or 
+			A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90))) then
+				return A.Rampage:Show(icon)
+			end
+		elseif A.GetToggle(2, "RampageLogic") == "High Priority Logic" then
+			if A.Rampage:IsReady(unitID) and A.Rampage:AbsentImun(unitID, Temp.TotalAndPhys) then
+				return A.Rampage:Show(icon)
+			end
+		end	
 		
 		--execute
 		if A.Execute:IsReady(unitID) and A.Execute:AbsentImun(unitID, Temp.TotalAndPhys) then
@@ -442,9 +449,11 @@ A[3] = function(icon, isMulti)
 		if A.Bloodthirst:IsReady(unitID) and A.Bloodthirst:AbsentImun(unitID, Temp.TotalAndPhys) and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) == 0 or A.ColdSteelHotBlood:GetAzeriteRank() > 1) then
 			return A.Bloodthirst:Show(icon)
 		end
-		
+		--/dump Action.MultiUnits:GetByRange(8, 2)
 		--dragon_roar,if=buff.enrage.up
-		if A.DragonRoar:IsReady(unitID, true) and A.DragonRoar:AbsentImun(unitID, Temp.TotalAndPhys) and Unit(unitID):GetRange() <= 12 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
+		if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and A.DragonRoar:IsReady(unitID, true) and A.DragonRoar:AbsentImun(unitID, Temp.TotalAndPhys) and Unit(unitID):GetRange() <= 12 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
+			return A.DragonRoar:Show(icon)
+		elseif not inHoldAoE and A.DragonRoar:IsReady(unitID, true) and A.DragonRoar:AbsentImun(unitID, Temp.TotalAndPhys) and Unit(unitID):GetRange() <= 12 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
 			return A.DragonRoar:Show(icon)
 		end
 		
@@ -459,8 +468,8 @@ A[3] = function(icon, isMulti)
 		end
 
 		--raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90)
-		if A.RagingBlow:IsReady(unitID) and A.RagingBlow:AbsentImun(unitID, Temp.TotalAndPhys) and A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and  Player:Rage() < 80) or 
-		(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90) then
+		if A.RagingBlow:IsReady(unitID) and A.RagingBlow:AbsentImun(unitID, Temp.TotalAndPhys) and (A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and  Player:Rage() < 80) or 
+		(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90)) then
 			return A.RagingBlow:Show(icon)
 		end
 			
@@ -470,7 +479,7 @@ A[3] = function(icon, isMulti)
 		end
 		
 		--whirlwind
-		if A.Whirlwind:IsReady(unitID, true) and A.Whirlwind:AbsentImun(unitID, Temp.TotalAndPhys) and inMelee then
+		if A.Whirlwind:IsReady(unitID, true) and A.Whirlwind:AbsentImun(unitID, Temp.TotalAndPhys) and inMelee and WWAllowed() then
 			return A.Whirlwind:Show(icon)
 		end
 		

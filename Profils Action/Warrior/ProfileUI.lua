@@ -1,22 +1,21 @@
-local TMW                                             = TMW 
-
-local A                                             = Action
-local UnitCooldown                                    = A.UnitCooldown
-local Unit                                            = A.Unit 
-local Player                                        = A.Player 
-local Pet                                             = A.Pet
-local LoC                                             = A.LossOfControl
-local MultiUnits                                    = A.MultiUnits
-local EnemyTeam                                        = A.EnemyTeam
-local FriendlyTeam                                    = A.FriendlyTeam
-local TeamCache                                        = A.TeamCache
-local InstanceInfo                                    = A.InstanceInfo
+local TMW						= TMW 
+local A							= Action
+local UnitCooldown				= A.UnitCooldown
+local Unit						= A.Unit 
+local Player					= A.Player 
+local Pet						= A.Pet
+local LoC						= A.LossOfControl
+local MultiUnits				= A.MultiUnits
+local EnemyTeam					= A.EnemyTeam
+local FriendlyTeam				= A.FriendlyTeam
+local TeamCache					= A.TeamCache
+local InstanceInfo				= A.InstanceInfo
 
 local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v2 (12.09.2019)",
+    DateTime = "v4 (03.11.2019)",
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
             { -- [1]                            
@@ -43,7 +42,49 @@ A.Data.ProfileUI                                     = {
                         enUS = "Enable multiunits actions", 
                     }, 
                     M = {},
-                },                    
+                },  
+				{
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Simcraft Logic", value = "Simcraft Logic" },
+                        { text = "High Priority Logic", value = "High Priority Logic"},                    
+                    },
+                    DB = "RampageLogic",
+                    DBV = "Simcraft Logic",
+                    L = { 
+                        ANY = A.GetSpellInfo(184367) .. " Logic",
+                    }, 
+                    TT = { 
+                        enUS = "Simcraft Logic - Respect the Simcraft logic. \n HIGH PRIORITY LOGIC - Always use Rampage whenever available.", 
+                    }, 
+                    M = {},
+                },			
+            }, 
+			 { -- [2]
+                {
+                    E = "Checkbox", 
+                    DB = "holdAoE",
+                    DBV = false,
+                    L = { 
+                        enUS = "Hold Dragon Roar / BoTE to AoE", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable to hold Dragon Roar / Blood of the Enemy to use only in multiunits.", 
+                    }, 
+                    M = {},
+                },
+				{
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 10,                            
+                    DB = "holdAoENum",
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = "Min. Units to Hold AoE Logic.",
+                    }, 
+                    M = {},
+                },			
             }, 
             { -- [2]
                 {
@@ -436,7 +477,8 @@ A.Data.ProfileUI                                     = {
         [ACTION_CONST_WARRIOR_ARMS] = {
             ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
-                return  (
+                return  A.StormBolt:IsReadyM(thisunit, true) and  
+						(
                             IsInPvP and 
                             EnemyTeam():PlayersInRange(1, 20)
                         )                                                             
