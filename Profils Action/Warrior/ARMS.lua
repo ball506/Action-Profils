@@ -63,6 +63,7 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     Avatar                                = Action.Create({ Type = "Spell", ID = 107574, isTalent = true    }), -- Talent
     Massacre                              = Action.Create({ Type = "Spell", ID = 281001, isTalent = true    }), -- Talent 
 	Execute									= Action.Create({ Type = "Spell", ID = 5308}),
+	SharpenBlade							= Action.Create({ Type = "Spell", ID = 198817, isTalent = true}), -- PvP Talent
 	
     -- Misc
 	BerserkerRage							= Action.Create({ Type = "Spell", ID = 18499    }),
@@ -270,6 +271,70 @@ A[3] = function(icon, isMulti)
 		--	return A.ExecuteDefault:Show(icon)
 		--end
 
+		 if unit ~= "mouseover" and A.BurstIsON(unit) then     
+			if inMelee then 
+                -- Racials 
+                if A.BloodFury:AutoRacial(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 then 
+                    return A.BloodFury:Show(icon)
+                end 
+                
+                if A.Fireblood:AutoRacial(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 then 
+                    return A.Fireblood:Show(icon)
+                end 
+                
+                if A.AncestralCall:AutoRacial(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 then 
+                    return A.AncestralCall:Show(icon)
+                end 
+                
+                if A.Berserking:AutoRacial(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 then 
+                    return A.Berserking:Show(icon)
+                end 
+                
+                -- Trinkets
+                if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket1:Show(icon)
+                end 
+                
+                if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket2:Show(icon)
+                end                     
+            end 
+			
+			if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) > 0 or (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 and TestofMightBuff:GetAzeriteRank() > 1)) then
+				return A.BloodoftheEnemy:Show(icon)    
+			end
+			
+			if A.PurifyingBlast:AutoHeartOfAzerothP(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) <= 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0) then
+				return A.PurifyingBlast:Show(icon)
+			end
+			
+			if A.RippleinSpace:AutoHeartOfAzerothP(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) <= 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0) then
+				return A.RippleinSpace:Show(icon)
+			end
+			
+			if A.WorldveinResonance:AutoHeartOfAzerothP(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) <= 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0) then
+                return A.WorldveinResonance:Show(icon)
+            end 
+			
+			if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) <= 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0) then 
+                return A.FocusedAzeriteBeam:Show(icon)
+            end 
+			
+			if A.ConcentratedFlame:AutoHeartOfAzeroth(unit) and (Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) <= 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0) then 
+				return A.ConcentratedFlame:Show(icon)
+			end 
+			
+			--guardian_of_azeroth,if=cooldown.colossus_smash.remains<10
+			if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit) and (A.ColossusSmash:GetCooldown() < 10 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 10)) then 
+                return A.GuardianofAzeroth:Show(icon)
+            end
+			
+			--if=!talent.warbreaker.enabled&cooldown.colossus_smash.remains<3|cooldown.warbreaker.remains<3
+			 if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit) and (not A.Warbreaker:IsSpellLearned() and A.ColossusSmash:GetCooldown() < 3 or A.Warbreaker:GetCooldown() < 3) then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+		 end
+
 		-- Hamstring (slow)
         if unit ~= "mouseover" and  Unit(unit):GetRange() <= 14 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.Hamstring:IsReady(unit) and A.Hamstring:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
             return A.Hamstring:Show(icon)
@@ -294,6 +359,10 @@ A[3] = function(icon, isMulti)
 		
 		if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, Temp.TotalAndPhys) and Unit("player"):HasBuffsStacks(A.Overpower.ID, true) <= 2 then
 			return A.Overpower:Show(icon)
+		end
+		
+		if A.SharpenBlade:IsReady("player") then 
+			return A.SharpenBlade:Show(icon)
 		end
 		
 		if A.MortalStrike:IsReady(unit) and A.MortalStrike:AbsentImun(unit, Temp.TotalAndPhys) then
