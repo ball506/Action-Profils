@@ -1,12 +1,17 @@
-local Action								= Action
-local TeamCache								= Action.TeamCache
-local EnemyTeam								= Action.EnemyTeam
-local FriendlyTeam							= Action.FriendlyTeam
-local LoC									= Action.LossOfControl
+local TMW                                   = TMW 
+
+local Action                                = Action
+local TeamCache                             = Action.TeamCache
+local EnemyTeam                             = Action.EnemyTeam
+local FriendlyTeam                          = Action.FriendlyTeam
+--local HealingEngine                       = Action.HealingEngine
+local LoC                                   = Action.LossOfControl
 local Player								= Action.Player 
-local MultiUnits							= Action.MultiUnits
-local UnitCooldown							= Action.UnitCooldown
-local Unit									= Action.Unit 
+local MultiUnits                            = Action.MultiUnits
+local UnitCooldown                          = Action.UnitCooldown
+local Unit                                  = Action.Unit 
+--local Pet                                     = LibStub("PetLibrary")
+--local Azerite                                 = LibStub("AzeriteTraits")
 
 local setmetatable                          = setmetatable
 
@@ -32,7 +37,6 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	-- CrownControl
 	StormBolt							= Action.Create({ Type = "Spell", ID = 107570    }),
 	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
-	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", QueueForbidden = true    }),
 	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
 	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),  
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
@@ -42,7 +46,6 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	-- Self Defensive
 	DiebytheSword						= Action.Create({ Type = "Spell", ID = 118038   }),
 	RallyingCry							= Action.Create({ Type = "Spell", ID = 97462    }),
-	WarBanner							= Action.Create({ Type = "Spell", ID = 236320, isTalent = true}), -- PvP Talent
    -- Generics Spells
     Skullsplitter                         = Action.Create({ Type = "Spell", ID = 260643, isTalent = true    }), -- Talent
     DeadlyCalm                            = Action.Create({ Type = "Spell", ID = 262228, isTalent = true    }), -- Talent
@@ -62,7 +65,6 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     AngerManagement                       = Action.Create({ Type = "Spell", ID = 152278, isTalent = true    }), -- Talent
     Avatar                                = Action.Create({ Type = "Spell", ID = 107574, isTalent = true    }), -- Talent
     Massacre                              = Action.Create({ Type = "Spell", ID = 281001, isTalent = true    }), -- Talent 
-	Execute									= Action.Create({ Type = "Spell", ID = 5308}),
 	
     -- Misc
 	BerserkerRage							= Action.Create({ Type = "Spell", ID = 18499    }),
@@ -87,89 +89,66 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     DeepWoundsDebuff                      = Action.Create({ Type = "Spell", ID = 262115, Hidden = true     }),
     ColossusSmashDebuff                   = Action.Create({ Type = "Spell", ID = 208086, Hidden = true     }),
     RendDebuff                            = Action.Create({ Type = "Spell", ID = 772, Hidden = true     }),
+    -- Trinkets
+	GenericTrinket1                       = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
+    GenericTrinket2                       = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
+    TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555 }),
+    RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    VialofStorms                         = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+	AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    -- Potions
+    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
+    PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
+    -- Misc
+    CyclotronicBlast                      = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),	
+	ExecuteDefault                        = Action.Create({ Type = "Spell", ID = 163201, Hidden = true}),
+    ExecuteMassacre                       = Action.Create({ Type = "Spell", ID = 281000, Hidden = true}),	
+    -- Hidden Heart of Azeroth
+    VisionofPerfectionMinor               = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2              = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3              = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                 = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                       = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                        = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
+	CondensedLifeforce                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295834, Hidden = true}),
+	CondensedLifeforce2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299354, Hidden = true}),
+	CondensedLifeforce3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299357, Hidden = true}),
 }
 
 Action:CreateEssencesFor(ACTION_CONST_WARRIOR_ARMS)
 local A = setmetatable(Action[ACTION_CONST_WARRIOR_ARMS], { __index = Action })
 
-local Temp							= {
-    TotalAndPhys					= {"TotalImun", "DamagePhysImun"},
-    TotalAndPhysKick                = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC               = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
-    TotalAndPhysAndStun             = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun        = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    DisablePhys                     = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-}
-
-local IsIndoors, UnitIsUnit = 
-IsIndoors, UnitIsUnit
-
--- [1] CC AntiFake Rotation
-local function AntiFakeStun(unit) 
-    return 
-    A.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 20 and 
-    Unit(unit):IsControlAble("stun", 0) and 
-    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
-end 
-A[1] = function(icon)    
-    if	A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
-    (
-        AntiFakeStun("mouseover") or 
-        AntiFakeStun("target") or 
-        (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target")
-        )
-    )
-    then 
-        return A.StormBoltGreen:Show(icon)         
-    end                                                                     
-end
-
--- [2] Kick AntiFake Rotation
-A[2] = function(icon)        
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end 
-    
-    if unit then         
-        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
-        if castLeft > 0 then             
-            if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
-                return A.PummelGreen:Show(icon)                                                  
-            end 
-            
-            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
-                return A.StormBoltAntiFake:Show(icon)                  
-            end 
-            
-            -- Racials 
-            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.QuakingPalm:Show(icon)
-            end 
-            
-            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.Haymaker:Show(icon)
-            end 
-            
-            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.WarStomp:Show(icon)
-            end 
-            
-            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.BullRush:Show(icon)
-            end                         
-        end 
-    end                                                                                 
-end
-
------------------------------------------
---                 ROTATION  
------------------------------------------
 local function SelfDefensives()
     if Unit("player"):CombatTime() == 0 then 
         return 
@@ -214,17 +193,17 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true) then 
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "KickImun"}, true) and Unit(unit):CanInterrupt(true) then 
         return A.Pummel
     end 
     
-    if useCC and A.StormBolt:IsReady(unit) and A.StormBolt:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
+    if useCC and A.StormBolt:IsReady(unit) and A.StormBolt:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.StormBolt              
     end          
 	
-	--if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
-      --  return A.IntimidatingShout              
-   -- end
+	if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
+        return A.IntimidatingShout              
+    end
     
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
@@ -244,13 +223,14 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
-
+-----------------------------------------
+--                 ROTATION  
+-----------------------------------------
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
-    local unitID 				= "player"
-    local isMoving 				= Player:IsMoving()
-    local inMelee 				= false
-	local inAoE					= A.GetToggle(2, "AoE")
+    local unit = "player"
+    local isMoving = Player:IsMoving()
+    local inMelee = false
 	
 	local function EnemyRotation(unit)
 		-- Variables
@@ -274,48 +254,163 @@ A[3] = function(icon, isMulti)
         if unit ~= "mouseover" and  Unit(unit):GetRange() <= 14 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.Hamstring:IsReady(unit) and A.Hamstring:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
             return A.Hamstring:Show(icon)
         end	
-		
-		if A.Execute:IsReady(unitID) and A.Execute:AbsentImun(unit, Temp.TotalAndPhys) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 then
-		    return A.Execute:Show(icon)
-        end
-		
-		if A.Warbreaker:IsReady(unit, true) and A.Warbreaker:AbsentImun(unit, Temp.TotalAndPhys) and inMelee then
-			return A.Warbreaker:Show(icon)
-		end
 
 		-- AoE
-		if inAoE and MultiUnits:GetByRange(8, 2) >= 2 and A.SweepingStrikes:IsReady(unit, true) then
+		if A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.SweepingStrikes:IsReady(unit, true) then
 			return A.SweepingStrikes:Show(icon)
 		end
 
-		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, Temp.TotalAndPhys) and Unit(unit):HasDeBuffs(A.RendDebuff.ID) <= A.GetGCD() + A.GetCurrentGCD() then
+		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.RendDebuff.ID) < 2  then
 			return A.Rend:Show(icon)
 		end	
-		
-		if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, Temp.TotalAndPhys) and Unit("player"):HasBuffsStacks(A.Overpower.ID, true) <= 2 then
+
+		--if A.GetToggle(2, "AoE") and MultiUnits:GetByRange(8, 2) >= 2 and A.Whirlwind:IsReady(unit, true) and Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true) <= 0 then
+		--	return A.Whirlwind:Show(icon)
+		--end
+		-- 
+
+		-- Bursting #2
+        if unit ~= "mouseover" and A.BurstIsON(unit) then             
+            -- Simcraft 
+            -- Cooldowns --
+            
+            if inMelee then 
+                -- Racials 
+                if A.BloodFury:AutoRacial(unit) then 
+                    return A.BloodFury:Show(icon)
+                end 
+                
+                if A.Fireblood:AutoRacial(unit) then 
+                    return A.Fireblood:Show(icon)
+                end 
+                
+                if A.AncestralCall:AutoRacial(unit) then 
+                    return A.AncestralCall:Show(icon)
+                end 
+                
+                if A.Berserking:AutoRacial(unit) then 
+                    return A.Berserking:Show(icon)
+                end 
+                
+                -- Trinkets
+                if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket1:Show(icon)
+                end 
+                
+                if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket2:Show(icon)
+                end                     
+            end 
+			
+            -- call_action_list,name=essences
+            if (isMulti or A.GetToggle(2, "AoE")) and A.BloodoftheEnemy:AutoHeartOfAzeroth(unit) then                                 
+                return A.BloodoftheEnemy:Show(icon)                                                 
+            end 
+            
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit) then 
+                return A.FocusedAzeriteBeam:Show(icon)
+            end 
+            
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) then 
+                return A.GuardianofAzeroth:Show(icon)
+            end 
+            
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit) then 
+                return A.WorldveinResonance:Show(icon)
+            end 
+        end
+
+		--Execute Rotation
+		if Unit(unit):HealthPercent() <= 30 then
+			if A.Skullsplitter:IsReady(unit) and A.Skullsplitter:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() < 60 and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID) <= 0) then
+				return A.Skullsplitter:Show(icon)
+			end
+
+			if inMelee and A.ColossusSmash:IsReady(unit) and A.ColossusSmash:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+				return A.ColossusSmash:Show(icon)
+			end
+
+			if inMelee then
+				if  A.Warbreaker:IsReady(unit, true) and A.Warbreaker:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+					return A.Warbreaker:Show(icon)
+				end
+			end
+
+			if A.MortalStrike:IsReady(unit) and A.MortalStrike:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+				return A.MortalStrike:Show(icon)
+			end
+
+			if A.ExecuteDefault:IsReady(unit)  then
+				return A.ExecuteDefault:Show(icon)
+			end
+
+			if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+				return A.Overpower:Show(icon)
+			end
+
+			if A.ExecuteDefault:IsReady(unit)  then
+				return A.ExecuteDefault:Show(icon)
+			end
+		end
+
+		-- Single 
+		--if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.RendDebuff.ID) < 1 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) <= 0 then
+		if A.Skullsplitter:IsReady(unit) and A.Skullsplitter:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() < 60 and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID) <= 0) then
+			return A.Skullsplitter:Show(icon)
+		end
+
+		-- Revanger
+
+		if inMelee and A.ColossusSmash:IsReady(unit) and A.ColossusSmash:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+			return A.ColossusSmash:Show(icon)
+		end
+
+		if inMelee then
+			if  A.Warbreaker:IsReady(unit, true) and A.Warbreaker:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+				return A.Warbreaker:Show(icon)
+			end
+		end
+
+		if A.MortalStrike:IsReady(unit) and A.MortalStrike:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
+			return A.MortalStrike:Show(icon)
+		end
+
+		if inMelee and A.DeadlyCalm:IsReady(unit) then
+			A.DeadlyCalm:Show(icon)
+		end
+
+	--	if A.SweepingStrikes:IsReady(unit) and (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) then
+	--		A.SweepingStrikes:Show(icon)
+	--	end
+
+		if A.Cleave:IsReady(unit) and A.Cleave:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (isMulti or A.GetToggle(2, "AoE") or MultiUnits:GetByRange(8, 2) < 2) then
+			A.Cleave:Show(icon)
+		end
+
+		if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() < 30 and Unit("player"):HasBuffs(A.ColossusSmashDebuff.ID) > 0) then
+			return A.Overpower:Show(icon)
+		end
+
+		if inMelee and A.Bladestorm:IsReady(unit, true) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID) > 0 then
+			return A.Bladestorm:Show(icon)
+		end
+
+		if A.Whirlwind:IsReady(unit) and A.Whirlwind:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (A.FervorofBattle:IsSpellLearned() and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID) > 0) then
+			return Whirlwind:Show(icon)
+		end
+
+		if A.Overpower:IsReady(unit) and A.Overpower:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) then
 			return A.Overpower:Show(icon)
 		end
 		
-		if A.MortalStrike:IsReady(unit) and A.MortalStrike:AbsentImun(unit, Temp.TotalAndPhys) then
-			return A.MortalStrike:Show(icon)
+		if A.Whirlwind:IsReady(unit) and A.Whirlwind:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (A.FervorofBattle:IsSpellLearned()) then
+			return Whirlwind:Show(icon)
 		end
-		
-		if inMelee and A.Bladestorm:IsReady(unit, true) then
-			return A.Bladestorm:Show(icon)
-		end
-		
-		if A.Slam:IsReady(unit) and A.Slam:AbsentImun(unit, Temp.TotalAndPhys) and (Player:Rage() >= 40 or Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true) > 0) then
+
+		if A.Slam:IsReady(unit) and A.Slam:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (Player:Rage() > 50 and not A.FervorofBattle:IsSpellLearned()) then
 			return A.Slam:Show(icon)
 		end
-		
-		if A.Execute:IsReady(unitID) and A.Execute:AbsentImun(unit, Temp.TotalAndPhys) then
-		    return A.Execute:Show(icon)
-        end
 
-		if A.WarBanner:IsReady("player") and Unit("player"):CombatTime() > 0 and Unit("player"):HealthPercent() <= 70 then
-			return A.WarBanner:Show(icon)
-		end
-		
 		-- Misc - Supportive 
         if A.BerserkerRage:IsReady("player") then 
             if Unit("player"):HasDeBuffs("Fear") >= 4 then 
@@ -409,7 +504,7 @@ local function ArenaRotation(icon, unit)
             end 
         end 
 
-		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, Temp.TotalAndPhys) and Unit(unit):HasDeBuffs(A.RendDebuff.ID) <= A.GetGCD() + A.GetCurrentGCD() then
+		if A.Rend:IsReady(unit) and A.Rend:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.RendDebuff.ID) < 2  then
 			return A.Rend:Show(icon)
 		end	
         
@@ -424,66 +519,14 @@ local function ArenaRotation(icon, unit)
     end 
 end 
 
-local function PartyRotation(unitID)  
-    -- RallyingCry 
-	local RallyingCry = A.GetToggle(2, "RallyingCryPvP")
-    if	RallyingCry >= 0 and A.RallyingCry:IsReady(unitID) and 
-    (
-        (     -- Auto 
-            RallyingCry >= 100 and 
-            (
-                -- HP lose per sec >= 20
-                Unit(unitID):GetDMG() * 100 / Unit(unitID):HealthMax() >= 20 or 
-                Unit(unitID):GetRealTimeDMG() >= Unit(unitID):HealthMax() * 0.20 or 
-                -- TTD 
-                Unit(unitID):TimeToDieX(25) < 5 or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit(unitID):UseDeff() or 
-                        (
-                            Unit(unitID, 5):HasFlags() and 
-                            Unit(unitID):GetRealTimeDMG() > 0 and 
-                            Unit(unitID):IsFocused() 
-                        )
-                    )
-                )
-            ) and 
-            Unit(unitID):HasBuffs(unitID, true) == 0
-        ) or 
-        (    -- Custom
-            RallyingCry < 100 and 
-            Unit(unitID):HealthPercent() <= RallyingCry
-        )
-    ) 
-    then 
-        return A.RallyingCry
-    end  
-	
-	if A.WarBanner:IsReady(unitID) and Unit(unitID):CombatTime() > 0 and Unit(unitID):HealthPercent() <= 70 and Unit(unitID):IsFocused() then
-		return A.WarBanner:Show(icon)
-	end
-	
-end 
-
 A[6] = function(icon)    
     return ArenaRotation(icon, "arena1")
 end
 
 A[7] = function(icon)   
-    local Party = PartyRotation("party1") 
-    if Party then 
-		return Party:Show(icon)
-	end 
-	
     return ArenaRotation(icon, "arena2")
 end
 
 A[8] = function(icon)   
-	local Party = PartyRotation("party1") 
-    if Party then 
-		return Party:Show(icon)
-	end 
-    
-	return ArenaRotation(icon, "arena3")
+    return ArenaRotation(icon, "arena3")
 end

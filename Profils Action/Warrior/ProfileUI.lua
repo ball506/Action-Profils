@@ -1,21 +1,22 @@
-local TMW						= TMW 
-local A							= Action
-local UnitCooldown				= A.UnitCooldown
-local Unit						= A.Unit 
-local Player					= A.Player 
-local Pet						= A.Pet
-local LoC						= A.LossOfControl
-local MultiUnits				= A.MultiUnits
-local EnemyTeam					= A.EnemyTeam
-local FriendlyTeam				= A.FriendlyTeam
-local TeamCache					= A.TeamCache
-local InstanceInfo				= A.InstanceInfo
+local TMW                                             = TMW 
+
+local A                                             = Action
+local UnitCooldown                                    = A.UnitCooldown
+local Unit                                            = A.Unit 
+local Player                                        = A.Player 
+local Pet                                             = A.Pet
+local LoC                                             = A.LossOfControl
+local MultiUnits                                    = A.MultiUnits
+local EnemyTeam                                        = A.EnemyTeam
+local FriendlyTeam                                    = A.FriendlyTeam
+local TeamCache                                        = A.TeamCache
+local InstanceInfo                                    = A.InstanceInfo
 
 local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4 (03.11.2019)",
+    DateTime = "v3 (31.10.2019)",
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
             { -- [1]                            
@@ -422,6 +423,18 @@ A.Data.ProfileUI                                     = {
                     }, 
                     TT = { 
                         enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by StormBolt\nMore custom config you can find in group by open /tmw", 
+                    }, 
+                    M = {},
+                },
+				{
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "RallyingCryPvP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(97462) .. " (%)",
                     }, 
                     M = {},
                 },
