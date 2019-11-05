@@ -1,22 +1,17 @@
-local TMW = TMW
-local CNDT = TMW.CNDT
-local Env = CNDT.Env
-local Action = Action
-local MultiUnits = Action.MultiUnits
-local HL = HeroLib;
-local Cache = HeroCache;
-local Unit = HL.Unit;
-local Player = Unit.Player;
-local Pet = Unit.Pet;
-local Target = Unit.Target;
-local Arena = Unit.Arena;
-local Spell = HL.Spell;
-local Item = HL.Item;
-local next, pairs, type, print  = next, pairs, type, print
+local TMW                                   = TMW
+local Action								= Action
+local TeamCache								= Action.TeamCache
+local EnemyTeam								= Action.EnemyTeam
+local FriendlyTeam							= Action.FriendlyTeam
+local LoC									= Action.LossOfControl
+local Player								= Action.Player 
+local MultiUnits							= Action.MultiUnits
+local UnitCooldown							= Action.UnitCooldown
+local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
-local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
-local PetLib = LibStub("PetLibrary")
-local ActionUnit    = Action.Unit 
+local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
+local PetLib                                = LibStub("PetLibrary")
+local Unit                                  = Action.Unit 
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -94,41 +89,6 @@ if currentClass == "DEMONHUNTER" then
     Action.Print("Automatically loaded profile : [Taste]Action - Demon Hunter")
 end
 
--------------------------------------------------------------------------------
--- Movement checker
--------------------------------------------------------------------------------
--- @return number
-local movedTimer = 0
-function Unit:MovingFor()
-    if not self:IsMoving() then
-        movedTimer = GetTime()
-    end
-    return GetTime() - movedTimer
-end
-
--------------------------------------------------------------------------------
--- Instance checker
--------------------------------------------------------------------------------
--- @return boolean
-function Player:InArena()
-    return select(2, IsInInstance()) == "arena"
-end
-
-function Player:InBattlegrounds()
-    return select(2, IsInInstance()) == "pvp"
-end
-
-function Player:InPvP()
-    return select(2, IsInInstance()) == "pvp" or select(2, IsInInstance()) == "arena"
-end
- 
-function Player:InDungeon()
-    return select(2, IsInInstance()) == "party" or C_Map.GetBestMapForUnit("Player") == 480
-end
-
-function Player:InRaid()
-    return select(2, IsInInstance()) == "raid" or C_Map.GetBestMapForUnit("Player") == 480
-end
 
 -------------------------------------------------------------------------------
 -- Trinkets
@@ -211,8 +171,7 @@ TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 ------------------------------------
 --------- NOTIFICATIONS API -------
 ------------------------------------
--- Return a tost notification directly in game with status information from rotation
--- Useful for custom events announcer	
+-- Return a tost notification directly in game with status information from rotation. Useful for custom events announcer	
 -- @Parameters : Message and Spell are mandaroty settings. 
 -- @optional Parameters : Delay and incombat can be nil 
 -- Usage : /run Action.SendNotification("test", 22812, 2, false)	
@@ -222,8 +181,9 @@ function Action.SendNotification(message, spell, delay, incombat)
 	local Enabled = Action.GetToggle(2, "UseAnnouncer")
 	
 	if not message then
-	    return
+	    Action.Print("You didn't set any message for Notification.")
 	end
+	
 	if not delay then
 	    if DelaySetting then 
 		    delay = DelaySetting
@@ -231,6 +191,7 @@ function Action.SendNotification(message, spell, delay, incombat)
 	        delay = 2
 		end
 	end
+	
 	if not incombat then
         if InCombatSetting then 
             incombat = InCombatSetting
@@ -240,8 +201,9 @@ function Action.SendNotification(message, spell, delay, incombat)
 	else
 	   incombat = true
 	end
+	
 	-- Variables
-	local timer = HL.GetTime()
+	local timer = TMW.time
 	local endtimer = timer + delay	
 	Action.NotificationMessage = ""
 	Action.NotificationIsValid = false
@@ -251,7 +213,7 @@ function Action.SendNotification(message, spell, delay, incombat)
 	if Enabled then
 	    -- Option 1 : Combat only		
 	    if message and spell and incombat then 
-	        if (HL.GetTime() <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
+	        if (TMW.time <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
 	            Action.NotificationIsValid = true
 	            Action.NotificationMessage = message 				
             else
