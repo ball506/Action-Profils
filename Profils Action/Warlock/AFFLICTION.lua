@@ -71,7 +71,11 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Defensive
     UnendingResolve                      = Action.Create({ Type = "Spell", ID = 104773     }),
 	SingeMagic                           = Action.Create({ Type = "Spell", ID = 89808, Color = "YELLOW", Desc = "YELLOW Color for Pet Target dispel"     }),
-    -- Misc
+    -- Utilities
+    DemonicCircle                        = Action.Create({ Type = "Spell", ID = 268358     }),
+    DemonicCircleTeleport                = Action.Create({ Type = "Spell", ID = 48020     }),
+	
+	-- Misc
     BurningRush                          = Action.Create({ Type = "Spell", ID = 278727     }),
     Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
 	TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
@@ -118,37 +122,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
     ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     -- Hidden Heart of Azeroth
-    VisionofPerfectionMinor              = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
-    VisionofPerfectionMinor2             = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
-    VisionofPerfectionMinor3             = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                      = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                       = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                  = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                 = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                 = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
+	
     -- Here come all the stuff needed by simcraft but not classic spells or items. 
 }
 
@@ -300,11 +274,14 @@ end
 
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+	
     TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
     TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
     TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
     TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
     TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
@@ -371,15 +348,15 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, {"TotalImun", "DamageMagicImun", "KickImun"}, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.PetKick
     end 
     
-    if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, {"TotalImun", "DamageMagicImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.Shadowfury              
     end          
 	
-	if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("disorient", 0) then 
+	if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 0) then 
         return A.Fear              
     end
     
@@ -971,32 +948,32 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- use_item,name=pocketsized_computation_device,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and A.PocketsizedComputationDevice:IsReady(unit) and A.PocketsizedComputationDevice:AbsentImun(unit, "DamageMagicImun") and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and A.PocketsizedComputationDevice:IsReady(unit) and A.PocketsizedComputationDevice:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.PocketsizedComputationDevice:Show(icon)
                 end
 				
                 -- use_item,name=rotcrusted_voodoo_doll,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.RotcrustedVoodooDoll:IsReady(unit) and A.RotcrustedVoodooDoll:AbsentImun(unit, "DamageMagicImun") and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and not ShouldStop and A.RotcrustedVoodooDoll:IsReady(unit) and A.RotcrustedVoodooDoll:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.RotcrustedVoodooDoll:Show(icon)
                 end
 				
                 -- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.ShiverVenomRelic:AbsentImun(unit, "DamageMagicImun") and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 and A.ShiverVenomRelic:IsReady(unit) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and not ShouldStop and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 and A.ShiverVenomRelic:IsReady(unit) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.ShiverVenomRelic:Show(icon)
                 end
 				
                 -- use_item,name=aquipotent_nautilus,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.AquipotentNautilus:IsReady(unit) and A.AquipotentNautilus:AbsentImun(unit, "DamageMagicImun") and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and not ShouldStop and A.AquipotentNautilus:IsReady(unit) and A.AquipotentNautilus:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.AquipotentNautilus:Show(icon)
                 end
 				
                 -- use_item,name=tidestorm_codex,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.TidestormCodex:IsReady(unit) and A.TidestormCodex:AbsentImun(unit, "DamageMagicImun") and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and not ShouldStop and A.TidestormCodex:IsReady(unit) and A.TidestormCodex:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.TidestormCodex:Show(icon)
                 end
 				
                 -- use_item,name=vial_of_storms,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.VialofStorms:IsReady(unit) and A.VialofStorms:AbsentImun(unit, "DamageMagicImun") and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TrinketON() and not ShouldStop and A.VialofStorms:IsReady(unit) and A.VialofStorms:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.VialofStorms:Show(icon)
                 end
 				
@@ -1013,11 +990,11 @@ A[3] = function(icon, isMulti)
             end
 		
 		    -- Make use of all trinkets of the game EXCEPT Blacklisted ones that need specific behavior
-           	if TrinketON() and A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+           	if TrinketON() and A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, Temp.TotalAndMag)  then 
       	   	    return A.Trinket1:Show(icon)
    	        end 
               
-   		    if TrinketON() and A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+   		    if TrinketON() and A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, Temp.TotalAndMag)  then 
        	       	return A.Trinket2:Show(icon)
    	        end  	   	
      		
