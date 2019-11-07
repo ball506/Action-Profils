@@ -16,7 +16,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v3 (31.10.2019)",
+    DateTime = "v4 (07.11.2019)",
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
             { -- [1]                            
