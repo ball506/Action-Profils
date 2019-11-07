@@ -20,7 +20,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v1.20 (06.10.2019)",
+    DateTime = "v2.0 (05.11.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -92,6 +92,22 @@ A.Data.ProfileUI = {
                 
             },  
             { -- [2]
+                {
+                    E = "Checkbox", 
+                    DB = "UseStopCast",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Stop Cast",
+                        ruRU = "Используйте Stop Cast", 
+                        frFR = "Utiliser les Stop Cast",
+                    }, 
+                    TT = { 
+                        enUS = "Will Stop Cast Shadow Bolt if Unstable Affliction debuff is going to expire before we finish.\n Give an increase for Contagion uptime.",
+                        ruRU = "Остановит литой бросок тени, если дебафф Unstable Affliction истечет до того, как мы закончим. \n Увеличьте время работы Contagion.", 
+                        frFR = "Permet de Stop Cast Trait de l'ombre si le débuff Affliction instable doit expirer avant la fin du cast. \n Augmente le uptime du debuff Contagion.",
+                    }, 
+                    M = {},
+                },			
                 {
                     E = "Checkbox", 
                     DB = "PredictSpells",
@@ -285,6 +301,24 @@ A.Data.ProfileUI = {
                     },
                 },
             },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseFakeCast",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Fake Cast",
+                        ruRU = "Используйте Fake Cast", 
+                        frFR = "Utiliser les Fake Cast",
+                    }, 
+                    TT = { 
+                        enUS = "Will Fake Cast some spells if melee enemy is on player.",
+                        ruRU = "Поддельные Будут разыгрываться заклинания, если враг находится на игроке ближнего боя.", 
+                        frFR = "Utilisera les Fake Cast sur certains sorts si un enemi en mélée est sur le joueur.",
+                    }, 
+                    M = {},
+                },
+			},
             { -- [5] 5th Row     
                 {
                     E = "Dropdown",                                                         
@@ -345,7 +379,7 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
-                        ruRU = "@ arena1-3, @target, @mouseover, @targettarget \ nDANGEROUS CAST - Только если цель или юнит арены разыгрывает заклинание, которое считается опасным. (CC или Большой урон). \ NON COOLDOWN - означает, что будет использоваться всегда во всех приведениях. \ NOFF - Вырезать из вращения, но все еще разрешать работу через системы Очереди и MSG \ nЕсли вы хотите полностью выключить его, то вы должны включить SetBlocker в ' Вкладка Действия", 
+                        ruRU = "@ arena1-3, @target, @mouseover, @targettarget \nDANGEROUS CAST - Только если цель или юнит арены разыгрывает заклинание, которое считается опасным. (CC или Большой урон). \nON COOLDOWN - означает, что будет использоваться всегда во всех приведениях. \ NOFF - Вырезать из вращения, но все еще разрешать работу через системы Очереди и MSG \ nЕсли вы хотите полностью выключить его, то вы должны включить SetBlocker в ' Вкладка Действия", 
                     }, 
                     M = {},
                 },
