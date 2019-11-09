@@ -45,31 +45,7 @@ local pvpReflect = {
 ---------------------------------------------------
 
 -- Local Randomizer
-local randomChannel = math.random(5, 15)
-local randomInterrupt = math.random(40, 90)
 local randomReflect = math.random(90, 100)
-local randomSeconds = math.random(0.3, 0.5)
-local randomTimer = HL.GetTime()
-
--- Randomizer
-local function Randomizer(option)
-
-    if option == "Interrupt" then
-        return randomInterrupt
-    end
-	
-    if option == "Channel" then
-        return randomChannel
-    end
-
-    if option == "Seconds" then
-        return randomSeconds
-    end
-
-    if option == "Reflect" then
-        return randomReflect
-    end
-end
 
 -- Should Reflect behavior
 -- Parameter "unit" is mandatory
@@ -77,18 +53,20 @@ end
 function Action.ShouldReflect(unit)	
 	local GoodToReflect = false
 	for p = 1, #pvpReflect do
-	    -- Get the spell name of every id in our list	    
+	    -- Protect if nil parameter 
 		if not unit or unit == nil then 
 		    unit = "target"
 		end
+		-- Current Cast SpellID
 		local currentCast = ActionUnit(unit):IsCasting()
 		-- [1] Total Casting Time (@number)
 		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
 		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
 		local castingTime, castingLeftSec, castingDonePer  = ActionUnit(unit):CastTime()
 		
+		-- Current casted spell is in list
         if currentCast == GetSpellInfo(pvpReflect[p]) then
-		    if  castingDonePer >= Randomizer("Reflect") then
+		    if  castingDonePer >= randomReflect then
                 GoodToReflect = true
             else
 		        GoodToReflect = false

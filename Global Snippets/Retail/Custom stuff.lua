@@ -134,7 +134,7 @@ function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, 
 	
 	if nameplates then 
 		for unitID in pairs(nameplates) do 
-			if Action.Unit(unitID):CombatTime() > 0 and (not range or Action.Unit(unitID):CanInterract(range)) and (not upTTD or Action.Unit(unitID):TimeToDie() >= upTTD) and Action.Unit(unitID):HasDeBuffs(deBuffs, true) <= refreshTime then 
+			if Unit(unitID):CombatTime() > 0 and (not range or Unit(unitID):CanInterract(range)) and (not upTTD or Unit(unitID):TimeToDie() >= upTTD) and Unit(unitID):HasDeBuffs(deBuffs, true) <= refreshTime then 
 				total = total + 1
 			end 
 			
@@ -221,7 +221,7 @@ function Action.SendNotification(message, spell, delay, incombat)
 		    end
 	    -- Option 2 : Everytime
         elseif message and spell and not incombat then 	
-	        if HL.GetTime() <= endtimer then 
+	        if TMW.time <= endtimer then 
 	            Action.NotificationIsValid = true
 	            Action.NotificationMessage = message            
             else

@@ -839,7 +839,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- shadow_bolt
-            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and(Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) >= A.ShadowBolt:GetSpellCastTime() + A.GetGCD() or not A.Haunt:IsSpellLearned()) then
+            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop then
                return A.ShadowBolt:Show(icon)
             end
 			
@@ -858,6 +858,7 @@ A[3] = function(icon, isMulti)
                 if Fillers(unit) then 
                     return true 
                 end 
+				Action.SendNotification("Preparing burst...", A.SummonDarkglare.ID)
             end
 						
             -- seed_of_corruption,if=variable.use_seed
@@ -906,9 +907,19 @@ A[3] = function(icon, isMulti)
             local castLeft, _, _, _, notKickAble = Unit("player"):IsCastingRemains()
             local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = A.Unit("player"):IsCasting()
 			
+			-- Allow stop cast to improve Contagion uptime
+			if spellID == A.ShadowBolt.ID and Player:SoulShardsP() > 0 then
+			    if contagion <= A.UnstableAffliction:GetSpellCastTime() + A.GetPing() + A.GetGCD() then
+				    if (A.SummonDarkglare:GetCooldown() > time_to_shard * 6) or not A.BurstIsON(unit) then
+					    Action.SendNotification("Stopping cast to maintain UA", A.UnstableAffliction.ID)
+                        return A.StopCast:Show(icon)
+					end
+			    end
+			end
+			
 			-- Fake stop cast PvP			
 			-- Need to find a way to track if unit got interrupt available ?
-			if A.IsInPvP() and castLeft > 0 and Unit("player"):IsControlAble("silence") 
+			if A.IsInPvP and castLeft > 0 and Unit("player"):IsControlAble("silence") 
             and (Unit("player"):IsFocused("MELEE") or EnemyTeam("HEALER"):GetRange() <= 30) 
 			then
                 return A.StopCast:Show(icon)
@@ -921,16 +932,7 @@ A[3] = function(icon, isMulti)
 			then
                 return A.TargetEnemy:Show(icon)
             end	
-			
-			-- Allow stop cast to improve Contagion uptime
-			if spellID == A.ShadowBolt.ID and Player:SoulShardsP() > 0 then
-			    if contagion <= A.UnstableAffliction:GetSpellCastTime() + A.GetPing() + A.GetGCD() then
-				    if (A.SummonDarkglare:GetCooldown() > time_to_shard * 6) or not A.BurstIsON(unit) then
-                        return A.StopCast:Show(icon)
-					end
-			    end
-			end
-		
+				
             -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
             if (true) then
                 VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 5 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 8)
@@ -1067,7 +1069,8 @@ A[3] = function(icon, isMulti)
 
             -- drain_life,if=talent.absolute_corruption.enabled&buff.inevitable_demise.stack>=50-20*(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up>=4)&dot.agony.remains>5*spell_haste&(debuff.haunt.remains>5*spell_haste|!talent.haunt.enabled)&contagion>5*spell_haste
             if A.DrainLife:IsReady(unit) and not isMoving and not ShouldStop and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 45 
-			or A.IsInPvP() and A.RotandDecay:IsSpellLearned() and contagion > 0 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5.4 + A.GetGCD() and Unit(unit):HasDeBuffs(A.Corruption.ID, true) > 4.2 + A.GetGCD() 
+			or A.IsInPvP and A.RotandDecay:IsSpellLearned() and contagion > 0 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5.4 + A.GetGCD() and Unit(unit):HasDeBuffs(A.Corruption.ID, true) > 4.2 + A.GetGCD() 
+			and contagion > 3 and (A.SummonDarkglare:GetCooldown() > 3 or not A.BurstIsON(unit))
 			then
                 return A.DrainLife:Show(icon)
             end					
