@@ -126,6 +126,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     PALADIN: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         PROTECTION: [
         ],

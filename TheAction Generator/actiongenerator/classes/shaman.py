@@ -155,6 +155,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     SHAMAN: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         ELEMENTAL: [
         ],

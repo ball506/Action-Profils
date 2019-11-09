@@ -183,6 +183,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     WARRIOR: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         ARMS: [
             'ArmsPreAplSetup',

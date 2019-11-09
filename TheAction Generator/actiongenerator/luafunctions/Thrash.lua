@@ -1,7 +1,7 @@
 local function Thrash()
-  if Player:Buff(S.CatForm) then
-    return S.ThrashCat;
+  if Unit("player"):HasBuffs(A.CatForm) then
+    return A.ThrashCat;
   else
-    return S.ThrashBear;
+    return A.ThrashBear;
   end
 end

@@ -91,6 +91,8 @@ WORD_REPLACEMENTS = {
     'Apl': 'APL',
 	'Debuff': 'DeBuff',
 	'DeBuffDebuff': 'DeBuff',
+	'Player': 'Unit("player")',
+	'Target': 'Unit(unit)',
 }
 
 # Expressions operators

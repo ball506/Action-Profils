@@ -39,12 +39,12 @@ class Context(Decorable):
 
     NUM_FUNCTION = (
         'local function num(val)\n'
-        '  if val then return 1 else return 0 end\n'
+        '    if val then return 1 else return 0 end\n'
         'end\n')
 
     BOOL_FUNCTION = (
         'local function bool(val)\n'
-        '  return val ~= 0\n'
+        '    return val ~= 0\n'
         'end\n')
 
     def __init__(self):
@@ -119,48 +119,50 @@ class Context(Decorable):
             pet_str = ''
             if self.player.spell_property(spell, PET):
                 pet_str = f', "{PET}"'
-            lua_spells += (f'  {spell.lua_name():38} = '
+            lua_spells += (f'    {spell.lua_name():38} = '
             'Action.Create('
             '{Type = "Spell", '
             f'ID = {spell_id}{pet_str}'
             ' })')
             lua_spells += ',\n' if i < len(self.spells) - 1 else '\n'
         lua_spells += (
-            '  -- Trinkets\n'
-            '  TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), \n'
-            '  TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), \n'  
-            '  AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), \n'
-            '  PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), \n'
-            '  RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), \n'
-            '  ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), \n'
-            '  AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), \n'
-            '  TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), \n'
-            '  VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), \n'
-            '  -- Potions\n'
-            '  PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), \n' 
-            '  PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), \n'
-			
-            '  -- Trinkets\n'
-            '  GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),\n'
-            '  GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),\n'
-            '  TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),\n'
-            '  TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), \n'
-            '  AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),\n'
-            '  PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),\n'
-            '  RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),\n'
-            '  ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),\n'
-            '  AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),\n'
-            '  TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),\n'
-            '  VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),\n'
-            '  GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),\n'
-            '  InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),\n'
-            '  LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),\n'
-            '  ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),\n'
-            '  VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),\n'
-            '  FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),\n'
-            '  RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),\n'
-            '  AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),\n'
-			
+            '    -- Trinkets\n'
+            '    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), \n'
+            '    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), \n'  
+            '    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), \n'
+            '    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), \n'
+            '    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), \n'
+            '    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), \n'
+            '    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), \n'
+            '    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), \n'
+            '    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), \n'
+            '    -- Potions\n'
+            '    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), \n' 
+            '    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), \n'
+            '    -- Trinkets\n'
+            '    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),\n'
+            '    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),\n'
+            '    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),\n'
+            '    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), \n'
+            '    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),\n'
+            '    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),\n'
+            '    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),\n'
+            '    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),\n'
+            '    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),\n'
+            '    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),\n'
+            '    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),\n'
+            '    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),\n'
+            '    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),\n'
+            '    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),\n'
+            '    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),\n'
+            '    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),\n'
+            '    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),\n'
+            '    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),\n'
+            '    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),\n'
+            '    -- Misc\n'
+            '    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling\n'
+            '    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)\n'
+            '    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit\n'
             '};\n\n'
 			'-- To create essences use next code:\n'
             f'Action:CreateEssencesFor(ACTION_CONST_{class_}_{spec})  '      
@@ -197,13 +199,18 @@ class Context(Decorable):
         """
         lua_variables = ''
         if len(self.variables) > 0:
-            lua_variables = '-- Variables\n'
+            lua_variables = ('------------------------------------------\n'
+            '---------------- VARIABLES ---------------\n'
+            '------------------------------------------\n'			
+            )
             for var in self.variables.values():
                 lua_variables += f'local {var.lua_name()} = {var.default};\n'
-            lua_variables += f'\nHL:RegisterForEvent(function()\n'
+            lua_variables += f'\nA.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()\n'
             for var in self.variables.values():
                 lua_variables += f'  {var.lua_name()} = {var.default}\n'
-            lua_variables += f'end, "PLAYER_REGEN_ENABLED")\n'
+            lua_variables += f'	end \n'
+            lua_variables += f'end)\n'
+			
         return lua_variables
 
     def print_inflight(self):

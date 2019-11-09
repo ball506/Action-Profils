@@ -720,7 +720,7 @@ class Equipped(BuildExpression):
         """
         Return the arguments for the expression equipped.
         """
-        self.method = Method('IsEquipped', type_=BOOL)
+        self.method = Method('IsExists', type_=BOOL)
 
 
 class PrevGCD(BuildExpression):
@@ -908,13 +908,13 @@ class Azerite(BuildExpression):
         """
         Return the arguments for the expression azerite.spell.rank.
         """
-        self.method = Method('GetAzeriteRank')
+        self.method = Method('GetAzeriteRank()')
 
     def enabled(self):
         """
         Return the arguments for the expression azerite.spell.enabled.
         """
-        self.method = Method('GetAzeriteRank', type_=BOOL)
+        self.method = Method('GetAzeriteRank()', type_=BOOL)
 
 
 class Talent(BuildExpression):

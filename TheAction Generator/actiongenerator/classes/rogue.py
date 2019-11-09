@@ -160,6 +160,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     ROGUE: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         ASSASSINATION: [
         ],

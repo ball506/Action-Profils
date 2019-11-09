@@ -134,6 +134,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     MONK: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         BREWMASTER: [
         ],

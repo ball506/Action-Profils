@@ -23,31 +23,28 @@ class APL:
     """
 
     DEFAULT_TEMPLATE = ('{context}'
-                        '--- ======= ACTION LISTS =======\n'
+                        '\n--- ======= ACTION LISTS =======\n'
                         '-- [3] Single Rotation\n'
                         'A[3] = function(icon, isMulti)\n'
-                        '	--------------------\n'
-                        '	---  VARIABLES   ---\n'
-                        '	--------------------\n'
-                        '   local isMoving = A.Player:IsMoving()\n'
-                        '   local inCombat = Unit("player"):CombatTime() > 0\n'
-                        '   local ShouldStop = Action.ShouldStop()\n'
-                        '   local Pull = Action.BossMods_Pulling()\n'
-                        '   local CanMultidot = HandleMultidots()\n'
-                        '   local unit = "player"\n'
-                        '   ------------------------------------------------------\n'
-                        '   ---------------- ENEMY UNIT ROTATION -----------------\n'
-                        '   ------------------------------------------------------\n'
-                        '   local function EnemyRotation(unit)\n'
-                        #'local function {function_name}()\n'
-                        '   {action_list_names}\n'
-                        '   UpdateRanges()\n'
-                        '   Everyone.AoEToggleEnemiesUpdate()\n'
-                        '   {action_lists}\n'
-                        '   {precombat_call}\n'
-                        '     if Everyone.TargetIsValid() then\n'
-                        '      {main_actions}\n'
-                        '     end\n'
+                        '    --------------------\n'
+                        '    --- ROTATION VAR ---\n'
+                        '    --------------------\n'
+                        '    local isMoving = A.Player:IsMoving()\n'
+                        '    local inCombat = Unit("player"):CombatTime() > 0\n'
+                        '    local ShouldStop = Action.ShouldStop()\n'
+                        '    local Pull = Action.BossMods_Pulling()\n'
+                        '    local unit = "player"\n\n'
+                        '    ------------------------------------------------------\n'
+                        '    ---------------- ENEMY UNIT ROTATION -----------------\n'
+                        '    ------------------------------------------------------\n'
+                        '    local function EnemyRotation(unit)\n'
+                        '{action_list_names}\n'
+                        '{action_lists}\n'
+                        '{precombat_call}\n\n'
+                        '        -- In Combat\n'
+                        '        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then\n'
+                        '        {main_actions}\n'
+                        '        end\n'
                         '    end\n'
                         '\n{set_apl}')
 
@@ -223,11 +220,90 @@ class APL:
         class_simc = self.player.class_.simc
         spec_simc = self.player.spec.simc
         apl_id = CLASS_SPECS.get(class_simc, {}).get(spec_simc, 0)
-        return ('-- Finished\n\n'
+        return ('    -- End on EnemyRotation()\n\n'	
+        '    -- Defensive\n'
+        '    local SelfDefensive = SelfDefensives()\n'
+        '    if SelfDefensive then \n'
+        '        return SelfDefensive:Show(icon)\n'
+        '    end \n\n'
+
+        '    -- Mouseover\n'     
+        '    if A.IsUnitEnemy("mouseover") then\n' 
+        '        unit = "mouseover"\n'
+        '        if EnemyRotation(unit) then \n'
+        '            return true \n'
+        '        end \n'
+        '    end \n\n'
+    
+        '    -- Target  \n'           
+        '    if A.IsUnitEnemy("target") then \n'
+        '        unit = "target"\n'
+        
+        '        if EnemyRotation(unit) then \n'
+        '            return true\n' 
+        '        end \n\n'
+        '    end\n'
+        'end\n'
+        '-- Finished\n\n'
         '-- [4] AoE Rotation\n'
         'A[4] = function(icon)\n'
         '    return A[3](icon, true)\n'
         'end\n '
+        '-- [5] Trinket Rotation\n'
+        '-- No specialization trinket actions \n'
+        '-- Passive \n'
+        'local function FreezingTrapUsedByEnemy()\n'
+        '    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and\n' 
+        '    UnitCooldown:IsSpellInFly("arena", 3355) and \n'
+        '    Unit("player"):GetDR("incapacitate") >= 50 \n'
+        '    then \n'
+        '        local Caster = UnitCooldown:GetUnitID("arena", 3355)\n'
+        '        if Caster and Unit(Caster):GetRange() <= 40 then \n'
+        '            return true \n'
+        '        end \n'
+        '    end \n'
+        'end \n'
+
+        'local function ArenaRotation(icon, unit)\n'
+        '    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then\n'             
+        '        -- Note: "arena1" is just identification of meta 6\n'
+        '        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then \n'                 
+        '            -- Reflect Casting BreakAble CC\n'
+        '            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then \n'
+        '                return A.NetherWard:Show(icon)\n'
+        '            end \n'		
+        '        end\n'                        
+        '    end \n'
+        'end \n'
+
+        'local function PartyRotation(unit)\n'
+        '    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then \n'
+        '        return false \n'
+        '    end\n\n'
+        '  	-- SingeMagic\n'
+        '    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then\n'
+        '        return A.SingeMagic:Show(icon)\n'
+        '    end\n'		
+
+        'end \n\n'
+        'A[6] = function(icon)\n'    
+        '    return ArenaRotation(icon, "arena1")\n'
+        'end\n\n'
+        'A[7] = function(icon)\n'
+        '    local Party = PartyRotation("party1") \n'
+        '    if Party then \n'
+        '        return Party:Show(icon)\n'
+        '    end \n'
+    
+        '    return ArenaRotation(icon, "arena2")\n'
+        'end\n\n'
+        'A[8] = function(icon)\n'
+        '    local Party = PartyRotation("party2") \n'
+        '    if Party then \n'
+        '        return Party:Show(icon)\n'
+        '    end     \n'
+        '    return ArenaRotation(icon, "arena3")\n'
+        'end\n\n'
                 )
 
     def template(self):
@@ -240,16 +316,16 @@ class APL:
         function_name = self.main_action_list().name.lua_name()
         action_list_names = self.print_action_list_names()
         action_lists = self.print_action_lists_lua()
-        precombat_call = indent(self.precombat_action().print_lua())
+        precombat_call = self.precombat_action().print_lua()
         main_actions = self.main_action_list().print_actions_lua()
         context = self.context.print_lua()
         set_apl = self.print_set_apl()
         return self.template().format(
             context=context,
             function_name=function_name,
-            action_list_names=action_list_names,
-            action_lists=action_lists,
+            action_list_names=indent(action_list_names),
+            action_lists=indent(action_lists),
             precombat_call=precombat_call,
-            main_actions=indent(main_actions),
+            main_actions=indent(indent(main_actions)),
             set_apl=set_apl
         )

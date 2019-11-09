@@ -1,32 +1,32 @@
-S.WildfireBombNormal  = Spell(259495)
-S.ShrapnelBomb        = Spell(270335)
-S.PheromoneBomb       = Spell(270323)
-S.VolatileBomb        = Spell(271045)
+A.WildfireBombNormal  = 259495
+A.ShrapnelBomb        = 270335
+A.PheromoneBomb       = 270323
+A.VolatileBomb        = 271045
 
 local WildfireInfusions = {
-  S.ShrapnelBomb,
-  S.PheromoneBomb,
-  S.VolatileBomb,
+  A.ShrapnelBomb,
+  A.PheromoneBomb,
+  A.VolatileBomb,
 }
 
 local function CurrentWildfireInfusion ()
-  if S.WildfireInfusion:IsAvailable() then
+  if A.WildfireInfusion:IsAvailable() then
     for _, infusion in pairs(WildfireInfusions) do
-      if infusion:IsLearned() then return infusion end
+      if infusion:IsSpellLearned() then return infusion end
     end
   end
-  return S.WildfireBombNormal
+  return A.WildfireBombNormal
 end
 
-S.RaptorStrikeNormal  = Spell(186270)
-S.RaptorStrikeEagle   = Spell(265189)
-S.MongooseBiteNormal  = Spell(259387)
-S.MongooseBiteEagle   = Spell(265888)
+A.RaptorStrikeNormal  = 186270
+A.RaptorStrikeEagle   = 265189
+A.MongooseBiteNormal  = 259387
+A.MongooseBiteEagle   = 265888
 
 local function CurrentRaptorStrike ()
-  return S.RaptorStrikeEagle:IsLearned() and S.RaptorStrikeEagle or S.RaptorStrikeNormal
+  return A.RaptorStrikeEagle:IsSpellLearned() and A.RaptorStrikeEagle or A.RaptorStrikeNormal
 end
 
 local function CurrentMongooseBite ()
-  return S.MongooseBiteEagle:IsLearned() and S.MongooseBiteEagle or S.MongooseBiteNormal
+  return A.MongooseBiteEagle:IsSpellLearned() and A.MongooseBiteEagle or A.MongooseBiteNormal
 end

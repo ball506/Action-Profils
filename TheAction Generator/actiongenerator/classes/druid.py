@@ -240,6 +240,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DRUID: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         BALANCE: [
             'FutureAstralPower',

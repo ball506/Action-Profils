@@ -8,7 +8,7 @@ Define function helpers for actiongenerator.
 from ..constants import TYPE_CONVERSION
 
 
-def indent(string, length=2):
+def indent(string, length=4):
     """
     Indent a string by indent_size spaces at the beginning of each new line.
     """

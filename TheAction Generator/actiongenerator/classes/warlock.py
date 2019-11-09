@@ -212,6 +212,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     WARLOCK: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         AFFLICTION: [
             'AfflictionPreAplSetup',
@@ -302,22 +303,15 @@ DECORATORS = {
 
 TEMPLATES = {
     WARLOCK+AFFLICTION:     ( '{context}'
-
-                '--- ======= [3] Single Rotation =======\n'
-                'A[3] = function(icon, isMulti)\n'
-	            '    local isMoving = A.Player:IsMoving()\n'
-	            '    local inCombat = Unit("player"):CombatTime() > 0\n'
-	            '    local ShouldStop = Action.ShouldStop()\n'
-	            '    local Pull = Action.BossMods_Pulling()\n'
-                '    local CanMulti<dot = HandleMultidots()\n'
-	            '    local unit = "player"\n'
-                '    local time_to_shard = TimeToShard()\n'
-	            '    local PredictSpells = A.GetToggle(2, "PredictSpells")\n'
-	            '    DetermineEssenceRanks()\n'
-                '    {action_lists}\n'
-                '    {precombat_call}\n'
-                '    if Unit(unit):IsExists() then\n'
-                '       {main_actions}\n'
-                '    end\n'
+                '      local CanMultidot = HandleMultidots()\n'
+	            '      local unit = "player"\n'
+                '      local time_to_shard = TimeToShard()\n'
+	            '      local PredictSpells = A.GetToggle(2, "PredictSpells")\n'
+	            '      DetermineEssenceRanks()\n'
+                '      {action_lists}\n'
+                '      {precombat_call}\n'
+                '      if Unit(unit):IsExists() then\n'
+                '         {main_actions}\n'
+                '      end\n'
                 '\n{set_apl}')
 }

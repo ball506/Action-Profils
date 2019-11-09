@@ -206,6 +206,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     HUNTER: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         BEAST_MASTERY: [
         ],

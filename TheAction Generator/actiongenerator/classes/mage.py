@@ -226,6 +226,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     MAGE: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         ARCANE: [
             'ArcanePreAplSetup',

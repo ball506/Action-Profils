@@ -172,6 +172,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DEATHKNIGHT: {
         COMMON: [
+            'CommonPreAplSetup',
         ],
         BLOOD: [
         ],

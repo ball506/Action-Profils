@@ -145,6 +145,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     PRIEST: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         SHADOW: [
             'InsanityThreshold',

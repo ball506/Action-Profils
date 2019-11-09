@@ -19,70 +19,74 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARRIOR_PROTECTION] = {
-  MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-  GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
-  ThunderClap                            = Action.Create({Type = "Spell", ID = 6343 }),
-  AvatarBuff                             = Action.Create({Type = "Spell", ID = 107574 }),
-  DemoralizingShout                      = Action.Create({Type = "Spell", ID = 1160 }),
-  BoomingVoice                           = Action.Create({Type = "Spell", ID = 202743 }),
-  AnimaofDeath                           = Action.Create({Type = "Spell", ID =  }),
-  LastStandBuff                          = Action.Create({Type = "Spell", ID =  }),
-  DragonRoar                             = Action.Create({Type = "Spell", ID = 118000 }),
-  Revenge                                = Action.Create({Type = "Spell", ID = 6572 }),
-  Ravager                                = Action.Create({Type = "Spell", ID = 228920 }),
-  ShieldBlock                            = Action.Create({Type = "Spell", ID = 2565 }),
-  ShieldSlam                             = Action.Create({Type = "Spell", ID = 23922 }),
-  ShieldBlockBuff                        = Action.Create({Type = "Spell", ID = 132404 }),
-  UnstoppableForce                       = Action.Create({Type = "Spell", ID = 275336 }),
-  RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
-  Avatar                                 = Action.Create({Type = "Spell", ID = 107574 }),
-  Devastate                              = Action.Create({Type = "Spell", ID = 20243 }),
-  Intercept                              = Action.Create({Type = "Spell", ID = 198304 }),
-  BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-  Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-  ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-  LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-  Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-  AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-  IgnorePain                             = Action.Create({Type = "Spell", ID = 190456 }),
-  WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-  RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-  ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-  ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
-  LastStand                              = Action.Create({Type = "Spell", ID =  })
-  -- Trinkets
-  TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-  TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-  AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-  PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-  RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-  ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-  AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-  TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-  VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
-  -- Potions
-  PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-  PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
-  -- Trinkets
-  GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-  GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-  TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-  TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-  AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-  PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-  RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-  ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-  AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-  TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-  VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-  GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-  InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-  LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-  ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-  VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-  FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-  RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-  AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
+    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
+    ThunderClap                            = Action.Create({Type = "Spell", ID = 6343 }),
+    AvatarBuff                             = Action.Create({Type = "Spell", ID = 107574 }),
+    DemoralizingShout                      = Action.Create({Type = "Spell", ID = 1160 }),
+    BoomingVoice                           = Action.Create({Type = "Spell", ID = 202743 }),
+    AnimaofDeath                           = Action.Create({Type = "Spell", ID =  }),
+    LastStandBuff                          = Action.Create({Type = "Spell", ID =  }),
+    DragonRoar                             = Action.Create({Type = "Spell", ID = 118000 }),
+    Revenge                                = Action.Create({Type = "Spell", ID = 6572 }),
+    Ravager                                = Action.Create({Type = "Spell", ID = 228920 }),
+    ShieldBlock                            = Action.Create({Type = "Spell", ID = 2565 }),
+    ShieldSlam                             = Action.Create({Type = "Spell", ID = 23922 }),
+    ShieldBlockBuff                        = Action.Create({Type = "Spell", ID = 132404 }),
+    UnstoppableForce                       = Action.Create({Type = "Spell", ID = 275336 }),
+    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
+    Avatar                                 = Action.Create({Type = "Spell", ID = 107574 }),
+    Devastate                              = Action.Create({Type = "Spell", ID = 20243 }),
+    Intercept                              = Action.Create({Type = "Spell", ID = 198304 }),
+    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
+    IgnorePain                             = Action.Create({Type = "Spell", ID = 190456 }),
+    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
+    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
+    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
+    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
+    LastStand                              = Action.Create({Type = "Spell", ID =  })
+    -- Trinkets
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    -- Potions
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    -- Trinkets
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    -- Misc
+    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
 };
 
 -- To create essences use next code:
@@ -100,246 +104,510 @@ end
 
 
 local function num(val)
-  if val then return 1 else return 0 end
+    if val then return 1 else return 0 end
 end
 
 local function bool(val)
-  return val ~= 0
+    return val ~= 0
+end
+
+------------------------------------------
+-------------- PRE APL SETUP -------------
+------------------------------------------
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
+------------------------------------------
+--------------- DEFENSIVES ---------------
+------------------------------------------
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+		
+    -- UnendingResolve
+ --[[   local UnendingResolve = A.GetToggle(2, "UnendingResolve")
+    if     UnendingResolve >= 0 and A.UnendingResolve:IsReady("player") and 
+    (
+        (     -- Auto 
+            UnendingResolve >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            UnendingResolve < 100 and 
+            Unit("player"):HealthPercent() <= UnendingResolve
+        )
+    ) 
+    then 
+        return A.UnendingResolve
+    end ]]--
+    
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+------------------------------------------
+--------------- INTERRUPTS ---------------
+------------------------------------------
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+  --  if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+  --      return A.PetKick
+  --  end 
+    
+  --  if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+  --      return A.Shadowfury              
+  --  end          
+	
+	--if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 0) then 
+    --    return A.Fear              
+    --end
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+------------------------------------------
+---------------- AntiFake ----------------
+------------------------------------------
+
+-- [1] CC AntiFake Rotation
+--[[local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
+    Unit(unit):IsControlAble("stun", 0) and 
+    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target") and                     
+            (
+                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))) or 
+                (not A.IsInPvP and MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1)
+            )
+        )
+    )
+    then 
+        return A.LegSweepGreen:Show(icon)         
+    end                                                                     
+end]]--
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+        --    if not notKickAble and A.PetKick:IsReady(unit, nil, nil, true) and A.PetKick:AbsentImun(unit, Temp.TotalAndMag, true) then
+        --        return A.PetKick:Show(icon)                                                  
+        --    end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
 end
 
 
 local function EvaluateCycleAshvanesRazorCoral82(unit)
     return Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) == 0
 end
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
-	--------------------
-	---  VARIABLES   ---
-	--------------------
-   local isMoving = A.Player:IsMoving()
-   local inCombat = Unit("player"):CombatTime() > 0
-   local ShouldStop = Action.ShouldStop()
-   local Pull = Action.BossMods_Pulling()
-   local CanMultidot = HandleMultidots()
-   local unit = "player"
-   ------------------------------------------------------
-   ---------------- ENEMY UNIT ROTATION -----------------
-   ------------------------------------------------------
-   local function EnemyRotation(unit)
-     local Precombat, Aoe, St
-   UpdateRanges()
-   Everyone.AoEToggleEnemiesUpdate()
-       local function Precombat(unit)
-        -- flask
-    -- food
-    -- augmentation
-    -- snapshot_stats
-    -- use_item,name=azsharas_font_of_power
-    if A.AzsharasFontofPower:IsReady(unit) then
-      A.AzsharasFontofPower:Show(icon)
-    end
-    -- memory_of_lucid_dreams
-    if A.MemoryofLucidDreams:IsReady(unit) then
-        return A.MemoryofLucidDreams:Show(icon)
-    end
-    -- guardian_of_azeroth
-    if A.GuardianofAzeroth:IsReady(unit) then
-        return A.GuardianofAzeroth:Show(icon)
-    end
-    -- potion
-    if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") then
-      A.BattlePotionofStrength:Show(icon)
-    end
-    end
-    local function Aoe(unit)
-        -- thunder_clap
-    if A.ThunderClap:IsReady(unit) then
-        return A.ThunderClap:Show(icon)
-    end
-    -- memory_of_lucid_dreams,if=buff.avatar.down
-    if A.MemoryofLucidDreams:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff))) then
-        return A.MemoryofLucidDreams:Show(icon)
-    end
-    -- demoralizing_shout,if=talent.booming_voice.enabled
-    if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
-        return A.DemoralizingShout:Show(icon)
-    end
-    -- anima_of_death,if=buff.last_stand.up
-    if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
-        return A.AnimaofDeath:Show(icon)
-    end
-    -- dragon_roar
-    if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
-        return A.DragonRoar:Show(icon)
-    end
-    -- revenge
-    if A.Revenge:IsReady(unit) then
-        return A.Revenge:Show(icon)
-    end
-    -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-    if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ThunderClap:GetCooldown() >= 4) then
-      A.GrongsPrimalRage:Show(icon)
-    end
-    -- ravager
-    if A.Ravager:IsReady(unit) then
-        return A.Ravager:Show(icon)
-    end
-    -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-    if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
-        return A.ShieldBlock:Show(icon)
-    end
-    -- shield_slam
-    if A.ShieldSlam:IsReady(unit) then
-        return A.ShieldSlam:Show(icon)
-    end
-    end
-    local function St(unit)
-        -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-    if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff)) then
-        return A.ThunderClap:Show(icon)
-    end
-    -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-    if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
-        return A.ShieldBlock:Show(icon)
-    end
-    -- shield_slam,if=buff.shield_block.up
-    if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff)) then
-        return A.ShieldSlam:Show(icon)
-    end
-    -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-    if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff))) then
-        return A.ThunderClap:Show(icon)
-    end
-    -- demoralizing_shout,if=talent.booming_voice.enabled
-    if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
-        return A.DemoralizingShout:Show(icon)
-    end
-    -- anima_of_death,if=buff.last_stand.up
-    if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
-        return A.AnimaofDeath:Show(icon)
-    end
-    -- shield_slam
-    if A.ShieldSlam:IsReady(unit) then
-        return A.ShieldSlam:Show(icon)
-    end
-    -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
-    if A.AshvanesRazorCoral:IsReady(unit) then
-        if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, EvaluateCycleAshvanesRazorCoral82) then
-            return A.AshvanesRazorCoral:Show(icon) 
+    --------------------
+    --- ROTATION VAR ---
+    --------------------
+    local isMoving = A.Player:IsMoving()
+    local inCombat = Unit("player"):CombatTime() > 0
+    local ShouldStop = Action.ShouldStop()
+    local Pull = Action.BossMods_Pulling()
+    local unit = "player"
+
+    ------------------------------------------------------
+    ---------------- ENEMY UNIT ROTATION -----------------
+    ------------------------------------------------------
+    local function EnemyRotation(unit)
+        local Precombat, Aoe, St
+        local function Precombat(unit)
+            -- flask
+            -- food
+            -- augmentation
+            -- snapshot_stats
+            -- use_item,name=azsharas_font_of_power
+            if A.AzsharasFontofPower:IsReady(unit) then
+                A.AzsharasFontofPower:Show(icon)
+            end
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:IsReady(unit) then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- guardian_of_azeroth
+            if A.GuardianofAzeroth:IsReady(unit) then
+                return A.GuardianofAzeroth:Show(icon)
+            end
+            -- potion
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                A.BattlePotionofStrength:Show(icon)
+            end
+        end
+        local function Aoe(unit)
+            -- thunder_clap
+            if A.ThunderClap:IsReady(unit) then
+                return A.ThunderClap:Show(icon)
+            end
+            -- memory_of_lucid_dreams,if=buff.avatar.down
+            if A.MemoryofLucidDreams:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff))) then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- demoralizing_shout,if=talent.booming_voice.enabled
+            if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
+                return A.DemoralizingShout:Show(icon)
+            end
+            -- anima_of_death,if=buff.last_stand.up
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
+                return A.AnimaofDeath:Show(icon)
+            end
+            -- dragon_roar
+            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
+                return A.DragonRoar:Show(icon)
+            end
+            -- revenge
+            if A.Revenge:IsReady(unit) then
+                return A.Revenge:Show(icon)
+            end
+            -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
+            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ThunderClap:GetCooldown() >= 4) then
+                A.GrongsPrimalRage:Show(icon)
+            end
+            -- ravager
+            if A.Ravager:IsReady(unit) then
+                return A.Ravager:Show(icon)
+            end
+            -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+                return A.ShieldBlock:Show(icon)
+            end
+            -- shield_slam
+            if A.ShieldSlam:IsReady(unit) then
+                return A.ShieldSlam:Show(icon)
+            end
+        end
+        local function St(unit)
+            -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff)) then
+                return A.ThunderClap:Show(icon)
+            end
+            -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+                return A.ShieldBlock:Show(icon)
+            end
+            -- shield_slam,if=buff.shield_block.up
+            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff)) then
+                return A.ShieldSlam:Show(icon)
+            end
+            -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
+            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff))) then
+                return A.ThunderClap:Show(icon)
+            end
+            -- demoralizing_shout,if=talent.booming_voice.enabled
+            if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
+                return A.DemoralizingShout:Show(icon)
+            end
+            -- anima_of_death,if=buff.last_stand.up
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
+                return A.AnimaofDeath:Show(icon)
+            end
+            -- shield_slam
+            if A.ShieldSlam:IsReady(unit) then
+                return A.ShieldSlam:Show(icon)
+            end
+            -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
+            if A.AshvanesRazorCoral:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, EvaluateCycleAshvanesRazorCoral82) then
+                    return A.AshvanesRazorCoral:Show(icon) 
+                end
+            end
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff))) then
+                A.AshvanesRazorCoral:Show(icon)
+            end
+            -- dragon_roar
+            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
+                return A.DragonRoar:Show(icon)
+            end
+            -- thunder_clap
+            if A.ThunderClap:IsReady(unit) then
+                return A.ThunderClap:Show(icon)
+            end
+            -- revenge
+            if A.Revenge:IsReady(unit) then
+                return A.Revenge:Show(icon)
+            end
+            -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
+            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ShieldSlam:GetCooldown() >= 4) then
+                A.GrongsPrimalRage:Show(icon)
+            end
+            -- ravager
+            if A.Ravager:IsReady(unit) then
+                return A.Ravager:Show(icon)
+            end
+            -- devastate
+            if A.Devastate:IsReady(unit) then
+                return A.Devastate:Show(icon)
+            end
+        end
+        
+        -- call precombat
+        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        end
+
+        -- In Combat
+        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+                    -- auto_attack
+            -- intercept,if=time=0
+            if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime == 0) then
+                return A.Intercept:Show(icon)
+            end
+            -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
+            -- blood_fury
+            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
+                return A.BloodFury:Show(icon)
+            end
+            -- berserking
+            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+                return A.Berserking:Show(icon)
+            end
+            -- arcane_torrent
+            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) then
+                return A.ArcaneTorrent:Show(icon)
+            end
+            -- lights_judgment
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
+                return A.LightsJudgment:Show(icon)
+            end
+            -- fireblood
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
+                return A.Fireblood:Show(icon)
+            end
+            -- ancestral_call
+            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
+                return A.AncestralCall:Show(icon)
+            end
+            -- potion,if=buff.avatar.up|target.time_to_die<25
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff) or Unit(unit):TimeToDie() < 25) then
+                A.BattlePotionofStrength:Show(icon)
+            end
+            -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
+            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:HasCooldownUps)) then
+                return A.IgnorePain:Show(icon)
+            end
+            -- worldvein_resonance,if=cooldown.avatar.remains<=2
+            if A.WorldveinResonance:IsReady(unit) and (A.Avatar:GetCooldown() <= 2) then
+                return A.WorldveinResonance:Show(icon)
+            end
+            -- ripple_in_space
+            if A.RippleInSpace:IsReady(unit) then
+                return A.RippleInSpace:Show(icon)
+            end
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:IsReady(unit) then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
+            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff))) > 0 or essence.the_crucible_of_flame.rank < 3) then
+                return A.ConcentratedFlame:Show(icon)
+            end
+            -- last_stand,if=cooldown.anima_of_death.remains<=2
+            if A.LastStand:IsReady(unit) and (A.AnimaofDeath:GetCooldown() <= 2) then
+                return A.LastStand:Show(icon)
+            end
+            -- avatar
+            if A.Avatar:IsReady(unit) and A.BurstIsON(unit) then
+                return A.Avatar:Show(icon)
+            end
+            -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
+            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+                return Aoe(unit);
+            end
+            -- call_action_list,name=st
+            if (true) then
+                local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
+            end
         end
     end
-    -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-    if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff))) then
-      A.AshvanesRazorCoral:Show(icon)
-    end
-    -- dragon_roar
-    if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
-        return A.DragonRoar:Show(icon)
-    end
-    -- thunder_clap
-    if A.ThunderClap:IsReady(unit) then
-        return A.ThunderClap:Show(icon)
-    end
-    -- revenge
-    if A.Revenge:IsReady(unit) then
-        return A.Revenge:Show(icon)
-    end
-    -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-    if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ShieldSlam:GetCooldown() >= 4) then
-      A.GrongsPrimalRage:Show(icon)
-    end
-    -- ravager
-    if A.Ravager:IsReady(unit) then
-        return A.Ravager:Show(icon)
-    end
-    -- devastate
-    if A.Devastate:IsReady(unit) then
-        return A.Devastate:Show(icon)
-    end
-    end
-     -- call precombat
-  if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
-    local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
-  end
-     if Everyone.TargetIsValid() then
-          -- auto_attack
-    -- intercept,if=time=0
-    if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime == 0) then
-        return A.Intercept:Show(icon)
-    end
-    -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
-    -- blood_fury
-    if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
-        return A.BloodFury:Show(icon)
-    end
-    -- berserking
-    if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
-        return A.Berserking:Show(icon)
-    end
-    -- arcane_torrent
-    if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) then
-        return A.ArcaneTorrent:Show(icon)
-    end
-    -- lights_judgment
-    if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
-        return A.LightsJudgment:Show(icon)
-    end
-    -- fireblood
-    if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
-        return A.Fireblood:Show(icon)
-    end
-    -- ancestral_call
-    if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
-        return A.AncestralCall:Show(icon)
-    end
-    -- potion,if=buff.avatar.up|target.time_to_die<25
-    if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff) or Unit(unit):TimeToDie() < 25) then
-      A.BattlePotionofStrength:Show(icon)
-    end
-    -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-    if A.IgnorePain:IsReady(unit) and (Player:RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:HasCooldownUps)) then
-        return A.IgnorePain:Show(icon)
-    end
-    -- worldvein_resonance,if=cooldown.avatar.remains<=2
-    if A.WorldveinResonance:IsReady(unit) and (A.Avatar:GetCooldown() <= 2) then
-        return A.WorldveinResonance:Show(icon)
-    end
-    -- ripple_in_space
-    if A.RippleInSpace:IsReady(unit) then
-        return A.RippleInSpace:Show(icon)
-    end
-    -- memory_of_lucid_dreams
-    if A.MemoryofLucidDreams:IsReady(unit) then
-        return A.MemoryofLucidDreams:Show(icon)
-    end
-    -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-    if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff))) > 0 or essence.the_crucible_of_flame.rank < 3) then
-        return A.ConcentratedFlame:Show(icon)
-    end
-    -- last_stand,if=cooldown.anima_of_death.remains<=2
-    if A.LastStand:IsReady(unit) and (A.AnimaofDeath:GetCooldown() <= 2) then
-        return A.LastStand:Show(icon)
-    end
-    -- avatar
-    if A.Avatar:IsReady(unit) and A.BurstIsON(unit) then
-        return A.Avatar:Show(icon)
-    end
-    -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-    if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
-      return Aoe(unit);
-    end
-    -- call_action_list,name=st
-    if (true) then
-      local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
-    end
-     end
-    end
 
+    -- End on EnemyRotation()
+
+    -- Defensive
+    local SelfDefensive = SelfDefensives()
+    if SelfDefensive then 
+        return SelfDefensive:Show(icon)
+    end 
+
+    -- Mouseover
+    if A.IsUnitEnemy("mouseover") then
+        unit = "mouseover"
+        if EnemyRotation(unit) then 
+            return true 
+        end 
+    end 
+
+    -- Target  
+    if A.IsUnitEnemy("target") then 
+        unit = "target"
+        if EnemyRotation(unit) then 
+            return true
+        end 
+
+    end
+end
 -- Finished
 
 -- [4] AoE Rotation
 A[4] = function(icon)
     return A[3](icon, true)
 end
- 
+ -- [5] Trinket Rotation
+-- No specialization trinket actions 
+-- Passive 
+local function FreezingTrapUsedByEnemy()
+    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
+    UnitCooldown:IsSpellInFly("arena", 3355) and 
+    Unit("player"):GetDR("incapacitate") >= 50 
+    then 
+        local Caster = UnitCooldown:GetUnitID("arena", 3355)
+        if Caster and Unit(Caster):GetRange() <= 40 then 
+            return true 
+        end 
+    end 
+end 
+local function ArenaRotation(icon, unit)
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
+        -- Note: "arena1" is just identification of meta 6
+        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+            -- Reflect Casting BreakAble CC
+            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
+                return A.NetherWard:Show(icon)
+            end 
+        end
+    end 
+end 
+local function PartyRotation(unit)
+    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+        return false 
+    end
+
+  	-- SingeMagic
+    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
+        return A.SingeMagic:Show(icon)
+    end
+end 
+
+A[6] = function(icon)
+    return ArenaRotation(icon, "arena1")
+end
+
+A[7] = function(icon)
+    local Party = PartyRotation("party1") 
+    if Party then 
+        return Party:Show(icon)
+    end 
+    return ArenaRotation(icon, "arena2")
+end
+
+A[8] = function(icon)
+    local Party = PartyRotation("party2") 
+    if Party then 
+        return Party:Show(icon)
+    end     
+    return ArenaRotation(icon, "arena3")
+end
+

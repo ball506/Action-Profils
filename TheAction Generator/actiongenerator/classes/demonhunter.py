@@ -115,6 +115,7 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DEMONHUNTER: {
         COMMON: [
+        'CommonPreAplSetup',
         ],
         HAVOC: [
             'IsInMeleeRange',

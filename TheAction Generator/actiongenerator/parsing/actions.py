@@ -59,9 +59,9 @@ class ActionList:
         """
         actions = self.print_actions_lua()
         function_name = self.name.print_lua()
-        return (f'  local function {function_name}(unit)\n'
-                f'    {actions}\n'
-                f'  end')
+        return (f'local function {function_name}(unit)\n'
+                f'{actions}\n'
+                f'end')
 
 
 class Action(Decorable):
@@ -175,9 +175,9 @@ class Action(Decorable):
                 exec_pool = Spell(self, 'pool_resource').print_cast()
                 return (
                     f'if {exec_name}:IsUsablePPool({extra_amount}) then\n'
-                    f'  {exec_cast}{exec_link}{exec_value}\n'
+                    f'    {exec_cast}{exec_link}{exec_value}\n'
                     'else\n'
-                    f'  {exec_pool}\n'
+                    f'    {exec_pool}\n'
                     'end'
                 )
             else:
@@ -250,7 +250,7 @@ class Action(Decorable):
                                     f'local function {cycle_evaluate_name}(unit)\n'
                                     f'  return {if_condition}\n'
                                     'end')
-        cycle_cast = f'  if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, {cycle_evaluate_name}) then\n      return {self.execution().object_().print_lua()}:Show(icon) \n  end'
+        cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, {cycle_evaluate_name}) then\n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
         lua_string += ('\n'
                     f'if {condition.print_lua()} then\n'
                     f'{indent(cycle_cast)}\n'
@@ -312,9 +312,9 @@ class Action(Decorable):
                                                     f'  return {if_condition}\n'
                                                     'end')
                     self.context.add_code(targetif_evaluate_function)
-                    cycle_cast = f'  if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "{mmax_mode}", {targetif_filter_evaluate_name}, {targetif_evaluate_name}) then \n      return {self.execution().object_().print_lua()}:Show(icon) \n  end'
+                    cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "{mmax_mode}", {targetif_filter_evaluate_name}, {targetif_evaluate_name}) then \n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
                 else:
-                    cycle_cast = f'  if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "{mmax_mode}", {targetif_filter_evaluate_name}) then \n      return {self.execution().object_().print_lua()}:Show(icon) \n  end'
+                    cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "{mmax_mode}", {targetif_filter_evaluate_name}) then \n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
                 lua_string += ('\n'
                     f'if {condition.print_lua()} then\n'
                     f'{indent(cycle_cast)}\n'
@@ -406,11 +406,11 @@ class PrecombatAction(Action):
     def print_lua(self):
         lua_string = ''
         if self.show_comments:
-            lua_string += f'-- call precombat'
+            lua_string += f'\n-- call precombat'
         exec_cast = self.execution().object_().print_cast()
         lua_string += (
             '\n'
             f'if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then \n'
-            f'  {exec_cast}\n'
+            f'    {exec_cast}\n'
             f'end')
-        return lua_string
+        return indent(indent(lua_string))

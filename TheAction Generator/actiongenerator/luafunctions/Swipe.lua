@@ -1,7 +1,7 @@
 local function Swipe()
-  if Player:Buff(S.CatForm) then
-    return S.SwipeCat;
+  if Unit("player"):HasBuffs(A.CatForm) then
+    return A.SwipeCat;
   else
-    return S.SwipeBear;
+    return A.SwipeBear;
   end
 end

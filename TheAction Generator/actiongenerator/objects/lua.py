@@ -93,7 +93,7 @@ class LuaCastable(Decorable):
         self.condition_args = []
         self.additional_conditions = []
         self.has_property = lambda execution, tag: False
-        self.cast_method = cast_method or Method('  return ')
+        self.cast_method = cast_method or Method('return ')
         self.cast_args = [self] if cast_args is None else cast_args
         self.cast_template = cast_template or '{}:Show(icon)'
 
