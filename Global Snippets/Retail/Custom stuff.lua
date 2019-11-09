@@ -121,6 +121,30 @@ end
 function TrinketON()
   return ( (Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]) )
 end
+------------------------------------
+--- HasDeBuffsDown simc reference
+------------------------------------
+function HasDeBuffsDown(self, spell, caster, byID)
+	-- @return boolean
+	-- current remain, total applied duration
+	-- Sorting method
+	local unitID 						= self.UnitID
+    local value, duration 				= 0, 0
+	local spell 						= type(spell) == "string" and AuraList[spell] or spell
+		
+    if not A.IsInitialized and A.Unit(unitID):DeBuffCyclone() > 0 then 
+        value, duration = -1, -1
+    else
+        value, duration = A.Unit(unitID):SortDeBuffs(spell, caster, byID) 
+    end    
+		
+    if duration > 0 then
+        return false
+    else
+	    return true
+	end
+ 		
+end
 
 -------------------------------------------------------------------------------
 -- Multiunits
