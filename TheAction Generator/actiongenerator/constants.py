@@ -11,7 +11,7 @@ A = 'Action'
 SPELL = 'spell'
 ITEM = 'item'
 BUFF = 'buff'
-DEBUFF = 'debuff'
+DEBUFF = 'deBuff'
 POTION = 'potion'
 
 VARIABLE = 'variable'
@@ -89,6 +89,8 @@ WORD_REPLACEMENTS = {
     'Deathknight': 'DeathKnight',
     'Demonhunter': 'DemonHunter',
     'Apl': 'APL',
+	'Debuff': 'DeBuff',
+	'DeBuffDebuff': 'DeBuff',
 }
 
 # Expressions operators

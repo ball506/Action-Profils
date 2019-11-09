@@ -28,9 +28,10 @@ class LuaNamed(Decorable):
         lua_words = [WORD_REPLACEMENTS.get(w, w) for w in lua_words]
         lua_string = ''.join(lua_words)
         # Recapitalize first letter if lowered
-        lua_string = lua_string[0].upper() + lua_string[1:]
-        return lua_string
 
+        lua_string = re.sub('([a-zA-Z])', lambda x: x.groups()[0].upper(), lua_string, 1)
+
+        return lua_string
 
 class LuaTyped(Decorable):
     """

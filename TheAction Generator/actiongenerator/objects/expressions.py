@@ -329,7 +329,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is debuff.
         """
-        return Debuff.build(self)
+        return DeBuff.build(self)
 
     def dot(self):
         """
@@ -963,7 +963,7 @@ class SpellTargets(BuildExpression):
         super().__init__(None, model=LuaRange)
 
 
-class Debuff(BuildExpression, Aura):
+class DeBuff(BuildExpression, Aura):
     """
     Represent the expression for a debuff. condition.
     """
@@ -975,7 +975,7 @@ class Debuff(BuildExpression, Aura):
         super().__init__(call)
 
 
-class Dot(Debuff):
+class Dot(DeBuff):
     """
     Represent the expression for a dot. condition.
     """
@@ -987,7 +987,7 @@ class Consumable(BuildExpression):
     """
 
     def __init__(self, condition):
-        self.object_ = condition.player_unit
+        self.object_ = Literal('Unit(unit)')
         self.method = None
         self.args = [Spell(condition.parent_action,
                            condition.condition_list[1],
