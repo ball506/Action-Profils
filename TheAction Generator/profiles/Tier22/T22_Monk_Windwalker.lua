@@ -110,7 +110,7 @@ end
 
 
 local function EvaluateTargetIfFilterRisingSunKick19(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfRisingSunKick32(unit)
@@ -118,7 +118,7 @@ local function EvaluateTargetIfRisingSunKick32(unit)
 end
 
 local function EvaluateTargetIfFilterTigerPalm62(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfTigerPalm73(unit)
@@ -126,7 +126,7 @@ local function EvaluateTargetIfTigerPalm73(unit)
 end
 
 local function EvaluateTargetIfFilterBlackoutKick85(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfBlackoutKick100(unit)
@@ -134,7 +134,7 @@ local function EvaluateTargetIfBlackoutKick100(unit)
 end
 
 local function EvaluateTargetIfFilterRisingSunKick136(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfRisingSunKick151(unit)
@@ -142,11 +142,11 @@ local function EvaluateTargetIfRisingSunKick151(unit)
 end
 
 local function EvaluateTargetIfFilterBlackoutKick193(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfFilterRisingSunKick206(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfRisingSunKick213(unit)
@@ -154,11 +154,11 @@ local function EvaluateTargetIfRisingSunKick213(unit)
 end
 
 local function EvaluateTargetIfFilterRisingSunKick221(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfFilterBlackoutKick254(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfBlackoutKick271(unit)
@@ -166,7 +166,7 @@ local function EvaluateTargetIfBlackoutKick271(unit)
 end
 
 local function EvaluateTargetIfFilterTigerPalm287(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfTigerPalm296(unit)
@@ -174,7 +174,7 @@ local function EvaluateTargetIfTigerPalm296(unit)
 end
 
 local function EvaluateTargetIfFilterTigerPalm332(unit)
-  return Unit(unit):HasDebuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
 end
 
 local function EvaluateTargetIfTigerPalm345(unit)

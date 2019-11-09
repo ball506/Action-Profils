@@ -165,19 +165,19 @@ end
 
 
 local function EvaluateCycleStormstrike72(unit)
-  return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.LightningConduit:GetAzeriteRank and not Unit(unit):HasDebuffs(A.LightningConduitDebuff) and bool(VarFurycheckSs)
+  return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.LightningConduit:GetAzeriteRank and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff) and bool(VarFurycheckSs)
 end
 
 local function EvaluateTargetIfFilterLavaLash200(unit)
-  return Unit(unit):HasDebuffsStacks(A.PrimalPrimerDebuff)
+  return Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff)
 end
 
 local function EvaluateTargetIfLavaLash215(unit)
-  return A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDebuffsStacks(A.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl) and bool(VarClpoolLl)
+  return A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl) and bool(VarClpoolLl)
 end
 
 local function EvaluateCycleStormstrike226(unit)
-  return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.LightningConduit:GetAzeriteRank and not Unit(unit):HasDebuffs(A.LightningConduitDebuff) and bool(VarFurycheckSs)
+  return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.LightningConduit:GetAzeriteRank and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff) and bool(VarFurycheckSs)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -362,7 +362,7 @@ A[3] = function(icon, isMulti)
         return A.LightningBolt:Show(icon)
     end
     -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
-    if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDebuffsStacks(A.PrimalPrimerDebuff) > 7 and bool(VarFurycheckLl) and bool(VarClpoolLl)) then
+    if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff) > 7 and bool(VarFurycheckLl) and bool(VarClpoolLl)) then
         return A.LavaLash:Show(icon)
     end
     -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS&variable.CLPool_SS
@@ -370,7 +370,7 @@ A[3] = function(icon, isMulti)
         return A.Stormstrike:Show(icon)
     end
     -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
-    if A.LavaLash:IsReady(unit) and (Unit(unit):HasDebuffsStacks(A.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl)) then
+    if A.LavaLash:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl)) then
         return A.LavaLash:Show(icon)
     end
     end
@@ -396,7 +396,7 @@ A[3] = function(icon, isMulti)
         return A.CrashLightning:Show(icon)
     end
     -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
-    if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDebuffsStacks(A.PrimalPrimerDebuff) == 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFreezerburnEnabled) and bool(VarFurycheckLl)) then
+    if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff) == 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFreezerburnEnabled) and bool(VarFurycheckLl)) then
         return A.LavaLash:Show(icon)
     end
     -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL

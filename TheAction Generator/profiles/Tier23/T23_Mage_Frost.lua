@@ -270,7 +270,7 @@ A[3] = function(icon, isMulti)
     end
     local function Single(unit)
         -- ice_nova,if=cooldown.ice_nova.ready&debuff.winters_chill.up
-    if A.IceNova:IsReady(unit) and (A.IceNova:HasCooldownUps and Target:HasDebuffs(A.WintersChillDebuff)) then
+    if A.IceNova:IsReady(unit) and (A.IceNova:HasCooldownUps and Target:HasDeBuffs(A.WintersChillDebuff)) then
         return A.IceNova:Show(icon)
     end
     -- flurry,if=talent.ebonbolt.enabled&prev_gcd.1.ebonbolt&(!talent.glacial_spike.enabled|buff.icicles.stack<4|buff.brain_freeze.react)

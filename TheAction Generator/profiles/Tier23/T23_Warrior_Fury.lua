@@ -168,7 +168,7 @@ A[3] = function(icon, isMulti)
         return A.Bloodthirst:Show(icon)
     end
     -- bladestorm,if=prev_gcd.1.rampage&(debuff.siegebreaker.up|!talent.siegebreaker.enabled)
-    if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Rampage) and (Target:HasDebuffs(A.SiegebreakerDebuff) or not A.Siegebreaker:IsSpellLearned())) then
+    if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Rampage) and (Target:HasDeBuffs(A.SiegebreakerDebuff) or not A.Siegebreaker:IsSpellLearned())) then
         return A.Bladestorm:Show(icon)
     end
     -- dragon_roar,if=buff.enrage.up

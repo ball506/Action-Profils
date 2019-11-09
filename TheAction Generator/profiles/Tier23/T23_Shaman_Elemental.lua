@@ -119,27 +119,27 @@ end
 
 
 local function EvaluateCycleFlameShock47(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < (5 - num(not A.TotemMastery:IsSpellLearned())) or not A.StormElemental:IsSpellLearned() and (A.FireElemental:GetCooldown() > (120 + 14 * Player:SpellHaste) or A.FireElemental:GetCooldown() < (24 - 14 * Player:SpellHaste))) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < (5 - num(not A.TotemMastery:IsSpellLearned())) or not A.StormElemental:IsSpellLearned() and (A.FireElemental:GetCooldown() > (120 + 14 * Player:SpellHaste) or A.FireElemental:GetCooldown() < (24 - 14 * Player:SpellHaste))) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14)
 end
 
 local function EvaluateCycleFlameShock148(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff)
 end
 
 local function EvaluateCycleFlameShock163(unit)
-    return (not Unit(unit):HasDebuffs(A.FlameShockDebuff) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDebuffs(A.FlameShockDebuff) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDebuffs(A.FlameShockDebuff) < (A.Ascendance:GetCooldown() + A.AscendanceBuff:BaseDuration) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14 or A.IgneousPotential:GetAzeriteRank >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
+    return (not Unit(unit):HasDeBuffs(A.FlameShockDebuff) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff) < (A.Ascendance:GetCooldown() + A.AscendanceBuff:BaseDuration) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14 or A.IgneousPotential:GetAzeriteRank >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
 end
 
 local function EvaluateCycleFlameShock390(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff)
 end
 
 local function EvaluateCycleFlameShock511(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
 end
 
 local function EvaluateCycleFlameShock562(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -227,7 +227,7 @@ A[3] = function(icon, isMulti)
         return A.ChainLightning:Show(icon)
     end
     -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
-    if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.LavaSurgeBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDebuffs(A.FlameShockDebuff)) then
+    if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.LavaSurgeBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDeBuffs(A.FlameShockDebuff)) then
         return A.LavaBurst:Show(icon)
     end
     -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
@@ -293,7 +293,7 @@ A[3] = function(icon, isMulti)
         return A.LightningBolt:Show(icon)
     end
     -- earthquake,if=(spell_targets.chain_lightning>1|azerite.tectonic_thunder.rank>=3&!talent.surge_of_power.enabled&azerite.lava_shock.rank<1)&azerite.lava_shock.rank*buff.lava_shock.stack<(36+3*azerite.tectonic_thunder.rank*spell_targets.chain_lightning)&(!talent.surge_of_power.enabled|!dot.flame_shock.refreshable|cooldown.storm_elemental.remains>120)&(!talent.master_of_the_elements.enabled|buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled)
-    if A.Earthquake:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or A.TectonicThunder:GetAzeriteRank >= 3 and not A.SurgeofPower:IsSpellLearned() and A.LavaShock:GetAzeriteRank < 1) and A.LavaShock:GetAzeriteRank * Unit("player"):HasBuffsStacks(A.LavaShockBuff) < (36 + 3 * A.TectonicThunder:GetAzeriteRank * MultiUnits:GetByRangeInCombat(40, 5, 10)) and (not A.SurgeofPower:IsSpellLearned() or not Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) or A.StormElemental:GetCooldown() > 120) and (not A.MasteroftheElements:IsSpellLearned() or Unit("player"):HasBuffs(A.MasteroftheElementsBuff) or A.LavaBurst:GetCooldown() > 0 and Player:Maelstrom() >= 92 + 30 * num(A.CalltheThunder:IsSpellLearned()))) then
+    if A.Earthquake:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or A.TectonicThunder:GetAzeriteRank >= 3 and not A.SurgeofPower:IsSpellLearned() and A.LavaShock:GetAzeriteRank < 1) and A.LavaShock:GetAzeriteRank * Unit("player"):HasBuffsStacks(A.LavaShockBuff) < (36 + 3 * A.TectonicThunder:GetAzeriteRank * MultiUnits:GetByRangeInCombat(40, 5, 10)) and (not A.SurgeofPower:IsSpellLearned() or not Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) or A.StormElemental:GetCooldown() > 120) and (not A.MasteroftheElements:IsSpellLearned() or Unit("player"):HasBuffs(A.MasteroftheElementsBuff) or A.LavaBurst:GetCooldown() > 0 and Player:Maelstrom() >= 92 + 30 * num(A.CalltheThunder:IsSpellLearned()))) then
         return A.Earthquake:Show(icon)
     end
     -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled|spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack<26)&buff.stormkeeper.up&cooldown.lava_burst.remains<=gcd)

@@ -163,7 +163,7 @@ local function EvaluateTargetIfFilterNemesis33(unit)
 end
 
 local function EvaluateTargetIfNemesis48(unit)
-  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(Unit(unit):HasDebuffsDown(A.NemesisDebuff)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 60)
+  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(Unit(unit):HasDeBuffsDown(A.NemesisDebuff)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 60)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -232,11 +232,11 @@ A[3] = function(icon, isMulti)
         return A.DarkSlash:Show(icon)
     end
     -- annihilation,if=debuff.dark_slash.up
-    if A.Annihilation:IsReady(unit) and IsInMeleeRange and (Unit(unit):HasDebuffs(A.DarkSlashDebuff)) then
+    if A.Annihilation:IsReady(unit) and IsInMeleeRange and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff)) then
         return A.Annihilation:Show(icon)
     end
     -- chaos_strike,if=debuff.dark_slash.up
-    if A.ChaosStrike:IsReady(unit) and IsInMeleeRange and (Unit(unit):HasDebuffs(A.DarkSlashDebuff)) then
+    if A.ChaosStrike:IsReady(unit) and IsInMeleeRange and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff)) then
         return A.ChaosStrike:Show(icon)
     end
     end
@@ -419,7 +419,7 @@ A[3] = function(icon, isMulti)
         return A.PickUpFragment:Show(icon)
     end
     -- call_action_list,name=dark_slash,if=talent.dark_slash.enabled&(variable.waiting_for_dark_slash|debuff.dark_slash.up)
-    if (A.DarkSlash:IsSpellLearned() and (bool(VarWaitingForDarkSlash) or Unit(unit):HasDebuffs(A.DarkSlashDebuff))) then
+    if (A.DarkSlash:IsSpellLearned() and (bool(VarWaitingForDarkSlash) or Unit(unit):HasDeBuffs(A.DarkSlashDebuff))) then
       local ShouldReturn = DarkSlash(unit); if ShouldReturn then return ShouldReturn; end
     end
     -- run_action_list,name=demonic,if=talent.demonic.enabled

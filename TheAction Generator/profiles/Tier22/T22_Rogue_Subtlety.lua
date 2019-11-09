@@ -141,11 +141,11 @@ local function EvaluateTargetIfMarkedForDeath88(unit)
 end
 
 local function EvaluateCycleNightblade169(unit)
-  return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and (A.NightsVengeance:GetAzeriteRank or not A.ReplicatingShadows:GetAzeriteRank or MultiUnits:GetByRangeInCombat(40, 5, 10) - A.NightbladeDebuff:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDebuffsRefreshable(A.NightbladeDebuff)
+  return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and (A.NightsVengeance:GetAzeriteRank or not A.ReplicatingShadows:GetAzeriteRank or MultiUnits:GetByRangeInCombat(40, 5, 10) - A.NightbladeDebuff:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff)
 end
 
 local function EvaluateCycleShadowstrike284(unit)
-  return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDebuffs(A.FindWeaknessDebuff) < 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
+  return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff) < 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -236,7 +236,7 @@ A[3] = function(icon, isMulti)
         return A.SymbolsofDeath:Show(icon)
     end
     -- symbols_of_death,if=dot.nightblade.ticking&(!talent.shuriken_tornado.enabled|talent.shadow_focus.enabled|spell_targets.shuriken_storm<3|!cooldown.shuriken_tornado.up)
-    if A.SymbolsofDeath:IsReady(unit) and (Target:HasDebuffs(A.NightbladeDebuff) and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not A.ShurikenTornado:HasCooldownUps)) then
+    if A.SymbolsofDeath:IsReady(unit) and (Target:HasDeBuffs(A.NightbladeDebuff) and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not A.ShurikenTornado:HasCooldownUps)) then
         return A.SymbolsofDeath:Show(icon)
     end
     -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.all&combo_points.deficit>=cp_max_spend)
@@ -254,11 +254,11 @@ A[3] = function(icon, isMulti)
         return A.ShadowBlades:Show(icon)
     end
     -- shuriken_tornado,if=spell_targets>=3&!talent.shadow_focus.enabled&dot.nightblade.ticking&!stealthed.all&cooldown.symbols_of_death.up&cooldown.shadow_dance.charges>=1
-    if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDebuffs(A.NightbladeDebuff) and not Player:IsStealthedP(true, true) and A.SymbolsofDeath:HasCooldownUps and A.ShadowDance:ChargesP() >= 1) then
+    if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff) and not Player:IsStealthedP(true, true) and A.SymbolsofDeath:HasCooldownUps and A.ShadowDance:ChargesP() >= 1) then
         return A.ShurikenTornado:Show(icon)
     end
     -- shuriken_tornado,if=spell_targets>=3&talent.shadow_focus.enabled&dot.nightblade.ticking&buff.symbols_of_death.up
-    if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDebuffs(A.NightbladeDebuff) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff)) then
+    if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff)) then
         return A.ShurikenTornado:Show(icon)
     end
     -- shadow_dance,if=!buff.shadow_dance.up&target.time_to_die<=5+talent.subterfuge.enabled&!raid_event.adds.up
@@ -272,7 +272,7 @@ A[3] = function(icon, isMulti)
         return A.Eviscerate:Show(icon)
     end
     -- nightblade,if=(!talent.dark_shadow.enabled|!buff.shadow_dance.up)&target.time_to_die-remains>6&remains<tick_time*2
-    if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff)) and Unit(unit):TimeToDie() - Unit(unit):HasDebuffs(A.NightbladeDebuff) > 6 and Unit(unit):HasDebuffs(A.NightbladeDebuff) < A.NightbladeDebuff:TickTime * 2) then
+    if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff) < A.NightbladeDebuff:TickTime * 2) then
         return A.Nightblade:Show(icon)
     end
     -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
@@ -282,7 +282,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- nightblade,if=remains<cooldown.symbols_of_death.remains+10&cooldown.symbols_of_death.remains<=5&target.time_to_die-remains>cooldown.symbols_of_death.remains+5
-    if A.Nightblade:IsReady(unit) and (Unit(unit):HasDebuffs(A.NightbladeDebuff) < A.SymbolsofDeath:GetCooldown() + 10 and A.SymbolsofDeath:GetCooldown() <= 5 and Unit(unit):TimeToDie() - Unit(unit):HasDebuffs(A.NightbladeDebuff) > A.SymbolsofDeath:GetCooldown() + 5) then
+    if A.Nightblade:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff) < A.SymbolsofDeath:GetCooldown() + 10 and A.SymbolsofDeath:GetCooldown() <= 5 and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff) > A.SymbolsofDeath:GetCooldown() + 5) then
         return A.Nightblade:Show(icon)
     end
     -- secret_technique,if=buff.symbols_of_death.up&(!talent.dark_shadow.enabled|buff.shadow_dance.up)
@@ -304,12 +304,12 @@ A[3] = function(icon, isMulti)
       VarShdThreshold = num(A.ShadowDance:ChargesFractionalP() >= 1.75)
     end
     -- vanish,if=!variable.shd_threshold&debuff.find_weakness.remains<1&combo_points.deficit>1
-    if A.Vanish:IsReady(unit) and (not bool(VarShdThreshold) and Unit(unit):HasDebuffs(A.FindWeaknessDebuff) < 1 and Player:ComboPointsDeficit() > 1) then
+    if A.Vanish:IsReady(unit) and (not bool(VarShdThreshold) and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff) < 1 and Player:ComboPointsDeficit() > 1) then
         return A.Vanish:Show(icon)
     end
     -- pool_resource,for_next=1,extra_amount=40
     -- shadowmeld,if=energy>=40&energy.deficit>=10&!variable.shd_threshold&debuff.find_weakness.remains<1&combo_points.deficit>1
-    if A.Shadowmeld:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 40 and Player:EnergyDeficitPredicted() >= 10 and not bool(VarShdThreshold) and Unit(unit):HasDebuffs(A.FindWeaknessDebuff) < 1 and Player:ComboPointsDeficit() > 1) then
+    if A.Shadowmeld:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 40 and Player:EnergyDeficitPredicted() >= 10 and not bool(VarShdThreshold) and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff) < 1 and Player:ComboPointsDeficit() > 1) then
       if A.Shadowmeld:IsUsablePPool(40) then
           return A.Shadowmeld:Show(icon)
       else
@@ -317,7 +317,7 @@ A[3] = function(icon, isMulti)
       end
     end
     -- shadow_dance,if=(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(!talent.nightstalker.enabled&!talent.dark_shadow.enabled|!variable.use_priority_rotation|combo_points.deficit<=1+2*azerite.the_first_dance.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets.shuriken_storm>=4&cooldown.symbols_of_death.remains>10)
-    if A.ShadowDance:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDebuffs(A.NightbladeDebuff) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (not A.Nightstalker:IsSpellLearned() and not A.DarkShadow:IsSpellLearned() or not bool(VarUsePriorityRotation) or Player:ComboPointsDeficit() <= 1 + 2 * num(A.TheFirstDance:GetAzeriteRank)) and (bool(VarShdThreshold) or Unit("player"):HasBuffs(A.SymbolsofDeathBuff) >= 1.2 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10)) then
+    if A.ShadowDance:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDeBuffs(A.NightbladeDebuff) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (not A.Nightstalker:IsSpellLearned() and not A.DarkShadow:IsSpellLearned() or not bool(VarUsePriorityRotation) or Player:ComboPointsDeficit() <= 1 + 2 * num(A.TheFirstDance:GetAzeriteRank)) and (bool(VarShdThreshold) or Unit("player"):HasBuffs(A.SymbolsofDeathBuff) >= 1.2 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10)) then
         return A.ShadowDance:Show(icon)
     end
     -- shadow_dance,if=target.time_to_die<cooldown.symbols_of_death.remains&!raid_event.adds.up
@@ -371,7 +371,7 @@ A[3] = function(icon, isMulti)
       return Stealthed(unit);
     end
     -- nightblade,if=target.time_to_die>6&remains<gcd.max&combo_points>=4-(time<10)*2
-    if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDebuffs(A.NightbladeDebuff) < A.GetGCD() and Player:ComboPoints() >= 4 - num((Unit("player"):CombatTime < 10)) * 2) then
+    if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff) < A.GetGCD() and Player:ComboPoints() >= 4 - num((Unit("player"):CombatTime < 10)) * 2) then
         return A.Nightblade:Show(icon)
     end
     -- variable,name=use_priority_rotation,value=priority_rotation&spell_targets.shuriken_storm>=2

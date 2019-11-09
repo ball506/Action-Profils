@@ -145,7 +145,7 @@ S.Rake:RegisterPMultiplier(
 )
 
 local function EvaluateCyclePrimalWrath95(unit)
-    return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit(unit):HasDebuffs(A.RipDebuff) < 4
+    return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff) < 4
 end
 
 local function EvaluateCyclePrimalWrath106(unit)
@@ -153,23 +153,23 @@ local function EvaluateCyclePrimalWrath106(unit)
 end
 
 local function EvaluateCycleRip115(unit)
-    return not Unit(unit):HasDebuffs(A.RipDebuff) or (Unit(unit):HasDebuffs(A.RipDebuff) <= A.RipDebuff:BaseDuration * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDebuffs(A.RipDebuff) <= A.RipDebuff:BaseDuration * 0.8 and Player:PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
+    return not Unit(unit):HasDeBuffs(A.RipDebuff) or (Unit(unit):HasDeBuffs(A.RipDebuff) <= A.RipDebuff:BaseDuration * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff) <= A.RipDebuff:BaseDuration * 0.8 and Player:PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
 end
 
 local function EvaluateCycleRake228(unit)
-    return not Unit(unit):HasDebuffs(A.RakeDebuff) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDebuffs(A.RakeDebuff) < A.RakeDebuff:BaseDuration * 0.3) and Unit(unit):TimeToDie() > 4
+    return not Unit(unit):HasDeBuffs(A.RakeDebuff) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff) < A.RakeDebuff:BaseDuration * 0.3) and Unit(unit):TimeToDie() > 4
 end
 
 local function EvaluateCycleRake257(unit)
-    return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff) and ((Unit(unit):HasDebuffs(A.RakeDebuff) <= 7) and Player:PMultiplier(A.Rake) > Unit(unit):PMultiplier(A.Rake) * 0.85) and Unit(unit):TimeToDie() > 4
+    return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff) and ((Unit(unit):HasDeBuffs(A.RakeDebuff) <= 7) and Player:PMultiplier(A.Rake) > Unit(unit):PMultiplier(A.Rake) * 0.85) and Unit(unit):TimeToDie() > 4
 end
 
 local function EvaluateCycleMoonfireCat302(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.MoonfireCatDebuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireCatDebuff)
 end
 
 local function EvaluateCycleFerociousBite418(unit)
-    return Unit(unit):HasDebuffs(A.RipDebuff) and Unit(unit):HasDebuffs(A.RipDebuff) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
+    return Unit(unit):HasDeBuffs(A.RipDebuff) and Unit(unit):HasDeBuffs(A.RipDebuff) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -311,11 +311,11 @@ A[3] = function(icon, isMulti)
     end
     local function Generators(unit)
         -- regrowth,if=talent.bloodtalons.enabled&buff.predatory_swiftness.up&buff.bloodtalons.down&combo_points=4&dot.rake.remains<4
-    if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and Player:ComboPoints() == 4 and Unit(unit):HasDebuffs(A.RakeDebuff) < 4) then
+    if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and Player:ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff) < 4) then
         return A.Regrowth:Show(icon)
     end
     -- regrowth,if=talent.bloodtalons.enabled&buff.bloodtalons.down&buff.predatory_swiftness.up&talent.lunar_inspiration.enabled&dot.rake.remains<1
-    if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and A.LunarInspiration:IsSpellLearned() and Unit(unit):HasDebuffs(A.RakeDebuff) < 1) then
+    if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and A.LunarInspiration:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff) < 1) then
         return A.Regrowth:Show(icon)
     end
     -- brutal_slash,if=spell_targets.brutal_slash>desired_targets
@@ -324,7 +324,7 @@ A[3] = function(icon, isMulti)
     end
     -- pool_resource,for_next=1
     -- thrash_cat,if=(refreshable)&(spell_targets.thrash_cat>2)
-    if A.ThrashCat:IsReady(unit) and ((Unit(unit):HasDebuffsRefreshable(A.ThrashCatDebuff)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+    if A.ThrashCat:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
       if A.ThrashCat:IsUsablePPool() then
           return A.ThrashCat:Show(icon)
       else
@@ -379,7 +379,7 @@ A[3] = function(icon, isMulti)
     end
     -- pool_resource,for_next=1
     -- thrash_cat,if=refreshable&((variable.use_thrash=2&(!buff.incarnation.up|azerite.wild_fleshrending.enabled))|spell_targets.thrash_cat>1)
-    if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.ThrashCatDebuff) and ((VarUseThrash == 2 and (not Unit("player"):HasBuffs(A.IncarnationBuff) or A.WildFleshrending:GetAzeriteRank)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+    if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff) and ((VarUseThrash == 2 and (not Unit("player"):HasBuffs(A.IncarnationBuff) or A.WildFleshrending:GetAzeriteRank)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
       if A.ThrashCat:IsUsablePPool() then
           return A.ThrashCat:Show(icon)
       else
@@ -387,7 +387,7 @@ A[3] = function(icon, isMulti)
       end
     end
     -- thrash_cat,if=refreshable&variable.use_thrash=1&buff.clearcasting.react&(!buff.incarnation.up|azerite.wild_fleshrending.enabled)
-    if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.ThrashCatDebuff) and VarUseThrash == 1 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff)) and (not Unit("player"):HasBuffs(A.IncarnationBuff) or A.WildFleshrending:GetAzeriteRank)) then
+    if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff) and VarUseThrash == 1 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff)) and (not Unit("player"):HasBuffs(A.IncarnationBuff) or A.WildFleshrending:GetAzeriteRank)) then
         return A.ThrashCat:Show(icon)
     end
     -- pool_resource,for_next=1
@@ -400,7 +400,7 @@ A[3] = function(icon, isMulti)
       end
     end
     -- shred,if=dot.rake.remains>(action.shred.cost+action.rake.cost-energy)%energy.regen|buff.clearcasting.react
-    if A.Shred:IsReady(unit) and (Unit(unit):HasDebuffs(A.RakeDebuff) > (A.Shred:Cost() + A.Rake:Cost() - Player:EnergyPredicted()) / Player:EnergyRegen() or bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff))) then
+    if A.Shred:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RakeDebuff) > (A.Shred:Cost() + A.Rake:Cost() - Player:EnergyPredicted()) / Player:EnergyRegen() or bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff))) then
         return A.Shred:Show(icon)
     end
     end
@@ -410,20 +410,20 @@ A[3] = function(icon, isMulti)
         return A.TigersFury:Show(icon)
     end
     -- rake,if=!ticking|buff.prowl.up
-    if A.Rake:IsReady(unit) and (not Unit(unit):HasDebuffs(A.RakeDebuff) or Unit("player"):HasBuffs(A.ProwlBuff)) then
+    if A.Rake:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RakeDebuff) or Unit("player"):HasBuffs(A.ProwlBuff)) then
         return A.Rake:Show(icon)
     end
     -- variable,name=opener_done,value=dot.rip.ticking
     if (true) then
-      VarOpenerDone = num(Unit(unit):HasDebuffs(A.RipDebuff))
+      VarOpenerDone = num(Unit(unit):HasDeBuffs(A.RipDebuff))
     end
     -- wait,sec=0.001,if=dot.rip.ticking
     -- moonfire_cat,if=!ticking
-    if A.MoonfireCat:IsReady(unit) and (not Unit(unit):HasDebuffs(A.MoonfireCatDebuff)) then
+    if A.MoonfireCat:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.MoonfireCatDebuff)) then
         return A.MoonfireCat:Show(icon)
     end
     -- rip,if=!ticking
-    if A.Rip:IsReady(unit) and (not Unit(unit):HasDebuffs(A.RipDebuff)) then
+    if A.Rip:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RipDebuff)) then
         return A.Rip:Show(icon)
     end
     end
@@ -456,7 +456,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- regrowth,if=combo_points=5&buff.predatory_swiftness.up&talent.bloodtalons.enabled&buff.bloodtalons.down&(!buff.incarnation.up|dot.rip.remains<8)
-    if A.Regrowth:IsReady(unit) and (Player:ComboPoints() == 5 and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and (not Unit("player"):HasBuffs(A.IncarnationBuff) or Unit(unit):HasDebuffs(A.RipDebuff) < 8)) then
+    if A.Regrowth:IsReady(unit) and (Player:ComboPoints() == 5 and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff) and A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff)) and (not Unit("player"):HasBuffs(A.IncarnationBuff) or Unit(unit):HasDeBuffs(A.RipDebuff) < 8)) then
         return A.Regrowth:Show(icon)
     end
     -- run_action_list,name=finishers,if=combo_points>4

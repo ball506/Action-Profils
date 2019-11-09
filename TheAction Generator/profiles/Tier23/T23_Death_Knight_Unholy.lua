@@ -111,7 +111,7 @@ end
 
 
 local function EvaluateCycleFesteringStrike40(unit)
-    return Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) <= 1 and bool(A.DeathandDecay:GetCooldown())
+    return Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) <= 1 and bool(A.DeathandDecay:GetCooldown())
 end
 
 local function EvaluateCycleSoulReaper163(unit)
@@ -119,7 +119,7 @@ local function EvaluateCycleSoulReaper163(unit)
 end
 
 local function EvaluateCycleOutbreak303(unit)
-    return Unit(unit):HasDebuffs(A.VirulentPlagueDebuff) <= A.GetGCD()
+    return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff) <= A.GetGCD()
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -194,7 +194,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- festering_strike,if=talent.bursting_sores.enabled&spell_targets.bursting_sores>=2&debuff.festering_wound.stack<=1
-    if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) <= 1) then
+    if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) <= 1) then
         return A.FesteringStrike:Show(icon)
     end
     -- death_coil,if=buff.sudden_doom.react&rune.deficit>=4
@@ -206,15 +206,15 @@ A[3] = function(icon, isMulti)
         return A.DeathCoil:Show(icon)
     end
     -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-    if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) then
+    if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) then
         return A.DeathCoil:Show(icon)
     end
     -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&cooldown.army_of_the_dead.remains>5
-    if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDebuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.ScourgeStrike:Show(icon)
     end
     -- clawing_shadows,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&cooldown.army_of_the_dead.remains>5
-    if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDebuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.ClawingShadows:Show(icon)
     end
     -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
@@ -222,7 +222,7 @@ A[3] = function(icon, isMulti)
         return A.DeathCoil:Show(icon)
     end
     -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&cooldown.army_of_the_dead.remains>5
-    if A.FesteringStrike:IsReady(unit) and (((((Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 4 and not Unit("player"):HasBuffs(A.UnholyFrenzyBuff)) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 3) and A.Apocalypse:GetCooldown() < 3) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 1) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.FesteringStrike:IsReady(unit) and (((((Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 4 and not Unit("player"):HasBuffs(A.UnholyFrenzyBuff)) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 3) and A.Apocalypse:GetCooldown() < 3) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 1) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.FesteringStrike:Show(icon)
     end
     -- death_coil,if=!variable.pooling_for_gargoyle
@@ -236,7 +236,7 @@ A[3] = function(icon, isMulti)
         return A.ArmyoftheDead:Show(icon)
     end
     -- apocalypse,if=debuff.festering_wound.stack>=4
-    if A.Apocalypse:IsReady(unit) and (Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) >= 4) then
+    if A.Apocalypse:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) >= 4) then
         return A.Apocalypse:Show(icon)
     end
     -- dark_transformation,if=!raid_event.adds.exists|raid_event.adds.in>15
@@ -248,7 +248,7 @@ A[3] = function(icon, isMulti)
         return A.SummonGargoyle:Show(icon)
     end
     -- unholy_frenzy,if=debuff.festering_wound.stack<4&!(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)
-    if A.UnholyFrenzy:IsReady(unit) and (Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 4 and not (A.RampingAmplitudeGigavoltEngine:IsEquipped or A.MagusoftheDead:GetAzeriteRank)) then
+    if A.UnholyFrenzy:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 4 and not (A.RampingAmplitudeGigavoltEngine:IsEquipped or A.MagusoftheDead:GetAzeriteRank)) then
         return A.UnholyFrenzy:Show(icon)
     end
     -- unholy_frenzy,if=cooldown.apocalypse.remains<2&(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)
@@ -280,7 +280,7 @@ A[3] = function(icon, isMulti)
         return A.DeathCoil:Show(icon)
     end
     -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-    if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) then
+    if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and not bool(VarPoolingForGargoyle)) then
         return A.DeathCoil:Show(icon)
     end
     -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
@@ -292,11 +292,11 @@ A[3] = function(icon, isMulti)
         return A.Defile:Show(icon)
     end
     -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&cooldown.army_of_the_dead.remains>5
-    if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDebuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.ScourgeStrike:Show(icon)
     end
     -- clawing_shadows,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&cooldown.army_of_the_dead.remains>5
-    if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDebuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff) and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) > 4) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.ClawingShadows:Show(icon)
     end
     -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
@@ -304,7 +304,7 @@ A[3] = function(icon, isMulti)
         return A.DeathCoil:Show(icon)
     end
     -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&cooldown.army_of_the_dead.remains>5
-    if A.FesteringStrike:IsReady(unit) and (((((Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 4 and not Unit("player"):HasBuffs(A.UnholyFrenzyBuff)) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 3) and A.Apocalypse:GetCooldown() < 3) or Unit(unit):HasDebuffsStacks(A.FesteringWoundDebuff) < 1) and A.ArmyoftheDead:GetCooldown() > 5) then
+    if A.FesteringStrike:IsReady(unit) and (((((Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 4 and not Unit("player"):HasBuffs(A.UnholyFrenzyBuff)) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 3) and A.Apocalypse:GetCooldown() < 3) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff) < 1) and A.ArmyoftheDead:GetCooldown() > 5) then
         return A.FesteringStrike:Show(icon)
     end
     -- death_coil,if=!variable.pooling_for_gargoyle

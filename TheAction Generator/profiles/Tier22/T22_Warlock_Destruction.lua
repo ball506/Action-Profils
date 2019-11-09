@@ -131,11 +131,11 @@ end
 
 
 local function EvaluateCycleHavoc48(unit)
-  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10
+  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10
 end
 
 local function EvaluateCycleChaosBolt73(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / 3) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / 3) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
 end
 
 local function EvaluateCycleHavoc106(unit)
@@ -143,35 +143,35 @@ local function EvaluateCycleHavoc106(unit)
 end
 
 local function EvaluateCycleChaosBolt115(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleImmolate130(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit(unit):HasDebuffsRefreshable(A.ImmolateDebuff) and Unit(unit):HasDebuffs(A.ImmolateDebuff) <= A.Cataclysm:GetCooldown()
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff) and Unit(unit):HasDeBuffs(A.ImmolateDebuff) <= A.Cataclysm:GetCooldown()
 end
 
 local function EvaluateCycleSoulFire155(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleConflagrate164(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleShadowburn173(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
 end
 
 local function EvaluateCycleIncinerate198(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleHavoc248(unit)
-  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10
+  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10
 end
 
 local function EvaluateCycleChaosBolt273(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / 3) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / 3) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
 end
 
 local function EvaluateCycleHavoc306(unit)
@@ -179,31 +179,31 @@ local function EvaluateCycleHavoc306(unit)
 end
 
 local function EvaluateCycleChaosBolt315(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleImmolate330(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit(unit):HasDebuffsRefreshable(A.ImmolateDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleSoulFire347(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleConflagrate356(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and (A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) <= 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) <= 7 + raid_event.invulnerable.up or A.RoaringBlaze:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 9 + raid_event.invulnerable.up)
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and (A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) <= 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) <= 7 + raid_event.invulnerable.up or A.RoaringBlaze:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 9 + raid_event.invulnerable.up)
 end
 
 local function EvaluateCycleIncinerate371(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleHavoc406(unit)
-  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10
+  return not (Unit(unit) == sim.target) and Unit(unit):TimeToDie() > 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10
 end
 
 local function EvaluateCycleChaosBolt435(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / (3 - 0.16 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up))) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.GrimoireofSupremacy:IsSpellLearned() and pet.infernal.remains > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and ((108 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up) / (3 - 0.16 * (MultiUnits:GetByRangeInCombat(40, 5, 10) + raid_event.invulnerable.up))) < (240 * (1 + 0.08 * Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff)) / 2 * num((1 + Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime()))))
 end
 
 local function EvaluateCycleHavoc464(unit)
@@ -211,31 +211,31 @@ local function EvaluateCycleHavoc464(unit)
 end
 
 local function EvaluateCycleChaosBolt481(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + raid_event.invulnerable.up and (A.Eradication:IsSpellLearned() or A.InternalCombustion:IsSpellLearned())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + raid_event.invulnerable.up and (A.Eradication:IsSpellLearned() or A.InternalCombustion:IsSpellLearned())
 end
 
 local function EvaluateCycleImmolate500(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and Unit(unit):HasDebuffsRefreshable(A.ImmolateDebuff)
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff)
 end
 
 local function EvaluateCycleSoulFire517(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleConflagrate526(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleShadowburn535(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
 end
 
 local function EvaluateCycleIncinerate560(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleImmolate584(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and (Unit(unit):HasDebuffsRefreshable(A.ImmolateDebuff) or A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDebuffs(A.ImmolateDebuff) - A.ChaosBolt:TravelTime() - 5 < A.ImmolateDebuff:BaseDuration * 0.3)
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and (Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff) or A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff) - A.ChaosBolt:TravelTime() - 5 < A.ImmolateDebuff:BaseDuration * 0.3)
 end
 
 local function EvaluateCycleHavoc627(unit)
@@ -243,35 +243,35 @@ local function EvaluateCycleHavoc627(unit)
 end
 
 local function EvaluateCycleSoulFire652(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 
 local function EvaluateCycleChaosBolt661(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (bool(trinket.proc.intellect.react) and trinket.proc.intellect.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.mastery.react) and trinket.proc.mastery.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.versatility.react) and trinket.proc.versatility.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.crit.react) and trinket.proc.crit.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.spell_power.react) and trinket.proc.spell_power.remains > A.ChaosBolt:GetSpellCastTime())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (bool(trinket.proc.intellect.react) and trinket.proc.intellect.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.mastery.react) and trinket.proc.mastery.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.versatility.react) and trinket.proc.versatility.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.crit.react) and trinket.proc.crit.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.proc.spell_power.react) and trinket.proc.spell_power.remains > A.ChaosBolt:GetSpellCastTime())
 end
 
 local function EvaluateCycleChaosBolt698(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (bool(trinket.stacking_proc.intellect.react) and trinket.stacking_proc.intellect.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.mastery.react) and trinket.stacking_proc.mastery.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.versatility.react) and trinket.stacking_proc.versatility.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.crit.react) and trinket.stacking_proc.crit.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.spell_power.react) and trinket.stacking_proc.spell_power.remains > A.ChaosBolt:GetSpellCastTime())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (bool(trinket.stacking_proc.intellect.react) and trinket.stacking_proc.intellect.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.mastery.react) and trinket.stacking_proc.mastery.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.versatility.react) and trinket.stacking_proc.versatility.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.crit.react) and trinket.stacking_proc.crit.remains > A.ChaosBolt:GetSpellCastTime() or bool(trinket.stacking_proc.spell_power.react) and trinket.stacking_proc.spell_power.remains > A.ChaosBolt:GetSpellCastTime())
 end
 
 local function EvaluateCycleChaosBolt735(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (A.SummonInfernal:GetCooldown() >= 20 or not A.GrimoireofSupremacy:IsSpellLearned()) and (A.DarkSoulInstability:GetCooldown() >= 20 or not A.DarkSoulInstability:IsSpellLearned()) and (A.Eradication:IsSpellLearned() and Unit(unit):HasDebuffs(A.EradicationDebuff) <= A.ChaosBolt:GetSpellCastTime() or bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or A.InternalCombustion:IsSpellLearned())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (A.SummonInfernal:GetCooldown() >= 20 or not A.GrimoireofSupremacy:IsSpellLearned()) and (A.DarkSoulInstability:GetCooldown() >= 20 or not A.DarkSoulInstability:IsSpellLearned()) and (A.Eradication:IsSpellLearned() and Unit(unit):HasDeBuffs(A.EradicationDebuff) <= A.ChaosBolt:GetSpellCastTime() or bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or A.InternalCombustion:IsSpellLearned())
 end
 
 local function EvaluateCycleChaosBolt772(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (Player:SoulShardsP >= 4 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff) > A.ChaosBolt:GetSpellCastTime() or bool(pet.infernal.active) or Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (Player:SoulShardsP >= 4 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff) > A.ChaosBolt:GetSpellCastTime() or bool(pet.infernal.active) or Unit("player"):HasBuffs(A.ActiveHavocBuff) > A.ChaosBolt:GetSpellCastTime())
 end
 
 local function EvaluateCycleConflagrate801(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and ((A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) <= 2) or (not A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) < 2))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and ((A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) <= 2) or (not A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff) < 2))
 end
 
 local function EvaluateCycleShadowburn818(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff)) and ((A.Shadowburn:ChargesP() == 2 or not bool(Unit("player"):HasBuffs(A.BackdraftBuff)) or Unit("player"):HasBuffs(A.BackdraftBuff) > Unit("player"):HasBuffsStacks(A.BackdraftBuff) * A.Incinerate:GetSpellCastTime()))
 end
 
 local function EvaluateCycleIncinerate843(unit)
-  return not bool(Unit(unit):HasDebuffs(A.HavocDebuff))
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff))
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -332,7 +332,7 @@ A[3] = function(icon, isMulti)
         return A.Cataclysm:Show(icon)
     end
     -- immolate,if=talent.channel_demonfire.enabled&!remains&cooldown.channel_demonfire.remains<=action.chaos_bolt.execute_time
-    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDebuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
+    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDeBuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
         return A.Immolate:Show(icon)
     end
     -- channel_demonfire,if=!buff.active_havoc.remains
@@ -346,7 +346,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- havoc,if=spell_targets.rain_of_fire<=8+raid_event.invulnerable.up&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
-    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10) then
+    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10) then
         return A.Havoc:Show(icon)
     end
     -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&active_enemies<=8+raid_event.invulnerable.up&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%3)<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))
@@ -443,7 +443,7 @@ A[3] = function(icon, isMulti)
         return A.RainofFire:Show(icon)
     end
     -- immolate,if=talent.channel_demonfire.enabled&!remains&cooldown.channel_demonfire.remains<=action.chaos_bolt.execute_time
-    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDebuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
+    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDeBuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
         return A.Immolate:Show(icon)
     end
     -- channel_demonfire,if=!buff.active_havoc.remains
@@ -457,7 +457,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- havoc,if=spell_targets.rain_of_fire<=4+raid_event.invulnerable.up&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
-    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10) then
+    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10) then
         return A.Havoc:Show(icon)
     end
     -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&active_enemies<=4+raid_event.invulnerable.up&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%3)<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))
@@ -525,7 +525,7 @@ A[3] = function(icon, isMulti)
         return A.Cataclysm:Show(icon)
     end
     -- immolate,if=talent.channel_demonfire.enabled&!remains&cooldown.channel_demonfire.remains<=action.chaos_bolt.execute_time
-    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDebuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
+    if A.Immolate:IsReady(unit) and (A.ChannelDemonfire:IsSpellLearned() and not bool(Unit(unit):HasDeBuffs(A.ImmolateDebuff)) and A.ChannelDemonfire:GetCooldown() <= A.ChaosBolt:GetSpellCastTime()) then
         return A.Immolate:Show(icon)
     end
     -- channel_demonfire,if=!buff.active_havoc.remains
@@ -539,7 +539,7 @@ A[3] = function(icon, isMulti)
         end
     end
     -- havoc,if=spell_targets.rain_of_fire<=4+raid_event.invulnerable.up+talent.internal_combustion.enabled&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
-    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDebuffs(A.HavocDebuff) <= 10) then
+    if A.Havoc:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 + raid_event.invulnerable.up + num(A.InternalCombustion:IsSpellLearned()) and A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and Unit(unit):HasDeBuffs(A.HavocDebuff) <= 10) then
         return A.Havoc:Show(icon)
     end
     -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up+talent.internal_combustion.enabled&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%(3-0.16*(spell_targets.rain_of_fire+raid_event.invulnerable.up)))<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))

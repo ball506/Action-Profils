@@ -151,15 +151,15 @@ end
 
 
 local function EvaluateCycleSunfire208(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.SunfireDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDebuffs(A.MoonfireDebuff)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.sunfire)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDeBuffs(A.MoonfireDebuff)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.sunfire)))
 end
 
 local function EvaluateCycleMoonfire261(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.MoonfireDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= 6 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.moonfire)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= 6 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.moonfire)))
 end
 
 local function EvaluateCycleStellarFlare286(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.StellarFlareDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) >= 5 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.stellar_flare)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.StellarFlareDebuff)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Player:SpellHaste)) >= 5 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff) or not bool(prev.stellar_flare)))
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation

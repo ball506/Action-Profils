@@ -135,15 +135,15 @@ local function EvaluateCycleMindBlast107(unit)
 end
 
 local function EvaluateCycleShadowWordPain118(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > ((num(true) - 1.2 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarSwpTraitRanksCheck)) and (not A.Misery:IsSpellLearned())
+    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > ((num(true) - 1.2 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarSwpTraitRanksCheck)) and (not A.Misery:IsSpellLearned())
 end
 
 local function EvaluateCycleVampiricTouch135(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.VampiricTouchDebuff)) and (Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtTraitRanksCheck))
+    return (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff)) and (Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtTraitRanksCheck))
 end
 
 local function EvaluateCycleVampiricTouch150(unit)
-    return (Unit(unit):HasDebuffsRefreshable(A.ShadowWordPainDebuff)) and ((A.Misery:IsSpellLearned() and Unit(unit):TimeToDie() > ((1.0 + 2.0 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtMisTraitRanksCheck * (VarVtMisSdCheck * MultiUnits:GetByRangeInCombat(40, 5, 10)))))
+    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff)) and ((A.Misery:IsSpellLearned() and Unit(unit):TimeToDie() > ((1.0 + 2.0 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtMisTraitRanksCheck * (VarVtMisSdCheck * MultiUnits:GetByRangeInCombat(40, 5, 10)))))
 end
 
 local function EvaluateCycleMindSear169(unit)
@@ -220,7 +220,7 @@ A[3] = function(icon, isMulti)
         return A.DarkAscension:Show(icon)
     end
     -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-    if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDebuffs(A.VampiricTouchDebuff) and A.ThoughtHarvester:GetAzeriteRank >= 1) then
+    if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.VampiricTouchDebuff) and A.ThoughtHarvester:GetAzeriteRank >= 1) then
         return A.VampiricTouch:Show(icon)
     end
     -- mind_sear,if=buff.harvested_thoughts.up
@@ -242,7 +242,7 @@ A[3] = function(icon, isMulti)
         return A.SurrenderToMadness:Show(icon)
     end
     -- dark_void,if=raid_event.adds.in>10&(dot.shadow_word_pain.refreshable|target.time_to_die>30)
-    if A.DarkVoid:IsReady(unit) and (10000000000 > 10 and (Unit(unit):HasDebuffsRefreshable(A.ShadowWordPainDebuff) or Unit(unit):TimeToDie() > 30)) then
+    if A.DarkVoid:IsReady(unit) and (10000000000 > 10 and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) or Unit(unit):TimeToDie() > 30)) then
         return A.DarkVoid:Show(icon)
     end
     -- mindbender
@@ -342,15 +342,15 @@ A[3] = function(icon, isMulti)
         return A.MindBlast:Show(icon)
     end
     -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
-    if A.VoidTorrent:IsReady(unit) and (Unit(unit):HasDebuffs(A.ShadowWordPainDebuff) > 4 and Unit(unit):HasDebuffs(A.VampiricTouchDebuff) > 4 and Unit("player"):HasBuffs(A.VoidformBuff)) then
+    if A.VoidTorrent:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff) > 4 and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff) > 4 and Unit("player"):HasBuffs(A.VoidformBuff)) then
         return A.VoidTorrent:Show(icon)
     end
     -- shadow_word_pain,if=refreshable&target.time_to_die>4&!talent.misery.enabled&!talent.dark_void.enabled
-    if A.ShadowWordPain:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > 4 and not A.Misery:IsSpellLearned() and not A.DarkVoid:IsSpellLearned()) then
+    if A.ShadowWordPain:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > 4 and not A.Misery:IsSpellLearned() and not A.DarkVoid:IsSpellLearned()) then
         return A.ShadowWordPain:Show(icon)
     end
     -- vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-    if A.VampiricTouch:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.VampiricTouchDebuff) and Unit(unit):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and Unit(unit):HasDebuffsRefreshable(A.ShadowWordPainDebuff))) then
+    if A.VampiricTouch:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff) and Unit(unit):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff))) then
         return A.VampiricTouch:Show(icon)
     end
     -- mind_sear,if=azerite.searing_dialogue.rank>=3,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
@@ -377,7 +377,7 @@ A[3] = function(icon, isMulti)
     end
     -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
     if (true) then
-      VarDotsUp = num(Unit(unit):HasDebuffs(A.ShadowWordPainDebuff) and Unit(unit):HasDebuffs(A.VampiricTouchDebuff))
+      VarDotsUp = num(Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff))
     end
     -- berserking
     if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then

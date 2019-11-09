@@ -186,7 +186,7 @@ A[3] = function(icon, isMulti)
         return A.DivineStorm:Show(icon)
     end
     -- divine_storm,if=variable.ds_castable&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*2)|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down
-    if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2) or Unit("player"):HasBuffs(A.EmpyreanPowerBuff) and bool(Target:HasDebuffsDown(A.JudgmentDebuff)) and bool(Unit("player"):HasBuffsDown(A.DivinePurposeBuff))) then
+    if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2) or Unit("player"):HasBuffs(A.EmpyreanPowerBuff) and bool(Target:HasDeBuffsDown(A.JudgmentDebuff)) and bool(Unit("player"):HasBuffsDown(A.DivinePurposeBuff))) then
         return A.DivineStorm:Show(icon)
     end
     -- templars_verdict,if=buff.divine_purpose.react

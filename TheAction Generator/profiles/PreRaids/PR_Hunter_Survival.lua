@@ -165,11 +165,11 @@ local function EvaluateCycleCarveCdr62(unit)
 end
 
 local function EvaluateTargetIfFilterMongooseBite98(unit)
-  return Unit(unit):HasDebuffsStacks(A.LatentPoisonDebuff)
+  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff)
 end
 
 local function EvaluateTargetIfMongooseBite107(unit)
-  return Unit(unit):HasDebuffsStacks(A.LatentPoisonDebuff) == 10
+  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff) == 10
 end
 
 local function EvaluateTargetIfFilterKillCommand115(unit)
@@ -181,7 +181,7 @@ local function EvaluateTargetIfKillCommand128(unit)
 end
 
 local function EvaluateTargetIfFilterSerpentSting164(unit)
-  return Unit(unit):HasDebuffs(A.SerpentStingDebuff)
+  return Unit(unit):HasDeBuffs(A.SerpentStingDebuff)
 end
 
 local function EvaluateTargetIfSerpentSting181(unit)
@@ -189,19 +189,19 @@ local function EvaluateTargetIfSerpentSting181(unit)
 end
 
 local function EvaluateTargetIfFilterSerpentSting199(unit)
-  return Unit(unit):HasDebuffs(A.SerpentStingDebuff)
+  return Unit(unit):HasDeBuffs(A.SerpentStingDebuff)
 end
 
 local function EvaluateTargetIfSerpentSting222(unit)
-  return Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and Unit("player"):HasBuffsStacks(A.TipoftheSpearBuff) < 3
+  return Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and Unit("player"):HasBuffsStacks(A.TipoftheSpearBuff) < 3
 end
 
 local function EvaluateTargetIfFilterMongooseBite228(unit)
-  return Unit(unit):HasDebuffsStacks(A.LatentPoisonDebuff)
+  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff)
 end
 
 local function EvaluateTargetIfFilterRaptorStrike239(unit)
-  return Unit(unit):HasDebuffsStacks(A.LatentPoisonDebuff)
+  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff)
 end
 --- ======= ACTION LISTS =======
 local function APL()
@@ -279,7 +279,7 @@ local function APL()
         return A.CoordinatedAssault:Show(icon)
     end
     -- carve,if=dot.shrapnel_bomb.ticking
-    if A.Carve:IsReady(unit) and (Unit(unit):HasDebuffs(A.ShrapnelBombDebuff)) then
+    if A.Carve:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff)) then
         return A.Carve:Show(icon)
     end
     -- wildfire_bomb,if=!talent.guerrilla_tactics.enabled|full_recharge_time<gcd
@@ -303,7 +303,7 @@ local function APL()
         end
     end
     -- butchery,if=full_recharge_time<gcd|!talent.wildfire_infusion.enabled|dot.shrapnel_bomb.ticking&dot.internal_bleeding.stack<3
-    if A.Butchery:IsReady(unit) and (A.Butchery:FullRechargeTimeP() < A.GetGCD() or not A.WildfireInfusion:IsSpellLearned() or Unit(unit):HasDebuffs(A.ShrapnelBombDebuff) and Unit(unit):HasDebuffsStacks(A.InternalBleedingDebuff) < 3) then
+    if A.Butchery:IsReady(unit) and (A.Butchery:FullRechargeTimeP() < A.GetGCD() or not A.WildfireInfusion:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff) and Unit(unit):HasDeBuffsStacks(A.InternalBleedingDebuff) < 3) then
         return A.Butchery:Show(icon)
     end
     -- carve,if=talent.guerrilla_tactics.enabled
@@ -315,7 +315,7 @@ local function APL()
         return A.FlankingStrike:Show(icon)
     end
     -- wildfire_bomb,if=dot.wildfire_bomb.refreshable|talent.wildfire_infusion.enabled
-    if A.WildfireBomb:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.WildfireBombDebuff) or A.WildfireInfusion:IsSpellLearned()) then
+    if A.WildfireBomb:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.WildfireBombDebuff) or A.WildfireInfusion:IsSpellLearned()) then
         return A.WildfireBomb:Show(icon)
     end
     -- serpent_sting,target_if=min:remains,if=buff.vipers_venom.react
@@ -357,11 +357,11 @@ local function APL()
     end
     local function MbApWfiSt(unit)
         -- serpent_sting,if=!dot.serpent_sting.ticking
-    if A.SerpentSting:IsReady(unit) and (not Unit(unit):HasDebuffs(A.SerpentStingDebuff)) then
+    if A.SerpentSting:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.SerpentStingDebuff)) then
         return A.SerpentSting:Show(icon)
     end
     -- wildfire_bomb,if=full_recharge_time<gcd|(focus+cast_regen<focus.max)&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-    if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax()) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) and Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+    if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax()) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
         return A.WildfireBomb:Show(icon)
     end
     -- coordinated_assault
@@ -385,23 +385,23 @@ local function APL()
         return A.KillCommand:Show(icon)
     end
     -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>60&dot.serpent_sting.remains>3*gcd
-    if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 60 and Unit(unit):HasDebuffs(A.SerpentStingDebuff) > 3 * A.GetGCD()) then
+    if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 60 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) > 3 * A.GetGCD()) then
         return A.WildfireBomb:Show(icon)
     end
     -- serpent_sting,if=refreshable&(next_wi_bomb.volatile&!dot.shrapnel_bomb.ticking|azerite.latent_poison.enabled|azerite.venomous_fangs.enabled)
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and (S.VolatileBomb:IsLearned() and not Unit(unit):HasDebuffs(A.ShrapnelBombDebuff) or A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank)) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and (S.VolatileBomb:IsLearned() and not Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff) or A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank)) then
         return A.SerpentSting:Show(icon)
     end
     -- mongoose_bite,if=buff.mongoose_fury.up|focus>60|dot.shrapnel_bomb.ticking
-    if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff) or Player:Focus() > 60 or Unit(unit):HasDebuffs(A.ShrapnelBombDebuff)) then
+    if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff) or Player:Focus() > 60 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff)) then
         return A.MongooseBite:Show(icon)
     end
     -- serpent_sting,if=refreshable
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff)) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff)) then
         return A.SerpentSting:Show(icon)
     end
     -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
-    if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
+    if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
         return A.WildfireBomb:Show(icon)
     end
     end
@@ -427,15 +427,15 @@ local function APL()
         return A.KillCommand:Show(icon)
     end
     -- wildfire_bomb,if=focus+cast_regen<focus.max&(full_recharge_time<gcd|!dot.wildfire_bomb.ticking&(buff.mongoose_fury.down|full_recharge_time<4.5*gcd))
-    if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or not Unit(unit):HasDebuffs(A.WildfireBombDebuff) and (bool(Unit("player"):HasBuffsDown(A.MongooseFuryBuff)) or A.WildfireBomb:FullRechargeTimeP() < 4.5 * A.GetGCD()))) then
+    if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff) and (bool(Unit("player"):HasBuffsDown(A.MongooseFuryBuff)) or A.WildfireBomb:FullRechargeTimeP() < 4.5 * A.GetGCD()))) then
         return A.WildfireBomb:Show(icon)
     end
     -- serpent_sting,if=buff.vipers_venom.react&dot.serpent_sting.remains<4*gcd|!talent.vipers_venom.enabled&!dot.serpent_sting.ticking&!buff.coordinated_assault.up
-    if A.SerpentSting:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff)) and Unit(unit):HasDebuffs(A.SerpentStingDebuff) < 4 * A.GetGCD() or not A.VipersVenom:IsSpellLearned() and not Unit(unit):HasDebuffs(A.SerpentStingDebuff) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)) then
+    if A.SerpentSting:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff)) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) < 4 * A.GetGCD() or not A.VipersVenom:IsSpellLearned() and not Unit(unit):HasDeBuffs(A.SerpentStingDebuff) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)) then
         return A.SerpentSting:Show(icon)
     end
     -- serpent_sting,if=refreshable&(azerite.latent_poison.rank>2|azerite.latent_poison.enabled&azerite.venomous_fangs.enabled|(azerite.latent_poison.enabled|azerite.venomous_fangs.enabled)&(!azerite.blur_of_talons.enabled|!talent.birds_of_prey.enabled|!buff.coordinated_assault.up))
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and (A.LatentPoison:GetAzeriteRank > 2 or A.LatentPoison:GetAzeriteRank and A.VenomousFangs:GetAzeriteRank or (A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank) and (not A.BlurofTalons:GetAzeriteRank or not A.BirdsofPrey:IsSpellLearned() or not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)))) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and (A.LatentPoison:GetAzeriteRank > 2 or A.LatentPoison:GetAzeriteRank and A.VenomousFangs:GetAzeriteRank or (A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank) and (not A.BlurofTalons:GetAzeriteRank or not A.BirdsofPrey:IsSpellLearned() or not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)))) then
         return A.SerpentSting:Show(icon)
     end
     -- steel_trap
@@ -471,11 +471,11 @@ local function APL()
         return A.RaptorStrike:Show(icon)
     end
     -- serpent_sting,if=dot.serpent_sting.refreshable&!buff.coordinated_assault.up
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff)) then
         return A.SerpentSting:Show(icon)
     end
     -- wildfire_bomb,if=dot.wildfire_bomb.refreshable
-    if A.WildfireBomb:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.WildfireBombDebuff)) then
+    if A.WildfireBomb:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.WildfireBombDebuff)) then
         return A.WildfireBomb:Show(icon)
     end
     end
@@ -489,11 +489,11 @@ local function APL()
         return A.CoordinatedAssault:Show(icon)
     end
     -- mongoose_bite,if=azerite.wilderness_survival.enabled&next_wi_bomb.volatile&dot.serpent_sting.remains>2.1*gcd&dot.serpent_sting.remains<3.5*gcd&cooldown.wildfire_bomb.remains>2.5*gcd
-    if A.MongooseBite:IsReady(unit) and (A.WildernessSurvival:GetAzeriteRank and S.VolatileBomb:IsLearned() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) > 2.1 * A.GetGCD() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) < 3.5 * A.GetGCD() and A.WildfireBomb:GetCooldown() > 2.5 * A.GetGCD()) then
+    if A.MongooseBite:IsReady(unit) and (A.WildernessSurvival:GetAzeriteRank and S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) > 2.1 * A.GetGCD() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) < 3.5 * A.GetGCD() and A.WildfireBomb:GetCooldown() > 2.5 * A.GetGCD()) then
         return A.MongooseBite:Show(icon)
     end
     -- wildfire_bomb,if=full_recharge_time<gcd|(focus+cast_regen<focus.max)&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-    if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax()) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) and Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+    if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < A.GetGCD() or (Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax()) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
         return A.WildfireBomb:Show(icon)
     end
     -- kill_command,if=focus+cast_regen<focus.max&buff.tip_of_the_spear.stack<3&(!talent.alpha_predator.enabled|buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
@@ -501,11 +501,11 @@ local function APL()
         return A.KillCommand:Show(icon)
     end
     -- raptor_strike,if=dot.internal_bleeding.stack<3&dot.shrapnel_bomb.ticking&!talent.mongoose_bite.enabled
-    if A.RaptorStrike:IsReady(unit) and (Unit(unit):HasDebuffsStacks(A.InternalBleedingDebuff) < 3 and Unit(unit):HasDebuffs(A.ShrapnelBombDebuff) and not A.MongooseBite:IsSpellLearned()) then
+    if A.RaptorStrike:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.InternalBleedingDebuff) < 3 and Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff) and not A.MongooseBite:IsSpellLearned()) then
         return A.RaptorStrike:Show(icon)
     end
     -- wildfire_bomb,if=next_wi_bomb.shrapnel&buff.mongoose_fury.down&(cooldown.kill_command.remains>gcd|focus>60)&!dot.serpent_sting.refreshable
-    if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and bool(Unit("player"):HasBuffsDown(A.MongooseFuryBuff)) and (A.KillCommand:GetCooldown() > A.GetGCD() or Player:Focus() > 60) and not Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff)) then
+    if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and bool(Unit("player"):HasBuffsDown(A.MongooseFuryBuff)) and (A.KillCommand:GetCooldown() > A.GetGCD() or Player:Focus() > 60) and not Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff)) then
         return A.WildfireBomb:Show(icon)
     end
     -- steel_trap
@@ -517,7 +517,7 @@ local function APL()
         return A.FlankingStrike:Show(icon)
     end
     -- serpent_sting,if=buff.vipers_venom.react|refreshable&(!talent.mongoose_bite.enabled|!talent.vipers_venom.enabled|next_wi_bomb.volatile&!dot.shrapnel_bomb.ticking|azerite.latent_poison.enabled|azerite.venomous_fangs.enabled|buff.mongoose_fury.stack=5)
-    if A.SerpentSting:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff)) or Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and (not A.MongooseBite:IsSpellLearned() or not A.VipersVenom:IsSpellLearned() or S.VolatileBomb:IsLearned() and not Unit(unit):HasDebuffs(A.ShrapnelBombDebuff) or A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank or Unit("player"):HasBuffsStacks(A.MongooseFuryBuff) == 5)) then
+    if A.SerpentSting:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff)) or Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and (not A.MongooseBite:IsSpellLearned() or not A.VipersVenom:IsSpellLearned() or S.VolatileBomb:IsLearned() and not Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff) or A.LatentPoison:GetAzeriteRank or A.VenomousFangs:GetAzeriteRank or Unit("player"):HasBuffsStacks(A.MongooseFuryBuff) == 5)) then
         return A.SerpentSting:Show(icon)
     end
     -- harpoon,if=talent.terms_of_engagement.enabled
@@ -525,7 +525,7 @@ local function APL()
         return A.Harpoon:Show(icon)
     end
     -- mongoose_bite,if=buff.mongoose_fury.up|focus>60|dot.shrapnel_bomb.ticking
-    if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff) or Player:Focus() > 60 or Unit(unit):HasDebuffs(A.ShrapnelBombDebuff)) then
+    if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff) or Player:Focus() > 60 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff)) then
         return A.MongooseBite:Show(icon)
     end
     -- raptor_strike
@@ -533,11 +533,11 @@ local function APL()
         return A.RaptorStrike:Show(icon)
     end
     -- serpent_sting,if=refreshable
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff)) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff)) then
         return A.SerpentSting:Show(icon)
     end
     -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
-    if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDebuffs(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
+    if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
         return A.WildfireBomb:Show(icon)
     end
     end

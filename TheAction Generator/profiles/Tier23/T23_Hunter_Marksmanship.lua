@@ -157,7 +157,7 @@ A[3] = function(icon, isMulti)
     end
     local function Cds(unit)
         -- hunters_mark,if=debuff.hunters_mark.down
-    if A.HuntersMark:IsReady(unit) and (bool(Target:HasDebuffsDown(A.HuntersMarkDebuff))) then
+    if A.HuntersMark:IsReady(unit) and (bool(Target:HasDeBuffsDown(A.HuntersMarkDebuff))) then
         return A.HuntersMark:Show(icon)
     end
     -- double_tap,if=target.time_to_die<15|cooldown.aimed_shot.remains<gcd&(buff.trueshot.up&(buff.unerring_vision.stack>6|!azerite.unerring_vision.enabled)|!talent.calling_the_shots.enabled)&(!azerite.surging_shots.enabled&!talent.streamline.enabled&!azerite.focused_fire.enabled)
@@ -211,7 +211,7 @@ A[3] = function(icon, isMulti)
         return A.AMurderofCrows:Show(icon)
     end
     -- serpent_sting,if=refreshable&!action.serpent_sting.in_flight
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
         return A.SerpentSting:Show(icon)
     end
     -- rapid_fire,if=focus<50&(buff.bloodlust.up&buff.trueshot.up|buff.trueshot.down)
@@ -277,7 +277,7 @@ A[3] = function(icon, isMulti)
         return A.AMurderofCrows:Show(icon)
     end
     -- serpent_sting,if=refreshable&!action.serpent_sting.in_flight
-    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDebuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
+    if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
         return A.SerpentSting:Show(icon)
     end
     -- steady_shot

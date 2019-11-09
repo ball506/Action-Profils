@@ -113,23 +113,23 @@ end
 
 
 local function EvaluateCycleFlameShock61(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14)
 end
 
 local function EvaluateCycleFlameShock116(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff)
 end
 
 local function EvaluateCycleFlameShock313(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff)
 end
 
 local function EvaluateCycleFlameShock394(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)
 end
 
 local function EvaluateCycleFlameShock443(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -241,7 +241,7 @@ A[3] = function(icon, isMulti)
     end
     local function SingleTarget(unit)
         -- flame_shock,if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&buff.wind_gust.stack<14&!buff.surge_of_power.up
-    if A.FlameShock:IsReady(unit) and ((not Unit(unit):HasDebuffs(A.FlameShockDebuff) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDebuffs(A.FlameShockDebuff) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDebuffs(A.FlameShockDebuff) < (A.Ascendance:GetCooldown() + A.AscendanceBuff:BaseDuration) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14 and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)) then
+    if A.FlameShock:IsReady(unit) and ((not Unit(unit):HasDeBuffs(A.FlameShockDebuff) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff) < (A.Ascendance:GetCooldown() + A.AscendanceBuff:BaseDuration) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and Unit("player"):HasBuffsStacks(A.WindGustBuff) < 14 and not Unit("player"):HasBuffs(A.SurgeofPowerBuff)) then
         return A.FlameShock:Show(icon)
     end
     -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains>120)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
@@ -265,7 +265,7 @@ A[3] = function(icon, isMulti)
         return A.LightningBolt:Show(icon)
     end
     -- earthquake,if=active_enemies>1&spell_targets.chain_lightning>1&(!talent.surge_of_power.enabled|!dot.flame_shock.refreshable|cooldown.storm_elemental.remains>120)&(!talent.master_of_the_elements.enabled|buff.master_of_the_elements.up|maelstrom>=92)
-    if A.Earthquake:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and (not A.SurgeofPower:IsSpellLearned() or not Unit(unit):HasDebuffsRefreshable(A.FlameShockDebuff) or A.StormElemental:GetCooldown() > 120) and (not A.MasteroftheElements:IsSpellLearned() or Unit("player"):HasBuffs(A.MasteroftheElementsBuff) or Player:Maelstrom() >= 92)) then
+    if A.Earthquake:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and (not A.SurgeofPower:IsSpellLearned() or not Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff) or A.StormElemental:GetCooldown() > 120) and (not A.MasteroftheElements:IsSpellLearned() or Unit("player"):HasBuffs(A.MasteroftheElementsBuff) or Player:Maelstrom() >= 92)) then
         return A.Earthquake:Show(icon)
     end
     -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|maelstrom>=92+30*talent.call_the_thunder.enabled|buff.stormkeeper.up&active_enemies<2)|!talent.master_of_the_elements.enabled&(buff.stormkeeper.up|maelstrom>=90+30*talent.call_the_thunder.enabled|!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)&expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)>=30*(1+(azerite.echo_of_the_elementals.rank>=2)))

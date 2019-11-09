@@ -112,63 +112,63 @@ end
 
 
 local function EvaluateCycleFrostStrike22(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and A.RemorselessWinter:GetCooldown() <= 2 * A.GetGCD() and A.GatheringStorm:IsSpellLearned() and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and A.RemorselessWinter:GetCooldown() <= 2 * A.GetGCD() and A.GatheringStorm:IsSpellLearned() and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike57(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate80(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike101(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate124(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RuneTimeToX(4) < A.GetGCD() and Player:RunicPowerDeficit() >= 25 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RuneTimeToX(4) < A.GetGCD() and Player:RunicPowerDeficit() >= 25 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike143(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate172(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike195(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate214(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPower() <= 30 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPower() <= 30 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate237(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RuneTimeToX(5) < A.GetGCD() or Player:RunicPower() <= 45 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RuneTimeToX(5) < A.GetGCD() or Player:RunicPower() <= 45 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate262(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate418(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3
 end
 
 local function EvaluateCycleObliterate451(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and bool(Unit("player"):HasBuffsStacks(A.KillingMachineBuff)) or (Unit("player"):HasBuffs(A.KillingMachineBuff) and (Unit("player"):GetSpellLastCast(A.FrostStrike) or Unit("player"):GetSpellLastCast(A.HowlingBlast) or Unit("player"):GetSpellLastCast(A.GlacialAdvance)))
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and bool(Unit("player"):HasBuffsStacks(A.KillingMachineBuff)) or (Unit("player"):HasBuffs(A.KillingMachineBuff) and (Unit("player"):GetSpellLastCast(A.FrostStrike) or Unit("player"):GetSpellLastCast(A.HowlingBlast) or Unit("player"):GetSpellLastCast(A.GlacialAdvance)))
 end
 
 local function EvaluateCycleFrostStrike492(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and not Unit("player"):HasBuffs(A.RimeBuff) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and not Unit("player"):HasBuffs(A.RimeBuff) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate515(unit)
-    return (Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDebuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff) < 10) and not A.Frostscythe:IsSpellLearned()
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -432,7 +432,7 @@ A[3] = function(icon, isMulti)
       A.RazdunksBigRedButton:Show(icon)
     end
     -- use_item,name=merekthas_fang,if=!dot.breath_of_sindragosa.ticking&!buff.pillar_of_frost.up
-    if A.MerekthasFang:IsReady(unit) and (not Unit(unit):HasDebuffs(A.BreathofSindragosaDebuff) and not Unit("player"):HasBuffs(A.PillarofFrostBuff)) then
+    if A.MerekthasFang:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff) and not Unit("player"):HasBuffs(A.PillarofFrostBuff)) then
       A.MerekthasFang:Show(icon)
     end
     -- potion,if=buff.pillar_of_frost.up&buff.empower_rune_weapon.up
@@ -464,7 +464,7 @@ A[3] = function(icon, isMulti)
         return A.EmpowerRuneWeapon:Show(icon)
     end
     -- call_action_list,name=cold_heart,if=talent.cold_heart.enabled&((buff.cold_heart.stack>=10&debuff.razorice.stack=5)|target.time_to_die<=gcd)
-    if (A.ColdHeart:IsSpellLearned() and ((Unit("player"):HasBuffsStacks(A.ColdHeartBuff) >= 10 and Unit(unit):HasDebuffsStacks(A.RazoriceDebuff) == 5) or Unit(unit):TimeToDie() <= A.GetGCD())) then
+    if (A.ColdHeart:IsSpellLearned() and ((Unit("player"):HasBuffsStacks(A.ColdHeartBuff) >= 10 and Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff) == 5) or Unit(unit):TimeToDie() <= A.GetGCD())) then
       local ShouldReturn = ColdHeart(unit); if ShouldReturn then return ShouldReturn; end
     end
     -- frostwyrms_fury,if=(buff.pillar_of_frost.remains<=gcd|(buff.pillar_of_frost.remains<8&buff.unholy_strength.remains<=gcd&buff.unholy_strength.up))&buff.pillar_of_frost.up&azerite.icy_citadel.rank<=2
@@ -587,7 +587,7 @@ A[3] = function(icon, isMulti)
      if Everyone.TargetIsValid() then
           -- auto_attack
     -- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-    if A.HowlingBlast:IsReady(unit) and (not Unit(unit):HasDebuffs(A.FrostFeverDebuff) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+    if A.HowlingBlast:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.FrostFeverDebuff) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
         return A.HowlingBlast:Show(icon)
     end
     -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
@@ -607,7 +607,7 @@ A[3] = function(icon, isMulti)
       return BosPooling(unit);
     end
     -- run_action_list,name=bos_ticking,if=dot.breath_of_sindragosa.ticking
-    if (Unit(unit):HasDebuffs(A.BreathofSindragosaDebuff)) then
+    if (Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff)) then
       return BosTicking(unit);
     end
     -- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled

@@ -231,7 +231,7 @@ A[3] = function(icon, isMulti)
         return A.RushingJadeWind:Show(icon)
     end
     -- breath_of_fire,if=buff.blackout_combo.down&(buff.bloodlust.down|(buff.bloodlust.up&&dot.breath_of_fire_dot.refreshable))
-    if A.BreathofFire:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff)) and (Unit("player"):HasNotHeroism or (Unit("player"):HasHeroism and true and Target:HasDebuffsRefreshable(A.BreathofFireDotDebuff)))) then
+    if A.BreathofFire:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff)) and (Unit("player"):HasNotHeroism or (Unit("player"):HasHeroism and true and Target:HasDeBuffsRefreshable(A.BreathofFireDotDebuff)))) then
         return A.BreathofFire:Show(icon)
     end
     -- chi_burst

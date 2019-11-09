@@ -128,7 +128,7 @@ end
 
 
 local function EvaluateCycleDoom120(unit)
-  return Unit(unit):HasDebuffsRefreshable(A.DoomDebuff)
+  return Unit(unit):HasDeBuffsRefreshable(A.DoomDebuff)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -338,7 +338,7 @@ A[3] = function(icon, isMulti)
         return A.Fireblood:Show(icon)
     end
     -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2
-    if A.Doom:IsReady(unit) and (not Unit(unit):HasDebuffs(A.DoomDebuff) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
+    if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
         return A.Doom:Show(icon)
     end
     -- demonic_strength,if=(buff.wild_imps.stack<6|buff.demonic_power.up)|spell_targets.implosion<2
@@ -374,7 +374,7 @@ A[3] = function(icon, isMulti)
         return A.PowerSiphon:Show(icon)
     end
     -- doom,if=talent.doom.enabled&refreshable&time_to_die>(dot.doom.remains+30)
-    if A.Doom:IsReady(unit) and (A.Doom:IsSpellLearned() and Unit(unit):HasDebuffsRefreshable(A.DoomDebuff) and Unit(unit):TimeToDie() > (Unit(unit):HasDebuffs(A.DoomDebuff) + 30)) then
+    if A.Doom:IsReady(unit) and (A.Doom:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.DoomDebuff) and Unit(unit):TimeToDie() > (Unit(unit):HasDeBuffs(A.DoomDebuff) + 30)) then
         return A.Doom:Show(icon)
     end
     -- hand_of_guldan,if=soul_shard>=5|(soul_shard>=3&cooldown.call_dreadstalkers.remains>4&(!talent.summon_vilefiend.enabled|cooldown.summon_vilefiend.remains>3))

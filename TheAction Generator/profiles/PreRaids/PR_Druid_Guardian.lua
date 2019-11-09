@@ -122,11 +122,11 @@ end
 
 
 local function EvaluateCyclePulverize77(unit)
-    return Unit(unit):HasDebuffsStacks(A.ThrashBearDebuff) == dot.thrash_bear.max_stacks
+    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff) == dot.thrash_bear.max_stacks
 end
 
 local function EvaluateCycleMoonfire88(unit)
-    return Unit(unit):HasDebuffsRefreshable(A.MoonfireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
+    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
 local function EvaluateCycleMoonfire139(unit)
@@ -251,7 +251,7 @@ A[3] = function(icon, isMulti)
         return Swipe:Show(icon)
     end
     -- mangle,if=dot.thrash_bear.ticking
-    if A.Mangle:IsReady(unit) and (Unit(unit):HasDebuffs(A.ThrashBearDebuff)) then
+    if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff)) then
         return A.Mangle:Show(icon)
     end
     -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2

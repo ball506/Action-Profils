@@ -135,19 +135,19 @@ A[3] = function(icon, isMulti)
         return A.FieryBrand:Show(icon)
     end
     -- immolation_aura,if=dot.fiery_brand.ticking
-    if A.ImmolationAura:IsReady(unit) and (Target:HasDebuffs(A.FieryBrandDebuff)) then
+    if A.ImmolationAura:IsReady(unit) and (Target:HasDeBuffs(A.FieryBrandDebuff)) then
         return A.ImmolationAura:Show(icon)
     end
     -- fel_devastation,if=dot.fiery_brand.ticking
-    if A.FelDevastation:IsReady(unit) and (Target:HasDebuffs(A.FieryBrandDebuff)) then
+    if A.FelDevastation:IsReady(unit) and (Target:HasDeBuffs(A.FieryBrandDebuff)) then
         return A.FelDevastation:Show(icon)
     end
     -- infernal_strike,if=dot.fiery_brand.ticking
-    if A.InfernalStrike:IsReady(unit) and (Target:HasDebuffs(A.FieryBrandDebuff)) then
+    if A.InfernalStrike:IsReady(unit) and (Target:HasDeBuffs(A.FieryBrandDebuff)) then
         return A.InfernalStrike:Show(icon)
     end
     -- sigil_of_flame,if=dot.fiery_brand.ticking
-    if A.SigilofFlame:IsReady(unit) and (Target:HasDebuffs(A.FieryBrandDebuff)) then
+    if A.SigilofFlame:IsReady(unit) and (Target:HasDeBuffs(A.FieryBrandDebuff)) then
         return A.SigilofFlame:Show(icon)
     end
     end

@@ -133,7 +133,7 @@ A[3] = function(icon, isMulti)
       A.BattlePotionofIntellect:Show(icon)
     end
     -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-    if A.HolyFire:IsReady(unit) and (Target:HasDebuffs(A.HolyFireDebuff) and (Target:HasDebuffs(A.HolyFireDebuff) <= A.GetGCD() or Target:HasDebuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+    if A.HolyFire:IsReady(unit) and (Target:HasDeBuffs(A.HolyFireDebuff) and (Target:HasDeBuffs(A.HolyFireDebuff) <= A.GetGCD() or Target:HasDeBuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
         return A.HolyFire:Show(icon)
     end
     -- holy_word_chastise,if=spell_targets.holy_nova<5
@@ -141,7 +141,7 @@ A[3] = function(icon, isMulti)
         return A.HolyWordChastise:Show(icon)
     end
     -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.refreshable|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-    if A.HolyFire:IsReady(unit) and (Target:HasDebuffs(A.HolyFireDebuff) and (Target:HasDebuffsRefreshable(A.HolyFireDebuff) or Target:HasDebuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+    if A.HolyFire:IsReady(unit) and (Target:HasDeBuffs(A.HolyFireDebuff) and (Target:HasDeBuffsRefreshable(A.HolyFireDebuff) or Target:HasDeBuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
         return A.HolyFire:Show(icon)
     end
     -- berserking,if=raid_event.adds.in>30|raid_event.adds.remains>8|raid_event.adds.duration<8
@@ -173,7 +173,7 @@ A[3] = function(icon, isMulti)
         return A.ArcanePulse:Show(icon)
     end
     -- holy_fire,if=!dot.holy_fire.ticking&spell_targets.holy_nova<7
-    if A.HolyFire:IsReady(unit) and (not Target:HasDebuffs(A.HolyFireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+    if A.HolyFire:IsReady(unit) and (not Target:HasDeBuffs(A.HolyFireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
         return A.HolyFire:Show(icon)
     end
     -- holy_nova,if=spell_targets.holy_nova>3

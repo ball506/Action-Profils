@@ -132,7 +132,7 @@ end
 
 
 local function EvaluateCycleDoom198(unit)
-  return Unit(unit):HasDebuffsRefreshable(A.DoomDebuff)
+  return Unit(unit):HasDeBuffsRefreshable(A.DoomDebuff)
 end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -420,7 +420,7 @@ A[3] = function(icon, isMulti)
         return A.Implosion:Show(icon)
     end
     -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2
-    if A.Doom:IsReady(unit) and (not Unit(unit):HasDebuffs(A.DoomDebuff) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
+    if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
         return A.Doom:Show(icon)
     end
     -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled
@@ -468,7 +468,7 @@ A[3] = function(icon, isMulti)
         return A.PowerSiphon:Show(icon)
     end
     -- doom,if=talent.doom.enabled&refreshable&time_to_die>(dot.doom.remains+30)
-    if A.Doom:IsReady(unit) and (A.Doom:IsSpellLearned() and Unit(unit):HasDebuffsRefreshable(A.DoomDebuff) and Unit(unit):TimeToDie() > (Unit(unit):HasDebuffs(A.DoomDebuff) + 30)) then
+    if A.Doom:IsReady(unit) and (A.Doom:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.DoomDebuff) and Unit(unit):TimeToDie() > (Unit(unit):HasDeBuffs(A.DoomDebuff) + 30)) then
         return A.Doom:Show(icon)
     end
     -- hand_of_guldan,if=soul_shard>=5|(soul_shard>=3&cooldown.call_dreadstalkers.remains>4&(cooldown.summon_demonic_tyrant.remains>20|(cooldown.summon_demonic_tyrant.remains<gcd*2&talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains<gcd*4&!talent.demonic_consumption.enabled))&(!talent.summon_vilefiend.enabled|cooldown.summon_vilefiend.remains>3))
