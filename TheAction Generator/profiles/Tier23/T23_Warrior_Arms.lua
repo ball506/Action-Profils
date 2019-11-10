@@ -301,11 +301,11 @@ A[2] = function(icon)
     end                                                                                 
 end
 
-S.ExecuteDefault    = Spell(163201)
-S.ExecuteMassacre   = Spell(281000)
+A.ExecuteDefault    = 163201
+A.ExecuteMassacre   = 281000
 
 local function UpdateExecuteID()
-    S.Execute = S.Massacre:IsAvailable() and S.ExecuteMassacre or S.ExecuteDefault
+    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
 end
 
 --- ======= ACTION LISTS =======
@@ -314,6 +314,7 @@ local function APL()
   UpdateRanges()
   Everyone.AoEToggleEnemiesUpdate()
   UpdateExecuteID()
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -324,21 +325,23 @@ local function APL()
                 A.BattlePotionofStrength:Show(icon)
             end
         end
+        
+        --Execute
         local function Execute(unit)
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff)))) then
+            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=!buff.deadly_calm.up&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
-            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):HasBuffs(A.DeadlyCalmBuff) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
+            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
                 return A.Ravager:Show(icon)
             end
             -- colossus_smash,if=debuff.colossus_smash.down
-            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.ColossusSmash:Show(icon)
             end
             -- warbreaker,if=debuff.colossus_smash.down
-            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.Warbreaker:Show(icon)
             end
             -- deadly_calm
@@ -346,7 +349,7 @@ local function APL()
                 return A.DeadlyCalm:Show(icon)
             end
             -- bladestorm,if=rage<30&!buff.deadly_calm.up
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Rage() < 30 and not Unit("player"):HasBuffs(A.DeadlyCalmBuff)) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Rage() < 30 and not Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true)) then
                 return A.Bladestorm:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
@@ -354,15 +357,15 @@ local function APL()
                 return A.Cleave:Show(icon)
             end
             -- slam,if=buff.crushing_assault.up
-            if A.Slam:IsReady(unit) and (Unit("player"):HasBuffs(A.CrushingAssaultBuff)) then
+            if A.Slam:IsReady(unit) and (Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true)) then
                 return A.Slam:Show(icon)
             end
             -- mortal_strike,if=buff.overpower.stack=2&talent.dreadnaught.enabled|buff.executioners_precision.stack=2
-            if A.MortalStrike:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.OverpowerBuff) == 2 and A.Dreadnaught:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.ExecutionersPrecisionBuff) == 2) then
+            if A.MortalStrike:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.OverpowerBuff.ID, true) == 2 and A.Dreadnaught:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.ExecutionersPrecisionBuff.ID, true) == 2) then
                 return A.MortalStrike:Show(icon)
             end
             -- execute,if=buff.deadly_calm.up
-            if A.Execute:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff)) then
+            if A.Execute:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true)) then
                 return A.Execute:Show(icon)
             end
             -- overpower
@@ -374,9 +377,11 @@ local function APL()
                 return A.Execute:Show(icon)
             end
         end
+        
+        --FiveUnit(unit)
         local function FiveUnit(unit)(unit)
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff)))) then
+            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=(!talent.warbreaker.enabled|cooldown.warbreaker.remains<2)
@@ -384,15 +389,15 @@ local function APL()
                 return A.Ravager:Show(icon)
             end
             -- colossus_smash,if=debuff.colossus_smash.down
-            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.ColossusSmash:Show(icon)
             end
             -- warbreaker,if=debuff.colossus_smash.down
-            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.Warbreaker:Show(icon)
             end
             -- bladestorm,if=buff.sweeping_strikes.down&(!talent.deadly_calm.enabled|buff.deadly_calm.down)&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.SweepingStrikesBuff)) and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff))) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) > 4.5 and not A.TestofMight:GetAzeriteRank()) or Unit("player"):HasBuffs(A.TestofMightBuff))) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.SweepingStrikesBuff.ID, true)) and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true))) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 4.5 and not bool(A.TestofMight:GetAzeriteRank())) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) then
                 return A.Bladestorm:Show(icon)
             end
             -- deadly_calm
@@ -404,19 +409,19 @@ local function APL()
                 return A.Cleave:Show(icon)
             end
             -- execute,if=(!talent.cleave.enabled&dot.deep_wounds.remains<2)|(buff.sudden_death.react|buff.stone_heart.react)&(buff.sweeping_strikes.up|cooldown.sweeping_strikes.remains>8)
-            if A.Execute:IsReady(unit) and ((not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff) < 2) or (bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff)) or bool(Unit("player"):HasBuffsStacks(A.StoneHeartBuff))) and (Unit("player"):HasBuffs(A.SweepingStrikesBuff) or A.SweepingStrikes:GetCooldown() > 8)) then
+            if A.Execute:IsReady(unit) and ((not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2) or (bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true)) or bool(Unit("player"):HasBuffsStacks(A.StoneHeartBuff.ID, true))) and (Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) or A.SweepingStrikes:GetCooldown() > 8)) then
                 return A.Execute:Show(icon)
             end
             -- mortal_strike,if=(!talent.cleave.enabled&dot.deep_wounds.remains<2)|buff.sweeping_strikes.up&buff.overpower.stack=2&(talent.dreadnaught.enabled|buff.executioners_precision.stack=2)
-            if A.MortalStrike:IsReady(unit) and ((not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff) < 2) or Unit("player"):HasBuffs(A.SweepingStrikesBuff) and Unit("player"):HasBuffsStacks(A.OverpowerBuff) == 2 and (A.Dreadnaught:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.ExecutionersPrecisionBuff) == 2)) then
+            if A.MortalStrike:IsReady(unit) and ((not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) and Unit("player"):HasBuffsStacks(A.OverpowerBuff.ID, true) == 2 and (A.Dreadnaught:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.ExecutionersPrecisionBuff.ID, true) == 2)) then
                 return A.MortalStrike:Show(icon)
             end
             -- whirlwind,if=debuff.colossus_smash.up|(buff.crushing_assault.up&talent.fervor_of_battle.enabled)
-            if A.Whirlwind:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) or (Unit("player"):HasBuffs(A.CrushingAssaultBuff) and A.FervorofBattle:IsSpellLearned())) then
+            if A.Whirlwind:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or (Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true) and A.FervorofBattle:IsSpellLearned())) then
                 return A.Whirlwind:Show(icon)
             end
             -- whirlwind,if=buff.deadly_calm.up|rage>60
-            if A.Whirlwind:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff) or Unit("player"):Rage() > 60) then
+            if A.Whirlwind:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() > 60) then
                 return A.Whirlwind:Show(icon)
             end
             -- overpower
@@ -428,9 +433,11 @@ local function APL()
                 return A.Whirlwind:Show(icon)
             end
         end
+        
+        --Hac
         local function Hac(unit)
             -- rend,if=remains<=duration*0.3&(!raid_event.adds.up|buff.sweeping_strikes.up)
-            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff) <= A.RendDebuff:BaseDuration * 0.3 and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff))) then
+            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration * 0.3 and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(cooldown.deadly_calm.remains>3|!talent.deadly_calm.enabled)
@@ -454,11 +461,11 @@ local function APL()
                 return A.Warbreaker:Show(icon)
             end
             -- bladestorm,if=(debuff.colossus_smash.up&raid_event.adds.in>target.time_to_die)|raid_event.adds.up&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) and 10000000000 > Unit(unit):TimeToDie()) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) > 4.5 and not A.TestofMight:GetAzeriteRank()) or Unit("player"):HasBuffs(A.TestofMightBuff))) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and 10000000000 > Unit(unit):TimeToDie()) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 4.5 and not bool(A.TestofMight:GetAzeriteRank())) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) then
                 return A.Bladestorm:Show(icon)
             end
             -- overpower,if=!raid_event.adds.up|(raid_event.adds.up&azerite.seismic_wave.enabled)
-            if A.Overpower:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and A.SeismicWave:GetAzeriteRank())) then
+            if A.Overpower:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(A.SeismicWave:GetAzeriteRank()))) then
                 return A.Overpower:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
@@ -466,11 +473,11 @@ local function APL()
                 return A.Cleave:Show(icon)
             end
             -- execute,if=!raid_event.adds.up|(!talent.cleave.enabled&dot.deep_wounds.remains<2)|buff.sudden_death.react
-            if A.Execute:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff) < 2) or bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff))) then
+            if A.Execute:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2) or bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true))) then
                 return A.Execute:Show(icon)
             end
             -- mortal_strike,if=!raid_event.adds.up|(!talent.cleave.enabled&dot.deep_wounds.remains<2)
-            if A.MortalStrike:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff) < 2)) then
+            if A.MortalStrike:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2)) then
                 return A.MortalStrike:Show(icon)
             end
             -- whirlwind,if=raid_event.adds.up
@@ -490,25 +497,27 @@ local function APL()
                 return A.Slam:Show(icon)
             end
         end
+        
+        --SingleUnit(unit)
         local function SingleUnit(unit)(unit)
             -- rend,if=remains<=duration*0.3&debuff.colossus_smash.down
-            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff) <= A.RendDebuff:BaseDuration * 0.3 and bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration * 0.3 and bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff)))) then
+            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=!buff.deadly_calm.up&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
-            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):HasBuffs(A.DeadlyCalmBuff) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
+            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
                 return A.Ravager:Show(icon)
             end
             -- colossus_smash,if=debuff.colossus_smash.down
-            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.ColossusSmash:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.ColossusSmash:Show(icon)
             end
             -- warbreaker,if=debuff.colossus_smash.down
-            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.Warbreaker:Show(icon)
             end
             -- deadly_calm
@@ -516,11 +525,11 @@ local function APL()
                 return A.DeadlyCalm:Show(icon)
             end
             -- execute,if=buff.sudden_death.react
-            if A.Execute:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff))) then
+            if A.Execute:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true))) then
                 return A.Execute:Show(icon)
             end
             -- bladestorm,if=cooldown.mortal_strike.remains&(!talent.deadly_calm.enabled|buff.deadly_calm.down)&((debuff.colossus_smash.up&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (bool(A.MortalStrike:GetCooldown()) and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff))) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) and not A.TestofMight:GetAzeriteRank()) or Unit("player"):HasBuffs(A.TestofMightBuff))) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (bool(A.MortalStrike:GetCooldown()) and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true))) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and not bool(A.TestofMight:GetAzeriteRank())) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) then
                 return A.Bladestorm:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
@@ -536,7 +545,7 @@ local function APL()
                 return A.MortalStrike:Show(icon)
             end
             -- whirlwind,if=talent.fervor_of_battle.enabled&(buff.deadly_calm.up|rage>=60)
-            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (Unit("player"):HasBuffs(A.DeadlyCalmBuff) or Unit("player"):Rage() >= 60)) then
+            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() >= 60)) then
                 return A.Whirlwind:Show(icon)
             end
             -- overpower
@@ -544,14 +553,15 @@ local function APL()
                 return A.Overpower:Show(icon)
             end
             -- whirlwind,if=talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up)
-            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (not A.TestofMight:GetAzeriteRank() or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff))) then
+            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (not bool(A.TestofMight:GetAzeriteRank()) or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true))) then
                 return A.Whirlwind:Show(icon)
             end
             -- slam,if=!talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up|buff.deadly_calm.up|rage>=60)
-            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and (not A.TestofMight:GetAzeriteRank() or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff) or Unit("player"):HasBuffs(A.DeadlyCalmBuff) or Unit("player"):Rage() >= 60)) then
+            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and (not bool(A.TestofMight:GetAzeriteRank()) or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() >= 60)) then
                 return A.Slam:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -568,27 +578,27 @@ local function APL()
                 A.BattlePotionofStrength:Show(icon)
             end
             -- blood_fury,if=debuff.colossus_smash.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff)) then
+            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=debuff.colossus_smash.up
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff)) then
+            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=debuff.colossus_smash.down&cooldown.mortal_strike.remains>1.5&rage<50
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff)) and A.MortalStrike:GetCooldown() > 1.5 and Unit("player"):Rage() < 50) then
+            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and A.MortalStrike:GetCooldown() > 1.5 and Unit("player"):Rage() < 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment,if=debuff.colossus_smash.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=debuff.colossus_smash.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff)) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=debuff.colossus_smash.up
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff)) then
+            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,name=ramping_amplitude_gigavolt_engine
@@ -600,7 +610,7 @@ local function APL()
                 return A.Avatar:Show(icon)
             end
             -- sweeping_strikes,if=spell_targets.whirlwind>1&(cooldown.bladestorm.remains>10|cooldown.colossus_smash.remains>8|azerite.test_of_might.enabled)
-            if A.SweepingStrikes:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and (A.Bladestorm:GetCooldown() > 10 or A.ColossusSmash:GetCooldown() > 8 or A.TestofMight:GetAzeriteRank())) then
+            if A.SweepingStrikes:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and (A.Bladestorm:GetCooldown() > 10 or A.ColossusSmash:GetCooldown() > 8 or bool(A.TestofMight:GetAzeriteRank()))) then
                 return A.SweepingStrikes:Show(icon)
             end
             -- run_action_list,name=hac,if=raid_event.adds.exists
@@ -612,7 +622,7 @@ local function APL()
                 return FiveUnitunit(unit);
             end
             -- run_action_list,name=execute,if=(talent.massacre.enabled&target.health.pct<35)|target.health.pct<20
-            if ((A.Massacre:IsSpellLearned() and Unit(unit):HealthPercent < 35) or Unit(unit):HealthPercent < 20) then
+            if ((A.Massacre:IsSpellLearned() and Unit(unit):HealthPercent() < 35) or Unit(unit):HealthPercent() < 20) then
                 return Execute(unit);
             end
             -- run_action_list,name=single_target

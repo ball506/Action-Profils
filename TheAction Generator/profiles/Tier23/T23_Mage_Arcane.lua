@@ -375,21 +375,22 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Burn, Conserve, Movement
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
             -- arcane_intellect
-            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff, true) then
+            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true, true) then
                 return A.ArcaneIntellect:Show(icon)
             end
             -- arcane_familiar
-            if A.ArcaneFamiliar:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneFamiliarBuff) then
+            if A.ArcaneFamiliar:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneFamiliarBuff.ID, true) then
                 return A.ArcaneFamiliar:Show(icon)
             end
             -- variable,name=conserve_mana,op=set,value=60+20*azerite.equipoise.enabled
             if (true) then
-                VarConserveMana = 60 + 20 * num(A.Equipoise:GetAzeriteRank())
+                VarConserveMana = 60 + 20 * A.Equipoise:GetAzeriteRank()
             end
             -- snapshot_stats
             -- mirror_image
@@ -405,6 +406,8 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneBlast:Show(icon)
             end
         end
+        
+        --Burn
         local function Burn(unit)
             -- variable,name=total_burns,op=add,value=1,if=!burn_phase
             if (not BurnPhase:On()) then
@@ -427,19 +430,19 @@ A[3] = function(icon, isMulti)
                 return A.MirrorImage:Show(icon)
             end
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
             -- arcane_blast,if=buff.rule_of_threes.up&talent.overpowered.enabled&active_enemies<3
-            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff) and A.Overpowered:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
+            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true) and A.Overpowered:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneBlast:Show(icon)
             end
             -- lights_judgment,if=buff.arcane_power.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
             -- rune_of_power,if=!buff.arcane_power.up&(mana.pct>=50|cooldown.arcane_power.remains=0)&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
-            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff) and (Unit("player"):ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
+            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Unit("player"):ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
                 return A.RuneofPower:Show(icon)
             end
             -- berserking
@@ -464,11 +467,11 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- presence_of_mind,if=(talent.rune_of_power.enabled&buff.rune_of_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time)|buff.arcane_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time
-            if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
+            if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
                 return A.PresenceofMind:Show(icon)
             end
             -- potion,if=buff.arcane_power.up&(buff.berserking.up|buff.blood_fury.up|!(race.troll|race.orc))
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff) and (Unit("player"):HasBuffs(A.BerserkingBuff) or Unit("player"):HasBuffs(A.BloodFuryBuff) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc")))) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc")))) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- arcane_orb,if=buff.arcane_charge.stack=0|(active_enemies<3|(active_enemies<2&talent.resonance.enabled))
@@ -484,7 +487,7 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneExplosion:Show(icon)
             end
             -- arcane_missiles,if=buff.clearcasting.react&active_enemies<3&(talent.amplification.enabled|(!talent.overpowered.enabled&azerite.arcane_pummeling.rank>=2)|buff.arcane_power.down),chain=1
-            if A.ArcaneMissiles:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and (A.Amplification:IsSpellLearned() or (not A.Overpowered:IsSpellLearned() and A.ArcanePummeling:GetAzeriteRank() >= 2) or bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff)))) then
+            if A.ArcaneMissiles:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and (A.Amplification:IsSpellLearned() or (not A.Overpowered:IsSpellLearned() and A.ArcanePummeling:GetAzeriteRank() >= 2) or bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)))) then
                 return A.ArcaneMissiles:Show(icon)
             end
             -- arcane_blast,if=active_enemies<3
@@ -504,6 +507,8 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneBarrage:Show(icon)
             end
         end
+        
+        --Conserve
         local function Conserve(unit)
             -- mirror_image
             if A.MirrorImage:IsReady(unit) and A.BurstIsON(unit) then
@@ -514,7 +519,7 @@ A[3] = function(icon, isMulti)
                 return A.ChargedUp:Show(icon)
             end
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
             -- arcane_orb,if=buff.arcane_charge.stack<=2&(cooldown.arcane_power.remains>10|active_enemies<=2)
@@ -522,11 +527,11 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneOrb:Show(icon)
             end
             -- arcane_blast,if=buff.rule_of_threes.up&buff.arcane_charge.stack>3
-            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff) and Unit("player"):ArcaneChargesP > 3) then
+            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true) and Unit("player"):ArcaneChargesP > 3) then
                 return A.ArcaneBlast:Show(icon)
             end
             -- use_item,name=tidestorm_codex,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff)) and A.ArcanePower:GetCooldown() > 20) then
+            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
                 A.TidestormCodex:Show(icon)
             end
             -- rune_of_power,if=buff.arcane_charge.stack=buff.arcane_charge.max_stack&(full_recharge_time<=execute_time|full_recharge_time<=cooldown.arcane_power.remains|target.time_to_die<=cooldown.arcane_power.remains)
@@ -534,7 +539,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- arcane_missiles,if=mana.pct<=95&buff.clearcasting.react&active_enemies<3,chain=1
-            if A.ArcaneMissiles:IsReady(unit) and (Unit("player"):ManaPercentageP() <= 95 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
+            if A.ArcaneMissiles:IsReady(unit) and (Unit("player"):ManaPercentageP() <= 95 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneMissiles:Show(icon)
             end
             -- arcane_barrage,if=((buff.arcane_charge.stack=buff.arcane_charge.max_stack)&((mana.pct<=variable.conserve_mana)|(talent.rune_of_power.enabled&cooldown.arcane_power.remains>cooldown.rune_of_power.full_recharge_time&mana.pct<=variable.conserve_mana+25))|(talent.arcane_orb.enabled&cooldown.arcane_orb.remains<=gcd&cooldown.arcane_power.remains>10))|mana.pct<=(variable.conserve_mana-10)
@@ -558,6 +563,8 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneBarrage:Show(icon)
             end
         end
+        
+        --Movement
         local function Movement(unit)
             -- blink_any,if=movement.distance>=10
             if A.BlinkAny:IsReady(unit) and (movement.distance >= 10) then
@@ -580,6 +587,7 @@ A[3] = function(icon, isMulti)
                 return A.Supernova:Show(icon)
             end
         end
+        
 -- call precombat
 if not Player:AffectingCombat() and not Player:IsCasting() then
   local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end

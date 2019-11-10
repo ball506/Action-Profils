@@ -3,15 +3,15 @@ local function FutureShard ()
   if not Player:IsCasting() then
     return Shard
   else
-    if Player:IsCasting(S.UnstableAffliction) 
-        or Player:IsCasting(S.SeedOfCorruption) then
+    if Player:IsCasting(A.UnstableAffliction) 
+        or Player:IsCasting(A.SeedOfCorruption) then
       return Shard - 1
-    elseif Player:IsCasting(S.SummonDoomGuard) 
-        or Player:IsCasting(S.SummonDoomGuardSuppremacy) 
-        or Player:IsCasting(S.SummonInfernal) 
-        or Player:IsCasting(S.SummonInfernalSuppremacy) 
-        or Player:IsCasting(S.GrimoireFelhunter) 
-        or Player:IsCasting(S.SummonFelhunter) then
+    elseif Player:IsCasting(A.SummonDoomGuard) 
+        or Player:IsCasting(A.SummonDoomGuardSuppremacy) 
+        or Player:IsCasting(A.SummonInfernal) 
+        or Player:IsCasting(A.SummonInfernalSuppremacy) 
+        or Player:IsCasting(A.GrimoireFelhunter) 
+        or Player:IsCasting(A.SummonFelhunter) then
       return Shard - 1
     else
       return Shard

@@ -307,8 +307,8 @@ A[2] = function(icon)
     end                                                                                 
 end
 
-S.FrozenOrb.EffectID = 84721
-S.Frostbolt:RegisterInFlight()
+--S.FrozenOrb.EffectID = 84721
+--S.Frostbolt:RegisterInFlight()
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -327,12 +327,13 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Aoe, Cooldowns, Essences, Movement, Single, TalentRop
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
             -- arcane_intellect
-            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff, true) then
+            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true, true) then
                 return A.ArcaneIntellect:Show(icon)
             end
             -- summon_water_elemental
@@ -357,6 +358,8 @@ A[3] = function(icon, isMulti)
                 return A.Frostbolt:Show(icon)
             end
         end
+        
+        --Aoe
         local function Aoe(unit)
             -- frozen_orb
             if A.FrozenOrb:IsReady(unit) then
@@ -379,11 +382,11 @@ A[3] = function(icon, isMulti)
                 return A.IceNova:Show(icon)
             end
             -- flurry,if=prev_gcd.1.ebonbolt|buff.brain_freeze.react&(prev_gcd.1.frostbolt&(buff.icicles.stack<4|!talent.glacial_spike.enabled)|prev_gcd.1.glacial_spike)
-            if A.Flurry:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Ebonbolt) or bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff)) and (Unit("player"):GetSpellLastCast(A.Frostbolt) and (Unit("player"):HasBuffsStacks(A.IciclesBuff) < 4 or not A.GlacialSpike:IsSpellLearned()) or Unit("player"):GetSpellLastCast(A.GlacialSpike))) then
+            if A.Flurry:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Ebonbolt) or bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) and (Unit("player"):GetSpellLastCast(A.Frostbolt) and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) < 4 or not A.GlacialSpike:IsSpellLearned()) or Unit("player"):GetSpellLastCast(A.GlacialSpike))) then
                 return A.Flurry:Show(icon)
             end
             -- ice_lance,if=buff.fingers_of_frost.react
-            if A.IceLance:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.FingersofFrostBuff))) then
+            if A.IceLance:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true))) then
                 return A.IceLance:Show(icon)
             end
             -- ray_of_frost
@@ -403,11 +406,11 @@ A[3] = function(icon, isMulti)
                 return A.ConeofCold:Show(icon)
             end
             -- use_item,name=tidestorm_codex,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff))) then
+            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff))) then
+            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 A.:Show(icon)
             end
             -- frostbolt
@@ -423,6 +426,8 @@ A[3] = function(icon, isMulti)
                 return A.IceLance:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:IsReady(unit) then
@@ -449,7 +454,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- use_item,name=balefire_branch,if=!talent.glacial_spike.enabled|buff.brain_freeze.react&prev_gcd.1.glacial_spike
-            if A.BalefireBranch:IsReady(unit) and (not A.GlacialSpike:IsSpellLearned() or bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff)) and Unit("player"):GetSpellLastCast(A.GlacialSpike)) then
+            if A.BalefireBranch:IsReady(unit) and (not A.GlacialSpike:IsSpellLearned() or bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) and Unit("player"):GetSpellLastCast(A.GlacialSpike)) then
                 A.BalefireBranch:Show(icon)
             end
             -- use_items
@@ -474,61 +479,67 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
         end
+        
+        --Essences
         local function Essences(unit)
             -- focused_azerite_beam,if=buff.rune_of_power.down|active_enemies>3
-            if A.FocusedAzeriteBeam:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.FocusedAzeriteBeam:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- memory_of_lucid_dreams,if=active_enemies<5&(buff.icicles.stack<=1|!talent.glacial_spike.enabled)&cooldown.frozen_orb.remains>10
-            if A.MemoryofLucidDreams:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (Unit("player"):HasBuffsStacks(A.IciclesBuff) <= 1 or not A.GlacialSpike:IsSpellLearned()) and A.FrozenOrb:GetCooldown() > 10) then
+            if A.MemoryofLucidDreams:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) <= 1 or not A.GlacialSpike:IsSpellLearned()) and A.FrozenOrb:GetCooldown() > 10) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy,if=(talent.glacial_spike.enabled&buff.icicles.stack=5&(buff.brain_freeze.react|prev_gcd.1.ebonbolt))|((active_enemies>3|!talent.glacial_spike.enabled)&(prev_gcd.1.frozen_orb|ground_aoe.frozen_orb.remains>5))
-            if A.BloodoftheEnemy:IsReady(unit) and ((A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff)) or Unit("player"):GetSpellLastCast(A.Ebonbolt))) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 3 or not A.GlacialSpike:IsSpellLearned()) and (Unit("player"):GetSpellLastCast(A.FrozenOrb) or Player:FrozenOrbGroundAoeRemains() > 5))) then
+            if A.BloodoftheEnemy:IsReady(unit) and ((A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Ebonbolt))) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 3 or not A.GlacialSpike:IsSpellLearned()) and (Unit("player"):GetSpellLastCast(A.FrozenOrb) or Player:FrozenOrbGroundAoeRemains() > 5))) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- purifying_blast,if=buff.rune_of_power.down|active_enemies>3
-            if A.PurifyingBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.PurifyingBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=buff.rune_of_power.down|active_enemies>3
-            if A.RippleInSpace:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.RippleInSpace:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.RippleInSpace:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down
-            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff))) then
+            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff)) then
+            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- worldvein_resonance,if=buff.rune_of_power.down|active_enemies>3
-            if A.WorldveinResonance:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.WorldveinResonance:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.WorldveinResonance:Show(icon)
             end
         end
+        
+        --Movement
         local function Movement(unit)
             -- blink_any,if=movement.distance>10
             if A.BlinkAny:IsReady(unit) and (movement.distance > 10) then
                 return A.BlinkAny:Show(icon)
             end
             -- ice_floes,if=buff.ice_floes.down
-            if A.IceFloes:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IceFloesBuff))) then
+            if A.IceFloes:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IceFloesBuff.ID, true))) then
                 return A.IceFloes:Show(icon)
             end
         end
+        
+        --Single
         local function Single(unit)
             -- ice_nova,if=cooldown.ice_nova.ready&debuff.winters_chill.up
-            if A.IceNova:IsReady(unit) and (A.IceNova:HasCooldownUps and Unit(unit):HasDeBuffs(A.WintersChillDebuff)) then
+            if A.IceNova:IsReady(unit) and (A.IceNova:GetCooldown() == 0 and Unit(unit):HasDeBuffs(A.WintersChillDebuff.ID, true)) then
                 return A.IceNova:Show(icon)
             end
             -- flurry,if=talent.ebonbolt.enabled&prev_gcd.1.ebonbolt&buff.brain_freeze.react
-            if A.Flurry:IsReady(unit) and (A.Ebonbolt:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.Ebonbolt) and bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff))) then
+            if A.Flurry:IsReady(unit) and (A.Ebonbolt:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.Ebonbolt) and bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true))) then
                 return A.Flurry:Show(icon)
             end
             -- flurry,if=prev_gcd.1.glacial_spike&buff.brain_freeze.react
-            if A.Flurry:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.GlacialSpike) and bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff))) then
+            if A.Flurry:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.GlacialSpike) and bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true))) then
                 return A.Flurry:Show(icon)
             end
             -- call_action_list,name=essences
@@ -548,11 +559,11 @@ A[3] = function(icon, isMulti)
                 return A.CometStorm:Show(icon)
             end
             -- ebonbolt,if=buff.icicles.stack=5&!buff.brain_freeze.react
-            if A.Ebonbolt:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.IciclesBuff) == 5 and not bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff))) then
+            if A.Ebonbolt:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and not bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true))) then
                 return A.Ebonbolt:Show(icon)
             end
             -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down
-            if A.GlacialSpike:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff)) or Unit("player"):GetSpellLastCast(A.Ebonbolt) or A.IncantersFlow:IsSpellLearned() and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() > incanters_flow_time_to.5.up and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.4.down) then
+            if A.GlacialSpike:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Ebonbolt) or A.IncantersFlow:IsSpellLearned() and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() > incanters_flow_time_to.5.up and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.4.down) then
                 return A.GlacialSpike:Show(icon)
             end
             -- ice_nova
@@ -560,11 +571,11 @@ A[3] = function(icon, isMulti)
                 return A.IceNova:Show(icon)
             end
             -- use_item,name=tidestorm_codex,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff))) then
+            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff))) then
+            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 A.:Show(icon)
             end
             -- frostbolt
@@ -580,9 +591,11 @@ A[3] = function(icon, isMulti)
                 return A.IceLance:Show(icon)
             end
         end
+        
+        --TalentRop
         local function TalentRop(unit)
             -- rune_of_power,if=talent.glacial_spike.enabled&buff.icicles.stack=5&(buff.brain_freeze.react|talent.ebonbolt.enabled&cooldown.ebonbolt.remains<cast_time)
-            if A.RuneofPower:IsReady(unit) and (A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff)) or A.Ebonbolt:IsSpellLearned() and A.Ebonbolt:GetCooldown() < A.RuneofPower:GetSpellCastTime())) then
+            if A.RuneofPower:IsReady(unit) and (A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or A.Ebonbolt:IsSpellLearned() and A.Ebonbolt:GetCooldown() < A.RuneofPower:GetSpellCastTime())) then
                 return A.RuneofPower:Show(icon)
             end
             -- rune_of_power,if=!talent.glacial_spike.enabled&(talent.ebonbolt.enabled&cooldown.ebonbolt.remains<cast_time|talent.comet_storm.enabled&cooldown.comet_storm.remains<cast_time|talent.ray_of_frost.enabled&cooldown.ray_of_frost.remains<cast_time|charges_fractional>1.9)
@@ -590,6 +603,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
         end
+        
 -- call precombat
 if not Player:AffectingCombat() and (not Player:IsCasting() or Player:IsCasting(S.WaterElemental)) then
   local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end

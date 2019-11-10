@@ -303,6 +303,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Aoe, St
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -313,6 +314,8 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
         end
+        
+        --Aoe
         local function Aoe(unit)
             -- thunder_clap
             if A.ThunderClap:IsReady(unit) then
@@ -335,7 +338,7 @@ A[3] = function(icon, isMulti)
                 return A.Ravager:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
                 return A.ShieldBlock:Show(icon)
             end
             -- shield_slam
@@ -343,21 +346,23 @@ A[3] = function(icon, isMulti)
                 return A.ShieldSlam:Show(icon)
             end
         end
+        
+        --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff)) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ThunderClap:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down&azerite.brace_for_impact.rank>azerite.deafening_crash.rank&buff.avatar.up
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff)) and A.BraceForImpact:GetAzeriteRank() > A.DeafeningCrash:GetAzeriteRank() and Unit("player"):HasBuffs(A.AvatarBuff)) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true)) and A.BraceForImpact:GetAzeriteRank() > A.DeafeningCrash:GetAzeriteRank() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ShieldBlock:Show(icon)
             end
             -- shield_slam,if=azerite.brace_for_impact.rank>azerite.deafening_crash.rank&buff.avatar.up&buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (A.BraceForImpact:GetAzeriteRank() > A.DeafeningCrash:GetAzeriteRank() and Unit("player"):HasBuffs(A.AvatarBuff) and Unit("player"):HasBuffs(A.ShieldBlockBuff)) then
+            if A.ShieldSlam:IsReady(unit) and (A.BraceForImpact:GetAzeriteRank() > A.DeafeningCrash:GetAzeriteRank() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true)) then
                 return A.ShieldSlam:Show(icon)
             end
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff))) then
+            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 return A.ThunderClap:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
@@ -365,7 +370,7 @@ A[3] = function(icon, isMulti)
                 return A.DemoralizingShout:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
                 return A.ShieldBlock:Show(icon)
             end
             -- shield_slam
@@ -394,6 +399,7 @@ A[3] = function(icon, isMulti)
             end
         end
         
+        
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
@@ -408,7 +414,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=cooldown.avatar.remains>20
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down
-            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff))) then
+            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true))) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- blood_fury
@@ -436,11 +442,11 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- potion,if=buff.avatar.up|target.time_to_die<25
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff) or Unit(unit):TimeToDie() < 25) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:HasCooldownUps)) then
+            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
                 return A.IgnorePain:Show(icon)
             end
             -- avatar

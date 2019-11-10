@@ -307,6 +307,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Movement, SingleUnit(unit)
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -317,31 +318,35 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- recklessness,if=!talent.furious_slash.enabled&!talent.reckless_abandon.enabled
-            if A.Recklessness:IsReady(unit) and Unit("player"):HasBuffsDown(A.RecklessnessBuff) and A.BurstIsON(unit) and (not A.FuriousSlash:IsSpellLearned() and not A.RecklessAbandon:IsSpellLearned()) then
+            if A.Recklessness:IsReady(unit) and Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true) and A.BurstIsON(unit) and (not A.FuriousSlash:IsSpellLearned() and not A.RecklessAbandon:IsSpellLearned()) then
                 return A.Recklessness:Show(icon)
             end
         end
+        
+        --Movement
         local function Movement(unit)
             -- heroic_leap
             if A.HeroicLeap:IsReady(unit) then
                 return A.HeroicLeap:Show(icon)
             end
         end
+        
+        --SingleUnit(unit)
         local function SingleUnit(unit)(unit)
             -- siegebreaker
             if A.Siegebreaker:IsReady(unit) and A.BurstIsON(unit) then
                 return A.Siegebreaker:Show(icon)
             end
             -- rampage,if=buff.recklessness.up|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-            if A.Rampage:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff) < A.GetGCD() or Unit("player"):Rage() > 90))) then
+            if A.Rampage:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90))) then
                 return A.Rampage:Show(icon)
             end
             -- execute,if=buff.enrage.up
-            if A.Execute:IsReady(unit) and (Unit("player"):HasBuffs(A.EnrageBuff)) then
+            if A.Execute:IsReady(unit) and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true)) then
                 return A.Execute:Show(icon)
             end
             -- bloodthirst,if=buff.enrage.down
-            if A.Bloodthirst:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.EnrageBuff))) then
+            if A.Bloodthirst:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.EnrageBuff.ID, true))) then
                 return A.Bloodthirst:Show(icon)
             end
             -- raging_blow,if=charges=2
@@ -353,11 +358,11 @@ A[3] = function(icon, isMulti)
                 return A.Bloodthirst:Show(icon)
             end
             -- bladestorm,if=prev_gcd.1.rampage&(debuff.siegebreaker.up|!talent.siegebreaker.enabled)
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Rampage) and (Unit(unit):HasDeBuffs(A.SiegebreakerDebuff) or not A.Siegebreaker:IsSpellLearned())) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Rampage) and (Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) or not A.Siegebreaker:IsSpellLearned())) then
                 return A.Bladestorm:Show(icon)
             end
             -- dragon_roar,if=buff.enrage.up
-            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.EnrageBuff)) then
+            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true)) then
                 return A.DragonRoar:Show(icon)
             end
             -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90)
@@ -373,6 +378,7 @@ A[3] = function(icon, isMulti)
                 return A.Whirlwind:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -399,11 +405,11 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- furious_slash,if=talent.furious_slash.enabled&(buff.furious_slash.stack<3|buff.furious_slash.remains<3|(cooldown.recklessness.remains<3&buff.furious_slash.remains<9))
-            if A.FuriousSlash:IsReady(unit) and (A.FuriousSlash:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.FuriousSlashBuff) < 3 or Unit("player"):HasBuffs(A.FuriousSlashBuff) < 3 or (A.Recklessness:GetCooldown() < 3 and Unit("player"):HasBuffs(A.FuriousSlashBuff) < 9))) then
+            if A.FuriousSlash:IsReady(unit) and (A.FuriousSlash:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.FuriousSlashBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.FuriousSlashBuff.ID, true) < 3 or (A.Recklessness:GetCooldown() < 3 and Unit("player"):HasBuffs(A.FuriousSlashBuff.ID, true) < 9))) then
                 return A.FuriousSlash:Show(icon)
             end
             -- bloodthirst,if=equipped.kazzalax_fujiedas_fury&(buff.fujiedas_fury.down|remains<2)
-            if A.Bloodthirst:IsReady(unit) and (A.KazzalaxFujiedasFury:IsExists and (bool(Unit("player"):HasBuffsDown(A.FujiedasFuryBuff)) or remains < 2)) then
+            if A.Bloodthirst:IsReady(unit) and (A.KazzalaxFujiedasFury:IsExists() and (bool(Unit("player"):HasBuffsDown(A.FujiedasFuryBuff.ID, true)) or remains < 2)) then
                 return A.Bloodthirst:Show(icon)
             end
             -- rampage,if=cooldown.recklessness.remains<3
@@ -415,27 +421,27 @@ A[3] = function(icon, isMulti)
                 return A.Recklessness:Show(icon)
             end
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff)) then
+            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
                 return A.Whirlwind:Show(icon)
             end
             -- blood_fury,if=buff.recklessness.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=buff.recklessness.up
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- lights_judgment,if=buff.recklessness.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.recklessness.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=buff.recklessness.up
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
             -- run_action_list,name=single_target

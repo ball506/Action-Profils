@@ -316,7 +316,7 @@ local function ExecuteRange ()
 end
 
 local function EvaluateCycleShadowWordDeath88(unit)
-    return Unit(unit):TimeToDie() < 3 or bool(Unit("player"):HasBuffsDown(A.VoidformBuff))
+    return Unit(unit):TimeToDie() < 3 or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true))
 end
 
 local function EvaluateCycleMindBlast107(unit)
@@ -324,15 +324,15 @@ local function EvaluateCycleMindBlast107(unit)
 end
 
 local function EvaluateCycleShadowWordPain118(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > ((num(true) - 1.2 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarSwpTraitRanksCheck)) and (not A.Misery:IsSpellLearned())
+    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) and Unit(unit):TimeToDie() > ((num(true) - 1.2 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarSwpTraitRanksCheck)) and (not A.Misery:IsSpellLearned())
 end
 
 local function EvaluateCycleVampiricTouch135(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff)) and (Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtTraitRanksCheck))
+    return (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff.ID, true)) and (Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtTraitRanksCheck))
 end
 
 local function EvaluateCycleVampiricTouch150(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff)) and ((A.Misery:IsSpellLearned() and Unit(unit):TimeToDie() > ((1.0 + 2.0 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtMisTraitRanksCheck * (VarVtMisSdCheck * MultiUnits:GetByRangeInCombat(40, 5, 10)))))
+    return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true)) and ((A.Misery:IsSpellLearned() and Unit(unit):TimeToDie() > ((1.0 + 2.0 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtMisTraitRanksCheck * (VarVtMisSdCheck * MultiUnits:GetByRangeInCombat(40, 5, 10)))))
 end
 
 local function EvaluateCycleMindSear169(unit)
@@ -356,6 +356,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cleave, Single
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -386,7 +387,7 @@ A[3] = function(icon, isMulti)
                 VarVtMisSdCheck = 1 - 0.014 * A.SearingDialogue:GetAzeriteRank()
             end
             -- shadowform,if=!buff.shadowform.up
-            if A.Shadowform:IsReady(unit) and Unit("player"):HasBuffsDown(A.ShadowformBuff) and (not Unit("player"):HasBuffs(A.ShadowformBuff)) then
+            if A.Shadowform:IsReady(unit) and Unit("player"):HasBuffsDown(A.ShadowformBuff.ID, true) and (not Unit("player"):HasBuffs(A.ShadowformBuff.ID, true)) then
                 return A.Shadowform:Show(icon)
             end
             -- mind_blast,if=spell_targets.mind_sear<2|azerite.thought_harvester.rank=0
@@ -394,25 +395,27 @@ A[3] = function(icon, isMulti)
                 return A.MindBlast:Show(icon)
             end
             -- vampiric_touch
-            if A.VampiricTouch:IsReady(unit) and Unit("player"):HasDebuffsDown(A.VampiricTouchDebuff) and inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then
+            if A.VampiricTouch:IsReady(unit) and Unit("player"):HasDebuffsDown(A.VampiricTouchDebuff.ID, true) and inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then
                 return A.VampiricTouch:Show(icon)
             end
         end
+        
+        --Cleave
         local function Cleave(unit)
             -- void_eruption
             if A.VoidEruption:IsReady(unit) then
                 return A.VoidEruption:Show(icon)
             end
             -- dark_ascension,if=buff.voidform.down
-            if A.DarkAscension:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.VoidformBuff))) then
+            if A.DarkAscension:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true))) then
                 return A.DarkAscension:Show(icon)
             end
             -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-            if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.VampiricTouchDebuff) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
+            if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
                 return A.VampiricTouch:Show(icon)
             end
             -- mind_sear,if=buff.harvested_thoughts.up
-            if A.MindSear:IsReady(unit) and (Unit("player"):HasBuffs(A.HarvestedThoughtsBuff)) then
+            if A.MindSear:IsReady(unit) and (Unit("player"):HasBuffs(A.HarvestedThoughtsBuff.ID, true)) then
                 return A.MindSear:Show(icon)
             end
             -- void_bolt
@@ -426,11 +429,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- surrender_to_madness,if=buff.voidform.stack>10+(10*buff.bloodlust.up)
-            if A.SurrenderToMadness:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.VoidformBuff) > 10 + (10 * num(Unit("player"):HasHeroism))) then
+            if A.SurrenderToMadness:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 10 + (10 * num(Unit("player"):HasHeroism))) then
                 return A.SurrenderToMadness:Show(icon)
             end
             -- dark_void,if=raid_event.adds.in>10&(dot.shadow_word_pain.refreshable|target.time_to_die>30)
-            if A.DarkVoid:IsReady(unit) and (10000000000 > 10 and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) or Unit(unit):TimeToDie() > 30)) then
+            if A.DarkVoid:IsReady(unit) and (10000000000 > 10 and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) or Unit(unit):TimeToDie() > 30)) then
                 return A.DarkVoid:Show(icon)
             end
             -- mindbender
@@ -466,7 +469,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- void_torrent,if=buff.voidform.up
-            if A.VoidTorrent:IsReady(unit) and (Unit("player"):HasBuffs(A.VoidformBuff)) then
+            if A.VoidTorrent:IsReady(unit) and (Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) then
                 return A.VoidTorrent:Show(icon)
             end
             -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
@@ -484,13 +487,15 @@ A[3] = function(icon, isMulti)
                 return A.ShadowWordPain:Show(icon)
             end
         end
+        
+        --Single
         local function Single(unit)
             -- void_eruption
             if A.VoidEruption:IsReady(unit) then
                 return A.VoidEruption:Show(icon)
             end
             -- dark_ascension,if=buff.voidform.down
-            if A.DarkAscension:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.VoidformBuff))) then
+            if A.DarkAscension:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true))) then
                 return A.DarkAscension:Show(icon)
             end
             -- void_bolt
@@ -498,7 +503,7 @@ A[3] = function(icon, isMulti)
                 return A.VoidBolt:Show(icon)
             end
             -- mind_sear,if=buff.harvested_thoughts.up&cooldown.void_bolt.remains>=1.5&azerite.searing_dialogue.rank>=1
-            if A.MindSear:IsReady(unit) and (Unit("player"):HasBuffs(A.HarvestedThoughtsBuff) and A.VoidBolt:GetCooldown() >= 1.5 and A.SearingDialogue:GetAzeriteRank() >= 1) then
+            if A.MindSear:IsReady(unit) and (Unit("player"):HasBuffs(A.HarvestedThoughtsBuff.ID, true) and A.VoidBolt:GetCooldown() >= 1.5 and A.SearingDialogue:GetAzeriteRank() >= 1) then
                 return A.MindSear:Show(icon)
             end
             -- shadow_word_death,if=target.time_to_die<3|cooldown.shadow_word_death.charges=2|(cooldown.shadow_word_death.charges=1&cooldown.shadow_word_death.remains<gcd.max)
@@ -506,7 +511,7 @@ A[3] = function(icon, isMulti)
                 return A.ShadowWordDeath:Show(icon)
             end
             -- surrender_to_madness,if=buff.voidform.stack>10+(10*buff.bloodlust.up)
-            if A.SurrenderToMadness:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.VoidformBuff) > 10 + (10 * num(Unit("player"):HasHeroism))) then
+            if A.SurrenderToMadness:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 10 + (10 * num(Unit("player"):HasHeroism))) then
                 return A.SurrenderToMadness:Show(icon)
             end
             -- dark_void,if=raid_event.adds.in>10
@@ -518,7 +523,7 @@ A[3] = function(icon, isMulti)
                 return A.Mindbender:Show(icon)
             end
             -- shadow_word_death,if=!buff.voidform.up|(cooldown.shadow_word_death.charges=2&buff.voidform.stack<15)
-            if A.ShadowWordDeath:IsReady(unit) and (not Unit("player"):HasBuffs(A.VoidformBuff) or (A.ShadowWordDeath:ChargesP() == 2 and Unit("player"):HasBuffsStacks(A.VoidformBuff) < 15)) then
+            if A.ShadowWordDeath:IsReady(unit) and (not Unit("player"):HasBuffs(A.VoidformBuff.ID, true) or (A.ShadowWordDeath:ChargesP() == 2 and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) < 15)) then
                 return A.ShadowWordDeath:Show(icon)
             end
             -- shadow_crash,if=raid_event.adds.in>5&raid_event.adds.duration<20
@@ -530,15 +535,15 @@ A[3] = function(icon, isMulti)
                 return A.MindBlast:Show(icon)
             end
             -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
-            if A.VoidTorrent:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff) > 4 and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff) > 4 and Unit("player"):HasBuffs(A.VoidformBuff)) then
+            if A.VoidTorrent:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID, true) > 4 and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) > 4 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) then
                 return A.VoidTorrent:Show(icon)
             end
             -- shadow_word_pain,if=refreshable&target.time_to_die>4&!talent.misery.enabled&!talent.dark_void.enabled
-            if A.ShadowWordPain:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff) and Unit(unit):TimeToDie() > 4 and not A.Misery:IsSpellLearned() and not A.DarkVoid:IsSpellLearned()) then
+            if A.ShadowWordPain:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) and Unit(unit):TimeToDie() > 4 and not A.Misery:IsSpellLearned() and not A.DarkVoid:IsSpellLearned()) then
                 return A.ShadowWordPain:Show(icon)
             end
             -- vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-            if A.VampiricTouch:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff) and Unit(unit):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff))) then
+            if A.VampiricTouch:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff.ID, true) and Unit(unit):TimeToDie() > 6 or (A.Misery:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true))) then
                 return A.VampiricTouch:Show(icon)
             end
             -- mind_sear,if=azerite.searing_dialogue.rank>=3,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
@@ -555,6 +560,7 @@ A[3] = function(icon, isMulti)
             end
         end
         
+        
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
@@ -564,12 +570,12 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- use_item,slot=trinket2
             -- potion,if=buff.bloodlust.react|target.time_to_die<=80|target.health.pct<35
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent < 35) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent() < 35) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
             if (true) then
-                VarDotsUp = num(Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff))
+                VarDotsUp = num(Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID, true) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true))
             end
             -- berserking
             if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then

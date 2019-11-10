@@ -59,9 +59,10 @@ class ActionList:
         """
         actions = self.print_actions_lua()
         function_name = self.name.print_lua()
-        return (f'local function {function_name}(unit)\n'
+        return (f'--{function_name}\n'
+                f'local function {function_name}(unit)\n'
                 f'{actions}\n'
-                f'end')
+                f'end\n')
 
 
 class Action(Decorable):
@@ -310,7 +311,7 @@ class Action(Decorable):
                     targetif_evaluate_function = ('\n'
                                                     f'local function {targetif_evaluate_name}(unit)\n'
                                                     f'  return {if_condition}\n'
-                                                    'end')
+                                                    'end\n')
                     self.context.add_code(targetif_evaluate_function)
                     cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "{mmax_mode}", {targetif_filter_evaluate_name}, {targetif_evaluate_name}) then \n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
                 else:

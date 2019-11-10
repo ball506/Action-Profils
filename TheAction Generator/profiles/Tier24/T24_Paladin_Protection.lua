@@ -304,6 +304,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cooldowns
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -314,7 +315,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStamina:Show(icon)
             end
             -- consecration
-            if A.Consecration:IsReady(unit) and Unit("player"):HasBuffsDown(A.ConsecrationBuff) then
+            if A.Consecration:IsReady(unit) and Unit("player"):HasBuffsDown(A.ConsecrationBuff.ID, true) then
                 return A.Consecration:Show(icon)
             end
             -- lights_judgment
@@ -322,9 +323,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- fireblood,if=buff.avenging_wrath.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff)) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.seraphim.remains<=10|!talent.seraphim.enabled
@@ -332,7 +335,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=(debuff.razor_coral_debuff.stack>7&buff.avenging_wrath.up)|debuff.razor_coral_debuff.stack=0
-            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) > 7 and Unit("player"):HasBuffs(A.AvengingWrathBuff)) or Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) == 0) then
+            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) > 7 and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) or Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) == 0) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- seraphim,if=cooldown.shield_of_the_righteous.charges_fractional>=2
@@ -340,11 +343,11 @@ A[3] = function(icon, isMulti)
                 return A.Seraphim:Show(icon)
             end
             -- avenging_wrath,if=buff.seraphim.up|cooldown.seraphim.remains<2|!talent.seraphim.enabled
-            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff) or A.Seraphim:GetCooldown() < 2 or not A.Seraphim:IsSpellLearned()) then
+            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() < 2 or not A.Seraphim:IsSpellLearned()) then
                 return A.AvengingWrath:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!talent.seraphim.enabled|cooldown.seraphim.remains<=gcd|buff.seraphim.up
-            if A.MemoryofLucidDreams:IsReady(unit) and (not A.Seraphim:IsSpellLearned() or A.Seraphim:GetCooldown() <= A.GetGCD() or Unit("player"):HasBuffs(A.SeraphimBuff)) then
+            if A.MemoryofLucidDreams:IsReady(unit) and (not A.Seraphim:IsSpellLearned() or A.Seraphim:GetCooldown() <= A.GetGCD() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bastion_of_light,if=cooldown.shield_of_the_righteous.charges_fractional<=0.5
@@ -352,20 +355,20 @@ A[3] = function(icon, isMulti)
                 return A.BastionofLight:Show(icon)
             end
             -- potion,if=buff.avenging_wrath.up
-            if A.BattlePotionofStamina:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvengingWrathBuff)) then
+            if A.BattlePotionofStamina:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
                 A.BattlePotionofStamina:Show(icon)
             end
             -- use_items,if=buff.seraphim.up|!talent.seraphim.enabled
             -- use_item,name=grongs_primal_rage,if=cooldown.judgment.full_recharge_time>4&cooldown.avengers_shield.remains>4&(buff.seraphim.up|cooldown.seraphim.remains+4+gcd>expected_combat_length-time)&consecration.up
-            if A.GrongsPrimalRage:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 and A.AvengersShield:GetCooldown() > 4 and (Unit("player"):HasBuffs(A.SeraphimBuff) or A.Seraphim:GetCooldown() + 4 + A.GetGCD() > expected_combat_length - Unit("player"):CombatTime) and bool(consecration.up)) then
+            if A.GrongsPrimalRage:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 and A.AvengersShield:GetCooldown() > 4 and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() + 4 + A.GetGCD() > expected_combat_length - Unit("player"):CombatTime) and bool(consecration.up)) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=cooldown.judgment.full_recharge_time>4*spell_haste&cooldown.avengers_shield.remains>4*spell_haste&(!equipped.grongs_primal_rage|!trinket.grongs_primal_rage.cooldown.up)&consecration.up
-            if A.PocketsizedComputationDevice:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 * Unit("player"):SpellHaste and A.AvengersShield:GetCooldown() > 4 * Unit("player"):SpellHaste and (not A.GrongsPrimalRage:IsExists or not bool(trinket.grongs_primal_rage.cooldown.up)) and bool(consecration.up)) then
+            if A.PocketsizedComputationDevice:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 * Unit("player"):SpellHaste and A.AvengersShield:GetCooldown() > 4 * Unit("player"):SpellHaste and (not A.GrongsPrimalRage:IsExists() or not bool(trinket.grongs_primal_rage.cooldown.up)) and bool(consecration.up)) then
                 A.PocketsizedComputationDevice:Show(icon)
             end
             -- use_item,name=merekthas_fang,if=!buff.avenging_wrath.up&(buff.seraphim.up|!talent.seraphim.enabled)
-            if A.MerekthasFang:IsReady(unit) and (not Unit("player"):HasBuffs(A.AvengingWrathBuff) and (Unit("player"):HasBuffs(A.SeraphimBuff) or not A.Seraphim:IsSpellLearned())) then
+            if A.MerekthasFang:IsReady(unit) and (not Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or not A.Seraphim:IsSpellLearned())) then
                 A.MerekthasFang:Show(icon)
             end
             -- use_item,name=razdunks_big_red_button
@@ -373,6 +376,7 @@ A[3] = function(icon, isMulti)
                 A.RazdunksBigRedButton:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -387,23 +391,23 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff) < 3) then
+            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avengers_valor.up&cooldown.shield_of_the_righteous.charges_fractional>=2.5)&(cooldown.seraphim.remains>gcd|!talent.seraphim.enabled)
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengersValorBuff) and A.ShieldoftheRighteous:ChargesFractionalP() >= 2.5) and (A.Seraphim:GetCooldown() > A.GetGCD() or not A.Seraphim:IsSpellLearned())) then
+            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true) and A.ShieldoftheRighteous:ChargesFractionalP() >= 2.5) and (A.Seraphim:GetCooldown() > A.GetGCD() or not A.Seraphim:IsSpellLearned())) then
                 return A.ShieldoftheRighteous:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avenging_wrath.up&!talent.seraphim.enabled)|buff.seraphim.up&buff.avengers_valor.up
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff) and not A.Seraphim:IsSpellLearned()) or Unit("player"):HasBuffs(A.SeraphimBuff) and Unit("player"):HasBuffs(A.AvengersValorBuff)) then
+            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and not A.Seraphim:IsSpellLearned()) or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) and Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true)) then
                 return A.ShieldoftheRighteous:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avenging_wrath.up&buff.avenging_wrath.remains<4&!talent.seraphim.enabled)|(buff.seraphim.remains<4&buff.seraphim.up)
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff) and Unit("player"):HasBuffs(A.AvengingWrathBuff) < 4 and not A.Seraphim:IsSpellLearned()) or (Unit("player"):HasBuffs(A.SeraphimBuff) < 4 and Unit("player"):HasBuffs(A.SeraphimBuff))) then
+            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) < 4 and not A.Seraphim:IsSpellLearned()) or (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) < 4 and Unit("player"):HasBuffs(A.SeraphimBuff.ID, true))) then
                 return A.ShieldoftheRighteous:Show(icon)
             end
             -- lights_judgment,if=buff.seraphim.up&buff.seraphim.remains<3
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff) and Unit("player"):HasBuffs(A.SeraphimBuff) < 3) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) and Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) < 3) then
                 return A.LightsJudgment:Show(icon)
             end
             -- consecration,if=!consecration.up
@@ -423,11 +427,11 @@ A[3] = function(icon, isMulti)
                 return A.Judgment:Show(icon)
             end
             -- concentrated_flame,if=(!talent.seraphim.enabled|buff.seraphim.up)&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:IsReady(unit) and ((not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff))) > 0 or essence.the_crucible_of_flame.rank < 3) then
+            if A.ConcentratedFlame:IsReady(unit) and ((not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true))) > 0 or essence.the_crucible_of_flame.rank < 3) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- lights_judgment,if=!talent.seraphim.enabled|buff.seraphim.up
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff)) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
                 return A.LightsJudgment:Show(icon)
             end
             -- anima_of_death

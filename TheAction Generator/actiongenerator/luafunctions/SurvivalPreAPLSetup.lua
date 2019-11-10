@@ -10,7 +10,7 @@ local WildfireInfusions = {
 }
 
 local function CurrentWildfireInfusion ()
-  if A.WildfireInfusion:IsAvailable() then
+  if A.WildfireInfusion:IsSpellLearned() then
     for _, infusion in pairs(WildfireInfusions) do
       if infusion:IsSpellLearned() then return infusion end
     end

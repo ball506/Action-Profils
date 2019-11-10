@@ -311,112 +311,124 @@ end
 
 
 local function EvaluateTargetIfFilterRisingSunKick25(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfRisingSunKick38(unit)
   return (A.WhirlingDragonPunch:IsSpellLearned() and A.WhirlingDragonPunch:GetCooldown() < 5) and A.FistsofFury:GetCooldown() > 3
 end
 
+
 local function EvaluateTargetIfFilterTigerPalm68(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfTigerPalm77(unit)
   return Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not bool(combo_break))
 end
 
+
 local function EvaluateTargetIfFilterBlackoutKick89(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfBlackoutKick102(unit)
-  return bool(combo_strike) and (Unit("player"):HasBuffs(A.BokProcBuff) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() < 4))
+  return bool(combo_strike) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() < 4))
 end
 
+
 local function EvaluateTargetIfFilterRisingSunKick185(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfRisingSunKick196(unit)
-  return Unit("player"):HasBuffs(A.StormEarthandFireBuff) or A.WhirlingDragonPunch:GetCooldown() < 4
+  return Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or A.WhirlingDragonPunch:GetCooldown() < 4
 end
 
+
 local function EvaluateTargetIfFilterBlackoutKick224(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfBlackoutKick235(unit)
   return bool(combo_strike) and (A.FistsofFury:GetCooldown() > 4 or Unit("player"):Chi() >= 4 or (Unit("player"):Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
 end
 
+
 local function EvaluateTargetIfFilterRisingSunKick255(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfRisingSunKick262(unit)
   return Unit("player"):ChiMax() - Unit("player"):Chi() < 2
 end
 
+
 local function EvaluateTargetIfFilterTigerPalm268(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfTigerPalm275(unit)
   return bool(combo_strike) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2
 end
 
+
 local function EvaluateTargetIfFilterRisingSunKick281(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfFilterRisingSunKick292(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfRisingSunKick307(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or Unit("player"):GetSpellLastCast(A.SpinningCraneKick)
 end
 
+
 local function EvaluateTargetIfFilterBlackoutKick363(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfFilterRisingSunKick376(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfRisingSunKick383(unit)
   return Unit("player"):Chi() >= 5
 end
 
+
 local function EvaluateTargetIfFilterRisingSunKick391(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfFilterBlackoutKick424(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfBlackoutKick437(unit)
   return bool(combo_strike) and (A.RisingSunKick:GetCooldown() > 3 or Unit("player"):Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Unit("player"):Chi() >= 4 or (Unit("player"):Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
 end
 
+
 local function EvaluateTargetIfFilterTigerPalm453(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfTigerPalm460(unit)
   return bool(combo_strike) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2
 end
 
+
 local function EvaluateTargetIfFilterTigerPalm520(unit)
-  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff)
+  return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
 local function EvaluateTargetIfTigerPalm535(unit)
-  return not bool(combo_break) and (Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Unit("player"):EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and not bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff))
+  return not bool(combo_break) and (Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Unit("player"):EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and not bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))
 end
+
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -435,6 +447,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Aoe, Cd, Rskless, Serenity, St, Tod
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -461,6 +474,8 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
         end
+        
+        --Aoe
         local function Aoe(unit)
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=(talent.whirling_dragon_punch.enabled&cooldown.whirling_dragon_punch.remains<5)&cooldown.fists_of_fury.remains>3
             if A.RisingSunKick:IsReady(unit) then
@@ -481,7 +496,7 @@ A[3] = function(icon, isMulti)
                 return A.FistsofFury:Show(icon)
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff))) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true))) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&(((chi>3|cooldown.fists_of_fury.remains>6)&(chi>=5|cooldown.fists_of_fury.remains>2))|energy.time_to_max<=3)
@@ -511,7 +526,7 @@ A[3] = function(icon, isMulti)
                 return A.ChiWave:Show(icon)
             end
             -- flying_serpent_kick,if=buff.bok_proc.down,interrupt=1
-            if A.FlyingSerpentKick:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BokProcBuff))) then
+            if A.FlyingSerpentKick:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BokProcBuff.ID, true))) then
                 return A.FlyingSerpentKick:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&(buff.bok_proc.up|(talent.hit_combo.enabled&prev_gcd.1.tiger_palm&chi<4))
@@ -521,6 +536,8 @@ A[3] = function(icon, isMulti)
                 end
             end
         end
+        
+        --Cd
         local function Cd(unit)
             -- invoke_xuen_the_white_tiger
             if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) then
@@ -563,11 +580,11 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Tod(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- storm_earth_and_fire,if=cooldown.storm_earth_and_fire.charges=2|(cooldown.fists_of_fury.remains<=9&chi>=3&cooldown.whirling_dragon_punch.remains<=14&cooldown.touch_of_death.remains>=90)|target.time_to_die<=15|dot.touch_of_death.remains
-            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 9 and Unit("player"):Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 14 and A.TouchofDeath:GetCooldown() >= 90) or Unit(unit):TimeToDie() <= 15 or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff))) then
+            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 9 and Unit("player"):Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 14 and A.TouchofDeath:GetCooldown() >= 90) or Unit(unit):TimeToDie() <= 15 or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))) then
                 return A.StormEarthandFire:Show(icon)
             end
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains<=2
-            if A.ConcentratedFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff) <= 2) then
+            if A.ConcentratedFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) <= 2) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy
@@ -587,11 +604,11 @@ A[3] = function(icon, isMulti)
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=dot.touch_of_death.remains
-            if A.PocketsizedComputationDevice:IsReady(unit) and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff))) then
+            if A.PocketsizedComputationDevice:IsReady(unit) and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))) then
                 A.PocketsizedComputationDevice:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=((equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>=20)|!equipped.cyclotronic_blast)&(debuff.razor_coral_debuff.down|(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&buff.storm_earth_and_fire.remains>13|target.time_to_die<21)
-            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists and A.CyclotronicBlast:GetCooldown() >= 20) or not A.CyclotronicBlast:IsExists) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff)) or (not A.DribblingInkpod:IsExists or target.time_to_pct_30.remains < 8) and Unit("player"):HasBuffs(A.StormEarthandFireBuff) > 13 or Unit(unit):TimeToDie() < 21)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() >= 20) or not A.CyclotronicBlast:IsExists()) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or (not A.DribblingInkpod:IsExists() or target.time_to_pct_30.remains < 8) and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) > 13 or Unit(unit):TimeToDie() < 21)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- serenity,if=cooldown.rising_sun_kick.remains<=2|target.time_to_die<=12
@@ -599,7 +616,7 @@ A[3] = function(icon, isMulti)
                 return A.Serenity:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<40&buff.storm_earth_and_fire.up
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff)) then
+            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- ripple_in_space
@@ -608,6 +625,8 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=(equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains<=20)|!equipped.cyclotronic_blast
         end
+        
+        --Rskless
         local function Rskless(unit)
             -- whirling_dragon_punch
             if A.WhirlingDragonPunch:IsReady(unit) then
@@ -624,7 +643,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- reverse_harm,if=chi.max-chi>=2
@@ -640,7 +659,7 @@ A[3] = function(icon, isMulti)
                 return A.EnergizingElixir:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.react
-            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and bool(Unit("player"):HasBuffsStacks(A.DanceofChijiBuff))) then
+            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and bool(Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true))) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm))
@@ -680,6 +699,8 @@ A[3] = function(icon, isMulti)
                 end
             end
         end
+        
+        --Serenity
         local function Serenity(unit)
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=active_enemies<3|prev_gcd.1.spinning_crane_kick
             if A.RisingSunKick:IsReady(unit) then
@@ -688,7 +709,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- fists_of_fury,if=(buff.bloodlust.up&prev_gcd.1.rising_sun_kick)|buff.serenity.remains<1|(active_enemies>1&active_enemies<5)
-            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff) < 1 or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5)) then
+            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5)) then
                 return A.FistsofFury:Show(icon)
             end
             -- fist_of_the_white_tiger,if=talent.hit_combo.enabled&energy.time_to_max<2&prev_gcd.1.blackout_kick&chi<=2
@@ -710,6 +731,8 @@ A[3] = function(icon, isMulti)
                 end
             end
         end
+        
+        --St
         local function St(unit)
             -- whirling_dragon_punch
             if A.WhirlingDragonPunch:IsReady(unit) then
@@ -732,7 +755,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- reverse_harm,if=chi.max-chi>=2
@@ -748,7 +771,7 @@ A[3] = function(icon, isMulti)
                 return A.EnergizingElixir:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.react
-            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and bool(Unit("player"):HasBuffsStacks(A.DanceofChijiBuff))) then
+            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and bool(Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true))) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&(cooldown.rising_sun_kick.remains>3|chi>=3)&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm))
@@ -776,20 +799,23 @@ A[3] = function(icon, isMulti)
                 return A.FlyingSerpentKick:Show(icon)
             end
         end
+        
+        --Tod
         local function Tod(unit)
             -- touch_of_death,if=equipped.cyclotronic_blast&target.time_to_die>9&cooldown.cyclotronic_blast.remains<=2
-            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (A.CyclotronicBlast:IsExists and Unit(unit):TimeToDie() > 9 and A.CyclotronicBlast:GetCooldown() <= 2) then
+            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (A.CyclotronicBlast:IsExists() and Unit(unit):TimeToDie() > 9 and A.CyclotronicBlast:GetCooldown() <= 2) then
                 return A.TouchofDeath:Show(icon)
             end
             -- touch_of_death,if=!equipped.cyclotronic_blast&equipped.dribbling_inkpod&target.time_to_die>9&(target.time_to_pct_30.remains>=130|target.time_to_pct_30.remains<8)
-            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists and A.DribblingInkpod:IsExists and Unit(unit):TimeToDie() > 9 and (target.time_to_pct_30.remains >= 130 or target.time_to_pct_30.remains < 8)) then
+            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists() and A.DribblingInkpod:IsExists() and Unit(unit):TimeToDie() > 9 and (target.time_to_pct_30.remains >= 130 or target.time_to_pct_30.remains < 8)) then
                 return A.TouchofDeath:Show(icon)
             end
             -- touch_of_death,if=!equipped.cyclotronic_blast&!equipped.dribbling_inkpod&target.time_to_die>9
-            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists and not A.DribblingInkpod:IsExists and Unit(unit):TimeToDie() > 9) then
+            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists() and not A.DribblingInkpod:IsExists() and Unit(unit):TimeToDie() > 9) then
                 return A.TouchofDeath:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -808,11 +834,11 @@ A[3] = function(icon, isMulti)
                 return A.TouchofKarma:Show(icon)
             end
             -- potion,if=buff.serenity.up|buff.storm_earth_and_fire.up|(!talent.serenity.enabled&trinket.proc.agility.react)|buff.bloodlust.react|target.time_to_die<=60
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff) or Unit("player"):HasBuffs(A.StormEarthandFireBuff) or (not A.Serenity:IsSpellLearned() and bool(trinket.proc.agility.react)) or Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 60) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or (not A.Serenity:IsSpellLearned() and bool(trinket.proc.agility.react)) or Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 60) then
                 A.ProlongedPower:Show(icon)
             end
             -- call_action_list,name=serenity,if=buff.serenity.up
-            if (Unit("player"):HasBuffs(A.SerenityBuff)) then
+            if (Unit("player"):HasBuffs(A.SerenityBuff.ID, true)) then
                 local ShouldReturn = Serenity(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- reverse_harm,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2))&chi.max-chi>=2
@@ -838,7 +864,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cd(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=rskless,if=!ptr&active_enemies<3&azerite.open_palm_strikes.enabled&!azerite.glory_of_the_dawn.enabled
-            if (not bool(ptr) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and A.OpenPalmStrikes:GetAzeriteRank() and not A.GloryoftheDawn:GetAzeriteRank()) then
+            if (not bool(ptr) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and bool(A.OpenPalmStrikes:GetAzeriteRank()) and not bool(A.GloryoftheDawn:GetAzeriteRank())) then
                 local ShouldReturn = Rskless(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=st,if=active_enemies<3

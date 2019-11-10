@@ -295,7 +295,7 @@ end
 
 
 local function EvaluateCycleAshvanesRazorCoral82(unit)
-    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) == 0
+    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) == 0
 end
 
 --- ======= ACTION LISTS =======
@@ -315,6 +315,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Aoe, St
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -337,13 +338,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
         end
+        
+        --Aoe
         local function Aoe(unit)
             -- thunder_clap
             if A.ThunderClap:IsReady(unit) then
                 return A.ThunderClap:Show(icon)
             end
             -- memory_of_lucid_dreams,if=buff.avatar.down
-            if A.MemoryofLucidDreams:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff))) then
+            if A.MemoryofLucidDreams:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
@@ -351,7 +354,7 @@ A[3] = function(icon, isMulti)
                 return A.DemoralizingShout:Show(icon)
             end
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
                 return A.AnimaofDeath:Show(icon)
             end
             -- dragon_roar
@@ -363,7 +366,7 @@ A[3] = function(icon, isMulti)
                 return A.Revenge:Show(icon)
             end
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ThunderClap:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) or A.ThunderClap:GetCooldown() >= 4) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- ravager
@@ -371,7 +374,7 @@ A[3] = function(icon, isMulti)
                 return A.Ravager:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
                 return A.ShieldBlock:Show(icon)
             end
             -- shield_slam
@@ -379,21 +382,23 @@ A[3] = function(icon, isMulti)
                 return A.ShieldSlam:Show(icon)
             end
         end
+        
+        --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff)) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ThunderClap:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:HasCooldownUps and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and bool(Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
                 return A.ShieldBlock:Show(icon)
             end
             -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff)) then
+            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true)) then
                 return A.ShieldSlam:Show(icon)
             end
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff))) then
+            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 return A.ThunderClap:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
@@ -401,7 +406,7 @@ A[3] = function(icon, isMulti)
                 return A.DemoralizingShout:Show(icon)
             end
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff)) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
                 return A.AnimaofDeath:Show(icon)
             end
             -- shield_slam
@@ -415,7 +420,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- dragon_roar
@@ -431,7 +436,7 @@ A[3] = function(icon, isMulti)
                 return A.Revenge:Show(icon)
             end
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) or A.ShieldSlam:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) or A.ShieldSlam:GetCooldown() >= 4) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- ravager
@@ -443,6 +448,7 @@ A[3] = function(icon, isMulti)
                 return A.Devastate:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -482,11 +488,11 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- potion,if=buff.avatar.up|target.time_to_die<25
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff) or Unit(unit):TimeToDie() < 25) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:HasCooldownUps)) then
+            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
                 return A.IgnorePain:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avatar.remains<=2
@@ -502,7 +508,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff))) > 0 or essence.the_crucible_of_flame.rank < 3) then
+            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true))) > 0 or essence.the_crucible_of_flame.rank < 3) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- last_stand,if=cooldown.anima_of_death.remains<=2

@@ -308,15 +308,15 @@ end
 
 
 local function EvaluateCyclePulverize77(unit)
-    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff) == dot.thrash_bear.max_stacks
+    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == dot.thrash_bear.max_stacks
 end
 
 local function EvaluateCycleMoonfire88(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
+    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
 local function EvaluateCycleMoonfire139(unit)
-    return Unit("player"):HasBuffs(A.GalacticGuardianBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
+    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
 --- ======= ACTION LISTS =======
@@ -336,12 +336,13 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cooldowns
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
             -- bear_form
-            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff) then
+            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true) then
                 return A.BearForm:Show(icon)
             end
             -- snapshot_stats
@@ -350,6 +351,8 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- potion
             if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
@@ -380,19 +383,20 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- barkskin,if=buff.bear_form.up
-            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff)) then
+            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.Barkskin:Show(icon)
             end
             -- lunar_beam,if=buff.bear_form.up
-            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff)) then
+            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.LunarBeam:Show(icon)
             end
             -- bristling_fur,if=buff.bear_form.up
-            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff)) then
+            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.BristlingFur:Show(icon)
             end
             -- use_items
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -411,7 +415,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=cost=0|(rage>cost&azerite.layered_mane.enabled&active_enemies>2)
-            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() == 0 or (Unit("player"):Rage() > A.Ironfur:Cost() and A.LayeredMane:GetAzeriteRank() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() == 0 or (Unit("player"):Rage() > A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
                 return A.Ironfur:Show(icon)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
@@ -431,15 +435,15 @@ A[3] = function(icon, isMulti)
                 return A.Incarnation:Show(icon)
             end
             -- thrash,if=(buff.incarnation.down&active_enemies>1)|(buff.incarnation.up&active_enemies>4)
-            if Thrash():IsReady(unit) and ((bool(Unit("player"):HasBuffsDown(A.IncarnationBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4)) then
+            if Thrash():IsReady(unit) and ((bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4)) then
                 return Thrash:Show(icon)
             end
             -- swipe,if=buff.incarnation.down&active_enemies>4
-            if Swipe():IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IncarnationBuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4) then
+            if Swipe():IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4) then
                 return Swipe:Show(icon)
             end
             -- mangle,if=dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff)) then
+            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2

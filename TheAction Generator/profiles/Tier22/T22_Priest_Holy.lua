@@ -293,6 +293,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -308,6 +309,7 @@ A[3] = function(icon, isMulti)
             end
         end
         
+        
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
@@ -321,7 +323,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_word_chastise,if=spell_targets.holy_nova<5
@@ -329,7 +331,7 @@ A[3] = function(icon, isMulti)
                 return A.HolyWordChastise:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.refreshable|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- berserking,if=raid_event.adds.in>30|raid_event.adds.remains>8|raid_event.adds.duration<8
@@ -361,7 +363,7 @@ A[3] = function(icon, isMulti)
                 return A.ArcanePulse:Show(icon)
             end
             -- holy_fire,if=!dot.holy_fire.ticking&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_nova,if=spell_targets.holy_nova>3

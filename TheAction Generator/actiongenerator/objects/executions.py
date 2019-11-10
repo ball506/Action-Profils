@@ -11,7 +11,7 @@ from ..constants import (IGNORED_EXECUTIONS, SPELL, BUFF, DEBUFF, USABLE, READY,
                          MELEE, INTERRUPT, CD, GCDAOGCD, OGCDAOGCD, NUM, BOOL,
                          FALSE, TRUE, AUTOCHECK, OPENER, ANYCASTER)
 from ..database import (SPELL_INFO, COMMON)
-
+import re
 
 class Item(LuaNamed, LuaCastable):
     """
@@ -218,4 +218,14 @@ class Spell(LuaNamed, LuaCastable):
         """
         Print the lua expression for the spell.
         """
-        return f'A.{self.lua_name()}'
+        fullstring = (f'A.{self.lua_name()}')
+        substring = "Buff"
+        substring2 = "Debuff"
+        if re.search(substring, fullstring):			
+            string1 = f'A.{self.lua_name()}.ID, true'
+        elif re.search(substring2, fullstring):			
+            string1 = f'A.{self.lua_name()}.ID, true'
+        else:
+            string1 = f'A.{self.lua_name()}'	
+
+        return string1

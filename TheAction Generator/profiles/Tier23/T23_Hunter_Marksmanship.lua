@@ -314,6 +314,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cds, St, Trickshots
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- augmentation
@@ -324,7 +325,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- hunters_mark
-            if A.HuntersMark:IsReady(unit) and Unit("player"):HasDebuffsDown(A.HuntersMarkDebuff) then
+            if A.HuntersMark:IsReady(unit) and Unit("player"):HasDebuffsDown(A.HuntersMarkDebuff.ID, true) then
                 return A.HuntersMark:Show(icon)
             end
             -- double_tap,precast_time=10
@@ -332,7 +333,7 @@ A[3] = function(icon, isMulti)
                 return A.DoubleTap:Show(icon)
             end
             -- trueshot,precast_time=1.5,if=active_enemies>2
-            if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
                 return A.Trueshot:Show(icon)
             end
             -- aimed_shot,if=active_enemies<3
@@ -340,33 +341,35 @@ A[3] = function(icon, isMulti)
                 return A.AimedShot:Show(icon)
             end
         end
+        
+        --Cds
         local function Cds(unit)
             -- hunters_mark,if=debuff.hunters_mark.down
-            if A.HuntersMark:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.HuntersMarkDebuff))) then
+            if A.HuntersMark:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.HuntersMarkDebuff.ID, true))) then
                 return A.HuntersMark:Show(icon)
             end
             -- double_tap,if=target.time_to_die<15|cooldown.aimed_shot.remains<gcd&(buff.trueshot.up&(buff.unerring_vision.stack>6|!azerite.unerring_vision.enabled)|!talent.calling_the_shots.enabled)&(!azerite.surging_shots.enabled&!talent.streamline.enabled&!azerite.focused_fire.enabled)
-            if A.DoubleTap:IsReady(unit) and (Unit(unit):TimeToDie() < 15 or A.AimedShot:GetCooldown() < A.GetGCD() and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff) > 6 or not A.UnerringVision:GetAzeriteRank()) or not A.CallingtheShots:IsSpellLearned()) and (not A.SurgingShots:GetAzeriteRank() and not A.Streamline:IsSpellLearned() and not A.FocusedFire:GetAzeriteRank())) then
+            if A.DoubleTap:IsReady(unit) and (Unit(unit):TimeToDie() < 15 or A.AimedShot:GetCooldown() < A.GetGCD() and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff.ID, true) > 6 or not bool(A.UnerringVision:GetAzeriteRank())) or not A.CallingtheShots:IsSpellLearned()) and (not bool(A.SurgingShots:GetAzeriteRank()) and not A.Streamline:IsSpellLearned() and not bool(A.FocusedFire:GetAzeriteRank()))) then
                 return A.DoubleTap:Show(icon)
             end
             -- double_tap,if=cooldown.rapid_fire.remains<gcd&(buff.trueshot.up&(buff.unerring_vision.stack>6|!azerite.unerring_vision.enabled)|!talent.calling_the_shots.enabled)&(azerite.surging_shots.enabled|talent.streamline.enabled|azerite.focused_fire.enabled)
-            if A.DoubleTap:IsReady(unit) and (A.RapidFire:GetCooldown() < A.GetGCD() and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff) > 6 or not A.UnerringVision:GetAzeriteRank()) or not A.CallingtheShots:IsSpellLearned()) and (A.SurgingShots:GetAzeriteRank() or A.Streamline:IsSpellLearned() or A.FocusedFire:GetAzeriteRank())) then
+            if A.DoubleTap:IsReady(unit) and (A.RapidFire:GetCooldown() < A.GetGCD() and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff.ID, true) > 6 or not bool(A.UnerringVision:GetAzeriteRank())) or not A.CallingtheShots:IsSpellLearned()) and (bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned() or bool(A.FocusedFire:GetAzeriteRank()))) then
                 return A.DoubleTap:Show(icon)
             end
             -- berserking,if=buff.trueshot.up&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<13
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration + A.BerserkingBuff:BaseDuration or (Unit(unit):HealthPercent < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
+            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration + A.BerserkingBuff.ID, true:BaseDuration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=buff.trueshot.up&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<16
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration + A.BloodFuryBuff:BaseDuration or (Unit(unit):HealthPercent < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration + A.BloodFuryBuff.ID, true:BaseDuration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
                 return A.BloodFury:Show(icon)
             end
             -- ancestral_call,if=buff.trueshot.up&(target.time_to_die>cooldown.ancestral_call.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<16
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit(unit):TimeToDie() > A.AncestralCall:BaseDuration + duration or (Unit(unit):HealthPercent < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit(unit):TimeToDie() > A.AncestralCall:BaseDuration + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
                 return A.AncestralCall:Show(icon)
             end
             -- fireblood,if=buff.trueshot.up&(target.time_to_die>cooldown.fireblood.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<9
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff) and (Unit(unit):TimeToDie() > A.Fireblood:BaseDuration + duration or (Unit(unit):HealthPercent < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 9) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit(unit):TimeToDie() > A.Fireblood:BaseDuration + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 9) then
                 return A.Fireblood:Show(icon)
             end
             -- lights_judgment
@@ -374,14 +377,16 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&ca_execute|target.time_to_die<25
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff)) and Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.TrueshotBuff) and bool(ca_execute) or Unit(unit):TimeToDie() < 25) then
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and bool(ca_execute) or Unit(unit):TimeToDie() < 25) then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- trueshot,if=cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|(target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
-            if A.Trueshot:IsReady(unit) and (bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff:BaseDuration or (Unit(unit):HealthPercent < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
+            if A.Trueshot:IsReady(unit) and (bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
                 return A.Trueshot:Show(icon)
             end
         end
+        
+        --St
         local function St(unit)
             -- explosive_shot
             if A.ExplosiveShot:IsReady(unit) then
@@ -396,23 +401,23 @@ A[3] = function(icon, isMulti)
                 return A.AMurderofCrows:Show(icon)
             end
             -- serpent_sting,if=refreshable&!action.serpent_sting.in_flight
-            if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
+            if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and not A.SerpentSting:IsSpellInFlight()) then
                 return A.SerpentSting:Show(icon)
             end
             -- rapid_fire,if=focus<50&(buff.bloodlust.up&buff.trueshot.up|buff.trueshot.down)
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff)))) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)))) then
                 return A.RapidFire:Show(icon)
             end
             -- arcane_shot,if=buff.master_marksman.up&buff.trueshot.up&focus+cast_regen<focus.max
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff) and Unit("player"):HasBuffs(A.TrueshotBuff) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Unit("player"):FocusMax()) then
                 return A.ArcaneShot:Show(icon)
             end
             -- aimed_shot,if=buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up
-            if A.AimedShot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff)) then
+            if A.AimedShot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.AimedShot:Show(icon)
             end
             -- rapid_fire,if=focus+cast_regen<focus.max|azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Unit("player"):FocusMax() or A.FocusedFire:GetAzeriteRank() or A.IntheRhythm:GetAzeriteRank() > 1 or A.SurgingShots:GetAzeriteRank() or A.Streamline:IsSpellLearned()) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Unit("player"):FocusMax() or bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned()) then
                 return A.RapidFire:Show(icon)
             end
             -- piercing_shot
@@ -420,7 +425,7 @@ A[3] = function(icon, isMulti)
                 return A.PiercingShot:Show(icon)
             end
             -- arcane_shot,if=focus>85|(buff.precise_shots.up|focus>45&cooldown.trueshot.remains&target.time_to_die<25)&buff.trueshot.down|target.time_to_die<5
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):Focus() > 85 or (Unit("player"):HasBuffs(A.PreciseShotsBuff) or Unit("player"):Focus() > 45 and bool(A.Trueshot:GetCooldown()) and Unit(unit):TimeToDie() < 25) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff)) or Unit(unit):TimeToDie() < 5) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):Focus() > 85 or (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Unit("player"):Focus() > 45 and bool(A.Trueshot:GetCooldown()) and Unit(unit):TimeToDie() < 25) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
                 return A.ArcaneShot:Show(icon)
             end
             -- steady_shot
@@ -428,6 +433,8 @@ A[3] = function(icon, isMulti)
                 return A.SteadyShot:Show(icon)
             end
         end
+        
+        --Trickshots
         local function Trickshots(unit)
             -- barrage
             if A.Barrage:IsReady(unit) then
@@ -438,19 +445,19 @@ A[3] = function(icon, isMulti)
                 return A.ExplosiveShot:Show(icon)
             end
             -- rapid_fire,if=buff.trick_shots.up&(azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled)
-            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff) and (A.FocusedFire:GetAzeriteRank() or A.IntheRhythm:GetAzeriteRank() > 1 or A.SurgingShots:GetAzeriteRank() or A.Streamline:IsSpellLearned())) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned())) then
                 return A.RapidFire:Show(icon)
             end
             -- aimed_shot,if=buff.trick_shots.up&(buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time)
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime())) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime())) then
                 return A.AimedShot:Show(icon)
             end
             -- rapid_fire,if=buff.trick_shots.up
-            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff)) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true)) then
                 return A.RapidFire:Show(icon)
             end
             -- multishot,if=buff.trick_shots.down|buff.precise_shots.up|focus>70
-            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff)) or Unit("player"):HasBuffs(A.PreciseShotsBuff) or Unit("player"):Focus() > 70) then
+            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Unit("player"):Focus() > 70) then
                 return A.Multishot:Show(icon)
             end
             -- piercing_shot
@@ -462,7 +469,7 @@ A[3] = function(icon, isMulti)
                 return A.AMurderofCrows:Show(icon)
             end
             -- serpent_sting,if=refreshable&!action.serpent_sting.in_flight
-            if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff) and not A.SerpentSting:IsSpellInFlight()) then
+            if A.SerpentSting:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and not A.SerpentSting:IsSpellInFlight()) then
                 return A.SerpentSting:Show(icon)
             end
             -- steady_shot
@@ -470,6 +477,7 @@ A[3] = function(icon, isMulti)
                 return A.SteadyShot:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 

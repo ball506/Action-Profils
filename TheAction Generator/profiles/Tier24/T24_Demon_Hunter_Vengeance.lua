@@ -305,6 +305,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Brand, Cooldowns, Defensives, Normal
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- augmentation
@@ -319,6 +320,8 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
         end
+        
+        --Brand
         local function Brand(unit)
             -- sigil_of_flame,if=cooldown.fiery_brand.remains<2
             if A.SigilofFlame:IsReady(unit) and (A.FieryBrand:GetCooldown() < 2) then
@@ -333,33 +336,35 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
             -- immolation_aura,if=dot.fiery_brand.ticking
-            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.ImmolationAura:Show(icon)
             end
             -- fel_devastation,if=dot.fiery_brand.ticking
-            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.FelDevastation:Show(icon)
             end
             -- infernal_strike,if=dot.fiery_brand.ticking
-            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.InfernalStrike:Show(icon)
             end
             -- sigil_of_flame,if=dot.fiery_brand.ticking
-            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.SigilofFlame:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- potion
             if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:IsReady(unit) and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:IsReady(unit) and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff) < 3) then
+            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams
@@ -371,15 +376,17 @@ A[3] = function(icon, isMulti)
                 return A.HeartEssence:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.memory_of_lucid_dreams.down
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff))) then
+            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true))) then
                 A.:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff)) or Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff) and Unit(unit):HealthPercent < 31 or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_items
         end
+        
+        --Defensives
         local function Defensives(unit)
             -- demon_spikes
             if A.DemonSpikes:IsReady(unit) then
@@ -394,6 +401,8 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
         end
+        
+        --Normal
         local function Normal(unit)
             -- infernal_strike
             if A.InfernalStrike:IsReady(unit) then
@@ -440,6 +449,7 @@ A[3] = function(icon, isMulti)
                 return A.ThrowGlaive:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 

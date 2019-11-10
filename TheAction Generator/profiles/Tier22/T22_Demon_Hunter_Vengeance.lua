@@ -296,6 +296,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Brand, Defensives, Normal
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- augmentation
@@ -306,6 +307,8 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
         end
+        
+        --Brand
         local function Brand(unit)
             -- sigil_of_flame,if=cooldown.fiery_brand.remains<2
             if A.SigilofFlame:IsReady(unit) and (A.FieryBrand:GetCooldown() < 2) then
@@ -320,22 +323,24 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
             -- immolation_aura,if=dot.fiery_brand.ticking
-            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.ImmolationAura:Show(icon)
             end
             -- fel_devastation,if=dot.fiery_brand.ticking
-            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.FelDevastation:Show(icon)
             end
             -- infernal_strike,if=dot.fiery_brand.ticking
-            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.InfernalStrike:Show(icon)
             end
             -- sigil_of_flame,if=dot.fiery_brand.ticking
-            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff)) then
+            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.SigilofFlame:Show(icon)
             end
         end
+        
+        --Defensives
         local function Defensives(unit)
             -- demon_spikes
             if A.DemonSpikes:IsReady(unit) then
@@ -350,6 +355,8 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
         end
+        
+        --Normal
         local function Normal(unit)
             -- infernal_strike
             if A.InfernalStrike:IsReady(unit) then
@@ -396,6 +403,7 @@ A[3] = function(icon, isMulti)
                 return A.ThrowGlaive:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 

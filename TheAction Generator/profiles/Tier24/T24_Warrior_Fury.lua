@@ -321,6 +321,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Movement, SingleUnit(unit)
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -339,7 +340,7 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- recklessness
-            if A.Recklessness:IsReady(unit) and Unit("player"):HasBuffsDown(A.RecklessnessBuff) and A.BurstIsON(unit) then
+            if A.Recklessness:IsReady(unit) and Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true) and A.BurstIsON(unit) then
                 return A.Recklessness:Show(icon)
             end
             -- potion
@@ -347,19 +348,23 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
         end
+        
+        --Movement
         local function Movement(unit)
             -- heroic_leap
             if A.HeroicLeap:IsReady(unit) then
                 return A.HeroicLeap:Show(icon)
             end
         end
+        
+        --SingleUnit(unit)
         local function SingleUnit(unit)(unit)
             -- siegebreaker
             if A.Siegebreaker:IsReady(unit) and A.BurstIsON(unit) then
                 return A.Siegebreaker:Show(icon)
             end
             -- rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-            if A.Rampage:IsReady(unit) and ((Unit("player"):HasBuffs(A.RecklessnessBuff) or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff)) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff) < A.GetGCD() or Unit("player"):Rage() > 90))) then
+            if A.Rampage:IsReady(unit) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90))) then
                 return A.Rampage:Show(icon)
             end
             -- execute
@@ -367,7 +372,7 @@ A[3] = function(icon, isMulti)
                 return A.Execute:Show(icon)
             end
             -- furious_slash,if=!buff.bloodlust.up&buff.furious_slash.remains<3
-            if A.FuriousSlash:IsReady(unit) and (not Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.FuriousSlashBuff) < 3) then
+            if A.FuriousSlash:IsReady(unit) and (not Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.FuriousSlashBuff.ID, true) < 3) then
                 return A.FuriousSlash:Show(icon)
             end
             -- bladestorm,if=prev_gcd.1.rampage
@@ -375,11 +380,11 @@ A[3] = function(icon, isMulti)
                 return A.Bladestorm:Show(icon)
             end
             -- bloodthirst,if=buff.enrage.down|azerite.cold_steel_hot_blood.rank>1
-            if A.Bloodthirst:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.EnrageBuff)) or A.ColdSteelHotBlood:GetAzeriteRank() > 1) then
+            if A.Bloodthirst:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.EnrageBuff.ID, true)) or A.ColdSteelHotBlood:GetAzeriteRank() > 1) then
                 return A.Bloodthirst:Show(icon)
             end
             -- dragon_roar,if=buff.enrage.up
-            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.EnrageBuff)) then
+            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true)) then
                 return A.DragonRoar:Show(icon)
             end
             -- raging_blow,if=charges=2
@@ -403,6 +408,7 @@ A[3] = function(icon, isMulti)
                 return A.Whirlwind:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -433,51 +439,51 @@ A[3] = function(icon, isMulti)
                 return A.Rampage:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.recklessness.up
-            if A.BloodoftheEnemy:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.BloodoftheEnemy:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- purifying_blast,if=!buff.recklessness.up&!buff.siegebreaker.up
-            if A.PurifyingBlast:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff) and not Unit("player"):HasBuffs(A.SiegebreakerBuff)) then
+            if A.PurifyingBlast:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) and not Unit("player"):HasBuffs(A.SiegebreakerBuff.ID, true)) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=!buff.recklessness.up&!buff.siegebreaker.up
-            if A.RippleInSpace:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff) and not Unit("player"):HasBuffs(A.SiegebreakerBuff)) then
+            if A.RippleInSpace:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) and not Unit("player"):HasBuffs(A.SiegebreakerBuff.ID, true)) then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=!buff.recklessness.up&!buff.siegebreaker.up
-            if A.WorldveinResonance:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff) and not Unit("player"):HasBuffs(A.SiegebreakerBuff)) then
+            if A.WorldveinResonance:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) and not Unit("player"):HasBuffs(A.SiegebreakerBuff.ID, true)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- focused_azerite_beam,if=!buff.recklessness.up&!buff.siegebreaker.up
-            if A.FocusedAzeriteBeam:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff) and not Unit("player"):HasBuffs(A.SiegebreakerBuff)) then
+            if A.FocusedAzeriteBeam:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) and not Unit("player"):HasBuffs(A.SiegebreakerBuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- concentrated_flame,if=!buff.recklessness.up&!buff.siegebreaker.up&dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff) and not Unit("player"):HasBuffs(A.SiegebreakerBuff) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff) == 0) then
+            if A.ConcentratedFlame:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) and not Unit("player"):HasBuffs(A.SiegebreakerBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff)) then
+            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- guardian_of_azeroth,if=!buff.recklessness.up
-            if A.GuardianofAzeroth:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.GuardianofAzeroth:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!buff.recklessness.up
-            if A.MemoryofLucidDreams:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff)) then
+            if A.MemoryofLucidDreams:IsReady(unit) and (not Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- recklessness,if=!essence.condensed_lifeforce.major&!essence.blood_of_the_enemy.major|cooldown.guardian_of_azeroth.remains>20|buff.guardian_of_azeroth.up|cooldown.blood_of_the_enemy.remains<gcd
-            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(essence.condensed_lifeforce.major) and not bool(essence.blood_of_the_enemy.major) or A.GuardianofAzeroth:GetCooldown() > 20 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
+            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(essence.condensed_lifeforce.major) and not bool(essence.blood_of_the_enemy.major) or A.GuardianofAzeroth:GetCooldown() > 20 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
                 return A.Recklessness:Show(icon)
             end
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff)) then
+            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
                 return A.Whirlwind:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
-            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff) or (Unit(unit):HealthPercent < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(essence.memory_of_lucid_dreams.major) and not bool(essence.condensed_lifeforce.major)))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(essence.memory_of_lucid_dreams.major) and not bool(essence.condensed_lifeforce.major)))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- blood_fury
@@ -489,7 +495,7 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
             -- lights_judgment,if=buff.recklessness.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood

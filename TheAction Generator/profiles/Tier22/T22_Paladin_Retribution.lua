@@ -316,6 +316,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cooldowns, Finishers, Generators, Opener
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -330,9 +331,11 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneTorrent:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- potion,if=(buff.bloodlust.react|buff.avenging_wrath.up|buff.crusade.up&buff.crusade.remains<25|target.time_to_die<=40)
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AvengingWrathBuff) or Unit("player"):HasBuffs(A.CrusadeBuff) and Unit("player"):HasBuffs(A.CrusadeBuff) < 25 or Unit(unit):TimeToDie() <= 40)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25 or Unit(unit):TimeToDie() <= 40)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
@@ -340,7 +343,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff) or Unit("player"):HasBuffs(A.CrusadeBuff) and Unit("player"):HasBuffsStacks(A.CrusadeBuff) == 10) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.Fireblood:Show(icon)
             end
             -- shield_of_vengeance
@@ -348,7 +351,7 @@ A[3] = function(icon, isMulti)
                 return A.ShieldofVengeance:Show(icon)
             end
             -- avenging_wrath,if=buff.inquisition.up|!talent.inquisition.enabled
-            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.InquisitionBuff) or not A.Inquisition:IsSpellLearned()) then
+            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) then
                 return A.AvengingWrath:Show(icon)
             end
             -- crusade,if=holy_power>=4
@@ -356,13 +359,15 @@ A[3] = function(icon, isMulti)
                 return A.Crusade:Show(icon)
             end
         end
+        
+        --Finishers
         local function Finishers(unit)
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled
             if (true) then
                 VarDsCastable = num(MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and not A.RighteousVerdict:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.RighteousVerdict:IsSpellLearned())
             end
             -- inquisition,if=buff.inquisition.down|buff.inquisition.remains<5&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3
-            if A.Inquisition:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.InquisitionBuff)) or Unit("player"):HasBuffs(A.InquisitionBuff) < 5 and Unit("player"):HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff) < 20 and Unit("player"):HolyPower() >= 3) then
+            if A.Inquisition:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 5 and Unit("player"):HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Unit("player"):HolyPower() >= 3) then
                 return A.Inquisition:Show(icon)
             end
             -- execution_sentence,if=spell_targets.divine_storm<=2&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*2)
@@ -370,26 +375,28 @@ A[3] = function(icon, isMulti)
                 return A.ExecutionSentence:Show(icon)
             end
             -- divine_storm,if=variable.ds_castable&buff.divine_purpose.react
-            if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and bool(Unit("player"):HasBuffsStacks(A.DivinePurposeBuff))) then
+            if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and bool(Unit("player"):HasBuffsStacks(A.DivinePurposeBuff.ID, true))) then
                 return A.DivineStorm:Show(icon)
             end
             -- divine_storm,if=variable.ds_castable&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*2)|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down
-            if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2) or Unit("player"):HasBuffs(A.EmpyreanPowerBuff) and bool(Unit(unit):HasDeBuffsDown(A.JudgmentDebuff)) and bool(Unit("player"):HasBuffsDown(A.DivinePurposeBuff))) then
+            if A.DivineStorm:IsReady(unit) and (bool(VarDsCastable) and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2) or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) and bool(Unit(unit):HasDeBuffsDown(A.JudgmentDebuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.DivinePurposeBuff.ID, true))) then
                 return A.DivineStorm:Show(icon)
             end
             -- templars_verdict,if=buff.divine_purpose.react
-            if A.TemplarsVerdict:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.DivinePurposeBuff))) then
+            if A.TemplarsVerdict:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.DivinePurposeBuff.ID, true))) then
                 return A.TemplarsVerdict:Show(icon)
             end
             -- templars_verdict,if=(!talent.crusade.enabled|cooldown.crusade.remains>gcd*3)&(!talent.execution_sentence.enabled|buff.crusade.up&buff.crusade.stack<10|cooldown.execution_sentence.remains>gcd*2)
-            if A.TemplarsVerdict:IsReady(unit) and ((not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 3) and (not A.ExecutionSentence:IsSpellLearned() or Unit("player"):HasBuffs(A.CrusadeBuff) and Unit("player"):HasBuffsStacks(A.CrusadeBuff) < 10 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) then
+            if A.TemplarsVerdict:IsReady(unit) and ((not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 3) and (not A.ExecutionSentence:IsSpellLearned() or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) then
                 return A.TemplarsVerdict:Show(icon)
             end
         end
+        
+        --Generators
         local function Generators(unit)
             -- variable,name=HoW,value=(!talent.hammer_of_wrath.enabled|target.health.pct>=20&(buff.avenging_wrath.down|buff.crusade.down))
             if (true) then
-                VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent >= 20 and (bool(Unit("player"):HasBuffsDown(A.AvengingWrathBuff)) or bool(Unit("player"):HasBuffsDown(A.CrusadeBuff)))))
+                VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (bool(Unit("player"):HasBuffsDown(A.AvengingWrathBuff.ID, true)) or bool(Unit("player"):HasBuffsDown(A.CrusadeBuff.ID, true)))))
             end
             -- call_action_list,name=finishers,if=holy_power>=5
             if (Unit("player"):HolyPower() >= 5) then
@@ -416,7 +423,7 @@ A[3] = function(icon, isMulti)
                 return A.Consecration:Show(icon)
             end
             -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&(target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up)
-            if (A.HammerofWrath:IsSpellLearned() and (Unit(unit):HealthPercent <= 20 or Unit("player"):HasBuffs(A.AvengingWrathBuff) or Unit("player"):HasBuffs(A.CrusadeBuff))) then
+            if (A.HammerofWrath:IsSpellLearned() and (Unit(unit):HealthPercent() <= 20 or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true))) then
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- crusader_strike,if=cooldown.crusader_strike.charges_fractional>=1.75&(holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2&cooldown.consecration.remains>gcd*2)
@@ -436,6 +443,8 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneTorrent:Show(icon)
             end
         end
+        
+        --Opener
         local function Opener(unit)
             -- sequence,if=talent.wake_of_ashes.enabled&talent.crusade.enabled&talent.execution_sentence.enabled&!talent.hammer_of_wrath.enabled,name=wake_opener_ES_CS:shield_of_vengeance:blade_of_justice:judgment:crusade:templars_verdict:wake_of_ashes:templars_verdict:crusader_strike:execution_sentence
             if A.Sequence:IsReady(unit) and (A.WakeofAshes:IsSpellLearned() and A.Crusade:IsSpellLearned() and A.ExecutionSentence:IsSpellLearned() and not A.HammerofWrath:IsSpellLearned()) then
@@ -458,6 +467,7 @@ A[3] = function(icon, isMulti)
                 return A.Sequence:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 

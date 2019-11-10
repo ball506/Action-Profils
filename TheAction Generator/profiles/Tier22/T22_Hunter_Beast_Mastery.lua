@@ -306,6 +306,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- augmentation
@@ -320,14 +321,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(unit) and Unit("player"):HasBuffsDown(A.AspectoftheWildBuff) and (not A.PrimalInstincts:GetAzeriteRank()) then
+            if A.AspectoftheWild:IsReady(unit) and Unit("player"):HasBuffsDown(A.AspectoftheWildBuff.ID, true) and (not bool(A.PrimalInstincts:GetAzeriteRank())) then
                 return A.AspectoftheWild:Show(icon)
             end
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled
-            if A.BestialWrath:IsReady(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff) and (A.PrimalInstincts:GetAzeriteRank()) then
+            if A.BestialWrath:IsReady(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank())) then
                 return A.BestialWrath:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -355,11 +357,11 @@ A[3] = function(icon, isMulti)
                 return A.Fireblood:Show(icon)
             end
             -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|target.time_to_die<25
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.BestialWrathBuff) and Unit("player"):HasBuffs(A.AspectoftheWildBuff) and (Unit(unit):HealthPercent < 35 or not A.KillerInstinct:IsSpellLearned()) or Unit(unit):TimeToDie() < 25) then
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned()) or Unit(unit):TimeToDie() < 25) then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- barbed_shot,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<=gcd.max|full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
-            if A.BarbedShot:IsReady(unit) and (Pet:HasBuffs(A.FrenzyBuff) and Pet:HasBuffs(A.FrenzyBuff) <= A.GetGCD() or A.BarbedShot:FullRechargeTimeP() < A.GetGCD() and bool(A.BestialWrath:GetCooldown())) then
+            if A.BarbedShot:IsReady(unit) and (Pet:HasBuffs(A.FrenzyBuff.ID, true) and Pet:HasBuffs(A.FrenzyBuff.ID, true) <= A.GetGCD() or A.BarbedShot:FullRechargeTimeP() < A.GetGCD() and bool(A.BestialWrath:GetCooldown())) then
                 return A.BarbedShot:Show(icon)
             end
             -- lights_judgment
@@ -379,11 +381,11 @@ A[3] = function(icon, isMulti)
                 return A.AMurderofCrows:Show(icon)
             end
             -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
-            if A.Stampede:IsReady(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff) and Unit("player"):HasBuffs(A.BestialWrathBuff) or Unit(unit):TimeToDie() < 15) then
+            if A.Stampede:IsReady(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) or Unit(unit):TimeToDie() < 15) then
                 return A.Stampede:Show(icon)
             end
             -- multishot,if=spell_targets>2&gcd.max-pet.cat.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 and A.GetGCD() - Pet:HasBuffs(A.BeastCleaveBuff) > 0.25) then
+            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 and A.GetGCD() - Pet:HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) then
                 return A.Multishot:Show(icon)
             end
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains>20|target.time_to_die<15
@@ -399,7 +401,7 @@ A[3] = function(icon, isMulti)
                 return A.ChimaeraShot:Show(icon)
             end
             -- multishot,if=spell_targets>1&gcd.max-pet.cat.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.GetGCD() - Pet:HasBuffs(A.BeastCleaveBuff) > 0.25) then
+            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.GetGCD() - Pet:HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) then
                 return A.Multishot:Show(icon)
             end
             -- kill_command
@@ -419,7 +421,7 @@ A[3] = function(icon, isMulti)
                 return A.DireBeast:Show(icon)
             end
             -- barbed_shot,if=pet.cat.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<6&azerite.primal_instincts.enabled|target.time_to_die<9
-            if A.BarbedShot:IsReady(unit) and (bool(Pet:HasBuffsDown(A.FrenzyBuff)) and (A.BarbedShot:ChargesFractionalP() > 1.8 or Unit("player"):HasBuffs(A.BestialWrathBuff)) or A.AspectoftheWild:GetCooldown() < 6 and A.PrimalInstincts:GetAzeriteRank() or Unit(unit):TimeToDie() < 9) then
+            if A.BarbedShot:IsReady(unit) and (bool(Pet:HasBuffsDown(A.FrenzyBuff.ID, true)) and (A.BarbedShot:ChargesFractionalP() > 1.8 or Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true)) or A.AspectoftheWild:GetCooldown() < 6 and bool(A.PrimalInstincts:GetAzeriteRank()) or Unit(unit):TimeToDie() < 9) then
                 return A.BarbedShot:Show(icon)
             end
             -- barrage

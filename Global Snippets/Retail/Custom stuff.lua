@@ -145,6 +145,12 @@ function HasDeBuffsDown(self, spell, caster, byID)
 	end
  		
 end
+------------------------------------
+--- CooldownUp simc reference
+------------------------------------
+function GetCooldownUp(self, unit, spellID)		
+    return UnitCooldown:GetCooldown(unit, spellID)
+end
 
 -------------------------------------------------------------------------------
 -- Multiunits

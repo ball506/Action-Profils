@@ -1,6 +1,6 @@
-S.ExecuteDefault    = Spell(163201)
-S.ExecuteMassacre   = Spell(281000)
+A.ExecuteDefault    = 163201
+A.ExecuteMassacre   = 281000
 
 local function UpdateExecuteID()
-    S.Execute = S.Massacre:IsAvailable() and S.ExecuteMassacre or S.ExecuteDefault
+    A.Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
 end

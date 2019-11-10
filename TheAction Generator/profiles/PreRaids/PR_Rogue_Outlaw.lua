@@ -322,6 +322,7 @@ local function EvaluateTargetIfMarkedForDeath56(unit)
   return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Unit("player"):ComboPointsDeficit() or not Unit("player"):IsStealthedP(true, false) and Unit("player"):ComboPointsDeficit() >= Rogue.CPMaxSpend() - 1)
 end
 
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -339,6 +340,7 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Build, Cds, Finish, Stealth
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- augmentation
@@ -361,17 +363,19 @@ A[3] = function(icon, isMulti)
                 return A.RolltheBones:Show(icon)
             end
             -- slice_and_dice,precombat_seconds=2
-            if A.SliceandDice:IsReady(unit) and Unit("player"):HasBuffsDown(A.SliceandDiceBuff) then
+            if A.SliceandDice:IsReady(unit) and Unit("player"):HasBuffsDown(A.SliceandDiceBuff.ID, true) then
                 return A.SliceandDice:Show(icon)
             end
             -- adrenaline_rush,precombat_seconds=1
-            if A.AdrenalineRush:IsReady(unit) and Unit("player"):HasBuffsDown(A.AdrenalineRushBuff) then
+            if A.AdrenalineRush:IsReady(unit) and Unit("player"):HasBuffsDown(A.AdrenalineRushBuff.ID, true) then
                 return A.AdrenalineRush:Show(icon)
             end
         end
+        
+        --Build
         local function Build(unit)
             -- pistol_shot,if=combo_points.deficit>=1+buff.broadside.up+talent.quick_draw.enabled&buff.opportunity.up
-            if A.PistolShot:IsReady(unit) and (Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff)) + num(A.QuickDraw:IsSpellLearned()) and Unit("player"):HasBuffs(A.OpportunityBuff)) then
+            if A.PistolShot:IsReady(unit) and (Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(A.QuickDraw:IsSpellLearned()) and Unit("player"):HasBuffs(A.OpportunityBuff.ID, true)) then
                 return A.PistolShot:Show(icon)
             end
             -- sinister_strike
@@ -379,9 +383,11 @@ A[3] = function(icon, isMulti)
                 return A.SinisterStrike:Show(icon)
             end
         end
+        
+        --Cds
         local function Cds(unit)
             -- potion,if=buff.bloodlust.react|buff.adrenaline_rush.up
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AdrenalineRushBuff)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
                 A.ProlongedPower:Show(icon)
             end
             -- use_item,name=lustrous_golden_plumage,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
@@ -405,7 +411,7 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1
-            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff) and Unit("player"):EnergyTimeToMaxPredicted() > 1) then
+            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and Unit("player"):EnergyTimeToMaxPredicted() > 1) then
                 return A.AdrenalineRush:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.rogue&combo_points.deficit>=cp_max_spend-1)
@@ -419,11 +425,11 @@ A[3] = function(icon, isMulti)
                 return A.MarkedForDeath:Show(icon)
             end
             -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
-            if A.BladeFlurry:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and not Unit("player"):HasBuffs(A.BladeFlurryBuff) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 0 > 8 or 10000000000 > (2 - A.BladeFlurry:ChargesFractionalP()) * 25)) then
+            if A.BladeFlurry:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and not Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 0 > 8 or 10000000000 > (2 - A.BladeFlurry:ChargesFractionalP()) * 25)) then
                 return A.BladeFlurry:Show(icon)
             end
             -- ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
-            if A.GhostlyStrike:IsReady(unit) and (bool(VarBladeFlurrySync) and Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff))) then
+            if A.GhostlyStrike:IsReady(unit) and (bool(VarBladeFlurrySync) and Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true))) then
                 return A.GhostlyStrike:Show(icon)
             end
             -- killing_spree,if=variable.blade_flurry_sync&(energy.time_to_max>5|energy<15)
@@ -443,21 +449,23 @@ A[3] = function(icon, isMulti)
                 return A.Shadowmeld:Show(icon)
             end
         end
+        
+        --Finish
         local function Finish(unit)
             -- between_the_eyes,if=buff.ruthless_precision.up|(azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled)&buff.roll_the_bones.up
-            if A.BetweentheEyes:IsReady(unit) and (Unit("player"):HasBuffs(A.RuthlessPrecisionBuff) or (A.Deadshot:GetAzeriteRank() or A.AceUpYourSleeve:GetAzeriteRank()) and Unit("player"):HasBuffs(A.RolltheBonesBuff)) then
+            if A.BetweentheEyes:IsReady(unit) and (Unit("player"):HasBuffs(A.RuthlessPrecisionBuff.ID, true) or (bool(A.Deadshot:GetAzeriteRank()) or bool(A.AceUpYourSleeve:GetAzeriteRank())) and Unit("player"):HasBuffs(A.RolltheBonesBuff.ID, true)) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
-            if A.SliceandDice:IsReady(unit) and (Unit("player"):HasBuffs(A.SliceandDiceBuff) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDiceBuff) < (1 + Unit("player"):ComboPoints()) * 1.8) then
+            if A.SliceandDice:IsReady(unit) and (Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < (1 + Unit("player"):ComboPoints()) * 1.8) then
                 return A.SliceandDice:Show(icon)
             end
             -- roll_the_bones,if=buff.roll_the_bones.remains<=3|variable.rtb_reroll
-            if A.RolltheBones:IsReady(unit) and (Unit("player"):HasBuffs(A.RolltheBonesBuff) <= 3 or bool(VarRtbReroll)) then
+            if A.RolltheBones:IsReady(unit) and (Unit("player"):HasBuffs(A.RolltheBonesBuff.ID, true) <= 3 or bool(VarRtbReroll)) then
                 return A.RolltheBones:Show(icon)
             end
             -- between_the_eyes,if=azerite.ace_up_your_sleeve.enabled|azerite.deadshot.enabled
-            if A.BetweentheEyes:IsReady(unit) and (A.AceUpYourSleeve:GetAzeriteRank() or A.Deadshot:GetAzeriteRank()) then
+            if A.BetweentheEyes:IsReady(unit) and (bool(A.AceUpYourSleeve:GetAzeriteRank()) or bool(A.Deadshot:GetAzeriteRank())) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- dispatch
@@ -465,12 +473,15 @@ A[3] = function(icon, isMulti)
                 return A.Dispatch:Show(icon)
             end
         end
+        
+        --Stealth
         local function Stealth(unit)
             -- ambush
             if A.Ambush:IsReady(unit) then
                 return A.Ambush:Show(icon)
             end
         end
+        
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
@@ -485,27 +496,27 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=rtb_reroll,value=rtb_buffs<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up)
             if (true) then
-                VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff) or not Unit("player"):HasBuffs(A.GrandMeleeBuff) and not Unit("player"):HasBuffs(A.RuthlessPrecisionBuff)))
+                VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) or not Unit("player"):HasBuffs(A.GrandMeleeBuff.ID, true) and not Unit("player"):HasBuffs(A.RuthlessPrecisionBuff.ID, true)))
             end
             -- variable,name=rtb_reroll,op=set,if=azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled,value=rtb_buffs<2&(buff.loaded_dice.up|buff.ruthless_precision.remains<=cooldown.between_the_eyes.remains)
-            if (A.Deadshot:GetAzeriteRank() or A.AceUpYourSleeve:GetAzeriteRank()) then
-                VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff) or Unit("player"):HasBuffs(A.RuthlessPrecisionBuff) <= A.BetweentheEyes:GetCooldown()))
+            if (bool(A.Deadshot:GetAzeriteRank()) or bool(A.AceUpYourSleeve:GetAzeriteRank())) then
+                VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) or Unit("player"):HasBuffs(A.RuthlessPrecisionBuff.ID, true) <= A.BetweentheEyes:GetCooldown()))
             end
             -- variable,name=rtb_reroll,op=set,if=azerite.snake_eyes.rank>=2,value=rtb_buffs<2
             if (A.SnakeEyes:GetAzeriteRank() >= 2) then
                 VarRtbReroll = num(RtB_Buffs < 2)
             end
             -- variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
-            if (A.SnakeEyes:GetAzeriteRank() >= 2 and Unit("player"):HasBuffsStacks(A.SnakeEyesBuff) >= 2 - num(Unit("player"):HasBuffs(A.BroadsideBuff))) then
+            if (A.SnakeEyes:GetAzeriteRank() >= 2 and Unit("player"):HasBuffsStacks(A.SnakeEyesBuff.ID, true) >= 2 - num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true))) then
                 VarRtbReroll = 0
             end
             -- variable,name=ambush_condition,value=combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up
             if (true) then
-                VarAmbushCondition = num(Unit("player"):ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.BroadsideBuff)) and Unit("player"):EnergyPredicted() > 60 and not Unit("player"):HasBuffs(A.SkullandCrossbonesBuff))
+                VarAmbushCondition = num(Unit("player"):ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) and Unit("player"):EnergyPredicted() > 60 and not Unit("player"):HasBuffs(A.SkullandCrossbonesBuff.ID, true))
             end
             -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
             if (true) then
-                VarBladeFlurrySync = num(MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and 10000000000 > 20 or Unit("player"):HasBuffs(A.BladeFlurryBuff))
+                VarBladeFlurrySync = num(MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and 10000000000 > 20 or Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true))
             end
             -- call_action_list,name=stealth,if=stealthed.all
             if (Unit("player"):IsStealthedP(true, true)) then
@@ -516,7 +527,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))
-            if (Unit("player"):ComboPoints() >= Rogue.CPMaxSpend() - (num(Unit("player"):HasBuffs(A.BroadsideBuff)) + num(Unit("player"):HasBuffs(A.OpportunityBuff))) * num((A.QuickDraw:IsSpellLearned() and (not A.MarkedForDeath:IsSpellLearned() or A.MarkedForDeath:GetCooldown() > 1)))) then
+            if (Unit("player"):ComboPoints() >= Rogue.CPMaxSpend() - (num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(Unit("player"):HasBuffs(A.OpportunityBuff.ID, true))) * num((A.QuickDraw:IsSpellLearned() and (not A.MarkedForDeath:IsSpellLearned() or A.MarkedForDeath:GetCooldown() > 1)))) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=build

@@ -467,31 +467,34 @@ end
 
 
 local function EvaluateTargetIfFilterAgony140(unit)
-  return Unit(unit):HasDeBuffs(A.AgonyDebuff)
+  return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
 local function EvaluateTargetIfAgony181(unit)
-  return A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff:ActiveDot < 6 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff)))
+  return A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff.ID, true:ActiveDot < 6 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff.ID, true)))
 end
 
+
 local function EvaluateTargetIfFilterAgony187(unit)
-  return Unit(unit):HasDeBuffs(A.AgonyDebuff)
+  return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
 local function EvaluateTargetIfAgony228(unit)
-  return not A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff:ActiveDot < 8 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff)))
+  return not A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff.ID, true:ActiveDot < 8 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff.ID, true)))
 end
 
+
 local function EvaluateTargetIfFilterSiphonLife234(unit)
-  return Unit(unit):HasDeBuffs(A.SiphonLifeDebuff)
+  return Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true)
 end
 
 local function EvaluateTargetIfSiphonLife273(unit)
-  return (A.SiphonLifeDebuff:ActiveDot < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetByRangeInCombat(40, 5, 10)) and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffsRefreshable(A.SiphonLifeDebuff) and (not bool(Unit(unit):HasDeBuffs(A.SiphonLifeDebuff)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or A.SummonDarkglare:GetCooldown() > Unit("player"):SoulShardsP * A.UnstableAffliction:GetSpellCastTime())
+  return (A.SiphonLifeDebuff.ID, true:ActiveDot < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetByRangeInCombat(40, 5, 10)) and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffsRefreshable(A.SiphonLifeDebuff.ID, true) and (not bool(Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or A.SummonDarkglare:GetCooldown() > Unit("player"):SoulShardsP * A.UnstableAffliction:GetSpellCastTime())
 end
 
+
 local function EvaluateCycleCorruption280(unit)
-  return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 + raid_event.invulnerable.up + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffsRefreshable(A.CorruptionDebuff)) and Unit(unit):TimeToDie() > 10
+  return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 + raid_event.invulnerable.up + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffsRefreshable(A.CorruptionDebuff.ID, true)) and Unit(unit):TimeToDie() > 10
 end
 
 local function EvaluateCycleDrainSoul447(unit)
@@ -499,35 +502,38 @@ local function EvaluateCycleDrainSoul447(unit)
 end
 
 local function EvaluateTargetIfFilterDrainSoul453(unit)
-  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)
+  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
 local function EvaluateTargetIfDrainSoul466(unit)
-  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff))
+  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true))
 end
 
+
 local function EvaluateTargetIfFilterDrainSoul472(unit)
-  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)
+  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
 local function EvaluateTargetIfDrainSoul483(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
 end
 
+
 local function EvaluateCycleShadowBolt492(unit)
-  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)) and not A.ShadowBolt:IsSpellInFlight()
+  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and not A.ShadowBolt:IsSpellInFlight()
 end
 
 local function EvaluateTargetIfFilterShadowBolt508(unit)
-  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)
+  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
 local function EvaluateTargetIfShadowBolt519(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
 end
 
+
 local function EvaluateCycleUnstableAffliction606(unit)
-  return not bool(VarUseSeed) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() > time_to_shard or Unit("player"):SoulShardsP > 1) and (not A.VileTaint:IsSpellLearned() or Unit("player"):SoulShardsP > 1) and contagion <= A.UnstableAffliction:GetSpellCastTime() + VarPadding and (not A.CascadingCalamity:GetAzeriteRank() or Unit("player"):HasBuffs(A.CascadingCalamityBuff) > time_to_shard)
+  return not bool(VarUseSeed) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() > time_to_shard or Unit("player"):SoulShardsP > 1) and (not A.VileTaint:IsSpellLearned() or Unit("player"):SoulShardsP > 1) and contagion <= A.UnstableAffliction:GetSpellCastTime() + VarPadding and (not bool(A.CascadingCalamity:GetAzeriteRank()) or Unit("player"):HasBuffs(A.CascadingCalamityBuff.ID, true) > time_to_shard)
 end
 
 local function EvaluateCycleDrainSoul677(unit)
@@ -535,32 +541,35 @@ local function EvaluateCycleDrainSoul677(unit)
 end
 
 local function EvaluateTargetIfFilterAgony707(unit)
-  return Unit(unit):HasDeBuffs(A.AgonyDebuff)
+  return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
 local function EvaluateTargetIfAgony724(unit)
-  return Unit(unit):HasDeBuffs(A.AgonyDebuff) <= A.GetGCD() + A.ShadowBolt:GetSpellCastTime() and Unit(unit):TimeToDie() > 8
+  return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() + A.ShadowBolt:GetSpellCastTime() and Unit(unit):TimeToDie() > 8
 end
+
 
 local function EvaluateCycleUnstableAffliction731(unit)
     return not bool(contagion) and Unit(unit):TimeToDie() <= 8
 end
 
 local function EvaluateTargetIfFilterDrainSoul737(unit)
-  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)
+  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
 local function EvaluateTargetIfDrainSoul752(unit)
-  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff) <= A.GetGCD() * 2
+  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.GetGCD() * 2
 end
 
+
 local function EvaluateTargetIfFilterShadowBolt758(unit)
-  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)
+  return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
 local function EvaluateTargetIfShadowBolt785(unit)
-  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff) <= A.ShadowBolt:GetSpellCastTime() * 2 + A.ShadowBolt:TravelTime() and not A.ShadowBolt:IsSpellInFlight()
+  return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.ShadowBolt:GetSpellCastTime() * 2 + A.ShadowBolt:TravelTime() and not A.ShadowBolt:IsSpellInFlight()
 end
+
 
 local function EvaluateTargetIfFilterPhantomSingularity791(unit)
   return Unit(unit):TimeToDie()
@@ -570,6 +579,7 @@ local function EvaluateTargetIfPhantomSingularity794(unit)
   return Unit("player"):CombatTime > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste
 end
 
+
 local function EvaluateTargetIfFilterVileTaint800(unit)
   return Unit(unit):TimeToDie()
 end
@@ -578,6 +588,7 @@ local function EvaluateTargetIfVileTaint803(unit)
   return Unit("player"):CombatTime > 15 and Unit(unit):TimeToDie() >= 10
 end
 
+
 local function EvaluateTargetIfFilterUnstableAffliction809(unit)
   return min:contagion
 end
@@ -585,12 +596,14 @@ end
 local function EvaluateTargetIfUnstableAffliction814(unit)
   return not bool(VarUseSeed) and Unit("player"):SoulShardsP == 5
 end
+
       local CanMultidot = HandleMultidots()
       local unit = "player"
       local time_to_shard = TimeToShard()
       local PredictSpells = A.GetToggle(2, "PredictSpells")
       DetermineEssenceRanks()
-              local function Precombat(unit)
+              --Precombat
+        local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
@@ -599,7 +612,7 @@ end
                 return A.SummonPet:Show(icon)
             end
             -- grimoire_of_sacrifice,if=talent.grimoire_of_sacrifice.enabled
-            if A.GrimoireofSacrifice:IsReady(unit) and Unit("player"):HasBuffsDown(A.GrimoireofSacrificeBuff) and (A.GrimoireofSacrifice:IsSpellLearned()) then
+            if A.GrimoireofSacrifice:IsReady(unit) and Unit("player"):HasBuffsDown(A.GrimoireofSacrificeBuff.ID, true) and (A.GrimoireofSacrifice:IsSpellLearned()) then
                 return A.GrimoireofSacrifice:Show(icon)
             end
             -- snapshot_stats
@@ -608,11 +621,11 @@ end
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- seed_of_corruption,if=spell_targets.seed_of_corruption_aoe>=3
-            if A.SeedofCorruption:IsReady(unit) and Unit("player"):HasDebuffsDown(A.SeedofCorruptionDebuff) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.SeedofCorruption:IsReady(unit) and Unit("player"):HasDebuffsDown(A.SeedofCorruptionDebuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
                 return A.SeedofCorruption:Show(icon)
             end
             -- haunt
-            if A.Haunt:IsReady(unit) and Unit("player"):HasDebuffsDown(A.HauntDebuff) then
+            if A.Haunt:IsReady(unit) and Unit("player"):HasDebuffsDown(A.HauntDebuff.ID, true) then
                 return A.Haunt:Show(icon)
             end
             -- shadow_bolt,if=!talent.haunt.enabled&spell_targets.seed_of_corruption_aoe<3
@@ -620,38 +633,44 @@ end
                 return A.ShadowBolt:Show(icon)
             end
         end
+        
+        --Cooldowns
         local function Cooldowns(unit)
             -- potion,if=(talent.dark_soul_misery.enabled&cooldown.summon_darkglare.up&cooldown.dark_soul.up)|cooldown.summon_darkglare.up|target.time_to_die<30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.DarkSoulMisery:IsSpellLearned() and A.SummonDarkglare:HasCooldownUps and A.DarkSoul:HasCooldownUps) or A.SummonDarkglare:HasCooldownUps or Unit(unit):TimeToDie() < 30) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.DarkSoulMisery:IsSpellLearned() and A.SummonDarkglare:GetCooldown() == 0 and A.DarkSoul:GetCooldown() == 0) or A.SummonDarkglare:GetCooldown() == 0 or Unit(unit):TimeToDie() < 30) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- use_items,if=!cooldown.summon_darkglare.up,if=cooldown.summon_darkglare.remains>70|time_to_die<20|((buff.active_uas.stack=5|soul_shard=0)&(!talent.phantom_singularity.enabled|cooldown.phantom_singularity.remains)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=gcd|!cooldown.deathbolt.remains)&!cooldown.summon_darkglare.remains)
             -- fireblood,if=!cooldown.summon_darkglare.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:HasCooldownUps) then
+            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
                 return A.Fireblood:Show(icon)
             end
             -- blood_fury,if=!cooldown.summon_darkglare.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:HasCooldownUps) then
+            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
                 return A.BloodFury:Show(icon)
             end
         end
+        
+        --DbRefresh
         local function DbRefresh(unit)
             -- siphon_life,line_cd=15,if=(dot.siphon_life.remains%dot.siphon_life.duration)<=(dot.agony.remains%dot.agony.duration)&(dot.siphon_life.remains%dot.siphon_life.duration)<=(dot.corruption.remains%dot.corruption.duration)&dot.siphon_life.remains<dot.siphon_life.duration*1.3
-            if A.SiphonLife:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) / A.SiphonLifeDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.AgonyDebuff) / A.AgonyDebuff:BaseDuration) and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) / A.SiphonLifeDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.CorruptionDebuff) / A.CorruptionDebuff:BaseDuration) and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) < A.SiphonLifeDebuff:BaseDuration * 1.3) then
+            if A.SiphonLife:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) / A.SiphonLifeDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) / A.AgonyDebuff.ID, true:BaseDuration) and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) / A.SiphonLifeDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) / A.CorruptionDebuff.ID, true:BaseDuration) and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) < A.SiphonLifeDebuff.ID, true:BaseDuration * 1.3) then
                 return A.SiphonLife:Show(icon)
             end
             -- agony,line_cd=15,if=(dot.agony.remains%dot.agony.duration)<=(dot.corruption.remains%dot.corruption.duration)&(dot.agony.remains%dot.agony.duration)<=(dot.siphon_life.remains%dot.siphon_life.duration)&dot.agony.remains<dot.agony.duration*1.3
-            if A.Agony:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.AgonyDebuff) / A.AgonyDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.CorruptionDebuff) / A.CorruptionDebuff:BaseDuration) and (Unit(unit):HasDeBuffs(A.AgonyDebuff) / A.AgonyDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) / A.SiphonLifeDebuff:BaseDuration) and Unit(unit):HasDeBuffs(A.AgonyDebuff) < A.AgonyDebuff:BaseDuration * 1.3) then
+            if A.Agony:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) / A.AgonyDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) / A.CorruptionDebuff.ID, true:BaseDuration) and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) / A.AgonyDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) / A.SiphonLifeDebuff.ID, true:BaseDuration) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < A.AgonyDebuff.ID, true:BaseDuration * 1.3) then
                 return A.Agony:Show(icon)
             end
             -- corruption,line_cd=15,if=(dot.corruption.remains%dot.corruption.duration)<=(dot.agony.remains%dot.agony.duration)&(dot.corruption.remains%dot.corruption.duration)<=(dot.siphon_life.remains%dot.siphon_life.duration)&dot.corruption.remains<dot.corruption.duration*1.3
-            if A.Corruption:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.CorruptionDebuff) / A.CorruptionDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.AgonyDebuff) / A.AgonyDebuff:BaseDuration) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff) / A.CorruptionDebuff:BaseDuration) <= (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) / A.SiphonLifeDebuff:BaseDuration) and Unit(unit):HasDeBuffs(A.CorruptionDebuff) < A.CorruptionDebuff:BaseDuration * 1.3) then
+            if A.Corruption:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) / A.CorruptionDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) / A.AgonyDebuff.ID, true:BaseDuration) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) / A.CorruptionDebuff.ID, true:BaseDuration) <= (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) / A.SiphonLifeDebuff.ID, true:BaseDuration) and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) < A.CorruptionDebuff.ID, true:BaseDuration * 1.3) then
                 return A.Corruption:Show(icon)
             end
         end
+        
+        --Dots
         local function Dots(unit)
             -- seed_of_corruption,if=dot.corruption.remains<=action.seed_of_corruption.cast_time+time_to_shard+4.2*(1-talent.creeping_death.enabled*0.15)&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up+talent.writhe_in_agony.enabled&!dot.seed_of_corruption.remains&!action.seed_of_corruption.in_flight
-            if A.SeedofCorruption:IsReady(unit) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff) <= A.SeedofCorruption:GetSpellCastTime() + time_to_shard + 4.2 * (1 - num(A.CreepingDeath:IsSpellLearned()) * 0.15) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + raid_event.invulnerable.up + num(A.WritheInAgony:IsSpellLearned()) and not bool(Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff)) and not A.SeedofCorruption:IsSpellInFlight()) then
+            if A.SeedofCorruption:IsReady(unit) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.SeedofCorruption:GetSpellCastTime() + time_to_shard + 4.2 * (1 - num(A.CreepingDeath:IsSpellLearned()) * 0.15) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + raid_event.invulnerable.up + num(A.WritheInAgony:IsSpellLearned()) and not bool(Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true)) and not A.SeedofCorruption:IsSpellInFlight()) then
                 return A.SeedofCorruption:Show(icon)
             end
             -- agony,target_if=min:remains,if=talent.creeping_death.enabled&active_dot.agony<6&target.time_to_die>10&(remains<=gcd|cooldown.summon_darkglare.remains>10&(remains<5|!azerite.pandemic_invocation.rank&refreshable))
@@ -679,17 +698,19 @@ end
                 end
             end
         end
+        
+        --Fillers
         local function Fillers(unit)
             -- unstable_affliction,line_cd=15,if=cooldown.deathbolt.remains<=gcd*2&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up&cooldown.summon_darkglare.remains>20
             if A.UnstableAffliction:IsReady(unit) and (A.Deathbolt:GetCooldown() <= A.GetGCD() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 + raid_event.invulnerable.up and A.SummonDarkglare:GetCooldown() > 20) then
                 return A.UnstableAffliction:Show(icon)
             end
             -- call_action_list,name=db_refresh,if=talent.deathbolt.enabled&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up&(dot.agony.remains<dot.agony.duration*0.75|dot.corruption.remains<dot.corruption.duration*0.75|dot.siphon_life.remains<dot.siphon_life.duration*0.75)&cooldown.deathbolt.remains<=action.agony.gcd*4&cooldown.summon_darkglare.remains>20
-            if (A.Deathbolt:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 + raid_event.invulnerable.up and (Unit(unit):HasDeBuffs(A.AgonyDebuff) < A.AgonyDebuff:BaseDuration * 0.75 or Unit(unit):HasDeBuffs(A.CorruptionDebuff) < A.CorruptionDebuff:BaseDuration * 0.75 or Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) < A.SiphonLifeDebuff:BaseDuration * 0.75) and A.Deathbolt:GetCooldown() <= action.agony.gcd * 4 and A.SummonDarkglare:GetCooldown() > 20) then
+            if (A.Deathbolt:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 + raid_event.invulnerable.up and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < A.AgonyDebuff.ID, true:BaseDuration * 0.75 or Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) < A.CorruptionDebuff.ID, true:BaseDuration * 0.75 or Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) < A.SiphonLifeDebuff.ID, true:BaseDuration * 0.75) and A.Deathbolt:GetCooldown() <= action.agony.gcd * 4 and A.SummonDarkglare:GetCooldown() > 20) then
                 local ShouldReturn = DbRefresh(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=db_refresh,if=talent.deathbolt.enabled&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up&cooldown.summon_darkglare.remains<=soul_shard*action.agony.gcd+action.agony.gcd*3&(dot.agony.remains<dot.agony.duration*1|dot.corruption.remains<dot.corruption.duration*1|dot.siphon_life.remains<dot.siphon_life.duration*1)
-            if (A.Deathbolt:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 + raid_event.invulnerable.up and A.SummonDarkglare:GetCooldown() <= Unit("player"):SoulShardsP * action.agony.gcd + action.agony.gcd * 3 and (Unit(unit):HasDeBuffs(A.AgonyDebuff) < A.AgonyDebuff:BaseDuration * 1 or Unit(unit):HasDeBuffs(A.CorruptionDebuff) < A.CorruptionDebuff:BaseDuration * 1 or Unit(unit):HasDeBuffs(A.SiphonLifeDebuff) < A.SiphonLifeDebuff:BaseDuration * 1)) then
+            if (A.Deathbolt:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 + raid_event.invulnerable.up and A.SummonDarkglare:GetCooldown() <= Unit("player"):SoulShardsP * action.agony.gcd + action.agony.gcd * 3 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < A.AgonyDebuff.ID, true:BaseDuration * 1 or Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) < A.CorruptionDebuff.ID, true:BaseDuration * 1 or Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) < A.SiphonLifeDebuff.ID, true:BaseDuration * 1)) then
                 local ShouldReturn = DbRefresh(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- deathbolt,if=cooldown.summon_darkglare.remains>=30+gcd|cooldown.summon_darkglare.remains>140
@@ -697,7 +718,7 @@ end
                 return A.Deathbolt:Show(icon)
             end
             -- shadow_bolt,if=buff.movement.up&buff.nightfall.remains
-            if A.ShadowBolt:IsReady(unit) and (Unit("player"):IsMoving and bool(Unit("player"):HasBuffs(A.NightfallBuff))) then
+            if A.ShadowBolt:IsReady(unit) and (Unit("player"):IsMoving and bool(Unit("player"):HasBuffs(A.NightfallBuff.ID, true))) then
                 return A.ShadowBolt:Show(icon)
             end
             -- agony,if=buff.movement.up&!(talent.siphon_life.enabled&(prev_gcd.1.agony&prev_gcd.2.agony&prev_gcd.3.agony)|prev_gcd.1.agony)
@@ -713,7 +734,7 @@ end
                 return A.Corruption:Show(icon)
             end
             -- drain_life,if=(buff.inevitable_demise.stack>=40-(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up>2)*20&(cooldown.deathbolt.remains>execute_time|!talent.deathbolt.enabled)&(cooldown.phantom_singularity.remains>execute_time|!talent.phantom_singularity.enabled)&(cooldown.dark_soul.remains>execute_time|!talent.dark_soul_misery.enabled)&(cooldown.vile_taint.remains>execute_time|!talent.vile_taint.enabled)&cooldown.summon_darkglare.remains>execute_time+10|buff.inevitable_demise.stack>10&target.time_to_die<=10)
-            if A.DrainLife:IsReady(unit) and A.BurstIsON(unit) and ((Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff) >= 40 - num((MultiUnits:GetByRangeInCombat(40, 5, 10) - raid_event.invulnerable.up > 2)) * 20 and (A.Deathbolt:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.Deathbolt:IsSpellLearned()) and (A.PhantomSingularity:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.PhantomSingularity:IsSpellLearned()) and (A.DarkSoul:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.DarkSoulMisery:IsSpellLearned()) and (A.VileTaint:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.VileTaint:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() > A.DrainLife:GetSpellCastTime() + 10 or Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff) > 10 and Unit(unit):TimeToDie() <= 10)) then
+            if A.DrainLife:IsReady(unit) and A.BurstIsON(unit) and ((Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 40 - num((MultiUnits:GetByRangeInCombat(40, 5, 10) - raid_event.invulnerable.up > 2)) * 20 and (A.Deathbolt:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.Deathbolt:IsSpellLearned()) and (A.PhantomSingularity:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.PhantomSingularity:IsSpellLearned()) and (A.DarkSoul:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.DarkSoulMisery:IsSpellLearned()) and (A.VileTaint:GetCooldown() > A.DrainLife:GetSpellCastTime() or not A.VileTaint:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() > A.DrainLife:GetSpellCastTime() + 10 or Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) > 10 and Unit(unit):TimeToDie() <= 10)) then
                 return A.DrainLife:Show(icon)
             end
             -- haunt
@@ -759,13 +780,15 @@ end
                 return A.ShadowBolt:Show(icon)
             end
         end
+        
+        --Spenders
         local function Spenders(unit)
             -- unstable_affliction,if=cooldown.summon_darkglare.remains<=soul_shard*execute_time&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=soul_shard*execute_time)
             if A.UnstableAffliction:IsReady(unit) and (A.SummonDarkglare:GetCooldown() <= Unit("player"):SoulShardsP * A.UnstableAffliction:GetSpellCastTime() and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= Unit("player"):SoulShardsP * A.UnstableAffliction:GetSpellCastTime())) then
                 return A.UnstableAffliction:Show(icon)
             end
             -- call_action_list,name=fillers,if=(cooldown.summon_darkglare.remains<time_to_shard*(6-soul_shard)|cooldown.summon_darkglare.up)&time_to_die>cooldown.summon_darkglare.remains
-            if ((A.SummonDarkglare:GetCooldown() < time_to_shard * (6 - Unit("player"):SoulShardsP) or A.SummonDarkglare:HasCooldownUps) and Unit(unit):TimeToDie() > A.SummonDarkglare:GetCooldown()) then
+            if ((A.SummonDarkglare:GetCooldown() < time_to_shard * (6 - Unit("player"):SoulShardsP) or A.SummonDarkglare:GetCooldown() == 0) and Unit(unit):TimeToDie() > A.SummonDarkglare:GetCooldown()) then
                 local ShouldReturn = Fillers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- seed_of_corruption,if=variable.use_seed
@@ -773,7 +796,7 @@ end
                 return A.SeedofCorruption:Show(icon)
             end
             -- unstable_affliction,if=!variable.use_seed&!prev_gcd.1.summon_darkglare&(talent.deathbolt.enabled&cooldown.deathbolt.remains<=execute_time&!azerite.cascading_calamity.enabled|(soul_shard>=5&spell_targets.seed_of_corruption_aoe<2|soul_shard>=2&spell_targets.seed_of_corruption_aoe>=2)&target.time_to_die>4+execute_time&spell_targets.seed_of_corruption_aoe=1|target.time_to_die<=8+execute_time*soul_shard)
-            if A.UnstableAffliction:IsReady(unit) and (not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() or (Unit("player"):SoulShardsP >= 5 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or Unit("player"):SoulShardsP >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Unit("player"):SoulShardsP)) then
+            if A.UnstableAffliction:IsReady(unit) and (not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not bool(A.CascadingCalamity:GetAzeriteRank()) or (Unit("player"):SoulShardsP >= 5 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or Unit("player"):SoulShardsP >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Unit("player"):SoulShardsP)) then
                 return A.UnstableAffliction:Show(icon)
             end
             -- unstable_affliction,if=!variable.use_seed&contagion<=cast_time+variable.padding
@@ -787,6 +810,7 @@ end
                 end
             end
         end
+        
       -- call precombat
 if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then
   local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
@@ -798,10 +822,10 @@ end
             end
             -- variable,name=padding,op=set,value=action.shadow_bolt.execute_time*azerite.cascading_calamity.enabled
             if (true) then
-                VarPadding = A.ShadowBolt:GetSpellCastTime() * num(A.CascadingCalamity:GetAzeriteRank())
+                VarPadding = A.ShadowBolt:GetSpellCastTime() * A.CascadingCalamity:GetAzeriteRank()
             end
             -- variable,name=padding,op=reset,value=gcd,if=azerite.cascading_calamity.enabled&(talent.drain_soul.enabled|talent.deathbolt.enabled&cooldown.deathbolt.remains<=gcd)
-            if (A.CascadingCalamity:GetAzeriteRank() and (A.DrainSoul:IsSpellLearned() or A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.GetGCD())) then
+            if (bool(A.CascadingCalamity:GetAzeriteRank()) and (A.DrainSoul:IsSpellLearned() or A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.GetGCD())) then
                 VarPadding = 0
             end
             -- variable,name=maintain_se,value=spell_targets.seed_of_corruption_aoe<=1+talent.writhe_in_agony.enabled+talent.absolute_corruption.enabled*2+(talent.writhe_in_agony.enabled&talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>2)+(talent.siphon_life.enabled&!talent.creeping_death.enabled&!talent.drain_soul.enabled)+raid_event.invulnerable.up
@@ -823,7 +847,7 @@ end
                 return A.Haunt:Show(icon)
             end
             -- summon_darkglare,if=dot.agony.ticking&dot.corruption.ticking&(buff.active_uas.stack=5|soul_shard=0)&(!talent.phantom_singularity.enabled|dot.phantom_singularity.remains)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=gcd|!cooldown.deathbolt.remains|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up)
-            if A.SummonDarkglare:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.AgonyDebuff) and Unit(unit):HasDeBuffs(A.CorruptionDebuff) and (ActiveUAs(unit) == 5 or Unit("player"):SoulShardsP == 0) and (not A.PhantomSingularity:IsSpellLearned() or bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff))) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or not bool(A.Deathbolt:GetCooldown()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up)) then
+            if A.SummonDarkglare:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) and (ActiveUAs(unit) == 5 or Unit("player"):SoulShardsP == 0) and (not A.PhantomSingularity:IsSpellLearned() or bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true))) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or not bool(A.Deathbolt:GetCooldown()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up)) then
                 return A.SummonDarkglare:Show(icon)
             end
             -- deathbolt,if=cooldown.summon_darkglare.remains&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up
@@ -889,7 +913,7 @@ end
                 return A.VileTaint:Show(icon)
             end
             -- dark_soul,if=cooldown.summon_darkglare.remains<10&dot.phantom_singularity.remains|target.time_to_die<20+gcd|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up
-            if A.DarkSoul:IsReady(unit) and A.BurstIsON(unit) and (A.SummonDarkglare:GetCooldown() < 10 and bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff)) or Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up) then
+            if A.DarkSoul:IsReady(unit) and A.BurstIsON(unit) and (A.SummonDarkglare:GetCooldown() < 10 and bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) or Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up) then
                 return A.DarkSoul:Show(icon)
             end
             -- berserking

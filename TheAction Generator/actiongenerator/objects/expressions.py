@@ -271,8 +271,8 @@ class Expression(Decorable):
         if self.player_unit.spell_property(spell, PET):
             return Pet(self.player_unit)
         if self.pet_caster:
-            return Literal('Pet')
-        return Literal('Unit("player")')
+            return self.pet_caster
+        return self.player_unit
 
     def pet(self):
         """
@@ -576,7 +576,12 @@ class Expires:
             # Required when called from Aura
             self.args = []
         else:
-            self.method = Method(f'Has{self.ready_simc.print_lua()}s', type_=BOOL)
+            fullstring = f'Has{self.ready_simc.print_lua()}s'
+            substring = "CooldownUp"
+            if re.search(substring, fullstring):
+                self.method = Method(f'GetCooldown() == 0', type_=BOOL)
+            else:
+                self.method = Method(f'Has{self.ready_simc.print_lua()}s', type_=BOOL)
 
     def remains(self):
         """
@@ -720,7 +725,7 @@ class Equipped(BuildExpression):
         """
         Return the arguments for the expression equipped.
         """
-        self.method = Method('IsExists', type_=BOOL)
+        self.method = Method('IsExists()', type_=BOOL)
 
 
 class PrevGCD(BuildExpression):
@@ -914,7 +919,7 @@ class Azerite(BuildExpression):
         """
         Return the arguments for the expression azerite.spell.enabled.
         """
-        self.method = Method('GetAzeriteRank()', type_=BOOL)
+        self.method = Method('GetAzeriteRank()')
 
 
 class Talent(BuildExpression):
@@ -1118,7 +1123,6 @@ class RaidEvent(BuildExpression):
         """
         self.simc = FALSE
 
-
 class TargetExpression(BuildExpression):
     """
     Represent the expression for a target. condition.
@@ -1143,7 +1147,7 @@ class TargetExpression(BuildExpression):
         Return the argument for the expressions target.health.{something}.
         """
         if self.condition.condition_list[2] == 'pct':
-            self.method = Method('HealthPercent')
+            self.method = Method('HealthPercent()')
 
     def debuff(self):
         """
