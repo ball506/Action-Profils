@@ -628,7 +628,7 @@ local function APL()
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&(buff.memory_of_lucid_dreams.up|(debuff.colossus_smash.up&!essence.memory_of_lucid_dreams.major)))
-            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and not bool(essence.memory_of_lucid_dreams.major))))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and not bool(essence.memory_of_lucid_dreams.major))))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- avatar,if=cooldown.colossus_smash.remains<8|(talent.warbreaker.enabled&cooldown.warbreaker.remains<8)

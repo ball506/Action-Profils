@@ -608,7 +608,7 @@ A[3] = function(icon, isMulti)
                 A.PocketsizedComputationDevice:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=((equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>=20)|!equipped.cyclotronic_blast)&(debuff.razor_coral_debuff.down|(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&buff.storm_earth_and_fire.remains>13|target.time_to_die<21)
-            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() >= 20) or not A.CyclotronicBlast:IsExists()) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or (not A.DribblingInkpod:IsExists() or target.time_to_pct_30.remains < 8) and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) > 13 or Unit(unit):TimeToDie() < 21)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() >= 20) or not A.CyclotronicBlast:IsExists()) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (not A.DribblingInkpod:IsExists() or Unit(unit):TimeToDieX(30) < 8) and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) > 13 or Unit(unit):TimeToDie() < 21)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- serenity,if=cooldown.rising_sun_kick.remains<=2|target.time_to_die<=12
@@ -807,7 +807,7 @@ A[3] = function(icon, isMulti)
                 return A.TouchofDeath:Show(icon)
             end
             -- touch_of_death,if=!equipped.cyclotronic_blast&equipped.dribbling_inkpod&target.time_to_die>9&(target.time_to_pct_30.remains>=130|target.time_to_pct_30.remains<8)
-            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists() and A.DribblingInkpod:IsExists() and Unit(unit):TimeToDie() > 9 and (target.time_to_pct_30.remains >= 130 or target.time_to_pct_30.remains < 8)) then
+            if A.TouchofDeath:IsReady(unit) and A.BurstIsON(unit) and (not A.CyclotronicBlast:IsExists() and A.DribblingInkpod:IsExists() and Unit(unit):TimeToDie() > 9 and (Unit(unit):TimeToDieX(30) >= 130 or Unit(unit):TimeToDieX(30) < 8)) then
                 return A.TouchofDeath:Show(icon)
             end
             -- touch_of_death,if=!equipped.cyclotronic_blast&!equipped.dribbling_inkpod&target.time_to_die>9

@@ -423,7 +423,7 @@ A[3] = function(icon, isMulti)
                 return A.Charge:Show(icon)
             end
             -- run_action_list,name=movement,if=movement.distance>5
-            if (movement.distance > 5) then
+            if (Unit(unit):GetRange() > 5) then
                 return Movement(unit);
             end
             -- heroic_leap,if=(raid_event.movement.distance>25&raid_event.movement.in>45)
@@ -483,7 +483,7 @@ A[3] = function(icon, isMulti)
                 return A.Whirlwind:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
-            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(essence.memory_of_lucid_dreams.major) and not bool(essence.condensed_lifeforce.major)))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(essence.memory_of_lucid_dreams.major) and not bool(essence.condensed_lifeforce.major)))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- blood_fury

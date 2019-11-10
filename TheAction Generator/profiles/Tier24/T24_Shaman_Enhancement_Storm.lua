@@ -485,15 +485,15 @@ A[3] = function(icon, isMulti)
                 return A.Ascendance:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) > 2)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>2&debuff.conductive_ink_debuff.down&(buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) > 2 and bool(Unit(unit):HasDeBuffsDown(A.ConductiveInkDeBuffDebuff.ID, true)) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2 and bool(Unit(unit):HasDeBuffsDown(A.ConductiveInkDebuff.ID, true)) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=(debuff.conductive_ink_debuff.up|buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)&target.health.pct<31
-            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6) and Unit(unit):HealthPercent() < 31) then
+            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6) and Unit(unit):HealthPercent() < 31) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_items

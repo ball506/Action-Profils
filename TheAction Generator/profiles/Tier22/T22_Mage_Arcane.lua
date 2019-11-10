@@ -563,11 +563,11 @@ A[3] = function(icon, isMulti)
         --Movement
         local function Movement(unit)
             -- shimmer,if=movement.distance>=10
-            if A.Shimmer:IsReady(unit) and (movement.distance >= 10) then
+            if A.Shimmer:IsReady(unit) and (Unit(unit):GetRange() >= 10) then
                 return A.Shimmer:Show(icon)
             end
             -- blink,if=movement.distance>=10
-            if A.Blink:IsReady(unit) and (movement.distance >= 10) then
+            if A.Blink:IsReady(unit) and (Unit(unit):GetRange() >= 10) then
                 return A.Blink:Show(icon)
             end
             -- presence_of_mind

@@ -393,7 +393,7 @@ A[3] = function(icon, isMulti)
                 return A.Charge:Show(icon)
             end
             -- run_action_list,name=movement,if=movement.distance>5
-            if (movement.distance > 5) then
+            if (Unit(unit):GetRange() > 5) then
                 return Movement(unit);
             end
             -- heroic_leap,if=(raid_event.movement.distance>25&raid_event.movement.in>45)|!raid_event.movement.exists

@@ -583,7 +583,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major.rank3&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not bool(essence.condensed_lifeforce.major.rank3) and bool(ca_execute)) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not bool(essence.condensed_lifeforce.major.rank3) and bool(ca_execute)) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5

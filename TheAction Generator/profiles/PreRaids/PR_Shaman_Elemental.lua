@@ -529,7 +529,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and isMoving and (movement.distance > 6) then
+            if A.FlameShock:IsReady(unit) and isMoving and (Unit(unit):GetRange() > 6) then
                 return A.FlameShock:Show(icon)
             end
             -- frost_shock,moving=1

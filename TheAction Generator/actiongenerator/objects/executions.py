@@ -41,7 +41,9 @@ class Item(LuaNamed, LuaCastable):
         """
         Print the lua representation of the item.
         """
-        return f'A.{self.lua_name()}'
+        string1 = (f'A.{self.lua_name()}')
+        string2 = string1.replace("Debuff","")
+        return string2
 
 class Potion(Item):
     """
@@ -221,11 +223,15 @@ class Spell(LuaNamed, LuaCastable):
         fullstring = (f'A.{self.lua_name()}')
         substring = "Buff"
         substring2 = "Debuff"
+        substring3 = "DeBuffDebuff"		
         if re.search(substring, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         elif re.search(substring2, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         else:
-            string1 = f'A.{self.lua_name()}'	
-
-        return string1
+            string1 = f'A.{self.lua_name()}'
+        if re.search(substring3, string1):
+            string2 = string1.replace("DeBuffDebuff","Debuff")
+        else:
+            string2 = string1			
+        return string2

@@ -369,7 +369,7 @@ A[3] = function(icon, isMulti)
                 return A.ShieldofVengeance:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(buff.avenging_wrath.remains>=20|buff.crusade.stack=10&buff.crusade.remains>15)&(cooldown.guardian_of_azeroth.remains>90|target.time_to_die<30|!essence.condensed_lifeforce.major)
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(essence.condensed_lifeforce.major))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(essence.condensed_lifeforce.major))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force,if=time<=2|buff.reckless_force.up

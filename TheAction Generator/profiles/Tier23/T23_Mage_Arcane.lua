@@ -567,7 +567,7 @@ A[3] = function(icon, isMulti)
         --Movement
         local function Movement(unit)
             -- blink_any,if=movement.distance>=10
-            if A.BlinkAny:IsReady(unit) and (movement.distance >= 10) then
+            if A.BlinkAny:IsReady(unit) and (Unit(unit):GetRange() >= 10) then
                 return A.BlinkAny:Show(icon)
             end
             -- presence_of_mind

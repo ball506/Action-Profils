@@ -22,6 +22,7 @@ CALL_ACTION_LIST = 'call_action_list'
 
 BLOODLUST = 'bloodlust'
 MOVEMENT = 'movement'
+DISTANCE = 'distance'
 COOLDOWN = 'cooldown'
 
 BOOL = 'bool'

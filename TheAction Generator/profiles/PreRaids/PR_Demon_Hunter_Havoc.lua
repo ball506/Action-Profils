@@ -484,11 +484,11 @@ A[3] = function(icon, isMulti)
                 return A.ThrowGlaive:Show(icon)
             end
             -- fel_rush,if=movement.distance>15|buff.out_of_range.up
-            if A.FelRush:IsReady(unit) and (movement.distance > 15 or Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true)) then
+            if A.FelRush:IsReady(unit) and (Unit(unit):GetRange() > 15 or Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true)) then
                 return A.FelRush:Show(icon)
             end
             -- vengeful_retreat,if=movement.distance>15
-            if A.VengefulRetreat:IsReady(unit) and (movement.distance > 15) then
+            if A.VengefulRetreat:IsReady(unit) and (Unit(unit):GetRange() > 15) then
                 return A.VengefulRetreat:Show(icon)
             end
             -- throw_glaive,if=talent.demon_blades.enabled
@@ -556,15 +556,15 @@ A[3] = function(icon, isMulti)
                 return A.FelRush:Show(icon)
             end
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and (movement.distance > 15 or Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true)) then
+            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15 or Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true)) then
                 return A.Felblade:Show(icon)
             end
             -- fel_rush,if=movement.distance>15|(buff.out_of_range.up&!talent.momentum.enabled)
-            if A.FelRush:IsReady(unit) and (movement.distance > 15 or (Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true) and not A.Momentum:IsSpellLearned())) then
+            if A.FelRush:IsReady(unit) and (Unit(unit):GetRange() > 15 or (Unit("player"):HasBuffs(A.OutofRangeBuff.ID, true) and not A.Momentum:IsSpellLearned())) then
                 return A.FelRush:Show(icon)
             end
             -- vengeful_retreat,if=movement.distance>15
-            if A.VengefulRetreat:IsReady(unit) and (movement.distance > 15) then
+            if A.VengefulRetreat:IsReady(unit) and (Unit(unit):GetRange() > 15) then
                 return A.VengefulRetreat:Show(icon)
             end
             -- throw_glaive,if=talent.demon_blades.enabled

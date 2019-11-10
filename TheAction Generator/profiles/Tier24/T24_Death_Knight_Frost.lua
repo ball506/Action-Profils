@@ -673,11 +673,11 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=(cooldown.pillar_of_frost.ready|cooldown.pillar_of_frost.remains>20)&(!talent.breath_of_sindragosa.enabled|cooldown.empower_rune_weapon.remains>95)
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=cooldown.empower_rune_weapon.remains>90&debuff.razor_coral_debuff.up&variable.other_on_use_equipped|buff.breath_of_sindragosa.up&debuff.razor_coral_debuff.up&!variable.other_on_use_equipped|buff.empower_rune_weapon.up&debuff.razor_coral_debuff.up&!talent.breath_of_sindragosa.enabled|target.1.time_to_die<21
-            if A.AshvanesRazorCoral:IsReady(unit) and (A.EmpowerRuneWeapon:GetCooldown() > 90 and Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) and bool(VarOtherOnUseEquipped) or Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) and not bool(VarOtherOnUseEquipped) or Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true) and not A.BreathofSindragosa:IsSpellLearned() or target.1.time_to_die < 21) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (A.EmpowerRuneWeapon:GetCooldown() > 90 and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and bool(VarOtherOnUseEquipped) or Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and not bool(VarOtherOnUseEquipped) or Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and not A.BreathofSindragosa:IsSpellLearned() or target.1.time_to_die < 21) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=jes_howler,if=(equipped.lurkers_insidious_gift&buff.pillar_of_frost.remains)|(!equipped.lurkers_insidious_gift&buff.pillar_of_frost.remains<12&buff.pillar_of_frost.up)

@@ -447,7 +447,7 @@ A[3] = function(icon, isMulti)
         --Movement
         local function Movement(unit)
             -- blink,if=movement.distance>10
-            if A.Blink:IsReady(unit) and (movement.distance > 10) then
+            if A.Blink:IsReady(unit) and (Unit(unit):GetRange() > 10) then
                 return A.Blink:Show(icon)
             end
             -- ice_floes,if=buff.ice_floes.down

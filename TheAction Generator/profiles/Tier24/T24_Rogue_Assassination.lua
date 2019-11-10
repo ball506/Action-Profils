@@ -465,7 +465,7 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=variable,name=vendetta_font_condition,value=!equipped.azsharas_font_of_power|azerite.shrouded_suffocation.enabled|debuff.razor_coral_debuff.down|trinket.ashvanes_razor_coral.cooldown.remains<10&(cooldown.toxic_blade.remains<1|debuff.toxic_blade.up)
             if (true) then
-                VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or bool(A.ShroudedSuffocation:GetAzeriteRank()) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
+                VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or bool(A.ShroudedSuffocation:GetAzeriteRank()) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
             end
             -- vendetta,if=!stealthed.rogue&dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition
             if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthedP(true, false) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and bool(VarVendettaSubterfugeCondition) and bool(VarVendettaNightstalkerCondition) and bool(VarVendettaFontCondition)) then
@@ -533,7 +533,7 @@ A[3] = function(icon, isMulti)
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) > 10 - 4 * num(A.AzsharasFontofPower:IsExists()) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) > 10 - 4 * num(A.AzsharasFontofPower:IsExists()) or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=master_assassin_remains=0&!debuff.vendetta.up&!debuff.toxic_blade.up&buff.memory_of_lucid_dreams.down&energy<80&dot.rupture.remains>4

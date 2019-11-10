@@ -601,7 +601,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack<1
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) < 1) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) < 1) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=pet.guardian_of_azeroth.active&pet.apoc_ghoul.active

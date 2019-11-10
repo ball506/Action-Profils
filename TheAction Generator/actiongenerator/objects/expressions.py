@@ -14,7 +14,7 @@ from .resources import (Rune, AstralPower, HolyPower, Insanity, Pain, Focus,
                         Maelstrom, Energy, ComboPoints, SoulShard,
                         ArcaneCharges, Chi, RunicPower, Fury, Rage, Mana)
 from .units import Pet
-from ..constants import (SPELL, BUFF, DEBUFF, BOOL, PET, BLOODLUST, MOVEMENT, RANGE,
+from ..constants import (SPELL, BUFF, DEBUFF, BOOL, PET, BLOODLUST, MOVEMENT, DISTANCE, RANGE,
                          FALSE, MAX_INT, POTION, COOLDOWN)
 from ..abstract.decoratormanager import Decorable
 
@@ -39,7 +39,7 @@ class ActionExpression(BuildExpression):
         'refreshable',
         'pmultiplier',
     ]
-
+	
     def __init__(self, condition, to_self=False):
         for method_name in self.AURA_METHODS:
             self._generate_aura_method(method_name)
@@ -493,6 +493,12 @@ class Expression(Decorable):
         Return the condition when the prefix is talent.
         """
         return Talent.build(self)
+    
+    def movement(self):
+        """
+        Return the condition when the prefix is movement.
+        """
+        return Movement.build(self)
 
     def race(self):
         """
@@ -767,7 +773,6 @@ class ActiveDot(BuildExpression):
         """
         self.method = Method('ActiveDot')
 
-
 class PrevOffGCD(BuildExpression):
     """
     Represent the expression for a prev_off_gcd. condition.
@@ -942,6 +947,24 @@ class Talent(BuildExpression):
         """
         self.method = Method('IsSpellLearned()', type_=BOOL)
 
+class Movement(BuildExpression):
+    """
+    Represent the expression for a talent. condition.
+    """
+
+    def __init__(self, condition):
+        self.condition = condition
+        call = condition.condition_list[1]
+        self.object_ = Literal('Unit(unit)')
+        self.method = None
+        self.args = []
+        super().__init__(call)
+
+    def distance(self):
+        """
+        Return the arguments for the expression talent.spell.enabled.
+        """
+        self.method = Literal('GetRange()')
 
 class Race(BuildExpression):
     """
@@ -1131,7 +1154,7 @@ class TargetExpression(BuildExpression):
     def __init__(self, condition):
         self.condition = condition
         call = condition.condition_list[1]
-        self.object_ = Literal('Unit(unit)')
+        self.object_ = self.condition.target_unit
         self.method = None
         self.args = []
         super().__init__(call)
@@ -1141,6 +1164,13 @@ class TargetExpression(BuildExpression):
         Return the arguments for the expression target.time_to_die.
         """
         self.method = Method('TimeToDie()')
+    
+    def time_to_pct_30(self):
+        """
+        Return the arguments for the expression target.time_to_pct_30.
+		Trick for execution checks
+        """
+        self.method = Method('TimeToDieX(30)')
 
     def health(self):
         """

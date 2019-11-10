@@ -422,11 +422,11 @@ A[3] = function(icon, isMulti)
                 A.MerekthasFang:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=buff.dancing_rune_weapon.up&debuff.razor_coral_debuff.up
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDeBuffDebuff.ID, true)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- potion,if=buff.dancing_rune_weapon.up

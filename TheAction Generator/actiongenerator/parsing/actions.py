@@ -281,7 +281,6 @@ class Action(Decorable):
         condition = self.execution().object_().conditions()
         if int(self.properties().get('moving', 0)) > 0:
             condition.add_condition(Literal('isMoving'))
-        
         # TODO: Make CycleTargets execution class
         if self.properties().get('cycle_targets'):
             return self.print_cycle_targets(lua_string, condition)

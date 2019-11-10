@@ -295,7 +295,7 @@ end
 
 
 local function EvaluateCycleAshvanesRazorCoral82(unit)
-    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) == 0
+    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
 end
 
 --- ======= ACTION LISTS =======
@@ -420,7 +420,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDeBuffDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- dragon_roar
