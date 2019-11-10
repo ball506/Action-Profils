@@ -554,8 +554,8 @@ A[3] = function(icon, isMulti)
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- rune_of_power,if=buff.arcane_charge.stack=buff.arcane_charge.max_stack&(full_recharge_time<=execute_time|full_recharge_time<=cooldown.arcane_power.remains|target.time_to_die<=cooldown.arcane_power.remains)
             if A.RuneofPower:IsReady(unit) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (A.RuneofPower:FullRechargeTimeP() <= A.RuneofPower:GetSpellCastTime() or A.RuneofPower:FullRechargeTimeP() <= A.ArcanePower:GetCooldown() or Unit(unit):TimeToDie() <= A.ArcanePower:GetCooldown())) then

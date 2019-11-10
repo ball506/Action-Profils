@@ -410,8 +410,8 @@ A[3] = function(icon, isMulti)
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- frostbolt
             if A.Frostbolt:IsReady(unit) then
@@ -575,8 +575,8 @@ A[3] = function(icon, isMulti)
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IcyVeinsBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- frostbolt
             if A.Frostbolt:IsReady(unit) then

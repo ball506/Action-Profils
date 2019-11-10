@@ -560,8 +560,8 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast
-            if A.:IsReady(unit) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) then
+                A.CyclotronicBlast:Show(icon)
             end
         end
         

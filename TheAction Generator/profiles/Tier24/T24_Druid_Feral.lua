@@ -498,16 +498,16 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
-            if A.:IsReady(unit) and ((Unit("player"):EnergyDeficitPredicted() >= Unit("player"):EnergyRegen() * 3) and bool(Unit("player"):HasBuffsDown(A.TigersFuryBuff.ID, true)) and not bool(A.JungleFury:GetAzeriteRank())) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and ((Unit("player"):EnergyDeficitPredicted() >= Unit("player"):EnergyRegen() * 3) and bool(Unit("player"):HasBuffsDown(A.TigersFuryBuff.ID, true)) and not bool(A.JungleFury:GetAzeriteRank())) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.tigers_fury.up&azerite.jungle_fury.enabled
-            if A.:IsReady(unit) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and bool(A.JungleFury:GetAzeriteRank())) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and bool(A.JungleFury:GetAzeriteRank())) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,effect_name=azsharas_font_of_power,if=energy.deficit>=50
-            if A.:IsReady(unit) and (Unit("player"):EnergyDeficitPredicted() >= 50) then
-                A.:Show(icon)
+            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):EnergyDeficitPredicted() >= 50) then
+                A.AzsharasFontofPower:Show(icon)
             end
             -- use_items,if=buff.tigers_fury.up|target.time_to_die<20
         end

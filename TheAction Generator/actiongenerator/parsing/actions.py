@@ -362,7 +362,7 @@ class Execution(Decorable):
         elif self.execution in ITEM_ACTIONS:
             type_, object_ = ITEM, Item(self.action, self.execution)
         elif self.execution == USE_ITEM:
-            item_name = self.action.properties().get('name', '')
+            item_name = self.action.properties().get('name', '') or self.action.properties().get('effect_name', '')
             type_, object_ = ITEM, Item(self.action, item_name)
         elif self.execution == VARIABLE:
             variable_name = self.action.properties()['name']

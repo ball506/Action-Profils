@@ -439,8 +439,8 @@ A[3] = function(icon, isMulti)
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.metamorphosis.up&buff.memory_of_lucid_dreams.down&(!variable.blade_dance|!cooldown.blade_dance.ready)
-            if A.:IsReady(unit) and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
             if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDeBuffDebuff.ID, true)) or (Unit(unit):HasDeBuffs(A.ConductiveInkDeBuffDebuff.ID, true) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 20) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then

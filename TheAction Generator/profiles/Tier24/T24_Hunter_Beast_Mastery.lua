@@ -388,8 +388,8 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists&(trinket.1.has_cooldown+trinket.2.has_cooldown<2|equipped.variable_intensity_gigavolt_oscillating_reactor)
-            if A.:IsReady(unit) and (not bool(raid_event.invulnerable.exists) and (trinket.1.has_cooldown + trinket.2.has_cooldown < 2 or A.VariableIntensityGigavoltOscillatingReactor:IsExists())) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not bool(raid_event.invulnerable.exists) and (trinket.1.has_cooldown + trinket.2.has_cooldown < 2 or A.VariableIntensityGigavoltOscillatingReactor:IsExists())) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- focused_azerite_beam,if=!raid_event.invulnerable.exists
             if A.FocusedAzeriteBeam:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
@@ -630,8 +630,8 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
-            if A.:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- call_action_list,name=cds
             if (true) then

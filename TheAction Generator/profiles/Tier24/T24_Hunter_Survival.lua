@@ -433,8 +433,8 @@ local function APL()
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
-            if A.:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:IsReady(unit) then

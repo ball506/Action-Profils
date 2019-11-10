@@ -486,8 +486,8 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&dot.nightblade.ticking&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.shadow_dance.up&cooldown.symbols_of_death.remains<10
             if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and A.SymbolsofDeath:GetCooldown() < 10) then

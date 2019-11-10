@@ -521,12 +521,12 @@ A[3] = function(icon, isMulti)
                 A.AzurethosSingedPlumage:Show(icon)
             end
             -- use_item,use_off_gcd=1,effect_name=gladiators_badge,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
-                A.:Show(icon)
+            if A.GladiatorsBadge:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+                A.GladiatorsBadge:Show(icon)
             end
             -- use_item,use_off_gcd=1,effect_name=gladiators_medallion,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
-                A.:Show(icon)
+            if A.GladiatorsMedallion:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+                A.GladiatorsMedallion:Show(icon)
             end
             -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
             if A.BalefireBranch:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
@@ -578,8 +578,8 @@ A[3] = function(icon, isMulti)
                 A.ShiverVenomRelic:Show(icon)
             end
             -- use_item,effect_name=harmonic_dematerializer
-            if A.:IsReady(unit) then
-                A.:Show(icon)
+            if A.HarmonicDematerializer:IsReady(unit) then
+                A.HarmonicDematerializer:Show(icon)
             end
             -- use_item,name=malformed_heralds_legwraps,if=cooldown.combustion.remains>=55&buff.combustion.down&cooldown.combustion.remains>variable.on_use_cutoff|variable.disable_combustion
             if A.MalformedHeraldsLegwraps:IsReady(unit) and (A.Combustion:GetCooldown() >= 55 and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and A.Combustion:GetCooldown() > VarOnUseCutoff or bool(VarDisableCombustion)) then
@@ -602,8 +602,8 @@ A[3] = function(icon, isMulti)
                 A.TidestormCodex:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=cooldown.combustion.remains>variable.on_use_cutoff|variable.disable_combustion|talent.firestarter.enabled&firestarter.remains>variable.on_use_cutoff
-            if A.:IsReady(unit) and (A.Combustion:GetCooldown() > VarOnUseCutoff or bool(VarDisableCombustion) or A.Firestarter:IsSpellLearned() and S.Firestarter:ActiveRemains() > VarOnUseCutoff) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (A.Combustion:GetCooldown() > VarOnUseCutoff or bool(VarDisableCombustion) or A.Firestarter:IsSpellLearned() and S.Firestarter:ActiveRemains() > VarOnUseCutoff) then
+                A.CyclotronicBlast:Show(icon)
             end
         end
         

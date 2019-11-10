@@ -356,7 +356,7 @@ local function EvaluateCycleGuardianofAzeroth84(unit)
     return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and ((not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
 end
 
-local function EvaluateCycle105(unit)
+local function EvaluateCycleCyclotronicBlast105(unit)
     return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
 end
 
@@ -502,9 +502,9 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- use_item,effect_name=cyclotronic_blast,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-            if A.:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A., 40, EvaluateCycle105) then
-                    return A.:Show(icon) 
+            if A.CyclotronicBlast:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.CyclotronicBlast, 40, EvaluateCycleCyclotronicBlast105) then
+                    return A.CyclotronicBlast:Show(icon) 
                 end
             end
             -- use_item,name=shiver_venom_relic,if=!buff.ca_inc.up&!buff.bloodlust.up,target_if=dot.shiver_venom.stack>=5

@@ -537,8 +537,8 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=master_assassin_remains=0&!debuff.vendetta.up&!debuff.toxic_blade.up&buff.memory_of_lucid_dreams.down&energy<80&dot.rupture.remains>4
-            if A.:IsReady(unit) and (MasterAssassinRemains == 0 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Unit("player"):EnergyPredicted() < 80 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (MasterAssassinRemains == 0 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Unit("player"):EnergyPredicted() < 80 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=lurkers_insidious_gift,if=debuff.vendetta.up
             if A.LurkersInsidiousGift:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
@@ -549,12 +549,12 @@ A[3] = function(icon, isMulti)
                 A.LustrousGoldenPlumage:Show(icon)
             end
             -- use_item,effect_name=gladiators_medallion,if=debuff.vendetta.up
-            if A.:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
-                A.:Show(icon)
+            if A.GladiatorsMedallion:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+                A.GladiatorsMedallion:Show(icon)
             end
             -- use_item,effect_name=gladiators_badge,if=debuff.vendetta.up
-            if A.:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
-                A.:Show(icon)
+            if A.GladiatorsBadge:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+                A.GladiatorsBadge:Show(icon)
             end
             -- use_items
         end

@@ -401,8 +401,8 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.:IsReady(unit) and (not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- avenging_wrath,if=(!talent.inquisition.enabled|buff.inquisition.up)&holy_power>=3
             if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and ((not A.Inquisition:IsSpellLearned() or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true)) and Unit("player"):HolyPower() >= 3) then

@@ -398,8 +398,8 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
-            if A.:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
+                A.CyclotronicBlast:Show(icon)
             end
         end
         
@@ -480,8 +480,8 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&buff.adrenaline_rush.down&buff.memory_of_lucid_dreams.down&energy.time_to_max>4&rtb_buffs<5
-            if A.:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(Unit("player"):HasBuffsDown(A.AdrenalineRushBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Unit("player"):EnergyTimeToMaxPredicted() > 4 and RtB_Buffs < 5) then
-                A.:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(Unit("player"):HasBuffsDown(A.AdrenalineRushBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Unit("player"):EnergyTimeToMaxPredicted() > 4 and RtB_Buffs < 5) then
+                A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.adrenaline_rush.up&!buff.blade_flurry.up&cooldown.adrenaline_rush.remains<15
             if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and not Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true) and A.AdrenalineRush:GetCooldown() < 15) then
