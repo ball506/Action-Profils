@@ -21,7 +21,6 @@ local setmetatable                           = setmetatable
 Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
     WakeofAshes                            = Action.Create({Type = "Spell", ID = 255937 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     AvengingWrathBuff                      = Action.Create({Type = "Spell", ID = 31884 }),
     CrusadeBuff                            = Action.Create({Type = "Spell", ID = 231895 }),
     LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
@@ -29,20 +28,12 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     ShieldofVengeance                      = Action.Create({Type = "Spell", ID = 184662 }),
     SeethingRageBuff                       = Action.Create({Type = "Spell", ID =  }),
     MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
     Crusade                                = Action.Create({Type = "Spell", ID = 231895 }),
     AvengingWrath                          = Action.Create({Type = "Spell", ID = 31884 }),
     InquisitionBuff                        = Action.Create({Type = "Spell", ID = 84963 }),
     Inquisition                            = Action.Create({Type = "Spell", ID = 84963 }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
     BladeofJustice                         = Action.Create({Type = "Spell", ID = 184575 }),
     Judgment                               = Action.Create({Type = "Spell", ID = 20271 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
     RighteousVerdict                       = Action.Create({Type = "Spell", ID = 267610 }),
     EmpyreanPowerBuff                      = Action.Create({Type = "Spell", ID = 286393 }),
     JudgmentDebuff                         = Action.Create({Type = "Spell", ID = 197277 }),
@@ -54,7 +45,6 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     HammerofWrath                          = Action.Create({Type = "Spell", ID = 24275 }),
     Consecration                           = Action.Create({Type = "Spell", ID = 205228 }),
     CrusaderStrike                         = Action.Create({Type = "Spell", ID = 35395 }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     Rebuke                                 = Action.Create({Type = "Spell", ID = 96231 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -90,9 +80,47 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -345,7 +373,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- arcane_torrent,if=!talent.wake_of_ashes.enabled
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -361,7 +389,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.Fireblood:Show(icon)
             end
             -- shield_of_vengeance,if=buff.seething_rage.down&buff.memory_of_lucid_dreams.down
@@ -373,31 +401,31 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force,if=time<=2|buff.reckless_force.up
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):CombatTime <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.BloodoftheEnemy:IsReady(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=!talent.crusade.enabled&(cooldown.avenging_wrath.remains<5&holy_power>=3&(buff.inquisition.up|!talent.inquisition.enabled)|cooldown.avenging_wrath.remains>=45)|(talent.crusade.enabled&cooldown.crusade.remains<gcd&holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled|cooldown.crusade.remains>=45)
-            if A.GuardianofAzeroth:IsReady(unit) and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Unit("player"):HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or Unit("player"):HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Unit("player"):HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or Unit("player"):HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avenging_wrath.remains<gcd&holy_power>=3|cooldown.crusade.remains<gcd&holy_power>=4|cooldown.avenging_wrath.remains>=45|cooldown.crusade.remains>=45
-            if A.WorldveinResonance:IsReady(unit) and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 3 or A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 3 or A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- memory_of_lucid_dreams,if=(buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10)&holy_power<=3
-            if A.MemoryofLucidDreams:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) and Unit("player"):HolyPower() <= 3) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) and Unit("player"):HolyPower() <= 3) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- purifying_blast,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)
-            if A.PurifyingBlast:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2)) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2)) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
@@ -485,7 +513,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:IsReady(unit) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- crusader_strike,if=holy_power<=4
@@ -493,7 +521,7 @@ A[3] = function(icon, isMulti)
                 return A.CrusaderStrike:Show(icon)
             end
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

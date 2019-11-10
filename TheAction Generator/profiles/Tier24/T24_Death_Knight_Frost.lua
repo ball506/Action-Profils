@@ -45,25 +45,14 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     IcyCitadelBuff                         = Action.Create({Type = "Spell", ID =  }),
     EmpoweredRuneWeapon                    = Action.Create({Type = "Spell", ID =  }),
     BreathofSindragosa                     = Action.Create({Type = "Spell", ID = 152279 }),
-    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
     EmpowerRuneWeapon                      = Action.Create({Type = "Spell", ID = 47568 }),
     EmpowerRuneWeaponBuff                  = Action.Create({Type = "Spell", ID =  }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
     ColdHeart                              = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     ChillStreak                            = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
     RecklessForceCounterBuff               = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
     FrozenPulseBuff                        = Action.Create({Type = "Spell", ID =  }),
     FrozenPulse                            = Action.Create({Type = "Spell", ID = 194909 }),
     FrostFeverDebuff                       = Action.Create({Type = "Spell", ID =  }),
@@ -103,9 +92,47 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -498,7 +525,7 @@ A[3] = function(icon, isMulti)
                 return A.HornofWinter:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -624,7 +651,7 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>50
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 50) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -705,11 +732,11 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- blood_fury,if=buff.pillar_of_frost.up&buff.empower_rune_weapon.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true)) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=buff.pillar_of_frost.up
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains
@@ -749,11 +776,11 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- blood_of_the_enemy,if=buff.pillar_of_frost.remains<10&buff.breath_of_sindragosa.up|buff.pillar_of_frost.remains<10&!talent.breath_of_sindragosa.enabled
-            if A.BloodoftheEnemy:IsReady(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and not A.BreathofSindragosa:IsSpellLearned()) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and not A.BreathofSindragosa:IsSpellLearned()) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- chill_streak,if=buff.pillar_of_frost.remains<5&buff.pillar_of_frost.up|target.1.time_to_die<5
@@ -761,31 +788,31 @@ A[3] = function(icon, isMulti)
                 return A.ChillStreak:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- focused_azerite_beam,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up
-            if A.FocusedAzeriteBeam:IsReady(unit) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- concentrated_flame,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up&dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:IsReady(unit) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- purifying_blast,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up
-            if A.PurifyingBlast:IsReady(unit) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- worldvein_resonance,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up
-            if A.WorldveinResonance:IsReady(unit) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up
-            if A.RippleInSpace:IsReady(unit) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and not Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true)) then
                 return A.RippleInSpace:Show(icon)
             end
             -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or (Unit("player"):RuneTimeToX(2) > A.GetGCD() and Unit("player"):RunicPower() < 50)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or (Unit("player"):RuneTimeToX(2) > A.GetGCD() and Unit("player"):RunicPower() < 50)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -893,7 +920,7 @@ A[3] = function(icon, isMulti)
                 return A.HornofWinter:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

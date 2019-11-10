@@ -39,7 +39,6 @@ Action[ACTION_CONST_MAGE_FROST] = {
     ConeofCold                             = Action.Create({Type = "Spell", ID = 120 }),
     IcyVeinsBuff                           = Action.Create({Type = "Spell", ID = 12472 }),
     RuneofPowerBuff                        = Action.Create({Type = "Spell", ID = 116014 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     IcyVeins                               = Action.Create({Type = "Spell", ID = 12472 }),
     RuneofPower                            = Action.Create({Type = "Spell", ID = 116011 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
@@ -47,15 +46,7 @@ Action[ACTION_CONST_MAGE_FROST] = {
     LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
+    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
     BlinkAny                               = Action.Create({Type = "Spell", ID =  }),
     IceFloes                               = Action.Create({Type = "Spell", ID = 108839 }),
     IceFloesBuff                           = Action.Create({Type = "Spell", ID = 108839 }),
@@ -98,9 +89,47 @@ Action[ACTION_CONST_MAGE_FROST] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -307,8 +336,8 @@ A[2] = function(icon)
     end                                                                                 
 end
 
---S.FrozenOrb.EffectID = 84721
---S.Frostbolt:RegisterInFlight()
+--A.FrozenOrb.EffectID = 84721
+--A.Frostbolt:RegisterInFlight()
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -430,7 +459,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- icy_veins
@@ -459,11 +488,11 @@ A[3] = function(icon, isMulti)
             end
             -- use_items
             -- blood_fury
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- lights_judgment
@@ -471,11 +500,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
         end
@@ -483,35 +512,35 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- focused_azerite_beam,if=buff.rune_of_power.down|active_enemies>3
-            if A.FocusedAzeriteBeam:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- memory_of_lucid_dreams,if=active_enemies<5&(buff.icicles.stack<=1|!talent.glacial_spike.enabled)&cooldown.frozen_orb.remains>10
-            if A.MemoryofLucidDreams:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) <= 1 or not A.GlacialSpike:IsSpellLearned()) and A.FrozenOrb:GetCooldown() > 10) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5 and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) <= 1 or not A.GlacialSpike:IsSpellLearned()) and A.FrozenOrb:GetCooldown() > 10) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy,if=(talent.glacial_spike.enabled&buff.icicles.stack=5&(buff.brain_freeze.react|prev_gcd.1.ebonbolt))|((active_enemies>3|!talent.glacial_spike.enabled)&(prev_gcd.1.frozen_orb|ground_aoe.frozen_orb.remains>5))
-            if A.BloodoftheEnemy:IsReady(unit) and ((A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Ebonbolt))) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 3 or not A.GlacialSpike:IsSpellLearned()) and (Unit("player"):GetSpellLastCast(A.FrozenOrb) or Player:FrozenOrbGroundAoeRemains() > 5))) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and ((A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Ebonbolt))) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 3 or not A.GlacialSpike:IsSpellLearned()) and (Unit("player"):GetSpellLastCast(A.FrozenOrb) or Player:FrozenOrbGroundAoeRemains() > 5))) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- purifying_blast,if=buff.rune_of_power.down|active_enemies>3
-            if A.PurifyingBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=buff.rune_of_power.down|active_enemies>3
-            if A.RippleInSpace:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.RippleInSpace:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down
-            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- worldvein_resonance,if=buff.rune_of_power.down|active_enemies>3
-            if A.WorldveinResonance:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.WorldveinResonance:Show(icon)
             end
         end

@@ -46,20 +46,11 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     PhoenixFlames                          = Action.Create({Type = "Spell", ID = 257541 }),
     DragonsBreath                          = Action.Create({Type = "Spell", ID = 31661 }),
     FlameOn                                = Action.Create({Type = "Spell", ID = 205029 }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     Flamestrike                            = Action.Create({Type = "Spell", ID = 2120 }),
     FlamePatch                             = Action.Create({Type = "Spell", ID = 205037 }),
     SearingTouch                           = Action.Create({Type = "Spell", ID = 269644 }),
     AlexstraszasFury                       = Action.Create({Type = "Spell", ID = 235870 }),
     Kindling                               = Action.Create({Type = "Spell", ID = 155148 }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -94,9 +85,47 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -316,16 +345,16 @@ A[2] = function(icon)
     end                                                                                 
 end
 
-S.PhoenixFlames:RegisterInFlight();
-S.Pyroblast:RegisterInFlight(S.CombustionBuff);
-S.Fireball:RegisterInFlight(S.CombustionBuff);
+A.PhoenixFlames:RegisterInFlight();
+A.Pyroblast:RegisterInFlight(A.CombustionBuff);
+A.Fireball:RegisterInFlight(A.CombustionBuff);
 
-function S.Firestarter:ActiveStatus()
-    return (S.Firestarter:IsAvailable() and (Target:HealthPercentage() > 90)) and 1 or 0
+function A.Firestarter:ActiveStatus()
+    return (A.Firestarter:IsSpellLearned() and (Unit(unit):HealthPercent() > 90)) and 1 or 0
 end
 
-function S.Firestarter:ActiveRemains()
-    return S.Firestarter:IsAvailable() and ((Target:HealthPercentage() > 90) and Target:TimeToX(90, 3) or 0)
+function A.Firestarter:ActiveRemains()
+    return A.Firestarter:IsSpellLearned() and ((Unit(unit):HealthPercent() > 90) and Unit(unit):TimeToDieX(90, 3) or 0)
 end
 
 --- ======= ACTION LISTS =======
@@ -416,19 +445,19 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- call_action_list,name=trinkets
@@ -492,15 +521,15 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = BmCombustionPhase(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:IsReady(unit) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:IsReady(unit) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- rune_of_power,if=buff.combustion.down
@@ -524,19 +553,19 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- call_action_list,name=trinkets
@@ -731,27 +760,27 @@ end
                 return A.MirrorImage:Show(icon)
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:IsReady(unit) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:IsReady(unit) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
             -- the_unbound_force
-            if A.TheUnboundForce:IsReady(unit) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- worldvein_resonance
-            if A.WorldveinResonance:IsReady(unit) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- rune_of_power,if=talent.firestarter.enabled&firestarter.remains>full_recharge_time|cooldown.combustion.remains>variable.combustion_rop_cutoff&buff.combustion.down|target.time_to_die<cooldown.combustion.remains&buff.combustion.down

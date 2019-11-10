@@ -32,24 +32,16 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     TigersFury                             = Action.Create({Type = "Spell", ID = 5217 }),
     TigersFuryBuff                         = Action.Create({Type = "Spell", ID = 5217 }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Thorns                                 = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
+    Thorns                                 = Action.Create({Type = "Spell", ID = 467 }),
+    ThornsDebuff                           = Action.Create({Type = "Spell", ID = 467 }),
     FeralFrenzy                            = Action.Create({Type = "Spell", ID = 274837 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID =  }),
+    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
     Incarnation                            = Action.Create({Type = "Spell", ID = 102543 }),
     IncarnationBuff                        = Action.Create({Type = "Spell", ID = 102543 }),
     Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
     Rake                                   = Action.Create({Type = "Spell", ID = 1822 }),
     RakeDebuff                             = Action.Create({Type = "Spell", ID = 155722 }),
-    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
-    ConductiveInkDeBuffDebuff              = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemyDebuff                  = Action.Create({Type = "Spell", ID =  }),
-    JungleFury                             = Action.Create({Type = "Spell", ID =  }),
+    JungleFury                             = Action.Create({Type = "Spell", ID = 274424 }),
     SavageRoar                             = Action.Create({Type = "Spell", ID = 52610 }),
     PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
     SavageRoarBuff                         = Action.Create({Type = "Spell", ID = 52610 }),
@@ -69,7 +61,6 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     ScentofBlood                           = Action.Create({Type = "Spell", ID = 285564 }),
     ScentofBloodBuff                       = Action.Create({Type = "Spell", ID = 285646 }),
     SwipeCat                               = Action.Create({Type = "Spell", ID = 106785 }),
-    RakeBleed                              = Action.Create({Type = "Spell", ID =  }),
     MoonfireCat                            = Action.Create({Type = "Spell", ID = 155625 }),
     MoonfireCatDebuff                      = Action.Create({Type = "Spell", ID = 155625 }),
     ClearcastingBuff                       = Action.Create({Type = "Spell", ID = 135700 }),
@@ -109,9 +100,47 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -131,7 +160,7 @@ A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				functi
 	end 
 end)
 
-local EnemyRanges = {8, 5}
+local EnemyRanges = {30, 8, 5}
 local function UpdateRanges()
   for _, i in ipairs(EnemyRanges) do
     HL.GetEnemies(i);
@@ -329,52 +358,52 @@ A[2] = function(icon)
     end                                                                                 
 end
 
-S.FerociousBiteMaxEnergy.CustomCost = {
+A.FerociousBiteMaxEnergy.CustomCost = {
   [3] = function ()
-          if (Player:BuffP(S.IncarnationBuff) or Player:BuffP(S.BerserkBuff)) then return 25
+          if (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) or Unit("player"):HasBuffs:BuffP(A.BerserkBuff.ID, true)) then return 25
           else return 50
           end
         end
 }
 
-S.Rip:RegisterPMultiplier({S.BloodtalonsBuff, 1.2}, {S.SavageRoar, 1.15}, {S.TigersFury, 1.15})
-S.Rake:RegisterPMultiplier(
-  S.RakeDebuff,
+A.Rip:RegisterPMultiplier({A.BloodtalonsBuff, 1.2}, {A.SavageRoar, 1.15}, {A.TigersFury, 1.15})
+A.Rake:RegisterPMultiplier(
+  A.RakeDebuff,
   {function ()
-    return Player:IsStealthed(true, true) and 2 or 1;
+    return Unit("player")::IsStealthed(true, true) and 2 or 1;
   end},
-  {S.BloodtalonsBuff, 1.2}, {S.SavageRoar, 1.15}, {S.TigersFury, 1.15}
+  {A.BloodtalonsBuff, 1.2}, {A.SavageRoar, 1.15}, {A.TigersFury, 1.15}
 )
 
-local function EvaluateCyclePrimalWrath169(unit)
+local function EvaluateCyclePrimalWrath171(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4
 end
 
-local function EvaluateCyclePrimalWrath180(unit)
+local function EvaluateCyclePrimalWrath182(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2
 end
 
-local function EvaluateCycleRip189(unit)
+local function EvaluateCycleRip191(unit)
     return not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration * 0.8 and Unit("player"):PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
 end
 
-local function EvaluateTargetIfFilterFerociousBite250(unit)
+local function EvaluateTargetIfFilterFerociousBite252(unit)
   return max:druid.rip.ticks_gained_on_refresh
 end
 
-local function EvaluateCycleRake328(unit)
+local function EvaluateCycleRake330(unit)
     return not Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < A.RakeDebuff.ID, true:BaseDuration * 0.3) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleRake357(unit)
+local function EvaluateCycleRake359(unit)
     return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and ((Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) <= 7) and Unit("player"):PMultiplier(A.Rake) > Unit(unit):PMultiplier(A.Rake) * 0.85) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleMoonfireCat402(unit)
+local function EvaluateCycleMoonfireCat404(unit)
     return Unit(unit):HasDeBuffsRefreshable(A.MoonfireCatDebuff.ID, true)
 end
 
-local function EvaluateCycleFerociousBite518(unit)
+local function EvaluateCycleFerociousBite520(unit)
     return Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
 end
 
@@ -446,7 +475,7 @@ A[3] = function(icon, isMulti)
                 return A.TigersFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- thorns,if=active_enemies>desired_targets|raid_event.adds.in>45
@@ -454,15 +483,15 @@ A[3] = function(icon, isMulti)
                 return A.Thorns:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.tigers_fury.up
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- memory_of_lucid_dreams,if=buff.tigers_fury.up&buff.berserk.down
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.BerserkBuff.ID, true))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.BerserkBuff.ID, true))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.tigers_fury.up
-            if A.BloodoftheEnemy:IsReady(unit) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- feral_frenzy,if=combo_points=0
@@ -470,11 +499,11 @@ A[3] = function(icon, isMulti)
                 return A.FeralFrenzy:Show(icon)
             end
             -- focused_azerite_beam,if=active_enemies>desired_targets|(raid_event.adds.in>90&energy.deficit>=50)
-            if A.FocusedAzeriteBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or (10000000000 > 90 and Unit("player"):EnergyDeficitPredicted() >= 50)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or (10000000000 > 90 and Unit("player"):EnergyDeficitPredicted() >= 50)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=active_enemies>desired_targets|raid_event.adds.in>60
-            if A.PurifyingBlast:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- heart_essence,if=buff.tigers_fury.up
@@ -490,7 +519,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- shadowmeld,if=combo_points<5&energy>=action.rake.cost&dot.rake.pmultiplier<2.1&buff.tigers_fury.up&(buff.bloodtalons.up|!talent.bloodtalons.enabled)&(!talent.incarnation.enabled|cooldown.incarnation.remains>18)&!buff.incarnation.up
-            if A.Shadowmeld:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):ComboPoints() < 5 and Unit("player"):EnergyPredicted() >= A.Rake:Cost() and Unit(unit):PMultiplier(A.Rake) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
+            if A.Shadowmeld:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):ComboPoints() < 5 and Unit("player"):EnergyPredicted() >= A.Rake:Cost() and Unit(unit):PMultiplier(A.Rake) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
                 return A.Shadowmeld:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.time_to_pct_30<1.5|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=25-10*debuff.blood_of_the_enemy.up|target.time_to_die<40)&buff.tigers_fury.remains>10
@@ -526,21 +555,21 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath169) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath171) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath180) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath182) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip189) then
+                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip191) then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -564,7 +593,7 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,max_energy=1,target_if=max:druid.rip.ticks_gained_on_refresh
             if A.FerociousBiteMaxEnergy:IsReady(unit) and A.FerociousBiteMaxEnergy:IsUsableP then
-                if Action.Utils.CastTargetIf(A.FerociousBiteMaxEnergy, 8, "max", EvaluateTargetIfFilterFerociousBite250) then 
+                if Action.Utils.CastTargetIf(A.FerociousBiteMaxEnergy, 8, "max", EvaluateTargetIfFilterFerociousBite252) then 
                     return A.FerociousBiteMaxEnergy:Show(icon) 
                 end
             end
@@ -614,14 +643,14 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- rake,target_if=!ticking|(!talent.bloodtalons.enabled&remains<duration*0.3)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake328) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake330) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rake,target_if=talent.bloodtalons.enabled&buff.bloodtalons.up&((remains<=7)&persistent_multiplier>dot.rake.pmultiplier*0.85)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake357) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake359) then
                     return A.Rake:Show(icon) 
                 end
             end
@@ -635,7 +664,7 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire_cat,target_if=refreshable
             if A.MoonfireCat:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat402) then
+                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat404) then
                     return A.MoonfireCat:Show(icon) 
                 end
             end
@@ -719,7 +748,7 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
             if A.FerociousBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite518) then
+                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite520) then
                     return A.FerociousBite:Show(icon) 
                 end
             end

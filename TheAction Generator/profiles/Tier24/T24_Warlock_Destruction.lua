@@ -35,22 +35,14 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     HavocDebuff                            = Action.Create({Type = "Spell", ID = 80240 }),
     ChaosBolt                              = Action.Create({Type = "Spell", ID = 116858 }),
     Inferno                                = Action.Create({Type = "Spell", ID = 270545 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
     FireandBrimstone                       = Action.Create({Type = "Spell", ID = 196408 }),
     BackdraftBuff                          = Action.Create({Type = "Spell", ID = 117828 }),
     Conflagrate                            = Action.Create({Type = "Spell", ID = 17962 }),
     Shadowburn                             = Action.Create({Type = "Spell", ID = 17877 }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     SummonInfernal                         = Action.Create({Type = "Spell", ID = 1122 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     DarkSoulInstability                    = Action.Create({Type = "Spell", ID = 113858 }),
     DarkSoulInstabilityBuff                = Action.Create({Type = "Spell", ID = 113858 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
     MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
@@ -58,8 +50,6 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     GrimoireofSupremacyBuff                = Action.Create({Type = "Spell", ID = 266091 }),
     InternalCombustion                     = Action.Create({Type = "Spell", ID = 266134 }),
     ShadowburnDebuff                       = Action.Create({Type = "Spell", ID = 17877 }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
     Flashover                              = Action.Create({Type = "Spell", ID = 267115 }),
     CrashingChaos                          = Action.Create({Type = "Spell", ID =  }),
     Eradication                            = Action.Create({Type = "Spell", ID = 196412 }),
@@ -98,9 +88,47 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -438,11 +466,11 @@ A[3] = function(icon, isMulti)
                 return A.RainofFire:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:IsReady(unit) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(!talent.grimoire_of_supremacy.enabled|!talent.inferno.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
@@ -468,7 +496,7 @@ A[3] = function(icon, isMulti)
                 return A.Shadowburn:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&active_enemies<5
-            if A.ConcentratedFlame:IsReady(unit) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- incinerate
@@ -496,7 +524,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=pet.infernal.active
-            if A.GuardianofAzeroth:IsReady(unit) and (bool(pet.infernal.active)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (bool(pet.infernal.active)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=pet.infernal.active&(pet.infernal.remains<20.5|pet.infernal.remains<22&soul_shard>=3.6|!talent.grimoire_of_supremacy.enabled)
@@ -504,7 +532,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=pet.infernal.active&(pet.infernal.remains<15.5|soul_shard<3.5&(buff.dark_soul_instability.up|!talent.grimoire_of_supremacy.enabled&dot.immolate.remains>12))
-            if A.MemoryofLucidDreams:IsReady(unit) and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Unit("player"):SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Unit("player"):SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die>cooldown.summon_infernal.duration+30
@@ -512,7 +540,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=time>30&target.time_to_die>cooldown.guardian_of_azeroth.duration+30
-            if A.GuardianofAzeroth:IsReady(unit) and (Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration + 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration + 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- summon_infernal,if=talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains>target.time_to_die
@@ -520,7 +548,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=cooldown.summon_infernal.remains>target.time_to_die
-            if A.GuardianofAzeroth:IsReady(unit) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=cooldown.summon_infernal.remains>target.time_to_die&pet.infernal.remains<20.5
@@ -528,7 +556,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=cooldown.summon_infernal.remains>target.time_to_die&(pet.infernal.remains<15.5|buff.dark_soul_instability.up&soul_shard<3)
-            if A.MemoryofLucidDreams:IsReady(unit) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Unit("player"):SoulShardsP < 3)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Unit("player"):SoulShardsP < 3)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die<30
@@ -536,7 +564,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=target.time_to_die<30
-            if A.GuardianofAzeroth:IsReady(unit) and (Unit(unit):TimeToDie() < 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit(unit):TimeToDie() < 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=target.time_to_die<21&target.time_to_die>4
@@ -544,19 +572,19 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=target.time_to_die<16&target.time_to_die>6
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit(unit):TimeToDie() < 16 and Unit(unit):TimeToDie() > 6) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit(unit):TimeToDie() < 16 and Unit(unit):TimeToDie() > 6) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:IsReady(unit) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- worldvein_resonance
-            if A.WorldveinResonance:IsReady(unit) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
             -- potion,if=pet.infernal.active|target.time_to_die<30
@@ -564,15 +592,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
@@ -716,19 +744,19 @@ end
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- focused_azerite_beam,if=!pet.infernal.active|!talent.grimoire_of_supremacy.enabled
-            if A.FocusedAzeriteBeam:IsReady(unit) and (not bool(pet.infernal.active) or not A.GrimoireofSupremacy:IsSpellLearned()) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (not bool(pet.infernal.active) or not A.GrimoireofSupremacy:IsSpellLearned()) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight
-            if A.ConcentratedFlame:IsReady(unit) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- channel_demonfire

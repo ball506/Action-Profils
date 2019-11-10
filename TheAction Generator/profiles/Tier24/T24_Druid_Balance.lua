@@ -36,19 +36,9 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     SunfireDebuff                          = Action.Create({Type = "Spell", ID = 164815 }),
     StellarFlare                           = Action.Create({Type = "Spell", ID = 202347 }),
     StellarFlareDebuff                     = Action.Create({Type = "Spell", ID = 202347 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     ShiverVenomDebuff                      = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
     CaInc                                  = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    Thorns                                 = Action.Create({Type = "Spell", ID =  }),
+    Thorns                                 = Action.Create({Type = "Spell", ID = 467 }),
     WarriorofElune                         = Action.Create({Type = "Spell", ID = 202425 }),
     Innervate                              = Action.Create({Type = "Spell", ID = 29166 }),
     LivelySpirit                           = Action.Create({Type = "Spell", ID = 279642 }),
@@ -102,9 +92,47 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -329,17 +357,17 @@ local function FutureAstralPower()
   if not Player:IsCasting() then
     return AstralPower
   else
-    if Player:IsCasting(S.NewnMoon) then
+    if Player:IsCasting(A.NewnMoon) then
       return AstralPower + 10
-    elseif Player:IsCasting(S.HalfMoon) then
+    elseif Player:IsCasting(A.HalfMoon) then
       return AstralPower + 20
-    elseif Player:IsCasting(S.FullMoon) then
+    elseif Player:IsCasting(A.FullMoon) then
       return AstralPower + 40
-    elseif Player:IsCasting(S.StellarFlare) then
+    elseif Player:IsCasting(A.StellarFlare) then
       return AstralPower + 8
-    elseif Player:IsCasting(S.SolarWrath) then
+    elseif Player:IsCasting(A.SolarWrath) then
       return AstralPower + 8
-    elseif Player:IsCasting(S.LunarStrike) then
+    elseif Player:IsCasting(A.LunarStrike) then
       return AstralPower + 12
     else
       return AstralPower
@@ -486,7 +514,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking,if=buff.ca_inc.up
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true)) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
@@ -496,7 +524,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- guardian_of_azeroth,if=(!talent.starlord.enabled|buff.starlord.up)&!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 if Action.Utils.CastTargetIf(A.GuardianofAzeroth, 40, EvaluateCycleGuardianofAzeroth84) then
                     return A.GuardianofAzeroth:Show(icon) 
                 end
@@ -514,39 +542,39 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- blood_of_the_enemy,if=cooldown.ca_inc.remains>30
-            if A.BloodoftheEnemy:IsReady(unit) and (A.CaInc:GetCooldown() > 30) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (A.CaInc:GetCooldown() > 30) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!buff.ca_inc.up&(astral_power<25|cooldown.ca_inc.remains>30),target_if=dot.sunfire.remains>10&dot.moonfire.remains>10&(!talent.stellar_flare.enabled|dot.stellar_flare.remains>10)
-            if A.MemoryofLucidDreams:IsReady(unit) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
                 if Action.Utils.CastTargetIf(A.MemoryofLucidDreams, 40, EvaluateCycleMemoryofLucidDreams137) then
                     return A.MemoryofLucidDreams:Show(icon) 
                 end
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:IsReady(unit) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-            if A.TheUnboundForce:IsReady(unit) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) then
                 if Action.Utils.CastTargetIf(A.TheUnboundForce, 40, EvaluateCycleTheUnboundForce162) then
                     return A.TheUnboundForce:Show(icon) 
                 end
             end
             -- worldvein_resonance
-            if A.WorldveinResonance:IsReady(unit) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- focused_azerite_beam,if=(!variable.az_ss|!buff.ca_inc.up),target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-            if A.FocusedAzeriteBeam:IsReady(unit) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
                 if Action.Utils.CastTargetIf(A.FocusedAzeriteBeam, 40, EvaluateCycleFocusedAzeriteBeam181) then
                     return A.FocusedAzeriteBeam:Show(icon) 
                 end

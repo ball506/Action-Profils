@@ -169,7 +169,36 @@ class Spell(LuaNamed, LuaCastable):
             self.action.context.add_spell(self)
 
     def custom_init(self):
-        if self.action.player.spell_property(self, USABLE):
+        """
+		Azerite Methods exception
+        """
+        if (f'{super().lua_name()}' == 'MemoryofLucidDreams'
+            or f'{super().lua_name()}' == 'RippleInSpace'		
+            or f'{super().lua_name()}' == 'BloodoftheEnemy'		
+            or f'{super().lua_name()}' == 'FocusedAzeriteBeam'		
+            or f'{super().lua_name()}' == 'PurifyingBlast'		
+            or f'{super().lua_name()}' == 'TheUnboundForce'		
+            or f'{super().lua_name()}' == 'GuardianofAzeroth'
+            or f'{super().lua_name()}' == 'WorldveinResonance'		
+            or f'{super().lua_name()}' == 'ConcentratedFlame'						
+        ):
+            self.condition_method = Method('AutoHeartOfAzerothP(unit, true)', type_=BOOL)
+        elif (f'{super().lua_name()}' == 'ArcaneTorrent'
+            or f'{super().lua_name()}' == 'BloodFury'		
+            or f'{super().lua_name()}' == 'Fireblood'		
+            or f'{super().lua_name()}' == 'AncestralCall'		
+            or f'{super().lua_name()}' == 'Berserking'		
+            or f'{super().lua_name()}' == 'ArcanePulse'		
+            or f'{super().lua_name()}' == 'QuakingPalm'
+            or f'{super().lua_name()}' == 'Haymaker'		
+            or f'{super().lua_name()}' == 'BullRush'
+            or f'{super().lua_name()}' == 'WarStomp'		
+            or f'{super().lua_name()}' == 'GiftofNaaru'
+            or f'{super().lua_name()}' == 'Shadowmeld'		
+            or f'{super().lua_name()}' == 'Stoneform'				
+        ):
+            self.condition_method = Method('AutoRacial(unit)', type_=BOOL)
+        elif self.action.player.spell_property(self, USABLE):
             self.condition_method = Method('IsReady(unit)', type_=BOOL)
         elif self.action.player.spell_property(self, READY):
             self.condition_method = Method('IsReady(unit)', type_=BOOL)
@@ -233,5 +262,6 @@ class Spell(LuaNamed, LuaCastable):
         if re.search(substring3, string1):
             string2 = string1.replace("DeBuffDebuff","Debuff")
         else:
-            string2 = string1			
+            string2 = string1
+  
         return string2

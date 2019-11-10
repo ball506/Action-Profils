@@ -32,12 +32,9 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
     AscendanceBuff                         = Action.Create({Type = "Spell", ID = 114051 }),
     Ascendance                             = Action.Create({Type = "Spell", ID = 114051 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     FeralSpirit                            = Action.Create({Type = "Spell", ID = 51533 }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
+    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
     Strike                                 = Action.Create({Type = "Spell", ID =  }),
-    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
-    ConductiveInkDeBuffDebuff              = Action.Create({Type = "Spell", ID =  }),
     MoltenWeaponBuff                       = Action.Create({Type = "Spell", ID =  }),
     CracklingSurgeBuff                     = Action.Create({Type = "Spell", ID =  }),
     IcyEdgeBuff                            = Action.Create({Type = "Spell", ID =  }),
@@ -51,11 +48,7 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     LightningBolt                          = Action.Create({Type = "Spell", ID = 187837 }),
     Overcharge                             = Action.Create({Type = "Spell", ID = 210727 }),
     Sundering                              = Action.Create({Type = "Spell", ID = 197214 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
     Thundercharge                          = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ForcefulWinds                          = Action.Create({Type = "Spell", ID = 262647 }),
     Flametongue                            = Action.Create({Type = "Spell", ID = 193796 }),
     SearingAssault                         = Action.Create({Type = "Spell", ID = 192087 }),
@@ -65,16 +58,12 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     HotHandBuff                            = Action.Create({Type = "Spell", ID = 215785 }),
     StrengthofEarthBuff                    = Action.Create({Type = "Spell", ID = 273465 }),
     CrashingStorm                          = Action.Create({Type = "Spell", ID = 192246 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
     Frostbrand                             = Action.Create({Type = "Spell", ID = 196834 }),
     Hailstorm                              = Action.Create({Type = "Spell", ID = 210853 }),
     FrostbrandBuff                         = Action.Create({Type = "Spell", ID = 196834 }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID =  }),
+    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
     PrimalPrimerDebuff                     = Action.Create({Type = "Spell", ID = 273006 }),
     FlametongueBuff                        = Action.Create({Type = "Spell", ID = 194084 }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
     FuryofAir                              = Action.Create({Type = "Spell", ID = 197211 }),
     FuryofAirBuff                          = Action.Create({Type = "Spell", ID = 197211 }),
     TotemMastery                           = Action.Create({Type = "Spell", ID = 262395 }),
@@ -122,9 +111,47 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -371,20 +398,20 @@ A[2] = function(icon)
 end
 
 
-local function EvaluateCycleStormstrike123(unit)
+local function EvaluateCycleStormstrike125(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and bool(VarFurycheckSs)
 end
 
-local function EvaluateTargetIfFilterLavaLash279(unit)
+local function EvaluateTargetIfFilterLavaLash281(unit)
   return Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfLavaLash294(unit)
+local function EvaluateTargetIfLavaLash296(unit)
   return A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and bool(VarFurycheckLl) and bool(VarClpoolLl)
 end
 
 
-local function EvaluateCycleStormstrike305(unit)
+local function EvaluateCycleStormstrike307(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and bool(VarFurycheckSs)
 end
 
@@ -445,7 +472,7 @@ A[3] = function(icon, isMulti)
         local function Cds(unit)
             -- bloodlust,if=azerite.ancestral_resonance.enabled
             -- berserking,if=variable.cooldown_sync
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Berserking:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
@@ -453,15 +480,15 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- blood_fury,if=variable.cooldown_sync
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=variable.cooldown_sync
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=variable.cooldown_sync
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.AncestralCall:Show(icon)
             end
             -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&feral_spirit.remains>5|target.time_to_die<=60
@@ -469,7 +496,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- feral_spirit
@@ -477,7 +504,7 @@ A[3] = function(icon, isMulti)
                 return A.FeralSpirit:Show(icon)
             end
             -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
-            if A.BloodoftheEnemy:IsReady(unit) and (10000000000 > 90 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (10000000000 > 90 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- ascendance,if=cooldown.strike.remains>0
@@ -508,7 +535,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike123) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike125) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -537,15 +564,15 @@ A[3] = function(icon, isMulti)
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
-            if A.FocusedAzeriteBeam:IsReady(unit) and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=raid_event.adds.in>60
-            if A.PurifyingBlast:IsReady(unit) and (10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=raid_event.adds.in>60
-            if A.RippleInSpace:IsReady(unit) and (10000000000 > 60) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (10000000000 > 60) then
                 return A.RippleInSpace:Show(icon)
             end
             -- thundercharge
@@ -553,7 +580,7 @@ A[3] = function(icon, isMulti)
                 return A.Thundercharge:Show(icon)
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:IsReady(unit) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
@@ -585,7 +612,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaLash:Show(icon)
             end
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:IsReady(unit) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- rockbiter
@@ -601,7 +628,7 @@ A[3] = function(icon, isMulti)
                 return A.Flametongue:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<4
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
                 return A.WorldveinResonance:Show(icon)
             end
         end
@@ -610,7 +637,7 @@ A[3] = function(icon, isMulti)
         local function FreezerburnCore(unit)
             -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
             if A.LavaLash:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.LavaLash, 40, "max", EvaluateTargetIfFilterLavaLash279, EvaluateTargetIfLavaLash294) then 
+                if Action.Utils.CastTargetIf(A.LavaLash, 40, "max", EvaluateTargetIfFilterLavaLash281, EvaluateTargetIfLavaLash296) then 
                     return A.LavaLash:Show(icon) 
                 end
             end
@@ -620,7 +647,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike305) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike307) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -677,7 +704,7 @@ A[3] = function(icon, isMulti)
                 return A.CrashLightning:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|time<5
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime < 5) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
@@ -705,15 +732,15 @@ A[3] = function(icon, isMulti)
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=active_enemies>1
-            if A.FocusedAzeriteBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=active_enemies>1
-            if A.PurifyingBlast:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=active_enemies>1
-            if A.RippleInSpace:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.RippleInSpace:Show(icon)
             end
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7

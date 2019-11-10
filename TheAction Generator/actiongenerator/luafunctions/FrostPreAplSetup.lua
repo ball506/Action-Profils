@@ -1,2 +1,2 @@
---S.FrozenOrb.EffectID = 84721
---S.Frostbolt:RegisterInFlight()
+--A.FrozenOrb.EffectID = 84721
+--A.Frostbolt:RegisterInFlight()

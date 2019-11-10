@@ -75,8 +75,8 @@ SPELL_INFO = {
                                                  READY:     True,
                                                  RANGE:     40,
                                                  GCDAOGCD:  True},
-            
-            
+            'chorus_of_insanity':             {  SPELL:     278661,
+                                                  BUFF:     278661},
             #Talents
             'fortress_of_the_mind':             {SPELL:     193195},     
             'shadowy_insight':                  {SPELL:     162452,

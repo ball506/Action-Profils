@@ -29,19 +29,10 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     MindBlast                              = Action.Create({Type = "Spell", ID = 8092 }),
     VampiricTouchDebuff                    = Action.Create({Type = "Spell", ID = 34914 }),
     VampiricTouch                          = Action.Create({Type = "Spell", ID = 34914 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
     VoidformBuff                           = Action.Create({Type = "Spell", ID = 194249 }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-    ChorusofInsanityBuff                   = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID =  }),
-    ChorusofInsanity                       = Action.Create({Type = "Spell", ID =  }),
+    ChorusofInsanityBuff                   = Action.Create({Type = "Spell", ID = 278661 }),
+    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
+    ChorusofInsanity                       = Action.Create({Type = "Spell", ID = 278661 }),
     VoidEruption                           = Action.Create({Type = "Spell", ID = 228260 }),
     DarkAscension                          = Action.Create({Type = "Spell", ID = 280711 }),
     MindSear                               = Action.Create({Type = "Spell", ID = 48045 }),
@@ -92,9 +83,47 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -321,7 +350,7 @@ A[2] = function(icon)
 end
 
 local function InsanityThreshold ()
-	return A.LegacyOfTheVoid:IsAvailable() and 60 or 90;
+	return A.LegacyOfTheVoid:IsSpellLearned() and 60 or 90;
 end
 local function ExecuteRange ()
 	return 20;
@@ -419,39 +448,39 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- memory_of_lucid_dreams,if=(buff.voidform.stack>20&insanity<=50)|buff.voidform.stack>(26+7*buff.bloodlust.up)|(current_insanity_drain*((gcd.max*2)+action.mind_blast.cast_time))>insanity
-            if A.MemoryofLucidDreams:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Unit("player"):Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Unit("player"):Insanity()) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Unit("player"):Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Unit("player"):Insanity()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:IsReady(unit) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=buff.voidform.stack>15
-            if A.GuardianofAzeroth:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 15) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 15) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force
-            if A.TheUnboundForce:IsReady(unit) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=time<=10|(buff.chorus_of_insanity.stack>=15&buff.voidform.up)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:IsReady(unit) and (Unit("player"):CombatTime <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- call_action_list,name=crit_cds,if=(buff.voidform.up&buff.chorus_of_insanity.stack>20)|azerite.chorus_of_insanity.rank=0

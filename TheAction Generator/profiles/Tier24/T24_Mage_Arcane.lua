@@ -55,15 +55,7 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     Amplification                          = Action.Create({Type = "Spell", ID = 236628 }),
     ArcanePummeling                        = Action.Create({Type = "Spell", ID = 270669 }),
     Supernova                              = Action.Create({Type = "Spell", ID = 157980 }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
+    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
     BlinkAny                               = Action.Create({Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -99,9 +91,47 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -346,7 +376,7 @@ function BurnPhase:Stop()
 end
 
 function BurnPhase:On()
-  return self.state or (not Player:AffectingCombat() and Player:IsCasting() and ((S.ArcanePower:CooldownRemainsP() == 0 and S.Evocation:CooldownRemainsP() <= VarAverageBurnLength and (Player:ArcaneChargesP() == Player:ArcaneChargesMax() or (S.ChargedUp:IsAvailable() and S.ChargedUp:CooldownRemainsP() == 0)))))
+  return self.state or (not Player:AffectingCombat() and Player:IsCasting() and ((A.ArcanePower:CooldownRemainsP() == 0 and A.Evocation:CooldownRemainsP() <= VarAverageBurnLength and (Player:ArcaneChargesP() == Player:ArcaneChargesMax() or (A.ChargedUp:IsSpellLearned() and A.ChargedUp:CooldownRemainsP() == 0)))))
 end
 
 function BurnPhase:Duration()
@@ -366,7 +396,7 @@ local function ArcaneMissilesProcMax ()
 end
 
 function Player:ArcaneChargesP()
-  return math.min(self:ArcaneCharges() + num(self:IsCasting(S.ArcaneBlast)),4)
+  return math.min(self:ArcaneCharges() + num(self:IsCasting(A.ArcaneBlast)),4)
 end
 
 --- ======= ACTION LISTS =======
@@ -465,7 +495,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- arcane_power
@@ -474,15 +504,15 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=buff.arcane_power.up|target.time_to_die<cooldown.arcane_power.remains
             -- blood_fury
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- presence_of_mind,if=(talent.rune_of_power.enabled&buff.rune_of_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time)|buff.arcane_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time
@@ -590,39 +620,39 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- blood_of_the_enemy,if=burn_phase&buff.arcane_power.down&buff.rune_of_power.down&buff.arcane_charge.stack=buff.arcane_charge.max_stack|time_to_die<cooldown.arcane_power.remains
-            if A.BloodoftheEnemy:IsReady(unit) and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down&buff.arcane_power.down&(!burn_phase|time_to_die<cooldown.arcane_power.remains)&mana.time_to_max>=execute_time
-            if A.ConcentratedFlame:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Unit("player"):ManaTimeToMaxPredicted() >= A.ConcentratedFlame:GetSpellCastTime()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Unit("player"):ManaTimeToMaxPredicted() >= A.ConcentratedFlame:GetSpellCastTime()) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- focused_azerite_beam,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.FocusedAzeriteBeam:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- guardian_of_azeroth,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.GuardianofAzeroth:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- purifying_blast,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.PurifyingBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.RippleInSpace:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.RippleInSpace:Show(icon)
             end
             -- the_unbound_force,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.TheUnboundForce:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!burn_phase&buff.arcane_power.down&cooldown.arcane_power.remains&buff.arcane_charge.stack=buff.arcane_charge.max_stack&(!talent.rune_of_power.enabled|action.rune_of_power.charges)|time_to_die<cooldown.arcane_power.remains
-            if A.MemoryofLucidDreams:IsReady(unit) and (not BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(A.ArcanePower:GetCooldown()) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (not A.RuneofPower:IsSpellLearned() or bool(A.RuneofPower:ChargesP())) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (not BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(A.ArcanePower:GetCooldown()) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (not A.RuneofPower:IsSpellLearned() or bool(A.RuneofPower:ChargesP())) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- worldvein_resonance,if=burn_phase&buff.arcane_power.down&buff.rune_of_power.down&buff.arcane_charge.stack=buff.arcane_charge.max_stack|time_to_die<cooldown.arcane_power.remains
-            if A.WorldveinResonance:IsReady(unit) and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.WorldveinResonance:Show(icon)
             end
         end

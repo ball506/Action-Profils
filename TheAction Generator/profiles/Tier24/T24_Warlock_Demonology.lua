@@ -22,7 +22,6 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     SummonPet                              = Action.Create({Type = "Spell", ID = 30146 }),
     InnerDemons                            = Action.Create({Type = "Spell", ID = 267216 }),
     Demonbolt                              = Action.Create({Type = "Spell", ID = 264178 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
     SoulStrike                             = Action.Create({Type = "Spell", ID = 264057 }),
     DemonicConsumption                     = Action.Create({Type = "Spell", ID = 267215 }),
     HandofGuldan                           = Action.Create({Type = "Spell", ID = 105174 }),
@@ -38,16 +37,11 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     DemonicCallingBuff                     = Action.Create({Type = "Spell", ID = 205146 }),
     DemonicCoreBuff                        = Action.Create({Type = "Spell", ID = 264173 }),
     SummonVilefiend                        = Action.Create({Type = "Spell", ID = 264119 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     Doom                                   = Action.Create({Type = "Spell", ID = 265412 }),
     DoomDebuff                             = Action.Create({Type = "Spell", ID = 265412 }),
     NetherPortal                           = Action.Create({Type = "Spell", ID = 267217 }),
     NetherPortalBuff                       = Action.Create({Type = "Spell", ID = 267218 }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     PowerSiphon                            = Action.Create({Type = "Spell", ID = 264130 }),
     ExplosivePotential                     = Action.Create({Type = "Spell", ID = 275395 }),
     ExplosivePotentialBuff                 = Action.Create({Type = "Spell", ID = 275398 }),
@@ -55,12 +49,9 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
+    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
+    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
     DreadstalkersBuff                      = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
     BalefulInvocation                      = Action.Create({Type = "Spell", ID = 287059 }),
     ShadowsBite                            = Action.Create({Type = "Spell", ID = 272944 }),
     ShadowsBiteBuff                        = Action.Create({Type = "Spell", ID = 272945 })
@@ -98,9 +89,47 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -377,7 +406,7 @@ A[3] = function(icon, isMulti)
         --BuildAShard
         local function BuildAShard(unit)
             -- memory_of_lucid_dreams,if=soul_shard<2
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):SoulShardsP < 2) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):SoulShardsP < 2) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
@@ -429,19 +458,19 @@ A[3] = function(icon, isMulti)
                 return A.BilescourgeBombers:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:IsReady(unit) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:IsReady(unit) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&spell_targets.implosion<5
-            if A.ConcentratedFlame:IsReady(unit) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- soul_strike,if=soul_shard<5&buff.demonic_core.stack<=2
@@ -527,7 +556,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- guardian_of_azeroth,if=!cooldown.nether_portal.remains&soul_shard>=5
-            if A.GuardianofAzeroth:IsReady(unit) and (not bool(A.NetherPortal:GetCooldown()) and Unit("player"):SoulShardsP >= 5) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (not bool(A.NetherPortal:GetCooldown()) and Unit("player"):SoulShardsP >= 5) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- nether_portal,if=soul_shard>=5
@@ -571,7 +600,7 @@ A[3] = function(icon, isMulti)
                 return A.Doom:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:IsReady(unit) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- hand_of_guldan,if=prev_gcd.1.hand_of_guldan&soul_shard>0&prev_gcd.2.soul_strike
@@ -641,27 +670,27 @@ end
             end
             -- use_items,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             -- berserking,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- blood_of_the_enemy,if=pet.demonic_tyrant.active&pet.demonic_tyrant.remains<=15-gcd*3&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)
-            if A.BloodoftheEnemy:IsReady(unit) and (bool(pet.demonic_tyrant.active) and pet.demonic_tyrant.remains <= 15 - A.GetGCD() * 3 and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (bool(pet.demonic_tyrant.active) and Unit("player"):HasBuffs(A.BloodoftheEnemyBuff.ID, true) <= 15 - A.GetGCD() * 3 and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3&(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15)) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.RippleInSpace:IsReady(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.RippleInSpace:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=cooldown.summon_demonic_tyrant.remains>=20&cooldown.summon_demonic_tyrant.remains<=cooldown.summon_demonic_tyrant.duration-15|target.time_to_die<=30
@@ -729,7 +758,7 @@ end
                 local ShouldReturn = Implosion(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
-            if A.GuardianofAzeroth:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() <= 15 or Unit(unit):TimeToDie() <= 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (A.SummonDemonicTyrant:GetCooldown() <= 15 or Unit(unit):TimeToDie() <= 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- grimoire_felguard,if=(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15|cooldown.summon_demonic_tyrant.remains<13)
@@ -745,7 +774,7 @@ end
                 return A.CallDreadstalkers:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- bilescourge_bombers
@@ -781,19 +810,19 @@ end
                 return A.Demonbolt:Show(icon)
             end
             -- focused_azerite_beam,if=!pet.demonic_tyrant.active
-            if A.FocusedAzeriteBeam:IsReady(unit) and (not bool(pet.demonic_tyrant.active)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (not bool(pet.demonic_tyrant.active)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:IsReady(unit) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&!pet.demonic_tyrant.active
-            if A.ConcentratedFlame:IsReady(unit) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(pet.demonic_tyrant.active)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(pet.demonic_tyrant.active)) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- call_action_list,name=build_a_shard

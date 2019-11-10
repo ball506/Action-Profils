@@ -21,7 +21,7 @@ function BurnPhase:Stop()
 end
 
 function BurnPhase:On()
-  return self.state or (not Player:AffectingCombat() and Player:IsCasting() and ((S.ArcanePower:CooldownRemainsP() == 0 and S.Evocation:CooldownRemainsP() <= VarAverageBurnLength and (Player:ArcaneChargesP() == Player:ArcaneChargesMax() or (S.ChargedUp:IsAvailable() and S.ChargedUp:CooldownRemainsP() == 0)))))
+  return self.state or (not Player:AffectingCombat() and Player:IsCasting() and ((A.ArcanePower:CooldownRemainsP() == 0 and A.Evocation:CooldownRemainsP() <= VarAverageBurnLength and (Player:ArcaneChargesP() == Player:ArcaneChargesMax() or (A.ChargedUp:IsSpellLearned() and A.ChargedUp:CooldownRemainsP() == 0)))))
 end
 
 function BurnPhase:Duration()
@@ -41,5 +41,5 @@ local function ArcaneMissilesProcMax ()
 end
 
 function Player:ArcaneChargesP()
-  return math.min(self:ArcaneCharges() + num(self:IsCasting(S.ArcaneBlast)),4)
+  return math.min(self:ArcaneCharges() + num(self:IsCasting(A.ArcaneBlast)),4)
 end

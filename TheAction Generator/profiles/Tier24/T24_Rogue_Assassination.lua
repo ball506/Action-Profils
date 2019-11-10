@@ -34,11 +34,9 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Nightstalker                           = Action.Create({Type = "Spell", ID = 14062 }),
     Exsanguinate                           = Action.Create({Type = "Spell", ID = 200806 }),
     DeeperStratagem                        = Action.Create({Type = "Spell", ID = 193531 }),
-    RazorCoralDeBuffDebuff                 = Action.Create({Type = "Spell", ID =  }),
     ToxicBlade                             = Action.Create({Type = "Spell", ID = 245388 }),
     PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
     MasterAssassin                         = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemyDebuff                  = Action.Create({Type = "Spell", ID =  }),
     Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
@@ -59,19 +57,9 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Rupture                                = Action.Create({Type = "Spell", ID = 1943 }),
     CrimsonTempest                         = Action.Create({Type = "Spell", ID = 121411 }),
     CrimsonTempestBuff                     = Action.Create({Type = "Spell", ID = 121411 }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
     RecklessForceCounterBuff               = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
+    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
     SubterfugeBuff                         = Action.Create({Type = "Spell", ID = 108208 }),
     ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
     ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
@@ -110,9 +98,47 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -497,7 +523,7 @@ A[3] = function(icon, isMulti)
                 return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
-            if A.Shadowmeld:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and Unit(unit):PMultiplier(A.Garrote) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
+            if A.Shadowmeld:AutoRacial(unit) and A.BurstIsON(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and Unit(unit):PMultiplier(A.Garrote) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
                 return A.Shadowmeld:Show(icon)
             end
             -- exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
@@ -513,19 +539,19 @@ A[3] = function(icon, isMulti)
                 A.ProlongedPower:Show(icon)
             end
             -- blood_fury,if=debuff.vendetta.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=debuff.vendetta.up
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- fireblood,if=debuff.vendetta.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=debuff.vendetta.up
-            if A.AncestralCall:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,name=galecallers_boon,if=cooldown.vendetta.remains>45
@@ -652,43 +678,43 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:IsReady(unit) and (Unit("player"):EnergyTimeToMaxPredicted() > 1 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (Unit("player"):EnergyTimeToMaxPredicted() > 1 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up&combo_points.deficit<=1|debuff.vendetta.remains<=10)|target.time_to_die<=10
-            if A.BloodoftheEnemy:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and Unit("player"):ComboPointsDeficit() <= 1 or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) <= 10) or Unit(unit):TimeToDie() <= 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and Unit("player"):ComboPointsDeficit() <= 1 or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) <= 10) or Unit(unit):TimeToDie() <= 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
-            if A.GuardianofAzeroth:IsReady(unit) and (A.Vendetta:GetCooldown() < 3 or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) or Unit(unit):TimeToDie() < 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (A.Vendetta:GetCooldown() < 3 or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) or Unit(unit):TimeToDie() < 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- guardian_of_azeroth,if=floor((target.time_to_die-30)%cooldown)>floor((target.time_to_die-30-cooldown.vendetta.remains)%cooldown)
-            if A.GuardianofAzeroth:IsReady(unit) and (math.floor ((Unit(unit):TimeToDie() - 30) / cooldown) > math.floor ((Unit(unit):TimeToDie() - 30 - A.Vendetta:GetCooldown()) / cooldown)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (math.floor ((Unit(unit):TimeToDie() - 30) / cooldown) > math.floor ((Unit(unit):TimeToDie() - 30 - A.Vendetta:GetCooldown()) / cooldown)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-            if A.FocusedAzeriteBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60 and Unit("player"):EnergyPredicted() < 70) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60 and Unit("player"):EnergyPredicted() < 70) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<50&!cooldown.vendetta.up
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):EnergyPredicted() < 50 and not A.Vendetta:GetCooldown() == 0) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):EnergyPredicted() < 50 and not A.Vendetta:GetCooldown() == 0) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -774,11 +800,11 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Direct(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- arcane_torrent,if=energy.deficit>=15+variable.energy_regen_combined
-            if A.ArcaneTorrent:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):EnergyDeficitPredicted() >= 15 + VarEnergyRegenCombined) then
+            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):EnergyDeficitPredicted() >= 15 + VarEnergyRegenCombined) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- arcane_pulse
-            if A.ArcanePulse:IsReady(unit) then
+            if A.ArcanePulse:AutoRacial(unit) then
                 return A.ArcanePulse:Show(icon)
             end
             -- lights_judgment

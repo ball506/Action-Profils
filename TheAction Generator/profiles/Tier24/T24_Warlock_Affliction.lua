@@ -38,13 +38,10 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     DarkSoul                               = Action.Create({Type = "Spell", ID = 113860 }),
     Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    MemoryofLucidDreams                    = Action.Create({Type = "Spell", ID =  }),
     SowtheSeeds                            = Action.Create({Type = "Spell", ID = 196226 }),
-    BloodoftheEnemy                        = Action.Create({Type = "Spell", ID =  }),
+    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
     Deathbolt                              = Action.Create({Type = "Spell", ID = 264106 }),
-    WorldveinResonance                     = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID =  }),
-    RippleInSpace                          = Action.Create({Type = "Spell", ID =  }),
+    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
     Agony                                  = Action.Create({Type = "Spell", ID = 980 }),
     Corruption                             = Action.Create({Type = "Spell", ID = 172 }),
     CreepingDeath                          = Action.Create({Type = "Spell", ID = 264000 }),
@@ -56,9 +53,6 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     AbsoluteCorruption                     = Action.Create({Type = "Spell", ID = 196103 }),
     DrainLife                              = Action.Create({Type = "Spell", ID = 234153 }),
     InevitableDemiseBuff                   = Action.Create({Type = "Spell", ID = 273525 }),
-    FocusedAzeriteBeam                     = Action.Create({Type = "Spell", ID =  }),
-    PurifyingBlast                         = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlame                      = Action.Create({Type = "Spell", ID =  }),
     ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     DrainSoul                              = Action.Create({Type = "Spell", ID = 198590 }),
     ShadowEmbraceDebuff                    = Action.Create({Type = "Spell", ID = 32390 }),
@@ -69,9 +63,6 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     VileTaint                              = Action.Create({Type = "Spell", ID = 278350 }),
     CascadingCalamityBuff                  = Action.Create({Type = "Spell", ID = 275378 }),
     ActiveUasBuff                          = Action.Create({Type = "Spell", ID = 233490 }),
-    TheUnboundForce                        = Action.Create({Type = "Spell", ID =  }),
-    RecklessForceBuff                      = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzeroth                      = Action.Create({Type = "Spell", ID =  }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -107,9 +98,47 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    -- Hidden Heart of Azeroth
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -480,134 +509,134 @@ end
 
 
 
-local function EvaluateTargetIfFilterAgony242(unit)
+local function EvaluateTargetIfFilterAgony244(unit)
   return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
-local function EvaluateTargetIfAgony283(unit)
+local function EvaluateTargetIfAgony285(unit)
   return A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff.ID, true:ActiveDot < 6 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff.ID, true)))
 end
 
 
-local function EvaluateTargetIfFilterAgony289(unit)
+local function EvaluateTargetIfFilterAgony291(unit)
   return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
-local function EvaluateTargetIfAgony330(unit)
+local function EvaluateTargetIfAgony332(unit)
   return not A.CreepingDeath:IsSpellLearned() and A.AgonyDebuff.ID, true:ActiveDot < 8 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not bool(A.PandemicInvocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.AgonyDebuff.ID, true)))
 end
 
 
-local function EvaluateTargetIfFilterSiphonLife336(unit)
+local function EvaluateTargetIfFilterSiphonLife338(unit)
   return Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true)
 end
 
-local function EvaluateTargetIfSiphonLife375(unit)
+local function EvaluateTargetIfSiphonLife377(unit)
   return (A.SiphonLifeDebuff.ID, true:ActiveDot < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetByRangeInCombat(40, 5, 10)) and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffsRefreshable(A.SiphonLifeDebuff.ID, true) and (not bool(Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or A.SummonDarkglare:GetCooldown() > Unit("player"):SoulShardsP * A.UnstableAffliction:GetSpellCastTime())
 end
 
 
-local function EvaluateCycleCorruption382(unit)
+local function EvaluateCycleCorruption384(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 + raid_event.invulnerable.up + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffsRefreshable(A.CorruptionDebuff.ID, true)) and Unit(unit):TimeToDie() > 10
 end
 
-local function EvaluateCycleDrainSoul565(unit)
+local function EvaluateCycleDrainSoul567(unit)
   return Unit(unit):TimeToDie() <= A.GetGCD()
 end
 
-local function EvaluateTargetIfFilterDrainSoul571(unit)
+local function EvaluateTargetIfFilterDrainSoul573(unit)
   return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
-local function EvaluateTargetIfDrainSoul584(unit)
+local function EvaluateTargetIfDrainSoul586(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true))
 end
 
 
-local function EvaluateTargetIfFilterDrainSoul590(unit)
+local function EvaluateTargetIfFilterDrainSoul592(unit)
   return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
-local function EvaluateTargetIfDrainSoul601(unit)
+local function EvaluateTargetIfDrainSoul603(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
 end
 
 
-local function EvaluateCycleShadowBolt610(unit)
+local function EvaluateCycleShadowBolt612(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and not bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and not A.ShadowBolt:IsSpellInFlight()
 end
 
-local function EvaluateTargetIfFilterShadowBolt626(unit)
+local function EvaluateTargetIfFilterShadowBolt628(unit)
   return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
-local function EvaluateTargetIfShadowBolt637(unit)
+local function EvaluateTargetIfShadowBolt639(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
 end
 
 
-local function EvaluateCycleUnstableAffliction732(unit)
+local function EvaluateCycleUnstableAffliction734(unit)
   return not bool(VarUseSeed) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() > time_to_shard or Unit("player"):SoulShardsP > 1) and (not A.VileTaint:IsSpellLearned() or Unit("player"):SoulShardsP > 1) and contagion <= A.UnstableAffliction:GetSpellCastTime() + VarPadding and (not bool(A.CascadingCalamity:GetAzeriteRank()) or Unit("player"):HasBuffs(A.CascadingCalamityBuff.ID, true) > time_to_shard)
 end
 
-local function EvaluateCycleDrainSoul803(unit)
+local function EvaluateCycleDrainSoul805(unit)
   return Unit(unit):TimeToDie() <= A.GetGCD() and Unit("player"):SoulShardsP < 5
 end
 
-local function EvaluateTargetIfFilterAgony845(unit)
+local function EvaluateTargetIfFilterAgony847(unit)
   return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
 end
 
-local function EvaluateTargetIfAgony862(unit)
+local function EvaluateTargetIfAgony864(unit)
   return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() + A.ShadowBolt:GetSpellCastTime() and Unit(unit):TimeToDie() > 8
 end
 
 
-local function EvaluateCycleUnstableAffliction893(unit)
+local function EvaluateCycleUnstableAffliction895(unit)
     return not bool(contagion) and Unit(unit):TimeToDie() <= 8
 end
 
-local function EvaluateTargetIfFilterDrainSoul899(unit)
+local function EvaluateTargetIfFilterDrainSoul901(unit)
   return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
-local function EvaluateTargetIfDrainSoul914(unit)
+local function EvaluateTargetIfDrainSoul916(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.GetGCD() * 2
 end
 
 
-local function EvaluateTargetIfFilterShadowBolt920(unit)
+local function EvaluateTargetIfFilterShadowBolt922(unit)
   return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
 end
 
-local function EvaluateTargetIfShadowBolt947(unit)
+local function EvaluateTargetIfShadowBolt949(unit)
   return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and bool(Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.ShadowBolt:GetSpellCastTime() * 2 + A.ShadowBolt:TravelTime() and not A.ShadowBolt:IsSpellInFlight()
 end
 
 
-local function EvaluateTargetIfFilterPhantomSingularity953(unit)
+local function EvaluateTargetIfFilterPhantomSingularity955(unit)
   return Unit(unit):TimeToDie()
 end
 
-local function EvaluateTargetIfPhantomSingularity966(unit)
+local function EvaluateTargetIfPhantomSingularity968(unit)
   return Unit("player"):CombatTime > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste and (not bool(essence.vision_of_perfection.minor) and not bool(A.DreadfulCalling:GetAzeriteRank()) or A.SummonDarkglare:GetCooldown() > 45 + Unit("player"):SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() < 15 * Unit("player"):SpellHaste + Unit("player"):SoulShardsP * A.DreadfulCalling:GetAzeriteRank())
 end
 
 
-local function EvaluateTargetIfFilterUnstableAffliction972(unit)
+local function EvaluateTargetIfFilterUnstableAffliction974(unit)
   return min:contagion
 end
 
-local function EvaluateTargetIfUnstableAffliction977(unit)
+local function EvaluateTargetIfUnstableAffliction979(unit)
   return not bool(VarUseSeed) and Unit("player"):SoulShardsP == 5
 end
 
 
-local function EvaluateTargetIfFilterVileTaint989(unit)
+local function EvaluateTargetIfFilterVileTaint991(unit)
   return Unit(unit):TimeToDie()
 end
 
-local function EvaluateTargetIfVileTaint1004(unit)
+local function EvaluateTargetIfVileTaint1006(unit)
   return Unit("player"):CombatTime > 15 and Unit(unit):TimeToDie() >= 10 and (A.SummonDarkglare:GetCooldown() > 30 or A.SummonDarkglare:GetCooldown() < 10 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) >= 10 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) >= 10 or not A.SiphonLife:IsSpellLearned()))
 end
 
@@ -664,15 +693,15 @@ end
             end
             -- use_items,if=cooldown.summon_darkglare.remains>70|time_to_die<20|((buff.active_uas.stack=5|soul_shard=0)&(!talent.phantom_singularity.enabled|cooldown.phantom_singularity.remains)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=gcd|!cooldown.deathbolt.remains)&!cooldown.summon_darkglare.remains)
             -- fireblood,if=!cooldown.summon_darkglare.up
-            if A.Fireblood:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
+            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
                 return A.Fireblood:Show(icon)
             end
             -- blood_fury,if=!cooldown.summon_darkglare.up
-            if A.BloodFury:IsReady(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
+            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (not A.SummonDarkglare:GetCooldown() == 0) then
                 return A.BloodFury:Show(icon)
             end
             -- memory_of_lucid_dreams,if=time>30
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):CombatTime > 30) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime > 30) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- dark_soul,if=target.time_to_die<20+gcd|talent.sow_the_seeds.enabled&cooldown.summon_darkglare.remains>=cooldown.summon_darkglare.duration-10
@@ -680,7 +709,7 @@ end
                 return A.DarkSoul:Show(icon)
             end
             -- blood_of_the_enemy,if=pet.darkglare.remains|(!cooldown.deathbolt.remains|!talent.deathbolt.enabled)&cooldown.summon_darkglare.remains>=80&essence.blood_of_the_enemy.rank>1
-            if A.BloodoftheEnemy:IsReady(unit) and (bool(pet.darkglare.remains) or (not bool(A.Deathbolt:GetCooldown()) or not A.Deathbolt:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() >= 80 and essence.blood_of_the_enemy.rank > 1) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffs(A.BloodoftheEnemyBuff.ID, true)) or (not bool(A.Deathbolt:GetCooldown()) or not A.Deathbolt:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() >= 80 and essence.blood_of_the_enemy.rank > 1) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=(cooldown.summon_darkglare.remains>=25|target.time_to_die<=30)&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
@@ -708,11 +737,11 @@ end
                 A.VialofStorms:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:IsReady(unit) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
                 return A.RippleInSpace:Show(icon)
             end
         end
@@ -741,25 +770,25 @@ end
             end
             -- agony,target_if=min:remains,if=talent.creeping_death.enabled&active_dot.agony<6&target.time_to_die>10&(remains<=gcd|cooldown.summon_darkglare.remains>10&(remains<5|!azerite.pandemic_invocation.rank&refreshable))
             if A.Agony:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony242, EvaluateTargetIfAgony283) then 
+                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony244, EvaluateTargetIfAgony285) then 
                     return A.Agony:Show(icon) 
                 end
             end
             -- agony,target_if=min:remains,if=!talent.creeping_death.enabled&active_dot.agony<8&target.time_to_die>10&(remains<=gcd|cooldown.summon_darkglare.remains>10&(remains<5|!azerite.pandemic_invocation.rank&refreshable))
             if A.Agony:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony289, EvaluateTargetIfAgony330) then 
+                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony291, EvaluateTargetIfAgony332) then 
                     return A.Agony:Show(icon) 
                 end
             end
             -- siphon_life,target_if=min:remains,if=(active_dot.siphon_life<8-talent.creeping_death.enabled-spell_targets.sow_the_seeds_aoe)&target.time_to_die>10&refreshable&(!remains&spell_targets.seed_of_corruption_aoe=1|cooldown.summon_darkglare.remains>soul_shard*action.unstable_affliction.execute_time)
             if A.SiphonLife:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SiphonLife, 40, "min", EvaluateTargetIfFilterSiphonLife336, EvaluateTargetIfSiphonLife375) then 
+                if Action.Utils.CastTargetIf(A.SiphonLife, 40, "min", EvaluateTargetIfFilterSiphonLife338, EvaluateTargetIfSiphonLife377) then 
                     return A.SiphonLife:Show(icon) 
                 end
             end
             -- corruption,cycle_targets=1,if=spell_targets.seed_of_corruption_aoe<3+raid_event.invulnerable.up+talent.writhe_in_agony.enabled&(remains<=gcd|cooldown.summon_darkglare.remains>10&refreshable)&target.time_to_die>10
             if A.Corruption:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Corruption, 40, EvaluateCycleCorruption382) then
+                if Action.Utils.CastTargetIf(A.Corruption, 40, EvaluateCycleCorruption384) then
                     return A.Corruption:Show(icon) 
                 end
             end
@@ -820,32 +849,32 @@ end
                 return A.Haunt:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:IsReady(unit) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:IsReady(unit) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight
-            if A.ConcentratedFlame:IsReady(unit) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- drain_soul,interrupt_global=1,chain=1,interrupt=1,cycle_targets=1,if=target.time_to_die<=gcd
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul565) then
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul567) then
                     return A.DrainSoul:Show(icon) 
                 end
             end
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,chain=1,interrupt_if=ticks_remain<5,interrupt_global=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul571, EvaluateTargetIfDrainSoul584) then 
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul573, EvaluateTargetIfDrainSoul586) then 
                     return A.DrainSoul:Show(icon) 
                 end
             end
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,chain=1,interrupt_if=ticks_remain<5,interrupt_global=1,if=talent.shadow_embrace.enabled&variable.maintain_se
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul590, EvaluateTargetIfDrainSoul601) then 
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul592, EvaluateTargetIfDrainSoul603) then 
                     return A.DrainSoul:Show(icon) 
                 end
             end
@@ -855,13 +884,13 @@ end
             end
             -- shadow_bolt,cycle_targets=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains&!action.shadow_bolt.in_flight
             if A.ShadowBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, EvaluateCycleShadowBolt610) then
+                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, EvaluateCycleShadowBolt612) then
                     return A.ShadowBolt:Show(icon) 
                 end
             end
             -- shadow_bolt,target_if=min:debuff.shadow_embrace.remains,if=talent.shadow_embrace.enabled&variable.maintain_se
             if A.ShadowBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt626, EvaluateTargetIfShadowBolt637) then 
+                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt628, EvaluateTargetIfShadowBolt639) then 
                     return A.ShadowBolt:Show(icon) 
                 end
             end
@@ -895,7 +924,7 @@ end
             end
             -- unstable_affliction,cycle_targets=1,if=!variable.use_seed&(!talent.deathbolt.enabled|cooldown.deathbolt.remains>time_to_shard|soul_shard>1)&(!talent.vile_taint.enabled|soul_shard>1)&contagion<=cast_time+variable.padding&(!azerite.cascading_calamity.enabled|buff.cascading_calamity.remains>time_to_shard)
             if A.UnstableAffliction:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction732) then
+                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction734) then
                     return A.UnstableAffliction:Show(icon) 
                 end
             end
@@ -928,7 +957,7 @@ end
             end
             -- drain_soul,interrupt_global=1,chain=1,cycle_targets=1,if=target.time_to_die<=gcd&soul_shard<5
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul803) then
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul805) then
                     return A.DrainSoul:Show(icon) 
                 end
             end
@@ -945,17 +974,17 @@ end
                 return A.Deathbolt:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.remains
-            if A.TheUnboundForce:IsReady(unit) and (bool(Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- agony,target_if=min:dot.agony.remains,if=remains<=gcd+action.shadow_bolt.execute_time&target.time_to_die>8
             if A.Agony:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony845, EvaluateTargetIfAgony862) then 
+                if Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony847, EvaluateTargetIfAgony864) then 
                     return A.Agony:Show(icon) 
                 end
             end
             -- memory_of_lucid_dreams,if=time<30
-            if A.MemoryofLucidDreams:IsReady(unit) and (Unit("player"):CombatTime < 30) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime < 30) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- agony,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314
@@ -972,31 +1001,31 @@ end
             end
             -- unstable_affliction,target_if=!contagion&target.time_to_die<=8
             if A.UnstableAffliction:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction893) then
+                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction895) then
                     return A.UnstableAffliction:Show(icon) 
                 end
             end
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,cancel_if=ticks_remain<5,if=talent.shadow_embrace.enabled&variable.maintain_se&debuff.shadow_embrace.remains&debuff.shadow_embrace.remains<=gcd*2
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul899, EvaluateTargetIfDrainSoul914) then 
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul901, EvaluateTargetIfDrainSoul916) then 
                     return A.DrainSoul:Show(icon) 
                 end
             end
             -- shadow_bolt,target_if=min:debuff.shadow_embrace.remains,if=talent.shadow_embrace.enabled&variable.maintain_se&debuff.shadow_embrace.remains&debuff.shadow_embrace.remains<=execute_time*2+travel_time&!action.shadow_bolt.in_flight
             if A.ShadowBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt920, EvaluateTargetIfShadowBolt947) then 
+                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt922, EvaluateTargetIfShadowBolt949) then 
                     return A.ShadowBolt:Show(icon) 
                 end
             end
             -- phantom_singularity,target_if=max:target.time_to_die,if=time>35&target.time_to_die>16*spell_haste&(!essence.vision_of_perfection.minor&!azerite.dreadful_calling.rank|cooldown.summon_darkglare.remains>45+soul_shard*azerite.dreadful_calling.rank|cooldown.summon_darkglare.remains<15*spell_haste+soul_shard*azerite.dreadful_calling.rank)
             if A.PhantomSingularity:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PhantomSingularity, 40, "max", EvaluateTargetIfFilterPhantomSingularity953, EvaluateTargetIfPhantomSingularity966) then 
+                if Action.Utils.CastTargetIf(A.PhantomSingularity, 40, "max", EvaluateTargetIfFilterPhantomSingularity955, EvaluateTargetIfPhantomSingularity968) then 
                     return A.PhantomSingularity:Show(icon) 
                 end
             end
             -- unstable_affliction,target_if=min:contagion,if=!variable.use_seed&soul_shard=5
             if A.UnstableAffliction:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateTargetIfFilterUnstableAffliction972, EvaluateTargetIfUnstableAffliction977) then 
+                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateTargetIfFilterUnstableAffliction974, EvaluateTargetIfUnstableAffliction979) then 
                     return A.UnstableAffliction:Show(icon) 
                 end
             end
@@ -1010,7 +1039,7 @@ end
             end
             -- vile_taint,target_if=max:target.time_to_die,if=time>15&target.time_to_die>=10&(cooldown.summon_darkglare.remains>30|cooldown.summon_darkglare.remains<10&dot.agony.remains>=10&dot.corruption.remains>=10&(dot.siphon_life.remains>=10|!talent.siphon_life.enabled))
             if A.VileTaint:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VileTaint, 40, "max", EvaluateTargetIfFilterVileTaint989, EvaluateTargetIfVileTaint1004) then 
+                if Action.Utils.CastTargetIf(A.VileTaint, 40, "max", EvaluateTargetIfFilterVileTaint991, EvaluateTargetIfVileTaint1006) then 
                     return A.VileTaint:Show(icon) 
                 end
             end
@@ -1027,7 +1056,7 @@ end
                 return A.VileTaint:Show(icon)
             end
             -- guardian_of_azeroth,if=(cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled|(azerite.dreadful_calling.rank|essence.vision_of_perfection.rank)&time>30&target.time_to_die>=210)&(dot.phantom_singularity.remains|dot.vile_taint.remains|!talent.phantom_singularity.enabled&!talent.vile_taint.enabled)|target.time_to_die<30+gcd
-            if A.GuardianofAzeroth:IsReady(unit) and ((A.SummonDarkglare:GetCooldown() < 15 + Unit("player"):SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or (bool(A.DreadfulCalling:GetAzeriteRank()) or bool(essence.vision_of_perfection.rank)) and Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() >= 210) and (bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.VileTaintDebuff.ID, true)) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) or Unit(unit):TimeToDie() < 30 + A.GetGCD()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and ((A.SummonDarkglare:GetCooldown() < 15 + Unit("player"):SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or (bool(A.DreadfulCalling:GetAzeriteRank()) or bool(essence.vision_of_perfection.rank)) and Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() >= 210) and (bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.VileTaintDebuff.ID, true)) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) or Unit(unit):TimeToDie() < 30 + A.GetGCD()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul,if=cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled&(dot.phantom_singularity.remains|dot.vile_taint.remains)
@@ -1035,7 +1064,7 @@ end
                 return A.DarkSoul:Show(icon)
             end
             -- berserking
-            if A.Berserking:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- call_action_list,name=spenders
