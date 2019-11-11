@@ -380,11 +380,11 @@ local function EvaluateCyclePrimalWrath106(unit)
 end
 
 local function EvaluateCycleRip115(unit)
-    return not bool(A.RipDebuff.ID, true:IsTicking()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.8 and Unit("player"):PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
+    return not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.8 and Unit("player"):PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
 end
 
 local function EvaluateCycleRake228(unit)
-    return not bool(A.RakeDebuff.ID, true:IsTicking()) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < A.RakeDebuff.ID, true:BaseDuration() * 0.3) and Unit(unit):TimeToDie() > 4
+    return not Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < A.RakeDebuff.ID, true:BaseDuration() * 0.3) and Unit(unit):TimeToDie() > 4
 end
 
 local function EvaluateCycleRake257(unit)
@@ -396,7 +396,7 @@ local function EvaluateCycleMoonfireCat302(unit)
 end
 
 local function EvaluateCycleFerociousBite418(unit)
-    return bool(A.RipDebuff.ID, true:IsTicking()) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
+    return Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
 end
 
 --- ======= ACTION LISTS =======
@@ -645,20 +645,20 @@ A[3] = function(icon, isMulti)
                 return A.TigersFury:Show(icon)
             end
             -- rake,if=!ticking|buff.prowl.up
-            if A.Rake:IsReady(unit) and (not bool(A.RakeDebuff.ID, true:IsTicking()) or Unit("player"):HasBuffs(A.ProwlBuff.ID, true)) then
+            if A.Rake:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) or Unit("player"):HasBuffs(A.ProwlBuff.ID, true)) then
                 return A.Rake:Show(icon)
             end
             -- variable,name=opener_done,value=dot.rip.ticking
             if (true) then
-                VarOpenerDone = A.RipDebuff.ID, true:IsTicking()
+                VarOpenerDone = num(Unit(unit):HasDeBuffs(A.RipDebuff.ID, true))
             end
             -- wait,sec=0.001,if=dot.rip.ticking
             -- moonfire_cat,if=!ticking
-            if A.MoonfireCat:IsReady(unit) and (not bool(A.MoonfireCatDebuff.ID, true:IsTicking())) then
+            if A.MoonfireCat:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.MoonfireCatDebuff.ID, true)) then
                 return A.MoonfireCat:Show(icon)
             end
             -- rip,if=!ticking
-            if A.Rip:IsReady(unit) and (not bool(A.RipDebuff.ID, true:IsTicking())) then
+            if A.Rip:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true)) then
                 return A.Rip:Show(icon)
             end
         end

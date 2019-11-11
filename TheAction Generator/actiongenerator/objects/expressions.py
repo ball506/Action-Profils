@@ -695,17 +695,14 @@ class Aura(Expires):
         Return the arguments for the expression {aura}.spell.tick_time.
         """
         self.object_ = self.spell
-        self.method = Method('IsTicking()')
+        self.method = Method('TickTime()')
         self.args = []
 
     def ticking(self):
         """
         Return the arguments for the expression {aura}.spell.ticking.
         """
-        self.object_ = self.spell
-        self.method = Method('IsTicking()')
-        self.args = []
-
+        self.ready()
 
     def ticks_remain(self):
         """

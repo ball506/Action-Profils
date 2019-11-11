@@ -738,7 +738,7 @@ end
                 return A.Implosion:Show(icon)
             end
             -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2&!buff.nether_portal.remains
-            if A.Doom:IsReady(unit) and (not bool(A.DoomDebuff.ID, true:IsTicking()) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and not bool(Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true))) then
+            if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and not bool(Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true))) then
                 return A.Doom:Show(icon)
             end
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled

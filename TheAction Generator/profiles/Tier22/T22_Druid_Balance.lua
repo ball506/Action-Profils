@@ -378,7 +378,7 @@ end
 
 
 local function EvaluateCycleSunfire208(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or bool(A.MoonfireDebuff.ID, true:IsTicking())) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)))
 end
 
 local function EvaluateCycleMoonfire261(unit)

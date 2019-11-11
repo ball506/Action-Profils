@@ -885,7 +885,7 @@ end
                 return A.Haunt:Show(icon)
             end
             -- summon_darkglare,if=dot.agony.ticking&dot.corruption.ticking&(buff.active_uas.stack=5|soul_shard=0)&(!talent.phantom_singularity.enabled|dot.phantom_singularity.remains)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=gcd|!cooldown.deathbolt.remains|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up)
-            if A.SummonDarkglare:IsReady(unit) and A.BurstIsON(unit) and (bool(A.AgonyDebuff.ID, true:IsTicking()) and bool(A.CorruptionDebuff.ID, true:IsTicking()) and (ActiveUAs(unit) == 5 or Unit("player"):SoulShardsP == 0) and (not A.PhantomSingularity:IsSpellLearned() or bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true))) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or not bool(A.Deathbolt:GetCooldown()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up)) then
+            if A.SummonDarkglare:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) and (ActiveUAs(unit) == 5 or Unit("player"):SoulShardsP == 0) and (not A.PhantomSingularity:IsSpellLearned() or bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true))) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or not bool(A.Deathbolt:GetCooldown()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + raid_event.invulnerable.up)) then
                 return A.SummonDarkglare:Show(icon)
             end
             -- deathbolt,if=cooldown.summon_darkglare.remains&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up

@@ -479,7 +479,7 @@ A[3] = function(icon, isMulti)
                 return A.MirrorImage:Show(icon)
             end
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not bool(A.NetherTempestDebuff.ID, true:IsTicking())) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
             -- arcane_blast,if=buff.rule_of_threes.up&talent.overpowered.enabled&active_enemies<3
@@ -568,7 +568,7 @@ A[3] = function(icon, isMulti)
                 return A.ChargedUp:Show(icon)
             end
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not bool(A.NetherTempestDebuff.ID, true:IsTicking())) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
             -- arcane_orb,if=buff.arcane_charge.stack<=2&(cooldown.arcane_power.remains>10|active_enemies<=2)

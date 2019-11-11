@@ -443,7 +443,7 @@ A[3] = function(icon, isMulti)
                 return A.BristlingFur:Show(icon)
             end
             -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
-            if A.Incarnation:IsReady(unit) and ((bool(A.MoonfireDebuff.ID, true:IsTicking()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(A.ThrashBearDebuff.ID, true:IsTicking())) then
+            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Incarnation:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
@@ -499,7 +499,7 @@ A[3] = function(icon, isMulti)
                 return Swipe:Show(icon)
             end
             -- mangle,if=dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (bool(A.ThrashBearDebuff.ID, true:IsTicking())) then
+            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2

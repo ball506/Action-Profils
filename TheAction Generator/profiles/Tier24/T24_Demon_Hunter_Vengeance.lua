@@ -368,19 +368,19 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
             -- immolation_aura,if=dot.fiery_brand.ticking
-            if A.ImmolationAura:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
+            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.ImmolationAura:Show(icon)
             end
             -- fel_devastation,if=dot.fiery_brand.ticking
-            if A.FelDevastation:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
+            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.FelDevastation:Show(icon)
             end
             -- infernal_strike,if=dot.fiery_brand.ticking
-            if A.InfernalStrike:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
+            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.InfernalStrike:Show(icon)
             end
             -- sigil_of_flame,if=dot.fiery_brand.ticking
-            if A.SigilofFlame:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
+            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.SigilofFlame:Show(icon)
             end
         end
@@ -392,7 +392,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not bool(A.ConcentratedFlameBurnDebuff.ID, true:IsTicking()) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3

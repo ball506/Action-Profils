@@ -377,15 +377,15 @@ end
 
 
 local function EvaluateCycleAzsharasFontofPower67(unit)
-    return (bool(A.MoonfireDebuff.ID, true:IsTicking()) and bool(A.SunfireDebuff.ID, true:IsTicking()) and (not A.StellarFlare:IsSpellLearned() or bool(A.StellarFlareDebuff.ID, true:IsTicking()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
+    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
 end
 
 local function EvaluateCycleGuardianofAzeroth84(unit)
-    return (bool(A.MoonfireDebuff.ID, true:IsTicking()) and bool(A.SunfireDebuff.ID, true:IsTicking()) and (not A.StellarFlare:IsSpellLearned() or bool(A.StellarFlareDebuff.ID, true:IsTicking()))) and ((not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
+    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and ((not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
 end
 
 local function EvaluateCycleCyclotronicBlast105(unit)
-    return (bool(A.MoonfireDebuff.ID, true:IsTicking()) and bool(A.SunfireDebuff.ID, true:IsTicking()) and (not A.StellarFlare:IsSpellLearned() or bool(A.StellarFlareDebuff.ID, true:IsTicking()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
+    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true))
 end
 
 local function EvaluateCycleShiverVenomRelic122(unit)
@@ -397,11 +397,11 @@ local function EvaluateCycleMemoryofLucidDreams137(unit)
 end
 
 local function EvaluateCycleTheUnboundForce162(unit)
-    return (bool(A.MoonfireDebuff.ID, true:IsTicking()) and bool(A.SunfireDebuff.ID, true:IsTicking()) and (not A.StellarFlare:IsSpellLearned() or bool(A.StellarFlareDebuff.ID, true:IsTicking()))) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true))
+    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true))
 end
 
 local function EvaluateCycleFocusedAzeriteBeam181(unit)
-    return (bool(A.MoonfireDebuff.ID, true:IsTicking()) and bool(A.SunfireDebuff.ID, true:IsTicking()) and (not A.StellarFlare:IsSpellLearned() or bool(A.StellarFlareDebuff.ID, true:IsTicking()))) and ((not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
+    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and ((not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
 end
 
 local function EvaluateCycleIncarnation227(unit)
@@ -409,11 +409,11 @@ local function EvaluateCycleIncarnation227(unit)
 end
 
 local function EvaluateCycleCelestialAlignment252(unit)
-    return ((Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and bool(A.MoonfireDebuff.ID, true:IsTicking()) and (bool(A.StellarFlareDebuff.ID, true:IsTicking()) or not A.StellarFlare:IsSpellLearned()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and bool(ap_check))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)))
+    return ((Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and bool(ap_check))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)))
 end
 
 local function EvaluateCycleSunfire377(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or bool(A.MoonfireDebuff.ID, true:IsTicking())) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
 end
 
 local function EvaluateCycleMoonfire440(unit)

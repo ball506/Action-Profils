@@ -933,7 +933,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
             -- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-            if A.HowlingBlast:IsReady(unit) and (not bool(A.FrostFeverDebuff.ID, true:IsTicking()) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+            if A.HowlingBlast:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.HowlingBlast:Show(icon)
             end
             -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)

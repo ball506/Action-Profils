@@ -481,7 +481,7 @@ A[3] = function(icon, isMulti)
                 return Swipe:Show(icon)
             end
             -- mangle,if=dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (bool(A.ThrashBearDebuff.ID, true:IsTicking())) then
+            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2

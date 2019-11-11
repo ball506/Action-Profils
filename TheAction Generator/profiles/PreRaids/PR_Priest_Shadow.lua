@@ -449,7 +449,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkAscension:Show(icon)
             end
             -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-            if A.VampiricTouch:IsReady(unit) and (not bool(A.VampiricTouchDebuff.ID, true:IsTicking()) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
+            if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
                 return A.VampiricTouch:Show(icon)
             end
             -- mind_sear,if=buff.harvested_thoughts.up
@@ -613,7 +613,7 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
             if (true) then
-                VarDotsUp = num(bool(A.ShadowWordPainDebuff.ID, true:IsTicking()) and bool(A.VampiricTouchDebuff.ID, true:IsTicking()))
+                VarDotsUp = num(Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID, true) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true))
             end
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then

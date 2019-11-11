@@ -449,12 +449,12 @@ A[3] = function(icon, isMulti)
                 return A.SymbolsofDeath:Show(icon)
             end
             -- call_action_list,name=essences,if=!stealthed.all&dot.nightblade.ticking
-            if (not Unit("player"):IsStealthedP(true, true) and bool(A.NightbladeDebuff.ID, true:IsTicking())) then
+            if (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true)) then
                 local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- pool_resource,for_next=1,if=!talent.shadow_focus.enabled
             -- shuriken_tornado,if=energy>=60&dot.nightblade.ticking&cooldown.symbols_of_death.up&cooldown.shadow_dance.charges>=1
-            if A.ShurikenTornado:IsReady(unit) and (Unit("player"):EnergyPredicted() >= 60 and bool(A.NightbladeDebuff.ID, true:IsTicking()) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
+            if A.ShurikenTornado:IsReady(unit) and (Unit("player"):EnergyPredicted() >= 60 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
                 if A.ShurikenTornado:IsUsablePPool() then
                     return A.ShurikenTornado:Show(icon)
                 else
@@ -462,7 +462,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- symbols_of_death,if=dot.nightblade.ticking&!cooldown.shadow_blades.up&(!talent.shuriken_tornado.enabled|talent.shadow_focus.enabled|cooldown.shuriken_tornado.remains>2)&(!essence.blood_of_the_enemy.major|cooldown.blood_of_the_enemy.remains>2)&(azerite.nights_vengeance.rank<2|buff.nights_vengeance.up)
-            if A.SymbolsofDeath:IsReady(unit) and (bool(A.NightbladeDebuff.ID, true:IsTicking()) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
+            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
                 return A.SymbolsofDeath:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.all&combo_points.deficit>=cp_max_spend)
@@ -476,11 +476,11 @@ A[3] = function(icon, isMulti)
                 return A.MarkedForDeath:Show(icon)
             end
             -- shadow_blades,if=!stealthed.all&dot.nightblade.ticking&combo_points.deficit>=2
-            if A.ShadowBlades:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(A.NightbladeDebuff.ID, true:IsTicking()) and Unit("player"):ComboPointsDeficit() >= 2) then
+            if A.ShadowBlades:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):ComboPointsDeficit() >= 2) then
                 return A.ShadowBlades:Show(icon)
             end
             -- shuriken_tornado,if=talent.shadow_focus.enabled&dot.nightblade.ticking&buff.symbols_of_death.up
-            if A.ShurikenTornado:IsReady(unit) and (A.ShadowFocus:IsSpellLearned() and bool(A.NightbladeDebuff.ID, true:IsTicking()) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
+            if A.ShurikenTornado:IsReady(unit) and (A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.ShurikenTornado:Show(icon)
             end
             -- shadow_dance,if=!buff.shadow_dance.up&target.time_to_die<=5+talent.subterfuge.enabled&!raid_event.adds.up
@@ -508,7 +508,7 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&dot.nightblade.ticking&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(A.NightbladeDebuff.ID, true:IsTicking()) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
+            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
                 A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.shadow_dance.up&cooldown.symbols_of_death.remains<10
@@ -529,7 +529,7 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.symbols_of_death.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (not bool(A.ConcentratedFlameBurnDebuff.ID, true:IsTicking()) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=!cooldown.shadow_blades.up&cooldown.symbols_of_death.up|target.time_to_die<=10
@@ -578,7 +578,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- nightblade,if=(!talent.dark_shadow.enabled|!buff.shadow_dance.up)&target.time_to_die-remains>6&remains<tick_time*2
-            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:IsTicking() * 2) then
+            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:TickTime() * 2) then
                 return A.Nightblade:Show(icon)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable

@@ -467,7 +467,7 @@ A[3] = function(icon, isMulti)
                 return A.SymbolsofDeath:Show(icon)
             end
             -- symbols_of_death,if=dot.nightblade.ticking&(!talent.shuriken_tornado.enabled|talent.shadow_focus.enabled|spell_targets.shuriken_storm<3|!cooldown.shuriken_tornado.up)
-            if A.SymbolsofDeath:IsReady(unit) and (bool(A.NightbladeDebuff.ID, true:IsTicking()) and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not A.ShurikenTornado:GetCooldown() == 0)) then
+            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not A.ShurikenTornado:GetCooldown() == 0)) then
                 return A.SymbolsofDeath:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.all&combo_points.deficit>=cp_max_spend)
@@ -485,11 +485,11 @@ A[3] = function(icon, isMulti)
                 return A.ShadowBlades:Show(icon)
             end
             -- shuriken_tornado,if=spell_targets>=3&!talent.shadow_focus.enabled&dot.nightblade.ticking&!stealthed.all&cooldown.symbols_of_death.up&cooldown.shadow_dance.charges>=1
-            if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not A.ShadowFocus:IsSpellLearned() and bool(A.NightbladeDebuff.ID, true:IsTicking()) and not Unit("player"):IsStealthedP(true, true) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
+            if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):IsStealthedP(true, true) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
                 return A.ShurikenTornado:Show(icon)
             end
             -- shuriken_tornado,if=spell_targets>=3&talent.shadow_focus.enabled&dot.nightblade.ticking&buff.symbols_of_death.up
-            if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.ShadowFocus:IsSpellLearned() and bool(A.NightbladeDebuff.ID, true:IsTicking()) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
+            if A.ShurikenTornado:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.ShurikenTornado:Show(icon)
             end
             -- shadow_dance,if=!buff.shadow_dance.up&target.time_to_die<=5+talent.subterfuge.enabled&!raid_event.adds.up
@@ -505,7 +505,7 @@ A[3] = function(icon, isMulti)
                 return A.Eviscerate:Show(icon)
             end
             -- nightblade,if=(!talent.dark_shadow.enabled|!buff.shadow_dance.up)&target.time_to_die-remains>6&remains<tick_time*2
-            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:IsTicking() * 2) then
+            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:TickTime() * 2) then
                 return A.Nightblade:Show(icon)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable

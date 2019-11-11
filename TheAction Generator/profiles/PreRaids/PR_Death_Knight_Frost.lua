@@ -666,7 +666,7 @@ A[3] = function(icon, isMulti)
                 A.RazdunksBigRedButton:Show(icon)
             end
             -- use_item,name=merekthas_fang,if=!dot.breath_of_sindragosa.ticking&!buff.pillar_of_frost.up
-            if A.MerekthasFang:IsReady(unit) and (not bool(A.BreathofSindragosaDebuff.ID, true:IsTicking()) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
+            if A.MerekthasFang:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff.ID, true) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
                 A.MerekthasFang:Show(icon)
             end
             -- potion,if=buff.pillar_of_frost.up&buff.empower_rune_weapon.up
@@ -829,7 +829,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
             -- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-            if A.HowlingBlast:IsReady(unit) and (not bool(A.FrostFeverDebuff.ID, true:IsTicking()) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+            if A.HowlingBlast:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.HowlingBlast:Show(icon)
             end
             -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
@@ -849,7 +849,7 @@ A[3] = function(icon, isMulti)
                 return BosPooling(unit);
             end
             -- run_action_list,name=bos_ticking,if=dot.breath_of_sindragosa.ticking
-            if (bool(A.BreathofSindragosaDebuff.ID, true:IsTicking())) then
+            if (Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff.ID, true)) then
                 return BosTicking(unit);
             end
             -- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled

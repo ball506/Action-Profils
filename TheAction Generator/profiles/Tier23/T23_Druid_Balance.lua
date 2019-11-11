@@ -377,7 +377,7 @@ end
 
 
 local function EvaluateCycleSunfire250(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or bool(A.MoonfireDebuff.ID, true:IsTicking())) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
+    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (bool(ap_check) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) or not bool(prev.sunfire)) and (Unit("player"):HasBuffs(A.CaIncBuff.ID, true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) or not Unit("player"):HasBuffs(A.CaIncBuff.ID, true)))
 end
 
 local function EvaluateCycleMoonfire313(unit)
@@ -523,7 +523,7 @@ A[3] = function(icon, isMulti)
                 return A.Incarnation:Show(icon)
             end
             -- celestial_alignment,if=astral_power>=40&!buff.ca_inc.up&ap_check&(!azerite.lively_spirit.enabled|buff.lively_spirit.up)&(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))
-            if A.CelestialAlignment:IsReady(unit) and (FutureAstralPower >= 40 and not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and bool(ap_check) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)) and (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and bool(A.MoonfireDebuff.ID, true:IsTicking()) and (bool(A.StellarFlareDebuff.ID, true:IsTicking()) or not A.StellarFlare:IsSpellLearned()))) then
+            if A.CelestialAlignment:IsReady(unit) and (FutureAstralPower >= 40 and not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and bool(ap_check) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)) and (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()))) then
                 return A.CelestialAlignment:Show(icon)
             end
             -- fury_of_elune,if=(buff.ca_inc.up|cooldown.ca_inc.remains>30)&solar_wrath.ap_check

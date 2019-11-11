@@ -352,7 +352,7 @@ local function EvaluateCycleFlameShock148(unit)
 end
 
 local function EvaluateCycleFlameShock163(unit)
-    return (not bool(A.FlameShockDebuff.ID, true:IsTicking()) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + A.AscendanceBuff.ID, true:BaseDuration()) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
+    return (not Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + A.AscendanceBuff.ID, true:BaseDuration()) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
 end
 
 local function EvaluateCycleFlameShock362(unit)
@@ -368,7 +368,7 @@ local function EvaluateCycleFlameShock528(unit)
 end
 
 local function EvaluateCycleFlameShock545(unit)
-    return (not bool(A.FlameShockDebuff.ID, true:IsTicking()) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + A.AscendanceBuff.ID, true:BaseDuration()) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
+    return (not Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + A.AscendanceBuff.ID, true:BaseDuration()) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) or not Unit("player"):HasHeroism) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
 end
 
 local function EvaluateCycleFlameShock774(unit)
@@ -470,7 +470,7 @@ A[3] = function(icon, isMulti)
                 return A.ChainLightning:Show(icon)
             end
             -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
-            if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and bool(A.FlameShockDebuff.ID, true:IsTicking())) then
+            if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true)) then
                 return A.LavaBurst:Show(icon)
             end
             -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up

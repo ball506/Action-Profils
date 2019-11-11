@@ -575,7 +575,7 @@ end
                 return A.Fireblood:Show(icon)
             end
             -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2
-            if A.Doom:IsReady(unit) and (not bool(A.DoomDebuff.ID, true:IsTicking()) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
+            if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
                 return A.Doom:Show(icon)
             end
             -- demonic_strength,if=(buff.wild_imps.stack<6|buff.demonic_power.up)|spell_targets.implosion<2
