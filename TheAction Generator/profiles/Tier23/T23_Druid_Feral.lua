@@ -197,31 +197,31 @@ end
 
 
 
-local function EvaluateCyclePrimalWrath95(unit)
+local function EvaluateCyclePrimalWrath93(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4
 end
 
-local function EvaluateCyclePrimalWrath106(unit)
+local function EvaluateCyclePrimalWrath104(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2
 end
 
-local function EvaluateCycleRip115(unit)
-    return not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.8 and Unit("player"):PMultiplier(A.Rip) > Unit(unit):PMultiplier(A.Rip)) and Unit(unit):TimeToDie() > 8
+local function EvaluateCycleRip113(unit)
+    return not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.8 and A.Persistent_PMultiplier(A.Rip) > A.PMultiplier(unit, A.RipDebuff.ID)) and Unit(unit):TimeToDie() > 8
 end
 
-local function EvaluateCycleRake228(unit)
+local function EvaluateCycleRake224(unit)
     return not Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < A.RakeDebuff.ID, true:BaseDuration() * 0.3) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleRake257(unit)
-    return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and ((Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) <= 7) and Unit("player"):PMultiplier(A.Rake) > Unit(unit):PMultiplier(A.Rake) * 0.85) and Unit(unit):TimeToDie() > 4
+local function EvaluateCycleRake253(unit)
+    return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and ((Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) <= 7) and A.Persistent_PMultiplier(A.Rake) > A.PMultiplier(unit, A.RakeDebuff.ID) * 0.85) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleMoonfireCat302(unit)
+local function EvaluateCycleMoonfireCat296(unit)
     return Unit(unit):HasDeBuffsRefreshable(A.MoonfireCatDebuff.ID, true)
 end
 
-local function EvaluateCycleFerociousBite418(unit)
+local function EvaluateCycleFerociousBite412(unit)
     return Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
 end
 
@@ -305,7 +305,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- shadowmeld,if=combo_points<5&energy>=action.rake.cost&dot.rake.pmultiplier<2.1&buff.tigers_fury.up&(buff.bloodtalons.up|!talent.bloodtalons.enabled)&(!talent.incarnation.enabled|cooldown.incarnation.remains>18)&!buff.incarnation.up
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ComboPoints() < 5 and Unit("player"):EnergyPredicted() >= A.Rake:Cost() and Unit(unit):PMultiplier(A.Rake) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ComboPoints() < 5 and Unit("player"):EnergyPredicted() >= A.Rake:Cost() and A.PMultiplier(unit, A.RakeDebuff.ID) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
                 return A.Shadowmeld:Show(icon)
             end
             -- use_items
@@ -325,21 +325,21 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath95) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath93) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath106) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath104) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip115) then
+                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip113) then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -411,14 +411,14 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- rake,target_if=!ticking|(!talent.bloodtalons.enabled&remains<duration*0.3)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake228) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake224) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rake,target_if=talent.bloodtalons.enabled&buff.bloodtalons.up&((remains<=7)&persistent_multiplier>dot.rake.pmultiplier*0.85)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake257) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake253) then
                     return A.Rake:Show(icon) 
                 end
             end
@@ -432,7 +432,7 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire_cat,target_if=refreshable
             if A.MoonfireCat:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat302) then
+                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat296) then
                     return A.MoonfireCat:Show(icon) 
                 end
             end
@@ -516,7 +516,7 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
             if A.FerociousBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite418) then
+                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite412) then
                     return A.FerociousBite:Show(icon) 
                 end
             end

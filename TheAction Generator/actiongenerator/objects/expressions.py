@@ -713,8 +713,10 @@ class Aura(Expires):
         """
         Return the arguments for the expression {aura}.spell.pmultiplier.
         """
-        self.method = Method('PMultiplier')
-        self.args = [Spell(self.condition.parent_action, self.spell.simc)]
+        self.object_ = []
+        self.method = Method(f'A.PMultiplier(unit, A.{self.spell.lua_name()}.ID)')
+        #self.method = Method('PMultiplier')
+        self.args = []
 
 
 class SetBonus(BuildExpression):
@@ -874,7 +876,9 @@ class PMultiplier(BuildExpression):
         """
         Return the arguments for the expression persistent_multiplier
         """
-        self.method = Method('PMultiplier')
+        self.object_ = []
+        self.method = Method('A.Persistent_PMultiplier')
+
 
 
 class Time(BuildExpression):

@@ -156,7 +156,7 @@ function HasDeBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (Unit(unit):HasDeBuffs(spell, ID) > 0 and true) or false
+    return (Unit(unit):HasDeBuffs(spell, ID) < 1 and true) or false
 end
 
 ------------------------------------
@@ -168,7 +168,7 @@ function HasBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (Unit("player"):HasBuffs(spell, ID) > 0 and true) or false
+    return (Unit("player"):HasBuffs(spell, ID) < 1 and true) or false
 end
 
 -------------------------------------------------------------------------------

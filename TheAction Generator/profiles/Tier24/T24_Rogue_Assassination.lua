@@ -28,13 +28,13 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Subterfuge                             = Action.Create({Type = "Spell", ID = 108208 }),
     ShroudedSuffocation                    = Action.Create({Type = "Spell", ID =  }),
     GarroteDebuff                          = Action.Create({Type = "Spell", ID = 703 }),
-    Garrote                                = Action.Create({Type = "Spell", ID = 703 }),
     Vanish                                 = Action.Create({Type = "Spell", ID = 1856 }),
     Nightstalker                           = Action.Create({Type = "Spell", ID = 14062 }),
     Exsanguinate                           = Action.Create({Type = "Spell", ID = 200806 }),
     DeeperStratagem                        = Action.Create({Type = "Spell", ID = 193531 }),
     ToxicBlade                             = Action.Create({Type = "Spell", ID = 245388 }),
     PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
+    Garrote                                = Action.Create({Type = "Spell", ID = 703 }),
     MasterAssassin                         = Action.Create({Type = "Spell", ID =  }),
     Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
@@ -624,36 +624,36 @@ local function EvaluateTargetIfMarkedForDeath36(unit)
 end
 
 
-local function EvaluateCycleFanofKnives276(unit)
+local function EvaluateCycleFanofKnives270(unit)
     return (not Unit(unit):HasDeBuffs(A.DeadlyPoisonDotDebuff.ID, true)) and (bool(VarUseFiller) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3)
 end
 
-local function EvaluateCycleMutilate297(unit)
+local function EvaluateCycleMutilate291(unit)
     return (not Unit(unit):HasDeBuffs(A.DeadlyPoisonDotDebuff.ID, true)) and (bool(VarUseFiller) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 2)
 end
 
-local function EvaluateCycleGarrote416(unit)
-  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= self.target and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Unit("player"):ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (Unit(unit):PMultiplier(A.Garrote) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()))
+local function EvaluateCycleGarrote408(unit)
+  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= self.target and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Unit("player"):ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()))
 end
 
-local function EvaluateCycleRupture567(unit)
-  return not bool(VarSkipCycleRupture) and not bool(VarSkipRupture) and Unit(unit) ~= self.target and Unit("player"):ComboPoints() >= 4 and Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and (Unit(unit):PMultiplier(A.Rupture) <= 1 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Rupture") or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4
+local function EvaluateCycleRupture555(unit)
+  return not bool(VarSkipCycleRupture) and not bool(VarSkipRupture) and Unit(unit) ~= self.target and Unit("player"):ComboPoints() >= 4 and Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and (A.PMultiplier(unit, A.RuptureDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Rupture") or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4
 end
 
-local function EvaluateTargetIfFilterGarrote723(unit)
+local function EvaluateTargetIfFilterGarrote709(unit)
   return Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)
 end
 
-local function EvaluateTargetIfGarrote760(unit)
-  return A.Subterfuge:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 12 or Unit(unit):PMultiplier(A.Garrote) <= 1) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 2
+local function EvaluateTargetIfGarrote744(unit)
+  return A.Subterfuge:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 12 or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 2
 end
 
 
-local function EvaluateTargetIfFilterGarrote778(unit)
+local function EvaluateTargetIfFilterGarrote762(unit)
   return Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)
 end
 
-local function EvaluateTargetIfGarrote809(unit)
+local function EvaluateTargetIfGarrote793(unit)
   return A.Subterfuge:IsSpellLearned() and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() > Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 18 or not bool(ss_buffed))
 end
 
@@ -725,7 +725,7 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=vendetta_subterfuge_condition,value=!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier>1&(spell_targets.fan_of_knives<6|!cooldown.vanish.up)
             if (true) then
-                VarVendettaSubterfugeCondition = num(not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or Unit(unit):PMultiplier(A.Garrote) > 1 and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 6 or not A.Vanish:GetCooldown() == 0))
+                VarVendettaSubterfugeCondition = num(not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) > 1 and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 6 or not A.Vanish:GetCooldown() == 0))
             end
             -- variable,name=vendetta_nightstalker_condition,value=!talent.nightstalker.enabled|!talent.exsanguinate.enabled|cooldown.exsanguinate.remains<5-2*talent.deeper_stratagem.enabled
             if (true) then
@@ -740,7 +740,7 @@ A[3] = function(icon, isMulti)
                 return A.Vendetta:Show(icon)
             end
             -- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
-            if A.Vanish:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and bool(VarSingleUnit(unit))) and Unit("player"):ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1 and (not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or Unit(unit):PMultiplier(A.Garrote) <= 1)) then
+            if A.Vanish:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and bool(VarSingleUnit(unit))) and Unit("player"):ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1 and (not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) then
                 return A.Vanish:Show(icon)
             end
             -- vanish,if=talent.nightstalker.enabled&!talent.exsanguinate.enabled&combo_points>=cp_max_spend&debuff.vendetta.up
@@ -765,7 +765,7 @@ A[3] = function(icon, isMulti)
                 return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthed(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and Unit(unit):PMultiplier(A.Garrote) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthed(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
                 return A.Shadowmeld:Show(icon)
             end
             -- exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
@@ -847,7 +847,7 @@ A[3] = function(icon, isMulti)
             end
             -- fan_of_knives,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives>=3
             if A.FanofKnives:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FanofKnives, 10, EvaluateCycleFanofKnives276) then
+                if Action.Utils.CastTargetIf(A.FanofKnives, 10, EvaluateCycleFanofKnives270) then
                     return A.FanofKnives:Show(icon) 
                 end
             end
@@ -857,7 +857,7 @@ A[3] = function(icon, isMulti)
             end
             -- mutilate,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives=2
             if A.Mutilate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Mutilate, 40, EvaluateCycleMutilate297) then
+                if Action.Utils.CastTargetIf(A.Mutilate, 40, EvaluateCycleMutilate291) then
                     return A.Mutilate:Show(icon) 
                 end
             end
@@ -887,7 +887,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- garrote,if=(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>4&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
-            if A.Garrote:IsReady(unit) and ((not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Unit("player"):ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (Unit(unit):PMultiplier(A.Garrote) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 4 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()))) then
+            if A.Garrote:IsReady(unit) and ((not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Unit("player"):ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= A.GarroteDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 4 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()))) then
                 if A.Garrote:IsUsablePPool() then
                     return A.Garrote:Show(icon)
                 else
@@ -897,7 +897,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,cycle_targets=1,if=!variable.skip_cycle_garrote&target!=self.target&(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>12&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote416) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote408) then
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -906,12 +906,12 @@ A[3] = function(icon, isMulti)
                 return A.CrimsonTempest:Show(icon)
             end
             -- rupture,if=!variable.skip_rupture&combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
-            if A.Rupture:IsReady(unit) and (not bool(VarSkipRupture) and Unit("player"):ComboPoints() >= 4 and Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and (Unit(unit):PMultiplier(A.Rupture) <= 1 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Rupture") or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
+            if A.Rupture:IsReady(unit) and (not bool(VarSkipRupture) and Unit("player"):ComboPoints() >= 4 and Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and (A.PMultiplier(unit, A.RuptureDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(Unit(unit), "Rupture") or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= A.RuptureDebuff.ID, true:TickTime() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
                 return A.Rupture:Show(icon)
             end
             -- rupture,cycle_targets=1,if=!variable.skip_cycle_rupture&!variable.skip_rupture&target!=self.target&combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
             if A.Rupture:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rupture, 5, EvaluateCycleRupture567) then
+                if Action.Utils.CastTargetIf(A.Rupture, 5, EvaluateCycleRupture555) then
                     return A.Rupture:Show(icon) 
                 end
             end
@@ -979,7 +979,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&(remains<12|pmultiplier<=1)&target.time_to_die-remains>2
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote723, EvaluateTargetIfGarrote760) then 
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote709, EvaluateTargetIfGarrote744) then 
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -990,7 +990,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&azerite.shrouded_suffocation.enabled&target.time_to_die>remains&(remains<18|!ss_buffed)
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote778, EvaluateTargetIfGarrote809) then 
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote762, EvaluateTargetIfGarrote793) then 
                     return A.Garrote:Show(icon) 
                 end
             end
