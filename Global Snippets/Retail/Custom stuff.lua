@@ -121,35 +121,54 @@ end
 function TrinketON()
   return ( (Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]) )
 end
+
+------------------------------------
+--- RegisterDamage simc reference
+------------------------------------
+-- Register the spell damage formula.
+function A:RegisterDamage(Function)
+  self.DamageFormula = Function
+end
+
+-- Get the spell damage formula if it exists.
+function A:Damage()
+  return self.DamageFormula and self.DamageFormula() or 0
+end
+
+-- attack_power
+function A.Player:AttackPower()
+    return UnitAttackPower(self.UnitID)
+end
+
 ------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
-function HasDeBuffsDown(self, spell, caster, byID)
-	-- @return boolean
-	-- current remain, total applied duration
-	-- Sorting method
-	local unitID 						= self.UnitID
-    local value, duration 				= 0, 0
-	local spell 						= type(spell) == "string" and AuraList[spell] or spell
-		
-    if not A.IsInitialized and A.Unit(unitID):DeBuffCyclone() > 0 then 
-        value, duration = -1, -1
-    else
-        value, duration = A.Unit(unitID):SortDeBuffs(spell, caster, byID) 
-    end    
-		
-    if duration > 0 then
-        return false
-    else
-	    return true
+function HasDeBuffsDown(spell, byID)
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+	
+    ID = byID
+	if not ID then
+	    ID = true
 	end
- 		
+	
+    return (Unit(unit):HasDeBuffs(spell, ID) > 0 and true) or false
 end
+
 ------------------------------------
---- CooldownUp simc reference
+--- HasBuffsDown simc reference
 ------------------------------------
-function GetCooldownUp(self, unit, spellID)		
-    return UnitCooldown:GetCooldown(unit, spellID)
+function HasBuffsDown(spell, byID)
+    ID = byID
+	if not ID then
+	    ID = true
+	end
+	
+    return (Unit("player"):HasBuffs(spell, ID) > 0 and true) or false
 end
 
 -------------------------------------------------------------------------------
