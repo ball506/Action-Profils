@@ -461,11 +461,11 @@ A[3] = function(icon, isMulti)
             end
             -- use_items
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- lights_judgment
@@ -473,11 +473,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
         end

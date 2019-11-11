@@ -190,7 +190,6 @@ class Pet(Unit, LuaNamed):
         self.owner = owner
         self.name = name
 
-
 class PlayerClass(LuaNamed):
     """
     The player class.

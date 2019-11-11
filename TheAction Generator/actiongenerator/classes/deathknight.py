@@ -58,6 +58,12 @@ SPELL_INFO = {
         BLOOD: {
             'blooddrinker':                     {SPELL:     206931,
                                                  GCDAOGCD:  True},
+            'hemostasis':                       {SPELL:     273946,
+                                                 BUFF:      273947},
+            'tombstone':                        {SPELL:     219809},
+            'death_and_decay':                  {SPELL:     43265,
+                                                 DEBUFF:    188290},
+            'rune_strike':                      {SPELL:     210764},
             'rapid_decomposition':              {SPELL:     194662},
             'dancing_rune_weapon':              {SPELL:     49028,
                                                  BUFF:      81256,

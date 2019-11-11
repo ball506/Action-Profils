@@ -37,7 +37,6 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     DemonicCallingBuff                     = Action.Create({Type = "Spell", ID = 205146 }),
     DemonicCoreBuff                        = Action.Create({Type = "Spell", ID = 264173 }),
     SummonVilefiend                        = Action.Create({Type = "Spell", ID = 264119 }),
-    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     Doom                                   = Action.Create({Type = "Spell", ID = 265412 }),
     DoomDebuff                             = Action.Create({Type = "Spell", ID = 265412 }),
     NetherPortal                           = Action.Create({Type = "Spell", ID = 267217 }),
@@ -46,6 +45,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     ExplosivePotential                     = Action.Create({Type = "Spell", ID = 275395 }),
     ExplosivePotentialBuff                 = Action.Create({Type = "Spell", ID = 275398 }),
     DemonicStrength                        = Action.Create({Type = "Spell", ID = 267171 }),
+    VisionofPerfection                     = Action.Create({Type = "Spell", ID =  }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
@@ -406,7 +406,7 @@ A[3] = function(icon, isMulti)
         --BuildAShard
         local function BuildAShard(unit)
             -- memory_of_lucid_dreams,if=soul_shard<2
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):SoulShardsP < 2) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):SoulShardsP < 2) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
@@ -458,19 +458,19 @@ A[3] = function(icon, isMulti)
                 return A.BilescourgeBombers:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&spell_targets.implosion<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- soul_strike,if=soul_shard<5&buff.demonic_core.stack<=2
@@ -556,7 +556,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- guardian_of_azeroth,if=!cooldown.nether_portal.remains&soul_shard>=5
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (not bool(A.NetherPortal:GetCooldown()) and Unit("player"):SoulShardsP >= 5) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(A.NetherPortal:GetCooldown()) and Unit("player"):SoulShardsP >= 5) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- nether_portal,if=soul_shard>=5
@@ -600,7 +600,7 @@ A[3] = function(icon, isMulti)
                 return A.Doom:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- hand_of_guldan,if=prev_gcd.1.hand_of_guldan&soul_shard>0&prev_gcd.2.soul_strike
@@ -661,7 +661,7 @@ end
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- potion,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.summon_demonic_tyrant.remains<=20&!talent.nether_portal.enabled
@@ -670,31 +670,31 @@ end
             end
             -- use_items,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             -- berserking,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- blood_of_the_enemy,if=pet.demonic_tyrant.active&pet.demonic_tyrant.remains<=15-gcd*3&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (bool(pet.demonic_tyrant.active) and Unit("player"):HasBuffs(A.BloodoftheEnemyBuff.ID, true) <= 15 - A.GetGCD() * 3 and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and Unit("player"):HasBuffs(A.BloodoftheEnemyBuff.ID, true) <= 15 - A.GetGCD() * 3 and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3&(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15)) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (bool(pet.demonic_tyrant.active) and (not bool(essence.vision_of_perfection.major) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration - 5) or Unit(unit):TimeToDie() <= 15) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(A.VisionofPerfection:EssenceIsMajorUseable()) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15) then
                 return A.RippleInSpace:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=cooldown.summon_demonic_tyrant.remains>=20&cooldown.summon_demonic_tyrant.remains<=cooldown.summon_demonic_tyrant.duration-15|target.time_to_die<=30
-            if A.PocketsizedComputationDevice:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() >= 20 and A.SummonDemonicTyrant:GetCooldown() <= A.SummonDemonicTyrant:BaseDuration - 15 or Unit(unit):TimeToDie() <= 30) then
+            if A.PocketsizedComputationDevice:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() >= 20 and A.SummonDemonicTyrant:GetCooldown() <= A.SummonDemonicTyrant:BaseDuration() - 15 or Unit(unit):TimeToDie() <= 30) then
                 A.PocketsizedComputationDevice:Show(icon)
             end
             -- use_item,name=rotcrusted_voodoo_doll,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
@@ -738,7 +738,7 @@ end
                 return A.Implosion:Show(icon)
             end
             -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2&!buff.nether_portal.remains
-            if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and not bool(Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true))) then
+            if A.Doom:IsReady(unit) and (not bool(A.DoomDebuff.ID, true:IsTicking()) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and not bool(Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true))) then
                 return A.Doom:Show(icon)
             end
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled
@@ -758,7 +758,7 @@ end
                 local ShouldReturn = Implosion(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (A.SummonDemonicTyrant:GetCooldown() <= 15 or Unit(unit):TimeToDie() <= 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonDemonicTyrant:GetCooldown() <= 15 or Unit(unit):TimeToDie() <= 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- grimoire_felguard,if=(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15|cooldown.summon_demonic_tyrant.remains<13)
@@ -774,7 +774,7 @@ end
                 return A.CallDreadstalkers:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- bilescourge_bombers
@@ -810,19 +810,19 @@ end
                 return A.Demonbolt:Show(icon)
             end
             -- focused_azerite_beam,if=!pet.demonic_tyrant.active
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (not bool(pet.demonic_tyrant.active)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Pet:IsActive(A.DemonicTyrant.ID))) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&!pet.demonic_tyrant.active
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(pet.demonic_tyrant.active)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(Pet:IsActive(A.DemonicTyrant.ID))) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- call_action_list,name=build_a_shard

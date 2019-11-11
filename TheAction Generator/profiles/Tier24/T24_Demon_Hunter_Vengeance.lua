@@ -25,9 +25,8 @@ Action[ACTION_CONST_DEMONHUNTER_VENGEANCE] = {
     ImmolationAura                         = Action.Create({Type = "Spell", ID = 178740 }),
     FieryBrandDebuff                       = Action.Create({Type = "Spell", ID =  }),
     FelDevastation                         = Action.Create({Type = "Spell", ID = 212084 }),
-    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID =  }),
+    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
     MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
     DemonSpikes                            = Action.Create({Type = "Spell", ID = 203720 }),
     Metamorphosis                          = Action.Create({Type = "Spell", ID = 191427 }),
@@ -369,19 +368,19 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
             -- immolation_aura,if=dot.fiery_brand.ticking
-            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
+            if A.ImmolationAura:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
                 return A.ImmolationAura:Show(icon)
             end
             -- fel_devastation,if=dot.fiery_brand.ticking
-            if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
+            if A.FelDevastation:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
                 return A.FelDevastation:Show(icon)
             end
             -- infernal_strike,if=dot.fiery_brand.ticking
-            if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
+            if A.InfernalStrike:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
                 return A.InfernalStrike:Show(icon)
             end
             -- sigil_of_flame,if=dot.fiery_brand.ticking
-            if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
+            if A.SigilofFlame:IsReady(unit) and (bool(A.FieryBrandDebuff.ID, true:IsTicking())) then
                 return A.SigilofFlame:Show(icon)
             end
         end
@@ -393,15 +392,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not bool(A.ConcentratedFlameBurnDebuff.ID, true:IsTicking()) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- heart_essence

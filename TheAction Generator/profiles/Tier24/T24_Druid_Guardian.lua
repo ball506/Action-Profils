@@ -21,7 +21,7 @@ local setmetatable                           = setmetatable
 Action[ACTION_CONST_DRUID_GUARDIAN] = {
     BearFormBuff                           = Action.Create({Type = "Spell", ID = 5487 }),
     BearForm                               = Action.Create({Type = "Spell", ID = 5487 }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID =  }),
+    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
     ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
@@ -36,6 +36,7 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     IncarnationBuff                        = Action.Create({Type = "Spell", ID = 102558 }),
     ThrashBearDebuff                       = Action.Create({Type = "Spell", ID = 192090 }),
     Maul                                   = Action.Create({Type = "Spell", ID = 6807 }),
+    ConflictandStrife                      = Action.Create({Type = "Spell", ID =  }),
     SharpenedClawsBuff                     = Action.Create({Type = "Spell", ID =  }),
     Ironfur                                = Action.Create({Type = "Spell", ID = 192081 }),
     IronfurBuff                            = Action.Create({Type = "Spell", ID = 192081 }),
@@ -346,15 +347,15 @@ local function Thrash()
 end
 
 
-local function EvaluateCyclePulverize105(unit)
+local function EvaluateCyclePulverize107(unit)
     return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == dot.thrash_bear.max_stacks
 end
 
-local function EvaluateCycleMoonfire116(unit)
+local function EvaluateCycleMoonfire118(unit)
     return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
-local function EvaluateCycleMoonfire165(unit)
+local function EvaluateCycleMoonfire167(unit)
     return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
@@ -382,7 +383,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bear_form
@@ -406,15 +407,15 @@ A[3] = function(icon, isMulti)
                 return A.HeartEssence:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment
@@ -422,11 +423,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- barkskin,if=buff.bear_form.up
@@ -442,7 +443,7 @@ A[3] = function(icon, isMulti)
                 return A.BristlingFur:Show(icon)
             end
             -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
-            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Incarnation:IsReady(unit) and ((bool(A.MoonfireDebuff.ID, true:IsTicking()) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(A.ThrashBearDebuff.ID, true:IsTicking())) then
                 return A.Incarnation:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
@@ -470,7 +471,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and (bool(essence.conflict_and_strife.major) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
+            if A.Maul:IsReady(unit) and (bool(A.ConflictandStrife:EssenceIsMajorUseable()) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=cost=0|(rage>cost&azerite.layered_mane.enabled&active_enemies>2)
@@ -479,13 +480,13 @@ A[3] = function(icon, isMulti)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Pulverize, 40, EvaluateCyclePulverize105) then
+                if Action.Utils.CastTargetIf(A.Pulverize, 40, EvaluateCyclePulverize107) then
                     return A.Pulverize:Show(icon) 
                 end
             end
             -- moonfire,target_if=dot.moonfire.refreshable&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire116) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire118) then
                     return A.Moonfire:Show(icon) 
                 end
             end
@@ -498,12 +499,12 @@ A[3] = function(icon, isMulti)
                 return Swipe:Show(icon)
             end
             -- mangle,if=dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Mangle:IsReady(unit) and (bool(A.ThrashBearDebuff.ID, true:IsTicking())) then
                 return A.Mangle:Show(icon)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire165) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire167) then
                     return A.Moonfire:Show(icon) 
                 end
             end

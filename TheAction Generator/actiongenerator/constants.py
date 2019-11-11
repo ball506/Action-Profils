@@ -24,6 +24,7 @@ BLOODLUST = 'bloodlust'
 MOVEMENT = 'movement'
 DISTANCE = 'distance'
 COOLDOWN = 'cooldown'
+ESSENCE = 'essence'
 
 BOOL = 'bool'
 NUM = 'num'

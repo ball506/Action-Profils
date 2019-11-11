@@ -39,7 +39,6 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     BackdraftBuff                          = Action.Create({Type = "Spell", ID = 117828 }),
     Conflagrate                            = Action.Create({Type = "Spell", ID = 17962 }),
     Shadowburn                             = Action.Create({Type = "Spell", ID = 17877 }),
-    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
     SummonInfernal                         = Action.Create({Type = "Spell", ID = 1122 }),
     DarkSoulInstability                    = Action.Create({Type = "Spell", ID = 113858 }),
     DarkSoulInstabilityBuff                = Action.Create({Type = "Spell", ID = 113858 }),
@@ -378,12 +377,12 @@ local function EvaluateCycleHavoc106(unit)
   return not (Unit(unit) == self.target) and (not A.GrimoireofSupremacy:IsSpellLearned() or not A.Inferno:IsSpellLearned() or A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) <= 10)
 end
 
-local function EvaluateCycleImmolate501(unit)
+local function EvaluateCycleImmolate507(unit)
   return Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true) and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true))
 end
 
-local function EvaluateCycleHavoc566(unit)
-  return not (Unit(unit) == self.target) and (Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > A.ImmolateDebuff.ID, true:BaseDuration * 0.5 or not A.InternalCombustion:IsSpellLearned()) and (not A.SummonInfernal:GetCooldown() == 0 or not A.GrimoireofSupremacy:IsSpellLearned() or A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) <= 10)
+local function EvaluateCycleHavoc572(unit)
+  return not (Unit(unit) == self.target) and (Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > A.ImmolateDebuff.ID, true:BaseDuration() * 0.5 or not A.InternalCombustion:IsSpellLearned()) and (not A.SummonInfernal:GetCooldown() == 0 or not A.GrimoireofSupremacy:IsSpellLearned() or A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) <= 10)
 end
 
 --- ======= ACTION LISTS =======
@@ -466,11 +465,11 @@ A[3] = function(icon, isMulti)
                 return A.RainofFire:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(!talent.grimoire_of_supremacy.enabled|!talent.inferno.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
@@ -496,7 +495,7 @@ A[3] = function(icon, isMulti)
                 return A.Shadowburn:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&active_enemies<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- incinerate
@@ -524,7 +523,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=pet.infernal.active
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (bool(pet.infernal.active)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(pet.infernal.active)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=pet.infernal.active&(pet.infernal.remains<20.5|pet.infernal.remains<22&soul_shard>=3.6|!talent.grimoire_of_supremacy.enabled)
@@ -532,15 +531,15 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=pet.infernal.active&(pet.infernal.remains<15.5|soul_shard<3.5&(buff.dark_soul_instability.up|!talent.grimoire_of_supremacy.enabled&dot.immolate.remains>12))
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Unit("player"):SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Unit("player"):SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die>cooldown.summon_infernal.duration+30
-            if A.SummonInfernal:IsReady(unit) and (Unit(unit):TimeToDie() > A.SummonInfernal:BaseDuration + 30) then
+            if A.SummonInfernal:IsReady(unit) and (Unit(unit):TimeToDie() > A.SummonInfernal:BaseDuration() + 30) then
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=time>30&target.time_to_die>cooldown.guardian_of_azeroth.duration+30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration + 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration() + 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- summon_infernal,if=talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains>target.time_to_die
@@ -548,7 +547,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=cooldown.summon_infernal.remains>target.time_to_die
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=cooldown.summon_infernal.remains>target.time_to_die&pet.infernal.remains<20.5
@@ -556,7 +555,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=cooldown.summon_infernal.remains>target.time_to_die&(pet.infernal.remains<15.5|buff.dark_soul_instability.up&soul_shard<3)
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Unit("player"):SoulShardsP < 3)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Unit("player"):SoulShardsP < 3)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die<30
@@ -564,7 +563,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=target.time_to_die<30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit(unit):TimeToDie() < 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):TimeToDie() < 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=target.time_to_die<21&target.time_to_die>4
@@ -572,19 +571,19 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=target.time_to_die<16&target.time_to_die>6
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit(unit):TimeToDie() < 16 and Unit(unit):TimeToDie() > 6) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):TimeToDie() < 16 and Unit(unit):TimeToDie() > 6) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
             -- potion,if=pet.infernal.active|target.time_to_die<30
@@ -592,15 +591,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(essence.memory_of_lucid_dreams.major) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
@@ -689,7 +688,7 @@ A[3] = function(icon, isMulti)
                 return A.Conflagrate:Show(icon)
             end
             -- immolate,if=talent.internal_combustion.enabled&remains<duration*0.5|!talent.internal_combustion.enabled&refreshable
-            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < A.ImmolateDebuff.ID, true:BaseDuration * 0.5 or not A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < A.ImmolateDebuff.ID, true:BaseDuration() * 0.5 or not A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon)
             end
             -- chaos_bolt,if=cast_time<havoc_remains
@@ -731,12 +730,12 @@ end
             end
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate501) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate507) then
                     return A.Immolate:Show(icon) 
                 end
             end
             -- immolate,if=talent.internal_combustion.enabled&action.chaos_bolt.in_flight&remains<duration*0.5
-            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < A.ImmolateDebuff.ID, true:BaseDuration * 0.5) then
+            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < A.ImmolateDebuff.ID, true:BaseDuration() * 0.5) then
                 return A.Immolate:Show(icon)
             end
             -- call_action_list,name=cds
@@ -744,19 +743,19 @@ end
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- focused_azerite_beam,if=!pet.infernal.active|!talent.grimoire_of_supremacy.enabled
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (not bool(pet.infernal.active) or not A.GrimoireofSupremacy:IsSpellLearned()) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(pet.infernal.active) or not A.GrimoireofSupremacy:IsSpellLearned()) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- channel_demonfire
@@ -765,7 +764,7 @@ end
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(dot.immolate.remains>dot.immolate.duration*0.5|!talent.internal_combustion.enabled)&(!cooldown.summon_infernal.ready|!talent.grimoire_of_supremacy.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc566) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc572) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -779,7 +778,7 @@ end
             end
             -- variable,name=pool_soul_shards,value=active_enemies>1&cooldown.havoc.remains<=10|cooldown.summon_infernal.remains<=15&(talent.grimoire_of_supremacy.enabled|talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains<=15)|talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains<=15&(cooldown.summon_infernal.remains>target.time_to_die|cooldown.summon_infernal.remains+cooldown.summon_infernal.duration>target.time_to_die)
             if (true) then
-                VarPoolSoulShards = num(MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15 and (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + A.SummonInfernal:BaseDuration > Unit(unit):TimeToDie()))
+                VarPoolSoulShards = num(MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15 and (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + A.SummonInfernal:BaseDuration() > Unit(unit):TimeToDie()))
             end
             -- conflagrate,if=buff.backdraft.down&soul_shard>=1.5-0.3*talent.flashover.enabled&!variable.pool_soul_shards
             if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Unit("player"):SoulShardsP >= 1.5 - 0.3 * num(A.Flashover:IsSpellLearned()) and not bool(VarPoolSoulShards)) then

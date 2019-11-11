@@ -25,12 +25,12 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     Marrowrend                             = Action.Create({Type = "Spell", ID = 195182 }),
     BoneShieldBuff                         = Action.Create({Type = "Spell", ID = 195181 }),
     BloodBoil                              = Action.Create({Type = "Spell", ID = 50842 }),
-    HemostasisBuff                         = Action.Create({Type = "Spell", ID =  }),
+    HemostasisBuff                         = Action.Create({Type = "Spell", ID = 273947 }),
     Ossuary                                = Action.Create({Type = "Spell", ID = 219786 }),
     Bonestorm                              = Action.Create({Type = "Spell", ID = 194844 }),
     Heartbreaker                           = Action.Create({Type = "Spell", ID = 221536 }),
-    DeathandDecay                          = Action.Create({Type = "Spell", ID =  }),
-    RuneStrike                             = Action.Create({Type = "Spell", ID =  }),
+    DeathandDecay                          = Action.Create({Type = "Spell", ID = 43265 }),
+    RuneStrike                             = Action.Create({Type = "Spell", ID = 210764 }),
     HeartStrike                            = Action.Create({Type = "Spell", ID = 206930 }),
     CrimsonScourgeBuff                     = Action.Create({Type = "Spell", ID = 81141 }),
     RapidDecomposition                     = Action.Create({Type = "Spell", ID = 194662 }),
@@ -39,7 +39,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
     DancingRuneWeapon                      = Action.Create({Type = "Spell", ID = 49028 }),
     Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Tombstone                              = Action.Create({Type = "Spell", ID =  })
+    Tombstone                              = Action.Create({Type = "Spell", ID = 219809 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -418,7 +418,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneStrike:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -433,11 +433,11 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
             -- blood_fury,if=cooldown.dancing_rune_weapon.ready&(!cooldown.blooddrinker.ready|!talent.blooddrinker.enabled)
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (A.DancingRuneWeapon:GetCooldown() == 0 and (not A.BloodDrinker:GetCooldown() == 0 or not A.BloodDrinker:IsSpellLearned())) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.DancingRuneWeapon:GetCooldown() == 0 and (not A.BloodDrinker:GetCooldown() == 0 or not A.BloodDrinker:IsSpellLearned())) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- use_items,if=cooldown.dancing_rune_weapon.remains>90

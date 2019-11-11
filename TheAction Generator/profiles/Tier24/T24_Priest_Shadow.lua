@@ -448,39 +448,39 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- memory_of_lucid_dreams,if=(buff.voidform.stack>20&insanity<=50)|buff.voidform.stack>(26+7*buff.bloodlust.up)|(current_insanity_drain*((gcd.max*2)+action.mind_blast.cast_time))>insanity
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Unit("player"):Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Unit("player"):Insanity()) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Unit("player"):Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Unit("player"):Insanity()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=buff.voidform.stack>15
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 15) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 15) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.TheUnboundForce:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=time<=10|(buff.chorus_of_insanity.stack>=15&buff.voidform.up)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- call_action_list,name=crit_cds,if=(buff.voidform.up&buff.chorus_of_insanity.stack>20)|azerite.chorus_of_insanity.rank=0
@@ -501,7 +501,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkAscension:Show(icon)
             end
             -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-            if A.VampiricTouch:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
+            if A.VampiricTouch:IsReady(unit) and (not bool(A.VampiricTouchDebuff.ID, true:IsTicking()) and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
                 return A.VampiricTouch:Show(icon)
             end
             -- mind_sear,if=buff.harvested_thoughts.up
@@ -680,7 +680,7 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
             if (true) then
-                VarDotsUp = num(Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID, true) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true))
+                VarDotsUp = num(bool(A.ShadowWordPainDebuff.ID, true:IsTicking()) and bool(A.VampiricTouchDebuff.ID, true:IsTicking()))
             end
             -- run_action_list,name=cleave,if=active_enemies>1
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then

@@ -503,7 +503,7 @@ A[3] = function(icon, isMulti)
                 return A.HornofWinter:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -629,7 +629,7 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -662,7 +662,7 @@ A[3] = function(icon, isMulti)
         local function Cooldowns(unit)
             -- use_items,if=(cooldown.pillar_of_frost.ready|cooldown.pillar_of_frost.remains>20)&(!talent.breath_of_sindragosa.enabled|cooldown.empower_rune_weapon.remains>95)
             -- use_item,name=grongs_primal_rage,if=rune<=3&!buff.pillar_of_frost.up&(!dot.breath_of_sindragosa.ticking|!talent.breath_of_sindragosa.enabled)
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):Rune() <= 3 and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff.ID, true) or not A.BreathofSindragosa:IsSpellLearned())) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):Rune() <= 3 and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (not bool(A.BreathofSindragosaDebuff.ID, true:IsTicking()) or not A.BreathofSindragosa:IsSpellLearned())) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- use_item,name=razdunks_big_red_button
@@ -670,7 +670,7 @@ A[3] = function(icon, isMulti)
                 A.RazdunksBigRedButton:Show(icon)
             end
             -- use_item,name=merekthas_fang,if=!dot.breath_of_sindragosa.ticking&!buff.pillar_of_frost.up
-            if A.MerekthasFang:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff.ID, true) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
+            if A.MerekthasFang:IsReady(unit) and (not bool(A.BreathofSindragosaDebuff.ID, true:IsTicking()) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
                 A.MerekthasFang:Show(icon)
             end
             -- potion,if=buff.pillar_of_frost.up&buff.empower_rune_weapon.up
@@ -678,11 +678,11 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- blood_fury,if=buff.pillar_of_frost.up&buff.empower_rune_weapon.up
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true)) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=buff.pillar_of_frost.up
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains
@@ -818,7 +818,7 @@ A[3] = function(icon, isMulti)
                 return A.HornofWinter:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -833,7 +833,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
             -- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-            if A.HowlingBlast:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+            if A.HowlingBlast:IsReady(unit) and (not bool(A.FrostFeverDebuff.ID, true:IsTicking()) and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.HowlingBlast:Show(icon)
             end
             -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
@@ -853,7 +853,7 @@ A[3] = function(icon, isMulti)
                 return BosPooling(unit);
             end
             -- run_action_list,name=bos_ticking,if=dot.breath_of_sindragosa.ticking
-            if (Unit(unit):HasDeBuffs(A.BreathofSindragosaDebuff.ID, true)) then
+            if (bool(A.BreathofSindragosaDebuff.ID, true:IsTicking())) then
                 return BosTicking(unit);
             end
             -- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled

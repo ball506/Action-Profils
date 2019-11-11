@@ -28,7 +28,7 @@ class ActionExpression(BuildExpression):
     AURA_METHODS = [
         'ready',
         'remains',
-		'cooldown',
+        'cooldown',
         'down',
         'stack',
         'react',
@@ -39,7 +39,7 @@ class ActionExpression(BuildExpression):
         'refreshable',
         'pmultiplier',
     ]
-	
+
     def __init__(self, condition, to_self=False):
         for method_name in self.AURA_METHODS:
             self._generate_aura_method(method_name)
@@ -251,6 +251,22 @@ class Expression(Decorable):
         Return the expression of the condition.
         """
         try:
+            """
+			DK Gargoyle
+            """
+            if self.simc == 'pet.gargoyle.active':
+                return Literal('Pet:IsActive(A.Gargoyle.ID)')
+            """
+			DK Gargoyle
+            """
+            if self.simc == 'pet.apoc_ghoul.active':
+                return Literal('Pet:IsActive(A.ApocGhoul.ID)')
+            """
+			WL Demonology
+            """
+            if self.simc == 'pet.demonic_tyrant.active':
+                return Literal('Pet:IsActive(A.DemonicTyrant.ID)')	
+				
             if (self.condition_list[0] in self.actions_to_self
                     and len(self.condition_list) == 1):
                 return self.action(to_self=True)
@@ -260,7 +276,8 @@ class Expression(Decorable):
                 float(self.simc)
             except ValueError:
                 if self.simc not in '':
-                    warnings.warn(f'Failed to parse the expression {self.simc} in {self.player_unit.apl.profile_name} (line {self.parent_action.simc})')
+                    warnings.warn(
+                        f'Failed to parse the expression {self.simc} in {self.player_unit.apl.profile_name} (line {self.parent_action.simc})')
             return Literal(self.simc)
 
     def caster(self, spell=None):
@@ -273,12 +290,13 @@ class Expression(Decorable):
         if self.pet_caster:
             return self.pet_caster
         return self.player_unit
-
+    
     def pet(self):
         """
         Return the condition for a pet.{name}.{condition} expression.
         """
         pet_name = self.condition_list[1]
+        condition_name = self.condition_list[2]
         self.pet_caster = Pet(self.player_unit, pet_name)
         self.condition_list = self.condition_list[2:]
         return self.expression()
@@ -312,6 +330,12 @@ class Expression(Decorable):
         Return the condition when the prefix is cooldown.
         """
         return Cooldown.build(self)
+		
+    def essence(self):
+        """
+        Return the condition when the prefix is essence.
+        """
+        return Essence.build(self)
 
     def consumable(self):
         """
@@ -372,7 +396,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is gcd.
         """
-        return Literal('A.GetGCD()')#GCD.build(self)
+        return Literal('A.GetGCD()')  # GCD.build(self)
 
     def time(self):
         """
@@ -493,7 +517,7 @@ class Expression(Decorable):
         Return the condition when the prefix is talent.
         """
         return Talent.build(self)
-    
+
     def movement(self):
         """
         Return the condition when the prefix is movement.
@@ -600,15 +624,16 @@ class Expires:
         else:
             fullstring = (f'Has{self.simc.print_lua()}s')
             substring = "HasCooldowns"
-            if re.search(substring, fullstring):			
+            if re.search(substring, fullstring):
                 self.method = Method(f'Get{self.simc.print_lua()}()')
             else:
-                self.method = Method(f'Has{self.simc.print_lua()}s')		
+                self.method = Method(f'Has{self.simc.print_lua()}s')
+
     def duration(self):
         """
         Return the arguments for the expression {aura}.spell.duration.
         """
-        self.method = Method('BaseDuration')
+        self.method = Method('BaseDuration()')
 
 
 class Aura(Expires):
@@ -642,7 +667,7 @@ class Aura(Expires):
             self.method = Method('HasHeroism', type_=BOOL)
             self.args = []
         else:
-            self.method = Method(f'Has{self.simc.print_lua()}sStacks')	
+            self.method = Method(f'Has{self.simc.print_lua()}sStacks')
 
     def refreshable(self):
         """
@@ -662,7 +687,7 @@ class Aura(Expires):
         """
         # Override as buff.spell.duration refers to the Expires form.
         self.object_ = self.spell
-        self.method = Method('BaseDuration')
+        self.method = Method('BaseDuration()')
         self.args = []
 
     def tick_time(self):
@@ -670,14 +695,17 @@ class Aura(Expires):
         Return the arguments for the expression {aura}.spell.tick_time.
         """
         self.object_ = self.spell
-        self.method = Method('TickTime')
+        self.method = Method('IsTicking()')
         self.args = []
 
     def ticking(self):
         """
         Return the arguments for the expression {aura}.spell.ticking.
         """
-        self.ready()
+        self.object_ = self.spell
+        self.method = Method('IsTicking()')
+        self.args = []
+
 
     def ticks_remain(self):
         """
@@ -754,6 +782,7 @@ class PrevGCD(BuildExpression):
         """
         self.method = Method('GetSpellLastCast', type_=BOOL)
 
+
 class ActiveDot(BuildExpression):
     """
     Represent the expression for a active_dot. condition.
@@ -762,7 +791,7 @@ class ActiveDot(BuildExpression):
     def __init__(self, condition):
         self.condition = condition
         call = 'value'
-        self.object_ = Spell(condition.parent_action,condition.condition_list[1], type_=DEBUFF)
+        self.object_ = Spell(condition.parent_action, condition.condition_list[1], type_=DEBUFF)
         self.method = None
         self.args = []
         super().__init__(call)
@@ -772,6 +801,7 @@ class ActiveDot(BuildExpression):
         Return the arguments for the expression active_dot.
         """
         self.method = Method('ActiveDot')
+
 
 class PrevOffGCD(BuildExpression):
     """
@@ -900,6 +930,7 @@ class Artifact(BuildExpression):
         """
         self.method = Method('ArtifactEnabled', type_=BOOL)
 
+
 class Azerite(BuildExpression):
     """
     Represent the expression for an Azerite. condition.
@@ -966,6 +997,7 @@ class Movement(BuildExpression):
         """
         self.method = Literal('GetRange()')
 
+
 class Race(BuildExpression):
     """
     Represent the expression for a race. condition.
@@ -978,6 +1010,7 @@ class Race(BuildExpression):
         self.args = [Literal(condition.condition_list[1], convert=True,
                              quoted=True)]
         super().__init__('')
+
 
 class SpellTargets(BuildExpression):
     """
@@ -1080,7 +1113,35 @@ class Cooldown(BuildExpression, Expires):
         cooldown.spell.charges_fractional.
         """
         self.method = Method('ChargesFractionalP()')
+		
 
+class Essence(BuildExpression):
+    """
+    Represent the expression for a essence. condition.
+    """
+
+    def __init__(self, condition):
+        Expires.__init__(self, condition, 'cooldown', 'cooldown_up')
+        call = condition.condition_list[2]
+        super().__init__(call)
+    
+    def enabled(self):
+        """
+        Return the arguments for the expression essence.spell.enabled.
+        """
+        self.method = Method('IsSpellLearned()')
+    
+    def major(self):
+        """
+        Return the arguments for the expression essence.spell.major.
+        """
+        self.method = Method('EssenceIsMajorUseable()')
+
+    def rank(self):
+        """
+        Return the arguments for the expression essence.spell.rank.
+        """
+        self.method = Method('GetRank()')
 
 class RaidEvent(BuildExpression):
     """
@@ -1146,6 +1207,7 @@ class RaidEvent(BuildExpression):
         """
         self.simc = FALSE
 
+
 class TargetExpression(BuildExpression):
     """
     Represent the expression for a target. condition.
@@ -1164,7 +1226,7 @@ class TargetExpression(BuildExpression):
         Return the arguments for the expression target.time_to_die.
         """
         self.method = Method('TimeToDie()')
-    
+
     def time_to_pct_30(self):
         """
         Return the arguments for the expression target.time_to_pct_30.

@@ -626,20 +626,20 @@ end
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- potion,if=pet.demonic_tyrant.active&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(pet.demonic_tyrant.active) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- use_items,if=pet.demonic_tyrant.active|target.time_to_die<=15
             -- berserking,if=pet.demonic_tyrant.active|target.time_to_die<=15
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.demonic_tyrant.active|target.time_to_die<=15
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.demonic_tyrant.active|target.time_to_die<=15
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.demonic_tyrant.active) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.DemonicTyrant.ID)) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- call_action_list,name=dcon_opener,if=talent.demonic_consumption.enabled&time<30&!cooldown.summon_demonic_tyrant.remains
@@ -659,7 +659,7 @@ end
                 return A.Implosion:Show(icon)
             end
             -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2
-            if A.Doom:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
+            if A.Doom:IsReady(unit) and (not bool(A.DoomDebuff.ID, true:IsTicking()) and Unit(unit):TimeToDie() > 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) then
                 return A.Doom:Show(icon)
             end
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled

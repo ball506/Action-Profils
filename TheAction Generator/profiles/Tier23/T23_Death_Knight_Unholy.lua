@@ -431,7 +431,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=buff.sudden_doom.react&!variable.pooling_for_gargoyle|pet.gargoyle.active
-            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and not bool(VarPoolingForGargoyle) or bool(pet.gargoyle.active)) then
+            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and not bool(VarPoolingForGargoyle) or bool(Pet:IsActive(A.Gargoyle.ID))) then
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
@@ -509,7 +509,7 @@ A[3] = function(icon, isMulti)
         --Generic
         local function Generic(unit)
             -- death_coil,if=buff.sudden_doom.react&!variable.pooling_for_gargoyle|pet.gargoyle.active
-            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and not bool(VarPoolingForGargoyle) or bool(pet.gargoyle.active)) then
+            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and not bool(VarPoolingForGargoyle) or bool(Pet:IsActive(A.Gargoyle.ID))) then
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
@@ -560,15 +560,15 @@ A[3] = function(icon, isMulti)
                 VarPoolingForGargoyle = num(A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned())
             end
             -- arcane_torrent,if=runic_power.deficit>65&(pet.gargoyle.active|!talent.summon_gargoyle.enabled)&rune.deficit>=5
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 65 and (bool(pet.gargoyle.active) or not A.SummonGargoyle:IsSpellLearned()) and Unit("player"):RuneDeficit() >= 5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 65 and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned()) and Unit("player"):RuneDeficit() >= 5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- blood_fury,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(pet.gargoyle.active) or not A.SummonGargoyle:IsSpellLearned()) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned()) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=buff.unholy_frenzy.up|pet.gargoyle.active|!talent.summon_gargoyle.enabled
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) or bool(pet.gargoyle.active) or not A.SummonGargoyle:IsSpellLearned()) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) or bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned()) then
                 return A.Berserking:Show(icon)
             end
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine
@@ -581,11 +581,11 @@ A[3] = function(icon, isMulti)
                 A.BygoneBeeAlmanac:Show(icon)
             end
             -- use_item,name=jes_howler,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
-            if A.JesHowler:IsReady(unit) and (bool(pet.gargoyle.active) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
+            if A.JesHowler:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 A.JesHowler:Show(icon)
             end
             -- use_item,name=galecallers_beak,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
-            if A.GalecallersBeak:IsReady(unit) and (bool(pet.gargoyle.active) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
+            if A.GalecallersBeak:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 A.GalecallersBeak:Show(icon)
             end
             -- use_item,name=grongs_primal_rage,if=rune<=3&(time>20|!equipped.ramping_amplitude_gigavolt_engine)
@@ -593,7 +593,7 @@ A[3] = function(icon, isMulti)
                 A.GrongsPrimalRage:Show(icon)
             end
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (A.ArmyoftheDead:GetCooldown() == 0 or bool(pet.gargoyle.active) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (A.ArmyoftheDead:GetCooldown() == 0 or bool(Pet:IsActive(A.Gargoyle.ID)) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd

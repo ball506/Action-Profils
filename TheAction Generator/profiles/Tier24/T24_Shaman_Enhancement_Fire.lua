@@ -472,7 +472,7 @@ A[3] = function(icon, isMulti)
         local function Cds(unit)
             -- bloodlust,if=azerite.ancestral_resonance.enabled
             -- berserking,if=variable.cooldown_sync
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Berserking:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
@@ -480,15 +480,15 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- blood_fury,if=variable.cooldown_sync
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=variable.cooldown_sync
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=variable.cooldown_sync
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.AncestralCall:Show(icon)
             end
             -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&feral_spirit.remains>5|target.time_to_die<=60
@@ -496,7 +496,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- feral_spirit
@@ -504,7 +504,7 @@ A[3] = function(icon, isMulti)
                 return A.FeralSpirit:Show(icon)
             end
             -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (10000000000 > 90 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 90 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- ascendance,if=cooldown.strike.remains>0
@@ -564,15 +564,15 @@ A[3] = function(icon, isMulti)
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=raid_event.adds.in>60
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (10000000000 > 60) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 60) then
                 return A.RippleInSpace:Show(icon)
             end
             -- thundercharge
@@ -580,7 +580,7 @@ A[3] = function(icon, isMulti)
                 return A.Thundercharge:Show(icon)
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
@@ -612,7 +612,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaLash:Show(icon)
             end
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- rockbiter
@@ -628,7 +628,7 @@ A[3] = function(icon, isMulti)
                 return A.Flametongue:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<4
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
                 return A.WorldveinResonance:Show(icon)
             end
         end
@@ -704,7 +704,7 @@ A[3] = function(icon, isMulti)
                 return A.CrashLightning:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|time<5
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime < 5) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
@@ -728,19 +728,19 @@ A[3] = function(icon, isMulti)
                 return A.TotemMastery:Show(icon)
             end
             -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and (not bool(essence.blood_of_the_enemy.major) or (bool(essence.blood_of_the_enemy.major) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
+            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or (bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=active_enemies>1
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=active_enemies>1
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=active_enemies>1
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.RippleInSpace:Show(icon)
             end
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7

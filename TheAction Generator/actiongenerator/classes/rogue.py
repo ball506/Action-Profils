@@ -85,10 +85,17 @@ SPELL_INFO = {
             'blade_flurry':                         {SPELL:     13877,
                                                      BUFF:      13877,
                                                      RANGE:     8},
+            'keep_your_wits_about_you':             {SPELL:     288988,
+                                                     BUFF:      202895},
             'ghostly_strike':                       {SPELL:     196937,
                                                      DEBUFF:    196937},
-            'broadsides':                           {BUFF:      193356},
+            'blade_rush':                           {SPELL:     271877,
+                                                     DEBUFF:    271877},
+            'broadside':                            {BUFF:      193356},
             'pistol_shot':                          {SPELL:     185763},
+            'sinister_strike':                      {SPELL:     193315},
+            'deadshot':                             {SPELL:     272936,
+                                                     BUFF:      272940},
             'quick_draw':                           {SPELL:     196938},
             'opportunity':                          {BUFF:      195627},
             'greenskins_waterlogged_wristcuffs':    {BUFF:      209420},
@@ -165,6 +172,7 @@ CLASS_FUNCTIONS = {
         ASSASSINATION: [
         ],
         OUTLAW: [
+        'RogueOutlawPreApl'
         ],
         SUBTLETY: [
         ],
@@ -190,7 +198,7 @@ def rogue_cp_max_spend(fun):
     from ..objects.lua import Literal
 
     def cp_max_spend(self):
-        return Literal('Rogue.CPMaxSpend()')
+        return Literal('CPMaxSpend()')
 
     return cp_max_spend
 
@@ -199,7 +207,7 @@ def rogue_poisoned_bleeds(fun):
     from ..objects.lua import Literal
 
     def poisoned_bleeds(self):
-        return Literal('Rogue.PoisonedBleeds()')
+        return Literal('PoisonedBleeds()')
 
     return poisoned_bleeds
 
@@ -209,7 +217,7 @@ def rogue_exsanguinated(fun):
     from ..constants import BOOL
 
     def exsanguinated(self):
-        return LuaExpression(None, Method('HL.Exsanguinated'), args=[self.target_unit, Literal(self.parent_action.execution().execution, convert=True, quoted=True)], type_=BOOL)
+        return LuaExpression(None, Method('A.Exsanguinated'), args=[self.target_unit, Literal(self.parent_action.execution().execution, convert=True, quoted=True)], type_=BOOL)
 
     return exsanguinated
 

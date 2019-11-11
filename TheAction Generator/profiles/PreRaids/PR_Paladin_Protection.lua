@@ -352,7 +352,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- fireblood,if=buff.avenging_wrath.up
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- seraphim,if=cooldown.shield_of_the_righteous.charges_fractional>=2

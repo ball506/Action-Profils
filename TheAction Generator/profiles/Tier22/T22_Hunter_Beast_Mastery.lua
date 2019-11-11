@@ -379,19 +379,19 @@ A[3] = function(icon, isMulti)
                     -- auto_shot
             -- use_items
             -- berserking,if=cooldown.bestial_wrath.remains>30
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=cooldown.bestial_wrath.remains>30
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
                 return A.BloodFury:Show(icon)
             end
             -- ancestral_call,if=cooldown.bestial_wrath.remains>30
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
                 return A.AncestralCall:Show(icon)
             end
             -- fireblood,if=cooldown.bestial_wrath.remains>30
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
                 return A.Fireblood:Show(icon)
             end
             -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|target.time_to_die<25
@@ -471,7 +471,7 @@ A[3] = function(icon, isMulti)
                 return A.CobraShot:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

@@ -475,7 +475,7 @@ local function APL()
         --Hac
         local function Hac(unit)
             -- rend,if=remains<=duration*0.3&(!raid_event.adds.up|buff.sweeping_strikes.up)
-            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration * 0.3 and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
+            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(cooldown.deadly_calm.remains>3|!talent.deadly_calm.enabled)
@@ -539,7 +539,7 @@ local function APL()
         --SingleUnit(unit)
         local function SingleUnit(unit)(unit)
             -- rend,if=remains<=duration*0.3&debuff.colossus_smash.down
-            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration * 0.3 and bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
+            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
@@ -616,15 +616,15 @@ local function APL()
                 A.BattlePotionofStrength:Show(icon)
             end
             -- blood_fury,if=debuff.colossus_smash.up
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=debuff.colossus_smash.up
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=debuff.colossus_smash.down&cooldown.mortal_strike.remains>1.5&rage<50
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and A.MortalStrike:GetCooldown() > 1.5 and Unit("player"):Rage() < 50) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and A.MortalStrike:GetCooldown() > 1.5 and Unit("player"):Rage() < 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment,if=debuff.colossus_smash.down
@@ -632,11 +632,11 @@ local function APL()
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=debuff.colossus_smash.up
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=debuff.colossus_smash.up
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,name=ramping_amplitude_gigavolt_engine

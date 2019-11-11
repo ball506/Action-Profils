@@ -459,7 +459,7 @@ local function EvaluateCycleIncinerate560(unit)
 end
 
 local function EvaluateCycleImmolate584(unit)
-  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and (Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true) or A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) - A.ChaosBolt:TravelTime() - 5 < A.ImmolateDebuff.ID, true:BaseDuration * 0.3)
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and (Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true) or A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) - A.ChaosBolt:TravelTime() - 5 < A.ImmolateDebuff.ID, true:BaseDuration() * 0.3)
 end
 
 local function EvaluateCycleHavoc627(unit)
@@ -648,15 +648,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- use_items

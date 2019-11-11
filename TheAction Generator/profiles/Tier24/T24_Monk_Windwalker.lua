@@ -48,8 +48,6 @@ Action[ACTION_CONST_MONK_WINDWALKER] = {
     StormEarthandFire                      = Action.Create({Type = "Spell", ID = 137639 }),
     TouchofDeath                           = Action.Create({Type = "Spell", ID = 115080 }),
     TouchofDeathDebuff                     = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
-    CyclotronicBlast                       = Action.Create({Type = "Spell", ID =  }),
     StormEarthandFireBuff                  = Action.Create({Type = "Spell", ID = 137639 }),
     DanceofChijiBuff                       = Action.Create({Type = "Spell", ID =  }),
     SpearHandStrike                        = Action.Create({Type = "Spell", ID = 116705 }),
@@ -498,7 +496,7 @@ A[3] = function(icon, isMulti)
                 return A.InvokeXuentheWhiteTiger:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
         end
@@ -572,23 +570,23 @@ A[3] = function(icon, isMulti)
                 return A.InvokeXuentheWhiteTiger:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and Unit("player"):EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and Unit("player"):EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment
@@ -596,11 +594,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- call_action_list,name=tod
@@ -612,23 +610,23 @@ A[3] = function(icon, isMulti)
                 return A.StormEarthandFire:Show(icon)
             end
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains<=2
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) <= 2) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) <= 2) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.TheUnboundForce:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=dot.touch_of_death.remains
@@ -644,11 +642,11 @@ A[3] = function(icon, isMulti)
                 return A.Serenity:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<40&buff.storm_earth_and_fire.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
             -- use_items,if=(equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains<=20)|!equipped.cyclotronic_blast

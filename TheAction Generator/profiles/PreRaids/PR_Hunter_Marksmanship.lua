@@ -399,19 +399,19 @@ A[3] = function(icon, isMulti)
                 return A.DoubleTap:Show(icon)
             end
             -- berserking,if=cooldown.trueshot.remains>60
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 60) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 60) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=cooldown.trueshot.remains>30
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
                 return A.BloodFury:Show(icon)
             end
             -- ancestral_call,if=cooldown.trueshot.remains>30
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
                 return A.AncestralCall:Show(icon)
             end
             -- fireblood,if=cooldown.trueshot.remains>30
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Trueshot:GetCooldown() > 30) then
                 return A.Fireblood:Show(icon)
             end
             -- lights_judgment
@@ -423,7 +423,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- trueshot,if=cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|(target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
-            if A.Trueshot:IsReady(unit) and (bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
+            if A.Trueshot:IsReady(unit) and (bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
                 return A.Trueshot:Show(icon)
             end
         end

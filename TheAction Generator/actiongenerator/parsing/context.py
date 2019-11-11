@@ -136,6 +136,13 @@ class Context(Decorable):
             and not spell.lua_name() == 'ConductiveInkDeBuffDebuff'
             and not spell.lua_name() == 'RecklessForceBuff'
             and not spell.lua_name() == 'RecklessForce'
+            and not spell.lua_name() == 'RecklessForceCounterBuff'
+            and not spell.lua_name() == 'ConcentratedFlameBurn'
+            and not spell.lua_name() == 'ConcentratedFlameBurnDebuff'
+            and not spell.lua_name() == 'CondensedLifeforce'
+            and not spell.lua_name() == 'CyclotronicBlast'
+            and not spell.lua_name() == 'Stealth'
+            and not spell.lua_name() == 'Stealth'			
 			"""
 			Class Specifics
 			"""

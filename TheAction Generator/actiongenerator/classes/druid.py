@@ -181,7 +181,6 @@ SPELL_INFO = {
                                                  RANGE:     8},
             'guardian_affinity':                {SPELL:     217615},
             'jungle_fury':                      {SPELL:     274424},
-            'heart_essence':                    {SPELL:     298554},
             'incarnation':                      {SPELL:     102543,
                                                  BUFF:      102543,
                                                  OGCDAOGCD: True,

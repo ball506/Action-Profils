@@ -365,7 +365,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- arcane_torrent,if=!talent.wake_of_ashes.enabled
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -385,7 +385,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.Fireblood:Show(icon)
             end
             -- shield_of_vengeance
@@ -481,7 +481,7 @@ A[3] = function(icon, isMulti)
                 return A.CrusaderStrike:Show(icon)
             end
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

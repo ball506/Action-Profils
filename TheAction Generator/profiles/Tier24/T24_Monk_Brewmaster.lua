@@ -47,7 +47,8 @@ Action[ACTION_CONST_MONK_BREWMASTER] = {
     ExpelHarm                              = Action.Create({Type = "Spell", ID =  }),
     BlackoutStrike                         = Action.Create({Type = "Spell", ID = 205523 }),
     ConcentratedFlameDebuff                = Action.Create({Type = "Spell", ID =  }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID =  }),
+    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
+    TheCrucibleofFlame                     = Action.Create({Type = "Spell", ID =  }),
     BreathofFire                           = Action.Create({Type = "Spell", ID = 115181 }),
     BreathofFireDotDebuff                  = Action.Create({Type = "Spell", ID = 123725 }),
     BlackoutCombo                          = Action.Create({Type = "Spell", ID = 196736 }),
@@ -399,11 +400,11 @@ A[3] = function(icon, isMulti)
                 A.ProlongedPower:Show(icon)
             end
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             -- berserking
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             -- lights_judgment
@@ -411,11 +412,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             -- invoke_niuzao_the_black_ox,if=target.time_to_die>25
@@ -467,11 +468,11 @@ A[3] = function(icon, isMulti)
                 return A.KegSmash:Show(icon)
             end
             -- concentrated_flame,if=dot.concentrated_flame.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HasDeBuffs(A.ConcentratedFlameDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- heart_essence,if=!essence.the_crucible_of_flame.major
-            if A.HeartEssence:IsReady(unit) and (not bool(essence.the_crucible_of_flame.major)) then
+            if A.HeartEssence:IsReady(unit) and (not bool(A.TheCrucibleofFlame:EssenceIsMajorUseable())) then
                 return A.HeartEssence:Show(icon)
             end
             -- expel_harm,if=buff.gift_of_the_ox.stack>=3
@@ -503,7 +504,7 @@ A[3] = function(icon, isMulti)
                 return A.TigerPalm:Show(icon)
             end
             -- arcane_torrent,if=energy<31
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() < 31) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() < 31) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- rushing_jade_wind

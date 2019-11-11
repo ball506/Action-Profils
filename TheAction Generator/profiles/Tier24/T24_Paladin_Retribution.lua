@@ -373,7 +373,7 @@ A[3] = function(icon, isMulti)
                 A.AzsharasFontofPower:Show(icon)
             end
             -- arcane_torrent,if=!talent.wake_of_ashes.enabled
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -381,7 +381,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.GuardianofAzeroth:GetCooldown() > 90 or not bool(essence.condensed_lifeforce.major)) and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 18 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.GuardianofAzeroth:GetCooldown() > 90 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable())) and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 18 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
@@ -389,7 +389,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.Fireblood:Show(icon)
             end
             -- shield_of_vengeance,if=buff.seething_rage.down&buff.memory_of_lucid_dreams.down
@@ -397,35 +397,35 @@ A[3] = function(icon, isMulti)
                 return A.ShieldofVengeance:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(buff.avenging_wrath.remains>=20|buff.crusade.stack=10&buff.crusade.remains>15)&(cooldown.guardian_of_azeroth.remains>90|target.time_to_die<30|!essence.condensed_lifeforce.major)
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(essence.condensed_lifeforce.major))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable()))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force,if=time<=2|buff.reckless_force.up
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and (Unit("player"):CombatTime <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=!talent.crusade.enabled&(cooldown.avenging_wrath.remains<5&holy_power>=3&(buff.inquisition.up|!talent.inquisition.enabled)|cooldown.avenging_wrath.remains>=45)|(talent.crusade.enabled&cooldown.crusade.remains<gcd&holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled|cooldown.crusade.remains>=45)
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Unit("player"):HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or Unit("player"):HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Unit("player"):HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or Unit("player"):HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avenging_wrath.remains<gcd&holy_power>=3|cooldown.crusade.remains<gcd&holy_power>=4|cooldown.avenging_wrath.remains>=45|cooldown.crusade.remains>=45
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 3 or A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 3 or A.Crusade:GetCooldown() < A.GetGCD() and Unit("player"):HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- memory_of_lucid_dreams,if=(buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10)&holy_power<=3
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) and Unit("player"):HolyPower() <= 3) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) and Unit("player"):HolyPower() <= 3) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- purifying_blast,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2)) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2)) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
@@ -513,7 +513,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- crusader_strike,if=holy_power<=4
@@ -521,7 +521,7 @@ A[3] = function(icon, isMulti)
                 return A.CrusaderStrike:Show(icon)
             end
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

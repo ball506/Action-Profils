@@ -34,11 +34,12 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
     LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
     AvengersValorBuff                      = Action.Create({Type = "Spell", ID =  }),
     CrusadersJudgment                      = Action.Create({Type = "Spell", ID =  }),
-    ConcentratedFlameBurnDebuff            = Action.Create({Type = "Spell", ID =  }),
+    TheCrucibleofFlame                     = Action.Create({Type = "Spell", ID =  }),
     AnimaofDeath                           = Action.Create({Type = "Spell", ID =  }),
     BlessedHammer                          = Action.Create({Type = "Spell", ID = 204019 }),
     HammeroftheRighteous                   = Action.Create({Type = "Spell", ID = 53595 }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID =  })
+    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
+    AnimaofLifeandDeath                    = Action.Create({Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -361,7 +362,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- fireblood,if=buff.avenging_wrath.up
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.seraphim.remains<=10|!talent.seraphim.enabled
@@ -381,7 +382,7 @@ A[3] = function(icon, isMulti)
                 return A.AvengingWrath:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!talent.seraphim.enabled|cooldown.seraphim.remains<=gcd|buff.seraphim.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and (not A.Seraphim:IsSpellLearned() or A.Seraphim:GetCooldown() <= A.GetGCD() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Seraphim:IsSpellLearned() or A.Seraphim:GetCooldown() <= A.GetGCD() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bastion_of_light,if=cooldown.shield_of_the_righteous.charges_fractional<=0.5
@@ -425,7 +426,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avengers_valor.up&cooldown.shield_of_the_righteous.charges_fractional>=2.5)&(cooldown.seraphim.remains>gcd|!talent.seraphim.enabled)
@@ -461,7 +462,7 @@ A[3] = function(icon, isMulti)
                 return A.Judgment:Show(icon)
             end
             -- concentrated_flame,if=(!talent.seraphim.enabled|buff.seraphim.up)&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and ((not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true))) > 0 or essence.the_crucible_of_flame.rank < 3) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true))) > 0 or A.TheCrucibleofFlame:GetRank() < 3) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- lights_judgment,if=!talent.seraphim.enabled|buff.seraphim.up
@@ -485,7 +486,7 @@ A[3] = function(icon, isMulti)
                 return A.Consecration:Show(icon)
             end
             -- heart_essence,if=!(essence.the_crucible_of_flame.major|essence.worldvein_resonance.major|essence.anima_of_life_and_death.major|essence.memory_of_lucid_dreams.major)
-            if A.HeartEssence:IsReady(unit) and (not (bool(essence.the_crucible_of_flame.major) or bool(essence.worldvein_resonance.major) or bool(essence.anima_of_life_and_death.major) or bool(essence.memory_of_lucid_dreams.major))) then
+            if A.HeartEssence:IsReady(unit) and (not (bool(A.TheCrucibleofFlame:EssenceIsMajorUseable()) or bool(A.WorldveinResonance:EssenceIsMajorUseable()) or bool(A.AnimaofLifeandDeath:EssenceIsMajorUseable()) or bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()))) then
                 return A.HeartEssence:Show(icon)
             end
         end

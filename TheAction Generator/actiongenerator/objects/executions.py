@@ -182,7 +182,10 @@ class Spell(LuaNamed, LuaCastable):
             or f'{super().lua_name()}' == 'WorldveinResonance'		
             or f'{super().lua_name()}' == 'ConcentratedFlame'						
         ):
-            self.condition_method = Method('AutoHeartOfAzerothP(unit, true)', type_=BOOL)
+            self.condition_method = Method('AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")', type_=BOOL)
+            """
+            Racials Methods exception
+            """
         elif (f'{super().lua_name()}' == 'ArcaneTorrent'
             or f'{super().lua_name()}' == 'BloodFury'		
             or f'{super().lua_name()}' == 'Fireblood'		
@@ -197,7 +200,7 @@ class Spell(LuaNamed, LuaCastable):
             or f'{super().lua_name()}' == 'Shadowmeld'		
             or f'{super().lua_name()}' == 'Stoneform'				
         ):
-            self.condition_method = Method('AutoRacial(unit)', type_=BOOL)
+            self.condition_method = Method('AutoRacial(unit) and Action.GetToggle(1, "Racial")', type_=BOOL)
         elif self.action.player.spell_property(self, USABLE):
             self.condition_method = Method('IsReady(unit)', type_=BOOL)
         elif self.action.player.spell_property(self, READY):
@@ -252,7 +255,8 @@ class Spell(LuaNamed, LuaCastable):
         fullstring = (f'A.{self.lua_name()}')
         substring = "Buff"
         substring2 = "Debuff"
-        substring3 = "DeBuffDebuff"		
+        substring3 = "DeBuffDebuff"	
+        substring4 = ", true:IsTicking"		
         if re.search(substring, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         elif re.search(substring2, fullstring):			

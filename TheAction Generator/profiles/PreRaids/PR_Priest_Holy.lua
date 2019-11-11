@@ -361,7 +361,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (bool(A.HolyFireDebuff.ID, true:IsTicking()) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_word_chastise,if=spell_targets.holy_nova<5
@@ -369,19 +369,19 @@ A[3] = function(icon, isMulti)
                 return A.HolyWordChastise:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.refreshable|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (bool(A.HolyFireDebuff.ID, true:IsTicking()) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- berserking,if=raid_event.adds.in>30|raid_event.adds.remains>8|raid_event.adds.duration<8
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (10000000000 > 30 or 0 > 8 or raid_event.adds.duration < 8) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (10000000000 > 30 or 0 > 8 or raid_event.adds.duration < 8) then
                 return A.Berserking:Show(icon)
             end
             -- fireblood,if=raid_event.adds.in>20|raid_event.adds.remains>6|raid_event.adds.duration<6
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (10000000000 > 20 or 0 > 6 or raid_event.adds.duration < 6) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (10000000000 > 20 or 0 > 6 or raid_event.adds.duration < 6) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=raid_event.adds.in>20|raid_event.adds.remains>10|raid_event.adds.duration<10
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (10000000000 > 20 or 0 > 10 or raid_event.adds.duration < 10) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (10000000000 > 20 or 0 > 10 or raid_event.adds.duration < 10) then
                 return A.AncestralCall:Show(icon)
             end
             -- divine_star,if=(raid_event.adds.in>5|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.divine_star>1
@@ -397,11 +397,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- arcane_pulse,if=(raid_event.adds.in>40|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.arcane_pulse>2
-            if A.ArcanePulse:AutoRacial(unit) and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
                 return A.ArcanePulse:Show(icon)
             end
             -- holy_fire,if=!dot.holy_fire.ticking&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (not bool(A.HolyFireDebuff.ID, true:IsTicking()) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_nova,if=spell_targets.holy_nova>3

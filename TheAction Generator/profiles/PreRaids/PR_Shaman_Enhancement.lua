@@ -461,19 +461,19 @@ A[3] = function(icon, isMulti)
         local function Cds(unit)
             -- bloodlust,if=azerite.ancestral_resonance.enabled
             -- berserking,if=variable.cooldown_sync
-            if A.Berserking:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=variable.cooldown_sync
-            if A.BloodFury:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=variable.cooldown_sync
-            if A.Fireblood:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Fireblood:Show(icon)
             end
             -- ancestral_call,if=variable.cooldown_sync
-            if A.AncestralCall:AutoRacial(unit) and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.AncestralCall:Show(icon)
             end
             -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&feral_spirit.remains>5|target.time_to_die<=60
