@@ -169,7 +169,7 @@ local function bool(val)
 end
 
 ------------------------------------------
--------------- PRE APL SETUP -------------
+-------------- COMMON PREAPL -------------
 ------------------------------------------
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
@@ -189,166 +189,6 @@ local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
 local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
-
-------------------------------------------
---------------- DEFENSIVES ---------------
-------------------------------------------
-local function SelfDefensives()
-    if Unit("player"):CombatTime() == 0 then 
-        return 
-    end 
-    
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end  
-		
-    -- UnendingResolve
- --[[   local UnendingResolve = A.GetToggle(2, "UnendingResolve")
-    if     UnendingResolve >= 0 and A.UnendingResolve:IsReady("player") and 
-    (
-        (     -- Auto 
-            UnendingResolve >= 100 and 
-            (
-                -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
-                -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit("player"):UseDeff() or 
-                        (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
-                        )
-                    )
-                )
-            ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
-        ) or 
-        (    -- Custom
-            UnendingResolve < 100 and 
-            Unit("player"):HealthPercent() <= UnendingResolve
-        )
-    ) 
-    then 
-        return A.UnendingResolve
-    end ]]--
-    
-    -- Stoneform on self dispel (only PvE)
-    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
-        return A.Stoneform
-    end 
-end 
-SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
-
-------------------------------------------
---------------- INTERRUPTS ---------------
-------------------------------------------
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-  --  if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-  --      return A.PetKick
-  --  end 
-    
-  --  if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-  --      return A.Shadowfury              
-  --  end          
-	
-	--if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 0) then 
-    --    return A.Fear              
-    --end
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
-------------------------------------------
----------------- AntiFake ----------------
-------------------------------------------
-
--- [1] CC AntiFake Rotation
---[[local function AntiFakeStun(unit) 
-    return 
-    A.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
-    Unit(unit):IsControlAble("stun", 0) and 
-    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
-end 
-A[1] = function(icon)    
-    if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
-    (
-        AntiFakeStun("mouseover") or 
-        AntiFakeStun("target") or 
-        (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target") and                     
-            (
-                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1)
-            )
-        )
-    )
-    then 
-        return A.LegSweepGreen:Show(icon)         
-    end                                                                     
-end]]--
-
--- [2] Kick AntiFake Rotation
-A[2] = function(icon)        
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end 
-    
-    if unit then         
-        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
-        if castLeft > 0 then             
-        --    if not notKickAble and A.PetKick:IsReady(unit, nil, nil, true) and A.PetKick:AbsentImun(unit, Temp.TotalAndMag, true) then
-        --        return A.PetKick:Show(icon)                                                  
-        --    end 
-            
-            -- Racials 
-            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.QuakingPalm:Show(icon)
-            end 
-            
-            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.Haymaker:Show(icon)
-            end 
-            
-            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.WarStomp:Show(icon)
-            end 
-            
-            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.BullRush:Show(icon)
-            end                         
-        end 
-    end                                                                                 
-end
 
 -- cp_max_spend
 local function CPMaxSpend()
@@ -592,7 +432,7 @@ local function EvaluateTargetIfFilterMarkedForDeath51(unit)
 end
 
 local function EvaluateTargetIfMarkedForDeath56(unit)
-  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Unit("player"):ComboPointsDeficit() or not Unit("player"):IsStealthedP(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1)
+  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Unit("player"):ComboPointsDeficit() or not Unit("player"):IsStealthed(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1)
 end
 
 
@@ -694,7 +534,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1
-            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthedP(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1) then
+            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthed(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1) then
                 return A.MarkedForDeath:Show(icon)
             end
             -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
@@ -714,11 +554,11 @@ A[3] = function(icon, isMulti)
                 return A.BladeRush:Show(icon)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
-            if A.Vanish:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(VarAmbushCondition)) then
+            if A.Vanish:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and bool(VarAmbushCondition)) then
                 return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&variable.ambush_condition
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(VarAmbushCondition)) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthed(true, true) and bool(VarAmbushCondition)) then
                 return A.Shadowmeld:Show(icon)
             end
         end
@@ -792,7 +632,7 @@ A[3] = function(icon, isMulti)
                 VarBladeFlurrySync = num(MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and 10000000000 > 20 or Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true))
             end
             -- call_action_list,name=stealth,if=stealthed.all
-            if (Unit("player"):IsStealthedP(true, true)) then
+            if (Unit("player"):IsStealthed(true, true)) then
                 local ShouldReturn = Stealth(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=cds

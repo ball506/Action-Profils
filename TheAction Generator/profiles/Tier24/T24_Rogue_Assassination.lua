@@ -188,7 +188,7 @@ local function bool(val)
 end
 
 ------------------------------------------
--------------- PRE APL SETUP -------------
+-------------- COMMON PREAPL -------------
 ------------------------------------------
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
@@ -209,164 +209,409 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-------------------------------------------
---------------- DEFENSIVES ---------------
-------------------------------------------
-local function SelfDefensives()
-    if Unit("player"):CombatTime() == 0 then 
+---------------------------------------------------
+-------------- ASSASSINATION PREAPL ---------------
+---------------------------------------------------
+local BleedTickTime, ExsanguinatedBleedTickTime = 2 / Unit("player"):SpellHaste(), 1 / Unit("player"):SpellHaste();
+local Stealth;
+local RuptureThreshold, RuptureDMGThreshold, GarroteDMGThreshold;
+local ComboPoints, ComboPointsDeficit, Energy_Regen_Combined, PoisonedBleeds;
+local PriorityRotation;
+
+-- Master Assassin Remains Check
+local MasterAssassinBuff, NominalDuration = 256735, 3;
+local function MasterAssassinRemains()
+    if Unit("player"):HasBuffs(MasterAssassinBuff, true) < 0 then
+        return A.GetCurrentGCD() + NominalDuration;
+    else
+        return Unit("player"):HasBuffs(MasterAssassinBuff, true);
+    end
+end
+
+function Poisoned (unit)
+    return (Unit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID, true) or Unit(unit):HasDeBuffs(A.WoundPoisonDebuff.ID, true)) and true or false;
+end
+
+function Bleeds (unit)
+    return (Unit(unit):HasDeBuffs(A.Garrote.ID, true) and 1 or 0) + (Unit(unit):HasDeBuffs(A.Rupture.ID, true) and 1 or 0)
+    + (Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) and 1 or 0) + (Unit(unit):HasDeBuffs(A.InternalBleeding.ID, true) and 1 or 0);
+end
+  
+local PoisonedBleedsCount = 0;
+function PoisonedBleeds ()
+    PoisonedBleedsCount = 0;
+    local AppliedGarrote = MultiUnits:GetByRangeAppliedDoTs(40, 5, A.Garrote.ID) -- Garrote count
+ 	local AppliedInternalBleeding = MultiUnits:GetByRangeAppliedDoTs(40, 5, A.InternalBleeding.ID) -- InternalBleeding count
+ 	local AppliedRupture = MultiUnits:GetByRangeAppliedDoTs(40, 5, A.Rupture.ID) -- Rupture count
+	
+	PoisonedBleedsCount = AppliedGarrote + AppliedInternalBleeding + AppliedRupture
+	
+    return PoisonedBleedsCount;
+end
+	
+---------------------------------------------------
+------- SIMC CUSTOM FUNCTION / EXPRESSION ---------
+---------------------------------------------------
+
+-- cp_max_spend
+local function CPMaxSpend()
+    -- Should work for all 3 specs since they have same Deeper Stratagem Spell ID.
+    return A.DeeperStratagem:IsSpellLearned() and 6 or 5;
+end
+
+-- "cp_spend"
+local function CPSpend()
+    return mathmin(Unit("player"):ComboPoints(), CPMaxSpend());
+end
+
+-- Spells Damage
+A.Envenom:RegisterDamage(
+-- Envenom DMG Formula:
+--    AP * CP * Env_APCoef * Aura_M * ToxicB_M * DS_M * Mastery_M * Versa_M
+function ()
+    return
+        -- Attack Power
+        Player:AttackPower() *
+        -- Combo Points
+        CPSpend() *
+        -- Envenom AP Coef
+        0.16 *
+        -- Aura Multiplier (SpellID: 137037)
+        1.27 *
+        -- Toxic Blade Multiplier
+        (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and 1.3 or 1) *
+        -- Deeper Stratagem Multiplier
+        (A.DeeperStratagem:IsSpellLearned() and 1.05 or 1) *
+        -- Mastery Finisher Multiplier
+        (1 + Player:MasteryPct()/100) *
+        -- Versatility Damage Multiplier
+        (1 + Player:VersatilityDmgPct()/100);
+    end
+);
+A.Mutilate:RegisterDamage(
+    function ()
+        return
+            -- Attack Power (MH Factor + OH Factor)
+            Player:AttackPower() *
+            -- Mutilate Coefficient
+            0.35 *
+            -- Aura Multiplier (SpellID: 137037)
+            1.27 *
+            -- Versatility Damage Multiplier
+            (1 + Player:VersatilityDmgPct()/100);
+    end
+);
+local function NighstalkerMultiplier ()
+    return A.Nightstalker:IsSpellLearned() and Unit("player"):IsStealthed() and 1.5 or 1;
+end
+local function SubterfugeGarroteMultiplier ()
+    return A.Subterfuge:IsSpellLearned() and Unit("player"):IsStealthed() and 2 or 1;
+end
+
+RegisterPMultiplier( -- Garrote dot and action
+	A.Garrote.ID,    -- Garrote action
+	A.GarroteDebuff.ID,  -- GarroteDebuff dot
+
+    {NighstalkerMultiplier},
+    {SubterfugeGarroteMultiplier}
+)
+
+RegisterPMultiplier( -- Rupture dot and action
+	A.Rupture.ID,    -- Rupture action
+	A.RuptureDebuff.ID,  -- RuptureDebuff dot
+
+    {NighstalkerMultiplier}
+)
+
+-- Spell ID Changes check
+Stealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent
+
+-- Stealth
+function Stealth(Stealth, Setting)
+    if Action.GetToggle(2, "StealthOOC") and Stealth:IsReady("player") and not Unit("player"):IsStealthed() then
+        return Stealth:Show(icon)
+    end
+    return false;
+end
+
+---------------------------------------------------
+------------------- DEFENSIVES --------------------
+---------------------------------------------------
+
+-- Crimson Vial
+function CrimsonVial(CrimsonVial)
+    if A.CrimsonVial:IsReady(unit) and Unit("player"):HealthPercent() <= Action.GetToggle(2, "CrimsonVialHP") then
+        return A.CrimsonVial:Show(icon)
+    end
+    return false;
+end
+
+-- Feint
+function Feint(Feint)
+    if A.Feint:IsReady(unit) and not Unit("player"):HasBuffs(A.Feint.ID, true) and Unit("player"):HealthPercent() <= Action.GetToggle(2, "FeintHP") then
+        return A.Feint:Show(icon)
+    end
+end
+
+-- SelfDefensives
+local function SelfDefensives(unit)
+    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()
+		
+    if ActionUnit("player"):CombatTime() == 0 then 
         return 
     end 
-    
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end  
-		
-    -- UnendingResolve
- --[[   local UnendingResolve = A.GetToggle(2, "UnendingResolve")
-    if     UnendingResolve >= 0 and A.UnendingResolve:IsReady("player") and 
+
+    -- Emergency Evade
+    local Evade = Action.GetToggle(2, "EvadeHP")
+    if     Evade >= 0 and A.Evade:IsReady("player") and 
     (
-        (     -- Auto 
-            UnendingResolve >= 100 and 
+        (   -- Auto 
+            Evade >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                ActionUnit("player"):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        ActionUnit("player"):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            ActionUnit("player", 5):HasFlags() and 
+                            ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                            ActionUnit("player"):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
-            UnendingResolve < 100 and 
-            Unit("player"):HealthPercent() <= UnendingResolve
+            Evade < 100 and 
+            ActionUnit("player"):HealthPercent() <= Evade
         )
     ) 
     then 
-        return A.UnendingResolve
-    end ]]--
-    
-    -- Stoneform on self dispel (only PvE)
-    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
-        return A.Stoneform
-    end 
-end 
-SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
-
-------------------------------------------
---------------- INTERRUPTS ---------------
-------------------------------------------
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-  --  if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-  --      return A.PetKick
-  --  end 
-    
-  --  if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-  --      return A.Shadowfury              
-  --  end          
-	
-	--if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 0) then 
-    --    return A.Fear              
-    --end
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
-------------------------------------------
----------------- AntiFake ----------------
-------------------------------------------
-
--- [1] CC AntiFake Rotation
---[[local function AntiFakeStun(unit) 
-    return 
-    A.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
-    Unit(unit):IsControlAble("stun", 0) and 
-    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
-end 
-A[1] = function(icon)    
-    if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
-    (
-        AntiFakeStun("mouseover") or 
-        AntiFakeStun("target") or 
+        return A.Evade:Show(icon)Cast Evade (Defensives)"; end
+    end  
+		
+    -- Emergency Feint
+        local Feint = Action.GetToggle(2, "FeintHP")
+        if     Feint >= 0 and A.Feint:IsReady("player") and 
         (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target") and                     
-            (
-                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1)
+            (   -- Auto 
+                Feint >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Feint < 100 and 
+                ActionUnit("player"):HealthPercent() <= Feint
             )
-        )
-    )
-    then 
-        return A.LegSweepGreen:Show(icon)         
-    end                                                                     
-end]]--
+        ) 
+        then 
+            return A.Feint:Show(icon)Cast Evade (Defensives)"; end
+        end  		
 
--- [2] Kick AntiFake Rotation
-A[2] = function(icon)        
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end 
-    
-    if unit then         
-        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
-        if castLeft > 0 then             
-        --    if not notKickAble and A.PetKick:IsReady(unit, nil, nil, true) and A.PetKick:AbsentImun(unit, Temp.TotalAndMag, true) then
-        --        return A.PetKick:Show(icon)                                                  
-        --    end 
-            
-            -- Racials 
-            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.QuakingPalm:Show(icon)
-            end 
-            
-            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.Haymaker:Show(icon)
-            end 
-            
-            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.WarStomp:Show(icon)
-            end 
-            
-            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
-                return A.BullRush:Show(icon)
-            end                         
+        -- Emergency CrimsonVial
+        local CrimsonVial = Action.GetToggle(2, "CrimsonVialHP")
+        if     CrimsonVial >= 0 and A.CrimsonVial:IsReady("player") and 
+        (
+            (   -- Auto 
+                CrimsonVial >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CrimsonVial < 100 and 
+                ActionUnit("player"):HealthPercent() <= CrimsonVial
+            )
+        ) 
+        then 
+            return A.CrimsonVial:Show(icon)Cast Evade (Defensives)"; end
+        end  		
+
+        -- Emergency Cloak of Shadow
+        local CloakofShadow = Action.GetToggle(2, "CloakofShadowHP")
+        if     CloakofShadow >= 0 and A.CloakofShadow:IsReady("player") and 
+        (
+            (   -- Auto 
+                CloakofShadow >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                CloakofShadow < 100 and 
+                ActionUnit("player"):HealthPercent() <= CloakofShadow
+            )
+        ) 
+        then 
+            return A.CloakofShadow:Show(icon)Cast Evade (Defensives)"; end
         end 
-    end                                                                                 
+		
+        -- Emergency Vanish
+        local Vanish = Action.GetToggle(2, "VanishDefensive")
+        if     Vanish >= 0 and A.Vanish:IsReady("player") and 
+        (
+            (   -- Auto 
+                Vanish >= 100 and 
+                (
+                    -- HP lose per sec >= 20
+                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
+                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    -- TTD 
+                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            ActionUnit("player"):UseDeff() or 
+                            (
+                                ActionUnit("player", 5):HasFlags() and 
+                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
+                                ActionUnit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                Vanish < 100 and 
+                ActionUnit("player"):HealthPercent() <= Vanish
+            )
+        ) 
+    then 
+        return A.Vanish:Show(icon)
+    end  
+
+end 
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+local function RefreshPoisons()
+    local choice = Action.GetToggle(2, "PoisonToUse")
+	
+	if A.CripplingPoison:IsCastableP() and (Unit("player"):BuffRemainsP(A.CripplingPoison) <= 10 or not Unit("player"):BuffP(A.CripplingPoison)) and not Unit("player"):PrevGCDP(1, A.CripplingPoison) and not Unit("player"):IsCasting() then
+	    return A.CripplingPoison:Show(icon)
+	end	
+	-- Wound Poison
+	if choice == "Wound Poison" then 
+	    if A.WoundPoison:IsCastableP() and (Unit("player"):BuffRemainsP(A.WoundPoison) <= 10 or not Unit("player"):BuffP(A.WoundPoison)) and not Unit("player"):PrevGCDP(1, A.WoundPoison) and not Unit("player"):IsCasting() then 
+		    return A.WoundPoison:Show(icon)
+        end
+	-- Deadly Poison
+	elseif choice == "Deadly Poison" then
+	    if A.DeadlyPoison:IsCastableP() and (Unit("player"):BuffRemainsP(A.DeadlyPoison) <= 10 or not Unit("player"):BuffP(A.DeadlyPoison)) and not Unit("player"):PrevGCDP(1, A.DeadlyPoison) and not Unit("player"):IsCasting() then 
+		    return A.DeadlyPoison:Show(icon)
+        end
+	elseif choice == "Auto" then
+	    -- Auto
+	    if Action.IsInPvP and A.WoundPoison:IsCastableP() and (Unit("player"):BuffRemainsP(A.WoundPoison) <= 10 or not Unit("player"):BuffP(A.WoundPoison)) and not Unit("player"):PrevGCDP(1, A.WoundPoison) and not Unit("player"):IsCasting() then 		
+	        return A.WoundPoison:Show(icon)
+		else
+		    if A.DeadlyPoison:IsCastableP() and (Unit("player"):BuffRemainsP(A.DeadlyPoison) <= 10 or not Unit("player"):BuffP(A.DeadlyPoison)) and not Action.IsInPvP and not Unit("player"):PrevGCDP(1, A.DeadlyPoison) and not Unit("player"):IsCasting() then
+		        return A.DeadlyPoison:Show(icon)
+		    end
+	    end
+	else
+	    return
+	end	
+end
+	
+-- Check if the Priority Rotation variable should be set
+local function UsePriorityRotation()
+    if Cache.EnemiesCount[10] < 2 then
+        return false
+    end
+    if Action.GetToggle(2, "UsePriorityRotation") == "Always" then
+        return true
+    end
+    if Action.GetToggle(2, "UsePriorityRotation") == "On Bosses" and Unit(unit):IsInBossList() then
+        return true
+    end
+    -- Zul Mythic
+    if Unit("player"):InstanceDifficulty() == 16 and Unit(unit):NPCID() == 138967 then
+        return true
+    end
+    return false
+end
+
+-- Fake ss_buffed (wonky without Subterfuge but why would you, eh?)
+local function SSBuffed(unit)
+    return A.ShroudedSuffocation:GetAzeriteRank() > 0
+end
+
+-- non_ss_buffed_targets
+local function NonSSBuffedTargets()
+    local count = 0;
+    
+	local MissingGarrote = MultiUnits:GetByRangeMissedDoTs(10, 5, A.Garrote.ID)   
+	
+	count = MissingGarrote
+	
+    return count;
+end
+
+-- ss_buffed_targets_above_pandemic
+local function SSBuffedTargetsAbovePandemic()
+    local count = 0;
+    local GarroteToRefresh = MultiUnits:GetByRangeDoTsToRefresh(10, 5, A.Garrote.ID, 5.4)
+    local AppliedGarrote = MultiUnits:GetByRangeAppliedDoTs(10, 5, A.Garrote.ID) -- Garrote count
+
+    count = AppliedGarrote - GarroteToRefresh
+
+    return count;
 end
 
 
@@ -461,11 +706,11 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- use_item,name=azsharas_font_of_power,if=!stealthed.all&master_assassin_remains=0&(cooldown.vendetta.remains<?cooldown.toxic_blade.remains)<10+10*equipped.ashvanes_razor_coral&!debuff.vendetta.up&!debuff.toxic_blade.up
-            if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):IsStealthedP(true, true) and MasterAssassinRemains == 0 and num((A.Vendetta:GetCooldown() < ?cooldown.toxic_blade.remains)) < 10 + 10 * num(A.AshvanesRazorCoral:IsExists()) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) then
+            if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and MasterAssassinRemains == 0 and num((A.Vendetta:GetCooldown() < ?cooldown.toxic_blade.remains)) < 10 + 10 * num(A.AshvanesRazorCoral:IsExists()) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- call_action_list,name=essences,if=!stealthed.all&dot.rupture.ticking&master_assassin_remains=0
-            if (not Unit("player"):IsStealthedP(true, true) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and MasterAssassinRemains == 0) then
+            if (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and MasterAssassinRemains == 0) then
                 local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
@@ -491,7 +736,7 @@ A[3] = function(icon, isMulti)
                 VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or bool(A.ShroudedSuffocation:GetAzeriteRank()) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
             end
             -- vendetta,if=!stealthed.rogue&dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition
-            if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthedP(true, false) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and bool(VarVendettaSubterfugeCondition) and bool(VarVendettaNightstalkerCondition) and bool(VarVendettaFontCondition)) then
+            if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthed(true, false) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and bool(VarVendettaSubterfugeCondition) and bool(VarVendettaNightstalkerCondition) and bool(VarVendettaFontCondition)) then
                 return A.Vendetta:Show(icon)
             end
             -- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
@@ -508,7 +753,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1,extra_amount=45
             -- vanish,if=talent.subterfuge.enabled&!stealthed.rogue&cooldown.garrote.up&(variable.ss_vanish_condition|!azerite.shrouded_suffocation.enabled&dot.garrote.refreshable)&combo_points.deficit>=((1+2*azerite.shrouded_suffocation.enabled)*spell_targets.fan_of_knives)>?4&raid_event.adds.in>12
-            if A.Vanish:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and not Unit("player"):IsStealthedP(true, false) and A.Garrote:GetCooldown() == 0 and (bool(VarSsVanishCondition) or not bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true)) and Unit("player"):ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank()) * MultiUnits:GetByRangeInCombat(40, 5, 10)) > ?4) and 10000000000 > 12) then
+            if A.Vanish:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and not Unit("player"):IsStealthed(true, false) and A.Garrote:GetCooldown() == 0 and (bool(VarSsVanishCondition) or not bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true)) and Unit("player"):ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank()) * MultiUnits:GetByRangeInCombat(40, 5, 10)) > ?4) and 10000000000 > 12) then
                 if A.Vanish:IsUsablePPool(45) then
                     return A.Vanish:Show(icon)
                 else
@@ -516,11 +761,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- vanish,if=talent.master_assassin.enabled&!stealthed.all&master_assassin_remains<=0&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up)&(!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up)
-            if A.Vanish:IsReady(unit) and (A.MasterAssassin:IsSpellLearned() and not Unit("player"):IsStealthedP(true, true) and MasterAssassinRemains <= 0 and not Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true))) then
+            if A.Vanish:IsReady(unit) and (A.MasterAssassin:IsSpellLearned() and not Unit("player"):IsStealthed(true, true) and MasterAssassinRemains <= 0 and not Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true))) then
                 return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthedP(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and Unit(unit):PMultiplier(A.Garrote) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Unit("player"):IsStealthed(true, true) and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and Unit(unit):PMultiplier(A.Garrote) <= 1 and Unit("player"):ComboPointsDeficit() >= 1) then
                 return A.Shadowmeld:Show(icon)
             end
             -- exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
@@ -597,7 +842,7 @@ A[3] = function(icon, isMulti)
                 return A.FanofKnives:Show(icon)
             end
             -- fan_of_knives,if=variable.use_filler&(buff.hidden_blades.stack>=19|(!priority_rotation&spell_targets.fan_of_knives>=4+(azerite.double_dose.rank>2)+stealthed.rogue))
-            if A.FanofKnives:IsReady(unit) and (bool(VarUseFiller) and (Unit("player"):HasBuffsStacks(A.HiddenBladesBuff.ID, true) >= 19 or (not bool(priority_rotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4 + num((A.DoubleDose:GetAzeriteRank() > 2)) + num(Unit("player"):IsStealthedP(true, false))))) then
+            if A.FanofKnives:IsReady(unit) and (bool(VarUseFiller) and (Unit("player"):HasBuffsStacks(A.HiddenBladesBuff.ID, true) >= 19 or (not bool(priority_rotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4 + num((A.DoubleDose:GetAzeriteRank() > 2)) + num(Unit("player"):IsStealthed(true, false))))) then
                 return A.FanofKnives:Show(icon)
             end
             -- fan_of_knives,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives>=3
@@ -781,7 +1026,7 @@ A[3] = function(icon, isMulti)
                 VarSingleUnit(unit) = num(MultiUnits:GetByRangeInCombat(40, 5, 10) < 2)
             end
             -- call_action_list,name=stealthed,if=stealthed.rogue
-            if (Unit("player"):IsStealthedP(true, false)) then
+            if (Unit("player"):IsStealthed(true, false)) then
                 local ShouldReturn = Stealthed(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=cds,if=(!talent.master_assassin.enabled|dot.garrote.ticking)

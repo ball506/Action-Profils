@@ -258,6 +258,7 @@ S.FerociousBiteMaxEnergy.CustomCost = {
 }
 
 S.Rip:RegisterPMultiplier({S.BloodtalonsBuff, 1.2}, {S.SavageRoar, 1.15}, {S.TigersFury, 1.15})
+
 S.Rake:RegisterPMultiplier(
   S.RakeDebuff,
   {function ()
@@ -265,7 +266,15 @@ S.Rake:RegisterPMultiplier(
   end},
   {S.BloodtalonsBuff, 1.2}, {S.SavageRoar, 1.15}, {S.TigersFury, 1.15}
 )
-
+	RegisterPMultiplier( -- Rake dot and action
+		1822,    -- Rake action
+		155722,  -- Rake dot
+		{function ()
+				return Player:IsStealthed() and 2 or 1
+		end},
+		-- BloodtalonsBuff, SavageRoar, TigersFury
+		{145152, 1.2}, {52610, 1.15}, {5217, 1.15}
+	)
 local function EvaluateCyclePrimalWrath95(Target)
   return Cache.EnemiesCount[5] > 1 and Target:DebuffRemainsP(S.RipDebuff) < 4
 end

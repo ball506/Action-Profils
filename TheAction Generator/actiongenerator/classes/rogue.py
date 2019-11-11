@@ -170,6 +170,7 @@ CLASS_FUNCTIONS = {
         'CommonPreAplSetup',
         ],
         ASSASSINATION: [
+        'AssassinationPreAplSetup',
         ],
         OUTLAW: [
         'RogueOutlawPreApl'
@@ -189,7 +190,7 @@ def rogue_stealthed(fun):
             self.args = [Literal('true'), Literal('true')]
         elif (self.condition_list[1] in 'rogue'):
             self.args = [Literal('true'), Literal('false')]
-        return LuaExpression(self.player_unit, Method('IsStealthedP', type_=BOOL), args=self.args)
+        return LuaExpression(self.player_unit, Method('IsStealthed', type_=BOOL), args=self.args)
 
     return stealthed
 

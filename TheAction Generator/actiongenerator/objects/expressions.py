@@ -635,7 +635,6 @@ class Expires:
         """
         self.method = Method('BaseDuration()')
 
-
 class Aura(Expires):
     """
     Available expressions for auras (buffs and debuffs).
@@ -1032,12 +1031,10 @@ class DeBuff(BuildExpression, Aura):
         call = condition.condition_list[2]
         super().__init__(call)
 
-
 class Dot(DeBuff):
     """
     Represent the expression for a dot. condition.
     """
-
 
 class Consumable(BuildExpression):
     """
