@@ -19,33 +19,51 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PRIEST_SHADOW] = {
-    WhispersoftheDamned                    = Action.Create({Type = "Spell", ID = 275722 }),
-    SearingDialogue                        = Action.Create({Type = "Spell", ID = 272788 }),
-    DeathThroes                            = Action.Create({Type = "Spell", ID = 278659 }),
-    ThoughtHarvester                       = Action.Create({Type = "Spell", ID = 288340 }),
-    SpitefulApparitions                    = Action.Create({Type = "Spell", ID = 277682 }),
-    ShadowformBuff                         = Action.Create({Type = "Spell", ID = 232698 }),
-    Shadowform                             = Action.Create({Type = "Spell", ID = 232698 }),
-    MindBlast                              = Action.Create({Type = "Spell", ID = 8092 }),
-    VampiricTouchDebuff                    = Action.Create({Type = "Spell", ID = 34914 }),
-    VampiricTouch                          = Action.Create({Type = "Spell", ID = 34914 }),
-    VoidEruption                           = Action.Create({Type = "Spell", ID = 228260 }),
-    DarkAscension                          = Action.Create({Type = "Spell", ID = 280711 }),
-    VoidformBuff                           = Action.Create({Type = "Spell", ID = 194249 }),
-    MindSear                               = Action.Create({Type = "Spell", ID = 48045 }),
-    HarvestedThoughtsBuff                  = Action.Create({Type = "Spell", ID = 288343 }),
-    VoidBolt                               = Action.Create({Type = "Spell", ID = 205448 }),
-    ShadowWordDeath                        = Action.Create({Type = "Spell", ID = 32379 }),
-    SurrenderToMadness                     = Action.Create({Type = "Spell", ID = 193223 }),
-    DarkVoid                               = Action.Create({Type = "Spell", ID = 263346 }),
-    ShadowWordPainDebuff                   = Action.Create({Type = "Spell", ID = 589 }),
-    Mindbender                             = Action.Create({Type = "Spell", ID = 200174 }),
-    ShadowCrash                            = Action.Create({Type = "Spell", ID = 205385 }),
-    ShadowWordPain                         = Action.Create({Type = "Spell", ID = 589 }),
-    Misery                                 = Action.Create({Type = "Spell", ID = 238558 }),
-    VoidTorrent                            = Action.Create({Type = "Spell", ID = 263165 }),
-    MindFlay                               = Action.Create({Type = "Spell", ID = 15407 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    WhispersoftheDamned                    = Action.Create({ Type = "Spell", ID = 275722 }),
+    SearingDialogue                        = Action.Create({ Type = "Spell", ID = 272788 }),
+    DeathThroes                            = Action.Create({ Type = "Spell", ID = 278659 }),
+    ThoughtHarvester                       = Action.Create({ Type = "Spell", ID = 288340 }),
+    SpitefulApparitions                    = Action.Create({ Type = "Spell", ID = 277682 }),
+    ShadowformBuff                         = Action.Create({ Type = "Spell", ID = 232698 }),
+    Shadowform                             = Action.Create({ Type = "Spell", ID = 232698 }),
+    MindBlast                              = Action.Create({ Type = "Spell", ID = 8092 }),
+    VampiricTouchDebuff                    = Action.Create({ Type = "Spell", ID = 34914 }),
+    VampiricTouch                          = Action.Create({ Type = "Spell", ID = 34914 }),
+    VoidEruption                           = Action.Create({ Type = "Spell", ID = 228260 }),
+    DarkAscension                          = Action.Create({ Type = "Spell", ID = 280711 }),
+    VoidformBuff                           = Action.Create({ Type = "Spell", ID = 194249 }),
+    MindSear                               = Action.Create({ Type = "Spell", ID = 48045 }),
+    HarvestedThoughtsBuff                  = Action.Create({ Type = "Spell", ID = 288343 }),
+    VoidBolt                               = Action.Create({ Type = "Spell", ID = 205448 }),
+    ShadowWordDeath                        = Action.Create({ Type = "Spell", ID = 32379 }),
+    SurrenderToMadness                     = Action.Create({ Type = "Spell", ID = 193223 }),
+    DarkVoid                               = Action.Create({ Type = "Spell", ID = 263346 }),
+    ShadowWordPainDebuff                   = Action.Create({ Type = "Spell", ID = 589 }),
+    Mindbender                             = Action.Create({ Type = "Spell", ID = 200174 }),
+    ShadowCrash                            = Action.Create({ Type = "Spell", ID = 205385 }),
+    ShadowWordPain                         = Action.Create({ Type = "Spell", ID = 589 }),
+    Misery                                 = Action.Create({ Type = "Spell", ID = 238558 }),
+    VoidTorrent                            = Action.Create({ Type = "Spell", ID = 263165 }),
+    MindFlay                               = Action.Create({ Type = "Spell", ID = 15407 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -58,6 +76,8 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -465,7 +485,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -496,7 +516,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -547,5 +567,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

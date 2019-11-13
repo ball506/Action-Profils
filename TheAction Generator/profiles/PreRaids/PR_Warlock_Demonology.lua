@@ -19,35 +19,53 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 30146 }),
-    InnerDemons                            = Action.Create({Type = "Spell", ID = 267216 }),
-    Demonbolt                              = Action.Create({Type = "Spell", ID = 264178 }),
-    SoulStrike                             = Action.Create({Type = "Spell", ID = 264057 }),
-    ShadowBolt                             = Action.Create({Type = "Spell", ID = 686 }),
-    Implosion                              = Action.Create({Type = "Spell", ID = 196277 }),
-    WildImpsBuff                           = Action.Create({Type = "Spell", ID =  }),
-    CallDreadstalkers                      = Action.Create({Type = "Spell", ID = 104316 }),
-    BilescourgeBombers                     = Action.Create({Type = "Spell", ID = 267211 }),
-    HandofGuldan                           = Action.Create({Type = "Spell", ID = 105174 }),
-    DemonicPowerBuff                       = Action.Create({Type = "Spell", ID = 265273 }),
-    DemonicCalling                         = Action.Create({Type = "Spell", ID = 205145 }),
-    GrimoireFelguard                       = Action.Create({Type = "Spell", ID = 111898 }),
-    SummonDemonicTyrant                    = Action.Create({Type = "Spell", ID = 265187 }),
-    DemonicCallingBuff                     = Action.Create({Type = "Spell", ID = 205146 }),
-    DemonicCoreBuff                        = Action.Create({Type = "Spell", ID = 264173 }),
-    SummonVilefiend                        = Action.Create({Type = "Spell", ID = 264119 }),
-    Doom                                   = Action.Create({Type = "Spell", ID = 265412 }),
-    DoomDebuff                             = Action.Create({Type = "Spell", ID = 265412 }),
-    NetherPortal                           = Action.Create({Type = "Spell", ID = 267217 }),
-    NetherPortalBuff                       = Action.Create({Type = "Spell", ID = 267218 }),
-    PowerSiphon                            = Action.Create({Type = "Spell", ID = 264130 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    DemonicStrength                        = Action.Create({Type = "Spell", ID = 267171 }),
-    DreadstalkersBuff                      = Action.Create({Type = "Spell", ID =  }),
-    DemonicConsumption                     = Action.Create({Type = "Spell", ID = 267215 }),
-    GrimoireFelguardBuff                   = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 30146 }),
+    InnerDemons                            = Action.Create({ Type = "Spell", ID = 267216 }),
+    Demonbolt                              = Action.Create({ Type = "Spell", ID = 264178 }),
+    SoulStrike                             = Action.Create({ Type = "Spell", ID = 264057 }),
+    ShadowBolt                             = Action.Create({ Type = "Spell", ID = 686 }),
+    Implosion                              = Action.Create({ Type = "Spell", ID = 196277 }),
+    WildImpsBuff                           = Action.Create({ Type = "Spell", ID =  }),
+    CallDreadstalkers                      = Action.Create({ Type = "Spell", ID = 104316 }),
+    BilescourgeBombers                     = Action.Create({ Type = "Spell", ID = 267211 }),
+    HandofGuldan                           = Action.Create({ Type = "Spell", ID = 105174 }),
+    DemonicPowerBuff                       = Action.Create({ Type = "Spell", ID = 265273 }),
+    DemonicCalling                         = Action.Create({ Type = "Spell", ID = 205145 }),
+    GrimoireFelguard                       = Action.Create({ Type = "Spell", ID = 111898 }),
+    SummonDemonicTyrant                    = Action.Create({ Type = "Spell", ID = 265187 }),
+    DemonicCallingBuff                     = Action.Create({ Type = "Spell", ID = 205146 }),
+    DemonicCoreBuff                        = Action.Create({ Type = "Spell", ID = 264173 }),
+    SummonVilefiend                        = Action.Create({ Type = "Spell", ID = 264119 }),
+    Doom                                   = Action.Create({ Type = "Spell", ID = 265412 }),
+    DoomDebuff                             = Action.Create({ Type = "Spell", ID = 265412 }),
+    NetherPortal                           = Action.Create({ Type = "Spell", ID = 267217 }),
+    NetherPortalBuff                       = Action.Create({ Type = "Spell", ID = 267218 }),
+    PowerSiphon                            = Action.Create({ Type = "Spell", ID = 264130 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    DemonicStrength                        = Action.Create({ Type = "Spell", ID = 267171 }),
+    DreadstalkersBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    DemonicConsumption                     = Action.Create({ Type = "Spell", ID = 267215 }),
+    GrimoireFelguardBuff                   = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -60,6 +78,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -164,24 +184,26 @@ local function IsSchoolFree()
 end 
 
 local function FutureShard ()
-  local Shard = Player:SoulShards()
-  if not Player:IsCasting() then
-    return Shard
-  else
-    if Player:IsCasting(A.UnstableAffliction) 
-        or Player:IsCasting(A.SeedOfCorruption) then
-      return Shard - 1
-    elseif Player:IsCasting(A.SummonDoomGuard) 
-        or Player:IsCasting(A.SummonDoomGuardSuppremacy) 
-        or Player:IsCasting(A.SummonInfernal) 
-        or Player:IsCasting(A.SummonInfernalSuppremacy) 
-        or Player:IsCasting(A.GrimoireFelhunter) 
-        or Player:IsCasting(A.SummonFelhunter) then
-      return Shard - 1
+    local Shard = Player:SoulShards()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    
+    if not Unit("player"):IsCasting() then
+        return Shard
     else
-      return Shard
+        if spellID = A.UnstableAffliction.ID 
+                or spellID = A.SeedOfCorruption.ID then
+            return Shard - 1
+        elseif spellID = A.SummonDoomGuard.ID 
+                or spellID = A.SummonDoomGuardSuppremacy.ID 
+                or spellID = A.SummonInfernal.ID
+                or spellID = A.SummonInfernalSuppremacy.ID 
+                or spellID = A.GrimoireFelhunter.ID 
+                or spellID = A.SummonFelhunter.ID then
+            return Shard - 1
+        else
+            return Shard
+        end
     end
-  end
 end
 
 
@@ -474,7 +496,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -505,7 +527,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -556,5 +578,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

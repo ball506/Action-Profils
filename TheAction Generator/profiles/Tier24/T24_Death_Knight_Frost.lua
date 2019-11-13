@@ -19,43 +19,61 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
-    RemorselessWinter                      = Action.Create({Type = "Spell", ID = 196770 }),
-    GatheringStorm                         = Action.Create({Type = "Spell", ID = 194912 }),
-    FrozenTempest                          = Action.Create({Type = "Spell", ID =  }),
-    RimeBuff                               = Action.Create({Type = "Spell", ID =  }),
-    GlacialAdvance                         = Action.Create({Type = "Spell", ID = 194913 }),
-    Frostscythe                            = Action.Create({Type = "Spell", ID = 207230 }),
-    FrostStrike                            = Action.Create({Type = "Spell", ID = 49143 }),
-    RazoriceDebuff                         = Action.Create({Type = "Spell", ID = 51714 }),
-    HowlingBlast                           = Action.Create({Type = "Spell", ID = 49184 }),
-    KillingMachineBuff                     = Action.Create({Type = "Spell", ID = 51124 }),
-    RunicAttenuation                       = Action.Create({Type = "Spell", ID = 207104 }),
-    Obliterate                             = Action.Create({Type = "Spell", ID = 49020 }),
-    HornofWinter                           = Action.Create({Type = "Spell", ID = 57330 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    PillarofFrost                          = Action.Create({Type = "Spell", ID = 51271 }),
-    ChainsofIce                            = Action.Create({Type = "Spell", ID = 45524 }),
-    ColdHeartBuff                          = Action.Create({Type = "Spell", ID =  }),
-    SeethingRageBuff                       = Action.Create({Type = "Spell", ID =  }),
-    PillarofFrostBuff                      = Action.Create({Type = "Spell", ID =  }),
-    FrostwyrmsFury                         = Action.Create({Type = "Spell", ID = 279302 }),
-    IcyCitadel                             = Action.Create({Type = "Spell", ID =  }),
-    BreathofSindragosaBuff                 = Action.Create({Type = "Spell", ID = 155166 }),
-    UnholyStrengthBuff                     = Action.Create({Type = "Spell", ID = 53365 }),
-    IcyCitadelBuff                         = Action.Create({Type = "Spell", ID =  }),
-    EmpoweredRuneWeapon                    = Action.Create({Type = "Spell", ID =  }),
-    BreathofSindragosa                     = Action.Create({Type = "Spell", ID = 152279 }),
-    EmpowerRuneWeapon                      = Action.Create({Type = "Spell", ID = 47568 }),
-    EmpowerRuneWeaponBuff                  = Action.Create({Type = "Spell", ID =  }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ColdHeart                              = Action.Create({Type = "Spell", ID =  }),
-    ChillStreak                            = Action.Create({Type = "Spell", ID =  }),
-    FrozenPulseBuff                        = Action.Create({Type = "Spell", ID =  }),
-    FrozenPulse                            = Action.Create({Type = "Spell", ID = 194909 }),
-    FrostFeverDebuff                       = Action.Create({Type = "Spell", ID =  }),
-    IcyTalonsBuff                          = Action.Create({Type = "Spell", ID = 194879 }),
-    Obliteration                           = Action.Create({Type = "Spell", ID = 281238 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    RemorselessWinter                      = Action.Create({ Type = "Spell", ID = 196770 }),
+    GatheringStorm                         = Action.Create({ Type = "Spell", ID = 194912 }),
+    FrozenTempest                          = Action.Create({ Type = "Spell", ID =  }),
+    RimeBuff                               = Action.Create({ Type = "Spell", ID =  }),
+    GlacialAdvance                         = Action.Create({ Type = "Spell", ID = 194913 }),
+    Frostscythe                            = Action.Create({ Type = "Spell", ID = 207230 }),
+    FrostStrike                            = Action.Create({ Type = "Spell", ID = 49143 }),
+    RazoriceDebuff                         = Action.Create({ Type = "Spell", ID = 51714 }),
+    HowlingBlast                           = Action.Create({ Type = "Spell", ID = 49184 }),
+    KillingMachineBuff                     = Action.Create({ Type = "Spell", ID = 51124 }),
+    RunicAttenuation                       = Action.Create({ Type = "Spell", ID = 207104 }),
+    Obliterate                             = Action.Create({ Type = "Spell", ID = 49020 }),
+    HornofWinter                           = Action.Create({ Type = "Spell", ID = 57330 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    PillarofFrost                          = Action.Create({ Type = "Spell", ID = 51271 }),
+    ChainsofIce                            = Action.Create({ Type = "Spell", ID = 45524 }),
+    ColdHeartBuff                          = Action.Create({ Type = "Spell", ID =  }),
+    SeethingRageBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    PillarofFrostBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    FrostwyrmsFury                         = Action.Create({ Type = "Spell", ID = 279302 }),
+    IcyCitadel                             = Action.Create({ Type = "Spell", ID =  }),
+    BreathofSindragosaBuff                 = Action.Create({ Type = "Spell", ID = 155166 }),
+    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
+    IcyCitadelBuff                         = Action.Create({ Type = "Spell", ID =  }),
+    EmpoweredRuneWeapon                    = Action.Create({ Type = "Spell", ID =  }),
+    BreathofSindragosa                     = Action.Create({ Type = "Spell", ID = 152279 }),
+    EmpowerRuneWeapon                      = Action.Create({ Type = "Spell", ID = 47568 }),
+    EmpowerRuneWeaponBuff                  = Action.Create({ Type = "Spell", ID =  }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ColdHeart                              = Action.Create({ Type = "Spell", ID =  }),
+    ChillStreak                            = Action.Create({ Type = "Spell", ID =  }),
+    FrozenPulseBuff                        = Action.Create({ Type = "Spell", ID =  }),
+    FrozenPulse                            = Action.Create({ Type = "Spell", ID = 194909 }),
+    FrostFeverDebuff                       = Action.Create({ Type = "Spell", ID =  }),
+    IcyTalonsBuff                          = Action.Create({ Type = "Spell", ID = 194879 }),
+    Obliteration                           = Action.Create({ Type = "Spell", ID = 281238 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -68,6 +86,8 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -811,7 +831,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -842,7 +862,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -893,5 +913,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

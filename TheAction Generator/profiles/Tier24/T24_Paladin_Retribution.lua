@@ -19,33 +19,50 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    WakeofAshes                            = Action.Create({Type = "Spell", ID = 255937 }),
-    AvengingWrathBuff                      = Action.Create({Type = "Spell", ID = 31884 }),
-    CrusadeBuff                            = Action.Create({Type = "Spell", ID = 231895 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    ShieldofVengeance                      = Action.Create({Type = "Spell", ID = 184662 }),
-    SeethingRageBuff                       = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    Crusade                                = Action.Create({Type = "Spell", ID = 231895 }),
-    AvengingWrath                          = Action.Create({Type = "Spell", ID = 31884 }),
-    InquisitionBuff                        = Action.Create({Type = "Spell", ID = 84963 }),
-    Inquisition                            = Action.Create({Type = "Spell", ID = 84963 }),
-    BladeofJustice                         = Action.Create({Type = "Spell", ID = 184575 }),
-    Judgment                               = Action.Create({Type = "Spell", ID = 20271 }),
-    RighteousVerdict                       = Action.Create({Type = "Spell", ID = 267610 }),
-    EmpyreanPowerBuff                      = Action.Create({Type = "Spell", ID = 286393 }),
-    JudgmentDebuff                         = Action.Create({Type = "Spell", ID = 197277 }),
-    DivinePurposeBuff                      = Action.Create({Type = "Spell", ID = 223819 }),
-    AvengingWrathAutocritBuff              = Action.Create({Type = "Spell", ID =  }),
-    ExecutionSentence                      = Action.Create({Type = "Spell", ID = 267798 }),
-    DivineStorm                            = Action.Create({Type = "Spell", ID = 53385 }),
-    TemplarsVerdict                        = Action.Create({Type = "Spell", ID = 85256 }),
-    HammerofWrath                          = Action.Create({Type = "Spell", ID = 24275 }),
-    Consecration                           = Action.Create({Type = "Spell", ID = 205228 }),
-    CrusaderStrike                         = Action.Create({Type = "Spell", ID = 35395 }),
-    Rebuke                                 = Action.Create({Type = "Spell", ID = 96231 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    WakeofAshes                            = Action.Create({ Type = "Spell", ID = 255937 }),
+    AvengingWrathBuff                      = Action.Create({ Type = "Spell", ID = 31884 }),
+    CrusadeBuff                            = Action.Create({ Type = "Spell", ID = 231895 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    ShieldofVengeance                      = Action.Create({ Type = "Spell", ID = 184662 }),
+    SeethingRageBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    Crusade                                = Action.Create({ Type = "Spell", ID = 231895 }),
+    AvengingWrath                          = Action.Create({ Type = "Spell", ID = 31884 }),
+    InquisitionBuff                        = Action.Create({ Type = "Spell", ID = 84963 }),
+    Inquisition                            = Action.Create({ Type = "Spell", ID = 84963 }),
+    BladeofJustice                         = Action.Create({ Type = "Spell", ID = 184575 }),
+    Judgment                               = Action.Create({ Type = "Spell", ID = 20271 }),
+    RighteousVerdict                       = Action.Create({ Type = "Spell", ID = 267610 }),
+    EmpyreanPowerBuff                      = Action.Create({ Type = "Spell", ID = 286393 }),
+    JudgmentDebuff                         = Action.Create({ Type = "Spell", ID = 197277 }),
+    DivinePurposeBuff                      = Action.Create({ Type = "Spell", ID = 223819 }),
+    AvengingWrathAutocritBuff              = Action.Create({ Type = "Spell", ID =  }),
+    ExecutionSentence                      = Action.Create({ Type = "Spell", ID = 267798 }),
+    DivineStorm                            = Action.Create({ Type = "Spell", ID = 53385 }),
+    TemplarsVerdict                        = Action.Create({ Type = "Spell", ID = 85256 }),
+    HammerofWrath                          = Action.Create({ Type = "Spell", ID = 24275 }),
+    Consecration                           = Action.Create({ Type = "Spell", ID = 205228 }),
+    CrusaderStrike                         = Action.Create({ Type = "Spell", ID = 35395 }),
+    Rebuke                                 = Action.Create({ Type = "Spell", ID = 96231 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -58,6 +75,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -234,7 +253,7 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force,if=time<=2|buff.reckless_force.up
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() <= 2 or Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
@@ -242,7 +261,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=!talent.crusade.enabled&(cooldown.avenging_wrath.remains<5&holy_power>=3&(buff.inquisition.up|!talent.inquisition.enabled)|cooldown.avenging_wrath.remains>=45)|(talent.crusade.enabled&cooldown.crusade.remains<gcd&holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled|cooldown.crusade.remains>=45)
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Player:HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Player:HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and Unit("player"):CombatTime() < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avenging_wrath.remains<gcd&holy_power>=3|cooldown.crusade.remains<gcd&holy_power>=4|cooldown.avenging_wrath.remains>=45|cooldown.crusade.remains>=45
@@ -270,7 +289,7 @@ A[3] = function(icon, isMulti)
                 return A.AvengingWrath:Show(icon)
             end
             -- crusade,if=holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled
-            if A.Crusade:IsReady(unit) and A.BurstIsON(unit) and (Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and Unit("player"):CombatTime < 10 and A.WakeofAshes:IsSpellLearned()) then
+            if A.Crusade:IsReady(unit) and A.BurstIsON(unit) and (Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and Unit("player"):CombatTime() < 10 and A.WakeofAshes:IsSpellLearned()) then
                 return A.Crusade:Show(icon)
             end
         end
@@ -386,7 +405,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -417,7 +436,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -468,5 +487,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

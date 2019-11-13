@@ -19,64 +19,82 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
-    LightningShield                        = Action.Create({Type = "Spell", ID = 192106 }),
-    CrashLightning                         = Action.Create({Type = "Spell", ID = 187874 }),
-    CrashLightningBuff                     = Action.Create({Type = "Spell", ID = 187874 }),
-    Rockbiter                              = Action.Create({Type = "Spell", ID = 193786 }),
-    Landslide                              = Action.Create({Type = "Spell", ID = 197992 }),
-    LandslideBuff                          = Action.Create({Type = "Spell", ID = 202004 }),
-    Windstrike                             = Action.Create({Type = "Spell", ID = 115356 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    AscendanceBuff                         = Action.Create({Type = "Spell", ID = 114051 }),
-    Ascendance                             = Action.Create({Type = "Spell", ID = 114051 }),
-    FeralSpirit                            = Action.Create({Type = "Spell", ID = 51533 }),
-    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
-    Strike                                 = Action.Create({Type = "Spell", ID =  }),
-    MoltenWeaponBuff                       = Action.Create({Type = "Spell", ID =  }),
-    CracklingSurgeBuff                     = Action.Create({Type = "Spell", ID =  }),
-    IcyEdgeBuff                            = Action.Create({Type = "Spell", ID =  }),
-    EarthenSpikeDebuff                     = Action.Create({Type = "Spell", ID = 188089 }),
-    EarthenSpike                           = Action.Create({Type = "Spell", ID = 188089 }),
-    Stormstrike                            = Action.Create({Type = "Spell", ID = 17364 }),
-    LightningConduit                       = Action.Create({Type = "Spell", ID = 275388 }),
-    LightningConduitDebuff                 = Action.Create({Type = "Spell", ID = 275391 }),
-    StormbringerBuff                       = Action.Create({Type = "Spell", ID = 201845 }),
-    GatheringStormsBuff                    = Action.Create({Type = "Spell", ID = 198300 }),
-    LightningBolt                          = Action.Create({Type = "Spell", ID = 187837 }),
-    Overcharge                             = Action.Create({Type = "Spell", ID = 210727 }),
-    Sundering                              = Action.Create({Type = "Spell", ID = 197214 }),
-    Thundercharge                          = Action.Create({Type = "Spell", ID =  }),
-    ForcefulWinds                          = Action.Create({Type = "Spell", ID = 262647 }),
-    Flametongue                            = Action.Create({Type = "Spell", ID = 193796 }),
-    SearingAssault                         = Action.Create({Type = "Spell", ID = 192087 }),
-    LavaLash                               = Action.Create({Type = "Spell", ID = 60103 }),
-    PrimalPrimer                           = Action.Create({Type = "Spell", ID = 272992 }),
-    HotHand                                = Action.Create({Type = "Spell", ID = 201900 }),
-    HotHandBuff                            = Action.Create({Type = "Spell", ID = 215785 }),
-    StrengthofEarthBuff                    = Action.Create({Type = "Spell", ID = 273465 }),
-    CrashingStorm                          = Action.Create({Type = "Spell", ID = 192246 }),
-    Frostbrand                             = Action.Create({Type = "Spell", ID = 196834 }),
-    Hailstorm                              = Action.Create({Type = "Spell", ID = 210853 }),
-    FrostbrandBuff                         = Action.Create({Type = "Spell", ID = 196834 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    PrimalPrimerDebuff                     = Action.Create({Type = "Spell", ID = 273006 }),
-    FlametongueBuff                        = Action.Create({Type = "Spell", ID = 194084 }),
-    FuryofAir                              = Action.Create({Type = "Spell", ID = 197211 }),
-    FuryofAirBuff                          = Action.Create({Type = "Spell", ID = 197211 }),
-    TotemMastery                           = Action.Create({Type = "Spell", ID = 262395 }),
-    ResonanceTotemBuff                     = Action.Create({Type = "Spell", ID = 262419 }),
-    SunderingDebuff                        = Action.Create({Type = "Spell", ID = 197214 }),
-    SeethingRageBuff                       = Action.Create({Type = "Spell", ID =  }),
-    NaturalHarmony                         = Action.Create({Type = "Spell", ID = 278697 }),
-    NaturalHarmonyFrostBuff                = Action.Create({Type = "Spell", ID = 279029 }),
-    NaturalHarmonyFireBuff                 = Action.Create({Type = "Spell", ID = 279028 }),
-    NaturalHarmonyNatureBuff               = Action.Create({Type = "Spell", ID = 279033 }),
-    WindShear                              = Action.Create({Type = "Spell", ID = 57994 }),
-    Boulderfist                            = Action.Create({Type = "Spell", ID = 246035 }),
-    StrengthofEarth                        = Action.Create({Type = "Spell", ID = 273461 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    LightningShield                        = Action.Create({ Type = "Spell", ID = 192106 }),
+    CrashLightning                         = Action.Create({ Type = "Spell", ID = 187874 }),
+    CrashLightningBuff                     = Action.Create({ Type = "Spell", ID = 187874 }),
+    Rockbiter                              = Action.Create({ Type = "Spell", ID = 193786 }),
+    Landslide                              = Action.Create({ Type = "Spell", ID = 197992 }),
+    LandslideBuff                          = Action.Create({ Type = "Spell", ID = 202004 }),
+    Windstrike                             = Action.Create({ Type = "Spell", ID = 115356 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    AscendanceBuff                         = Action.Create({ Type = "Spell", ID = 114051 }),
+    Ascendance                             = Action.Create({ Type = "Spell", ID = 114051 }),
+    FeralSpirit                            = Action.Create({ Type = "Spell", ID = 51533 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    Strike                                 = Action.Create({ Type = "Spell", ID =  }),
+    MoltenWeaponBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    CracklingSurgeBuff                     = Action.Create({ Type = "Spell", ID =  }),
+    IcyEdgeBuff                            = Action.Create({ Type = "Spell", ID =  }),
+    EarthenSpikeDebuff                     = Action.Create({ Type = "Spell", ID = 188089 }),
+    EarthenSpike                           = Action.Create({ Type = "Spell", ID = 188089 }),
+    Stormstrike                            = Action.Create({ Type = "Spell", ID = 17364 }),
+    LightningConduit                       = Action.Create({ Type = "Spell", ID = 275388 }),
+    LightningConduitDebuff                 = Action.Create({ Type = "Spell", ID = 275391 }),
+    StormbringerBuff                       = Action.Create({ Type = "Spell", ID = 201845 }),
+    GatheringStormsBuff                    = Action.Create({ Type = "Spell", ID = 198300 }),
+    LightningBolt                          = Action.Create({ Type = "Spell", ID = 187837 }),
+    Overcharge                             = Action.Create({ Type = "Spell", ID = 210727 }),
+    Sundering                              = Action.Create({ Type = "Spell", ID = 197214 }),
+    Thundercharge                          = Action.Create({ Type = "Spell", ID =  }),
+    ForcefulWinds                          = Action.Create({ Type = "Spell", ID = 262647 }),
+    Flametongue                            = Action.Create({ Type = "Spell", ID = 193796 }),
+    SearingAssault                         = Action.Create({ Type = "Spell", ID = 192087 }),
+    LavaLash                               = Action.Create({ Type = "Spell", ID = 60103 }),
+    PrimalPrimer                           = Action.Create({ Type = "Spell", ID = 272992 }),
+    HotHand                                = Action.Create({ Type = "Spell", ID = 201900 }),
+    HotHandBuff                            = Action.Create({ Type = "Spell", ID = 215785 }),
+    StrengthofEarthBuff                    = Action.Create({ Type = "Spell", ID = 273465 }),
+    CrashingStorm                          = Action.Create({ Type = "Spell", ID = 192246 }),
+    Frostbrand                             = Action.Create({ Type = "Spell", ID = 196834 }),
+    Hailstorm                              = Action.Create({ Type = "Spell", ID = 210853 }),
+    FrostbrandBuff                         = Action.Create({ Type = "Spell", ID = 196834 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    PrimalPrimerDebuff                     = Action.Create({ Type = "Spell", ID = 273006 }),
+    FlametongueBuff                        = Action.Create({ Type = "Spell", ID = 194084 }),
+    FuryofAir                              = Action.Create({ Type = "Spell", ID = 197211 }),
+    FuryofAirBuff                          = Action.Create({ Type = "Spell", ID = 197211 }),
+    TotemMastery                           = Action.Create({ Type = "Spell", ID = 262395 }),
+    ResonanceTotemBuff                     = Action.Create({ Type = "Spell", ID = 262419 }),
+    SunderingDebuff                        = Action.Create({ Type = "Spell", ID = 197214 }),
+    SeethingRageBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    NaturalHarmony                         = Action.Create({ Type = "Spell", ID = 278697 }),
+    NaturalHarmonyFrostBuff                = Action.Create({ Type = "Spell", ID = 279029 }),
+    NaturalHarmonyFireBuff                 = Action.Create({ Type = "Spell", ID = 279028 }),
+    NaturalHarmonyNatureBuff               = Action.Create({ Type = "Spell", ID = 279033 }),
+    WindShear                              = Action.Create({ Type = "Spell", ID = 57994 }),
+    Boulderfist                            = Action.Create({ Type = "Spell", ID = 246035 }),
+    StrengthofEarth                        = Action.Create({ Type = "Spell", ID = 273461 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -89,6 +107,8 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -525,7 +545,7 @@ A[3] = function(icon, isMulti)
         --Opener
         local function Opener(unit)
             -- rockbiter,if=maelstrom<15&time<gcd
-            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime < A.GetGCD()) then
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime() < A.GetGCD()) then
                 return A.Rockbiter:Show(icon)
             end
         end
@@ -537,7 +557,7 @@ A[3] = function(icon, isMulti)
                 return A.CrashLightning:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|time<5
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime < 5) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime() < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
@@ -713,7 +733,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -744,7 +764,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -795,5 +815,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

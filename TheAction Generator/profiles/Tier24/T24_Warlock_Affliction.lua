@@ -19,51 +19,69 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 691 }),
-    GrimoireofSacrificeBuff                = Action.Create({Type = "Spell", ID = 196099 }),
-    GrimoireofSacrifice                    = Action.Create({Type = "Spell", ID = 108503 }),
-    SeedofCorruptionDebuff                 = Action.Create({Type = "Spell", ID = 27243 }),
-    SeedofCorruption                       = Action.Create({Type = "Spell", ID = 27243 }),
-    HauntDebuff                            = Action.Create({Type = "Spell", ID = 48181 }),
-    Haunt                                  = Action.Create({Type = "Spell", ID = 48181 }),
-    ShadowBolt                             = Action.Create({Type = "Spell", ID = 232670 }),
-    PhantomSingularity                     = Action.Create({Type = "Spell", ID = 205179 }),
-    SummonDarkglare                        = Action.Create({Type = "Spell", ID = 205180 }),
-    DreadfulCalling                        = Action.Create({Type = "Spell", ID =  }),
-    AgonyDebuff                            = Action.Create({Type = "Spell", ID = 980 }),
-    CorruptionDebuff                       = Action.Create({Type = "Spell", ID = 146739 }),
-    SiphonLifeDebuff                       = Action.Create({Type = "Spell", ID = 63106 }),
-    SiphonLife                             = Action.Create({Type = "Spell", ID = 63106 }),
-    DarkSoulMisery                         = Action.Create({Type = "Spell", ID = 113860 }),
-    DarkSoul                               = Action.Create({Type = "Spell", ID = 113860 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    SowtheSeeds                            = Action.Create({Type = "Spell", ID = 196226 }),
-    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
-    Deathbolt                              = Action.Create({Type = "Spell", ID = 264106 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    Agony                                  = Action.Create({Type = "Spell", ID = 980 }),
-    Corruption                             = Action.Create({Type = "Spell", ID = 172 }),
-    CreepingDeath                          = Action.Create({Type = "Spell", ID = 264000 }),
-    WritheInAgony                          = Action.Create({Type = "Spell", ID = 196102 }),
-    PandemicInvocation                     = Action.Create({Type = "Spell", ID = 289364 }),
-    UnstableAffliction                     = Action.Create({Type = "Spell", ID = 30108 }),
-    UnstableAfflictionDebuff               = Action.Create({Type = "Spell", ID = 30108 }),
-    NightfallBuff                          = Action.Create({Type = "Spell", ID = 264571 }),
-    AbsoluteCorruption                     = Action.Create({Type = "Spell", ID = 196103 }),
-    DrainLife                              = Action.Create({Type = "Spell", ID = 234153 }),
-    InevitableDemiseBuff                   = Action.Create({Type = "Spell", ID = 273525 }),
-    DrainSoul                              = Action.Create({Type = "Spell", ID = 198590 }),
-    ShadowEmbraceDebuff                    = Action.Create({Type = "Spell", ID = 32390 }),
-    ShadowEmbrace                          = Action.Create({Type = "Spell", ID = 32388 }),
-    PhantomSingularityDebuff               = Action.Create({Type = "Spell", ID = 205179 }),
-    VileTaintDebuff                        = Action.Create({Type = "Spell", ID = 278350 }),
-    CascadingCalamity                      = Action.Create({Type = "Spell", ID = 275372 }),
-    VileTaint                              = Action.Create({Type = "Spell", ID = 278350 }),
-    CascadingCalamityBuff                  = Action.Create({Type = "Spell", ID = 275378 }),
-    ActiveUasBuff                          = Action.Create({Type = "Spell", ID = 233490 }),
-    VisionofPerfection                     = Action.Create({Type = "Spell", ID =  }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 691 }),
+    GrimoireofSacrificeBuff                = Action.Create({ Type = "Spell", ID = 196099 }),
+    GrimoireofSacrifice                    = Action.Create({ Type = "Spell", ID = 108503 }),
+    SeedofCorruptionDebuff                 = Action.Create({ Type = "Spell", ID = 27243 }),
+    SeedofCorruption                       = Action.Create({ Type = "Spell", ID = 27243 }),
+    HauntDebuff                            = Action.Create({ Type = "Spell", ID = 48181 }),
+    Haunt                                  = Action.Create({ Type = "Spell", ID = 48181 }),
+    ShadowBolt                             = Action.Create({ Type = "Spell", ID = 232670 }),
+    PhantomSingularity                     = Action.Create({ Type = "Spell", ID = 205179 }),
+    SummonDarkglare                        = Action.Create({ Type = "Spell", ID = 205180 }),
+    DreadfulCalling                        = Action.Create({ Type = "Spell", ID =  }),
+    AgonyDebuff                            = Action.Create({ Type = "Spell", ID = 980 }),
+    CorruptionDebuff                       = Action.Create({ Type = "Spell", ID = 146739 }),
+    SiphonLifeDebuff                       = Action.Create({ Type = "Spell", ID = 63106 }),
+    SiphonLife                             = Action.Create({ Type = "Spell", ID = 63106 }),
+    DarkSoulMisery                         = Action.Create({ Type = "Spell", ID = 113860 }),
+    DarkSoul                               = Action.Create({ Type = "Spell", ID = 113860 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    SowtheSeeds                            = Action.Create({ Type = "Spell", ID = 196226 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    Deathbolt                              = Action.Create({ Type = "Spell", ID = 264106 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    Agony                                  = Action.Create({ Type = "Spell", ID = 980 }),
+    Corruption                             = Action.Create({ Type = "Spell", ID = 172 }),
+    CreepingDeath                          = Action.Create({ Type = "Spell", ID = 264000 }),
+    WritheInAgony                          = Action.Create({ Type = "Spell", ID = 196102 }),
+    PandemicInvocation                     = Action.Create({ Type = "Spell", ID = 289364 }),
+    UnstableAffliction                     = Action.Create({ Type = "Spell", ID = 30108 }),
+    UnstableAfflictionDebuff               = Action.Create({ Type = "Spell", ID = 30108 }),
+    NightfallBuff                          = Action.Create({ Type = "Spell", ID = 264571 }),
+    AbsoluteCorruption                     = Action.Create({ Type = "Spell", ID = 196103 }),
+    DrainLife                              = Action.Create({ Type = "Spell", ID = 234153 }),
+    InevitableDemiseBuff                   = Action.Create({ Type = "Spell", ID = 273525 }),
+    DrainSoul                              = Action.Create({ Type = "Spell", ID = 198590 }),
+    ShadowEmbraceDebuff                    = Action.Create({ Type = "Spell", ID = 32390 }),
+    ShadowEmbrace                          = Action.Create({ Type = "Spell", ID = 32388 }),
+    PhantomSingularityDebuff               = Action.Create({ Type = "Spell", ID = 205179 }),
+    VileTaintDebuff                        = Action.Create({ Type = "Spell", ID = 278350 }),
+    CascadingCalamity                      = Action.Create({ Type = "Spell", ID = 275372 }),
+    VileTaint                              = Action.Create({ Type = "Spell", ID = 278350 }),
+    CascadingCalamityBuff                  = Action.Create({ Type = "Spell", ID = 275378 }),
+    ActiveUasBuff                          = Action.Create({ Type = "Spell", ID = 233490 }),
+    VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -76,6 +94,8 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -452,7 +472,7 @@ local function EvaluateTargetIfFilterPhantomSingularity959(unit)
 end
 
 local function EvaluateTargetIfPhantomSingularity974(unit)
-  return Unit("player"):CombatTime > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste and (not bool(essence.vision_of_perfection.minor) and not bool(A.DreadfulCalling:GetAzeriteRank()) or A.SummonDarkglare:GetCooldown() > 45 + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() < 15 * Unit("player"):SpellHaste + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank())
+  return Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste and (not bool(essence.vision_of_perfection.minor) and not bool(A.DreadfulCalling:GetAzeriteRank()) or A.SummonDarkglare:GetCooldown() > 45 + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() < 15 * Unit("player"):SpellHaste + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank())
 end
 
 
@@ -470,7 +490,7 @@ local function EvaluateTargetIfFilterVileTaint997(unit)
 end
 
 local function EvaluateTargetIfVileTaint1012(unit)
-  return Unit("player"):CombatTime > 15 and Unit(unit):TimeToDie() >= 10 and (A.SummonDarkglare:GetCooldown() > 30 or A.SummonDarkglare:GetCooldown() < 10 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) >= 10 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) >= 10 or not A.SiphonLife:IsSpellLearned()))
+  return Unit("player"):CombatTime() > 15 and Unit(unit):TimeToDie() >= 10 and (A.SummonDarkglare:GetCooldown() > 30 or A.SummonDarkglare:GetCooldown() < 10 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) >= 10 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) >= 10 or not A.SiphonLife:IsSpellLearned()))
 end
 
       local CanMultidot = HandleMultidots()
@@ -534,7 +554,7 @@ end
                 return A.BloodFury:Show(icon)
             end
             -- memory_of_lucid_dreams,if=time>30
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime > 30) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() > 30) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- dark_soul,if=target.time_to_die<20+gcd|talent.sow_the_seeds.enabled&cooldown.summon_darkglare.remains>=cooldown.summon_darkglare.duration-10
@@ -817,19 +837,19 @@ end
                 end
             end
             -- memory_of_lucid_dreams,if=time<30
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime < 30) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() < 30) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- agony,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314
-            if A.Agony:IsReady(unit) and (Unit("player"):CombatTime > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists()) then
+            if A.Agony:IsReady(unit) and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists()) then
                 return A.Agony:Show(icon)
             end
             -- corruption,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314&!talent.absolute_corruption.enabled&(talent.siphon_life.enabled|spell_targets.seed_of_corruption_aoe>1&spell_targets.seed_of_corruption_aoe<=3)
-            if A.Corruption:IsReady(unit) and (Unit("player"):CombatTime > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetByRangeInCombat(5, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(5, 5, 10) <= 3)) then
+            if A.Corruption:IsReady(unit) and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetByRangeInCombat(5, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(5, 5, 10) <= 3)) then
                 return A.Corruption:Show(icon)
             end
             -- siphon_life,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314
-            if A.SiphonLife:IsReady(unit) and (Unit("player"):CombatTime > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists()) then
+            if A.SiphonLife:IsReady(unit) and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.Item169314:IsExists()) then
                 return A.SiphonLife:Show(icon)
             end
             -- unstable_affliction,target_if=!contagion&target.time_to_die<=8
@@ -877,19 +897,19 @@ end
                 end
             end
             -- use_item,name=azsharas_font_of_power,if=time<=3
-            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime <= 3) then
+            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 3) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- phantom_singularity,if=time<=35
-            if A.PhantomSingularity:IsReady(unit) and (Unit("player"):CombatTime <= 35) then
+            if A.PhantomSingularity:IsReady(unit) and (Unit("player"):CombatTime() <= 35) then
                 return A.PhantomSingularity:Show(icon)
             end
             -- vile_taint,if=time<15
-            if A.VileTaint:IsReady(unit) and (Unit("player"):CombatTime < 15) then
+            if A.VileTaint:IsReady(unit) and (Unit("player"):CombatTime() < 15) then
                 return A.VileTaint:Show(icon)
             end
             -- guardian_of_azeroth,if=(cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled|(azerite.dreadful_calling.rank|essence.vision_of_perfection.rank)&time>30&target.time_to_die>=210)&(dot.phantom_singularity.remains|dot.vile_taint.remains|!talent.phantom_singularity.enabled&!talent.vile_taint.enabled)|target.time_to_die<30+gcd
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.SummonDarkglare:GetCooldown() < 15 + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or (bool(A.DreadfulCalling:GetAzeriteRank()) or bool(A.VisionofPerfection:GetRank())) and Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() >= 210) and (bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.VileTaintDebuff.ID, true)) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) or Unit(unit):TimeToDie() < 30 + A.GetGCD()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.SummonDarkglare:GetCooldown() < 15 + Player:SoulShardsP * A.DreadfulCalling:GetAzeriteRank() or (bool(A.DreadfulCalling:GetAzeriteRank()) or bool(A.VisionofPerfection:GetRank())) and Unit("player"):CombatTime() > 30 and Unit(unit):TimeToDie() >= 210) and (bool(Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.VileTaintDebuff.ID, true)) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) or Unit(unit):TimeToDie() < 30 + A.GetGCD()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul,if=cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled&(dot.phantom_singularity.remains|dot.vile_taint.remains)
@@ -913,7 +933,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -944,7 +964,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -995,5 +1015,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

@@ -19,42 +19,60 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 30146 }),
-    InnerDemons                            = Action.Create({Type = "Spell", ID = 267216 }),
-    Demonbolt                              = Action.Create({Type = "Spell", ID = 264178 }),
-    SoulStrike                             = Action.Create({Type = "Spell", ID = 264057 }),
-    DemonicConsumption                     = Action.Create({Type = "Spell", ID = 267215 }),
-    HandofGuldan                           = Action.Create({Type = "Spell", ID = 105174 }),
-    ShadowBolt                             = Action.Create({Type = "Spell", ID = 686 }),
-    Implosion                              = Action.Create({Type = "Spell", ID = 196277 }),
-    WildImpsBuff                           = Action.Create({Type = "Spell", ID =  }),
-    CallDreadstalkers                      = Action.Create({Type = "Spell", ID = 104316 }),
-    BilescourgeBombers                     = Action.Create({Type = "Spell", ID = 267211 }),
-    DemonicPowerBuff                       = Action.Create({Type = "Spell", ID = 265273 }),
-    DemonicCalling                         = Action.Create({Type = "Spell", ID = 205145 }),
-    GrimoireFelguard                       = Action.Create({Type = "Spell", ID = 111898 }),
-    SummonDemonicTyrant                    = Action.Create({Type = "Spell", ID = 265187 }),
-    DemonicCallingBuff                     = Action.Create({Type = "Spell", ID = 205146 }),
-    DemonicCoreBuff                        = Action.Create({Type = "Spell", ID = 264173 }),
-    SummonVilefiend                        = Action.Create({Type = "Spell", ID = 264119 }),
-    Doom                                   = Action.Create({Type = "Spell", ID = 265412 }),
-    DoomDebuff                             = Action.Create({Type = "Spell", ID = 265412 }),
-    NetherPortal                           = Action.Create({Type = "Spell", ID = 267217 }),
-    NetherPortalBuff                       = Action.Create({Type = "Spell", ID = 267218 }),
-    PowerSiphon                            = Action.Create({Type = "Spell", ID = 264130 }),
-    ExplosivePotential                     = Action.Create({Type = "Spell", ID = 275395 }),
-    ExplosivePotentialBuff                 = Action.Create({Type = "Spell", ID = 275398 }),
-    DemonicStrength                        = Action.Create({Type = "Spell", ID = 267171 }),
-    VisionofPerfection                     = Action.Create({Type = "Spell", ID =  }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    DreadstalkersBuff                      = Action.Create({Type = "Spell", ID =  }),
-    BalefulInvocation                      = Action.Create({Type = "Spell", ID = 287059 }),
-    ShadowsBite                            = Action.Create({Type = "Spell", ID = 272944 }),
-    ShadowsBiteBuff                        = Action.Create({Type = "Spell", ID = 272945 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 30146 }),
+    InnerDemons                            = Action.Create({ Type = "Spell", ID = 267216 }),
+    Demonbolt                              = Action.Create({ Type = "Spell", ID = 264178 }),
+    SoulStrike                             = Action.Create({ Type = "Spell", ID = 264057 }),
+    DemonicConsumption                     = Action.Create({ Type = "Spell", ID = 267215 }),
+    HandofGuldan                           = Action.Create({ Type = "Spell", ID = 105174 }),
+    ShadowBolt                             = Action.Create({ Type = "Spell", ID = 686 }),
+    Implosion                              = Action.Create({ Type = "Spell", ID = 196277 }),
+    WildImpsBuff                           = Action.Create({ Type = "Spell", ID =  }),
+    CallDreadstalkers                      = Action.Create({ Type = "Spell", ID = 104316 }),
+    BilescourgeBombers                     = Action.Create({ Type = "Spell", ID = 267211 }),
+    DemonicPowerBuff                       = Action.Create({ Type = "Spell", ID = 265273 }),
+    DemonicCalling                         = Action.Create({ Type = "Spell", ID = 205145 }),
+    GrimoireFelguard                       = Action.Create({ Type = "Spell", ID = 111898 }),
+    SummonDemonicTyrant                    = Action.Create({ Type = "Spell", ID = 265187 }),
+    DemonicCallingBuff                     = Action.Create({ Type = "Spell", ID = 205146 }),
+    DemonicCoreBuff                        = Action.Create({ Type = "Spell", ID = 264173 }),
+    SummonVilefiend                        = Action.Create({ Type = "Spell", ID = 264119 }),
+    Doom                                   = Action.Create({ Type = "Spell", ID = 265412 }),
+    DoomDebuff                             = Action.Create({ Type = "Spell", ID = 265412 }),
+    NetherPortal                           = Action.Create({ Type = "Spell", ID = 267217 }),
+    NetherPortalBuff                       = Action.Create({ Type = "Spell", ID = 267218 }),
+    PowerSiphon                            = Action.Create({ Type = "Spell", ID = 264130 }),
+    ExplosivePotential                     = Action.Create({ Type = "Spell", ID = 275395 }),
+    ExplosivePotentialBuff                 = Action.Create({ Type = "Spell", ID = 275398 }),
+    DemonicStrength                        = Action.Create({ Type = "Spell", ID = 267171 }),
+    VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    DreadstalkersBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    BalefulInvocation                      = Action.Create({ Type = "Spell", ID = 287059 }),
+    ShadowsBite                            = Action.Create({ Type = "Spell", ID = 272944 }),
+    ShadowsBiteBuff                        = Action.Create({ Type = "Spell", ID = 272945 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -67,6 +85,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -171,24 +191,26 @@ local function IsSchoolFree()
 end 
 
 local function FutureShard ()
-  local Shard = Player:SoulShards()
-  if not Player:IsCasting() then
-    return Shard
-  else
-    if Player:IsCasting(A.UnstableAffliction) 
-        or Player:IsCasting(A.SeedOfCorruption) then
-      return Shard - 1
-    elseif Player:IsCasting(A.SummonDoomGuard) 
-        or Player:IsCasting(A.SummonDoomGuardSuppremacy) 
-        or Player:IsCasting(A.SummonInfernal) 
-        or Player:IsCasting(A.SummonInfernalSuppremacy) 
-        or Player:IsCasting(A.GrimoireFelhunter) 
-        or Player:IsCasting(A.SummonFelhunter) then
-      return Shard - 1
+    local Shard = Player:SoulShards()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    
+    if not Unit("player"):IsCasting() then
+        return Shard
     else
-      return Shard
+        if spellID = A.UnstableAffliction.ID 
+                or spellID = A.SeedOfCorruption.ID then
+            return Shard - 1
+        elseif spellID = A.SummonDoomGuard.ID 
+                or spellID = A.SummonDoomGuardSuppremacy.ID 
+                or spellID = A.SummonInfernal.ID
+                or spellID = A.SummonInfernalSuppremacy.ID 
+                or spellID = A.GrimoireFelhunter.ID 
+                or spellID = A.SummonFelhunter.ID then
+            return Shard - 1
+        else
+            return Shard
+        end
     end
-  end
 end
 
 
@@ -244,7 +266,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime > 15 or Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):HasHeroism) then
+            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime() > 15 or Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):HasHeroism) then
                 return A.SoulStrike:Show(icon)
             end
             -- shadow_bolt
@@ -398,19 +420,19 @@ A[3] = function(icon, isMulti)
                 return A.NetherPortal:Show(icon)
             end
             -- call_dreadstalkers,if=time>=30
-            if A.CallDreadstalkers:IsReady(unit) and (Unit("player"):CombatTime >= 30) then
+            if A.CallDreadstalkers:IsReady(unit) and (Unit("player"):CombatTime() >= 30) then
                 return A.CallDreadstalkers:Show(icon)
             end
             -- hand_of_guldan,if=time>=30&cooldown.call_dreadstalkers.remains>18&soul_shard>=3
-            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime >= 30 and A.CallDreadstalkers:GetCooldown() > 18 and Player:SoulShardsP >= 3) then
+            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime() >= 30 and A.CallDreadstalkers:GetCooldown() > 18 and Player:SoulShardsP >= 3) then
                 return A.HandofGuldan:Show(icon)
             end
             -- power_siphon,if=time>=30&buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&soul_shard>=3
-            if A.PowerSiphon:IsReady(unit) and (Unit("player"):CombatTime >= 30 and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 2 and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 and bool(Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true)) and Player:SoulShardsP >= 3) then
+            if A.PowerSiphon:IsReady(unit) and (Unit("player"):CombatTime() >= 30 and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 2 and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 and bool(Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true)) and Player:SoulShardsP >= 3) then
                 return A.PowerSiphon:Show(icon)
             end
             -- hand_of_guldan,if=time>=30&soul_shard>=5
-            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime >= 30 and Player:SoulShardsP >= 5) then
+            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime() >= 30 and Player:SoulShardsP >= 5) then
                 return A.HandofGuldan:Show(icon)
             end
             -- call_action_list,name=build_a_shard
@@ -450,7 +472,7 @@ A[3] = function(icon, isMulti)
                 return A.BilescourgeBombers:Show(icon)
             end
             -- soul_strike,line_cd=30,if=!buff.bloodlust.remains|time>5&prev_gcd.1.hand_of_guldan
-            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism or Unit("player"):CombatTime > 5 and Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
+            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism or Unit("player"):CombatTime() > 5 and Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
                 return A.SoulStrike:Show(icon)
             end
             -- summon_vilefiend,if=soul_shard=5
@@ -470,7 +492,7 @@ A[3] = function(icon, isMulti)
                 return A.HandofGuldan:Show(icon)
             end
             -- hand_of_guldan,if=soul_shard>=3&prev_gcd.2.hand_of_guldan&time>5&(prev_gcd.1.soul_strike|!talent.soul_strike.enabled&prev_gcd.1.shadow_bolt)
-            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):CombatTime > 5 and (Unit("player"):GetSpellLastCast(A.SoulStrike) or not A.SoulStrike:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.ShadowBolt))) then
+            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):CombatTime() > 5 and (Unit("player"):GetSpellLastCast(A.SoulStrike) or not A.SoulStrike:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.ShadowBolt))) then
                 return A.HandofGuldan:Show(icon)
             end
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
@@ -552,15 +574,15 @@ end
                 A.VialofStorms:Show(icon)
             end
             -- call_action_list,name=opener,if=!talent.nether_portal.enabled&time<30&!cooldown.summon_demonic_tyrant.remains
-            if (not A.NetherPortal:IsSpellLearned() and Unit("player"):CombatTime < 30 and not bool(A.SummonDemonicTyrant:GetCooldown())) then
+            if (not A.NetherPortal:IsSpellLearned() and Unit("player"):CombatTime() < 30 and not bool(A.SummonDemonicTyrant:GetCooldown())) then
                 local ShouldReturn = Opener(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- use_item,name=azsharas_font_of_power,if=(time>30|!talent.nether_portal.enabled)&talent.grimoire_felguard.enabled&(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15)|target.time_to_die<=35
-            if A.AzsharasFontofPower:IsReady(unit) and ((Unit("player"):CombatTime > 30 or not A.NetherPortal:IsSpellLearned()) and A.GrimoireFelguard:IsSpellLearned() and (Unit(unit):TimeToDie() > 120 or Unit(unit):TimeToDie() < A.SummonDemonicTyrant:GetCooldown() + 15) or Unit(unit):TimeToDie() <= 35) then
+            if A.AzsharasFontofPower:IsReady(unit) and ((Unit("player"):CombatTime() > 30 or not A.NetherPortal:IsSpellLearned()) and A.GrimoireFelguard:IsSpellLearned() and (Unit(unit):TimeToDie() > 120 or Unit(unit):TimeToDie() < A.SummonDemonicTyrant:GetCooldown() + 15) or Unit(unit):TimeToDie() <= 35) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- hand_of_guldan,if=azerite.explosive_potential.rank&time<5&soul_shard>2&buff.explosive_potential.down&buff.wild_imps.stack<3&!prev_gcd.1.hand_of_guldan&&!prev_gcd.2.hand_of_guldan
-            if A.HandofGuldan:IsReady(unit) and (bool(A.ExplosivePotential:GetAzeriteRank()) and Unit("player"):CombatTime < 5 and Player:SoulShardsP > 2 and bool(Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true)) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 3 and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and true and not Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
+            if A.HandofGuldan:IsReady(unit) and (bool(A.ExplosivePotential:GetAzeriteRank()) and Unit("player"):CombatTime() < 5 and Player:SoulShardsP > 2 and bool(Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true)) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 3 and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and true and not Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
                 return A.HandofGuldan:Show(icon)
             end
             -- demonbolt,if=soul_shard<=3&buff.demonic_core.up&buff.demonic_core.stack=4
@@ -576,7 +598,7 @@ end
                 return A.Doom:Show(icon)
             end
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled
-            if A.BilescourgeBombers:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):CombatTime < 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and bool(Unit("player"):HasBuffs(A.DreadstalkersBuff.ID, true)) and A.NetherPortal:IsSpellLearned()) then
+            if A.BilescourgeBombers:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):CombatTime() < 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and bool(Unit("player"):HasBuffs(A.DreadstalkersBuff.ID, true)) and A.NetherPortal:IsSpellLearned()) then
                 return A.BilescourgeBombers:Show(icon)
             end
             -- demonic_strength,if=(buff.wild_imps.stack<6|buff.demonic_power.up)|spell_targets.implosion<2
@@ -669,7 +691,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -700,7 +722,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -751,5 +773,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

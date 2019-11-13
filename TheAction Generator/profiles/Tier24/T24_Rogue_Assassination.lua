@@ -19,48 +19,65 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
-    MarkedForDeath                         = Action.Create({Type = "Spell", ID = 137619 }),
-    ApplyPoison                            = Action.Create({Type = "Spell", ID =  }),
-    Vendetta                               = Action.Create({Type = "Spell", ID = 79140 }),
-    VendettaDebuff                         = Action.Create({Type = "Spell", ID = 79140 }),
-    ToxicBladeDebuff                       = Action.Create({Type = "Spell", ID = 245389 }),
-    RuptureDebuff                          = Action.Create({Type = "Spell", ID = 1943 }),
-    Subterfuge                             = Action.Create({Type = "Spell", ID = 108208 }),
-    ShroudedSuffocation                    = Action.Create({Type = "Spell", ID =  }),
-    GarroteDebuff                          = Action.Create({Type = "Spell", ID = 703 }),
-    Vanish                                 = Action.Create({Type = "Spell", ID = 1856 }),
-    Nightstalker                           = Action.Create({Type = "Spell", ID = 14062 }),
-    Exsanguinate                           = Action.Create({Type = "Spell", ID = 200806 }),
-    DeeperStratagem                        = Action.Create({Type = "Spell", ID = 193531 }),
-    ToxicBlade                             = Action.Create({Type = "Spell", ID = 245388 }),
-    PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
-    Garrote                                = Action.Create({Type = "Spell", ID = 703 }),
-    MasterAssassin                         = Action.Create({Type = "Spell", ID =  }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    Envenom                                = Action.Create({Type = "Spell", ID = 32645 }),
-    FanofKnives                            = Action.Create({Type = "Spell", ID = 51723 }),
-    EchoingBlades                          = Action.Create({Type = "Spell", ID =  }),
-    HiddenBladesBuff                       = Action.Create({Type = "Spell", ID =  }),
-    DoubleDose                             = Action.Create({Type = "Spell", ID =  }),
-    DeadlyPoisonDotDebuff                  = Action.Create({Type = "Spell", ID = 177918 }),
-    Blindside                              = Action.Create({Type = "Spell", ID =  }),
-    BlindsideBuff                          = Action.Create({Type = "Spell", ID =  }),
-    VenomRush                              = Action.Create({Type = "Spell", ID = 152152 }),
-    Mutilate                               = Action.Create({Type = "Spell", ID = 1329 }),
-    ScentofBlood                           = Action.Create({Type = "Spell", ID =  }),
-    Rupture                                = Action.Create({Type = "Spell", ID = 1943 }),
-    CrimsonTempest                         = Action.Create({Type = "Spell", ID = 121411 }),
-    CrimsonTempestBuff                     = Action.Create({Type = "Spell", ID = 121411 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    SubterfugeBuff                         = Action.Create({Type = "Spell", ID = 108208 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    MarkedForDeath                         = Action.Create({ Type = "Spell", ID = 137619 }),
+    ApplyPoison                            = Action.Create({ Type = "Spell", ID =  }),
+    Vendetta                               = Action.Create({ Type = "Spell", ID = 79140 }),
+    VendettaDebuff                         = Action.Create({ Type = "Spell", ID = 79140 }),
+    ToxicBladeDebuff                       = Action.Create({ Type = "Spell", ID = 245389 }),
+    RuptureDebuff                          = Action.Create({ Type = "Spell", ID = 1943 }),
+    Subterfuge                             = Action.Create({ Type = "Spell", ID = 108208 }),
+    ShroudedSuffocation                    = Action.Create({ Type = "Spell", ID =  }),
+    GarroteDebuff                          = Action.Create({ Type = "Spell", ID = 703 }),
+    Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
+    Nightstalker                           = Action.Create({ Type = "Spell", ID = 14062 }),
+    Exsanguinate                           = Action.Create({ Type = "Spell", ID = 200806 }),
+    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
+    ToxicBlade                             = Action.Create({ Type = "Spell", ID = 245388 }),
+    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
+    Garrote                                = Action.Create({ Type = "Spell", ID = 703 }),
+    MasterAssassin                         = Action.Create({ Type = "Spell", ID =  }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Envenom                                = Action.Create({ Type = "Spell", ID = 32645 }),
+    FanofKnives                            = Action.Create({ Type = "Spell", ID = 51723 }),
+    EchoingBlades                          = Action.Create({ Type = "Spell", ID =  }),
+    HiddenBladesBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    DoubleDose                             = Action.Create({ Type = "Spell", ID =  }),
+    DeadlyPoisonDotDebuff                  = Action.Create({ Type = "Spell", ID = 177918 }),
+    Blindside                              = Action.Create({ Type = "Spell", ID =  }),
+    BlindsideBuff                          = Action.Create({ Type = "Spell", ID =  }),
+    VenomRush                              = Action.Create({ Type = "Spell", ID = 152152 }),
+    Mutilate                               = Action.Create({ Type = "Spell", ID = 1329 }),
+    ScentofBlood                           = Action.Create({ Type = "Spell", ID =  }),
+    Rupture                                = Action.Create({ Type = "Spell", ID = 1943 }),
+    CrimsonTempest                         = Action.Create({ Type = "Spell", ID = 121411 }),
+    CrimsonTempestBuff                     = Action.Create({ Type = "Spell", ID = 121411 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    SubterfugeBuff                         = Action.Create({ Type = "Spell", ID = 108208 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -73,6 +90,8 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -875,7 +894,7 @@ A[3] = function(icon, isMulti)
                 VarSkipRupture = num(Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) or MasterAssassinRemains > 0) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 2)
             end
             -- rupture,if=talent.exsanguinate.enabled&((combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1)|(!ticking&(time>10|combo_points>=2)))
-            if A.Rupture:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and ((Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1) or (not Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and (Unit("player"):CombatTime > 10 or Player:ComboPoints() >= 2)))) then
+            if A.Rupture:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and ((Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1) or (not Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and (Unit("player"):CombatTime() > 10 or Player:ComboPoints() >= 2)))) then
                 return A.Rupture:Show(icon)
             end
             -- pool_resource,for_next=1
@@ -1052,7 +1071,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -1083,7 +1102,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -1134,5 +1153,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

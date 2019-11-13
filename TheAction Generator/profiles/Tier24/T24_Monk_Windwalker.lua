@@ -19,41 +19,59 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MONK_WINDWALKER] = {
-    ChiBurst                               = Action.Create({Type = "Spell", ID = 123986 }),
-    SerenityBuff                           = Action.Create({Type = "Spell", ID = 152173 }),
-    Serenity                               = Action.Create({Type = "Spell", ID = 152173 }),
-    FistoftheWhiteTiger                    = Action.Create({Type = "Spell", ID = 261947 }),
-    ChiWave                                = Action.Create({Type = "Spell", ID = 115098 }),
-    InvokeXuentheWhiteTiger                = Action.Create({Type = "Spell", ID = 123904 }),
-    RisingSunKick                          = Action.Create({Type = "Spell", ID = 107428 }),
-    MarkoftheCraneDebuff                   = Action.Create({Type = "Spell", ID = 228287 }),
-    WhirlingDragonPunch                    = Action.Create({Type = "Spell", ID = 152175 }),
-    FistsofFury                            = Action.Create({Type = "Spell", ID = 113656 }),
-    EnergizingElixir                       = Action.Create({Type = "Spell", ID = 115288 }),
-    TigerPalm                              = Action.Create({Type = "Spell", ID = 100780 }),
-    RushingJadeWind                        = Action.Create({Type = "Spell", ID = 261715 }),
-    RushingJadeWindBuff                    = Action.Create({Type = "Spell", ID = 261715 }),
-    SpinningCraneKick                      = Action.Create({Type = "Spell", ID = 101546 }),
-    ReverseHarm                            = Action.Create({Type = "Spell", ID =  }),
-    HitCombo                               = Action.Create({Type = "Spell", ID = 196741 }),
-    FlyingSerpentKick                      = Action.Create({Type = "Spell", ID = 101545 }),
-    BokProcBuff                            = Action.Create({Type = "Spell", ID = 116768 }),
-    BlackoutKick                           = Action.Create({Type = "Spell", ID = 100784 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    StormEarthandFire                      = Action.Create({Type = "Spell", ID = 137639 }),
-    TouchofDeath                           = Action.Create({Type = "Spell", ID = 115080 }),
-    TouchofDeathDebuff                     = Action.Create({Type = "Spell", ID =  }),
-    StormEarthandFireBuff                  = Action.Create({Type = "Spell", ID = 137639 }),
-    DanceofChijiBuff                       = Action.Create({Type = "Spell", ID =  }),
-    SpearHandStrike                        = Action.Create({Type = "Spell", ID = 116705 }),
-    TouchofKarma                           = Action.Create({Type = "Spell", ID = 122470 }),
-    OpenPalmStrikes                        = Action.Create({Type = "Spell", ID =  }),
-    GloryoftheDawn                         = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ChiBurst                               = Action.Create({ Type = "Spell", ID = 123986 }),
+    SerenityBuff                           = Action.Create({ Type = "Spell", ID = 152173 }),
+    Serenity                               = Action.Create({ Type = "Spell", ID = 152173 }),
+    FistoftheWhiteTiger                    = Action.Create({ Type = "Spell", ID = 261947 }),
+    ChiWave                                = Action.Create({ Type = "Spell", ID = 115098 }),
+    InvokeXuentheWhiteTiger                = Action.Create({ Type = "Spell", ID = 123904 }),
+    RisingSunKick                          = Action.Create({ Type = "Spell", ID = 107428 }),
+    MarkoftheCraneDebuff                   = Action.Create({ Type = "Spell", ID = 228287 }),
+    WhirlingDragonPunch                    = Action.Create({ Type = "Spell", ID = 152175 }),
+    FistsofFury                            = Action.Create({ Type = "Spell", ID = 113656 }),
+    EnergizingElixir                       = Action.Create({ Type = "Spell", ID = 115288 }),
+    TigerPalm                              = Action.Create({ Type = "Spell", ID = 100780 }),
+    RushingJadeWind                        = Action.Create({ Type = "Spell", ID = 261715 }),
+    RushingJadeWindBuff                    = Action.Create({ Type = "Spell", ID = 261715 }),
+    SpinningCraneKick                      = Action.Create({ Type = "Spell", ID = 101546 }),
+    ReverseHarm                            = Action.Create({ Type = "Spell", ID =  }),
+    HitCombo                               = Action.Create({ Type = "Spell", ID = 196741 }),
+    FlyingSerpentKick                      = Action.Create({ Type = "Spell", ID = 101545 }),
+    BokProcBuff                            = Action.Create({ Type = "Spell", ID = 116768 }),
+    BlackoutKick                           = Action.Create({ Type = "Spell", ID = 100784 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    StormEarthandFire                      = Action.Create({ Type = "Spell", ID = 137639 }),
+    TouchofDeath                           = Action.Create({ Type = "Spell", ID = 115080 }),
+    TouchofDeathDebuff                     = Action.Create({ Type = "Spell", ID =  }),
+    StormEarthandFireBuff                  = Action.Create({ Type = "Spell", ID = 137639 }),
+    DanceofChijiBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    SpearHandStrike                        = Action.Create({ Type = "Spell", ID = 116705 }),
+    TouchofKarma                           = Action.Create({ Type = "Spell", ID = 122470 }),
+    OpenPalmStrikes                        = Action.Create({ Type = "Spell", ID =  }),
+    GloryoftheDawn                         = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -66,6 +84,8 @@ Action[ACTION_CONST_MONK_WINDWALKER] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -716,7 +736,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- chi_wave,if=!talent.fist_of_the_white_tiger.enabled&time<=3
-            if A.ChiWave:IsReady(unit) and (not A.FistoftheWhiteTiger:IsSpellLearned() and Unit("player"):CombatTime <= 3) then
+            if A.ChiWave:IsReady(unit) and (not A.FistoftheWhiteTiger:IsSpellLearned() and Unit("player"):CombatTime() <= 3) then
                 return A.ChiWave:Show(icon)
             end
             -- call_action_list,name=cd
@@ -741,7 +761,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -772,7 +792,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -823,5 +843,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

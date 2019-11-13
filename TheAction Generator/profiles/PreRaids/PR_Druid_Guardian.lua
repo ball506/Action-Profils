@@ -19,34 +19,52 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DRUID_GUARDIAN] = {
-    BearFormBuff                           = Action.Create({Type = "Spell", ID = 5487 }),
-    BearForm                               = Action.Create({Type = "Spell", ID = 5487 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Barkskin                               = Action.Create({Type = "Spell", ID = 22812 }),
-    LunarBeam                              = Action.Create({Type = "Spell", ID = 204066 }),
-    BristlingFur                           = Action.Create({Type = "Spell", ID = 155835 }),
-    Maul                                   = Action.Create({Type = "Spell", ID = 6807 }),
-    Ironfur                                = Action.Create({Type = "Spell", ID = 192081 }),
-    IronfurBuff                            = Action.Create({Type = "Spell", ID = 192081 }),
-    LayeredMane                            = Action.Create({Type = "Spell", ID = 279552 }),
-    Pulverize                              = Action.Create({Type = "Spell", ID = 80313 }),
-    ThrashBearDebuff                       = Action.Create({Type = "Spell", ID = 192090 }),
-    Moonfire                               = Action.Create({Type = "Spell", ID = 8921 }),
-    MoonfireDebuff                         = Action.Create({Type = "Spell", ID = 164812 }),
-    Incarnation                            = Action.Create({Type = "Spell", ID = 102558 }),
-    ThrashCat                              = Action.Create({Type = "Spell", ID = 106830 }),
-    ThrashBear                             = Action.Create({Type = "Spell", ID = 77758 }),
-    IncarnationBuff                        = Action.Create({Type = "Spell", ID = 102558 }),
-    SwipeCat                               = Action.Create({Type = "Spell", ID = 106785 }),
-    SwipeBear                              = Action.Create({Type = "Spell", ID = 213771 }),
-    Mangle                                 = Action.Create({Type = "Spell", ID = 33917 }),
-    GalacticGuardianBuff                   = Action.Create({Type = "Spell", ID = 213708 }),
-    PoweroftheMoon                         = Action.Create({Type = "Spell", ID = 273367 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    BearFormBuff                           = Action.Create({ Type = "Spell", ID = 5487 }),
+    BearForm                               = Action.Create({ Type = "Spell", ID = 5487 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Barkskin                               = Action.Create({ Type = "Spell", ID = 22812 }),
+    LunarBeam                              = Action.Create({ Type = "Spell", ID = 204066 }),
+    BristlingFur                           = Action.Create({ Type = "Spell", ID = 155835 }),
+    Maul                                   = Action.Create({ Type = "Spell", ID = 6807 }),
+    Ironfur                                = Action.Create({ Type = "Spell", ID = 192081 }),
+    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081 }),
+    LayeredMane                            = Action.Create({ Type = "Spell", ID = 279552 }),
+    Pulverize                              = Action.Create({ Type = "Spell", ID = 80313 }),
+    ThrashBearDebuff                       = Action.Create({ Type = "Spell", ID = 192090 }),
+    Moonfire                               = Action.Create({ Type = "Spell", ID = 8921 }),
+    MoonfireDebuff                         = Action.Create({ Type = "Spell", ID = 164812 }),
+    Incarnation                            = Action.Create({ Type = "Spell", ID = 102558 }),
+    ThrashCat                              = Action.Create({ Type = "Spell", ID = 106830 }),
+    ThrashBear                             = Action.Create({ Type = "Spell", ID = 77758 }),
+    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102558 }),
+    SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
+    SwipeBear                              = Action.Create({ Type = "Spell", ID = 213771 }),
+    Mangle                                 = Action.Create({ Type = "Spell", ID = 33917 }),
+    GalacticGuardianBuff                   = Action.Create({ Type = "Spell", ID = 213708 }),
+    PoweroftheMoon                         = Action.Create({ Type = "Spell", ID = 273367 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -59,6 +77,8 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -163,7 +183,7 @@ local function IsSchoolFree()
 end 
 
 local function Swipe()
-  if Unit("player"):HasBuffs(A.CatForm) then
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
     return A.SwipeCat;
   else
     return A.SwipeBear;
@@ -171,7 +191,7 @@ local function Swipe()
 end
 
 local function Thrash()
-  if Unit("player"):HasBuffs(A.CatForm) then
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
     return A.ThrashCat;
   else
     return A.ThrashBear;
@@ -346,7 +366,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -377,7 +397,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -428,5 +448,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

@@ -19,27 +19,45 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
-    DeathStrike                            = Action.Create({Type = "Spell", ID = 49998 }),
-    BloodDrinker                           = Action.Create({Type = "Spell", ID = 206931 }),
-    DancingRuneWeaponBuff                  = Action.Create({Type = "Spell", ID = 81256 }),
-    Marrowrend                             = Action.Create({Type = "Spell", ID = 195182 }),
-    BoneShieldBuff                         = Action.Create({Type = "Spell", ID = 195181 }),
-    BloodBoil                              = Action.Create({Type = "Spell", ID = 50842 }),
-    HemostasisBuff                         = Action.Create({Type = "Spell", ID = 273947 }),
-    Ossuary                                = Action.Create({Type = "Spell", ID = 219786 }),
-    Bonestorm                              = Action.Create({Type = "Spell", ID = 194844 }),
-    Heartbreaker                           = Action.Create({Type = "Spell", ID = 221536 }),
-    DeathandDecay                          = Action.Create({Type = "Spell", ID = 43265 }),
-    RuneStrike                             = Action.Create({Type = "Spell", ID = 210764 }),
-    HeartStrike                            = Action.Create({Type = "Spell", ID = 206930 }),
-    CrimsonScourgeBuff                     = Action.Create({Type = "Spell", ID = 81141 }),
-    RapidDecomposition                     = Action.Create({Type = "Spell", ID = 194662 }),
-    Consumption                            = Action.Create({Type = "Spell", ID = 205223 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    DancingRuneWeapon                      = Action.Create({Type = "Spell", ID = 49028 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Tombstone                              = Action.Create({Type = "Spell", ID = 219809 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    DeathStrike                            = Action.Create({ Type = "Spell", ID = 49998 }),
+    BloodDrinker                           = Action.Create({ Type = "Spell", ID = 206931 }),
+    DancingRuneWeaponBuff                  = Action.Create({ Type = "Spell", ID = 81256 }),
+    Marrowrend                             = Action.Create({ Type = "Spell", ID = 195182 }),
+    BoneShieldBuff                         = Action.Create({ Type = "Spell", ID = 195181 }),
+    BloodBoil                              = Action.Create({ Type = "Spell", ID = 50842 }),
+    HemostasisBuff                         = Action.Create({ Type = "Spell", ID = 273947 }),
+    Ossuary                                = Action.Create({ Type = "Spell", ID = 219786 }),
+    Bonestorm                              = Action.Create({ Type = "Spell", ID = 194844 }),
+    Heartbreaker                           = Action.Create({ Type = "Spell", ID = 221536 }),
+    DeathandDecay                          = Action.Create({ Type = "Spell", ID = 43265 }),
+    RuneStrike                             = Action.Create({ Type = "Spell", ID = 210764 }),
+    HeartStrike                            = Action.Create({ Type = "Spell", ID = 206930 }),
+    CrimsonScourgeBuff                     = Action.Create({ Type = "Spell", ID = 81141 }),
+    RapidDecomposition                     = Action.Create({ Type = "Spell", ID = 194662 }),
+    Consumption                            = Action.Create({ Type = "Spell", ID = 205223 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    DancingRuneWeapon                      = Action.Create({ Type = "Spell", ID = 49028 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Tombstone                              = Action.Create({ Type = "Spell", ID = 219809 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -52,6 +70,8 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -305,7 +325,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -336,7 +356,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -387,5 +407,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

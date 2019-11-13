@@ -19,38 +19,56 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MAGE_FIRE] = {
-    ArcaneIntellectBuff                    = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneIntellect                        = Action.Create({Type = "Spell", ID = 1459 }),
-    MirrorImage                            = Action.Create({Type = "Spell", ID = 55342 }),
-    Pyroblast                              = Action.Create({Type = "Spell", ID = 11366 }),
-    LivingBomb                             = Action.Create({Type = "Spell", ID = 44457 }),
-    CombustionBuff                         = Action.Create({Type = "Spell", ID = 190319 }),
-    Combustion                             = Action.Create({Type = "Spell", ID = 190319 }),
-    Meteor                                 = Action.Create({Type = "Spell", ID = 153561 }),
-    RuneofPowerBuff                        = Action.Create({Type = "Spell", ID = 116014 }),
-    RuneofPower                            = Action.Create({Type = "Spell", ID = 116011 }),
-    Firestarter                            = Action.Create({Type = "Spell", ID = 205026 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    FireBlast                              = Action.Create({Type = "Spell", ID = 108853 }),
-    BlasterMasterBuff                      = Action.Create({Type = "Spell", ID = 274598 }),
-    Fireball                               = Action.Create({Type = "Spell", ID = 133 }),
-    BlasterMaster                          = Action.Create({Type = "Spell", ID = 274596 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Scorch                                 = Action.Create({Type = "Spell", ID = 2948 }),
-    HeatingUpBuff                          = Action.Create({Type = "Spell", ID = 48107 }),
-    HotStreakBuff                          = Action.Create({Type = "Spell", ID = 48108 }),
-    PyroclasmBuff                          = Action.Create({Type = "Spell", ID = 269651 }),
-    PhoenixFlames                          = Action.Create({Type = "Spell", ID = 257541 }),
-    DragonsBreath                          = Action.Create({Type = "Spell", ID = 31661 }),
-    FlameOn                                = Action.Create({Type = "Spell", ID = 205029 }),
-    Flamestrike                            = Action.Create({Type = "Spell", ID = 2120 }),
-    FlamePatch                             = Action.Create({Type = "Spell", ID = 205037 }),
-    SearingTouch                           = Action.Create({Type = "Spell", ID = 269644 }),
-    AlexstraszasFury                       = Action.Create({Type = "Spell", ID = 235870 }),
-    Kindling                               = Action.Create({Type = "Spell", ID = 155148 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneIntellectBuff                    = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneIntellect                        = Action.Create({ Type = "Spell", ID = 1459 }),
+    MirrorImage                            = Action.Create({ Type = "Spell", ID = 55342 }),
+    Pyroblast                              = Action.Create({ Type = "Spell", ID = 11366 }),
+    LivingBomb                             = Action.Create({ Type = "Spell", ID = 44457 }),
+    CombustionBuff                         = Action.Create({ Type = "Spell", ID = 190319 }),
+    Combustion                             = Action.Create({ Type = "Spell", ID = 190319 }),
+    Meteor                                 = Action.Create({ Type = "Spell", ID = 153561 }),
+    RuneofPowerBuff                        = Action.Create({ Type = "Spell", ID = 116014 }),
+    RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
+    Firestarter                            = Action.Create({ Type = "Spell", ID = 205026 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    FireBlast                              = Action.Create({ Type = "Spell", ID = 108853 }),
+    BlasterMasterBuff                      = Action.Create({ Type = "Spell", ID = 274598 }),
+    Fireball                               = Action.Create({ Type = "Spell", ID = 133 }),
+    BlasterMaster                          = Action.Create({ Type = "Spell", ID = 274596 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Scorch                                 = Action.Create({ Type = "Spell", ID = 2948 }),
+    HeatingUpBuff                          = Action.Create({ Type = "Spell", ID = 48107 }),
+    HotStreakBuff                          = Action.Create({ Type = "Spell", ID = 48108 }),
+    PyroclasmBuff                          = Action.Create({ Type = "Spell", ID = 269651 }),
+    PhoenixFlames                          = Action.Create({ Type = "Spell", ID = 257541 }),
+    DragonsBreath                          = Action.Create({ Type = "Spell", ID = 31661 }),
+    FlameOn                                = Action.Create({ Type = "Spell", ID = 205029 }),
+    Flamestrike                            = Action.Create({ Type = "Spell", ID = 2120 }),
+    FlamePatch                             = Action.Create({ Type = "Spell", ID = 205037 }),
+    SearingTouch                           = Action.Create({ Type = "Spell", ID = 269644 }),
+    AlexstraszasFury                       = Action.Create({ Type = "Spell", ID = 235870 }),
+    Kindling                               = Action.Create({ Type = "Spell", ID = 155148 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -63,6 +81,8 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -598,7 +618,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -629,7 +649,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -680,5 +700,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

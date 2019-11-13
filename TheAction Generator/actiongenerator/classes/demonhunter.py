@@ -85,6 +85,7 @@ SPELL_INFO = {
             'fury_of_the_illidari':   {SPELL:     201467,
                                        RANGE:     40},
             'fel_devastation':        {SPELL:     212084},
+            'eyes_of_rage':           {SPELL:     278500},
             'shear':                  {SPELL:     203782},
             'sigil_of_flame':         {SPELL:     204596},
             'soul_cleave':            {SPELL:     228477},

@@ -19,50 +19,68 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_ROGUE_SUBTLETY] = {
-    StealthBuff                            = Action.Create({Type = "Spell", ID = 1784 }),
-    MarkedForDeath                         = Action.Create({Type = "Spell", ID = 137619 }),
-    ShadowBladesBuff                       = Action.Create({Type = "Spell", ID = 121471 }),
-    ShadowBlades                           = Action.Create({Type = "Spell", ID = 121471 }),
-    ShurikenStorm                          = Action.Create({Type = "Spell", ID = 197835 }),
-    Gloomblade                             = Action.Create({Type = "Spell", ID = 200758 }),
-    Backstab                               = Action.Create({Type = "Spell", ID = 53 }),
-    SymbolsofDeathBuff                     = Action.Create({Type = "Spell", ID = 212283 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    ShadowDance                            = Action.Create({Type = "Spell", ID = 185313 }),
-    ShadowDanceBuff                        = Action.Create({Type = "Spell", ID = 185313 }),
-    ShurikenTornadoBuff                    = Action.Create({Type = "Spell", ID =  }),
-    SymbolsofDeath                         = Action.Create({Type = "Spell", ID = 212283 }),
-    NightbladeDebuff                       = Action.Create({Type = "Spell", ID = 195452 }),
-    ShurikenTornado                        = Action.Create({Type = "Spell", ID =  }),
-    ShadowFocus                            = Action.Create({Type = "Spell", ID = 108209 }),
-    Subterfuge                             = Action.Create({Type = "Spell", ID = 108208 }),
-    Eviscerate                             = Action.Create({Type = "Spell", ID = 196819 }),
-    NightsVengeanceBuff                    = Action.Create({Type = "Spell", ID =  }),
-    SecretTechnique                        = Action.Create({Type = "Spell", ID =  }),
-    Nightblade                             = Action.Create({Type = "Spell", ID = 195452 }),
-    DarkShadow                             = Action.Create({Type = "Spell", ID = 245687 }),
-    NightsVengeance                        = Action.Create({Type = "Spell", ID =  }),
-    ReplicatingShadows                     = Action.Create({Type = "Spell", ID =  }),
-    Nightstalker                           = Action.Create({Type = "Spell", ID = 14062 }),
-    Vanish                                 = Action.Create({Type = "Spell", ID = 1856 }),
-    FindWeaknessDebuff                     = Action.Create({Type = "Spell", ID =  }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
-    TheFirstDance                          = Action.Create({Type = "Spell", ID =  }),
-    Shadowstrike                           = Action.Create({Type = "Spell", ID = 185438 }),
-    DeeperStratagem                        = Action.Create({Type = "Spell", ID = 193531 }),
-    VanishBuff                             = Action.Create({Type = "Spell", ID = 1856 }),
-    FindWeakness                           = Action.Create({Type = "Spell", ID =  }),
-    BladeIntheShadows                      = Action.Create({Type = "Spell", ID =  }),
-    Vigor                                  = Action.Create({Type = "Spell", ID = 14983 }),
-    MasterofShadows                        = Action.Create({Type = "Spell", ID =  }),
-    Alacrity                               = Action.Create({Type = "Spell", ID =  }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    StealthBuff                            = Action.Create({ Type = "Spell", ID = 1784 }),
+    MarkedForDeath                         = Action.Create({ Type = "Spell", ID = 137619 }),
+    ShadowBladesBuff                       = Action.Create({ Type = "Spell", ID = 121471 }),
+    ShadowBlades                           = Action.Create({ Type = "Spell", ID = 121471 }),
+    ShurikenStorm                          = Action.Create({ Type = "Spell", ID = 197835 }),
+    Gloomblade                             = Action.Create({ Type = "Spell", ID = 200758 }),
+    Backstab                               = Action.Create({ Type = "Spell", ID = 53 }),
+    SymbolsofDeathBuff                     = Action.Create({ Type = "Spell", ID = 212283 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    ShadowDance                            = Action.Create({ Type = "Spell", ID = 185313 }),
+    ShadowDanceBuff                        = Action.Create({ Type = "Spell", ID = 185313 }),
+    ShurikenTornadoBuff                    = Action.Create({ Type = "Spell", ID =  }),
+    SymbolsofDeath                         = Action.Create({ Type = "Spell", ID = 212283 }),
+    NightbladeDebuff                       = Action.Create({ Type = "Spell", ID = 195452 }),
+    ShurikenTornado                        = Action.Create({ Type = "Spell", ID =  }),
+    ShadowFocus                            = Action.Create({ Type = "Spell", ID = 108209 }),
+    Subterfuge                             = Action.Create({ Type = "Spell", ID = 108208 }),
+    Eviscerate                             = Action.Create({ Type = "Spell", ID = 196819 }),
+    NightsVengeanceBuff                    = Action.Create({ Type = "Spell", ID =  }),
+    SecretTechnique                        = Action.Create({ Type = "Spell", ID =  }),
+    Nightblade                             = Action.Create({ Type = "Spell", ID = 195452 }),
+    DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687 }),
+    NightsVengeance                        = Action.Create({ Type = "Spell", ID =  }),
+    ReplicatingShadows                     = Action.Create({ Type = "Spell", ID =  }),
+    Nightstalker                           = Action.Create({ Type = "Spell", ID = 14062 }),
+    Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
+    FindWeaknessDebuff                     = Action.Create({ Type = "Spell", ID =  }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
+    TheFirstDance                          = Action.Create({ Type = "Spell", ID =  }),
+    Shadowstrike                           = Action.Create({ Type = "Spell", ID = 185438 }),
+    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
+    VanishBuff                             = Action.Create({ Type = "Spell", ID = 1856 }),
+    FindWeakness                           = Action.Create({ Type = "Spell", ID =  }),
+    BladeIntheShadows                      = Action.Create({ Type = "Spell", ID =  }),
+    Vigor                                  = Action.Create({ Type = "Spell", ID = 14983 }),
+    MasterofShadows                        = Action.Create({ Type = "Spell", ID =  }),
+    Alacrity                               = Action.Create({ Type = "Spell", ID =  }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -75,6 +93,8 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -445,7 +465,7 @@ A[3] = function(icon, isMulti)
                 return Stealthed(unit);
             end
             -- nightblade,if=target.time_to_die>6&remains<gcd.max&combo_points>=4-(time<10)*2
-            if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.GetGCD() and Player:ComboPoints() >= 4 - num((Unit("player"):CombatTime < 10)) * 2) then
+            if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.GetGCD() and Player:ComboPoints() >= 4 - num((Unit("player"):CombatTime() < 10)) * 2) then
                 return A.Nightblade:Show(icon)
             end
             -- variable,name=use_priority_rotation,value=priority_rotation&spell_targets.shuriken_storm>=2
@@ -498,7 +518,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -529,7 +549,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -580,5 +600,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

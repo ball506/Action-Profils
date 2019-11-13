@@ -19,49 +19,67 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DRUID_FERAL] = {
-    Regrowth                               = Action.Create({Type = "Spell", ID = 8936 }),
-    BloodtalonsBuff                        = Action.Create({Type = "Spell", ID = 145152 }),
-    Bloodtalons                            = Action.Create({Type = "Spell", ID = 155672 }),
-    WildFleshrending                       = Action.Create({Type = "Spell", ID = 279527 }),
-    CatFormBuff                            = Action.Create({Type = "Spell", ID = 768 }),
-    CatForm                                = Action.Create({Type = "Spell", ID = 768 }),
-    ProwlBuff                              = Action.Create({Type = "Spell", ID = 5215 }),
-    Prowl                                  = Action.Create({Type = "Spell", ID = 5215 }),
-    BerserkBuff                            = Action.Create({Type = "Spell", ID = 106951 }),
-    Berserk                                = Action.Create({Type = "Spell", ID = 106951 }),
-    TigersFury                             = Action.Create({Type = "Spell", ID = 5217 }),
-    TigersFuryBuff                         = Action.Create({Type = "Spell", ID = 5217 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    FeralFrenzy                            = Action.Create({Type = "Spell", ID = 274837 }),
-    Incarnation                            = Action.Create({Type = "Spell", ID = 102543 }),
-    IncarnationBuff                        = Action.Create({Type = "Spell", ID = 102543 }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    Rake                                   = Action.Create({Type = "Spell", ID = 1822 }),
-    RakeDebuff                             = Action.Create({Type = "Spell", ID = 155722 }),
-    SavageRoar                             = Action.Create({Type = "Spell", ID = 52610 }),
-    PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
-    SavageRoarBuff                         = Action.Create({Type = "Spell", ID = 52610 }),
-    PrimalWrath                            = Action.Create({Type = "Spell", ID = 285381 }),
-    RipDebuff                              = Action.Create({Type = "Spell", ID = 1079 }),
-    Rip                                    = Action.Create({Type = "Spell", ID = 1079 }),
-    Sabertooth                             = Action.Create({Type = "Spell", ID = 202031 }),
-    Maim                                   = Action.Create({Type = "Spell", ID = 22570 }),
-    IronJawsBuff                           = Action.Create({Type = "Spell", ID = 276026 }),
-    FerociousBiteMaxEnergy                 = Action.Create({Type = "Spell", ID = 22568 }),
-    FerociousBite                          = Action.Create({Type = "Spell", ID = 22568 }),
-    PredatorySwiftnessBuff                 = Action.Create({Type = "Spell", ID = 69369 }),
-    LunarInspiration                       = Action.Create({Type = "Spell", ID = 155580 }),
-    BrutalSlash                            = Action.Create({Type = "Spell", ID = 202028 }),
-    ThrashCat                              = Action.Create({Type = "Spell", ID = 106830 }),
-    ThrashCatDebuff                        = Action.Create({Type = "Spell", ID = 106830 }),
-    ScentofBlood                           = Action.Create({Type = "Spell", ID = 285564 }),
-    ScentofBloodBuff                       = Action.Create({Type = "Spell", ID = 285646 }),
-    SwipeCat                               = Action.Create({Type = "Spell", ID = 106785 }),
-    MoonfireCat                            = Action.Create({Type = "Spell", ID = 155625 }),
-    MoonfireCatDebuff                      = Action.Create({Type = "Spell", ID = 155625 }),
-    ClearcastingBuff                       = Action.Create({Type = "Spell", ID = 135700 }),
-    Shred                                  = Action.Create({Type = "Spell", ID = 5221 }),
-    ShadowmeldBuff                         = Action.Create({Type = "Spell", ID = 58984 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    Regrowth                               = Action.Create({ Type = "Spell", ID = 8936 }),
+    BloodtalonsBuff                        = Action.Create({ Type = "Spell", ID = 145152 }),
+    Bloodtalons                            = Action.Create({ Type = "Spell", ID = 155672 }),
+    WildFleshrending                       = Action.Create({ Type = "Spell", ID = 279527 }),
+    CatFormBuff                            = Action.Create({ Type = "Spell", ID = 768 }),
+    CatForm                                = Action.Create({ Type = "Spell", ID = 768 }),
+    ProwlBuff                              = Action.Create({ Type = "Spell", ID = 5215 }),
+    Prowl                                  = Action.Create({ Type = "Spell", ID = 5215 }),
+    BerserkBuff                            = Action.Create({ Type = "Spell", ID = 106951 }),
+    Berserk                                = Action.Create({ Type = "Spell", ID = 106951 }),
+    TigersFury                             = Action.Create({ Type = "Spell", ID = 5217 }),
+    TigersFuryBuff                         = Action.Create({ Type = "Spell", ID = 5217 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    FeralFrenzy                            = Action.Create({ Type = "Spell", ID = 274837 }),
+    Incarnation                            = Action.Create({ Type = "Spell", ID = 102543 }),
+    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102543 }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    Rake                                   = Action.Create({ Type = "Spell", ID = 1822 }),
+    RakeDebuff                             = Action.Create({ Type = "Spell", ID = 155722 }),
+    SavageRoar                             = Action.Create({ Type = "Spell", ID = 52610 }),
+    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
+    SavageRoarBuff                         = Action.Create({ Type = "Spell", ID = 52610 }),
+    PrimalWrath                            = Action.Create({ Type = "Spell", ID = 285381 }),
+    RipDebuff                              = Action.Create({ Type = "Spell", ID = 1079 }),
+    Rip                                    = Action.Create({ Type = "Spell", ID = 1079 }),
+    Sabertooth                             = Action.Create({ Type = "Spell", ID = 202031 }),
+    Maim                                   = Action.Create({ Type = "Spell", ID = 22570 }),
+    IronJawsBuff                           = Action.Create({ Type = "Spell", ID = 276026 }),
+    FerociousBiteMaxEnergy                 = Action.Create({ Type = "Spell", ID = 22568 }),
+    FerociousBite                          = Action.Create({ Type = "Spell", ID = 22568 }),
+    PredatorySwiftnessBuff                 = Action.Create({ Type = "Spell", ID = 69369 }),
+    LunarInspiration                       = Action.Create({ Type = "Spell", ID = 155580 }),
+    BrutalSlash                            = Action.Create({ Type = "Spell", ID = 202028 }),
+    ThrashCat                              = Action.Create({ Type = "Spell", ID = 106830 }),
+    ThrashCatDebuff                        = Action.Create({ Type = "Spell", ID = 106830 }),
+    ScentofBlood                           = Action.Create({ Type = "Spell", ID = 285564 }),
+    ScentofBloodBuff                       = Action.Create({ Type = "Spell", ID = 285646 }),
+    SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
+    MoonfireCat                            = Action.Create({ Type = "Spell", ID = 155625 }),
+    MoonfireCatDebuff                      = Action.Create({ Type = "Spell", ID = 155625 }),
+    ClearcastingBuff                       = Action.Create({ Type = "Spell", ID = 135700 }),
+    Shred                                  = Action.Create({ Type = "Spell", ID = 5221 }),
+    ShadowmeldBuff                         = Action.Create({ Type = "Spell", ID = 58984 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -74,6 +92,8 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -531,7 +551,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -562,7 +582,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -613,5 +633,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

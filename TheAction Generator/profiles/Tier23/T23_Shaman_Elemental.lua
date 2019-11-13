@@ -19,47 +19,65 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
-    TotemMastery                           = Action.Create({Type = "Spell", ID = 210643 }),
-    StormkeeperBuff                        = Action.Create({Type = "Spell", ID = 191634 }),
-    Stormkeeper                            = Action.Create({Type = "Spell", ID = 191634 }),
-    FireElemental                          = Action.Create({Type = "Spell", ID = 198067 }),
-    StormElemental                         = Action.Create({Type = "Spell", ID = 192249 }),
-    ElementalBlast                         = Action.Create({Type = "Spell", ID = 117014 }),
-    LavaBurst                              = Action.Create({Type = "Spell", ID = 51505 }),
-    ChainLightning                         = Action.Create({Type = "Spell", ID = 188443 }),
-    FlameShock                             = Action.Create({Type = "Spell", ID = 188389 }),
-    FlameShockDebuff                       = Action.Create({Type = "Spell", ID = 188389 }),
-    WindGustBuff                           = Action.Create({Type = "Spell", ID = 263806 }),
-    Ascendance                             = Action.Create({Type = "Spell", ID = 114050 }),
-    Icefury                                = Action.Create({Type = "Spell", ID = 210714 }),
-    IcefuryBuff                            = Action.Create({Type = "Spell", ID = 210714 }),
-    LiquidMagmaTotem                       = Action.Create({Type = "Spell", ID = 192222 }),
-    Earthquake                             = Action.Create({Type = "Spell", ID = 61882 }),
-    MasteroftheElements                    = Action.Create({Type = "Spell", ID = 16166 }),
-    MasteroftheElementsBuff                = Action.Create({Type = "Spell", ID = 260734 }),
-    LavaSurgeBuff                          = Action.Create({Type = "Spell", ID = 77762 }),
-    AscendanceBuff                         = Action.Create({Type = "Spell", ID = 114050 }),
-    FrostShock                             = Action.Create({Type = "Spell", ID = 196840 }),
-    LavaBeam                               = Action.Create({Type = "Spell", ID = 114074 }),
-    IgneousPotential                       = Action.Create({Type = "Spell", ID = 279829 }),
-    SurgeofPowerBuff                       = Action.Create({Type = "Spell", ID = 285514 }),
-    NaturalHarmony                         = Action.Create({Type = "Spell", ID = 278697 }),
-    SurgeofPower                           = Action.Create({Type = "Spell", ID = 262303 }),
-    LightningBolt                          = Action.Create({Type = "Spell", ID = 188196 }),
-    LavaShock                              = Action.Create({Type = "Spell", ID = 273448 }),
-    LavaShockBuff                          = Action.Create({Type = "Spell", ID = 273453 }),
-    TectonicThunder                        = Action.Create({Type = "Spell", ID = 286949 }),
-    CalltheThunder                         = Action.Create({Type = "Spell", ID = 260897 }),
-    EarthShock                             = Action.Create({Type = "Spell", ID = 8042 }),
-    EchooftheElementals                    = Action.Create({Type = "Spell", ID = 275381 }),
-    EchooftheElements                      = Action.Create({Type = "Spell", ID = 108283 }),
-    ResonanceTotemBuff                     = Action.Create({Type = "Spell", ID = 202192 }),
-    TectonicThunderBuff                    = Action.Create({Type = "Spell", ID = 286949 }),
-    WindShear                              = Action.Create({Type = "Spell", ID = 57994 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    TotemMastery                           = Action.Create({ Type = "Spell", ID = 210643 }),
+    StormkeeperBuff                        = Action.Create({ Type = "Spell", ID = 191634 }),
+    Stormkeeper                            = Action.Create({ Type = "Spell", ID = 191634 }),
+    FireElemental                          = Action.Create({ Type = "Spell", ID = 198067 }),
+    StormElemental                         = Action.Create({ Type = "Spell", ID = 192249 }),
+    ElementalBlast                         = Action.Create({ Type = "Spell", ID = 117014 }),
+    LavaBurst                              = Action.Create({ Type = "Spell", ID = 51505 }),
+    ChainLightning                         = Action.Create({ Type = "Spell", ID = 188443 }),
+    FlameShock                             = Action.Create({ Type = "Spell", ID = 188389 }),
+    FlameShockDebuff                       = Action.Create({ Type = "Spell", ID = 188389 }),
+    WindGustBuff                           = Action.Create({ Type = "Spell", ID = 263806 }),
+    Ascendance                             = Action.Create({ Type = "Spell", ID = 114050 }),
+    Icefury                                = Action.Create({ Type = "Spell", ID = 210714 }),
+    IcefuryBuff                            = Action.Create({ Type = "Spell", ID = 210714 }),
+    LiquidMagmaTotem                       = Action.Create({ Type = "Spell", ID = 192222 }),
+    Earthquake                             = Action.Create({ Type = "Spell", ID = 61882 }),
+    MasteroftheElements                    = Action.Create({ Type = "Spell", ID = 16166 }),
+    MasteroftheElementsBuff                = Action.Create({ Type = "Spell", ID = 260734 }),
+    LavaSurgeBuff                          = Action.Create({ Type = "Spell", ID = 77762 }),
+    AscendanceBuff                         = Action.Create({ Type = "Spell", ID = 114050 }),
+    FrostShock                             = Action.Create({ Type = "Spell", ID = 196840 }),
+    LavaBeam                               = Action.Create({ Type = "Spell", ID = 114074 }),
+    IgneousPotential                       = Action.Create({ Type = "Spell", ID = 279829 }),
+    SurgeofPowerBuff                       = Action.Create({ Type = "Spell", ID = 285514 }),
+    NaturalHarmony                         = Action.Create({ Type = "Spell", ID = 278697 }),
+    SurgeofPower                           = Action.Create({ Type = "Spell", ID = 262303 }),
+    LightningBolt                          = Action.Create({ Type = "Spell", ID = 188196 }),
+    LavaShock                              = Action.Create({ Type = "Spell", ID = 273448 }),
+    LavaShockBuff                          = Action.Create({ Type = "Spell", ID = 273453 }),
+    TectonicThunder                        = Action.Create({ Type = "Spell", ID = 286949 }),
+    CalltheThunder                         = Action.Create({ Type = "Spell", ID = 260897 }),
+    EarthShock                             = Action.Create({ Type = "Spell", ID = 8042 }),
+    EchooftheElementals                    = Action.Create({ Type = "Spell", ID = 275381 }),
+    EchooftheElements                      = Action.Create({ Type = "Spell", ID = 108283 }),
+    ResonanceTotemBuff                     = Action.Create({ Type = "Spell", ID = 202192 }),
+    TectonicThunderBuff                    = Action.Create({ Type = "Spell", ID = 286949 }),
+    WindShear                              = Action.Create({ Type = "Spell", ID = 57994 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -72,6 +90,8 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -335,7 +355,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (Unit("player"):CombatTime >= 60 or Unit("player"):HasHeroism) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0)) then
+            if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0)) then
                 return A.Ascendance:Show(icon)
             end
             -- elemental_blast,if=talent.elemental_blast.enabled&(talent.master_of_the_elements.enabled&buff.master_of_the_elements.up&maelstrom<60|!talent.master_of_the_elements.enabled)&(!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)|azerite.natural_harmony.rank=3&buff.wind_gust.stack<14)
@@ -363,7 +383,7 @@ A[3] = function(icon, isMulti)
                 return A.EarthShock:Show(icon)
             end
             -- earth_shock,if=!talent.master_of_the_elements.enabled&!(azerite.igneous_potential.rank>2&buff.ascendance.up)&(buff.stormkeeper.up|maelstrom>=90+30*talent.call_the_thunder.enabled|!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)&expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)>=30*(1+(azerite.echo_of_the_elementals.rank>=2)))
-            if A.EarthShock:IsReady(unit) and (not A.MasteroftheElements:IsSpellLearned() and not (A.IgneousPotential:GetAzeriteRank() > 2 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) or Player:Maelstrom() >= 90 + 30 * num(A.CalltheThunder:IsSpellLearned()) or not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) and expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown()) / 150) >= 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))))) then
+            if A.EarthShock:IsReady(unit) and (not A.MasteroftheElements:IsSpellLearned() and not (A.IgneousPotential:GetAzeriteRank() > 2 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) or Player:Maelstrom() >= 90 + 30 * num(A.CalltheThunder:IsSpellLearned()) or not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) and expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) >= 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))))) then
                 return A.EarthShock:Show(icon)
             end
             -- earth_shock,if=talent.surge_of_power.enabled&!buff.surge_of_power.up&cooldown.lava_burst.remains<=gcd&(!talent.storm_elemental.enabled&!(cooldown.fire_elemental.remains>120)|talent.storm_elemental.enabled&!(cooldown.storm_elemental.remains>120))
@@ -393,11 +413,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- lava_burst,if=talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains)%150))<(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime) - A.StormElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime) - A.StormElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime - A.StormElemental:GetCooldown()) / 150)))) then
+            if A.LavaBurst:IsReady(unit) and (A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150)))) then
                 return A.LavaBurst:Show(icon)
             end
             -- lava_burst,if=!talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains)%150))<(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (not A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime - A.FireElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime) - A.FireElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime) - A.FireElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime - A.FireElemental:GetCooldown()) / 150)))) then
+            if A.LavaBurst:IsReady(unit) and (not A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150)))) then
                 return A.LavaBurst:Show(icon)
             end
             -- lightning_bolt,if=buff.surge_of_power.up
@@ -472,7 +492,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- bloodlust,if=azerite.ancestral_resonance.enabled
             -- potion,if=expected_combat_length-time<30|cooldown.fire_elemental.remains>120|cooldown.storm_elemental.remains>120
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (expected_combat_length - Unit("player"):CombatTime < 30 or A.FireElemental:GetCooldown() > 120 or A.StormElemental:GetCooldown() > 120) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (expected_combat_length - Unit("player"):CombatTime() < 30 or A.FireElemental:GetCooldown() > 120 or A.StormElemental:GetCooldown() > 120) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- wind_shear
@@ -523,7 +543,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -554,7 +574,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -605,5 +625,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

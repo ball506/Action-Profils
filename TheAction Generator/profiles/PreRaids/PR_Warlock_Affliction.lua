@@ -19,46 +19,64 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 691 }),
-    GrimoireofSacrificeBuff                = Action.Create({Type = "Spell", ID = 196099 }),
-    GrimoireofSacrifice                    = Action.Create({Type = "Spell", ID = 108503 }),
-    SeedofCorruptionDebuff                 = Action.Create({Type = "Spell", ID = 27243 }),
-    SeedofCorruption                       = Action.Create({Type = "Spell", ID = 27243 }),
-    HauntDebuff                            = Action.Create({Type = "Spell", ID = 48181 }),
-    Haunt                                  = Action.Create({Type = "Spell", ID = 48181 }),
-    ShadowBolt                             = Action.Create({Type = "Spell", ID = 232670 }),
-    DarkSoulMisery                         = Action.Create({Type = "Spell", ID = 113860 }),
-    SummonDarkglare                        = Action.Create({Type = "Spell", ID = 205180 }),
-    DarkSoul                               = Action.Create({Type = "Spell", ID = 113860 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    SiphonLife                             = Action.Create({Type = "Spell", ID = 63106 }),
-    SiphonLifeDebuff                       = Action.Create({Type = "Spell", ID = 63106 }),
-    AgonyDebuff                            = Action.Create({Type = "Spell", ID = 980 }),
-    CorruptionDebuff                       = Action.Create({Type = "Spell", ID = 146739 }),
-    Agony                                  = Action.Create({Type = "Spell", ID = 980 }),
-    Corruption                             = Action.Create({Type = "Spell", ID = 172 }),
-    CreepingDeath                          = Action.Create({Type = "Spell", ID = 264000 }),
-    WritheInAgony                          = Action.Create({Type = "Spell", ID = 196102 }),
-    PandemicInvocation                     = Action.Create({Type = "Spell", ID = 289364 }),
-    UnstableAffliction                     = Action.Create({Type = "Spell", ID = 30108 }),
-    UnstableAfflictionDebuff               = Action.Create({Type = "Spell", ID = 30108 }),
-    Deathbolt                              = Action.Create({Type = "Spell", ID = 264106 }),
-    NightfallBuff                          = Action.Create({Type = "Spell", ID = 264571 }),
-    AbsoluteCorruption                     = Action.Create({Type = "Spell", ID = 196103 }),
-    DrainLife                              = Action.Create({Type = "Spell", ID = 234153 }),
-    InevitableDemiseBuff                   = Action.Create({Type = "Spell", ID = 273525 }),
-    PhantomSingularity                     = Action.Create({Type = "Spell", ID = 205179 }),
-    VileTaint                              = Action.Create({Type = "Spell", ID = 278350 }),
-    DrainSoul                              = Action.Create({Type = "Spell", ID = 198590 }),
-    ShadowEmbraceDebuff                    = Action.Create({Type = "Spell", ID = 32390 }),
-    ShadowEmbrace                          = Action.Create({Type = "Spell", ID = 32388 }),
-    CascadingCalamity                      = Action.Create({Type = "Spell", ID = 275372 }),
-    CascadingCalamityBuff                  = Action.Create({Type = "Spell", ID = 275378 }),
-    SowtheSeeds                            = Action.Create({Type = "Spell", ID = 196226 }),
-    ActiveUasBuff                          = Action.Create({Type = "Spell", ID = 233490 }),
-    PhantomSingularityDebuff               = Action.Create({Type = "Spell", ID = 205179 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 691 }),
+    GrimoireofSacrificeBuff                = Action.Create({ Type = "Spell", ID = 196099 }),
+    GrimoireofSacrifice                    = Action.Create({ Type = "Spell", ID = 108503 }),
+    SeedofCorruptionDebuff                 = Action.Create({ Type = "Spell", ID = 27243 }),
+    SeedofCorruption                       = Action.Create({ Type = "Spell", ID = 27243 }),
+    HauntDebuff                            = Action.Create({ Type = "Spell", ID = 48181 }),
+    Haunt                                  = Action.Create({ Type = "Spell", ID = 48181 }),
+    ShadowBolt                             = Action.Create({ Type = "Spell", ID = 232670 }),
+    DarkSoulMisery                         = Action.Create({ Type = "Spell", ID = 113860 }),
+    SummonDarkglare                        = Action.Create({ Type = "Spell", ID = 205180 }),
+    DarkSoul                               = Action.Create({ Type = "Spell", ID = 113860 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    SiphonLife                             = Action.Create({ Type = "Spell", ID = 63106 }),
+    SiphonLifeDebuff                       = Action.Create({ Type = "Spell", ID = 63106 }),
+    AgonyDebuff                            = Action.Create({ Type = "Spell", ID = 980 }),
+    CorruptionDebuff                       = Action.Create({ Type = "Spell", ID = 146739 }),
+    Agony                                  = Action.Create({ Type = "Spell", ID = 980 }),
+    Corruption                             = Action.Create({ Type = "Spell", ID = 172 }),
+    CreepingDeath                          = Action.Create({ Type = "Spell", ID = 264000 }),
+    WritheInAgony                          = Action.Create({ Type = "Spell", ID = 196102 }),
+    PandemicInvocation                     = Action.Create({ Type = "Spell", ID = 289364 }),
+    UnstableAffliction                     = Action.Create({ Type = "Spell", ID = 30108 }),
+    UnstableAfflictionDebuff               = Action.Create({ Type = "Spell", ID = 30108 }),
+    Deathbolt                              = Action.Create({ Type = "Spell", ID = 264106 }),
+    NightfallBuff                          = Action.Create({ Type = "Spell", ID = 264571 }),
+    AbsoluteCorruption                     = Action.Create({ Type = "Spell", ID = 196103 }),
+    DrainLife                              = Action.Create({ Type = "Spell", ID = 234153 }),
+    InevitableDemiseBuff                   = Action.Create({ Type = "Spell", ID = 273525 }),
+    PhantomSingularity                     = Action.Create({ Type = "Spell", ID = 205179 }),
+    VileTaint                              = Action.Create({ Type = "Spell", ID = 278350 }),
+    DrainSoul                              = Action.Create({ Type = "Spell", ID = 198590 }),
+    ShadowEmbraceDebuff                    = Action.Create({ Type = "Spell", ID = 32390 }),
+    ShadowEmbrace                          = Action.Create({ Type = "Spell", ID = 32388 }),
+    CascadingCalamity                      = Action.Create({ Type = "Spell", ID = 275372 }),
+    CascadingCalamityBuff                  = Action.Create({ Type = "Spell", ID = 275378 }),
+    SowtheSeeds                            = Action.Create({ Type = "Spell", ID = 196226 }),
+    ActiveUasBuff                          = Action.Create({ Type = "Spell", ID = 233490 }),
+    PhantomSingularityDebuff               = Action.Create({ Type = "Spell", ID = 205179 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -71,6 +89,8 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -447,7 +467,7 @@ local function EvaluateTargetIfFilterPhantomSingularity791(unit)
 end
 
 local function EvaluateTargetIfPhantomSingularity794(unit)
-  return Unit("player"):CombatTime > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste
+  return Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste
 end
 
 
@@ -456,7 +476,7 @@ local function EvaluateTargetIfFilterVileTaint800(unit)
 end
 
 local function EvaluateTargetIfVileTaint803(unit)
-  return Unit("player"):CombatTime > 15 and Unit(unit):TimeToDie() >= 10
+  return Unit("player"):CombatTime() > 15 and Unit(unit):TimeToDie() >= 10
 end
 
 
@@ -776,11 +796,11 @@ end
                 local ShouldReturn = Dots(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- phantom_singularity,if=time<=35
-            if A.PhantomSingularity:IsReady(unit) and (Unit("player"):CombatTime <= 35) then
+            if A.PhantomSingularity:IsReady(unit) and (Unit("player"):CombatTime() <= 35) then
                 return A.PhantomSingularity:Show(icon)
             end
             -- vile_taint,if=time<15
-            if A.VileTaint:IsReady(unit) and (Unit("player"):CombatTime < 15) then
+            if A.VileTaint:IsReady(unit) and (Unit("player"):CombatTime() < 15) then
                 return A.VileTaint:Show(icon)
             end
             -- dark_soul,if=cooldown.summon_darkglare.remains<10&dot.phantom_singularity.remains|target.time_to_die<20+gcd|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up
@@ -804,7 +824,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -835,7 +855,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -886,5 +906,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

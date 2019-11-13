@@ -901,7 +901,7 @@ class Time(BuildExpression):
         """
         Return the arguments for the expression time.
         """
-        self.method = Method('Unit("player"):CombatTime')
+        self.method = Method('Unit("player"):CombatTime()')
 
 
 class Artifact(BuildExpression):
@@ -1074,7 +1074,6 @@ class Buff(BuildExpression, Aura):
         Aura.__init__(self, condition, BUFF, object_, spell_type=BUFF)
         call = condition.condition_list[2]
         super().__init__(call)
-
 
 class Cooldown(BuildExpression, Expires):
     """

@@ -19,32 +19,50 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 883 }),
-    AspectoftheWildBuff                    = Action.Create({Type = "Spell", ID = 193530 }),
-    AspectoftheWild                        = Action.Create({Type = "Spell", ID = 193530 }),
-    PrimalInstinctsBuff                    = Action.Create({Type = "Spell", ID = 279810 }),
-    PrimalInstincts                        = Action.Create({Type = "Spell", ID = 279806 }),
-    BestialWrathBuff                       = Action.Create({Type = "Spell", ID = 19574 }),
-    BestialWrath                           = Action.Create({Type = "Spell", ID = 19574 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    KillerInstinct                         = Action.Create({Type = "Spell", ID = 273887 }),
-    BarbedShot                             = Action.Create({Type = "Spell", ID = 217200 }),
-    FrenzyBuff                             = Action.Create({Type = "Spell", ID = 272790 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    SpittingCobra                          = Action.Create({Type = "Spell", ID = 194407 }),
-    AMurderofCrows                         = Action.Create({Type = "Spell", ID = 131894 }),
-    Stampede                               = Action.Create({Type = "Spell", ID = 201430 }),
-    Multishot                              = Action.Create({Type = "Spell", ID = 2643 }),
-    BeastCleaveBuff                        = Action.Create({Type = "Spell", ID = 118455, "pet" }),
-    Barrage                                = Action.Create({Type = "Spell", ID = 120360 }),
-    ChimaeraShot                           = Action.Create({Type = "Spell", ID = 53209 }),
-    KillCommand                            = Action.Create({Type = "Spell", ID = 34026 }),
-    DireBeast                              = Action.Create({Type = "Spell", ID = 120679 }),
-    CobraShot                              = Action.Create({Type = "Spell", ID = 193455 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883 }),
+    AspectoftheWildBuff                    = Action.Create({ Type = "Spell", ID = 193530 }),
+    AspectoftheWild                        = Action.Create({ Type = "Spell", ID = 193530 }),
+    PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810 }),
+    PrimalInstincts                        = Action.Create({ Type = "Spell", ID = 279806 }),
+    BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574 }),
+    BestialWrath                           = Action.Create({ Type = "Spell", ID = 19574 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    KillerInstinct                         = Action.Create({ Type = "Spell", ID = 273887 }),
+    BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
+    FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
+    Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
+    BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455, "pet" }),
+    Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
+    ChimaeraShot                           = Action.Create({ Type = "Spell", ID = 53209 }),
+    KillCommand                            = Action.Create({ Type = "Spell", ID = 34026 }),
+    DireBeast                              = Action.Create({ Type = "Spell", ID = 120679 }),
+    CobraShot                              = Action.Create({ Type = "Spell", ID = 193455 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -57,6 +75,8 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -314,7 +334,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -345,7 +365,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -396,5 +416,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

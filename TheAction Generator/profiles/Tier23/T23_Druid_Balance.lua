@@ -19,45 +19,63 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DRUID_BALANCE] = {
-    StreakingStars                         = Action.Create({Type = "Spell", ID = 272871 }),
-    ArcanicPulsarBuff                      = Action.Create({Type = "Spell", ID = 287790 }),
-    ArcanicPulsar                          = Action.Create({Type = "Spell", ID = 287773 }),
-    StarlordBuff                           = Action.Create({Type = "Spell", ID = 279709 }),
-    Starlord                               = Action.Create({Type = "Spell", ID = 202345 }),
-    TwinMoons                              = Action.Create({Type = "Spell", ID = 279620 }),
-    MoonkinForm                            = Action.Create({Type = "Spell", ID = 24858 }),
-    SolarWrath                             = Action.Create({Type = "Spell", ID = 190984 }),
-    CaIncBuff                              = Action.Create({Type = "Spell", ID =  }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    CaInc                                  = Action.Create({Type = "Spell", ID =  }),
-    WarriorofElune                         = Action.Create({Type = "Spell", ID = 202425 }),
-    Innervate                              = Action.Create({Type = "Spell", ID = 29166 }),
-    LivelySpirit                           = Action.Create({Type = "Spell", ID = 279642 }),
-    Incarnation                            = Action.Create({Type = "Spell", ID = 102560 }),
-    CelestialAlignment                     = Action.Create({Type = "Spell", ID = 194223 }),
-    SunfireDebuff                          = Action.Create({Type = "Spell", ID = 164815 }),
-    MoonfireDebuff                         = Action.Create({Type = "Spell", ID = 164812 }),
-    StellarFlareDebuff                     = Action.Create({Type = "Spell", ID = 202347 }),
-    StellarFlare                           = Action.Create({Type = "Spell", ID = 202347 }),
-    LivelySpiritBuff                       = Action.Create({Type = "Spell", ID = 279646 }),
-    FuryofElune                            = Action.Create({Type = "Spell", ID = 202770 }),
-    ForceofNature                          = Action.Create({Type = "Spell", ID = 205636 }),
-    Starfall                               = Action.Create({Type = "Spell", ID = 191034 }),
-    Starsurge                              = Action.Create({Type = "Spell", ID = 78674 }),
-    LunarEmpowermentBuff                   = Action.Create({Type = "Spell", ID = 164547 }),
-    SolarEmpowermentBuff                   = Action.Create({Type = "Spell", ID = 164545 }),
-    Sunfire                                = Action.Create({Type = "Spell", ID = 93402 }),
-    Moonfire                               = Action.Create({Type = "Spell", ID = 8921 }),
-    NewMoon                                = Action.Create({Type = "Spell", ID = 274281 }),
-    HalfMoon                               = Action.Create({Type = "Spell", ID = 274282 }),
-    FullMoon                               = Action.Create({Type = "Spell", ID = 274283 }),
-    LunarStrike                            = Action.Create({Type = "Spell", ID = 194153 }),
-    WarriorofEluneBuff                     = Action.Create({Type = "Spell", ID = 202425 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    StreakingStars                         = Action.Create({ Type = "Spell", ID = 272871 }),
+    ArcanicPulsarBuff                      = Action.Create({ Type = "Spell", ID = 287790 }),
+    ArcanicPulsar                          = Action.Create({ Type = "Spell", ID = 287773 }),
+    StarlordBuff                           = Action.Create({ Type = "Spell", ID = 279709 }),
+    Starlord                               = Action.Create({ Type = "Spell", ID = 202345 }),
+    TwinMoons                              = Action.Create({ Type = "Spell", ID = 279620 }),
+    MoonkinForm                            = Action.Create({ Type = "Spell", ID = 24858 }),
+    SolarWrath                             = Action.Create({ Type = "Spell", ID = 190984 }),
+    CaIncBuff                              = Action.Create({ Type = "Spell", ID =  }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    CaInc                                  = Action.Create({ Type = "Spell", ID =  }),
+    WarriorofElune                         = Action.Create({ Type = "Spell", ID = 202425 }),
+    Innervate                              = Action.Create({ Type = "Spell", ID = 29166 }),
+    LivelySpirit                           = Action.Create({ Type = "Spell", ID = 279642 }),
+    Incarnation                            = Action.Create({ Type = "Spell", ID = 102560 }),
+    CelestialAlignment                     = Action.Create({ Type = "Spell", ID = 194223 }),
+    SunfireDebuff                          = Action.Create({ Type = "Spell", ID = 164815 }),
+    MoonfireDebuff                         = Action.Create({ Type = "Spell", ID = 164812 }),
+    StellarFlareDebuff                     = Action.Create({ Type = "Spell", ID = 202347 }),
+    StellarFlare                           = Action.Create({ Type = "Spell", ID = 202347 }),
+    LivelySpiritBuff                       = Action.Create({ Type = "Spell", ID = 279646 }),
+    FuryofElune                            = Action.Create({ Type = "Spell", ID = 202770 }),
+    ForceofNature                          = Action.Create({ Type = "Spell", ID = 205636 }),
+    Starfall                               = Action.Create({ Type = "Spell", ID = 191034 }),
+    Starsurge                              = Action.Create({ Type = "Spell", ID = 78674 }),
+    LunarEmpowermentBuff                   = Action.Create({ Type = "Spell", ID = 164547 }),
+    SolarEmpowermentBuff                   = Action.Create({ Type = "Spell", ID = 164545 }),
+    Sunfire                                = Action.Create({ Type = "Spell", ID = 93402 }),
+    Moonfire                               = Action.Create({ Type = "Spell", ID = 8921 }),
+    NewMoon                                = Action.Create({ Type = "Spell", ID = 274281 }),
+    HalfMoon                               = Action.Create({ Type = "Spell", ID = 274282 }),
+    FullMoon                               = Action.Create({ Type = "Spell", ID = 274283 }),
+    LunarStrike                            = Action.Create({ Type = "Spell", ID = 194153 }),
+    WarriorofEluneBuff                     = Action.Create({ Type = "Spell", ID = 202425 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -70,6 +88,8 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -186,26 +206,28 @@ local function IsSchoolFree()
 end 
 
 local function FutureAstralPower()
-  local AstralPower=Player:AstralPower()
-  if not Player:IsCasting() then
-    return AstralPower
-  else
-    if Player:IsCasting(A.NewnMoon) then
-      return AstralPower + 10
-    elseif Player:IsCasting(A.HalfMoon) then
-      return AstralPower + 20
-    elseif Player:IsCasting(A.FullMoon) then
-      return AstralPower + 40
-    elseif Player:IsCasting(A.StellarFlare) then
-      return AstralPower + 8
-    elseif Player:IsCasting(A.SolarWrath) then
-      return AstralPower + 8
-    elseif Player:IsCasting(A.LunarStrike) then
-      return AstralPower + 12
+    local AstralPower=Player:AstralPower()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+        
+    if not Unit("player"):IsCasting() then
+        return AstralPower
     else
-      return AstralPower
+        if spellID = A.NewMoon.ID then
+            return AstralPower + 10
+        elseif spellID = A.HalfMoon.ID then
+            return AstralPower + 20
+        elseif spellID = A.FullMoon.ID then
+            return AstralPower + 40
+        elseif spellID = A.StellarFlare.ID then
+            return AstralPower + 8
+        elseif spellID = A.SolarWrath.ID then
+            return AstralPower + 8
+        elseif spellID = A.LunarStrike.ID then
+            return AstralPower + 12
+        else
+            return AstralPower
+        end
     end
-  end
 end
 
 
@@ -435,7 +457,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -466,7 +488,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -517,5 +539,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

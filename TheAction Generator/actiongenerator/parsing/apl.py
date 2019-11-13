@@ -222,7 +222,7 @@ class APL:
         apl_id = CLASS_SPECS.get(class_simc, {}).get(spec_simc, 0)
         return ('    -- End on EnemyRotation()\n\n'	
         '    -- Defensive\n'
-        '    local SelfDefensive = SelfDefensives()\n'
+        '    --local SelfDefensive = SelfDefensives()\n'
         '    if SelfDefensive then \n'
         '        return SelfDefensive:Show(icon)\n'
         '    end \n\n'
@@ -252,7 +252,7 @@ class APL:
         '-- [5] Trinket Rotation\n'
         '-- No specialization trinket actions \n'
         '-- Passive \n'
-        'local function FreezingTrapUsedByEnemy()\n'
+        '--[[local function FreezingTrapUsedByEnemy()\n'
         '    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and\n' 
         '    UnitCooldown:IsSpellInFly("arena", 3355) and \n'
         '    Unit("player"):GetDR("incapacitate") >= 50 \n'
@@ -303,7 +303,7 @@ class APL:
         '        return Party:Show(icon)\n'
         '    end     \n'
         '    return ArenaRotation(icon, "arena3")\n'
-        'end\n\n'
+        'end]]--\n\n'
                 )
 
     def template(self):

@@ -19,49 +19,66 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_HUNTER_SURVIVAL] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 883 }),
-    SteelTrapDebuff                        = Action.Create({Type = "Spell", ID = 162487 }),
-    SteelTrap                              = Action.Create({Type = "Spell", ID = 162488 }),
-    Harpoon                                = Action.Create({Type = "Spell", ID = 190925 }),
-    MongooseBite                           = Action.Create({Type = "Spell", ID = 259387 }),
-    CoordinatedAssaultBuff                 = Action.Create({Type = "Spell", ID = 266779 }),
-    BlurofTalonsBuff                       = Action.Create({Type = "Spell", ID = 277969 }),
-    RaptorStrike                           = Action.Create({Type = "Spell", ID = 186270 }),
-    FlankingStrike                         = Action.Create({Type = "Spell", ID = 269751 }),
-    KillCommand                            = Action.Create({Type = "Spell", ID = 259489 }),
-    WildfireBomb                           = Action.Create({Type = "Spell", ID = 259495 }),
-    WildfireBombDebuff                     = Action.Create({Type = "Spell", ID = 269747 }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    MongooseFuryBuff                       = Action.Create({Type = "Spell", ID = 259388 }),
-    SerpentSting                           = Action.Create({Type = "Spell", ID = 259491 }),
-    SerpentStingDebuff                     = Action.Create({Type = "Spell", ID = 259491 }),
-    AMurderofCrows                         = Action.Create({Type = "Spell", ID = 131894 }),
-    CoordinatedAssault                     = Action.Create({Type = "Spell", ID = 266779 }),
-    TipoftheSpearBuff                      = Action.Create({Type = "Spell", ID = 260286 }),
-    ShrapnelBombDebuff                     = Action.Create({Type = "Spell", ID = 270339 }),
-    Chakrams                               = Action.Create({Type = "Spell", ID = 259391 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    GuardianofAzerothBuff                  = Action.Create({Type = "Spell", ID =  }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    PotionofUnbridledFuryBuff              = Action.Create({Type = "Spell", ID =  }),
-    AspectoftheEagle                       = Action.Create({Type = "Spell", ID = 186289 }),
-    WildfireInfusion                       = Action.Create({Type = "Spell", ID = 271014 }),
-    Carve                                  = Action.Create({Type = "Spell", ID = 187708 }),
-    GuerrillaTactics                       = Action.Create({Type = "Spell", ID = 264332 }),
-    LatentPoisonDebuff                     = Action.Create({Type = "Spell", ID = 273286 }),
-    BloodseekerDebuff                      = Action.Create({Type = "Spell", ID = 259277 }),
-    Butchery                               = Action.Create({Type = "Spell", ID = 212436 }),
-    InternalBleedingDebuff                 = Action.Create({Type = "Spell", ID = 270343 }),
-    VipersVenomBuff                        = Action.Create({Type = "Spell", ID = 268552 }),
-    TermsofEngagement                      = Action.Create({Type = "Spell", ID = 265895 }),
-    VipersVenom                            = Action.Create({Type = "Spell", ID = 268501 }),
-    AlphaPredator                          = Action.Create({Type = "Spell", ID = 269737 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883 }),
+    SteelTrapDebuff                        = Action.Create({ Type = "Spell", ID = 162487 }),
+    SteelTrap                              = Action.Create({ Type = "Spell", ID = 162488 }),
+    Harpoon                                = Action.Create({ Type = "Spell", ID = 190925 }),
+    MongooseBite                           = Action.Create({ Type = "Spell", ID = 259387 }),
+    CoordinatedAssaultBuff                 = Action.Create({ Type = "Spell", ID = 266779 }),
+    BlurofTalonsBuff                       = Action.Create({ Type = "Spell", ID = 277969 }),
+    RaptorStrike                           = Action.Create({ Type = "Spell", ID = 186270 }),
+    FlankingStrike                         = Action.Create({ Type = "Spell", ID = 269751 }),
+    KillCommand                            = Action.Create({ Type = "Spell", ID = 259489 }),
+    WildfireBomb                           = Action.Create({ Type = "Spell", ID = 259495 }),
+    WildfireBombDebuff                     = Action.Create({ Type = "Spell", ID = 269747 }),
+    MongooseFuryBuff                       = Action.Create({ Type = "Spell", ID = 259388 }),
+    SerpentSting                           = Action.Create({ Type = "Spell", ID = 259491 }),
+    SerpentStingDebuff                     = Action.Create({ Type = "Spell", ID = 259491 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    CoordinatedAssault                     = Action.Create({ Type = "Spell", ID = 266779 }),
+    TipoftheSpearBuff                      = Action.Create({ Type = "Spell", ID = 260286 }),
+    ShrapnelBombDebuff                     = Action.Create({ Type = "Spell", ID = 270339 }),
+    Chakrams                               = Action.Create({ Type = "Spell", ID = 259391 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
+    AspectoftheEagle                       = Action.Create({ Type = "Spell", ID = 186289 }),
+    WildfireInfusion                       = Action.Create({ Type = "Spell", ID = 271014 }),
+    Carve                                  = Action.Create({ Type = "Spell", ID = 187708 }),
+    GuerrillaTactics                       = Action.Create({ Type = "Spell", ID = 264332 }),
+    LatentPoisonDebuff                     = Action.Create({ Type = "Spell", ID = 273286 }),
+    BloodseekerDebuff                      = Action.Create({ Type = "Spell", ID = 259277 }),
+    Butchery                               = Action.Create({ Type = "Spell", ID = 212436 }),
+    InternalBleedingDebuff                 = Action.Create({ Type = "Spell", ID = 270343 }),
+    VipersVenomBuff                        = Action.Create({ Type = "Spell", ID = 268552 }),
+    TermsofEngagement                      = Action.Create({ Type = "Spell", ID = 265895 }),
+    VipersVenom                            = Action.Create({ Type = "Spell", ID = 268501 }),
+    AlphaPredator                          = Action.Create({ Type = "Spell", ID = 269737 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -74,6 +91,8 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -817,7 +836,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -848,7 +867,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -899,5 +918,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

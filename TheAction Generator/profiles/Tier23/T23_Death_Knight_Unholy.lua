@@ -19,33 +19,51 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
-    RaiseDead                              = Action.Create({Type = "Spell", ID = 46584 }),
-    ArmyoftheDead                          = Action.Create({Type = "Spell", ID = 42650 }),
-    DeathandDecay                          = Action.Create({Type = "Spell", ID = 43265 }),
-    Apocalypse                             = Action.Create({Type = "Spell", ID = 275699 }),
-    Defile                                 = Action.Create({Type = "Spell", ID = 152280 }),
-    Epidemic                               = Action.Create({Type = "Spell", ID = 207317 }),
-    DeathCoil                              = Action.Create({Type = "Spell", ID = 47541 }),
-    ScourgeStrike                          = Action.Create({Type = "Spell", ID = 55090 }),
-    ClawingShadows                         = Action.Create({Type = "Spell", ID = 207311 }),
-    FesteringStrike                        = Action.Create({Type = "Spell", ID = 85948 }),
-    FesteringWoundDebuff                   = Action.Create({Type = "Spell", ID = 194310 }),
-    BurstingSores                          = Action.Create({Type = "Spell", ID = 207264 }),
-    SuddenDoomBuff                         = Action.Create({Type = "Spell", ID = 81340 }),
-    UnholyFrenzyBuff                       = Action.Create({Type = "Spell", ID = 207289 }),
-    DarkTransformation                     = Action.Create({Type = "Spell", ID = 63560 }),
-    SummonGargoyle                         = Action.Create({Type = "Spell", ID = 49206 }),
-    UnholyFrenzy                           = Action.Create({Type = "Spell", ID = 207289 }),
-    MagusoftheDead                         = Action.Create({Type = "Spell", ID = 288417 }),
-    SoulReaper                             = Action.Create({Type = "Spell", ID = 130736 }),
-    UnholyBlight                           = Action.Create({Type = "Spell", ID = 115989 }),
-    Pestilence                             = Action.Create({Type = "Spell", ID = 277234 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArmyoftheDamned                        = Action.Create({Type = "Spell", ID = 276837 }),
-    Outbreak                               = Action.Create({Type = "Spell", ID = 77575 }),
-    VirulentPlagueDebuff                   = Action.Create({Type = "Spell", ID = 191587 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    RaiseDead                              = Action.Create({ Type = "Spell", ID = 46584 }),
+    ArmyoftheDead                          = Action.Create({ Type = "Spell", ID = 42650 }),
+    DeathandDecay                          = Action.Create({ Type = "Spell", ID = 43265 }),
+    Apocalypse                             = Action.Create({ Type = "Spell", ID = 275699 }),
+    Defile                                 = Action.Create({ Type = "Spell", ID = 152280 }),
+    Epidemic                               = Action.Create({ Type = "Spell", ID = 207317 }),
+    DeathCoil                              = Action.Create({ Type = "Spell", ID = 47541 }),
+    ScourgeStrike                          = Action.Create({ Type = "Spell", ID = 55090 }),
+    ClawingShadows                         = Action.Create({ Type = "Spell", ID = 207311 }),
+    FesteringStrike                        = Action.Create({ Type = "Spell", ID = 85948 }),
+    FesteringWoundDebuff                   = Action.Create({ Type = "Spell", ID = 194310 }),
+    BurstingSores                          = Action.Create({ Type = "Spell", ID = 207264 }),
+    SuddenDoomBuff                         = Action.Create({ Type = "Spell", ID = 81340 }),
+    UnholyFrenzyBuff                       = Action.Create({ Type = "Spell", ID = 207289 }),
+    DarkTransformation                     = Action.Create({ Type = "Spell", ID = 63560 }),
+    SummonGargoyle                         = Action.Create({ Type = "Spell", ID = 49206 }),
+    UnholyFrenzy                           = Action.Create({ Type = "Spell", ID = 207289 }),
+    MagusoftheDead                         = Action.Create({ Type = "Spell", ID = 288417 }),
+    SoulReaper                             = Action.Create({ Type = "Spell", ID = 130736 }),
+    UnholyBlight                           = Action.Create({ Type = "Spell", ID = 115989 }),
+    Pestilence                             = Action.Create({ Type = "Spell", ID = 277234 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
+    Outbreak                               = Action.Create({ Type = "Spell", ID = 77575 }),
+    VirulentPlagueDebuff                   = Action.Create({ Type = "Spell", ID = 191587 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -58,6 +76,8 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -410,19 +430,19 @@ A[3] = function(icon, isMulti)
                 A.RampingAmplitudeGigavoltEngine:Show(icon)
             end
             -- use_item,name=bygone_bee_almanac,if=cooldown.summon_gargoyle.remains>60|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
-            if A.BygoneBeeAlmanac:IsReady(unit) and (A.SummonGargoyle:GetCooldown() > 60 or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
+            if A.BygoneBeeAlmanac:IsReady(unit) and (A.SummonGargoyle:GetCooldown() > 60 or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 A.BygoneBeeAlmanac:Show(icon)
             end
             -- use_item,name=jes_howler,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
-            if A.JesHowler:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
+            if A.JesHowler:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 A.JesHowler:Show(icon)
             end
             -- use_item,name=galecallers_beak,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
-            if A.GalecallersBeak:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
+            if A.GalecallersBeak:IsReady(unit) and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 A.GalecallersBeak:Show(icon)
             end
             -- use_item,name=grongs_primal_rage,if=rune<=3&(time>20|!equipped.ramping_amplitude_gigavolt_engine)
-            if A.GrongsPrimalRage:IsReady(unit) and (Player:Rune() <= 3 and (Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists())) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Player:Rune() <= 3 and (Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists())) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
@@ -453,7 +473,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -484,7 +504,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -535,5 +555,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

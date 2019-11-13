@@ -19,38 +19,55 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
-    MetamorphosisBuff                      = Action.Create({Type = "Spell", ID = 162264 }),
-    Metamorphosis                          = Action.Create({Type = "Spell", ID = 191427 }),
-    ChaoticTransformation                  = Action.Create({Type = "Spell", ID = 288754 }),
-    Demonic                                = Action.Create({Type = "Spell", ID = 213410 }),
-    EyeBeam                                = Action.Create({Type = "Spell", ID = 198013 }),
-    BladeDance                             = Action.Create({Type = "Spell", ID = 188499 }),
-    Nemesis                                = Action.Create({Type = "Spell", ID = 206491 }),
-    NemesisDebuff                          = Action.Create({Type = "Spell", ID = 206491 }),
-    DarkSlash                              = Action.Create({Type = "Spell", ID = 258860 }),
-    Annihilation                           = Action.Create({Type = "Spell", ID = 201427 }),
-    DarkSlashDebuff                        = Action.Create({Type = "Spell", ID = 258860 }),
-    ChaosStrike                            = Action.Create({Type = "Spell", ID = 162794 }),
-    DeathSweep                             = Action.Create({Type = "Spell", ID = 210152 }),
-    FelBarrage                             = Action.Create({Type = "Spell", ID = 258925 }),
-    RevolvingBlades                        = Action.Create({Type = "Spell", ID = 279581 }),
-    ImmolationAura                         = Action.Create({Type = "Spell", ID = 258920 }),
-    Felblade                               = Action.Create({Type = "Spell", ID = 232893 }),
-    FelRush                                = Action.Create({Type = "Spell", ID = 195072 }),
-    DemonBlades                            = Action.Create({Type = "Spell", ID = 203555 }),
-    DemonsBite                             = Action.Create({Type = "Spell", ID = 162243 }),
-    ThrowGlaive                            = Action.Create({Type = "Spell", ID = 185123 }),
-    OutofRangeBuff                         = Action.Create({Type = "Spell", ID =  }),
-    VengefulRetreat                        = Action.Create({Type = "Spell", ID = 198793 }),
-    Momentum                               = Action.Create({Type = "Spell", ID = 206476 }),
-    PreparedBuff                           = Action.Create({Type = "Spell", ID = 203650 }),
-    FelMastery                             = Action.Create({Type = "Spell", ID = 192939 }),
-    BlindFury                              = Action.Create({Type = "Spell", ID = 203550 }),
-    FirstBlood                             = Action.Create({Type = "Spell", ID = 206416 }),
-    TrailofRuin                            = Action.Create({Type = "Spell", ID = 258881 }),
-    MomentumBuff                           = Action.Create({Type = "Spell", ID = 208628 }),
-    Disrupt                                = Action.Create({Type = "Spell", ID = 183752 }),
-    PickUpFragment                         = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    MetamorphosisBuff                      = Action.Create({ Type = "Spell", ID = 162264 }),
+    Metamorphosis                          = Action.Create({ Type = "Spell", ID = 191427 }),
+    ChaoticTransformation                  = Action.Create({ Type = "Spell", ID = 288754 }),
+    Demonic                                = Action.Create({ Type = "Spell", ID = 213410 }),
+    EyeBeam                                = Action.Create({ Type = "Spell", ID = 198013 }),
+    BladeDance                             = Action.Create({ Type = "Spell", ID = 188499 }),
+    Nemesis                                = Action.Create({ Type = "Spell", ID = 206491 }),
+    NemesisDebuff                          = Action.Create({ Type = "Spell", ID = 206491 }),
+    DarkSlash                              = Action.Create({ Type = "Spell", ID = 258860 }),
+    Annihilation                           = Action.Create({ Type = "Spell", ID = 201427 }),
+    DarkSlashDebuff                        = Action.Create({ Type = "Spell", ID = 258860 }),
+    ChaosStrike                            = Action.Create({ Type = "Spell", ID = 162794 }),
+    DeathSweep                             = Action.Create({ Type = "Spell", ID = 210152 }),
+    FelBarrage                             = Action.Create({ Type = "Spell", ID = 258925 }),
+    RevolvingBlades                        = Action.Create({ Type = "Spell", ID = 279581 }),
+    ImmolationAura                         = Action.Create({ Type = "Spell", ID = 258920 }),
+    Felblade                               = Action.Create({ Type = "Spell", ID = 232893 }),
+    FelRush                                = Action.Create({ Type = "Spell", ID = 195072 }),
+    DemonBlades                            = Action.Create({ Type = "Spell", ID = 203555 }),
+    DemonsBite                             = Action.Create({ Type = "Spell", ID = 162243 }),
+    ThrowGlaive                            = Action.Create({ Type = "Spell", ID = 185123 }),
+    VengefulRetreat                        = Action.Create({ Type = "Spell", ID = 198793 }),
+    Momentum                               = Action.Create({ Type = "Spell", ID = 206476 }),
+    PreparedBuff                           = Action.Create({ Type = "Spell", ID = 203650 }),
+    FelMastery                             = Action.Create({ Type = "Spell", ID = 192939 }),
+    BlindFury                              = Action.Create({ Type = "Spell", ID = 203550 }),
+    FirstBlood                             = Action.Create({ Type = "Spell", ID = 206416 }),
+    TrailofRuin                            = Action.Create({ Type = "Spell", ID = 258881 }),
+    MomentumBuff                           = Action.Create({ Type = "Spell", ID = 208628 }),
+    Disrupt                                = Action.Create({ Type = "Spell", ID = 183752 }),
+    PickUpFragment                         = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -63,6 +80,8 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -207,11 +226,11 @@ end
 
 local function MetamorphosisCooldownAdjusted()
   -- TODO: Make this better by sampling the Fury expenses over time instead of approximating
-  if I.ConvergenceofFates:IsEquipped() and I.DelusionsOfGrandeur:IsEquipped() then
+  if A.ConvergenceofFates:IsEquipped() and A.DelusionsOfGrandeur:IsEquipped() then
     return A.Metamorphosis:CooldownRemainsP() * 0.56;
-  elseif I.ConvergenceofFates:IsEquipped() then
+  elseif A.ConvergenceofFates:IsEquipped() then
     return A.Metamorphosis:CooldownRemainsP() * 0.78;
-  elseif I.DelusionsOfGrandeur:IsEquipped() then
+  elseif A.DelusionsOfGrandeur:IsEquipped() then
     return A.Metamorphosis:CooldownRemainsP() * 0.67;
   end
   return A.Metamorphosis:CooldownRemainsP()
@@ -369,7 +388,7 @@ A[3] = function(icon, isMulti)
         --Normal
         local function Normal(unit)
             -- vengeful_retreat,if=talent.momentum.enabled&buff.prepared.down&time>1
-            if A.VengefulRetreat:IsReady(unit) and (A.Momentum:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true)) and Unit("player"):CombatTime > 1) then
+            if A.VengefulRetreat:IsReady(unit) and (A.Momentum:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true)) and Unit("player"):CombatTime() > 1) then
                 return A.VengefulRetreat:Show(icon)
             end
             -- fel_rush,if=(variable.waiting_for_momentum|talent.fel_mastery.enabled)&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10))
@@ -509,7 +528,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -540,7 +559,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -591,5 +610,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

@@ -19,27 +19,45 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PALADIN_PROTECTION] = {
-    ConsecrationBuff                       = Action.Create({Type = "Spell", ID = 188370 }),
-    Consecration                           = Action.Create({Type = "Spell", ID = 26573 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AvengingWrathBuff                      = Action.Create({Type = "Spell", ID = 31884 }),
-    Seraphim                               = Action.Create({Type = "Spell", ID = 152262 }),
-    ShieldoftheRighteous                   = Action.Create({Type = "Spell", ID = 53600 }),
-    AvengingWrath                          = Action.Create({Type = "Spell", ID = 31884 }),
-    SeraphimBuff                           = Action.Create({Type = "Spell", ID = 152262 }),
-    BastionofLight                         = Action.Create({Type = "Spell", ID = 204035 }),
-    Judgment                               = Action.Create({Type = "Spell", ID = 20271 }),
-    AvengersShield                         = Action.Create({Type = "Spell", ID = 31935 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    AvengersValorBuff                      = Action.Create({Type = "Spell", ID =  }),
-    CrusadersJudgment                      = Action.Create({Type = "Spell", ID =  }),
-    TheCrucibleofFlame                     = Action.Create({Type = "Spell", ID =  }),
-    AnimaofDeath                           = Action.Create({Type = "Spell", ID =  }),
-    BlessedHammer                          = Action.Create({Type = "Spell", ID = 204019 }),
-    HammeroftheRighteous                   = Action.Create({Type = "Spell", ID = 53595 }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
-    AnimaofLifeandDeath                    = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ConsecrationBuff                       = Action.Create({ Type = "Spell", ID = 188370 }),
+    Consecration                           = Action.Create({ Type = "Spell", ID = 26573 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AvengingWrathBuff                      = Action.Create({ Type = "Spell", ID = 31884 }),
+    Seraphim                               = Action.Create({ Type = "Spell", ID = 152262 }),
+    ShieldoftheRighteous                   = Action.Create({ Type = "Spell", ID = 53600 }),
+    AvengingWrath                          = Action.Create({ Type = "Spell", ID = 31884 }),
+    SeraphimBuff                           = Action.Create({ Type = "Spell", ID = 152262 }),
+    BastionofLight                         = Action.Create({ Type = "Spell", ID = 204035 }),
+    Judgment                               = Action.Create({ Type = "Spell", ID = 20271 }),
+    AvengersShield                         = Action.Create({ Type = "Spell", ID = 31935 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    AvengersValorBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    CrusadersJudgment                      = Action.Create({ Type = "Spell", ID =  }),
+    TheCrucibleofFlame                     = Action.Create({ Type = "Spell", ID =  }),
+    AnimaofDeath                           = Action.Create({ Type = "Spell", ID =  }),
+    BlessedHammer                          = Action.Create({ Type = "Spell", ID = 204019 }),
+    HammeroftheRighteous                   = Action.Create({ Type = "Spell", ID = 53595 }),
+    HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
+    AnimaofLifeandDeath                    = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -52,6 +70,8 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -229,7 +249,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=buff.seraphim.up|!talent.seraphim.enabled
             -- use_item,name=grongs_primal_rage,if=cooldown.judgment.full_recharge_time>4&cooldown.avengers_shield.remains>4&(buff.seraphim.up|cooldown.seraphim.remains+4+gcd>expected_combat_length-time)&consecration.up
-            if A.GrongsPrimalRage:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 and A.AvengersShield:GetCooldown() > 4 and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() + 4 + A.GetGCD() > expected_combat_length - Unit("player"):CombatTime) and bool(consecration.up)) then
+            if A.GrongsPrimalRage:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 and A.AvengersShield:GetCooldown() > 4 and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() + 4 + A.GetGCD() > expected_combat_length - Unit("player"):CombatTime()) and bool(consecration.up)) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=cooldown.judgment.full_recharge_time>4*spell_haste&cooldown.avengers_shield.remains>4*spell_haste&(!equipped.grongs_primal_rage|!trinket.grongs_primal_rage.cooldown.up)&consecration.up
@@ -329,7 +349,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -360,7 +380,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -411,5 +431,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

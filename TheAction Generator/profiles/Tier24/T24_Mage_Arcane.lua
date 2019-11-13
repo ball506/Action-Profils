@@ -19,44 +19,62 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MAGE_ARCANE] = {
-    ArcaneIntellectBuff                    = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneIntellect                        = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneFamiliarBuff                     = Action.Create({Type = "Spell", ID = 210126 }),
-    ArcaneFamiliar                         = Action.Create({Type = "Spell", ID = 205022 }),
-    Equipoise                              = Action.Create({Type = "Spell", ID = 286027 }),
-    MirrorImage                            = Action.Create({Type = "Spell", ID = 55342 }),
-    ArcaneBlast                            = Action.Create({Type = "Spell", ID = 30451 }),
-    Evocation                              = Action.Create({Type = "Spell", ID = 12051 }),
-    ChargedUp                              = Action.Create({Type = "Spell", ID = 205032 }),
-    ArcaneChargeBuff                       = Action.Create({Type = "Spell", ID = 36032 }),
-    NetherTempest                          = Action.Create({Type = "Spell", ID = 114923 }),
-    NetherTempestDebuff                    = Action.Create({Type = "Spell", ID = 114923 }),
-    RuneofPowerBuff                        = Action.Create({Type = "Spell", ID = 116014 }),
-    ArcanePowerBuff                        = Action.Create({Type = "Spell", ID = 12042 }),
-    RuleofThreesBuff                       = Action.Create({Type = "Spell", ID = 264774 }),
-    Overpowered                            = Action.Create({Type = "Spell", ID = 155147 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    RuneofPower                            = Action.Create({Type = "Spell", ID = 116011 }),
-    ArcanePower                            = Action.Create({Type = "Spell", ID = 12042 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    PresenceofMind                         = Action.Create({Type = "Spell", ID = 205025 }),
-    PresenceofMindBuff                     = Action.Create({Type = "Spell", ID = 205025 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    ArcaneOrb                              = Action.Create({Type = "Spell", ID = 153626 }),
-    Resonance                              = Action.Create({Type = "Spell", ID = 205028 }),
-    ArcaneBarrage                          = Action.Create({Type = "Spell", ID = 44425 }),
-    ArcaneExplosion                        = Action.Create({Type = "Spell", ID = 1449 }),
-    ArcaneMissiles                         = Action.Create({Type = "Spell", ID = 5143 }),
-    ClearcastingBuff                       = Action.Create({Type = "Spell", ID = 263725 }),
-    Amplification                          = Action.Create({Type = "Spell", ID = 236628 }),
-    ArcanePummeling                        = Action.Create({Type = "Spell", ID = 270669 }),
-    Supernova                              = Action.Create({Type = "Spell", ID = 157980 }),
-    BloodoftheEnemyBuff                    = Action.Create({Type = "Spell", ID = 297108 }),
-    BlinkAny                               = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneIntellectBuff                    = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneIntellect                        = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneFamiliarBuff                     = Action.Create({ Type = "Spell", ID = 210126 }),
+    ArcaneFamiliar                         = Action.Create({ Type = "Spell", ID = 205022 }),
+    Equipoise                              = Action.Create({ Type = "Spell", ID = 286027 }),
+    MirrorImage                            = Action.Create({ Type = "Spell", ID = 55342 }),
+    ArcaneBlast                            = Action.Create({ Type = "Spell", ID = 30451 }),
+    Evocation                              = Action.Create({ Type = "Spell", ID = 12051 }),
+    ChargedUp                              = Action.Create({ Type = "Spell", ID = 205032 }),
+    ArcaneChargeBuff                       = Action.Create({ Type = "Spell", ID = 36032 }),
+    NetherTempest                          = Action.Create({ Type = "Spell", ID = 114923 }),
+    NetherTempestDebuff                    = Action.Create({ Type = "Spell", ID = 114923 }),
+    RuneofPowerBuff                        = Action.Create({ Type = "Spell", ID = 116014 }),
+    ArcanePowerBuff                        = Action.Create({ Type = "Spell", ID = 12042 }),
+    RuleofThreesBuff                       = Action.Create({ Type = "Spell", ID = 264774 }),
+    Overpowered                            = Action.Create({ Type = "Spell", ID = 155147 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
+    ArcanePower                            = Action.Create({ Type = "Spell", ID = 12042 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    PresenceofMind                         = Action.Create({ Type = "Spell", ID = 205025 }),
+    PresenceofMindBuff                     = Action.Create({ Type = "Spell", ID = 205025 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    ArcaneOrb                              = Action.Create({ Type = "Spell", ID = 153626 }),
+    Resonance                              = Action.Create({ Type = "Spell", ID = 205028 }),
+    ArcaneBarrage                          = Action.Create({ Type = "Spell", ID = 44425 }),
+    ArcaneExplosion                        = Action.Create({ Type = "Spell", ID = 1449 }),
+    ArcaneMissiles                         = Action.Create({ Type = "Spell", ID = 5143 }),
+    ClearcastingBuff                       = Action.Create({ Type = "Spell", ID = 263725 }),
+    Amplification                          = Action.Create({ Type = "Spell", ID = 236628 }),
+    ArcanePummeling                        = Action.Create({ Type = "Spell", ID = 270669 }),
+    Supernova                              = Action.Create({ Type = "Spell", ID = 157980 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    BlinkAny                               = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -69,6 +87,8 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -552,7 +572,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -583,7 +603,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -634,5 +654,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 
