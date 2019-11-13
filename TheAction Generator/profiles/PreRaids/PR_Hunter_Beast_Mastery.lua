@@ -128,12 +128,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_BEASTMASTERY], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -307,7 +301,7 @@ A[3] = function(icon, isMulti)
                 return A.Barrage:Show(icon)
             end
             -- cobra_shot,if=(active_enemies<2|cooldown.kill_command.remains>focus.time_to_max)&(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd)&cooldown.kill_command.remains>1
-            if A.CobraShot:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or A.KillCommand:GetCooldown() > Unit("player"):FocusTimeToMaxPredicted()) and (Unit("player"):Focus() - A.CobraShot:Cost() + Unit("player"):FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD()) and A.KillCommand:GetCooldown() > 1) then
+            if A.CobraShot:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted()) and (Player:Focus() - A.CobraShot:Cost() + Player:FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD()) and A.KillCommand:GetCooldown() > 1) then
                 return A.CobraShot:Show(icon)
             end
             -- arcane_torrent

@@ -139,12 +139,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_BEASTMASTERY], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -395,7 +389,7 @@ A[3] = function(icon, isMulti)
                 return A.Multishot:Show(icon)
             end
             -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-            if A.CobraShot:IsReady(unit) and (A.KillCommand:GetCooldown() > Unit("player"):FocusTimeToMaxPredicted() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not bool(A.RapidReload:GetAzeriteRank()))) then
+            if A.CobraShot:IsReady(unit) and (A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not bool(A.RapidReload:GetAzeriteRank()))) then
                 return A.CobraShot:Show(icon)
             end
             -- spitting_cobra
@@ -411,7 +405,7 @@ A[3] = function(icon, isMulti)
                 return A.BarbedShot:Show(icon)
             end
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.bestial_wrath.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):Focus() + Unit("player"):FocusRegen() * A.GetGCD() < Unit("player"):FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<2|pet.cat.buff.frenzy.stack>2|!azerite.primal_instincts.enabled
@@ -467,7 +461,7 @@ A[3] = function(icon, isMulti)
                 return A.Barrage:Show(icon)
             end
             -- cobra_shot,if=(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd|buff.memory_of_lucid_dreams.up)&cooldown.kill_command.remains>1
-            if A.CobraShot:IsReady(unit) and ((Unit("player"):Focus() - A.CobraShot:Cost() + Unit("player"):FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD() or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) and A.KillCommand:GetCooldown() > 1) then
+            if A.CobraShot:IsReady(unit) and ((Player:Focus() - A.CobraShot:Cost() + Player:FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD() or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) and A.KillCommand:GetCooldown() > 1) then
                 return A.CobraShot:Show(icon)
             end
             -- spitting_cobra

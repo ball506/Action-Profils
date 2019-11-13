@@ -134,17 +134,10 @@ local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_UNHOLY], { __index = Acti
 ------------------------------------------
 local VarPoolingForGargoyle = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarPoolingForGargoyle = 0
-	end 
 end)
 
-local EnemyRanges = {40, 30, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -242,11 +235,11 @@ A[3] = function(icon, isMulti)
                 return A.Defile:Show(icon)
             end
             -- epidemic,if=death_and_decay.ticking&rune<2&!variable.pooling_for_gargoyle
-            if A.Epidemic:IsReady(unit) and (bool(death_and_decay.ticking) and Unit("player"):Rune() < 2 and not bool(VarPoolingForGargoyle)) then
+            if A.Epidemic:IsReady(unit) and (bool(death_and_decay.ticking) and Player:Rune() < 2 and not bool(VarPoolingForGargoyle)) then
                 return A.Epidemic:Show(icon)
             end
             -- death_coil,if=death_and_decay.ticking&rune<2&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (bool(death_and_decay.ticking) and Unit("player"):Rune() < 2 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (bool(death_and_decay.ticking) and Player:Rune() < 2 and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
             -- scourge_strike,if=death_and_decay.ticking&cooldown.apocalypse.remains
@@ -268,11 +261,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- festering_strike,if=talent.bursting_sores.enabled&spell_targets.bursting_sores>=2&debuff.festering_wound.stack<=1
-            if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) <= 1) then
+            if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) <= 1) then
                 return A.FesteringStrike:Show(icon)
             end
             -- death_coil,if=buff.sudden_doom.react&rune.deficit>=4
-            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and Unit("player"):RuneDeficit() >= 4) then
+            if A.DeathCoil:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true)) and Player:RuneDeficit() >= 4) then
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=buff.sudden_doom.react&!variable.pooling_for_gargoyle|pet.gargoyle.active
@@ -280,7 +273,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
             -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
@@ -292,7 +285,7 @@ A[3] = function(icon, isMulti)
                 return A.ClawingShadows:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
             -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
@@ -320,7 +313,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkTransformation:Show(icon)
             end
             -- summon_gargoyle,if=runic_power.deficit<14
-            if A.SummonGargoyle:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 14) then
+            if A.SummonGargoyle:IsReady(unit) and (Player:RunicPowerDeficit() < 14) then
                 return A.SummonGargoyle:Show(icon)
             end
             -- unholy_frenzy,if=essence.vision_of_perfection.enabled|(essence.condensed_lifeforce.enabled&pet.apoc_ghoul.active)|debuff.festering_wound.stack<4&!(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)|cooldown.apocalypse.remains<2&(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)
@@ -338,7 +331,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- soul_reaper,if=(!raid_event.adds.exists|raid_event.adds.in>20)&rune<=(1-buff.unholy_frenzy.up)
-            if A.SoulReaper:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 20) and Unit("player"):Rune() <= (1 - num(Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)))) then
+            if A.SoulReaper:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 20) and Player:Rune() <= (1 - num(Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)))) then
                 return A.SoulReaper:Show(icon)
             end
             -- unholy_blight
@@ -350,11 +343,11 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):RuneTimeToX(1) > A.GetGCD() and Unit("player"):RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(A.DeathandDecay:GetCooldown()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (bool(A.Defile:GetCooldown()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (bool(A.Apocalypse:GetCooldown()) and A.DeathandDecay:GetCooldown() == 0)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(A.DeathandDecay:GetCooldown()) and MultiUnits:GetByRangeInCombat(30, 5, 10) > 1) or (bool(A.Defile:GetCooldown()) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 1) or (bool(A.Apocalypse:GetCooldown()) and A.DeathandDecay:GetCooldown() == 0)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
@@ -394,7 +387,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathCoil:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
             -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
@@ -414,7 +407,7 @@ A[3] = function(icon, isMulti)
                 return A.ClawingShadows:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
             -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
@@ -441,7 +434,7 @@ A[3] = function(icon, isMulti)
                 VarPoolingForGargoyle = num(A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned())
             end
             -- arcane_torrent,if=runic_power.deficit>65&(pet.gargoyle.active|!talent.summon_gargoyle.enabled)&rune.deficit>=5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 65 and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned()) and Unit("player"):RuneDeficit() >= 5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (bool(Pet:IsActive(A.Gargoyle.ID)) or not A.SummonGargoyle:IsSpellLearned()) and Player:RuneDeficit() >= 5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- blood_fury,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled
@@ -502,7 +495,7 @@ A[3] = function(icon, isMulti)
                 A.GalecallersBeak:Show(icon)
             end
             -- use_item,name=grongs_primal_rage,if=rune<=3&(time>20|!equipped.ramping_amplitude_gigavolt_engine)
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):Rune() <= 3 and (Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists())) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Player:Rune() <= 3 and (Unit("player"):CombatTime > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists())) then
                 A.GrongsPrimalRage:Show(icon)
             end
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up

@@ -118,12 +118,6 @@ local A = setmetatable(Action[ACTION_CONST_PALADIN_PROTECTION], { __index = Acti
 
 
 
-local EnemyRanges = {}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)

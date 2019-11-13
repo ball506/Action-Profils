@@ -138,12 +138,6 @@ local A = setmetatable(Action[ACTION_CONST_MAGE_FROST], { __index = Action })
 
 
 
-local EnemyRanges = {40, 35}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -420,7 +414,7 @@ A[3] = function(icon, isMulti)
                 return A.FrozenOrb:Show(icon)
             end
             -- blizzard,if=active_enemies>2|active_enemies>1&!talent.splitting_ice.enabled
-            if A.Blizzard:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not A.SplittingIce:IsSpellLearned()) then
+            if A.Blizzard:IsReady(unit) and (MultiUnits:GetByRangeInCombat(35, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(35, 5, 10) > 1 and not A.SplittingIce:IsSpellLearned()) then
                 return A.Blizzard:Show(icon)
             end
             -- comet_storm

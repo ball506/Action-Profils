@@ -396,7 +396,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is gcd.
         """
-        return Literal('A.GetGCD()')  # GCD.build(self)
+        return GCD.build(self)
 
     def time(self):
         """
@@ -835,7 +835,7 @@ class GCD(BuildExpression):
             call = condition.condition_list[1]
         else:
             call = 'value'
-        self.object_ = condition.player_unit
+        self.object_ = None
         self.method = None
         self.args = []
         super().__init__(call)
@@ -844,7 +844,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.remains.
         """
-        self.method = Method('GCDRemains')
+        self.method = Method('A.GetCurrentGCD()')
 
     def max(self):
         """
@@ -856,7 +856,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.
         """
-        self.method = Method('A.GetGCD')
+        self.method = Method('A.GetGCD()')
 
 
 class PMultiplier(BuildExpression):

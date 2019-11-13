@@ -129,12 +129,6 @@ local A = setmetatable(Action[ACTION_CONST_WARRIOR_FURY], { __index = Action })
 
 
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -216,7 +210,7 @@ A[3] = function(icon, isMulti)
                 return A.Siegebreaker:Show(icon)
             end
             -- rampage,if=buff.recklessness.up|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-            if A.Rampage:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90))) then
+            if A.Rampage:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90))) then
                 return A.Rampage:Show(icon)
             end
             -- execute,if=buff.enrage.up
@@ -244,7 +238,7 @@ A[3] = function(icon, isMulti)
                 return A.DragonRoar:Show(icon)
             end
             -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90)
-            if A.RagingBlow:IsReady(unit) and (A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and Unit("player"):Rage() < 80) or (A.FrothingBerserker:IsSpellLearned() and Unit("player"):Rage() < 90)) then
+            if A.RagingBlow:IsReady(unit) and (A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and Player:Rage() < 80) or (A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90)) then
                 return A.RagingBlow:Show(icon)
             end
             -- furious_slash,if=talent.furious_slash.enabled
@@ -299,7 +293,7 @@ A[3] = function(icon, isMulti)
                 return A.Recklessness:Show(icon)
             end
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
+            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
                 return A.Whirlwind:Show(icon)
             end
             -- blood_fury,if=buff.recklessness.up

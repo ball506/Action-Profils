@@ -127,12 +127,6 @@ local A = setmetatable(Action[ACTION_CONST_WARRIOR_PROTECTION], { __index = Acti
 
 
 
-local EnemyRanges = {5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -258,7 +252,7 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ThunderClap:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
@@ -364,7 +358,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
+            if A.IgnorePain:IsReady(unit) and (Player:RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
                 return A.IgnorePain:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avatar.remains<=2
@@ -392,7 +386,7 @@ A[3] = function(icon, isMulti)
                 return A.Avatar:Show(icon)
             end
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3) then
                 return Aoe(unit);
             end
             -- call_action_list,name=st

@@ -136,12 +136,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_MARKSMANSHIP], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -287,11 +281,11 @@ A[3] = function(icon, isMulti)
                 return A.SerpentSting:Show(icon)
             end
             -- rapid_fire,if=focus<50&(buff.bloodlust.up&buff.trueshot.up|buff.trueshot.down)
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)))) then
+            if A.RapidFire:IsReady(unit) and (Player:Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)))) then
                 return A.RapidFire:Show(icon)
             end
             -- arcane_shot,if=buff.master_marksman.up&buff.trueshot.up&focus+cast_regen<focus.max
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Player:FocusMax()) then
                 return A.ArcaneShot:Show(icon)
             end
             -- aimed_shot,if=buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up
@@ -299,7 +293,7 @@ A[3] = function(icon, isMulti)
                 return A.AimedShot:Show(icon)
             end
             -- rapid_fire,if=focus+cast_regen<focus.max|azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Unit("player"):FocusMax() or bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned()) then
+            if A.RapidFire:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Player:FocusMax() or bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned()) then
                 return A.RapidFire:Show(icon)
             end
             -- piercing_shot
@@ -307,7 +301,7 @@ A[3] = function(icon, isMulti)
                 return A.PiercingShot:Show(icon)
             end
             -- arcane_shot,if=focus>60&!talent.steady_focus.enabled|buff.precise_shots.up&buff.trueshot.down|focus>85
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):Focus() > 60 and not A.SteadyFocus:IsSpellLearned() or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Unit("player"):Focus() > 85) then
+            if A.ArcaneShot:IsReady(unit) and (Player:Focus() > 60 and not A.SteadyFocus:IsSpellLearned() or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Player:Focus() > 85) then
                 return A.ArcaneShot:Show(icon)
             end
             -- steady_shot
@@ -339,7 +333,7 @@ A[3] = function(icon, isMulti)
                 return A.RapidFire:Show(icon)
             end
             -- multishot,if=buff.trick_shots.down|buff.precise_shots.up|focus>70
-            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Unit("player"):Focus() > 70) then
+            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Player:Focus() > 70) then
                 return A.Multishot:Show(icon)
             end
             -- piercing_shot

@@ -172,7 +172,7 @@ local VarOcpool = 0;
 local VarOcpoolFb = 0;
 local VarRockslideEnabled = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarFurycheckCl = 0
   VarCooldownSync = 0
   VarFurycheckEs = 0
@@ -189,15 +189,8 @@ A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				functi
   VarOcpool = 0
   VarOcpoolFb = 0
   VarRockslideEnabled = 0
-	end 
 end)
 
-local EnemyRanges = {40, 8, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -284,7 +277,7 @@ A[3] = function(icon, isMulti)
         --Asc
         local function Asc(unit)
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
@@ -348,11 +341,11 @@ A[3] = function(icon, isMulti)
                 return A.Stormstrike:Show(icon)
             end
             -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
-            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFurycheckLb) and Unit("player"):Maelstrom() >= 40) then
+            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFurycheckLb) and Player:Maelstrom() >= 40) then
                 return A.LightningBolt:Show(icon)
             end
             -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS
@@ -368,7 +361,7 @@ A[3] = function(icon, isMulti)
                 return A.Sundering:Show(icon)
             end
             -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (A.ForcefulWinds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (A.ForcefulWinds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- flametongue,if=talent.searing_assault.enabled
@@ -380,11 +373,11 @@ A[3] = function(icon, isMulti)
                 return A.LavaLash:Show(icon)
             end
             -- crash_lightning,if=active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- rockbiter,if=maelstrom<70&!buff.strength_of_earth.up
-            if A.Rockbiter:IsReady(unit) and (Unit("player"):Maelstrom() < 70 and not Unit("player"):HasBuffs(A.StrengthofEarthBuff.ID, true)) then
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 70 and not Unit("player"):HasBuffs(A.StrengthofEarthBuff.ID, true)) then
                 return A.Rockbiter:Show(icon)
             end
             -- crash_lightning,if=talent.crashing_storm.enabled&variable.OCPool_CL
@@ -432,11 +425,11 @@ A[3] = function(icon, isMulti)
                 return A.Stormstrike:Show(icon)
             end
             -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
-            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFurycheckLb) and Unit("player"):Maelstrom() >= 40) then
+            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and bool(VarFurycheckLb) and Player:Maelstrom() >= 40) then
                 return A.LightningBolt:Show(icon)
             end
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
@@ -468,7 +461,7 @@ A[3] = function(icon, isMulti)
         --Opener
         local function Opener(unit)
             -- rockbiter,if=maelstrom<15&time<gcd
-            if A.Rockbiter:IsReady(unit) and (Unit("player"):Maelstrom() < 15 and Unit("player"):CombatTime < A.GetGCD()) then
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime < A.GetGCD()) then
                 return A.Rockbiter:Show(icon)
             end
         end
@@ -476,7 +469,7 @@ A[3] = function(icon, isMulti)
         --Priority
         local function Priority(unit)
             -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= (8 - (num(A.ForcefulWinds:IsSpellLearned()) * 3)) and bool(VarFreezerburnEnabled) and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= (8 - (num(A.ForcefulWinds:IsSpellLearned()) * 3)) and bool(VarFreezerburnEnabled) and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
@@ -484,15 +477,15 @@ A[3] = function(icon, isMulti)
                 return A.LavaLash:Show(icon)
             end
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(VarFurycheckCl)) then
+            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
             end
             -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
-            if A.FuryofAir:IsReady(unit) and (not Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and Unit("player"):Maelstrom() >= 20 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= (1 + VarFreezerburnEnabled)) then
+            if A.FuryofAir:IsReady(unit) and (not Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and Player:Maelstrom() >= 20 and MultiUnits:GetByRangeInCombat(5, 5, 10) >= (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
             -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
-            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and true and MultiUnits:GetByRangeInCombat(40, 5, 10) < (1 + VarFreezerburnEnabled)) then
+            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and true and MultiUnits:GetByRangeInCombat(5, 5, 10) < (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
             -- totem_mastery,if=buff.resonance_totem.remains<=2*gcd
@@ -500,7 +493,7 @@ A[3] = function(icon, isMulti)
                 return A.TotemMastery:Show(icon)
             end
             -- sundering,if=active_enemies>=3
-            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3) then
                 return A.Sundering:Show(icon)
             end
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
@@ -516,7 +509,7 @@ A[3] = function(icon, isMulti)
                 return A.Flametongue:Show(icon)
             end
             -- rockbiter,if=(azerite.natural_harmony.enabled&buff.natural_harmony_nature.remains<=2*gcd)&maelstrom<70
-            if A.Rockbiter:IsReady(unit) and ((bool(A.NaturalHarmony:GetAzeriteRank()) and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true) <= 2 * A.GetGCD()) and Unit("player"):Maelstrom() < 70) then
+            if A.Rockbiter:IsReady(unit) and ((bool(A.NaturalHarmony:GetAzeriteRank()) and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true) <= 2 * A.GetGCD()) and Player:Maelstrom() < 70) then
                 return A.Rockbiter:Show(icon)
             end
         end
@@ -539,27 +532,27 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=furyCheck_SS,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.stormstrike.cost))
             if (true) then
-                VarFurycheckSs = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Stormstrike:Cost())))
+                VarFurycheckSs = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Stormstrike:Cost())))
             end
             -- variable,name=furyCheck_LL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.lava_lash.cost))
             if (true) then
-                VarFurycheckLl = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.LavaLash:Cost())))
+                VarFurycheckLl = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.LavaLash:Cost())))
             end
             -- variable,name=furyCheck_CL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.crash_lightning.cost))
             if (true) then
-                VarFurycheckCl = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.CrashLightning:Cost())))
+                VarFurycheckCl = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.CrashLightning:Cost())))
             end
             -- variable,name=furyCheck_FB,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.frostbrand.cost))
             if (true) then
-                VarFurycheckFb = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Frostbrand:Cost())))
+                VarFurycheckFb = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Frostbrand:Cost())))
             end
             -- variable,name=furyCheck_ES,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.earthen_spike.cost))
             if (true) then
-                VarFurycheckEs = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.EarthenSpike:Cost())))
+                VarFurycheckEs = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.EarthenSpike:Cost())))
             end
             -- variable,name=furyCheck_LB,value=maelstrom>=(talent.fury_of_air.enabled*(6+40))
             if (true) then
-                VarFurycheckLb = num(Unit("player"):Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + 40)))
+                VarFurycheckLb = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + 40)))
             end
             -- variable,name=OCPool,value=(active_enemies>1|(cooldown.lightning_bolt.remains>=2*gcd))
             if (true) then
@@ -567,27 +560,27 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=OCPool_SS,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.stormstrike.cost)))
             if (true) then
-                VarOcpoolSs = num((bool(VarOcpool) or Unit("player"):Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Stormstrike:Cost()))))
+                VarOcpoolSs = num((bool(VarOcpool) or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Stormstrike:Cost()))))
             end
             -- variable,name=OCPool_LL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.lava_lash.cost)))
             if (true) then
-                VarOcpoolLl = num((bool(VarOcpool) or Unit("player"):Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.LavaLash:Cost()))))
+                VarOcpoolLl = num((bool(VarOcpool) or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.LavaLash:Cost()))))
             end
             -- variable,name=OCPool_CL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.crash_lightning.cost)))
             if (true) then
-                VarOcpoolCl = num((bool(VarOcpool) or Unit("player"):Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.CrashLightning:Cost()))))
+                VarOcpoolCl = num((bool(VarOcpool) or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.CrashLightning:Cost()))))
             end
             -- variable,name=OCPool_FB,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.frostbrand.cost)))
             if (true) then
-                VarOcpoolFb = num((bool(VarOcpool) or Unit("player"):Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Frostbrand:Cost()))))
+                VarOcpoolFb = num((bool(VarOcpool) or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Frostbrand:Cost()))))
             end
             -- variable,name=CLPool_LL,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.lava_lash.cost)
             if (true) then
-                VarClpoolLl = num(MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):Maelstrom() >= (A.CrashLightning:Cost() + A.LavaLash:Cost()))
+                VarClpoolLl = num(MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Player:Maelstrom() >= (A.CrashLightning:Cost() + A.LavaLash:Cost()))
             end
             -- variable,name=CLPool_SS,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.stormstrike.cost)
             if (true) then
-                VarClpoolSs = num(MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):Maelstrom() >= (A.CrashLightning:Cost() + A.Stormstrike:Cost()))
+                VarClpoolSs = num(MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Player:Maelstrom() >= (A.CrashLightning:Cost() + A.Stormstrike:Cost()))
             end
             -- variable,name=freezerburn_enabled,value=(talent.hot_hand.enabled&talent.hailstorm.enabled&azerite.primal_primer.enabled)
             if (true) then

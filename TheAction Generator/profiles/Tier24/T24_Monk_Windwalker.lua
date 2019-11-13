@@ -137,12 +137,6 @@ local A = setmetatable(Action[ACTION_CONST_MONK_WINDWALKER], { __index = Action 
 
 
 
-local EnemyRanges = {40, 8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -190,7 +184,7 @@ local function EvaluateTargetIfFilterTigerPalm68(unit)
 end
 
 local function EvaluateTargetIfTigerPalm77(unit)
-  return Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not bool(combo_break))
+  return Player:ChiMax() - Player:Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not bool(combo_break))
 end
 
 
@@ -199,7 +193,7 @@ local function EvaluateTargetIfFilterBlackoutKick89(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick102(unit)
-  return bool(combo_strike) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() < 4))
+  return bool(combo_strike) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
 end
 
 
@@ -217,7 +211,7 @@ local function EvaluateTargetIfFilterBlackoutKick224(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick235(unit)
-  return bool(combo_strike) and (A.FistsofFury:GetCooldown() > 4 or Unit("player"):Chi() >= 4 or (Unit("player"):Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
+  return bool(combo_strike) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
 end
 
 
@@ -226,7 +220,7 @@ local function EvaluateTargetIfFilterRisingSunKick255(unit)
 end
 
 local function EvaluateTargetIfRisingSunKick262(unit)
-  return Unit("player"):ChiMax() - Unit("player"):Chi() < 2
+  return Player:ChiMax() - Player:Chi() < 2
 end
 
 
@@ -235,7 +229,7 @@ local function EvaluateTargetIfFilterTigerPalm268(unit)
 end
 
 local function EvaluateTargetIfTigerPalm275(unit)
-  return bool(combo_strike) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2
+  return bool(combo_strike) and Player:ChiMax() - Player:Chi() >= 2
 end
 
 
@@ -261,7 +255,7 @@ local function EvaluateTargetIfFilterRisingSunKick376(unit)
 end
 
 local function EvaluateTargetIfRisingSunKick383(unit)
-  return Unit("player"):Chi() >= 5
+  return Player:Chi() >= 5
 end
 
 
@@ -274,7 +268,7 @@ local function EvaluateTargetIfFilterBlackoutKick424(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick437(unit)
-  return bool(combo_strike) and (A.RisingSunKick:GetCooldown() > 3 or Unit("player"):Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Unit("player"):Chi() >= 4 or (Unit("player"):Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
+  return bool(combo_strike) and (A.RisingSunKick:GetCooldown() > 3 or Player:Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
 end
 
 
@@ -283,7 +277,7 @@ local function EvaluateTargetIfFilterTigerPalm453(unit)
 end
 
 local function EvaluateTargetIfTigerPalm460(unit)
-  return bool(combo_strike) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2
+  return bool(combo_strike) and Player:ChiMax() - Player:Chi() >= 2
 end
 
 
@@ -292,7 +286,7 @@ local function EvaluateTargetIfFilterTigerPalm520(unit)
 end
 
 local function EvaluateTargetIfTigerPalm535(unit)
-  return not bool(combo_break) and (Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Unit("player"):EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and not bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))
+  return not bool(combo_break) and (Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Player:ChiMax() - Player:Chi() >= 2 and not bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))
 end
 
 
@@ -354,11 +348,11 @@ A[3] = function(icon, isMulti)
                 return A.WhirlingDragonPunch:Show(icon)
             end
             -- energizing_elixir,if=!prev_gcd.1.tiger_palm&chi<=1&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() <= 1 and Unit("player"):EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() <= 1 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             -- fists_of_fury,if=energy.time_to_max>3
-            if A.FistsofFury:IsReady(unit) and (Unit("player"):EnergyTimeToMaxPredicted() > 3) then
+            if A.FistsofFury:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 3) then
                 return A.FistsofFury:Show(icon)
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down
@@ -366,19 +360,19 @@ A[3] = function(icon, isMulti)
                 return A.RushingJadeWind:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&(((chi>3|cooldown.fists_of_fury.remains>6)&(chi>=5|cooldown.fists_of_fury.remains>2))|energy.time_to_max<=3)
-            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and (((Unit("player"):Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Unit("player"):Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Unit("player"):EnergyTimeToMaxPredicted() <= 3)) then
+            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3)) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ReverseHarm:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ReverseHarm:Show(icon)
             end
             -- chi_burst,if=chi<=3
-            if A.ChiBurst:IsReady(unit) and (Unit("player"):Chi() <= 3) then
+            if A.ChiBurst:IsReady(unit) and (Player:Chi() <= 3) then
                 return A.ChiBurst:Show(icon)
             end
             -- fist_of_the_white_tiger,if=chi.max-chi>=3
-            if A.FistoftheWhiteTiger:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 3) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 3) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi>=2&(!talent.hit_combo.enabled|!combo_break)
@@ -426,7 +420,7 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and Unit("player"):EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment
@@ -446,7 +440,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Tod(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- storm_earth_and_fire,if=cooldown.storm_earth_and_fire.charges=2|(cooldown.fists_of_fury.remains<=9&chi>=3&cooldown.whirling_dragon_punch.remains<=14&cooldown.touch_of_death.remains>=90)|target.time_to_die<=15|dot.touch_of_death.remains
-            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 9 and Unit("player"):Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 14 and A.TouchofDeath:GetCooldown() >= 90) or Unit(unit):TimeToDie() <= 15 or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))) then
+            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 9 and Player:Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 14 and A.TouchofDeath:GetCooldown() >= 90) or Unit(unit):TimeToDie() <= 15 or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))) then
                 return A.StormEarthandFire:Show(icon)
             end
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains<=2
@@ -482,7 +476,7 @@ A[3] = function(icon, isMulti)
                 return A.Serenity:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<40&buff.storm_earth_and_fire.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- ripple_in_space
@@ -509,19 +503,19 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ReverseHarm:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ReverseHarm:Show(icon)
             end
             -- fist_of_the_white_tiger,if=chi<=2
-            if A.FistoftheWhiteTiger:IsReady(unit) and (Unit("player"):Chi() <= 2) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (Player:Chi() <= 2) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- energizing_elixir,if=chi<=3&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Chi() <= 3 and Unit("player"):EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Player:Chi() <= 3 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.react
@@ -539,11 +533,11 @@ A[3] = function(icon, isMulti)
                 return A.ChiWave:Show(icon)
             end
             -- chi_burst,if=chi.max-chi>=1&active_enemies=1|chi.max-chi>=2
-            if A.ChiBurst:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ChiBurst:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ChiBurst:Show(icon)
             end
             -- flying_serpent_kick,if=prev_gcd.1.blackout_kick&chi>3,interrupt=1
-            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Unit("player"):Chi() > 3) then
+            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Player:Chi() > 3) then
                 return A.FlyingSerpentKick:Show(icon)
             end
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi<2
@@ -575,19 +569,19 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- fists_of_fury,if=(buff.bloodlust.up&prev_gcd.1.rising_sun_kick)|buff.serenity.remains<1|(active_enemies>1&active_enemies<5)
-            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5)) then
+            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(8, 5, 10) < 5)) then
                 return A.FistsofFury:Show(icon)
             end
             -- fist_of_the_white_tiger,if=talent.hit_combo.enabled&energy.time_to_max<2&prev_gcd.1.blackout_kick&chi<=2
-            if A.FistoftheWhiteTiger:IsReady(unit) and (A.HitCombo:IsSpellLearned() and Unit("player"):EnergyTimeToMaxPredicted() < 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick) and Unit("player"):Chi() <= 2) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (A.HitCombo:IsSpellLearned() and Player:EnergyTimeToMaxPredicted() < 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick) and Player:Chi() <= 2) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- tiger_palm,if=talent.hit_combo.enabled&energy.time_to_max<1&prev_gcd.1.blackout_kick&chi.max-chi>=2
-            if A.TigerPalm:IsReady(unit) and (A.HitCombo:IsSpellLearned() and Unit("player"):EnergyTimeToMaxPredicted() < 1 and Unit("player"):GetSpellLastCast(A.BlackoutKick) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.TigerPalm:IsReady(unit) and (A.HitCombo:IsSpellLearned() and Player:EnergyTimeToMaxPredicted() < 1 and Unit("player"):GetSpellLastCast(A.BlackoutKick) and Player:ChiMax() - Player:Chi() >= 2) then
                 return A.TigerPalm:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&(active_enemies>=3|(talent.hit_combo.enabled&prev_gcd.1.blackout_kick)|(active_enemies=2&prev_gcd.1.blackout_kick))
-            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.BlackoutKick)) or (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick)))) then
+            if A.SpinningCraneKick:IsReady(unit) and (bool(combo_strike) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.BlackoutKick)) or (MultiUnits:GetByRangeInCombat(8, 5, 10) == 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick)))) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains
@@ -611,7 +605,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- fists_of_fury,if=energy.time_to_max>3
-            if A.FistsofFury:IsReady(unit) and (Unit("player"):EnergyTimeToMaxPredicted() > 3) then
+            if A.FistsofFury:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 3) then
                 return A.FistsofFury:Show(icon)
             end
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains
@@ -621,19 +615,19 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- reverse_harm,if=chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ReverseHarm:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ReverseHarm:Show(icon)
             end
             -- fist_of_the_white_tiger,if=chi<=2
-            if A.FistoftheWhiteTiger:IsReady(unit) and (Unit("player"):Chi() <= 2) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (Player:Chi() <= 2) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- energizing_elixir,if=chi<=3&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Chi() <= 3 and Unit("player"):EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Player:Chi() <= 3 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             -- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.react
@@ -651,7 +645,7 @@ A[3] = function(icon, isMulti)
                 return A.ChiWave:Show(icon)
             end
             -- chi_burst,if=chi.max-chi>=1&active_enemies=1|chi.max-chi>=2
-            if A.ChiBurst:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ChiBurst:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ChiBurst:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&chi.max-chi>=2
@@ -661,7 +655,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- flying_serpent_kick,if=prev_gcd.1.blackout_kick&chi>3,interrupt=1
-            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Unit("player"):Chi() > 3) then
+            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Player:Chi() > 3) then
                 return A.FlyingSerpentKick:Show(icon)
             end
         end
@@ -708,11 +702,11 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Serenity(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- reverse_harm,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2))&chi.max-chi>=2
-            if A.ReverseHarm:IsReady(unit) and ((Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ReverseHarm:IsReady(unit) and ((Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ReverseHarm:Show(icon)
             end
             -- fist_of_the_white_tiger,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2)|(energy.time_to_max<4&cooldown.fists_of_fury.remains<1.5))&chi.max-chi>=3
-            if A.FistoftheWhiteTiger:IsReady(unit) and ((Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Unit("player"):EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 3) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and ((Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Player:ChiMax() - Player:Chi() >= 3) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=!combo_break&(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2)|(energy.time_to_max<4&cooldown.fists_of_fury.remains<1.5))&chi.max-chi>=2&!dot.touch_of_death.remains

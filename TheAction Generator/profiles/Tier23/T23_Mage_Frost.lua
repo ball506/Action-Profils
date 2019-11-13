@@ -136,12 +136,6 @@ local A = setmetatable(Action[ACTION_CONST_MAGE_FROST], { __index = Action })
 
 
 
-local EnemyRanges = {40, 35}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -362,7 +356,7 @@ A[3] = function(icon, isMulti)
                 return A.FrozenOrb:Show(icon)
             end
             -- blizzard,if=active_enemies>2|active_enemies>1&cast_time=0&buff.fingers_of_frost.react<2
-            if A.Blizzard:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.Blizzard:GetSpellCastTime() == 0 and Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true) < 2) then
+            if A.Blizzard:IsReady(unit) and (MultiUnits:GetByRangeInCombat(35, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(35, 5, 10) > 1 and A.Blizzard:GetSpellCastTime() == 0 and Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true) < 2) then
                 return A.Blizzard:Show(icon)
             end
             -- ice_lance,if=buff.fingers_of_frost.react
@@ -382,7 +376,7 @@ A[3] = function(icon, isMulti)
                 return A.RayofFrost:Show(icon)
             end
             -- blizzard,if=cast_time=0|active_enemies>1
-            if A.Blizzard:IsReady(unit) and (A.Blizzard:GetSpellCastTime() == 0 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.Blizzard:IsReady(unit) and (A.Blizzard:GetSpellCastTime() == 0 or MultiUnits:GetByRangeInCombat(35, 5, 10) > 1) then
                 return A.Blizzard:Show(icon)
             end
             -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|active_enemies>1&talent.splitting_ice.enabled

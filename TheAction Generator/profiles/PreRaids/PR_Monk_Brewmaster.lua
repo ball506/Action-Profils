@@ -132,12 +132,6 @@ local A = setmetatable(Action[ACTION_CONST_MONK_BREWMASTER], { __index = Action 
 
 
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -275,11 +269,11 @@ A[3] = function(icon, isMulti)
                 return A.BlackOxBrew:Show(icon)
             end
             -- black_ox_brew,if=(energy+(energy.regen*cooldown.keg_smash.remains))<40&buff.blackout_combo.down&cooldown.keg_smash.up
-            if A.BlackOxBrew:IsReady(unit) and ((Unit("player"):EnergyPredicted() + (Unit("player"):EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
+            if A.BlackOxBrew:IsReady(unit) and ((Player:EnergyPredicted() + (Player:EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
                 return A.BlackOxBrew:Show(icon)
             end
             -- keg_smash,if=spell_targets>=2
-            if A.KegSmash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.KegSmash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.KegSmash:Show(icon)
             end
             -- tiger_palm,if=talent.rushing_jade_wind.enabled&buff.blackout_combo.up&buff.rushing_jade_wind.up
@@ -315,11 +309,11 @@ A[3] = function(icon, isMulti)
                 return A.ChiWave:Show(icon)
             end
             -- tiger_palm,if=!talent.blackout_combo.enabled&cooldown.keg_smash.remains>gcd&(energy+(energy.regen*(cooldown.keg_smash.remains+gcd)))>=65
-            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Unit("player"):EnergyPredicted() + (Unit("player"):EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
+            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Player:EnergyPredicted() + (Player:EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
                 return A.TigerPalm:Show(icon)
             end
             -- arcane_torrent,if=energy<31
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() < 31) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyPredicted() < 31) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- rushing_jade_wind

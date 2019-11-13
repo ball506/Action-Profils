@@ -121,12 +121,6 @@ local A = setmetatable(Action[ACTION_CONST_DEMONHUNTER_VENGEANCE], { __index = A
 
 
 
-local EnemyRanges = {}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -293,11 +287,11 @@ A[3] = function(icon, isMulti)
                 return A.SoulCleave:Show(icon)
             end
             -- immolation_aura,if=pain<=90
-            if A.ImmolationAura:IsReady(unit) and (Unit("player"):Pain() <= 90) then
+            if A.ImmolationAura:IsReady(unit) and (Player:Pain() <= 90) then
                 return A.ImmolationAura:Show(icon)
             end
             -- felblade,if=pain<=70
-            if A.Felblade:IsReady(unit) and (Unit("player"):Pain() <= 70) then
+            if A.Felblade:IsReady(unit) and (Player:Pain() <= 70) then
                 return A.Felblade:Show(icon)
             end
             -- fracture,if=soul_fragments<=3

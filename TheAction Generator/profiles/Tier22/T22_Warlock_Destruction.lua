@@ -134,12 +134,6 @@ local A = setmetatable(Action[ACTION_CONST_WARLOCK_DESTRUCTION], { __index = Act
 
 
 
-local EnemyRanges = {40, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -247,15 +241,15 @@ local function EvaluateCycleChaosBolt315(unit)
 end
 
 local function EvaluateCycleImmolate330(unit)
-  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 8 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true) and MultiUnits:GetByRangeInCombat(5, 5, 10) <= 8 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleSoulFire347(unit)
-  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + raid_event.invulnerable.up
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and MultiUnits:GetByRangeInCombat(5, 5, 10) <= 3 + raid_event.invulnerable.up
 end
 
 local function EvaluateCycleConflagrate356(unit)
-  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and (A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff.ID, true) <= 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) <= 7 + raid_event.invulnerable.up or A.RoaringBlaze:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 9 + raid_event.invulnerable.up)
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and (A.Flashover:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.BackdraftBuff.ID, true) <= 2 or MultiUnits:GetByRangeInCombat(5, 5, 10) <= 7 + raid_event.invulnerable.up or A.RoaringBlaze:IsSpellLearned() and MultiUnits:GetByRangeInCombat(5, 5, 10) <= 9 + raid_event.invulnerable.up)
 end
 
 local function EvaluateCycleIncinerate371(unit)
@@ -323,7 +317,7 @@ local function EvaluateCycleChaosBolt735(unit)
 end
 
 local function EvaluateCycleChaosBolt772(unit)
-  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (Unit("player"):SoulShardsP >= 4 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) > A.ChaosBolt:GetSpellCastTime() or bool(pet.infernal.active) or Unit("player"):HasBuffs(A.ActiveHavocBuff.ID, true) > A.ChaosBolt:GetSpellCastTime())
+  return not bool(Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true)) and A.ChaosBolt:GetSpellCastTime() + A.ChaosBolt:TravelTime() < Unit(unit):TimeToDie() and (Player:SoulShardsP >= 4 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) > A.ChaosBolt:GetSpellCastTime() or bool(pet.infernal.active) or Unit("player"):HasBuffs(A.ActiveHavocBuff.ID, true) > A.ChaosBolt:GetSpellCastTime())
 end
 
 local function EvaluateCycleConflagrate801(unit)
@@ -390,7 +384,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- rain_of_fire,if=soul_shard>=4.5
-            if A.RainofFire:IsReady(unit) and (Unit("player"):SoulShardsP >= 4.5) then
+            if A.RainofFire:IsReady(unit) and (Player:SoulShardsP >= 4.5) then
                 return A.RainofFire:Show(icon)
             end
             -- cataclysm
@@ -509,7 +503,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- rain_of_fire,if=soul_shard>=4.5
-            if A.RainofFire:IsReady(unit) and (Unit("player"):SoulShardsP >= 4.5) then
+            if A.RainofFire:IsReady(unit) and (Player:SoulShardsP >= 4.5) then
                 return A.RainofFire:Show(icon)
             end
             -- immolate,if=talent.channel_demonfire.enabled&!remains&cooldown.channel_demonfire.remains<=action.chaos_bolt.execute_time
@@ -589,7 +583,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- rain_of_fire,if=soul_shard>=4.5
-            if A.RainofFire:IsReady(unit) and (Unit("player"):SoulShardsP >= 4.5) then
+            if A.RainofFire:IsReady(unit) and (Player:SoulShardsP >= 4.5) then
                 return A.RainofFire:Show(icon)
             end
             -- cataclysm
@@ -680,15 +674,15 @@ end
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- run_action_list,name=cata,if=spell_targets.infernal_awakening>=3+raid_event.invulnerable.up&talent.cataclysm.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + raid_event.invulnerable.up and A.Cataclysm:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3 + raid_event.invulnerable.up and A.Cataclysm:IsSpellLearned()) then
                 return Cata(unit);
             end
             -- run_action_list,name=fnb,if=spell_targets.infernal_awakening>=3+raid_event.invulnerable.up&talent.fire_and_brimstone.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + raid_event.invulnerable.up and A.FireandBrimstone:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3 + raid_event.invulnerable.up and A.FireandBrimstone:IsSpellLearned()) then
                 return Fnb(unit);
             end
             -- run_action_list,name=inf,if=spell_targets.infernal_awakening>=3+raid_event.invulnerable.up&talent.inferno.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 + raid_event.invulnerable.up and A.Inferno:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3 + raid_event.invulnerable.up and A.Inferno:IsSpellLearned()) then
                 return Inf(unit);
             end
             -- cataclysm

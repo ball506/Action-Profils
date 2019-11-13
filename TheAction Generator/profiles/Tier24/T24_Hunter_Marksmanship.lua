@@ -141,12 +141,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_MARKSMANSHIP], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -292,7 +286,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
-            if A.Trueshot:IsReady(unit) and (Unit("player"):Focus() > 60 and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) and bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
+            if A.Trueshot:IsReady(unit) and (Player:Focus() > 60 and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) and bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
                 return A.Trueshot:Show(icon)
             end
         end
@@ -316,7 +310,7 @@ A[3] = function(icon, isMulti)
                 return A.SerpentSting:Show(icon)
             end
             -- rapid_fire,if=buff.trueshot.down|focus<70
-            if A.RapidFire:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Unit("player"):Focus() < 70) then
+            if A.RapidFire:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Player:Focus() < 70) then
                 return A.RapidFire:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.trueshot.up&(buff.unerring_vision.stack>4|!azerite.unerring_vision.enabled)|target.time_to_die<11
@@ -348,7 +342,7 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.trueshot.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):Focus() + Unit("player"):FocusRegen() * A.GetGCD() < Unit("player"):FocusMax() and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
@@ -356,7 +350,7 @@ A[3] = function(icon, isMulti)
                 return A.TheUnboundForce:Show(icon)
             end
             -- arcane_shot,if=buff.trueshot.down&(buff.precise_shots.up&(focus>41|buff.master_marksman.up)|(focus>50&azerite.focused_fire.enabled|focus>75)&(cooldown.trueshot.remains>5|focus>80)|target.time_to_die<5)
-            if A.ArcaneShot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and (Unit("player"):Focus() > 41 or Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true)) or (Unit("player"):Focus() > 50 and bool(A.FocusedFire:GetAzeriteRank()) or Unit("player"):Focus() > 75) and (A.Trueshot:GetCooldown() > 5 or Unit("player"):Focus() > 80) or Unit(unit):TimeToDie() < 5)) then
+            if A.ArcaneShot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and (Player:Focus() > 41 or Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true)) or (Player:Focus() > 50 and bool(A.FocusedFire:GetAzeriteRank()) or Player:Focus() > 75) and (A.Trueshot:GetCooldown() > 5 or Player:Focus() > 80) or Unit(unit):TimeToDie() < 5)) then
                 return A.ArcaneShot:Show(icon)
             end
             -- steady_shot
@@ -392,7 +386,7 @@ A[3] = function(icon, isMulti)
                 return A.RapidFire:Show(icon)
             end
             -- multishot,if=buff.trick_shots.down|buff.precise_shots.up&!buff.trueshot.up|focus>70
-            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or Unit("player"):Focus() > 70) then
+            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or Player:Focus() > 70) then
                 return A.Multishot:Show(icon)
             end
             -- focused_azerite_beam

@@ -1,5 +1,5 @@
 local TMW                                   = TMW
-local Action								= Action
+local A     								= Action
 local TeamCache								= Action.TeamCache
 local EnemyTeam								= Action.EnemyTeam
 local FriendlyTeam							= Action.FriendlyTeam
@@ -143,7 +143,7 @@ end
 ------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
-function HasDeBuffsDown(spell, byID)
+function Unit:HasDeBuffsDown(spell, byID)
     local unit
     if A.IsUnitEnemy("mouseover") then 
         unit = "mouseover"
@@ -156,19 +156,19 @@ function HasDeBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (Unit(unit):HasDeBuffs(spell, ID) < 1 and true) or false
+    return (self:HasDeBuffs(spell, ID) < 1 and true) or false
 end
 
 ------------------------------------
 --- HasBuffsDown simc reference
 ------------------------------------
-function HasBuffsDown(spell, byID)
+function Unit:HasBuffsDown(spell, byID)
     ID = byID
 	if not ID then
 	    ID = true
 	end
 	
-    return (Unit("player"):HasBuffs(spell, ID) < 1 and true) or false
+    return (self:HasBuffs(spell, ID) < 1 and true) or false
 end
 
 -------------------------------------------------------------------------------

@@ -138,22 +138,15 @@ local VarVtMisTraitRanksCheck = 0;
 local VarVtMisSdCheck = 0;
 local VarDotsUp = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarMindBlastTargets = 0
   VarSwpTraitRanksCheck = 0
   VarVtTraitRanksCheck = 0
   VarVtMisTraitRanksCheck = 0
   VarVtMisSdCheck = 0
   VarDotsUp = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)

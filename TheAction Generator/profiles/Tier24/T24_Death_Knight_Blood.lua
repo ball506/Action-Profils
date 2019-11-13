@@ -124,12 +124,6 @@ local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_BLOOD], { __index = Actio
 
 
 
-local EnemyRanges = {5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -195,7 +189,7 @@ A[3] = function(icon, isMulti)
         --Standard
         local function Standard(unit)
             -- death_strike,if=runic_power.deficit<=10
-            if A.DeathStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() <= 10) then
+            if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= 10) then
                 return A.DeathStrike:Show(icon)
             end
             -- blooddrinker,if=!buff.dancing_rune_weapon.up
@@ -203,7 +197,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodDrinker:Show(icon)
             end
             -- marrowrend,if=(buff.bone_shield.remains<=rune.time_to_3|buff.bone_shield.remains<=(gcd+cooldown.blooddrinker.ready*talent.blooddrinker.enabled*2)|buff.bone_shield.stack<3)&runic_power.deficit>=20
-            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Unit("player"):RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Unit("player"):RunicPowerDeficit() >= 20) then
+            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Player:RunicPowerDeficit() >= 20) then
                 return A.Marrowrend:Show(icon)
             end
             -- heart_essence,if=!buff.dancing_rune_weapon.up
@@ -211,31 +205,31 @@ A[3] = function(icon, isMulti)
                 return A.HeartEssence:Show(icon)
             end
             -- blood_boil,if=charges_fractional>=1.8&(buff.hemostasis.stack<=(5-spell_targets.blood_boil)|spell_targets.blood_boil>2)
-            if A.BloodBoil:IsReady(unit) and (A.BloodBoil:ChargesFractionalP() >= 1.8 and (Unit("player"):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRangeInCombat(40, 5, 10)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+            if A.BloodBoil:IsReady(unit) and (A.BloodBoil:ChargesFractionalP() >= 1.8 and (Unit("player"):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRangeInCombat(5, 5, 10)) or MultiUnits:GetByRangeInCombat(5, 5, 10) > 2)) then
                 return A.BloodBoil:Show(icon)
             end
             -- marrowrend,if=buff.bone_shield.stack<5&talent.ossuary.enabled&runic_power.deficit>=15
-            if A.Marrowrend:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 5 and A.Ossuary:IsSpellLearned() and Unit("player"):RunicPowerDeficit() >= 15) then
+            if A.Marrowrend:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 5 and A.Ossuary:IsSpellLearned() and Player:RunicPowerDeficit() >= 15) then
                 return A.Marrowrend:Show(icon)
             end
             -- bonestorm,if=runic_power>=100&!buff.dancing_rune_weapon.up
-            if A.Bonestorm:IsReady(unit) and (Unit("player"):RunicPower() >= 100 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
+            if A.Bonestorm:IsReady(unit) and (Player:RunicPower() >= 100 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.Bonestorm:Show(icon)
             end
             -- death_strike,if=runic_power.deficit<=(15+buff.dancing_rune_weapon.up*5+spell_targets.heart_strike*talent.heartbreaker.enabled*2)|target.1.time_to_die<10
-            if A.DeathStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() <= (15 + num(Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) * 5 + MultiUnits:GetByRangeInCombat(40, 5, 10) * num(A.Heartbreaker:IsSpellLearned()) * 2) or target.1.time_to_die < 10) then
+            if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= (15 + num(Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) * 5 + MultiUnits:GetByRangeInCombat(5, 5, 10) * num(A.Heartbreaker:IsSpellLearned()) * 2) or target.1.time_to_die < 10) then
                 return A.DeathStrike:Show(icon)
             end
             -- death_and_decay,if=spell_targets.death_and_decay>=3
-            if A.DeathandDecay:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.DeathandDecay:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3) then
                 return A.DeathandDecay:Show(icon)
             end
             -- rune_strike,if=(charges_fractional>=1.8|buff.dancing_rune_weapon.up)&rune.time_to_3>=gcd
-            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:ChargesFractionalP() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Unit("player"):RuneTimeToX(3) >= A.GetGCD()) then
+            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:ChargesFractionalP() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Player:RuneTimeToX(3) >= A.GetGCD()) then
                 return A.RuneStrike:Show(icon)
             end
             -- heart_strike,if=buff.dancing_rune_weapon.up|rune.time_to_4<gcd
-            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Unit("player"):RuneTimeToX(4) < A.GetGCD()) then
+            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Player:RuneTimeToX(4) < A.GetGCD()) then
                 return A.HeartStrike:Show(icon)
             end
             -- blood_boil,if=buff.dancing_rune_weapon.up
@@ -243,7 +237,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodBoil:Show(icon)
             end
             -- death_and_decay,if=buff.crimson_scourge.up|talent.rapid_decomposition.enabled|spell_targets.death_and_decay>=2
-            if A.DeathandDecay:IsReady(unit) and (Unit("player"):HasBuffs(A.CrimsonScourgeBuff.ID, true) or A.RapidDecomposition:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.DeathandDecay:IsReady(unit) and (Unit("player"):HasBuffs(A.CrimsonScourgeBuff.ID, true) or A.RapidDecomposition:IsSpellLearned() or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) then
                 return A.DeathandDecay:Show(icon)
             end
             -- consumption
@@ -255,7 +249,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodBoil:Show(icon)
             end
             -- heart_strike,if=rune.time_to_3<gcd|buff.bone_shield.stack>6
-            if A.HeartStrike:IsReady(unit) and (Unit("player"):RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
+            if A.HeartStrike:IsReady(unit) and (Player:RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
                 return A.HeartStrike:Show(icon)
             end
             -- use_item,name=grongs_primal_rage
@@ -267,7 +261,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneStrike:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end

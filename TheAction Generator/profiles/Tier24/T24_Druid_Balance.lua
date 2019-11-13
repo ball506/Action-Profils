@@ -147,19 +147,12 @@ local VarAzSs = 0;
 local VarAzAp = 0;
 local VarSfTargets = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarAzSs = 0
   VarAzAp = 0
   VarSfTargets = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)

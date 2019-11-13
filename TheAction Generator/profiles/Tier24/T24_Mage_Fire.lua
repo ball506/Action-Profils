@@ -145,7 +145,7 @@ local VarOnUseCutoff = 0;
 local VarPhoenixPooling = 0;
 local VarFireBlastPooling = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarDisableCombustion = 0
   VarCombustionRopCutoff = 0
   VarCombustionOnUse = 0
@@ -153,15 +153,8 @@ A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				functi
   VarOnUseCutoff = 0
   VarPhoenixPooling = 0
   VarFireBlastPooling = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)

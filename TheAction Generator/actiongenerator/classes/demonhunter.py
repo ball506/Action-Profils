@@ -27,6 +27,7 @@ DEFAULT_POTION = {
 
 DEFAULT_RANGE = {
     DEMONHUNTER: {
+    8
     },
 }
 
@@ -71,6 +72,7 @@ SPELL_INFO = {
                                        RANGE:     30},
             'felblade':               {SPELL:     232893},
             'fel_eruption':           {SPELL:     211881},
+            'fel_barrage':            {SPELL:     258925},
             'fel_mastery':            {SPELL:     192939},
             'first_blood':            {SPELL:     206416},
             'master_of_the_glaive':   {SPELL:     203556},

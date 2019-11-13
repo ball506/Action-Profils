@@ -273,10 +273,9 @@ class Context(Decorable):
             )
             for var in self.variables.values():
                 lua_variables += f'local {var.lua_name()} = {var.default};\n'
-            lua_variables += f'\nA.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()\n'
+            lua_variables += f'\nA.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()\n'
             for var in self.variables.values():
                 lua_variables += f'  {var.lua_name()} = {var.default}\n'
-            lua_variables += f'	end \n'
             lua_variables += f'end)\n'
 			
         return lua_variables
@@ -301,12 +300,7 @@ class Context(Decorable):
         Print the custom code.
         """
         lua_ranges = ", ".join(str(r) for r in sorted(self.ranges, reverse=True))
-        return (f'local EnemyRanges = {{{lua_ranges}}}\n'
-                f'local function UpdateRanges()\n'
-                f'  for _, i in ipairs(EnemyRanges) do\n'
-                f'    HL.GetEnemies(i);\n'
-                f'  end\n'
-                f'end\n')
+        return ('')
 
     def print_settings(self):
         """

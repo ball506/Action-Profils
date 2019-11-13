@@ -140,19 +140,12 @@ local VarCombustionRopCutoff = 0;
 local VarFireBlastPooling = 0;
 local VarPhoenixPooling = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarCombustionRopCutoff = 0
   VarFireBlastPooling = 0
   VarPhoenixPooling = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -321,7 +314,7 @@ A[3] = function(icon, isMulti)
                 return A.PhoenixFlames:Show(icon)
             end
             -- fire_blast,use_off_gcd=1,if=buff.blaster_master.stack=1&buff.hot_streak.down&!buff.pyroclasm.react&prev_gcd.1.pyroblast&(buff.blaster_master.remains<0.15|gcd.remains<0.15)
-            if A.FireBlast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BlasterMasterBuff.ID, true) == 1 and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true)) and Unit("player"):GetSpellLastCast(A.Pyroblast) and (Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.15 or A.GetGCD() < 0.15)) then
+            if A.FireBlast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BlasterMasterBuff.ID, true) == 1 and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true)) and Unit("player"):GetSpellLastCast(A.Pyroblast) and (Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.15 or A.GetCurrentGCD() < 0.15)) then
                 return A.FireBlast:Show(icon)
             end
             -- fire_blast,use_while_casting=1,if=buff.blaster_master.stack=1&(action.scorch.executing&action.scorch.execute_remains<0.15|buff.blaster_master.remains<0.15)

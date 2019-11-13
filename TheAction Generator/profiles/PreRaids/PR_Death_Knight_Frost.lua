@@ -136,12 +136,6 @@ local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_FROST], { __index = Actio
 
 
 
-local EnemyRanges = {30, 10, 8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -180,11 +174,11 @@ local function EvaluateCycleFrostStrike22(unit)
 end
 
 local function EvaluateCycleFrostStrike57(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate80(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike101(unit)
@@ -192,35 +186,35 @@ local function EvaluateCycleFrostStrike101(unit)
 end
 
 local function EvaluateCycleObliterate124(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RuneTimeToX(4) < A.GetGCD() and Unit("player"):RunicPowerDeficit() >= 25 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RuneTimeToX(4) < A.GetGCD() and Player:RunicPowerDeficit() >= 25 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike143(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate172(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleFrostStrike195(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4) and Unit("player"):RunicPowerDeficit() < 40 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate214(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPower() <= 30 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPower() <= 30 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate237(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RuneTimeToX(5) < A.GetGCD() or Unit("player"):RunicPower() <= 45 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RuneTimeToX(5) < A.GetGCD() or Player:RunicPower() <= 45 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate262(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):RunicPowerDeficit() > 25 or Unit("player"):Rune() > 3 and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate418(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 3
 end
 
 local function EvaluateCycleObliterate451(unit)
@@ -228,7 +222,7 @@ local function EvaluateCycleObliterate451(unit)
 end
 
 local function EvaluateCycleFrostStrike492(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Unit("player"):RunicPowerDeficit() < 10 or Unit("player"):RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
 end
 
 local function EvaluateCycleObliterate515(unit)
@@ -267,7 +261,7 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targets.remorseless_winter>=3&!buff.rime.up)
-            if A.RemorselessWinter:IsReady(unit) and (A.GatheringStorm:IsSpellLearned() or (bool(A.FrozenTempest:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not Unit("player"):HasBuffs(A.RimeBuff.ID, true))) then
+            if A.RemorselessWinter:IsReady(unit) and (A.GatheringStorm:IsSpellLearned() or (bool(A.FrozenTempest:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and not Unit("player"):HasBuffs(A.RimeBuff.ID, true))) then
                 return A.RemorselessWinter:Show(icon)
             end
             -- glacial_advance,if=talent.frostscythe.enabled
@@ -293,7 +287,7 @@ A[3] = function(icon, isMulti)
                 return A.Frostscythe:Show(icon)
             end
             -- glacial_advance,if=runic_power.deficit<(15+talent.runic_attenuation.enabled*3)
-            if A.GlacialAdvance:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.GlacialAdvance:IsReady(unit) and (Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.GlacialAdvance:Show(icon)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit<(15+talent.runic_attenuation.enabled*3)&!talent.frostscythe.enabled
@@ -303,7 +297,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- frost_strike,if=runic_power.deficit<(15+talent.runic_attenuation.enabled*3)
-            if A.FrostStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.FrostStrike:IsReady(unit) and (Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.FrostStrike:Show(icon)
             end
             -- remorseless_winter
@@ -321,7 +315,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=runic_power.deficit>(25+talent.runic_attenuation.enabled*3)
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.Obliterate:IsReady(unit) and (Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.Obliterate:Show(icon)
             end
             -- glacial_advance
@@ -361,11 +355,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=rune.time_to_4<gcd&runic_power.deficit>=25
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RuneTimeToX(4) < A.GetGCD() and Unit("player"):RunicPowerDeficit() >= 25) then
+            if A.Obliterate:IsReady(unit) and (Player:RuneTimeToX(4) < A.GetGCD() and Player:RunicPowerDeficit() >= 25) then
                 return A.Obliterate:Show(icon)
             end
             -- glacial_advance,if=runic_power.deficit<20&cooldown.pillar_of_frost.remains>rune.time_to_4&spell_targets.glacial_advance>=2
-            if A.GlacialAdvance:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.GlacialAdvance:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 2) then
                 return A.GlacialAdvance:Show(icon)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit<20&cooldown.pillar_of_frost.remains>rune.time_to_4&!talent.frostscythe.enabled
@@ -375,15 +369,15 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- frost_strike,if=runic_power.deficit<20&cooldown.pillar_of_frost.remains>rune.time_to_4
-            if A.FrostStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4)) then
+            if A.FrostStrike:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4)) then
                 return A.FrostStrike:Show(icon)
             end
             -- frostscythe,if=buff.killing_machine.up&runic_power.deficit>(15+talent.runic_attenuation.enabled*3)&spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and Unit("player"):RunicPowerDeficit() > (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and Player:RunicPowerDeficit() > (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             -- frostscythe,if=runic_power.deficit>=(35+talent.runic_attenuation.enabled*3)&spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and (Unit("player"):RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and (Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit>=(35+talent.runic_attenuation.enabled*3)&!talent.frostscythe.enabled
@@ -393,11 +387,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=runic_power.deficit>=(35+talent.runic_attenuation.enabled*3)
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.Obliterate:IsReady(unit) and (Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.Obliterate:Show(icon)
             end
             -- glacial_advance,if=cooldown.pillar_of_frost.remains>rune.time_to_4&runic_power.deficit<40&spell_targets.glacial_advance>=2
-            if A.GlacialAdvance:IsReady(unit) and (A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4) and Unit("player"):RunicPowerDeficit() < 40 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.GlacialAdvance:IsReady(unit) and (A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40 and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 2) then
                 return A.GlacialAdvance:Show(icon)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&cooldown.pillar_of_frost.remains>rune.time_to_4&runic_power.deficit<40&!talent.frostscythe.enabled
@@ -407,7 +401,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- frost_strike,if=cooldown.pillar_of_frost.remains>rune.time_to_4&runic_power.deficit<40
-            if A.FrostStrike:IsReady(unit) and (A.PillarofFrost:GetCooldown() > Unit("player"):RuneTimeToX(4) and Unit("player"):RunicPowerDeficit() < 40) then
+            if A.FrostStrike:IsReady(unit) and (A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40) then
                 return A.FrostStrike:Show(icon)
             end
         end
@@ -421,7 +415,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=runic_power<=30
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RunicPower() <= 30) then
+            if A.Obliterate:IsReady(unit) and (Player:RunicPower() <= 30) then
                 return A.Obliterate:Show(icon)
             end
             -- remorseless_winter,if=talent.gathering_storm.enabled
@@ -439,15 +433,15 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=rune.time_to_5<gcd|runic_power<=45
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RuneTimeToX(5) < A.GetGCD() or Unit("player"):RunicPower() <= 45) then
+            if A.Obliterate:IsReady(unit) and (Player:RuneTimeToX(5) < A.GetGCD() or Player:RunicPower() <= 45) then
                 return A.Obliterate:Show(icon)
             end
             -- frostscythe,if=buff.killing_machine.up&spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             -- horn_of_winter,if=runic_power.deficit>=30&rune.time_to_3>gcd
-            if A.HornofWinter:IsReady(unit) and (Unit("player"):RunicPowerDeficit() >= 30 and Unit("player"):RuneTimeToX(3) > A.GetGCD()) then
+            if A.HornofWinter:IsReady(unit) and (Player:RunicPowerDeficit() >= 30 and Player:RuneTimeToX(3) > A.GetGCD()) then
                 return A.HornofWinter:Show(icon)
             end
             -- remorseless_winter
@@ -455,7 +449,7 @@ A[3] = function(icon, isMulti)
                 return A.RemorselessWinter:Show(icon)
             end
             -- frostscythe,if=spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit>25|rune>3&!talent.frostscythe.enabled
@@ -465,11 +459,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=runic_power.deficit>25|rune>3
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RunicPowerDeficit() > 25 or Unit("player"):Rune() > 3) then
+            if A.Obliterate:IsReady(unit) and (Player:RunicPowerDeficit() > 25 or Player:Rune() > 3) then
                 return A.Obliterate:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -481,7 +475,7 @@ A[3] = function(icon, isMulti)
                 return A.ChainsofIce:Show(icon)
             end
             -- chains_of_ice,if=(buff.pillar_of_frost.remains<=gcd*(1+cooldown.frostwyrms_fury.ready)|buff.pillar_of_frost.remains<rune.time_to_3)&buff.pillar_of_frost.up&azerite.icy_citadel.rank<=2
-            if A.ChainsofIce:IsReady(unit) and ((Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) <= A.GetGCD() * (1 + num(A.FrostwyrmsFury:GetCooldown() == 0)) or Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < Unit("player"):RuneTimeToX(3)) and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and A.IcyCitadel:GetAzeriteRank() <= 2) then
+            if A.ChainsofIce:IsReady(unit) and ((Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) <= A.GetGCD() * (1 + num(A.FrostwyrmsFury:GetCooldown() == 0)) or Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < Player:RuneTimeToX(3)) and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and A.IcyCitadel:GetAzeriteRank() <= 2) then
                 return A.ChainsofIce:Show(icon)
             end
             -- chains_of_ice,if=buff.pillar_of_frost.remains<8&buff.unholy_strength.remains<gcd*(1+cooldown.frostwyrms_fury.ready)&buff.unholy_strength.remains&buff.pillar_of_frost.up&azerite.icy_citadel.rank<=2
@@ -489,7 +483,7 @@ A[3] = function(icon, isMulti)
                 return A.ChainsofIce:Show(icon)
             end
             -- chains_of_ice,if=(buff.icy_citadel.remains<=gcd*(1+cooldown.frostwyrms_fury.ready)|buff.icy_citadel.remains<rune.time_to_3)&buff.icy_citadel.up&azerite.icy_citadel.enabled&azerite.icy_citadel.rank>2
-            if A.ChainsofIce:IsReady(unit) and ((Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) <= A.GetGCD() * (1 + num(A.FrostwyrmsFury:GetCooldown() == 0)) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) < Unit("player"):RuneTimeToX(3)) and Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) and bool(A.IcyCitadel:GetAzeriteRank()) and A.IcyCitadel:GetAzeriteRank() > 2) then
+            if A.ChainsofIce:IsReady(unit) and ((Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) <= A.GetGCD() * (1 + num(A.FrostwyrmsFury:GetCooldown() == 0)) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) < Player:RuneTimeToX(3)) and Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) and bool(A.IcyCitadel:GetAzeriteRank()) and A.IcyCitadel:GetAzeriteRank() > 2) then
                 return A.ChainsofIce:Show(icon)
             end
             -- chains_of_ice,if=buff.icy_citadel.remains<8&buff.unholy_strength.remains<gcd*(1+cooldown.frostwyrms_fury.ready)&buff.unholy_strength.remains&buff.icy_citadel.up&!azerite.icy_citadel.enabled&azerite.icy_citadel.rank>2
@@ -530,11 +524,11 @@ A[3] = function(icon, isMulti)
                 return A.BreathofSindragosa:Show(icon)
             end
             -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&!talent.breath_of_sindragosa.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.time_to_die<20
-            if A.EmpowerRuneWeapon:IsReady(unit) and (A.PillarofFrost:GetCooldown() == 0 and not A.BreathofSindragosa:IsSpellLearned() and Unit("player"):RuneTimeToX(5) > A.GetGCD() and Unit("player"):RunicPowerDeficit() >= 10 or Unit(unit):TimeToDie() < 20) then
+            if A.EmpowerRuneWeapon:IsReady(unit) and (A.PillarofFrost:GetCooldown() == 0 and not A.BreathofSindragosa:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and Player:RunicPowerDeficit() >= 10 or Unit(unit):TimeToDie() < 20) then
                 return A.EmpowerRuneWeapon:Show(icon)
             end
             -- empower_rune_weapon,if=(cooldown.pillar_of_frost.ready|target.time_to_die<20)&talent.breath_of_sindragosa.enabled&rune>=3&runic_power>60
-            if A.EmpowerRuneWeapon:IsReady(unit) and ((A.PillarofFrost:GetCooldown() == 0 or Unit(unit):TimeToDie() < 20) and A.BreathofSindragosa:IsSpellLearned() and Unit("player"):Rune() >= 3 and Unit("player"):RunicPower() > 60) then
+            if A.EmpowerRuneWeapon:IsReady(unit) and ((A.PillarofFrost:GetCooldown() == 0 or Unit(unit):TimeToDie() < 20) and A.BreathofSindragosa:IsSpellLearned() and Player:Rune() >= 3 and Player:RunicPower() > 60) then
                 return A.EmpowerRuneWeapon:Show(icon)
             end
             -- call_action_list,name=cold_heart,if=talent.cold_heart.enabled&((buff.cold_heart.stack>=10&debuff.razorice.stack=5)|target.time_to_die<=gcd)
@@ -564,11 +558,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=!talent.frostscythe.enabled&!buff.rime.up&spell_targets.howling_blast>=3
-            if A.Obliterate:IsReady(unit) and (not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.Obliterate:IsReady(unit) and (not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 3) then
                 return A.Obliterate:Show(icon)
             end
             -- frostscythe,if=(buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance)))&spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and ((bool(Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true)) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Unit("player"):GetSpellLastCast(A.FrostStrike) or Unit("player"):GetSpellLastCast(A.HowlingBlast) or Unit("player"):GetSpellLastCast(A.GlacialAdvance)))) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and ((bool(Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true)) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Unit("player"):GetSpellLastCast(A.FrostStrike) or Unit("player"):GetSpellLastCast(A.HowlingBlast) or Unit("player"):GetSpellLastCast(A.GlacialAdvance)))) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance))
@@ -582,11 +576,11 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
             -- glacial_advance,if=(!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd)&spell_targets.glacial_advance>=2
-            if A.GlacialAdvance:IsReady(unit) and ((not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Unit("player"):RunicPowerDeficit() < 10 or Unit("player"):RuneTimeToX(2) > A.GetGCD()) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.GlacialAdvance:IsReady(unit) and ((not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD()) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 2) then
                 return A.GlacialAdvance:Show(icon)
             end
             -- howling_blast,if=buff.rime.up&spell_targets.howling_blast>=2
-            if A.HowlingBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.HowlingBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 2) then
                 return A.HowlingBlast:Show(icon)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd&!talent.frostscythe.enabled
@@ -596,7 +590,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- frost_strike,if=!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd
-            if A.FrostStrike:IsReady(unit) and (not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Unit("player"):RunicPowerDeficit() < 10 or Unit("player"):RuneTimeToX(2) > A.GetGCD()) then
+            if A.FrostStrike:IsReady(unit) and (not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD()) then
                 return A.FrostStrike:Show(icon)
             end
             -- howling_blast,if=buff.rime.up
@@ -634,15 +628,15 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
             -- frost_strike,if=runic_power.deficit<(15+talent.runic_attenuation.enabled*3)
-            if A.FrostStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.FrostStrike:IsReady(unit) and (Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.FrostStrike:Show(icon)
             end
             -- frostscythe,if=buff.killing_machine.up&rune.time_to_4>=gcd
-            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and Unit("player"):RuneTimeToX(4) >= A.GetGCD()) then
+            if A.Frostscythe:IsReady(unit) and (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and Player:RuneTimeToX(4) >= A.GetGCD()) then
                 return A.Frostscythe:Show(icon)
             end
             -- obliterate,if=runic_power.deficit>(25+talent.runic_attenuation.enabled*3)
-            if A.Obliterate:IsReady(unit) and (Unit("player"):RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
+            if A.Obliterate:IsReady(unit) and (Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3)) then
                 return A.Obliterate:Show(icon)
             end
             -- frost_strike
@@ -673,7 +667,7 @@ A[3] = function(icon, isMulti)
                 return A.HowlingBlast:Show(icon)
             end
             -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-            if A.GlacialAdvance:IsReady(unit) and (Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) <= A.GetGCD() and Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+            if A.GlacialAdvance:IsReady(unit) and (Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) <= A.GetGCD() and Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 2 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.GlacialAdvance:Show(icon)
             end
             -- frost_strike,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
@@ -697,7 +691,7 @@ A[3] = function(icon, isMulti)
                 return Obliteration(unit);
             end
             -- run_action_list,name=aoe,if=active_enemies>=2
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2) then
                 return Aoe(unit);
             end
             -- call_action_list,name=standard

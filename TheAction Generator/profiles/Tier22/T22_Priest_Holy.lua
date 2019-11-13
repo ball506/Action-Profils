@@ -115,12 +115,6 @@ local A = setmetatable(Action[ACTION_CONST_PRIEST_HOLY], { __index = Action })
 
 
 
-local EnemyRanges = {40, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -201,15 +195,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_word_chastise,if=spell_targets.holy_nova<5
-            if A.HolyWordChastise:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.HolyWordChastise:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) < 5) then
                 return A.HolyWordChastise:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.refreshable|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- berserking,if=raid_event.adds.in>30|raid_event.adds.remains>8|raid_event.adds.duration<8
@@ -225,11 +219,11 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- divine_star,if=(raid_event.adds.in>5|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.divine_star>1
-            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 1) then
                 return A.DivineStar:Show(icon)
             end
             -- halo,if=(raid_event.adds.in>14|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.halo>0
-            if A.Halo:IsReady(unit) and ((10000000000 > 14 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.Halo:IsReady(unit) and ((10000000000 > 14 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.Halo:Show(icon)
             end
             -- lights_judgment,if=raid_event.adds.in>50|raid_event.adds.remains>4|raid_event.adds.duration<4
@@ -237,15 +231,15 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- arcane_pulse,if=(raid_event.adds.in>40|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.arcane_pulse>2
-            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 2) then
                 return A.ArcanePulse:Show(icon)
             end
             -- holy_fire,if=!dot.holy_fire.ticking&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_nova,if=spell_targets.holy_nova>3
-            if A.HolyNova:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.HolyNova:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) > 3) then
                 return A.HolyNova:Show(icon)
             end
             -- apotheosis,if=active_enemies<5&(raid_event.adds.in>15|raid_event.adds.in>raid_event.adds.cooldown-5)
@@ -261,11 +255,11 @@ A[3] = function(icon, isMulti)
                 return A.HolyFire:Show(icon)
             end
             -- divine_star,if=(raid_event.adds.in>5|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.divine_star>0
-            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.DivineStar:Show(icon)
             end
             -- holy_nova,if=raid_event.movement.remains>gcd*0.3&spell_targets.holy_nova>0
-            if A.HolyNova:IsReady(unit) and (raid_event.movement.remains > A.GetGCD() * 0.3 and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.HolyNova:IsReady(unit) and (raid_event.movement.remains > A.GetGCD() * 0.3 and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.HolyNova:Show(icon)
             end
         end

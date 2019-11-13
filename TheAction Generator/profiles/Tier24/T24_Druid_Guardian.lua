@@ -132,12 +132,6 @@ local A = setmetatable(Action[ACTION_CONST_DRUID_GUARDIAN], { __index = Action }
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -307,7 +301,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- maul,if=rage.deficit<10&active_enemies<4
-            if A.Maul:IsReady(unit) and (Unit("player"):RageDeficit() < 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4) then
+            if A.Maul:IsReady(unit) and (Player:RageDeficit() < 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4) then
                 return A.Maul:Show(icon)
             end
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
@@ -315,7 +309,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=cost=0|(rage>cost&azerite.layered_mane.enabled&active_enemies>2)
-            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() == 0 or (Unit("player"):Rage() > A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() == 0 or (Player:Rage() > A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
                 return A.Ironfur:Show(icon)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
