@@ -569,7 +569,7 @@ A[3] = function(icon, isMulti)
                 return A.Shadowmeld:Show(icon)
             end
             -- potion,if=buff.bloodlust.react|buff.adrenaline_rush.up
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
                 A.ProlongedPower:Show(icon)
             end
             -- blood_fury

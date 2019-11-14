@@ -513,11 +513,11 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- potion,if=buff.bloodlust.react|buff.adrenaline_rush.up
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
                 A.ProlongedPower:Show(icon)
             end
             -- use_item,name=lustrous_golden_plumage,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
-            if A.LustrousGoldenPlumage:IsReady(unit) and (Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 20 or Player:ComboPointsDeficit() <= 2) then
+            if A.LustrousGoldenPlumage:IsReady(unit) and (Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 20 or Player:ComboPointsDeficit() <= 2) then
                 A.LustrousGoldenPlumage:Show(icon)
             end
             -- blood_fury

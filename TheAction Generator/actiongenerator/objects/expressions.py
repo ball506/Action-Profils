@@ -311,7 +311,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is spell_haste.
         """
-        return LuaExpression(self.player_unit, Method('SpellHaste'))
+        return Literal('Player:SpellHaste()')
 
     def set_bonus(self):
         """
@@ -663,7 +663,7 @@ class Aura(Expires):
         Return the arguments for the expression {aura}.spell.stack.
         """
         if self.spell.simc == BLOODLUST:
-            self.method = Method('HasHeroism', type_=BOOL)
+            self.method = Method('HasHeroism()', type_=BOOL)
             self.args = []
         else:
             self.method = Method(f'Has{self.simc.print_lua()}sStacks')
@@ -1128,6 +1128,13 @@ class Essence(BuildExpression):
         """
         self.method = Method('IsSpellLearned()')
     
+    def minor(self):
+        """
+        Return the arguments for the expression essence.spell.major.
+        """
+        self.object_ = Literal('Azerite')
+        self.method = Method(f'EssenceHasMinor(A.{self.spell.lua_name()}.ID)')
+
     def major(self):
         """
         Return the arguments for the expression essence.spell.major.

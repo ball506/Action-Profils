@@ -408,7 +408,7 @@ A[3] = function(icon, isMulti)
         --NetherPortalBuilding
         local function NetherPortalBuilding(unit)
             -- use_item,name=azsharas_font_of_power,if=cooldown.nether_portal.remains<=5*spell_haste
-            if A.AzsharasFontofPower:IsReady(unit) and (A.NetherPortal:GetCooldown() <= 5 * Unit("player"):SpellHaste) then
+            if A.AzsharasFontofPower:IsReady(unit) and (A.NetherPortal:GetCooldown() <= 5 * Player:SpellHaste()) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- guardian_of_azeroth,if=!cooldown.nether_portal.remains&soul_shard>=5
@@ -496,7 +496,7 @@ A[3] = function(icon, isMulti)
                 return A.HandofGuldan:Show(icon)
             end
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
-            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.DemonicStrength) or Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):GetSpellLastCast(A.HandofGuldan) or not A.DemonicStrength:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Unit("player"):SpellHaste >= 6) then
+            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.DemonicStrength) or Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):GetSpellLastCast(A.HandofGuldan) or not A.DemonicStrength:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Player:SpellHaste() >= 6) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
             -- demonbolt,if=soul_shard<=3&buff.demonic_core.remains
@@ -642,7 +642,7 @@ end
                 return A.HandofGuldan:Show(icon)
             end
             -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-            if A.SummonDemonicTyrant:IsReady(unit) and (Player:SoulShardsP < 3 and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Unit("player"):SpellHaste >= 6 and time_to_imps.all.remains < A.SummonDemonicTyrant:GetSpellCastTime()) or Unit(unit):TimeToDie() < 20) then
+            if A.SummonDemonicTyrant:IsReady(unit) and (Player:SoulShardsP < 3 and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Player:SpellHaste() >= 6 and time_to_imps.all.remains < A.SummonDemonicTyrant:GetSpellCastTime()) or Unit(unit):TimeToDie() < 20) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
             -- power_siphon,if=buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&spell_targets.implosion<2

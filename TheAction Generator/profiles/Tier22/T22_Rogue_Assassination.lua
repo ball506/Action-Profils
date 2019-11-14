@@ -691,7 +691,7 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- potion,if=buff.bloodlust.react|debuff.vendetta.up
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true)) then
                 A.ProlongedPower:Show(icon)
             end
             -- use_item,name=galecallers_boon,if=cooldown.vendetta.remains<=1&(!talent.subterfuge.enabled|dot.garrote.pmultiplier>1)|cooldown.vendetta.remains>45
@@ -880,7 +880,7 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*7%(2*spell_haste)
             if (true) then
-                VarEnergyRegenCombined = Player:EnergyRegen() + PoisonedBleeds() * 7 / (2 * Unit("player"):SpellHaste)
+                VarEnergyRegenCombined = Player:EnergyRegen() + PoisonedBleeds() * 7 / (2 * Player:SpellHaste())
             end
             -- variable,name=single_target,value=spell_targets.fan_of_knives<2
             if (true) then

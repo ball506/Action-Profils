@@ -467,7 +467,7 @@ local function EvaluateTargetIfFilterPhantomSingularity791(unit)
 end
 
 local function EvaluateTargetIfPhantomSingularity794(unit)
-  return Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Unit("player"):SpellHaste
+  return Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Player:SpellHaste()
 end
 
 

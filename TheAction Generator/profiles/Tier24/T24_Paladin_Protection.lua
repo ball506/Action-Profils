@@ -253,7 +253,7 @@ A[3] = function(icon, isMulti)
                 A.GrongsPrimalRage:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=cooldown.judgment.full_recharge_time>4*spell_haste&cooldown.avengers_shield.remains>4*spell_haste&(!equipped.grongs_primal_rage|!trinket.grongs_primal_rage.cooldown.up)&consecration.up
-            if A.PocketsizedComputationDevice:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 * Unit("player"):SpellHaste and A.AvengersShield:GetCooldown() > 4 * Unit("player"):SpellHaste and (not A.GrongsPrimalRage:IsExists() or not bool(trinket.grongs_primal_rage.cooldown.up)) and bool(consecration.up)) then
+            if A.PocketsizedComputationDevice:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 * Player:SpellHaste() and A.AvengersShield:GetCooldown() > 4 * Player:SpellHaste() and (not A.GrongsPrimalRage:IsExists() or not bool(trinket.grongs_primal_rage.cooldown.up)) and bool(consecration.up)) then
                 A.PocketsizedComputationDevice:Show(icon)
             end
             -- use_item,name=merekthas_fang,if=!buff.avenging_wrath.up&(buff.seraphim.up|!talent.seraphim.enabled)

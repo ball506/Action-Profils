@@ -42,6 +42,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     AspectoftheWild                        = Action.Create({ Type = "Spell", ID = 193530 }),
     PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810 }),
     PrimalInstincts                        = Action.Create({ Type = "Spell", ID = 279806 }),
+    EssenceoftheFocusingIris               = Action.Create({ Type = "Spell", ID =  }),
     BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574 }),
     BestialWrath                           = Action.Create({ Type = "Spell", ID = 19574 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
@@ -53,11 +54,11 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790 }),
-    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID = 169299 }),
-    UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID = 169299 }),
+    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
+    UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
     LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
     BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
-    BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID = 217200 }),
+    BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID =  }),
     Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
     BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455, "pet" }),
     Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
@@ -66,12 +67,12 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
     Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
     KillCommand                            = Action.Create({ Type = "Spell", ID = 34026 }),
-    RapidReload                            = Action.Create({ Type = "Spell", ID = 278530 }),
+    RapidReload                            = Action.Create({ Type = "Spell", ID =  }),
     DireBeast                              = Action.Create({ Type = "Spell", ID = 120679 }),
     CobraShot                              = Action.Create({ Type = "Spell", ID = 193455 }),
     SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
-    DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274441 }),
-    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
+    DanceofDeath                           = Action.Create({ Type = "Spell", ID =  }),
+    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -246,11 +247,11 @@ A[3] = function(icon, isMulti)
             -- snapshot_stats
             -- potion
             if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                return A.BattlePotionofAgility:Show(icon)
+                A.BattlePotionofAgility:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
-                return A.AzsharasFontofPower:Show(icon)
+                A.AzsharasFontofPower:Show(icon)
             end
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
@@ -266,7 +267,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists&(trinket.1.has_cooldown+trinket.2.has_cooldown<2|equipped.variable_intensity_gigavolt_oscillating_reactor)
             if A.CyclotronicBlast:IsReady(unit) and (not bool(raid_event.invulnerable.exists) and (trinket.1.has_cooldown + trinket.2.has_cooldown < 2 or A.VariableIntensityGigavoltOscillatingReactor:IsExists())) then
-                return A.CyclotronicBlast:Show(icon)
+                A.CyclotronicBlast:Show(icon)
             end
             -- focused_azerite_beam,if=!raid_event.invulnerable.exists
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(raid_event.invulnerable.exists)) then
@@ -306,7 +307,7 @@ A[3] = function(icon, isMulti)
             end
             -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
             if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned()) or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
-                return A.BattlePotionofAgility:Show(icon)
+                A.BattlePotionofAgility:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<4
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
@@ -508,7 +509,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
             if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
-                return A.CyclotronicBlast:Show(icon)
+                A.CyclotronicBlast:Show(icon)
             end
             -- call_action_list,name=cds
             if (true) then

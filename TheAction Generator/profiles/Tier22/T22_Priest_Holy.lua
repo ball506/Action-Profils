@@ -211,7 +211,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- use_items
             -- potion,if=buff.bloodlust.react|(raid_event.adds.up&(raid_event.adds.remains>20|raid_event.adds.duration<20))|target.time_to_die<=30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (0 > 20 or raid_event.adds.duration < 20)) or Unit(unit):TimeToDie() <= 30) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (0 > 20 or raid_event.adds.duration < 20)) or Unit(unit):TimeToDie() <= 30) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
