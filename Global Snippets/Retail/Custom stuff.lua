@@ -141,6 +141,31 @@ function A.Player:AttackPower()
 end
 
 ------------------------------------
+--- HasHeroism simc reference
+------------------------------------
+local HeroismBuff = {
+    [1] = 90355, -- Ancient Hysteria
+    [2] = 92825, -- Bloodlust
+    [3] = 932182, -- Heroism
+    [4] = 9160452, -- Netherwinds
+    [5] = 980353, -- Time Warp
+    [6] = 9178207, -- Drums of Fury
+    [7] = 935475, -- Drums of War
+    [8] = 9230935, -- Drums of Montain
+    [9] = 9256740 -- Drums of Maelstrom
+}
+
+function Unit:HasHeroism()
+    for i = 1, #HeroismBuff do
+        local Buff = HeroismBuff[i]
+		if self:HasBuffs(HeroismBuff[i], true) then
+            return true
+        end
+    end
+    return false
+end
+
+------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
 function Unit:HasDeBuffsDown(spell, byID)
@@ -168,7 +193,19 @@ function Unit:HasBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (self:HasBuffs(spell, ID) < 1 and true) or false
+    return (self:HasBuffs(spell, ID) < 0.1 and true) or false
+end
+
+------------------------------------
+--- HasDeBuffsRefreshable simc reference
+------------------------------------
+function Unit:HasDeBuffsRefreshable(spell, byID)
+    ID = byID
+	if not ID then
+	    ID = true
+	end
+	
+    return (self:HasDeBuffs(spell, ID) < 5 and true) or false
 end
 
 -------------------------------------------------------------------------------
