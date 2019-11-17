@@ -296,7 +296,7 @@ A[3] = function(icon, isMulti)
             end
             -- immolate,cycle_targets=1,if=remains<5&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate46) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate46) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -306,7 +306,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&active_enemies<4
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc71) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc71) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -328,7 +328,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(!talent.grimoire_of_supremacy.enabled|!talent.inferno.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc106) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc106) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -445,15 +445,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
@@ -584,7 +584,7 @@ end
             end
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate507) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate507) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -618,7 +618,7 @@ end
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(dot.immolate.remains>dot.immolate.duration*0.5|!talent.internal_combustion.enabled)&(!cooldown.summon_infernal.ready|!talent.grimoire_of_supremacy.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc572) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc572) then
                     return A.Havoc:Show(icon) 
                 end
             end

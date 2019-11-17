@@ -1139,7 +1139,8 @@ class Essence(BuildExpression):
         """
         Return the arguments for the expression essence.spell.major.
         """
-        self.method = Method('EssenceIsMajorUseable()')
+        self.object_ = Literal('Azerite')
+        self.method = Method(f'EssenceHasMajor(A.{self.spell.lua_name()}.ID)')
 
     def rank(self):
         """

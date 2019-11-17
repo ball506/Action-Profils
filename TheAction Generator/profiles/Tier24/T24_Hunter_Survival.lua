@@ -487,7 +487,7 @@ local function APL()
                 return A.Berserking:Show(icon)
             end
             -- potion,if=buff.guardian_of_azeroth.up&(buff.berserking.up|buff.blood_fury.up|!race.troll)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)|!essence.condensed_lifeforce.major&buff.coordinated_assault.up
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not bool(A.CondensedLifeforce:EssenceIsMajorUseable()) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- aspect_of_the_eagle,if=target.distance>=6
@@ -499,7 +499,7 @@ local function APL()
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
-            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or bool(A.CyclotronicBlast:GetCooldown()) or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) and bool(A.CoordinatedAssault:GetCooldown())) then
+            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or bool(A.CyclotronicBlast:GetCooldown()) or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and bool(A.CoordinatedAssault:GetCooldown())) then
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
@@ -548,7 +548,7 @@ local function APL()
         local function Cleave(unit)
             -- variable,name=carve_cdr,op=setif,value=active_enemies,value_else=5,condition=active_enemies<5
             if  then
-                if Action.Utils.CastTargetIf(VarCarveCdr, 8, EvaluateCycleCarveCdr412) then
+                if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr412) then
                     return VarCarveCdr:Show(icon) 
                 end
             end
@@ -785,7 +785,7 @@ local function APL()
   if Everyone.TargetIsValid() then
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
             -- auto_attack

@@ -315,7 +315,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_death,target_if=target.time_to_die<3|buff.voidform.down
             if A.ShadowWordDeath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, EvaluateCycleShadowWordDeath88) then
+                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, "min", EvaluateCycleShadowWordDeath88) then
                     return A.ShadowWordDeath:Show(icon) 
                 end
             end
@@ -333,7 +333,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_blast,target_if=spell_targets.mind_sear<variable.mind_blast_targets
             if A.MindBlast:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindBlast, 40, EvaluateCycleMindBlast107) then
+                if Action.Utils.CastTargetIf(A.MindBlast, 40, "min", EvaluateCycleMindBlast107) then
                     return A.MindBlast:Show(icon) 
                 end
             end
@@ -343,19 +343,19 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_pain,target_if=refreshable&target.time_to_die>((-1.2+3.3*spell_targets.mind_sear)*variable.swp_trait_ranks_check),if=!talent.misery.enabled
             if A.ShadowWordPain:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, EvaluateCycleShadowWordPain118) then
+                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, "min", EvaluateCycleShadowWordPain118) then
                     return A.ShadowWordPain:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check)
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, EvaluateCycleVampiricTouch135) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch135) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=dot.shadow_word_pain.refreshable,if=(talent.misery.enabled&target.time_to_die>((1.0+2.0*spell_targets.mind_sear)*variable.vt_mis_trait_ranks_check*(variable.vt_mis_sd_check*spell_targets.mind_sear)))
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, EvaluateCycleVampiricTouch150) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch150) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
@@ -365,7 +365,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
             if A.MindSear:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindSear, 40, EvaluateCycleMindSear169) then
+                if Action.Utils.CastTargetIf(A.MindSear, 40, "min", EvaluateCycleMindSear169) then
                     return A.MindSear:Show(icon) 
                 end
             end
@@ -453,7 +453,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

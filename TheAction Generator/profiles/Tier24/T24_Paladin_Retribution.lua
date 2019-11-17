@@ -233,7 +233,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.GuardianofAzeroth:GetCooldown() > 90 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable())) and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 18 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((A.GuardianofAzeroth:GetCooldown() > 90 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID))) and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 18 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
@@ -249,7 +249,7 @@ A[3] = function(icon, isMulti)
                 return A.ShieldofVengeance:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(buff.avenging_wrath.remains>=20|buff.crusade.stack=10&buff.crusade.remains>15)&(cooldown.guardian_of_azeroth.remains>90|target.time_to_die<30|!essence.condensed_lifeforce.major)
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable()))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) >= 20 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10 and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 15) and (A.GuardianofAzeroth:GetCooldown() > 90 or Unit(unit):TimeToDie() < 30 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force,if=time<=2|buff.reckless_force.up
@@ -380,7 +380,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

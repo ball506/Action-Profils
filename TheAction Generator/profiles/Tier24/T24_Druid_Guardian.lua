@@ -309,7 +309,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -325,7 +325,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and (bool(A.ConflictandStrife:EssenceIsMajorUseable()) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
+            if A.Maul:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.ConflictandStrife.ID)) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=cost=0|(rage>cost&azerite.layered_mane.enabled&active_enemies>2)
@@ -334,13 +334,13 @@ A[3] = function(icon, isMulti)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Pulverize, 40, EvaluateCyclePulverize107) then
+                if Action.Utils.CastTargetIf(A.Pulverize, 40, "min", EvaluateCyclePulverize107) then
                     return A.Pulverize:Show(icon) 
                 end
             end
             -- moonfire,target_if=dot.moonfire.refreshable&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire118) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire118) then
                     return A.Moonfire:Show(icon) 
                 end
             end
@@ -358,7 +358,7 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire167) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire167) then
                     return A.Moonfire:Show(icon) 
                 end
             end

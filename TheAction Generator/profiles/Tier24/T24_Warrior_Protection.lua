@@ -301,7 +301,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
             if A.AshvanesRazorCoral:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, EvaluateCycleAshvanesRazorCoral82) then
+                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral82) then
                     return A.AshvanesRazorCoral:Show(icon) 
                 end
             end
@@ -337,7 +337,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

@@ -773,7 +773,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- vanish,if=talent.master_assassin.enabled&!stealthed.all&master_assassin_remains<=0&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up)&(!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up)
-            if A.Vanish:IsReady(unit) and (A.MasterAssassin:IsSpellLearned() and not Unit("player"):IsStealthed(true, true) and MasterAssassinRemains <= 0 and not Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true))) then
+            if A.Vanish:IsReady(unit) and (A.MasterAssassin:IsSpellLearned() and not Unit("player"):IsStealthed(true, true) and MasterAssassinRemains <= 0 and not Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) and (not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true))) then
                 return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
@@ -859,7 +859,7 @@ A[3] = function(icon, isMulti)
             end
             -- fan_of_knives,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives>=3
             if A.FanofKnives:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FanofKnives, 10, EvaluateCycleFanofKnives270) then
+                if Action.Utils.CastTargetIf(A.FanofKnives, 10, "min", EvaluateCycleFanofKnives270) then
                     return A.FanofKnives:Show(icon) 
                 end
             end
@@ -869,7 +869,7 @@ A[3] = function(icon, isMulti)
             end
             -- mutilate,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives=2
             if A.Mutilate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Mutilate, 40, EvaluateCycleMutilate291) then
+                if Action.Utils.CastTargetIf(A.Mutilate, 40, "min", EvaluateCycleMutilate291) then
                     return A.Mutilate:Show(icon) 
                 end
             end
@@ -909,7 +909,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,cycle_targets=1,if=!variable.skip_cycle_garrote&target!=self.target&(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>12&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote408) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote408) then
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -923,7 +923,7 @@ A[3] = function(icon, isMulti)
             end
             -- rupture,cycle_targets=1,if=!variable.skip_cycle_rupture&!variable.skip_rupture&target!=self.target&combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
             if A.Rupture:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rupture, 5, EvaluateCycleRupture555) then
+                if Action.Utils.CastTargetIf(A.Rupture, 5, "min", EvaluateCycleRupture555) then
                     return A.Rupture:Show(icon) 
                 end
             end
@@ -1019,7 +1019,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

@@ -276,7 +276,7 @@ A[3] = function(icon, isMulti)
             end
             -- festering_strike,target_if=debuff.festering_wound.stack<=1&cooldown.death_and_decay.remains
             if A.FesteringStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FesteringStrike, 40, EvaluateCycleFesteringStrike42) then
+                if Action.Utils.CastTargetIf(A.FesteringStrike, 40, "min", EvaluateCycleFesteringStrike42) then
                     return A.FesteringStrike:Show(icon) 
                 end
             end
@@ -346,7 +346,7 @@ A[3] = function(icon, isMulti)
             end
             -- soul_reaper,target_if=target.time_to_die<8&target.time_to_die>4
             if A.SoulReaper:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulReaper, 40, EvaluateCycleSoulReaper167) then
+                if Action.Utils.CastTargetIf(A.SoulReaper, 40, "min", EvaluateCycleSoulReaper167) then
                     return A.SoulReaper:Show(icon) 
                 end
             end
@@ -442,7 +442,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -467,11 +467,11 @@ A[3] = function(icon, isMulti)
             end
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
             -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.major&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.major)
-            if A.AzsharasFontofPower:IsReady(unit) and ((bool(A.VisionofPerfection:EssenceIsMajorUseable()) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(A.CondensedLifeforce:EssenceIsMajorUseable()) and not bool(A.VisionofPerfection:EssenceIsMajorUseable()))) then
+            if A.AzsharasFontofPower:IsReady(unit) and ((bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)))) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.major&talent.unholy_frenzy.enabled)
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(A.CondensedLifeforce:EssenceIsMajorUseable()) or bool(A.VisionofPerfection:EssenceIsMajorUseable()) and A.UnholyFrenzy:IsSpellLearned())) then
+            if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and A.UnholyFrenzy:IsSpellLearned())) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=target.1.time_to_die<cooldown.apocalypse.remains+34
@@ -487,7 +487,7 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=cooldown.apocalypse.ready&(essence.condensed_lifeforce.major&target.1.time_to_die<cooldown.condensed_lifeforce.remains+20|!essence.condensed_lifeforce.major)
-            if A.AshvanesRazorCoral:IsReady(unit) and (A.Apocalypse:GetCooldown() == 0 and (bool(A.CondensedLifeforce:EssenceIsMajorUseable()) and target.1.time_to_die < A.CondensedLifeforce:GetCooldown() + 20 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable()))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (A.Apocalypse:GetCooldown() == 0 and (bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and target.1.time_to_die < A.CondensedLifeforce:GetCooldown() + 20 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=target.1.time_to_die<cooldown.apocalypse.remains+20
@@ -524,7 +524,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, EvaluateCycleOutbreak401) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak401) then
                     return A.Outbreak:Show(icon) 
                 end
             end

@@ -363,7 +363,7 @@ A[3] = function(icon, isMulti)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
             if A.Nightblade:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Nightblade, 40, EvaluateCycleNightblade169) then
+                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade169) then
                     return A.Nightblade:Show(icon) 
                 end
             end
@@ -426,7 +426,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
             if A.Shadowstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, EvaluateCycleShadowstrike290) then
+                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike290) then
                     return A.Shadowstrike:Show(icon) 
                 end
             end
@@ -446,7 +446,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

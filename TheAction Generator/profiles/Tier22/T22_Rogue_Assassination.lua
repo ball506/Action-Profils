@@ -782,7 +782,7 @@ A[3] = function(icon, isMulti)
             end
             -- fan_of_knives,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives>=3
             if A.FanofKnives:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FanofKnives, 10, EvaluateCycleFanofKnives183) then
+                if Action.Utils.CastTargetIf(A.FanofKnives, 10, "min", EvaluateCycleFanofKnives183) then
                     return A.FanofKnives:Show(icon) 
                 end
             end
@@ -792,7 +792,7 @@ A[3] = function(icon, isMulti)
             end
             -- mutilate,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives=2
             if A.Mutilate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Mutilate, 40, EvaluateCycleMutilate204) then
+                if Action.Utils.CastTargetIf(A.Mutilate, 40, "min", EvaluateCycleMutilate204) then
                     return A.Mutilate:Show(icon) 
                 end
             end
@@ -811,7 +811,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,cycle_targets=1,if=(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains>4&spell_targets.fan_of_knives<=1|target.time_to_die-remains>12)
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote233) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote233) then
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -821,7 +821,7 @@ A[3] = function(icon, isMulti)
             end
             -- rupture,cycle_targets=1,if=combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
             if A.Rupture:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rupture, 5, EvaluateCycleRupture322) then
+                if Action.Utils.CastTargetIf(A.Rupture, 5, "min", EvaluateCycleRupture322) then
                     return A.Rupture:Show(icon) 
                 end
             end
@@ -835,13 +835,13 @@ A[3] = function(icon, isMulti)
             end
             -- garrote,cycle_targets=1,if=talent.subterfuge.enabled&refreshable&target.time_to_die-remains>2
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote399) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote399) then
                     return A.Garrote:Show(icon) 
                 end
             end
             -- garrote,cycle_targets=1,if=talent.subterfuge.enabled&remains<=10&pmultiplier<=1&target.time_to_die-remains>2
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote420) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote420) then
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -851,7 +851,7 @@ A[3] = function(icon, isMulti)
             end
             -- garrote,cycle_targets=1,if=talent.subterfuge.enabled&azerite.shrouded_suffocation.enabled&target.time_to_die>remains&combo_points.deficit>1
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, EvaluateCycleGarrote455) then
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote455) then
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -868,7 +868,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

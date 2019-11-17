@@ -309,7 +309,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&cooldown.remorseless_winter.remains<=2*gcd&talent.gathering_storm.enabled&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike42) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike42) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -331,7 +331,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit<(15+talent.runic_attenuation.enabled*3)&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike77) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike77) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -349,7 +349,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit>(25+talent.runic_attenuation.enabled*3)&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate102) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate102) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -363,7 +363,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike123) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike123) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -389,7 +389,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&&runic_power.deficit>=25&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate146) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate146) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -403,7 +403,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit<20&!talent.frostscythe.enabled&cooldown.pillar_of_frost.remains>5
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike165) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike165) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -421,7 +421,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit>=(35+talent.runic_attenuation.enabled*3)&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate194) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate194) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -435,7 +435,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&cooldown.pillar_of_frost.remains>rune.time_to_4&runic_power.deficit<40&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike217) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike217) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -449,7 +449,7 @@ A[3] = function(icon, isMulti)
         local function BosTicking(unit)
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power<=32&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate236) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate236) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -467,7 +467,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&rune.time_to_5<gcd|runic_power<=45&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate259) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate259) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -493,7 +493,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power.deficit>25|rune>3&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate284) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate284) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -676,7 +676,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled&!buff.rime.up&spell_targets.howling_blast>=3
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate596) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate596) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -690,7 +690,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance))
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate629) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate629) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -708,7 +708,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, EvaluateCycleFrostStrike670) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike670) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -722,7 +722,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, EvaluateCycleObliterate693) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate693) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -778,7 +778,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

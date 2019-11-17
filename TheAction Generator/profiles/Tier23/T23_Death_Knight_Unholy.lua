@@ -271,7 +271,7 @@ A[3] = function(icon, isMulti)
             end
             -- festering_strike,target_if=debuff.festering_wound.stack<=1&cooldown.death_and_decay.remains
             if A.FesteringStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FesteringStrike, 40, EvaluateCycleFesteringStrike40) then
+                if Action.Utils.CastTargetIf(A.FesteringStrike, 40, "min", EvaluateCycleFesteringStrike40) then
                     return A.FesteringStrike:Show(icon) 
                 end
             end
@@ -345,7 +345,7 @@ A[3] = function(icon, isMulti)
             end
             -- soul_reaper,target_if=target.time_to_die<8&target.time_to_die>4
             if A.SoulReaper:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulReaper, 40, EvaluateCycleSoulReaper163) then
+                if Action.Utils.CastTargetIf(A.SoulReaper, 40, "min", EvaluateCycleSoulReaper163) then
                     return A.SoulReaper:Show(icon) 
                 end
             end
@@ -401,7 +401,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -451,7 +451,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, EvaluateCycleOutbreak303) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak303) then
                     return A.Outbreak:Show(icon) 
                 end
             end

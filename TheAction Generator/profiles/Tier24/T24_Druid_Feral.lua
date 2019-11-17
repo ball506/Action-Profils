@@ -394,21 +394,21 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath169) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath169) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath180) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath180) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip189) then
+                if Action.Utils.CastTargetIf(A.Rip, 8, "min", EvaluateCycleRip189) then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -482,14 +482,14 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- rake,target_if=!ticking|(!talent.bloodtalons.enabled&remains<duration*0.3)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake326) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake326) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rake,target_if=talent.bloodtalons.enabled&buff.bloodtalons.up&((remains<=7)&persistent_multiplier>dot.rake.pmultiplier*0.85)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake355) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake355) then
                     return A.Rake:Show(icon) 
                 end
             end
@@ -503,7 +503,7 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire_cat,target_if=refreshable
             if A.MoonfireCat:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat398) then
+                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, "min", EvaluateCycleMoonfireCat398) then
                     return A.MoonfireCat:Show(icon) 
                 end
             end
@@ -562,7 +562,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -587,7 +587,7 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
             if A.FerociousBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite514) then
+                if Action.Utils.CastTargetIf(A.FerociousBite, 8, "min", EvaluateCycleFerociousBite514) then
                     return A.FerociousBite:Show(icon) 
                 end
             end

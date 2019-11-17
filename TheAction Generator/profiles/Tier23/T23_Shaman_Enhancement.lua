@@ -352,7 +352,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike72) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike72) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -436,7 +436,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike228) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike228) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -536,7 +536,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

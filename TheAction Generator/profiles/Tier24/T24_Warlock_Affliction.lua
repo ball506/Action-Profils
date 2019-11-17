@@ -641,7 +641,7 @@ end
             end
             -- corruption,cycle_targets=1,if=spell_targets.seed_of_corruption_aoe<3+raid_event.invulnerable.up+talent.writhe_in_agony.enabled&(remains<=gcd|cooldown.summon_darkglare.remains>10&refreshable)&target.time_to_die>10
             if A.Corruption:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Corruption, 40, EvaluateCycleCorruption386) then
+                if Action.Utils.CastTargetIf(A.Corruption, 40, "min", EvaluateCycleCorruption386) then
                     return A.Corruption:Show(icon) 
                 end
             end
@@ -715,7 +715,7 @@ end
             end
             -- drain_soul,interrupt_global=1,chain=1,interrupt=1,cycle_targets=1,if=target.time_to_die<=gcd
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul569) then
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateCycleDrainSoul569) then
                     return A.DrainSoul:Show(icon) 
                 end
             end
@@ -737,7 +737,7 @@ end
             end
             -- shadow_bolt,cycle_targets=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains&!action.shadow_bolt.in_flight
             if A.ShadowBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, EvaluateCycleShadowBolt614) then
+                if Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateCycleShadowBolt614) then
                     return A.ShadowBolt:Show(icon) 
                 end
             end
@@ -777,7 +777,7 @@ end
             end
             -- unstable_affliction,cycle_targets=1,if=!variable.use_seed&(!talent.deathbolt.enabled|cooldown.deathbolt.remains>time_to_shard|soul_shard>1)&(!talent.vile_taint.enabled|soul_shard>1)&contagion<=cast_time+variable.padding&(!azerite.cascading_calamity.enabled|buff.cascading_calamity.remains>time_to_shard)
             if A.UnstableAffliction:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction736) then
+                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateCycleUnstableAffliction736) then
                     return A.UnstableAffliction:Show(icon) 
                 end
             end
@@ -810,7 +810,7 @@ end
             end
             -- drain_soul,interrupt_global=1,chain=1,cycle_targets=1,if=target.time_to_die<=gcd&soul_shard<5
             if A.DrainSoul:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.DrainSoul, 40, EvaluateCycleDrainSoul807) then
+                if Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateCycleDrainSoul807) then
                     return A.DrainSoul:Show(icon) 
                 end
             end
@@ -854,7 +854,7 @@ end
             end
             -- unstable_affliction,target_if=!contagion&target.time_to_die<=8
             if A.UnstableAffliction:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, EvaluateCycleUnstableAffliction899) then
+                if Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateCycleUnstableAffliction899) then
                     return A.UnstableAffliction:Show(icon) 
                 end
             end

@@ -268,7 +268,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -340,7 +340,7 @@ A[3] = function(icon, isMulti)
                 return A.Consecration:Show(icon)
             end
             -- heart_essence,if=!(essence.the_crucible_of_flame.major|essence.worldvein_resonance.major|essence.anima_of_life_and_death.major|essence.memory_of_lucid_dreams.major)
-            if A.HeartEssence:IsReady(unit) and (not (bool(A.TheCrucibleofFlame:EssenceIsMajorUseable()) or bool(A.WorldveinResonance:EssenceIsMajorUseable()) or bool(A.AnimaofLifeandDeath:EssenceIsMajorUseable()) or bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()))) then
+            if A.HeartEssence:IsReady(unit) and (not (bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID)) or bool(Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) or bool(Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID)) or bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)))) then
                 return A.HeartEssence:Show(icon)
             end
         end

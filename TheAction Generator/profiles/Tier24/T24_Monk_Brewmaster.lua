@@ -228,7 +228,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -326,7 +326,7 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
             -- heart_essence,if=!essence.the_crucible_of_flame.major
-            if A.HeartEssence:IsReady(unit) and (not bool(A.TheCrucibleofFlame:EssenceIsMajorUseable())) then
+            if A.HeartEssence:IsReady(unit) and (not bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID))) then
                 return A.HeartEssence:Show(icon)
             end
             -- expel_harm,if=buff.gift_of_the_ox.stack>=3

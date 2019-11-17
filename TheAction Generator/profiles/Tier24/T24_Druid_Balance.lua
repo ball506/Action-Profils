@@ -259,11 +259,11 @@ local function EvaluateCycleFocusedAzeriteBeam181(unit)
 end
 
 local function EvaluateCycleIncarnation227(unit)
-    return (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned())) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and bool(ap_check))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or bool(ap_check)))
+    return (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned())) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID))) and bool(ap_check))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or bool(ap_check)))
 end
 
 local function EvaluateCycleCelestialAlignment252(unit)
-    return ((Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and bool(ap_check))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)))
+    return ((Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()))) and (not Unit("player"):HasBuffs(A.CaIncBuff.ID, true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID))) and bool(ap_check))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)))
 end
 
 local function EvaluateCycleSunfire377(unit)
@@ -357,7 +357,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -373,25 +373,25 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.AzsharasFontofPower:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AzsharasFontofPower, 40, EvaluateCycleAzsharasFontofPower67) then
+                if Action.Utils.CastTargetIf(A.AzsharasFontofPower, 40, "min", EvaluateCycleAzsharasFontofPower67) then
                     return A.AzsharasFontofPower:Show(icon) 
                 end
             end
             -- guardian_of_azeroth,if=(!talent.starlord.enabled|buff.starlord.up)&!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.GuardianofAzeroth, 40, EvaluateCycleGuardianofAzeroth84) then
+                if Action.Utils.CastTargetIf(A.GuardianofAzeroth, 40, "min", EvaluateCycleGuardianofAzeroth84) then
                     return A.GuardianofAzeroth:Show(icon) 
                 end
             end
             -- use_item,effect_name=cyclotronic_blast,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.CyclotronicBlast:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.CyclotronicBlast, 40, EvaluateCycleCyclotronicBlast105) then
+                if Action.Utils.CastTargetIf(A.CyclotronicBlast, 40, "min", EvaluateCycleCyclotronicBlast105) then
                     return A.CyclotronicBlast:Show(icon) 
                 end
             end
             -- use_item,name=shiver_venom_relic,if=!buff.ca_inc.up&!buff.bloodlust.up,target_if=dot.shiver_venom.stack>=5
             if A.ShiverVenomRelic:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShiverVenomRelic, 40, EvaluateCycleShiverVenomRelic122) then
+                if Action.Utils.CastTargetIf(A.ShiverVenomRelic, 40, "min", EvaluateCycleShiverVenomRelic122) then
                     return A.ShiverVenomRelic:Show(icon) 
                 end
             end
@@ -401,7 +401,7 @@ A[3] = function(icon, isMulti)
             end
             -- memory_of_lucid_dreams,if=!buff.ca_inc.up&(astral_power<25|cooldown.ca_inc.remains>30),target_if=dot.sunfire.remains>10&dot.moonfire.remains>10&(!talent.stellar_flare.enabled|dot.stellar_flare.remains>10)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.MemoryofLucidDreams, 40, EvaluateCycleMemoryofLucidDreams137) then
+                if Action.Utils.CastTargetIf(A.MemoryofLucidDreams, 40, "min", EvaluateCycleMemoryofLucidDreams137) then
                     return A.MemoryofLucidDreams:Show(icon) 
                 end
             end
@@ -419,7 +419,7 @@ A[3] = function(icon, isMulti)
             end
             -- the_unbound_force,if=buff.reckless_force.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.TheUnboundForce, 40, EvaluateCycleTheUnboundForce162) then
+                if Action.Utils.CastTargetIf(A.TheUnboundForce, 40, "min", EvaluateCycleTheUnboundForce162) then
                     return A.TheUnboundForce:Show(icon) 
                 end
             end
@@ -429,7 +429,7 @@ A[3] = function(icon, isMulti)
             end
             -- focused_azerite_beam,if=(!variable.az_ss|!buff.ca_inc.up),target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.FocusedAzeriteBeam, 40, EvaluateCycleFocusedAzeriteBeam181) then
+                if Action.Utils.CastTargetIf(A.FocusedAzeriteBeam, 40, "min", EvaluateCycleFocusedAzeriteBeam181) then
                     return A.FocusedAzeriteBeam:Show(icon) 
                 end
             end
@@ -454,13 +454,13 @@ A[3] = function(icon, isMulti)
             end
             -- incarnation,if=!buff.ca_inc.up&(buff.memory_of_lucid_dreams.up|((cooldown.memory_of_lucid_dreams.remains>20|!essence.memory_of_lucid_dreams.major)&ap_check))&(buff.memory_of_lucid_dreams.up|ap_check),target_if=dot.sunfire.remains>8&dot.moonfire.remains>12&(dot.stellar_flare.remains>6|!talent.stellar_flare.enabled)
             if A.Incarnation:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incarnation, 40, EvaluateCycleIncarnation227) then
+                if Action.Utils.CastTargetIf(A.Incarnation, 40, "min", EvaluateCycleIncarnation227) then
                     return A.Incarnation:Show(icon) 
                 end
             end
             -- celestial_alignment,if=!buff.ca_inc.up&(!talent.starlord.enabled|buff.starlord.up)&(buff.memory_of_lucid_dreams.up|((cooldown.memory_of_lucid_dreams.remains>20|!essence.memory_of_lucid_dreams.major)&ap_check))&(!azerite.lively_spirit.enabled|buff.lively_spirit.up),target_if=(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))
             if A.CelestialAlignment:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.CelestialAlignment, 40, EvaluateCycleCelestialAlignment252) then
+                if Action.Utils.CastTargetIf(A.CelestialAlignment, 40, "min", EvaluateCycleCelestialAlignment252) then
                     return A.CelestialAlignment:Show(icon) 
                 end
             end
@@ -490,19 +490,19 @@ A[3] = function(icon, isMulti)
             end
             -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
             if A.Sunfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Sunfire, 40, EvaluateCycleSunfire377) then
+                if Action.Utils.CastTargetIf(A.Sunfire, 40, "min", EvaluateCycleSunfire377) then
                     return A.Sunfire:Show(icon) 
                 end
             end
             -- moonfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=6&(!variable.az_ss|!buff.ca_inc.up|!prev.moonfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire440) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire440) then
                     return A.Moonfire:Show(icon) 
                 end
             end
             -- stellar_flare,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))>=5&(!variable.az_ss|!buff.ca_inc.up|!prev.stellar_flare)
             if A.StellarFlare:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.StellarFlare, 40, EvaluateCycleStellarFlare475) then
+                if Action.Utils.CastTargetIf(A.StellarFlare, 40, "min", EvaluateCycleStellarFlare475) then
                     return A.StellarFlare:Show(icon) 
                 end
             end

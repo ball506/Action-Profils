@@ -522,7 +522,7 @@ local function APL()
         local function Cleave(unit)
             -- variable,name=carve_cdr,op=setif,value=active_enemies,value_else=5,condition=active_enemies<5
             if  then
-                if Action.Utils.CastTargetIf(VarCarveCdr, 8, EvaluateCycleCarveCdr360) then
+                if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr360) then
                     return VarCarveCdr:Show(icon) 
                 end
             end
@@ -755,7 +755,7 @@ local function APL()
   if Everyone.TargetIsValid() then
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
             -- auto_attack

@@ -388,7 +388,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike125) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike125) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -500,7 +500,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, EvaluateCycleStormstrike307) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike307) then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -581,7 +581,7 @@ A[3] = function(icon, isMulti)
                 return A.TotemMastery:Show(icon)
             end
             -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or (bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
+            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and (not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or (bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=active_enemies>1
@@ -616,7 +616,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

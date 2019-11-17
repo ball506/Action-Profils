@@ -380,7 +380,7 @@ A[3] = function(icon, isMulti)
             end
             -- doom,cycle_targets=1,max_cycle_targets=7,if=refreshable
             if A.Doom:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Doom, 40, EvaluateCycleDoom198) then
+                if Action.Utils.CastTargetIf(A.Doom, 40, "min", EvaluateCycleDoom198) then
                     return A.Doom:Show(icon) 
                 end
             end

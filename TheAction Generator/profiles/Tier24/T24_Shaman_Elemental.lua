@@ -303,7 +303,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&(spell_targets.chain_lightning<(5-!talent.totem_mastery.enabled)|!talent.storm_elemental.enabled&(cooldown.fire_elemental.remains>(120+14*spell_haste)|cooldown.fire_elemental.remains<(24-14*spell_haste)))&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120|spell_targets.chain_lightning=3&buff.wind_gust.stack<14)
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock47) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock47) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -353,7 +353,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock148) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock148) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -367,7 +367,7 @@ A[3] = function(icon, isMulti)
         local function Funnel(unit)
             -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock163) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock163) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -421,7 +421,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock362) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock362) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -459,7 +459,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock483) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock483) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -477,7 +477,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock528) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock528) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -495,7 +495,7 @@ A[3] = function(icon, isMulti)
         local function SingleUnit(unit)(unit)
             -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock545) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock545) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -557,7 +557,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock774) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock774) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -595,7 +595,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock895) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock895) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -617,7 +617,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock946) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock946) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -633,7 +633,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 

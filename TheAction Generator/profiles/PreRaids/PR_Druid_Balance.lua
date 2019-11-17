@@ -303,7 +303,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -392,19 +392,19 @@ A[3] = function(icon, isMulti)
             end
             -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)
             if A.Sunfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Sunfire, 40, EvaluateCycleSunfire208) then
+                if Action.Utils.CastTargetIf(A.Sunfire, 40, "min", EvaluateCycleSunfire208) then
                     return A.Sunfire:Show(icon) 
                 end
             end
             -- moonfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=6&(!variable.az_ss|!buff.ca_inc.up|!prev.moonfire)
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire261) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire261) then
                     return A.Moonfire:Show(icon) 
                 end
             end
             -- stellar_flare,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))>=5&(!variable.az_ss|!buff.ca_inc.up|!prev.stellar_flare)
             if A.StellarFlare:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.StellarFlare, 40, EvaluateCycleStellarFlare286) then
+                if Action.Utils.CastTargetIf(A.StellarFlare, 40, "min", EvaluateCycleStellarFlare286) then
                     return A.StellarFlare:Show(icon) 
                 end
             end

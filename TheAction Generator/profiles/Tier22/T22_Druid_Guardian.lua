@@ -291,7 +291,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -312,13 +312,13 @@ A[3] = function(icon, isMulti)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Pulverize, 40, EvaluateCyclePulverize77) then
+                if Action.Utils.CastTargetIf(A.Pulverize, 40, "min", EvaluateCyclePulverize77) then
                     return A.Pulverize:Show(icon) 
                 end
             end
             -- moonfire,target_if=dot.moonfire.refreshable&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire88) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire88) then
                     return A.Moonfire:Show(icon) 
                 end
             end
@@ -340,7 +340,7 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2
             if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire139) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire139) then
                     return A.Moonfire:Show(icon) 
                 end
             end

@@ -423,7 +423,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=8+raid_event.invulnerable.up&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc48) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc48) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -433,13 +433,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&active_enemies<=8+raid_event.invulnerable.up&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%3)<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt73) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt73) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc106) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc106) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -449,13 +449,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&buff.active_havoc.remains>execute_time&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt115) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt115) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- immolate,cycle_targets=1,if=!debuff.havoc.remains&refreshable&remains<=cooldown.cataclysm.remains
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate130) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate130) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -465,25 +465,25 @@ A[3] = function(icon, isMulti)
             end
             -- soul_fire,cycle_targets=1,if=!debuff.havoc.remains
             if A.SoulFire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulFire, 40, EvaluateCycleSoulFire155) then
+                if Action.Utils.CastTargetIf(A.SoulFire, 40, "min", EvaluateCycleSoulFire155) then
                     return A.SoulFire:Show(icon) 
                 end
             end
             -- conflagrate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Conflagrate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Conflagrate, 40, EvaluateCycleConflagrate164) then
+                if Action.Utils.CastTargetIf(A.Conflagrate, 40, "min", EvaluateCycleConflagrate164) then
                     return A.Conflagrate:Show(icon) 
                 end
             end
             -- shadowburn,cycle_targets=1,if=!debuff.havoc.remains&((charges=2|!buff.backdraft.remains|buff.backdraft.remains>buff.backdraft.stack*action.incinerate.execute_time))
             if A.Shadowburn:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowburn, 40, EvaluateCycleShadowburn173) then
+                if Action.Utils.CastTargetIf(A.Shadowburn, 40, "min", EvaluateCycleShadowburn173) then
                     return A.Shadowburn:Show(icon) 
                 end
             end
             -- incinerate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Incinerate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incinerate, 40, EvaluateCycleIncinerate198) then
+                if Action.Utils.CastTargetIf(A.Incinerate, 40, "min", EvaluateCycleIncinerate198) then
                     return A.Incinerate:Show(icon) 
                 end
             end
@@ -538,7 +538,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc248) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc248) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -548,13 +548,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&active_enemies<=4+raid_event.invulnerable.up&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%3)<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt273) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt273) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc306) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc306) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -564,13 +564,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&buff.active_havoc.remains>execute_time&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt315) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt315) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- immolate,cycle_targets=1,if=!debuff.havoc.remains&refreshable&spell_targets.incinerate<=8+raid_event.invulnerable.up
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate330) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate330) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -580,19 +580,19 @@ A[3] = function(icon, isMulti)
             end
             -- soul_fire,cycle_targets=1,if=!debuff.havoc.remains&spell_targets.incinerate<=3+raid_event.invulnerable.up
             if A.SoulFire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulFire, 40, EvaluateCycleSoulFire347) then
+                if Action.Utils.CastTargetIf(A.SoulFire, 40, "min", EvaluateCycleSoulFire347) then
                     return A.SoulFire:Show(icon) 
                 end
             end
             -- conflagrate,cycle_targets=1,if=!debuff.havoc.remains&(talent.flashover.enabled&buff.backdraft.stack<=2|spell_targets.incinerate<=7+raid_event.invulnerable.up|talent.roaring_blaze.enabled&spell_targets.incinerate<=9+raid_event.invulnerable.up)
             if A.Conflagrate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Conflagrate, 40, EvaluateCycleConflagrate356) then
+                if Action.Utils.CastTargetIf(A.Conflagrate, 40, "min", EvaluateCycleConflagrate356) then
                     return A.Conflagrate:Show(icon) 
                 end
             end
             -- incinerate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Incinerate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incinerate, 40, EvaluateCycleIncinerate371) then
+                if Action.Utils.CastTargetIf(A.Incinerate, 40, "min", EvaluateCycleIncinerate371) then
                     return A.Incinerate:Show(icon) 
                 end
             end
@@ -622,7 +622,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up+talent.internal_combustion.enabled&talent.grimoire_of_supremacy.enabled&pet.infernal.active&pet.infernal.remains<=10
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc406) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc406) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -632,13 +632,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&talent.grimoire_of_supremacy.enabled&pet.infernal.remains>execute_time&spell_targets.rain_of_fire<=4+raid_event.invulnerable.up+talent.internal_combustion.enabled&((108*(spell_targets.rain_of_fire+raid_event.invulnerable.up)%(3-0.16*(spell_targets.rain_of_fire+raid_event.invulnerable.up)))<(240*(1+0.08*buff.grimoire_of_supremacy.stack)%2*(1+buff.active_havoc.remains>execute_time)))
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt435) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt435) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&spell_targets.rain_of_fire<=3+raid_event.invulnerable.up&(talent.eradication.enabled|talent.internal_combustion.enabled)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc464) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc464) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -648,13 +648,13 @@ A[3] = function(icon, isMulti)
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&buff.active_havoc.remains>execute_time&spell_targets.rain_of_fire<=3+raid_event.invulnerable.up&(talent.eradication.enabled|talent.internal_combustion.enabled)
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt481) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt481) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- immolate,cycle_targets=1,if=!debuff.havoc.remains&refreshable
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate500) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate500) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -664,25 +664,25 @@ A[3] = function(icon, isMulti)
             end
             -- soul_fire,cycle_targets=1,if=!debuff.havoc.remains
             if A.SoulFire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulFire, 40, EvaluateCycleSoulFire517) then
+                if Action.Utils.CastTargetIf(A.SoulFire, 40, "min", EvaluateCycleSoulFire517) then
                     return A.SoulFire:Show(icon) 
                 end
             end
             -- conflagrate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Conflagrate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Conflagrate, 40, EvaluateCycleConflagrate526) then
+                if Action.Utils.CastTargetIf(A.Conflagrate, 40, "min", EvaluateCycleConflagrate526) then
                     return A.Conflagrate:Show(icon) 
                 end
             end
             -- shadowburn,cycle_targets=1,if=!debuff.havoc.remains&((charges=2|!buff.backdraft.remains|buff.backdraft.remains>buff.backdraft.stack*action.incinerate.execute_time))
             if A.Shadowburn:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowburn, 40, EvaluateCycleShadowburn535) then
+                if Action.Utils.CastTargetIf(A.Shadowburn, 40, "min", EvaluateCycleShadowburn535) then
                     return A.Shadowburn:Show(icon) 
                 end
             end
             -- incinerate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Incinerate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incinerate, 40, EvaluateCycleIncinerate560) then
+                if Action.Utils.CastTargetIf(A.Incinerate, 40, "min", EvaluateCycleIncinerate560) then
                     return A.Incinerate:Show(icon) 
                 end
             end
@@ -713,7 +713,7 @@ end
             end
             -- immolate,cycle_targets=1,if=!debuff.havoc.remains&(refreshable|talent.internal_combustion.enabled&action.chaos_bolt.in_flight&remains-action.chaos_bolt.travel_time-5<duration*0.3)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate584) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate584) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -727,7 +727,7 @@ end
             end
             -- havoc,cycle_targets=1,if=!(target=sim.target)&target.time_to_die>10&active_enemies>1+raid_event.invulnerable.up
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc627) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc627) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -737,49 +737,49 @@ end
             end
             -- soul_fire,cycle_targets=1,if=!debuff.havoc.remains
             if A.SoulFire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SoulFire, 40, EvaluateCycleSoulFire652) then
+                if Action.Utils.CastTargetIf(A.SoulFire, 40, "min", EvaluateCycleSoulFire652) then
                     return A.SoulFire:Show(icon) 
                 end
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&execute_time+travel_time<target.time_to_die&(trinket.proc.intellect.react&trinket.proc.intellect.remains>cast_time|trinket.proc.mastery.react&trinket.proc.mastery.remains>cast_time|trinket.proc.versatility.react&trinket.proc.versatility.remains>cast_time|trinket.proc.crit.react&trinket.proc.crit.remains>cast_time|trinket.proc.spell_power.react&trinket.proc.spell_power.remains>cast_time)
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt661) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt661) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&execute_time+travel_time<target.time_to_die&(trinket.stacking_proc.intellect.react&trinket.stacking_proc.intellect.remains>cast_time|trinket.stacking_proc.mastery.react&trinket.stacking_proc.mastery.remains>cast_time|trinket.stacking_proc.versatility.react&trinket.stacking_proc.versatility.remains>cast_time|trinket.stacking_proc.crit.react&trinket.stacking_proc.crit.remains>cast_time|trinket.stacking_proc.spell_power.react&trinket.stacking_proc.spell_power.remains>cast_time)
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt698) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt698) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&execute_time+travel_time<target.time_to_die&(cooldown.summon_infernal.remains>=20|!talent.grimoire_of_supremacy.enabled)&(cooldown.dark_soul_instability.remains>=20|!talent.dark_soul_instability.enabled)&(talent.eradication.enabled&debuff.eradication.remains<=cast_time|buff.backdraft.remains|talent.internal_combustion.enabled)
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt735) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt735) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- chaos_bolt,cycle_targets=1,if=!debuff.havoc.remains&execute_time+travel_time<target.time_to_die&(soul_shard>=4|buff.dark_soul_instability.remains>cast_time|pet.infernal.active|buff.active_havoc.remains>cast_time)
             if A.ChaosBolt:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, EvaluateCycleChaosBolt772) then
+                if Action.Utils.CastTargetIf(A.ChaosBolt, 40, "min", EvaluateCycleChaosBolt772) then
                     return A.ChaosBolt:Show(icon) 
                 end
             end
             -- conflagrate,cycle_targets=1,if=!debuff.havoc.remains&((talent.flashover.enabled&buff.backdraft.stack<=2)|(!talent.flashover.enabled&buff.backdraft.stack<2))
             if A.Conflagrate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Conflagrate, 40, EvaluateCycleConflagrate801) then
+                if Action.Utils.CastTargetIf(A.Conflagrate, 40, "min", EvaluateCycleConflagrate801) then
                     return A.Conflagrate:Show(icon) 
                 end
             end
             -- shadowburn,cycle_targets=1,if=!debuff.havoc.remains&((charges=2|!buff.backdraft.remains|buff.backdraft.remains>buff.backdraft.stack*action.incinerate.execute_time))
             if A.Shadowburn:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowburn, 40, EvaluateCycleShadowburn818) then
+                if Action.Utils.CastTargetIf(A.Shadowburn, 40, "min", EvaluateCycleShadowburn818) then
                     return A.Shadowburn:Show(icon) 
                 end
             end
             -- incinerate,cycle_targets=1,if=!debuff.havoc.remains
             if A.Incinerate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incinerate, 40, EvaluateCycleIncinerate843) then
+                if Action.Utils.CastTargetIf(A.Incinerate, 40, "min", EvaluateCycleIncinerate843) then
                     return A.Incinerate:Show(icon) 
                 end
             end

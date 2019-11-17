@@ -280,7 +280,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&spell_targets.chain_lightning<5&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120|spell_targets.chain_lightning=3&buff.wind_gust.stack<14)
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock61) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock61) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -310,7 +310,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock116) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock116) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -372,7 +372,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock313) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock313) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -394,7 +394,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock394) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock394) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -416,7 +416,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, EvaluateCycleFlameShock443) then
+                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock443) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -432,7 +432,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
