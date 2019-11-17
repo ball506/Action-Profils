@@ -12,6 +12,13 @@ local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetS
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib                                = LibStub("PetLibrary")
 local Unit                                  = Action.Unit 
+local EventFrame = CreateFrame("Frame", "Taste_EventFrame", UIParent)
+local Events = {} -- All Events
+local CombatEvents = {} -- Combat Log Unfiltered
+local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
+local PetCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PetGUID filter
+local PrefixCombatEvents = {}
+local SuffixCombatEvents = {}
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -244,6 +251,55 @@ if petClass == "WARLOCK" then
 	    30213, -- Legion Strike
 	    89751, --Felstorm
 	})
+end
+
+-------------------------------------------------------------------------------
+-- Event register
+-------------------------------------------------------------------------------
+-- Register a handler for an event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not Events[Event] then
+            Events[Event] = { Handler }
+            EventFrame:RegisterEvent(Event)
+        else
+            tableinsert(Events[Event], Handler)
+        end
+    end
+end
+
+-- Register a handler for a combat event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForCombatEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not CombatEvents[Event] then
+            CombatEvents[Event] = { Handler }
+        else
+            tableinsert(CombatEvents[Event], Handler)
+        end
+    end
+end
+
+-- Register a handler for a self combat event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForSelfCombatEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not SelfCombatEvents[Event] then
+            SelfCombatEvents[Event] = { Handler }
+        else
+            tableinsert(SelfCombatEvents[Event], Handler)
+        end
+    end
 end
 
 -------------------------------------------------------------------------------
