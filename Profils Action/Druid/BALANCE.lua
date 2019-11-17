@@ -12,6 +12,15 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
+local wipe                                   = wipe 
+local math_floor                             = math.floor
+local math_ceil                              = math.ceil
+local setmetatable, select, unpack, table, pairs    = 
+setmetatable, select, unpack, table, pairs 
+local tinsert                                = table.insert 
+local CombatLogGetCurrentEventInfo           = CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower =
+UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -53,7 +62,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     SunfireDebuff                          = Action.Create({ Type = "Spell", ID = 164815 }),
     StellarFlare                           = Action.Create({ Type = "Spell", ID = 202347 }),
     StellarFlareDebuff                     = Action.Create({ Type = "Spell", ID = 202347 }),
-    ShiverVenomDebuff                     = Action.Create({ Type = "Spell", ID = 301624     }),	
+    ShiverVenomDebuff                      = Action.Create({ Type = "Spell", ID = 301624     }),	
     Thorns                                 = Action.Create({ Type = "Spell", ID = 467 }),
     WarriorofElune                         = Action.Create({ Type = "Spell", ID = 202425 }),
     Innervate                              = Action.Create({ Type = "Spell", ID = 29166 }),
@@ -72,7 +81,17 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     HalfMoon                               = Action.Create({ Type = "Spell", ID = 274282 }),
     FullMoon                               = Action.Create({ Type = "Spell", ID = 274283 }),
     LunarStrike                            = Action.Create({ Type = "Spell", ID = 194153 }),
-    WarriorofEluneBuff                     = Action.Create({ Type = "Spell", ID = 202425 })
+    WarriorofEluneBuff                     = Action.Create({ Type = "Spell", ID = 202425 }),
+    Renewal                                = Action.Create({ Type = "Spell", ID = 108238     }),
+    SolarBeam                              = Action.Create({ Type = "Spell", ID = 78675     }), 
+    ShootingStars                          = Action.Create({ Type = "Spell", ID = 202342     }),
+    NaturesBalance                        = Action.Create({ Type = "Spell", ID = 202430     }),	
+	-- Utilities
+	Typhoon                                = Action.Create({ Type = "Spell", ID = 132469   }),
+	MightyBash                             = Action.Create({ Type = "Spell", ID = 5211   }),
+	Soothe                                 = Action.Create({ Type = "Spell", ID = 2908   }),    
+    -- Defensive
+	Barkskin                               = Action.Create({ Type = "Spell", ID = 22812   }),	
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -209,17 +228,17 @@ local function FutureAstralPower()
     if not Unit("player"):IsCasting() then
         return AstralPower
     else
-        if spellID = A.NewMoon.ID then
+        if spellID == A.NewMoon.ID then
             return AstralPower + 10
-        elseif spellID = A.HalfMoon.ID then
+        elseif spellID == A.HalfMoon.ID then
             return AstralPower + 20
-        elseif spellID = A.FullMoon.ID then
+        elseif spellID == A.FullMoon.ID then
             return AstralPower + 40
-        elseif spellID = A.StellarFlare.ID then
+        elseif spellID == A.StellarFlare.ID then
             return AstralPower + 8
-        elseif spellID = A.SolarWrath.ID then
+        elseif spellID == A.SolarWrath.ID then
             return AstralPower + 8
-        elseif spellID = A.LunarStrike.ID then
+        elseif spellID == A.LunarStrike.ID then
             return AstralPower + 12
         else
             return AstralPower
@@ -228,6 +247,10 @@ local function FutureAstralPower()
 end
 
 local function CaInc()
+    return A.Incarnation:IsSpellLearned() and A.Incarnation or A.CelestialAlignment
+end
+
+local function CaIncBuff()
     return A.Incarnation:IsSpellLearned() and A.Incarnation or A.CelestialAlignment
 end
 
@@ -261,53 +284,14 @@ local function AP_Check(spell)
 end
 
 
-local function EvaluateCycleAzsharasFontofPower67(unit)
-    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (not Unit("player"):HasBuffs(CaInc(), true))
-end
-
-local function EvaluateCycleGuardianofAzeroth84(unit)
-    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and ((not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and not Unit("player"):HasBuffs(CaInc(), true))
-end
-
 local function EvaluateCycleCyclotronicBlast105(unit)
     return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (not Unit("player"):HasBuffs(CaInc(), true))
 end
 
 local function EvaluateCycleShiverVenomRelic122(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) and (not Unit("player"):HasBuffs(CaInc(), true) and not Unit("player"):HasHeroism)
+    return (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) and (not Unit("player"):HasBuffs(CaInc(), true) and not Unit("player"):HasHeroism())
 end
 
-local function EvaluateCycleMemoryofLucidDreams137(unit)
-    return (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 10 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 10 and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 10)) and (not Unit("player"):HasBuffs(CaInc(), true) and (FutureAstralPower < 25 or A.CaInc:GetCooldown() > 30))
-end
-
-local function EvaluateCycleTheUnboundForce162(unit)
-    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true))
-end
-
-local function EvaluateCycleFocusedAzeriteBeam181(unit)
-    return (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) and ((not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true)))
-end
-
-local function EvaluateCycleIncarnation227(unit)
-    return (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned())) and (not Unit("player"):HasBuffs(CaInc(), true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and AP_Check(CaInc()))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or AP_Check(CaInc())))
-end
-
-local function EvaluateCycleCelestialAlignment252(unit)
-    return ((Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()))) and (not Unit("player"):HasBuffs(CaInc(), true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and AP_Check(CaInc()))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true)))
-end
-
-local function EvaluateCycleSunfire377(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.SunfireDebuff.ID, true)) and (AP_Check(A.Sunfire) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= math.ceil (math.floor (2 / MultiUnits:GetByRangeInCombat(40, 5, 10)) * 1.5) + 2 * MultiUnits:GetByRangeInCombat(40, 5, 10) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 + num(A.TwinMoons:IsSpellLearned()) or Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true)) and (not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.Sunfire.ID, true))) and (Unit("player"):HasBuffs(CaInc(), true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) or not Unit("player"):HasBuffs(CaInc(), true)))
-end
-
-local function EvaluateCycleMoonfire440(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)) and (AP_Check(A.Moonfire) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) * MultiUnits:GetByRangeInCombat(40, 5, 10) >= 6 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.Moonfire.ID, true))) and (Unit("player"):HasBuffs(CaInc(), true) > Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or not Unit("player"):HasBuffs(CaInc(), true)))
-end
-
-local function EvaluateCycleStellarFlare475(unit)
-    return (Unit(unit):HasDeBuffsRefreshable(A.StellarFlareDebuff.ID, true)) and (AP_Check(A.StellarFlare) and math.floor (Unit(unit):TimeToDie() / (2 * Unit("player"):SpellHaste)) >= 5 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.StellarFlare.ID, true))))
-end
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -320,7 +304,7 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-
+    CaInc()
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -361,40 +345,63 @@ A[3] = function(icon, isMulti)
                 VarSfTargets = VarSfTargets - 1
             end
             -- moonkin_form
-            if A.MoonkinForm:IsReady(unit) then
+            if A.MoonkinForm:IsReady(unit) and not Unit("player"):HasBuffs(A.MoonkinForm.ID, true) then
                 return A.MoonkinForm:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(unit) and not inCombat then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- potion,dynamic_prepot=1
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") 
-			and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime() + 1) not Action.GetToggle(1, "DBM"))
+            if A.PotionofUnbridledFury:IsReady(unit) and not inCombat and Action.GetToggle(1, "Potion") 
+			and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime() + 1) or not Action.GetToggle(1, "DBM"))
 			then
-                return A.BattlePotionofIntellect:Show(icon)
+                return A.PotionofUnbridledFury:Show(icon)
             end
             -- solar_wrath
-            if A.SolarWrath:IsReady(unit) and inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() 
-            and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime()) not Action.GetToggle(1, "DBM"))			
+            if A.SolarWrath:IsReady(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() 
+            and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime()) or not Action.GetToggle(1, "DBM"))			
 			then
                 return A.SolarWrath:Show(icon)
             end
             -- solar_wrath
-            if A.SolarWrath:IsReady(unit) and inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem()
-            and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime()) not Action.GetToggle(1, "DBM"))
+            if A.SolarWrath:IsReady(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem()
+            and ((Pull > 0.1 and Pull <= A.SolarWrath:GetSpellCastTime()) or not Action.GetToggle(1, "DBM"))
 			then
                 return A.SolarWrath:Show(icon)
             end
-            -- starsurge
-            if A.Starsurge:IsReady(unit) then
+            -- starsurge_with_talent_naturesbalance
+            if A.Starsurge:IsReady(unit) and not inCombat and A.NaturesBalance:IsSpellLearned()
+			and ((Pull > 0.1 and Pull <= 0.5) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.Starsurge:Show(icon)
             end
         end
         
+		-- pandemic
+		local function Pandemic(unit)
+		    --sunfire
+		    if A.Sunfire:IsReady(unit) then
+			    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) <= 5.4 then
+				    return A.Sunfire:Show(icon)
+                end	
+			end
+			-- moonfire
+			if A.Moonfire:IsReady(unit) then
+			    if Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 6.6 then
+				    return A.Moonfire:Show(icon)
+                end	
+			end
+			-- stellar_flare
+			if A.StellarFlare:IsReady(unit) and A.StellarFlare:IsSpellLearned() then
+			    if Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= 7.2 then
+				    return A.StellarFlare:Show(icon)
+                end					
+			end
+		end
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -407,13 +414,13 @@ A[3] = function(icon, isMulti)
             local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		
   	        -- SolarBeam
-  	        if useKick and S.SolarBeam:IsReady() and S.SolarBeam:IsSpellLearned() then 
+  	        if useKick and A.SolarBeam:IsReady() and A.SolarBeam:IsSpellLearned() then 
 		      	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
           	        return A.SolarBeam:Show(icon)
              	end 
           	end 	
      	    -- MightyBash
-      	    if useCC and S.MightyBash:IsSpellLearned() and S.MightyBash:IsReady(unit) then 
+      	    if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
 	  		    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
      	            return A.MightyBash:Show(icon)
      	        end 
@@ -422,12 +429,19 @@ A[3] = function(icon, isMulti)
             if A.Renewal:IsReady(unit) and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "RenewalHP") then
                 return A.Renewal:Show(icon)
             end
+			-- Barkskin
             if A.Barkskin:IsReady(unit) and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "BarkskinHP") then
                 return A.Barkskin:Show(icon)
-            end
+            end	
+			-- Pandemic
+			if true then
+                if Pandemic(unit) then
+				    return true
+				end
+			end
             -- potion,if=buff.celestial_alignment.remains>13|buff.incarnation.remains>16.5
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 13 or Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 16.5) then
-                return A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 13 or Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 16.5) then
+                return A.PotionofUnbridledFury:Show(icon)
             end
             -- berserking,if=buff.ca_inc.up
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(CaInc(), true)) then
@@ -435,26 +449,34 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.AzsharasFontofPower:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AzsharasFontofPower, 40, EvaluateCycleAzsharasFontofPower67) then
-                    return A.AzsharasFontofPower:Show(icon) 
+                if (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) then
+    				if (not Unit("player"):HasBuffs(CaInc(), true)) then
+                        return A.AzsharasFontofPower:Show(icon) 
+					end
                 end
             end
             -- guardian_of_azeroth,if=(!talent.starlord.enabled|buff.starlord.up)&!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.GuardianofAzeroth, 40, EvaluateCycleGuardianofAzeroth84) then
-                    return A.GuardianofAzeroth:Show(icon) 
+                if (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) then
+				    if ((not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and not Unit("player"):HasBuffs(CaInc(), true)) then
+                        return A.GuardianofAzeroth:Show(icon) 
+					end
                 end
             end
             -- use_item,effect_name=cyclotronic_blast,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.CyclotronicBlast:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.CyclotronicBlast, 40, EvaluateCycleCyclotronicBlast105) then
-                    return A.CyclotronicBlast:Show(icon) 
+                if (Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) and (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true))) then
+				    if (not Unit("player"):HasBuffs(CaInc(), true)) then
+                        return A.CyclotronicBlast:Show(icon) 
+					end
                 end
             end
             -- use_item,name=shiver_venom_relic,if=!buff.ca_inc.up&!buff.bloodlust.up,target_if=dot.shiver_venom.stack>=5
             if A.ShiverVenomRelic:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShiverVenomRelic, 40, EvaluateCycleShiverVenomRelic122) then
-                    return A.ShiverVenomRelic:Show(icon) 
+                if (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) then
+    				if (not Unit("player"):HasBuffs(CaInc(), true) and not Unit("player"):HasHeroism()) then
+                        return A.ShiverVenomRelic:Show(icon) 
+					end
                 end
             end
 	 		-- Non SIMC Custom Trinket1
@@ -475,8 +497,10 @@ A[3] = function(icon, isMulti)
             end
             -- memory_of_lucid_dreams,if=!buff.ca_inc.up&(astral_power<25|cooldown.ca_inc.remains>30),target_if=dot.sunfire.remains>10&dot.moonfire.remains>10&(!talent.stellar_flare.enabled|dot.stellar_flare.remains>10)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.MemoryofLucidDreams, 40, EvaluateCycleMemoryofLucidDreams137) then
-                    return A.MemoryofLucidDreams:Show(icon) 
+			    if Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 10 then
+			        if (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 10) and (not Unit("player"):HasBuffs(CaInc(), true) and (FutureAstralPower() < 25 or A.CaInc:GetCooldown() > 30)) then
+                        return A.MemoryofLucidDreams:Show(icon) 
+					end
                 end
             end
             -- purifying_blast
@@ -493,8 +517,10 @@ A[3] = function(icon, isMulti)
             end
             -- the_unbound_force,if=buff.reckless_force.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.TheUnboundForce, 40, EvaluateCycleTheUnboundForce162) then
-                    return A.TheUnboundForce:Show(icon) 
+			    if Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) then
+				    if (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true)) and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+                        return A.TheUnboundForce:Show(icon) 
+					end
                 end
             end
             -- worldvein_resonance
@@ -503,8 +529,10 @@ A[3] = function(icon, isMulti)
             end
             -- focused_azerite_beam,if=(!variable.az_ss|!buff.ca_inc.up),target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                if Action.Utils.CastTargetIf(A.FocusedAzeriteBeam, 40, EvaluateCycleFocusedAzeriteBeam181) then
-                    return A.FocusedAzeriteBeam:Show(icon) 
+			    if Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) then
+				    if (not A.StellarFlare:IsSpellLearned() or Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true)) and ((not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true))) then
+                        return A.FocusedAzeriteBeam:Show(icon) 
+					end
                 end
             end
             -- thorns
@@ -526,16 +554,22 @@ A[3] = function(icon, isMulti)
             if A.ForceofNature:IsReady(unit) and ((bool(VarAzSs) and not Unit("player"):HasBuffs(CaInc(), true) or not bool(VarAzSs) and (Unit("player"):HasBuffs(CaInc(), true) or A.CaInc:GetCooldown() > 30)) and AP_Check(A.ForceofNature)) then
                 return A.ForceofNature:Show(icon)
             end
-            -- incarnation,if=!buff.ca_inc.up&(buff.memory_of_lucid_dreams.up|((cooldown.memory_of_lucid_dreams.remains>20|!essence.memory_of_lucid_dreams.major)&ap_check))&(buff.memory_of_lucid_dreams.up|ap_check),target_if=dot.sunfire.remains>8&dot.moonfire.remains>12&(dot.stellar_flare.remains>6|!talent.stellar_flare.enabled)
-            if A.Incarnation:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Incarnation, 40, EvaluateCycleIncarnation227) then
-                    return A.Incarnation:Show(icon) 
+	        -- incarnation,if=dot.sunfire.remains>8&dot.moonfire.remains>12&(dot.stellar_flare.remains>6|!talent.stellar_flare.enabled)&(buff.memory_of_lucid_dreams.up|ap_check)&!buff.ca_inc.up
+            if A.Incarnation:IsReady(unit) and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned()) and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) or AP_Check(A.Incarnation)) and not Unit("player"):HasBuffs(CaInc()) then
+                if Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 then
+	                if Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 then
+					    if (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned()) and (not Unit("player"):HasBuffs(CaInc(), true) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and AP_Check(CaInc()))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or AP_Check(CaInc()))) then
+                            return A.Incarnation:Show(icon)
+                        end
+                    end						
                 end
             end
-            -- celestial_alignment,if=!buff.ca_inc.up&(!talent.starlord.enabled|buff.starlord.up)&(buff.memory_of_lucid_dreams.up|((cooldown.memory_of_lucid_dreams.remains>20|!essence.memory_of_lucid_dreams.major)&ap_check))&(!azerite.lively_spirit.enabled|buff.lively_spirit.up),target_if=(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))
-            if A.CelestialAlignment:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.CelestialAlignment, 40, EvaluateCycleCelestialAlignment252) then
-                    return A.CelestialAlignment:Show(icon) 
+            -- celestial_alignment,if=!buff.ca_inc.up&(buff.memory_of_lucid_dreams.up|(ap_check&astral_power>=40))&(!azerite.lively_spirit.enabled|buff.lively_spirit.up)&(dot.sunfire.remains>2&dot.moonfire.ticking&(dot.stellar_flare.ticking|!talent.stellar_flare.enabled))   
+            if A.CelestialAlignment:IsReady(unit) and not Unit("player"):HasBuffs(CaInc()) and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) or (AP_Check(A.CelestialAlignment) and FutureAstralPower() >= 40)) and (Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned())) then
+                if Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 2 then
+	                if (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) or not A.StellarFlare:IsSpellLearned()) and (not Unit("player"):HasBuffs(CaInc(), true) and (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true)) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable())) and AP_Check(CaInc()))) and (not bool(A.LivelySpirit:GetAzeriteRank()) or Unit("player"):HasBuffs(A.LivelySpiritBuff.ID, true))) then
+                        return A.CelestialAlignment:Show(icon) 
+					end
                 end
             end
             -- fury_of_elune,if=(buff.ca_inc.up|cooldown.ca_inc.remains>30)&solar_wrath.ap_check
@@ -543,42 +577,16 @@ A[3] = function(icon, isMulti)
                 return A.FuryofElune:Show(icon)
             end
             -- cancel_buff,name=starlord,if=buff.starlord.remains<3&!solar_wrath.ap_check
-            if (Unit("player"):HasBuffs(A.StarlordBuff.ID, true) < 3 and not AP_Check(A.SolarWrath)) then
+            --if (Unit("player"):HasBuffs(A.StarlordBuff.ID, true) < 3 and not AP_Check(A.SolarWrath)) then
                 -- if HR.CancelA.StarlordBuff.ID, true then return ""; end
-            end
+            --end
             -- starfall,if=(buff.starlord.stack<3|buff.starlord.remains>=8)&spell_targets>=variable.sf_targets&(target.time_to_die+1)*spell_targets>cost%2.5
             if A.Starfall:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 8) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarSfTargets and (Unit(unit):TimeToDie() + 1) * MultiUnits:GetByRangeInCombat(40, 5, 10) > A.Starfall:Cost() / 2.5) then
                 return A.Starfall:Show(icon)
             end
             -- starsurge,if=(talent.starlord.enabled&(buff.starlord.stack<3|buff.starlord.remains>=5&buff.arcanic_pulsar.stack<8)|!talent.starlord.enabled&(buff.arcanic_pulsar.stack<8|buff.ca_inc.up))&spell_targets.starfall<variable.sf_targets&buff.lunar_empowerment.stack+buff.solar_empowerment.stack<4&buff.solar_empowerment.stack<3&buff.lunar_empowerment.stack<3&(!variable.az_ss|!buff.ca_inc.up|!prev.starsurge)|target.time_to_die<=execute_time*astral_power%40|!solar_wrath.ap_check
-            if A.Starsurge:IsReady(unit) and ((A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 5 and Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8) or not A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or Unit("player"):HasBuffs(CaInc(), true))) and MultiUnits:GetByRangeInCombat(40, 5, 10) < VarSfTargets and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.Starsurge.ID, true))) or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower / 40 or not AP_Check(A.SolarWrath)) then
+            if A.Starsurge:IsReady(unit) and ((A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 5 and Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8) or not A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or Unit("player"):HasBuffs(CaInc(), true))) and MultiUnits:GetByRangeInCombat(40, 5, 10) < VarSfTargets and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (not bool(VarAzSs) or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.Starsurge.ID))) or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) then
                 return A.Starsurge:Show(icon)
-            end
-            -- sunfire,if=buff.ca_inc.up&buff.ca_inc.remains<gcd.max&variable.az_ss&dot.moonfire.remains>remains
-            if A.Sunfire:IsReady(unit) and (Unit("player"):HasBuffs(CaInc(), true) and Unit("player"):HasBuffs(CaInc(), true) < A.GetGCD() and bool(VarAzSs) and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true)) then
-                return A.Sunfire:Show(icon)
-            end
-            -- moonfire,if=buff.ca_inc.up&buff.ca_inc.remains<gcd.max&variable.az_ss
-            if A.Moonfire:IsReady(unit) and (Unit("player"):HasBuffs(CaInc(), true) and Unit("player"):HasBuffs(CaInc(), true) < A.GetGCD() and bool(VarAzSs)) then
-                return A.Moonfire:Show(icon)
-            end
-            -- sunfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=ceil(floor(2%spell_targets)*1.5)+2*spell_targets&(spell_targets>1+talent.twin_moons.enabled|dot.moonfire.ticking)&(!variable.az_ss|!buff.ca_inc.up|!prev.sunfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
-            if A.Sunfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Sunfire, 40, EvaluateCycleSunfire377) then
-                    return A.Sunfire:Show(icon) 
-                end
-            end
-            -- moonfire,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))*spell_targets>=6&(!variable.az_ss|!buff.ca_inc.up|!prev.moonfire)&(buff.ca_inc.remains>remains|!buff.ca_inc.up)
-            if A.Moonfire:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Moonfire, 40, EvaluateCycleMoonfire440) then
-                    return A.Moonfire:Show(icon) 
-                end
-            end
-            -- stellar_flare,target_if=refreshable,if=ap_check&floor(target.time_to_die%(2*spell_haste))>=5&(!variable.az_ss|!buff.ca_inc.up|!prev.stellar_flare)
-            if A.StellarFlare:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.StellarFlare, 40, EvaluateCycleStellarFlare475) then
-                    return A.StellarFlare:Show(icon) 
-                end
             end
             -- new_moon,if=ap_check
             if A.NewMoon:IsReady(unit) and AP_Check(A.NewMoon) then
@@ -597,13 +605,13 @@ A[3] = function(icon, isMulti)
                 return A.LunarStrike:Show(icon)
             end
             -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
-            if A.SolarWrath:IsReady(unit) and (VarAzSs < 3 or not Unit("player"):HasBuffs(CaInc(), true) or not bool(Unit("player"):GetSpellLastCast(A.SolarWrath.ID, true))) then
+            if A.SolarWrath:IsReady(unit) and (VarAzSs < 3 or not Unit("player"):HasBuffs(CaInc(), true) or not Unit("player"):GetSpellLastCast(A.SolarWrath.ID)) then
                 return A.SolarWrath:Show(icon)
             end
             -- sunfire
-            if A.Sunfire:IsReady(unit) then
-                return A.Sunfire:Show(icon)
-            end
+            --if A.Sunfire:IsReady(unit) then
+            --    return A.Sunfire:Show(icon)
+            --end
         end
     end
 
