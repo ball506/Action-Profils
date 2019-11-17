@@ -181,7 +181,7 @@ function Unit:HasDeBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (self:HasDeBuffs(spell, ID) < 1 and true) or false
+    return (self:HasDeBuffs(spell, ID) == 0 and true) or false
 end
 
 ------------------------------------
@@ -193,7 +193,7 @@ function Unit:HasBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (self:HasBuffs(spell, ID) < 0.1 and true) or false
+    return (self:HasBuffs(spell, ID) == 0 and true) or false
 end
 
 ------------------------------------
@@ -205,7 +205,7 @@ function Unit:HasDeBuffsRefreshable(spell, byID)
 	    ID = true
 	end
 	
-    return (self:HasDeBuffs(spell, ID) < 5 and true) or false
+    return (self:HasDeBuffs(spell, ID) < 5 or self:HasBuffsDown(spell, ID) and true) or false
 end
 
 -------------------------------------------------------------------------------
