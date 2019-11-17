@@ -1,764 +1,686 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
+--- ====================== ACTION HEADER ============================ ---
+local Action                                 = Action
+local TeamCache                              = Action.TeamCache
+local EnemyTeam                              = Action.EnemyTeam
+local FriendlyTeam                           = Action.FriendlyTeam
+--local HealingEngine                        = Action.HealingEngine
+local LoC                                    = Action.LossOfControl
+local Player                                 = Action.Player
+local MultiUnits                             = Action.MultiUnits
+local UnitCooldown                           = Action.UnitCooldown
+local Unit                                   = Action.Unit
+local Pet                                    = LibStub("PetLibrary")
+local Azerite                                = LibStub("AzeriteTraits")
+local setmetatable                           = setmetatable
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local Action = Action
-local TeamCache = Action.TeamCache
-local EnemyTeam = Action.EnemyTeam
-local FriendlyTeam = Action.FriendlyTeam
---local HealingEngine = Action.HealingEngine
-local LoC = Action.LossOfControl
-local ActionPlayer = Action.Player 
-local MultiUnits = Action.MultiUnits
-local UnitCooldown = Action.UnitCooldown
-local ActionUnit = Action.Unit 
---local Pet = LibStub("PetLibrary")
---local Azerite = LibStub("AzeriteTraits")
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 
+-- Spells
 Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
-    -- Racials
-    ArcaneTorrent                        = Action.Create({ Type = "Spell", ID = 50613     }),
-    BloodFury                            = Action.Create({ Type = "Spell", ID = 20572      }),
-    Fireblood                            = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                        = Action.Create({ Type = "Spell", ID = 274738     }),
-    Berserking                           = Action.Create({ Type = "Spell", ID = 26297    }),
-    ArcanePulse                          = Action.Create({ Type = "Spell", ID = 260364    }),
-    QuakingPalm                          = Action.Create({ Type = "Spell", ID = 107079     }),
-    Haymaker                             = Action.Create({ Type = "Spell", ID = 287712     }), 
-    BullRush                             = Action.Create({ Type = "Spell", ID = 255654     }),    
-    WarStomp                             = Action.Create({ Type = "Spell", ID = 20549     }),
-    GiftofNaaru                          = Action.Create({ Type = "Spell", ID = 59544    }),
-    Shadowmeld                           = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
-    Stoneform                            = Action.Create({ Type = "Spell", ID = 20594    }), 
-    WilloftheForsaken                    = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
-    EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-    EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
-    -- Generics Spells    
-    SummonPet                             = Action.Create({ Type = "Spell", ID = 883 }),
-    AspectoftheWild                       = Action.Create({ Type = "Spell", ID = 193530 }),
-    PrimalInstincts                       = Action.Create({ Type = "Spell", ID = 279806 }),
-    BestialWrath                          = Action.Create({ Type = "Spell", ID = 19574 }),
-    AncestralCall                         = Action.Create({ Type = "Spell", ID = 274738 }),
-    Fireblood                             = Action.Create({ Type = "Spell", ID = 265221 }),
-    Berserking                            = Action.Create({ Type = "Spell", ID = 26297 }),
-    KillerInstinct                        = Action.Create({ Type = "Spell", ID = 273887 }),
-    BloodFury                             = Action.Create({ Type = "Spell", ID = 20572 }),
-    LightsJudgment                        = Action.Create({ Type = "Spell", ID = 255647 }),
-    BarbedShot                            = Action.Create({ Type = "Spell", ID = 217200 }),
-    Multishot                             = Action.Create({ Type = "Spell", ID = 2643 }),
-    Stampede                              = Action.Create({ Type = "Spell", ID = 201430 }),
-    ChimaeraShot                          = Action.Create({ Type = "Spell", ID = 53209 }),
-    AMurderofCrows                        = Action.Create({ Type = "Spell", ID = 131894 }),
-    Barrage                               = Action.Create({ Type = "Spell", ID = 120360 }),
-    KillCommand                           = Action.Create({ Type = "Spell", ID = 34026 }),
-    RapidReload                           = Action.Create({ Type = "Spell", ID = 278530 }),
-    DireBeast                             = Action.Create({ Type = "Spell", ID = 120679 }),
-    CobraShot                             = Action.Create({ Type = "Spell", ID = 193455 }),
-    SpittingCobra                         = Action.Create({ Type = "Spell", ID = 194407 }),
-    OneWithThePack                        = Action.Create({ Type = "Spell", ID = 199528 }),
-    Intimidation                          = Action.Create({ Type = "Spell", ID = 19577 }),
-    CounterShot                           = Action.Create({ Type = "Spell", ID = 147362 }),
-    Exhilaration                          = Action.Create({ Type = "Spell", ID = 109304 }),
-    DanceofDeath                          = Action.Create({ Type = "Spell", ID = 274441 }),
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
+    AspectoftheWildBuff                    = Action.Create({ Type = "Spell", ID = 193530 }),
+    AspectoftheWild                        = Action.Create({ Type = "Spell", ID = 193530 }),
+    PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810 }),
+    PrimalInstincts                        = Action.Create({ Type = "Spell", ID = 279806 }),
+    BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574 }),
+    BestialWrath                           = Action.Create({ Type = "Spell", ID = 19574 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    KillerInstinct                         = Action.Create({ Type = "Spell", ID = 273887 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
+    Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
+    BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455 }),
+    Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
+    OneWiththePack                         = Action.Create({ Type = "Spell", ID = 199528 }),
+    ChimaeraShot                           = Action.Create({ Type = "Spell", ID = 53209 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
+    KillCommand                            = Action.Create({ Type = "Spell", ID = 34026 }),
+    RapidReload                            = Action.Create({ Type = "Spell", ID = 278530 }),
+    DireBeast                              = Action.Create({ Type = "Spell", ID = 120679 }),
+    CobraShot                              = Action.Create({ Type = "Spell", ID = 193455 }),
+    SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
+    DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
+    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
     -- Pet
-    CallPet                               = Action.Create({ Type = "Spell", ID = 883 }),
-    MendPet                               = Action.Create({ Type = "Spell", ID = 136 }),
-    RevivePet                             = Action.Create({ Type = "Spell", ID = 982 }),
+    CallPet                               = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
+    MendPet                               = Action.Create({ Type = "Spell", ID = 136  }),
+    RevivePet                             = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
     SpiritShock                           = Action.Create({ Type = "Spell", ID = 264265 }),
     SonicBlast                            = Action.Create({ Type = "Spell", ID = 264263 }),
+    CounterShot                           = Action.Create({ Type = "Spell", ID = 147362 }),
+    Exhilaration                          = Action.Create({ Type = "Spell", ID = 109304 }),
 	-- Defensives
 	AspectoftheTurtle                     = Action.Create({ Type = "Spell", ID = 274441 }),
-    -- Misc
-    Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
-    RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
-    ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
-    CyclotronicBlast                      = Action.Create({ Type = "Spell", ID = 167672, Hidden = true     }),
-    HarmonicDematerializer                = Action.Create({ Type = "Spell", ID = 293512, Hidden = true     }),
-    RecklessForceCounter                  = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),
-    RecklessForceCounter2                 = Action.Create({ Type = "Spell", ID = 302917, Hidden = true     }),
-	--PoolFocus                             = Action.Create({ Type = "Spell", ID = 9999000010, Hidden = true     }),
-    -- Buffs
-    DanceofDeathBuff                      = Action.Create({ Type = "Spell", ID = 274443 , Hidden = true     }),
-    BeastCleaveBuff                       = Action.Create({ Type = "Spell", ID = 118455 , Hidden = true     }),
-    BloodFuryBuff                         = Action.Create({ Type = "Spell", ID = 20572 , Hidden = true     }),
-    BerserkingBuff                        = Action.Create({ Type = "Spell", ID = 26297 , Hidden = true     }),
-    BestialWrathBuff                      = Action.Create({ Type = "Spell", ID = 19574 , Hidden = true     }),
-    PrimalInstinctsBuff                   = Action.Create({ Type = "Spell", ID = 279810 , Hidden = true     }),
-    FrenzyBuff                            = Action.Create({ Type = "Spell", ID = 272790 , Hidden = true     }),
-    AspectoftheWildBuff                   = Action.Create({ Type = "Spell", ID = 193530 , Hidden = true     }),	
-	-- Debuffs 
-    RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568 , Hidden = true     }),	
+    -- Trinkets
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
-    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
-    -- Trinkets    
-	AshvanesRazorCoral                   = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, QueueForbidden = true }),
-    PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    HyperthreadWristwraps                = Action.Create({ Type = "Trinket", ID = 168989, QueueForbidden = true }),
-    NotoriousAspirantsBadge              = Action.Create({ Type = "Trinket", ID = 167528, QueueForbidden = true }),
-    NotoriousGladiatorsBadge             = Action.Create({ Type = "Trinket", ID = 167380, QueueForbidden = true }),
-    SinisterGladiatorsBadge              = Action.Create({ Type = "Trinket", ID = 165058, QueueForbidden = true }),
-    SinisterAspirantsBadge               = Action.Create({ Type = "Trinket", ID = 165223, QueueForbidden = true }),
-    DreadGladiatorsBadge                 = Action.Create({ Type = "Trinket", ID = 161902, QueueForbidden = true }),
-    DreadAspirantsBadge                  = Action.Create({ Type = "Trinket", ID = 162966, QueueForbidden = true }),
-    DreadCombatantsInsignia              = Action.Create({ Type = "Trinket", ID = 161676, QueueForbidden = true }),
-    NotoriousAspirantsMedallion          = Action.Create({ Type = "Trinket", ID = 167525, QueueForbidden = true }),
-    NotoriousGladiatorsMedallion         = Action.Create({ Type = "Trinket", ID = 167377, QueueForbidden = true }),
-    SinisterGladiatorsMedallion          = Action.Create({ Type = "Trinket", ID = 165055, QueueForbidden = true }),
-    SinisterAspirantsMedallion           = Action.Create({ Type = "Trinket", ID = 165220, QueueForbidden = true }),
-    DreadGladiatorsMedallion             = Action.Create({ Type = "Trinket", ID = 161674, QueueForbidden = true }),
-    DreadAspirantsMedallion              = Action.Create({ Type = "Trinket", ID = 162897, QueueForbidden = true }),
-    DreadCombatantsMedallion             = Action.Create({ Type = "Trinket", ID = 161811, QueueForbidden = true }),
-    IgnitionMagesFuse                    = Action.Create({ Type = "Trinket", ID = 159615, QueueForbidden = true }),
-    TzanesBarkspines                     = Action.Create({ Type = "Trinket", ID = 161411, QueueForbidden = true }),
-    AzurethoseSingedPlumage              = Action.Create({ Type = "Trinket", ID = 161377, QueueForbidden = true }),
-    AncientKnotofWisdomAlliance          = Action.Create({ Type = "Trinket", ID = 161417, QueueForbidden = true }),
-    AncientKnotofWisdomHorde             = Action.Create({ Type = "Trinket", ID = 166793, QueueForbidden = true }),
-    ShockbitersFang                      = Action.Create({ Type = "Trinket", ID = 169318, QueueForbidden = true }),
-    NeuralSynapseEnhancer                = Action.Create({ Type = "Trinket", ID = 168973, QueueForbidden = true }),
-    BalefireBranch                       = Action.Create({ Type = "Trinket", ID = 159630, QueueForbidden = true }),
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    -- Trinkets
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
-    RecklessForceCounter1                = Action.Create({ Type = "Spell", ID = 298409, Hidden = true}),
-    RecklessForceCounter2                = Action.Create({ Type = "Spell", ID = 302917, Hidden = true}),
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true  }),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true  }),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
     -- Hidden Heart of Azeroth
-    VisionofPerfectionMinor              = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
-    VisionofPerfectionMinor2             = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
-    VisionofPerfectionMinor3             = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-	MemoryofLucidDreamsMinor             = Action.Create({ Type = "Spell", ID = 298268, Hidden = true}),
-    MemoryofLucidDreamsMinor2            = Action.Create({ Type = "Spell", ID = 299371, Hidden = true}),
-    MemoryofLucidDreamsMinor3            = Action.Create({ Type = "Spell", ID = 299373, Hidden = true}),
-    UnleashHeartOfAzeroth                = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                      = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                       = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                  = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                 = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                 = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
-	
-    -- Here come all the stuff needed by simcraft but not classic spells or items. 
-}
-
--- To create essences use next code:
-Action:CreateEssencesFor(ACTION_CONST_HUNTER_BEASTMASTERY)        -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
-
--- This code making shorter access to both tables Action[PLAYERSPEC] and Action
--- However if you prefer long access it still can be used like Action[PLAYERSPEC].Guard:IsReady() and not ShouldStop, it doesn't make any conflict if you will skip shorter access
--- So with shorter access you can just do A.Guard:IsReady() and not ShouldStop instead of Action[PLAYERSPEC].Guard:IsReady() and not ShouldStop
-local A = setmetatable(Action[ACTION_CONST_HUNTER_BEASTMASTERY], { __index = Action })
-
--- Simcraft Imported
--- HeroLib
-local HL         = HeroLib
-local Cache      = HeroCache
-local Unit       = HL.Unit
-local Player     = Unit.Player
-local Target     = Unit.Target
-local Pet        = Unit.Pet
-local Spell      = HL.Spell
-local Item       = HL.Item
--- HeroRotation
-local HR         = HeroRotation
-
----------------------------
--- PORT TO ACTION 
-local S, I = A:HeroCreate()
-Action.HeroSetHookAllTable(S, {
-        [3] = "TellMeWhen_Group4_Icon3",
-        [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6", 
-})
-Action.HeroSetHookAllTable(I, {
-        [3] = "TellMeWhen_Group4_Icon3",
-        [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6",
-})
--- Adding manually missed staff
---S.Brews                                 = Spell(115308)
---S.BlackoutCombo                         = Spell(196736)
---S.BlackoutComboBuff                     = Spell(228563)
-
----------------------------
-
--- Rotation Var
-local ShouldReturn; -- Used to get the return string
-local ForceOffGCD = {true, false};
-local Everyone = HR.Commons.Everyone;
-
--- Rotation Var
-local ShouldReturn; -- Used to get the return string
-local EnemiesCount, GCDMax;
-
--- Stuns
-local StunInterrupts = {
-  {S.Intimidation, "Cast Intimidation (Interrupt)", function () return true; end},
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
-
-S.CallPet.TextureSpellID = { S.MendPet:ID() }
-S.RevivePet.TextureSpellID = { S.MendPet:ID() }
-
-
-local function cacheOverwrite()
-    Cache.Persistent.SpellLearned.Player[S.MendPet.SpellID] = true
-end
-
--- AoE Detection Mode
-local function GetEnemiesCount(range)
-    -- Unit Update - Update differently depending on if splash data is being used
-    if HR.AoEON() then
-        if Action.GetToggle(2, "AoeDetectionMode") == "USE COMBAT LOGS" then
-	       return active_enemies()
-	    elseif Action.GetToggle(2, "AoeDetectionMode") == "USE SPLASH DATA" then
-	        HL.GetEnemies(range, nil, true, Target)
-            return Cache.EnemiesCount[range]
-	    else 
-            UpdateRanges()
-            return Cache.EnemiesCount[40]
-        end
-    else
-        return 1
-    end
-end
-
-S.ConcentratedFlame:RegisterInFlight()
+-- To create essences use next code:
+Action:CreateEssencesFor(ACTION_CONST_HUNTER_BEASTMASTERY)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
+local A = setmetatable(Action[ACTION_CONST_HUNTER_BEASTMASTERY], { __index = Action })
 
 local function num(val)
-  if val then return 1 else return 0 end
+    if val then return 1 else return 0 end
 end
 
 local function bool(val)
-  return val ~= 0
+    return val ~= 0
 end
 
-local function EvaluateTargetIfFilterBarbedShot74(TargetUnit)
-  return TargetUnit:DebuffRemainsP(S.BarbedShot)
+------------------------------------------
+-------------- COMMON PREAPL -------------
+------------------------------------------
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
+
+local function EvaluateTargetIfFilterBarbedShot129(unit)
+  return Unit(unit):HasDeBuffs(A.BarbedShot.ID, true)
 end
 
-local function EvaluateTargetIfBarbedShot75(TargetUnit)
-  return (Pet:BuffP(S.FrenzyBuff) and Pet:BuffRemainsP(S.FrenzyBuff) <= Player:GCD() + 0.150)
+local function EvaluateTargetIfBarbedShot140(unit)
+  return Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) <= A.GetGCD()
 end
 
-local function EvaluateTargetIfBarbedShot85(TargetUnit)
-  return (S.BarbedShot:FullRechargeTimeP() < Player:GCD() + 0.150 and bool(S.BestialWrath:CooldownRemainsP()))
+
+local function EvaluateTargetIfFilterBarbedShot150(unit)
+  return Unit(unit):HasDeBuffs(A.BarbedShot.ID, true)
 end
 
-local function EvaluateTargetIfBarbedShot123(TargetUnit)
-  return (Pet:BuffDownP(S.FrenzyBuff) and (S.BarbedShot:ChargesFractionalP() > 1.8 or Player:BuffP(S.BestialWrathBuff)) or S.AspectoftheWild:CooldownRemainsP() < S.FrenzyBuff:BaseDuration() - Player:GCD() + 0.150 and S.PrimalInstincts:AzeriteEnabled() or S.BarbedShot:ChargesFractionalP() > 1.4 or Target:TimeToDie() < 9)
+local function EvaluateTargetIfBarbedShot163(unit)
+  return A.BarbedShot:GetCooldown() < A.GetGCD() and bool(A.BestialWrath:GetCooldown())
 end
 
-local function DetermineEssenceRanks()
-    S.BloodoftheEnemy = S.BloodoftheEnemy2:IsAvailable() and S.BloodoftheEnemy2 or S.BloodoftheEnemy
-    S.BloodoftheEnemy = S.BloodoftheEnemy3:IsAvailable() and S.BloodoftheEnemy3 or S.BloodoftheEnemy
-    S.MemoryofLucidDreams = S.MemoryofLucidDreams2:IsAvailable() and S.MemoryofLucidDreams2 or S.MemoryofLucidDreams
-    S.MemoryofLucidDreams = S.MemoryofLucidDreams3:IsAvailable() and S.MemoryofLucidDreams3 or S.MemoryofLucidDreams
-    S.PurifyingBlast = S.PurifyingBlast2:IsAvailable() and S.PurifyingBlast2 or S.PurifyingBlast
-    S.PurifyingBlast = S.PurifyingBlast3:IsAvailable() and S.PurifyingBlast3 or S.PurifyingBlast
-    S.RippleInSpace = S.RippleInSpace2:IsAvailable() and S.RippleInSpace2 or S.RippleInSpace
-    S.RippleInSpace = S.RippleInSpace3:IsAvailable() and S.RippleInSpace3 or S.RippleInSpace
-    S.ConcentratedFlame = S.ConcentratedFlame2:IsAvailable() and S.ConcentratedFlame2 or S.ConcentratedFlame
-    S.ConcentratedFlame = S.ConcentratedFlame3:IsAvailable() and S.ConcentratedFlame3 or S.ConcentratedFlame
-    S.TheUnboundForce = S.TheUnboundForce2:IsAvailable() and S.TheUnboundForce2 or S.TheUnboundForce
-    S.TheUnboundForce = S.TheUnboundForce3:IsAvailable() and S.TheUnboundForce3 or S.TheUnboundForce
-    S.WorldveinResonance = S.WorldveinResonance2:IsAvailable() and S.WorldveinResonance2 or S.WorldveinResonance
-    S.WorldveinResonance = S.WorldveinResonance3:IsAvailable() and S.WorldveinResonance3 or S.WorldveinResonance
-    S.FocusedAzeriteBeam = S.FocusedAzeriteBeam2:IsAvailable() and S.FocusedAzeriteBeam2 or S.FocusedAzeriteBeam
-    S.FocusedAzeriteBeam = S.FocusedAzeriteBeam3:IsAvailable() and S.FocusedAzeriteBeam3 or S.FocusedAzeriteBeam
-    S.VisionofPerfectionMinor = S.VisionofPerfectionMinor2:IsAvailable() and S.VisionofPerfectionMinor2 or S.VisionofPerfectionMinor
-    S.VisionofPerfectionMinor = S.VisionofPerfectionMinor3:IsAvailable() and S.VisionofPerfectionMinor3 or S.VisionofPerfectionMinor
-    S.GuardianofAzeroth = S.GuardianofAzeroth2:IsAvailable() and S.GuardianofAzeroth2 or S.GuardianofAzeroth
-    S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
-    S.MemoryofLucidDreamsMinor = S.MemoryofLucidDreamsMinor2:IsAvailable() and S.MemoryofLucidDreamsMinor2 or S.MemoryofLucidDreamsMinor
-    S.MemoryofLucidDreamsMinor = S.MemoryofLucidDreamsMinor3:IsAvailable() and S.MemoryofLucidDreamsMinor3 or S.MemoryofLucidDreamsMinor
-	S.RecklessForceCounter = S.RecklessForceCounter2:IsAvailable() and S.RecklessForceCounter2 or S.RecklessForceCounter
+
+local function EvaluateTargetIfFilterBarbedShot201(unit)
+  return Unit(unit):HasDeBuffs(A.BarbedShot.ID, true)
 end
 
--- Initiate Nucleus Ability registration
-local function Init()
-  -- Register Splash Data Nucleus Abilities
-  HL.RegisterNucleusAbility(2643, 8, 6)               -- Multi-Shot
-  HL.RegisterNucleusAbility(194392, 8, 6)             -- Volley
-  HL.RegisterNucleusAbility({171454, 171457}, 8, 6)   -- Chimaera Shot
-  HL.RegisterNucleusAbility(118459, 10, 6)            -- Beast Cleave
-  HL.RegisterNucleusAbility(201754, 10, 6)            -- Stomp
-  HL.RegisterNucleusAbility(271686, 3, 6)             -- Head My Call
+local function EvaluateTargetIfBarbedShot226(unit)
+  return bool(Unit("pet"):HasBuffsDown(A.FrenzyBuff.ID, true)) and (A.BarbedShot:GetSpellCharges() > 1.8 or Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true)) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and bool(A.PrimalInstincts:GetAzeriteRank()) or A.BarbedShot:GetSpellCharges() > 1.4 or Unit(unit):TimeToDie() < 9
 end
 
--- Init data for splash data (To Check)
-Init()
 
 --- ======= ACTION LISTS =======
-local function APL(icon) 
-    
-	-- Action specifics remap
-	local ShouldStop = Action.ShouldStop()
-	local Pull = Action.BossMods_Pulling()
+-- [3] Single Rotation
+A[3] = function(icon, isMulti)
+    --------------------
+    --- ROTATION VAR ---
+    --------------------
+    local isMoving = A.Player:IsMoving()
+    local inCombat = Unit("player"):CombatTime() > 0
+    local ShouldStop = Action.ShouldStop()
+    local Pull = Action.BossMods_Pulling()
+    local unit = "player"
+
+    ------------------------------------------------------
+    ---------------- ENEMY UNIT ROTATION -----------------
+    ------------------------------------------------------
+    local function EnemyRotation(unit)
+        local Precombat, Cds, Cleave, St
+        --Precombat
+        local function Precombat(unit)
+            -- flask
+            -- augmentation
+            -- food
+            -- summon_pet
+            if A.SummonPet:IsReady(unit) and not Pet:IsActive() then
+                return A.SummonPet:Show(icon)
+            end
+            -- snapshot_stats
+            -- use_item,name=azsharas_font_of_power
+            if A.AzsharasFontofPower:IsReady(unit)
+			and ((Pull > 0.1 and Pull <= 8) or not Action.GetToggle(1, "DBM")) then
+                return A.AzsharasFontofPower:Show(icon)
+            end
+            -- potion
+            if A.BattlePotionOfAgility:IsReady(unit) and Action.GetToggle(1, "Potion")
+			and ((Pull > 0.1 and Pull < 1.5 + A.GetGCD()) or not Action.GetToggle(1, "DBM")) then
+                return A.BattlePotionOfAgility:Show(icon)
+            end
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")
+			and ((Pull > 0.1 and Pull < 1.5) or not Action.GetToggle(1, "DBM")) then
+                return A.WorldveinResonance:Show(icon)
+            end
+            -- guardian_of_azeroth
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")
+			and ((Pull > 0.1 and Pull < 1.5) or not Action.GetToggle(1, "DBM")) then
+                return A.GuardianofAzeroth:Show(icon)
+            end
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")
+			and ((Pull > 0.1 and Pull < 1.5) or not Action.GetToggle(1, "DBM")) then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- focused_azerite_beam,if=!raid_event.invulnerable.exists
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")
+			and ((Pull > 0.1 and Pull < 1) or not Action.GetToggle(1, "DBM")) then
+                return A.FocusedAzeriteBeam:Show(icon)
+            end		    
+            -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
+            if A.BurstIsON(unit) and not inCombat and A.AspectoftheWild:IsReady("player") and Unit("player"):HasBuffsDown(A.AspectoftheWildBuff.ID, true) and (not bool(A.PrimalInstincts:GetAzeriteRank()) and not bool((A.FocusedAzeriteBeam:IsSpellLearned())) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+			and ((Pull > 0.1 and Pull <= 1.2) or not Action.GetToggle(1, "DBM")) then
+                return A.AspectoftheWild:Show(icon)
+            end
+            -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
+            if A.BestialWrath:IsReady("player") and not inCombat and A.BurstIsON(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(Azerite:EssenceHasMajor(A.FocusedAzeriteBeam.ID)) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+			and ((Pull > 0.1 and Pull <= 1.6) or not Action.GetToggle(1, "DBM")) then
+                return A.BestialWrath:Show(icon)
+            end
+			-- cobra_shot
+			if A.BarbedShot:IsReady(unit) and not inCombat and 
+			((Pull > 0.1 and Pull < 0.7) or not Action.GetToggle(1, "DBM")) then
+                return A.BarbedShot:Show(icon)
+            end	
+        end
+        
+        --Cds
+        local function Cds(unit)
+            -- ancestral_call,if=cooldown.bestial_wrath.remains>30
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+                return A.AncestralCall:Show(icon)
+            end
+            -- fireblood,if=cooldown.bestial_wrath.remains>30
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) then
+                return A.Fireblood:Show(icon)
+            end
+            -- berserking,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<13
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):TimeToDie() > 10 or (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
+                return A.Berserking:Show(icon)
+            end
+            -- blood_fury,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<16
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):TimeToDie() > 15 or (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+                return A.BloodFury:Show(icon)
+            end
+            -- lights_judgment,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains>gcd.max|!pet.cat.buff.frenzy.up
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > A.GetGCD() or not Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true)) then
+                return A.LightsJudgment:Show(icon)
+            end
+            -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
+            if A.BattlePotionOfAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned()) or ((Unit(unit):HasBuffs(A.PotionofUnbridledFury.ID, true) or Unit(unit):HasBuffs(A.UnbridledFury.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
+                A.BattlePotionOfAgility:Show(icon)
+            end
+            -- worldvein_resonance,if=buff.lifeblood.stack<4
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) then
+                return A.WorldveinResonance:Show(icon)
+            end
+            -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.AspectoftheWild:GetCooldown() < 10 or Unit(unit):TimeToDie() > cooldown + duration or Unit(unit):TimeToDie() < 30) then
+                return A.GuardianofAzeroth:Show(icon)
+            end
+            -- ripple_in_space
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.RippleInSpace:Show(icon)
+            end
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+        end
+        
+        --Cleave
+        local function Cleave(unit)
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<=gcd.max
+            if A.BarbedShot:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot129, EvaluateTargetIfBarbedShot140) then 
+                    return A.BarbedShot:Show(icon) 
+                end
+            end
+            -- multishot,if=gcd.max-pet.cat.buff.beast_cleave.remains>0.25
+            if A.Multishot:IsReady(unit) and A.GetToggle(2, "AoE") and (A.GetGCD() - Unit("pet"):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) then
+                return A.Multishot:Show(icon)
+            end
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
+            if A.BarbedShot:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot150, EvaluateTargetIfBarbedShot163) then 
+                    return A.BarbedShot:Show(icon) 
+                end
+            end
+            -- aspect_of_the_wild
+            if A.AspectoftheWild:IsReady("player") and A.BurstIsON(unit) then
+                return A.AspectoftheWild:Show(icon)
+            end
+            -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
+            if A.Stampede:IsReady(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) or Unit(unit):TimeToDie() < 15) then
+                return A.Stampede:Show(icon)
+            end
+            -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
+            if A.BurstIsON(unit) and A.BestialWrath:IsReady("player") and (A.AspectoftheWild:GetCooldown() > 20 or A.OneWiththePack:IsSpellLearned() or Unit(unit):TimeToDie() < 15) then
+                return A.BestialWrath:Show(icon)
+            end
+            -- chimaera_shot
+            if A.ChimaeraShot:IsReady(unit) then
+                return A.ChimaeraShot:Show(icon)
+            end
+            -- a_murder_of_crows
+            if A.AMurderofCrows:IsReady(unit) then
+                return A.AMurderofCrows:Show(icon)
+            end
+            -- barrage
+            if A.Barrage:IsReady(unit) then
+                return A.Barrage:Show(icon)
+            end
+            -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
+            if A.KillCommand:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 or not bool(A.RapidReload:GetAzeriteRank())) then
+                return A.KillCommand:Show(icon)
+            end
+            -- dire_beast
+            if A.DireBeast:IsReady(unit) then
+                return A.DireBeast:Show(icon)
+            end
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.cat.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.cat.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
+            if A.BarbedShot:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot201, EvaluateTargetIfBarbedShot226) then 
+                    return A.BarbedShot:Show(icon) 
+                end
+            end
+            -- focused_azerite_beam
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.FocusedAzeriteBeam:Show(icon)
+            end
+            -- purifying_blast
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.PurifyingBlast:Show(icon)
+            end
+            -- concentrated_flame
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ConcentratedFlame:Show(icon)
+            end
+            -- blood_of_the_enemy
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.BloodoftheEnemy:Show(icon)
+            end
+            -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+                return A.TheUnboundForce:Show(icon)
+            end
+            -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
+            if A.CobraShot:IsReady(unit) and (A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not bool(A.RapidReload:GetAzeriteRank()))) then
+                return A.CobraShot:Show(icon)
+            end
+            -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
+            if A.Multishot:IsReady(unit) and A.GetToggle(2, "AoE") and (bool(A.RapidReload:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+                return A.Multishot:Show(icon)
+            end
+            -- spitting_cobra
+            if A.SpittingCobra:IsReady(unit) then
+                return A.SpittingCobra:Show(icon)
+            end
+        end
+        
+        --St
+        local function St(unit)
+            -- barbed_shot,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
+            if A.BarbedShot:IsReady(unit) and (Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) < A.GetGCD() or bool(A.BestialWrath:GetCooldown()) and (A.BarbedShot:GetCooldown() < A.GetGCD() or bool(A.PrimalInstincts:GetAzeriteRank()) and A.AspectoftheWild:GetCooldown() < A.GetGCD())) then
+                return A.BarbedShot:Show(icon)
+            end
+            -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.bestial_wrath.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetCooldown() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+                return A.ConcentratedFlame:Show(icon)
+            end
+            -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<2|pet.cat.buff.frenzy.stack>2|!azerite.primal_instincts.enabled
+            if A.BurstIsON(unit) and A.AspectoftheWild:IsReady("player") and (A.BarbedShot:GetSpellCharges() < 2 or Unit("pet"):HasBuffsStacks(A.FrenzyBuff.ID, true) > 2 or not bool(A.PrimalInstincts:GetAzeriteRank())) then
+                return A.AspectoftheWild:Show(icon)
+            end
+            -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
+            if A.Stampede:IsReady(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) > 0 or Unit(unit):TimeToDie() < 15) then
+                return A.Stampede:Show(icon)
+            end
+            -- a_murder_of_crows,if=cooldown.bestial_wrath.remains
+            if A.AMurderofCrows:IsReady(unit) and A.BestialWrath:GetCooldown() > 0 then
+                return A.AMurderofCrows:Show(icon)
+            end
+            -- focused_azerite_beam,if=buff.bestial_wrath.down|target.time_to_die<5
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+                return A.FocusedAzeriteBeam:Show(icon)
+            end
+            -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10 or Unit(unit):TimeToDie() < 5) then
+                return A.TheUnboundForce:Show(icon)
+            end
+            -- bestial_wrath
+            if A.BestialWrath:IsReady("player") and A.BurstIsON(unit) then
+                return A.BestialWrath:Show(icon)
+            end
+            -- kill_command
+            if A.KillCommand:IsReady(unit) then
+                return A.KillCommand:Show(icon)
+            end
+            -- chimaera_shot
+            if A.ChimaeraShot:IsReady(unit) then
+                return A.ChimaeraShot:Show(icon)
+            end
+            -- dire_beast
+            if A.DireBeast:IsReady(unit) then
+                return A.DireBeast:Show(icon)
+            end
+            -- barbed_shot,if=pet.cat.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.cat.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|azerite.dance_of_death.rank>1&buff.dance_of_death.down&crit_pct_current>40|target.time_to_die<9
+            if A.BarbedShot:IsReady(unit) and (Unit("pet"):HasBuffsDown(A.FrenzyBuff.ID, true) and (A.BarbedShot:GetSpellCharges() > 1.8 or Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true)) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and bool(A.PrimalInstincts:GetAzeriteRank()) or A.DanceofDeath:GetAzeriteRank() > 1 and Unit("player"):HasBuffsDown(A.DanceofDeathBuff.ID, true) and Player:CritChancePct() > 40 or Unit(unit):TimeToDie() < 9) then
+                return A.BarbedShot:Show(icon)
+            end
+            -- purifying_blast,if=buff.bestial_wrath.down|target.time_to_die<8
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
+                return A.PurifyingBlast:Show(icon)
+            end
+            -- blood_of_the_enemy
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.BloodoftheEnemy:Show(icon)
+            end
+            -- barrage
+            if A.Barrage:IsReady(unit) then
+                return A.Barrage:Show(icon)
+            end
+            -- Special pooling line for HeroRotation -- negiligible effective DPS loss (0.1%), but better for prediction accounting for latency
+            -- Avoids cases where Cobra Shot would be suggested but the GCD of Cobra Shot + latency would allow Barbed Shot to fall off
+            -- wait,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<=gcd.max*2&focus.time_to_max>gcd.max*2
+            if Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) <= A.GetGCD() * 2 and Player:FocusTimeToMaxPredicted() > A.GetGCD() * 2 then
+                return A.Channeling:Show(icon)
+             end
+            -- cobra_shot,if=(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd|buff.memory_of_lucid_dreams.up)&cooldown.kill_command.remains>1
+            if A.CobraShot:IsReady(unit) and ((Player:Focus() - A.GetSpellPowerCost(A.CobraShot.ID) + Player:FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.GetSpellPowerCost(A.KillCommand.ID) or A.KillCommand:GetCooldown() > 1 + A.GetGCD() or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true)) and A.KillCommand:GetCooldown() > 1) then
+                return A.CobraShot:Show(icon)
+            end
+            -- spitting_cobra
+            if A.SpittingCobra:IsReady(unit) then
+                return A.SpittingCobra:Show(icon)
+            end
+            -- barbed_shot,if=charges_fractional>1.4
+            if A.BarbedShot:IsReady(unit) and (A.BarbedShot:GetSpellCharges() >= 1.4) then
+                return A.BarbedShot:Show(icon)
+            end
+        end
+        
+	    -- Survivability handler
+	    local function Survival()
+		    -- Aspect of the turtle
+		    if A.AspectoftheTurtle:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "Turtle") then
+				return A.AspectoftheTurtle:Show(icon)
+            end
+            -- Exhilaration
+            if A.Exhilaration:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "ExhilarationHP") then
+				return A.Exhilaration:Show(icon)
+           end	
+	    end	
 	
-	-- Local functions remap
-    GCDMax = Player:GCD() + 0.150
-    EnemiesCount = GetEnemiesCount(40)
-	--print(EnemiesCount)
-    HL.GetEnemies(40) -- To populate Cache.Enemies[40] for CastCycles
-    DetermineEssenceRanks()
-	cacheOverwrite()
+	    local function PurgeDispellMagic(unit)
+		    -- SpiritShock
+		    if A.SpiritShock:IsReady(unit) and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+		        return A.SpiritShock:Show(icon)
+            end
+            -- SonicBlast
+            if A.SonicBlast:IsReady(unit) and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+                return A.SonicBlast:Show(icon)
+            end		
 	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
-    local function Precombat_DBM()
-        -- flask
-        -- augmentation
-        -- food
-        -- summon_pet
-        if S.SummonPet:IsCastableP() and not ShouldStop and not Pet:Exists() then
-            if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
-        end
-        -- potion
-        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
-            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
-        end
-        -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 1 and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
-        end
-        -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-        if S.BestialWrath:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 1 and (S.PrimalInstincts:AzeriteEnabled() and not S.FocusedAzeriteBeam:IsAvailable() and (I.AzsharasFontofPower:IsEquipped() or not S.CyclotronicBlast:IsAvailable())) then
-            if HR.Cast(S.BestialWrath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "bestial_wrath 16"; end
-        end
-    end	
-    local function Precombat()
-        -- flask
-        -- augmentation
-        -- food
-        -- summon_pet
-        if S.SummonPet:IsCastableP() and not ShouldStop and not Pet:Exists() then
-            if HR.Cast(S.SummonPet, Action.GetToggle(2, "OffGCDasOffGCD")) then return "summon_pet 3"; end
-        end
-        -- potion
-        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
-        end
-        -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() then
-            if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
-        end
-        -- worldvein_resonance
-        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
-        end
-        -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and HR.CDsON() and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
-        end
-        -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and HR.CDsON() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
-        end
-        -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists&(trinket.1.has_cooldown+trinket.2.has_cooldown<2|equipped.variable_intensity_gigavolt_oscillating_reactor)
-        -- Needs to be updated to the 2nd half of the condition
-        if I.PocketsizedComputationDevice:IsEquipped() and HR.CDsON() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and S.CyclotronicBlast:IsAvailable() and TrinketON() then
-            if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast precombat"; end
-        end
-        -- focused_azerite_beam,if=!raid_event.invulnerable.exists
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
-        end
-        -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-        if S.AspectoftheWild:IsCastableP() and not ShouldStop and HR.CDsON() and (not S.PrimalInstincts:AzeriteEnabled() and not S.FocusedAzeriteBeam:IsAvailable() and (I.AzsharasFontofPower:IsEquipped() or not S.CyclotronicBlast:IsAvailable())) then
-            if HR.Cast(S.AspectoftheWild, Action.GetToggle(2, "OffGCDasOffGCD")) then return "aspect_of_the_wild 8"; end
-        end
-        -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-        if S.BestialWrath:IsCastableP() and not ShouldStop and (S.PrimalInstincts:AzeriteEnabled() and not S.FocusedAzeriteBeam:IsAvailable() and (I.AzsharasFontofPower:IsEquipped() or not S.CyclotronicBlast:IsAvailable())) then
-            if HR.Cast(S.BestialWrath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "bestial_wrath 16"; end
+	    end
+        
+        -- call precombat
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
-    end
-	
-    local function Cds()
-    -- ancestral_call,if=cooldown.bestial_wrath.remains>30
-        if S.AncestralCall:IsCastableP() and not ShouldStop and HR.CDsON() and (S.BestialWrath:CooldownRemainsP() > 30) then
-            if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 24"; end
-        end
-        -- fireblood,if=cooldown.bestial_wrath.remains>30
-        if S.Fireblood:IsCastableP() and not ShouldStop and HR.CDsON() and (S.BestialWrath:CooldownRemainsP() > 30) then
-            if HR.Cast(S.Fireblood, Action.GetToggle(2, "OffGCDasOffGCD")) then return "fireblood 28"; end
-        end
-        -- berserking,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<13
-        if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.AspectoftheWildBuff) and (Target:TimeToDie() > S.Berserking:BaseDuration() + S.BerserkingBuff:BaseDuration() or (Target:HealthPercentage() < 35 or not S.KillerInstinct:IsAvailable())) or Target:TimeToDie() < 13) then
-            if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 32"; end
-        end
-        -- blood_fury,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<16
-        if S.BloodFury:IsCastableP() and not ShouldStop and HR.CDsON() and (Player:BuffP(S.AspectoftheWildBuff) and (Target:TimeToDie() > S.BloodFury:BaseDuration() + S.BloodFuryBuff:BaseDuration() or (Target:HealthPercentage() < 35 or not S.KillerInstinct:IsAvailable())) or Target:TimeToDie() < 16) then
-            if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "blood_fury 46"; end
-        end
-        -- lights_judgment,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains>gcd.max|!pet.cat.buff.frenzy.up
-        if S.LightsJudgment:IsCastableP() and not ShouldStop and HR.CDsON() and (Pet:BuffP(S.FrenzyBuff) and Pet:BuffRemainsP(S.FrenzyBuff) > GCDMax or not Pet:BuffP(S.FrenzyBuff)) then
-            if HR.Cast(S.LightsJudgment) then return "lights_judgment 60"; end
-        end
-         -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
-        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.BestialWrathBuff) and Player:BuffP(S.AspectoftheWildBuff) and (Target:HealthPercentage() < 35 or not S.KillerInstinct:IsAvailable()) or Target:TimeToDie() < 61) then
-            if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 68"; end
-        end
-        -- worldvein_resonance,if=buff.lifeblood.stack<4
-        if S.WorldveinResonance:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffStackP(S.LifebloodBuff) < 4) then
-            if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance"; end
-        end
-        -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
-         if S.GuardianofAzeroth:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
-        end
-        -- ripple_in_space
-        if S.RippleInSpace:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.RippleInSpace) then return "ripple_in_space"; end
-        end
-        -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
-        end
-    end
-    
-	local function Cleave()
-        -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<=gcd.max
-        if S.BarbedShot:IsCastableP() and not ShouldStop and EvaluateTargetIfFilterBarbedShot74(Target) and EvaluateTargetIfBarbedShot75(Target) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 76"; end
-        end
-        -- multishot,if=gcd.max-pet.cat.buff.beast_cleave.remains>0.25
-        if S.Multishot:IsCastableP() and not ShouldStop and (GCDMax - Pet:BuffRemainsP(S.BeastCleaveBuff) > 0.25) then
-            if HR.Cast(S.Multishot) then return "multishot 82"; end
-        end
-        -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
-        if S.BarbedShot:IsCastableP() and not ShouldStop and EvaluateTargetIfFilterBarbedShot74(Target) and EvaluateTargetIfBarbedShot85(Target) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 86"; end
-        end
-        -- aspect_of_the_wild
-        if S.AspectoftheWild:IsCastableP() and not ShouldStop and HR.CDsON() then
-            if HR.Cast(S.AspectoftheWild, Action.GetToggle(2, "OffGCDasOffGCD")) then return "aspect_of_the_wild 94"; end
-        end
-        -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
-        if S.Stampede:IsCastableP() and not ShouldStop and (Player:BuffP(S.AspectoftheWildBuff) and Player:BuffP(S.BestialWrathBuff) or Target:TimeToDie() < 15) then
-            if HR.Cast(S.Stampede, Action.GetToggle(2, "OffGCDasOffGCD")) then return "stampede 96"; end
-        end
-        -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-        if S.BestialWrath:IsCastableP() and not ShouldStop and (S.AspectoftheWild:CooldownRemainsP() > 20 or S.OneWithThePack:IsAvailable() or Target:TimeToDie() < 15) then
-            if HR.Cast(S.BestialWrath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "bestial_wrath 102"; end
-        end
-        -- chimaera_shot
-        if S.ChimaeraShot:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.ChimaeraShot) then return "chimaera_shot 106"; end
-        end
-        -- a_murder_of_crows
-        if S.AMurderofCrows:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 108"; end
-        end
-        -- barrage
-        if S.Barrage:IsReadyP() and not ShouldStop then
-            if HR.Cast(S.Barrage) then return "barrage 110"; end
-        end
-        -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
-        if S.KillCommand:IsCastableP() and not ShouldStop and (EnemiesCount < 4 or not S.RapidReload:AzeriteEnabled()) then
-            if HR.Cast(S.KillCommand) then return "kill_command 112"; end
-        end
-        -- dire_beast
-        if S.DireBeast:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.DireBeast) then return "dire_beast 122"; end
-        end
-        -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.cat.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.cat.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
-        if S.BarbedShot:IsCastableP() and not ShouldStop and EvaluateTargetIfFilterBarbedShot74(Target) and EvaluateTargetIfBarbedShot123(Target) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 124"; end
-        end
-        -- focused_azerite_beam
-        if S.FocusedAzeriteBeam:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam"; end
-        end
-        -- purifying_blast
-        if S.PurifyingBlast:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-           if HR.Cast(S.PurifyingBlast) then return "focused_azerite_beam"; end
-        end
-        -- concentrated_flame
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.ConcentratedFlame) then return "focused_azerite_beam"; end
-        end
-        -- blood_of_the_enemy
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.BloodoftheEnemy) then return "focused_azerite_beam"; end
-        end
-        -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-        if S.TheUnboundForce:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 10) then
-            if HR.Cast(S.TheUnboundForce) then return "focused_azerite_beam"; end
-        end
-        -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
-        if S.Multishot:IsCastableP() and not ShouldStop and (S.RapidReload:AzeriteEnabled() and EnemiesCount > 2) then
-            if HR.Cast(S.Multishot) then return "multishot 140"; end
-        end
-        -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-        if S.CobraShot:IsCastableP() and not ShouldStop and (S.KillCommand:CooldownRemainsP() > Player:FocusTimeToMaxPredicted() and (EnemiesCount < 3 or not S.RapidReload:AzeriteEnabled())) then
-            if HR.Cast(S.CobraShot) then return "cobra_shot 150"; end
-        end
-        -- spitting_cobra
-        if S.SpittingCobra:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.SpittingCobra, Action.GetToggle(2, "OffGCDasOffGCD")) then return "spitting_cobra 162"; end
-        end
-    end
-  
-    local function St()
-        -- barbed_shot,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
-        if S.BarbedShot:IsCastableP() and not ShouldStop and (Pet:BuffP(S.FrenzyBuff) and Pet:BuffRemainsP(S.FrenzyBuff) < Player:GCD() or bool(S.BestialWrath:CooldownRemainsP()) and (S.BarbedShot:FullRechargeTimeP() < Player:GCD() or S.PrimalInstincts:AzeriteEnabled() and S.AspectoftheWild:CooldownRemainsP() < Player:GCD())) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 164"; end
-        end
-        -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.bestial_wrath.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * Player:GCD() < Player:FocusMax() and Player:BuffDownP(S.BestialWrathBuff) and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight()) or S.ConcentratedFlame:FullRechargeTimeP() < Player:GCD() or Target:TimeToDie() < 5) then
-            if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 165"; end
-        end
-        -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<2|pet.cat.buff.frenzy.stack>2|!azerite.primal_instincts.enabled
-        if S.AspectoftheWild:IsCastableP() and not ShouldStop and HR.CDsON()  and (S.BarbedShot:ChargesP() < 2 or Pet:BuffStackP(S.FrenzyBuff) > 2 or not S.PrimalInstincts:AzeriteEnabled()) then
-            if HR.Cast(S.AspectoftheWild, Action.GetToggle(2, "OffGCDasOffGCD")) then return "aspect_of_the_wild 180"; end
-        end
-        -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
-        if S.Stampede:IsCastableP() and not ShouldStop and (Player:BuffP(S.AspectoftheWildBuff) and Player:BuffP(S.BestialWrathBuff) or Target:TimeToDie() < 15) then
-            if HR.Cast(S.Stampede, Action.GetToggle(2, "OffGCDasOffGCD")) then return "stampede 182"; end
-        end
-        -- a_murder_of_crows,if=cooldown.bestial_wrath.remains
-        if S.AMurderofCrows:IsCastableP() and not ShouldStop and (bool(S.BestialWrath:CooldownRemainsP())) then
-            if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 183"; end
-        end
-        -- focused_azerite_beam,if=buff.bestial_wrath.down|target.time_to_die<5
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffDownP(S.BestialWrathBuff) or Target:TimeToDie() < 5) then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 184"; end
-        end
-        -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
-        if S.TheUnboundForce:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or Player:BuffStackP(S.RecklessForceCounter) < 10 or Target:TimeToDie() < 5) then
-            if HR.Cast(S.TheUnboundForce) then return "the_unbound_force 185"; end
-        end
-        -- bestial_wrath
-        if S.BestialWrath:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.BestialWrath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "bestial_wrath 190"; end
-        end
-        -- kill_command
-        if S.KillCommand:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.KillCommand) then return "kill_command 194"; end
-        end
-        -- chimaera_shot
-        if S.ChimaeraShot:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.ChimaeraShot) then return "chimaera_shot 196"; end
-        end
-        -- dire_beast
-        if S.DireBeast:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.DireBeast) then return "dire_beast 198"; end
-        end
-        -- barbed_shot,if=pet.cat.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.cat.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|azerite.dance_of_death.rank>1&buff.dance_of_death.down&crit_pct_current>40|target.time_to_die<9
-        if S.BarbedShot:IsCastableP() and not ShouldStop and (Pet:BuffDownP(S.FrenzyBuff) and (S.BarbedShot:ChargesFractionalP() > 1.8 or Player:BuffP(S.BestialWrathBuff)) or S.AspectoftheWild:CooldownRemainsP() < S.FrenzyBuff:BaseDuration() - GCDMax and S.PrimalInstincts:AzeriteEnabled() or S.DanceofDeath:AzeriteRank() > 1 and Player:BuffDownP(S.DanceofDeathBuff) and Player:CritChancePct() > 40 or Target:TimeToDie() < 9) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 200"; end
-        end
-        -- purifying_blast,if=buff.bestial_wrath.down|target.time_to_die<8
-       if S.PurifyingBlast:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Player:BuffDownP(S.BestialWrathBuff) or Target:TimeToDie() < 8) then
-            if HR.Cast(S.PurifyingBlast) then return "focused_azerite_beam"; end
-        end
-        -- blood_of_the_enemy
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
-            if HR.Cast(S.BloodoftheEnemy) then return "focused_azerite_beam"; end
-        end
-        -- barrage
-        if S.Barrage:IsReadyP() and not ShouldStop then
-            if HR.Cast(S.Barrage) then return "barrage 216"; end
-        end
-        -- Special pooling line for HeroRotation -- negiligible effective DPS loss (0.1%), but better for prediction accounting for latency
-        -- Avoids cases where Cobra Shot would be suggested but the GCD of Cobra Shot + latency would allow Barbed Shot to fall off
-        -- wait,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains<=gcd.max*2&focus.time_to_max>gcd.max*2
-        if Pet:BuffP(S.FrenzyBuff) and Pet:BuffRemainsP(S.FrenzyBuff) <= GCDMax * 2 and Player:FocusTimeToMaxPredicted() > GCDMax * 2 then
-            if HR.Cast(S.Channeling) then return "Barbed Shot Pooling"; end
-        end
-        -- cobra_shot,if=(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd|buff.memory_of_lucid_dreams.up)&cooldown.kill_command.remains>1
-        if S.CobraShot:IsCastableP() and not ShouldStop and ((Player:Focus() - S.CobraShot:Cost() + Player:FocusRegen() * (S.KillCommand:CooldownRemainsP() - 1) > S.KillCommand:Cost() or S.KillCommand:CooldownRemainsP() > 1 + GCDMax or Player:BuffP(S.MemoryofLucidDreams)) and S.KillCommand:CooldownRemainsP() > 1) then
-            if HR.Cast(S.CobraShot) then return "cobra_shot 218"; end
-        end
-        -- spitting_cobra
-        if S.SpittingCobra:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.SpittingCobra, Action.GetToggle(2, "OffGCDasOffGCD")) then return "spitting_cobra 234"; end
-        end
-        -- barbed_shot,if=charges_fractional>1.4
-        if S.BarbedShot:IsCastableP() and not ShouldStop and (S.BarbedShot:ChargesFractionalP() > 1.4) then
-            if HR.Cast(S.BarbedShot) then return "barbed_shot 235"; end
-        end
-		-- call_action_list,name=cds
-        if (HR.CDsON()) then
-            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
-        end
-    end
-	
-	-- Survivability handler
-	local function Survival()
-		-- Aspect of the turtle
-		if S.AspectoftheTurtle:IsCastable() and Player:HealthPercentage() <= Action.GetToggle(2, "Turtle") then
-		    return S.AspectoftheTurtle:Cast()
-        end
-        -- Exhilaration
-        if S.Exhilaration:IsCastable() and Player:HealthPercentage() <= Action.GetToggle(2, "ExhilarationHP") then
-            return S.Exhilaration:Cast()
-        end	
-	end	
-	
-	local function PurgeDispellMagic()
-		-- SpiritShock
-		if S.SpiritShock:IsCastable() and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
-		    return S.SpiritShock:Cast()
-        end
-        -- SonicBlast
-        if S.SonicBlast:IsCastable() and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
-            return S.SonicBlast:Cast()
-        end		
-	
-	end
-    
-	-- call DBM precombat
-    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-        local ShouldReturn = Precombat_DBM(); 
-            if ShouldReturn then return ShouldReturn; 
-        end    
-    end
-    -- call non DBM precombat
-    if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
-        local ShouldReturn = Precombat(); 
-            if ShouldReturn then return ShouldReturn; 
-        end    
-    end
- 
-	-- Make use of all trinkets of the game
-	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
-	local function TrinketsRotation(icon)
-	    --print(Trinket1IsAllowed)	
-        -- print(Trinket2IsAllowed)
-		
-       	-- Trinkets
-       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	return A.Trinket1:Show(icon)
-   	    end 
-              
-   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	   	return A.Trinket2:Show(icon)
-   	    end  	   	
-     	
-   	end		
- 
-    -- In Combat
-    if Player:AffectingCombat() then
-        
-		-- Interrupt Handler
+        -- In Combat
+        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+		    -- Interrupt Handler
  	 	
-  		local unit = "target"
-   		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
-		
-  	    -- CounterShot
-  	    if useKick and S.CounterShot:IsReady() and not ShouldStop then 
-		  	if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-          	    if HR.Cast(S.CounterShot, true) then return "CounterShot 5"; end
-         	end 
-      	end 		
-		-- Self heal, if below setting value
-        if S.Exhilaration:IsCastableP() and not ShouldStop and Player:HealthPercentage() <= Action.GetToggle(2, "ExhilarationHP") then
-            if HR.Cast(S.Exhilaration, Action.GetToggle(2, "OffGCDasOffGCD")) then return "exhilaration"; end
+  		    local unit = "target"
+   		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+		    
+  	        -- CounterShot
+  	        if useKick and A.CounterShot:IsReady() and not ShouldStop then 
+		  	    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+          	        return A.CounterShot:Show(icon)
+         	    end 
+         	end 		
+		    -- Self heal, if below setting value
+            if A.Exhilaration:IsReady("player") and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "ExhilarationHP") then
+                return A.Exhilaration:Show(icon)
+            end
+            -- mendpet
+            if A.MendPet:IsReady("player") and Pet:IsActive() and Unit("pet"):HealthPercent() > 0 and Unit("pet"):HealthPercent() <= Action.GetToggle(2, "MendPet") and not Unit("pet"):HasBuffs(A.MendPet.ID, true) then
+			    return A.MendPet:Show(icon)
+            end
+	        -- summon_pet if not active
+            if not Pet:IsActive() and A.MendPet:IsReady("player") then
+			    return A.MendPet:Show(icon)
+            end
+            -- call_action_list,name=purge_dispellmagic
+            if true then
+                local ShouldReturn = PurgeDispellMagic(unit); if ShouldReturn then return ShouldReturn; end
+            end
+            -- call_action_list,name=survival
+            if true then
+                local ShouldReturn = Survival(); if ShouldReturn then return ShouldReturn; end
+            end
+            -- use_items
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)&(target.health.pct<35|!essence.condensed_lifeforce.major)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) > 0 and (Unit("player"):GetSpellLastCast(A.AspectoftheWild) or not A.CyclotronicBlast:IsExists() and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0) and (Unit(unit):HealthPercent() < 35 or not A.CondensedLifeforce:IsSpellLearned()) or (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
+                return A.AshvanesRazorCoral:Show(icon)
+            end
+            -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
+            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+                return A.CyclotronicBlast:Show(icon)
+            end
+            -- call_action_list,name=cds
+            if (true) and A.BurstIsON(unit) then
+                local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
+            end
+            -- call_action_list,name=st,if=active_enemies<2
+            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 2) or not Action.GetToggle(2, "AoE") then
+                local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
+            end
+            -- call_action_list,name=cleave,if=active_enemies>1
+            if (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Action.GetToggle(2, "AoE") then
+                local ShouldReturn = Cleave(unit); if ShouldReturn then return ShouldReturn; end
+            end
         end
-        -- mendpet
-        if S.MendPet:IsCastable() and Pet:IsActive() and Pet:HealthPercentage() > 0 and Pet:HealthPercentage() <= Action.GetToggle(2, "MendPet") and not Pet:Buff(S.MendPet) then
-			if HR.Cast(S.MendPet, true) then return "MendPet 5"; end
-        end
-	    -- summon_pet if dead or ghost
-        if Pet:IsDeadOrGhost() then
-			if HR.Cast(S.MendPet, true) then return "MendPet 5"; end
-        elseif not Pet:IsActive() then
-		    if HR.Cast(S.CallPet, true) then return "CallPet 5"; end
-        end
-        -- auto_shot
-        -- use_items
-        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and Target:DebuffP(S.RazorCoralDebuff) and Player:BuffP(S.BestialWrathBuff) and Target:HealthPercentage() <= 31 and Target:TimeToDie() >= 10 then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
-        end
-        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and not Target:DebuffP(S.RazorCoralDebuff) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
-        end
-        -- call_action_list,name=st,if=active_enemies<2
-        if (EnemiesCount < 2) then
-            local ShouldReturn = St(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- call_action_list,name=cleave,if=active_enemies>1
-        if (EnemiesCount > 1) then
-            local ShouldReturn = Cleave(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- call_action_list,name=cds
-        if (HR.CDsON()) then
-            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
-        end
-		-- Non SIMC Custom Trinket1
-	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
-       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	    return A.Trinket1:Show(icon)
-   	        end 		
-	    end
-		
-		-- Non SIMC Custom Trinket2
-	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
-       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	    return A.Trinket2:Show(icon)
-   	        end 	
-	    end
-		-- Pool icon
-        --if HR.Cast(S.Channeling) then return "Pooling Focus"; end
+    end
+
+    -- End on EnemyRotation()
+
+    -- Defensive
+    --local SelfDefensive = SelfDefensives()
+    if SelfDefensive then 
+        return SelfDefensive:Show(icon)
+    end 
+
+    -- Mouseover
+    if A.IsUnitEnemy("mouseover") then
+        unit = "mouseover"
+        if EnemyRotation(unit) then 
+            return true 
+        end 
+    end 
+
+    -- Target  
+    if A.IsUnitEnemy("target") then 
+        unit = "target"
+        if EnemyRotation(unit) then 
+            return true
+        end 
 
     end
 end
 -- Finished
 
-
-
-
------------------------------------------
---                 ROTATION  
------------------------------------------
-
--- [3] is Single rotation (supports all actions)
-A[3] = function(icon)
-    if APL(icon) then 
-        return true 
-    end
+-- [4] AoE Rotation
+A[4] = function(icon)
+    return A[3](icon, true)
 end
+ -- [5] Trinket Rotation
+-- No specialization trinket actions 
+-- Passive 
+--[[local function FreezingTrapUsedByEnemy()
+    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
+    UnitCooldown:IsSpellInFly("arena", 3355) and 
+    Unit("player"):GetDR("incapacitate") >= 50 
+    then 
+        local Caster = UnitCooldown:GetUnitID("arena", 3355)
+        if Caster and Unit(Caster):GetRange() <= 40 then 
+            return true 
+        end 
+    end 
+end 
+local function ArenaRotation(icon, unit)
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
+        -- Note: "arena1" is just identification of meta 6
+        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+            -- Reflect Casting BreakAble CC
+            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
+                return A.NetherWard:Show(icon)
+            end 
+        end
+    end 
+end 
+local function PartyRotation(unit)
+    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+        return false 
+    end
+
+  	-- SingeMagic
+    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
+        return A.SingeMagic:Show(icon)
+    end
+end 
+
+A[6] = function(icon)
+    return ArenaRotation(icon, "arena1")
+end
+
+A[7] = function(icon)
+    local Party = PartyRotation("party1") 
+    if Party then 
+        return Party:Show(icon)
+    end 
+    return ArenaRotation(icon, "arena2")
+end
+
+A[8] = function(icon)
+    local Party = PartyRotation("party2") 
+    if Party then 
+        return Party:Show(icon)
+    end     
+    return ArenaRotation(icon, "arena3")
+end]]--
 
