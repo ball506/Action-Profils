@@ -70,15 +70,17 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
     -- Pet
-    CallPet                               = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
-    MendPet                               = Action.Create({ Type = "Spell", ID = 136  }),
-    RevivePet                             = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
-    SpiritShock                           = Action.Create({ Type = "Spell", ID = 264265 }),
-    SonicBlast                            = Action.Create({ Type = "Spell", ID = 264263 }),
-    CounterShot                           = Action.Create({ Type = "Spell", ID = 147362 }),
-    Exhilaration                          = Action.Create({ Type = "Spell", ID = 109304 }),
+    CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
+    MendPet                                = Action.Create({ Type = "Spell", ID = 136  }),
+    RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
+    SpiritShock                            = Action.Create({ Type = "Spell", ID = 264265 }),
+    SonicBlast                             = Action.Create({ Type = "Spell", ID = 264263 }),
+    CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
+    Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
+	SpiritMend                             = Action.Create({ Type = "Spell", ID = 90361}), 
+	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248}), 
 	-- Defensives
-	AspectoftheTurtle                     = Action.Create({ Type = "Spell", ID = 274441 }),
+	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -185,6 +187,186 @@ local Temp = {
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
+
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+	
+    -- Exhilaration
+    local Exhilaration = A.GetToggle(2, "ExhilarationHP")
+    if     Exhilaration >= 0 and A.Exhilaration:IsReady("player") and 
+    (
+        (     -- Auto 
+            Exhilaration >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            Exhilaration < 100 and 
+            Unit("player"):HealthPercent() <= Exhilaration
+        )
+    ) 
+    then 
+        return A.Exhilaration
+    end
+	
+    -- AspectoftheTurtle
+    local AspectoftheTurtle = A.GetToggle(2, "Turtle")
+    if     AspectoftheTurtle >= 0 and A.AspectoftheTurtle:IsReady("player") and 
+    (
+        (     -- Auto 
+            AspectoftheTurtle >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AspectoftheTurtle < 100 and 
+            Unit("player"):HealthPercent() <= AspectoftheTurtle
+        )
+    ) 
+    then 
+        return A.AspectoftheTurtle
+    end     
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.CounterShot
+    end 
+    
+    if useCC and A.BindingShot:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.BindingShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+        return A.BindingShot              
+    end          
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+-- [1] CC AntiFake Rotation
+--[[local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
+    Unit(unit):IsControlAble("stun", 0) and 
+    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target") and                     
+            (
+                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))) or 
+                (not A.IsInPvP and MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1)
+            )
+        )
+    )
+    then 
+        return A.LegSweepGreen:Show(icon)         
+    end                                                                     
+end]]--
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.CounterShot:IsReady(unit, nil, nil, true) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMag, true) then
+                return A.CounterShot:Show(icon)                                                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
 
@@ -510,28 +692,16 @@ A[3] = function(icon, isMulti)
             end
         end
         
-	    -- Survivability handler
-	    local function Survival()
-		    -- Aspect of the turtle
-		    if A.AspectoftheTurtle:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "Turtle") then
-				return A.AspectoftheTurtle:Show(icon)
-            end
-            -- Exhilaration
-            if A.Exhilaration:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "ExhilarationHP") then
-				return A.Exhilaration:Show(icon)
-           end	
-	    end	
 	
 	    local function PurgeDispellMagic(unit)
 		    -- SpiritShock
-		    if A.SpiritShock:IsReady(unit) and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+		    if A.SpiritShock:IsReady(unit) and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
 		        return A.SpiritShock:Show(icon)
             end
             -- SonicBlast
-            if A.SonicBlast:IsReady(unit) and not ShouldStop and (Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") or Action.AuraIsValid("target", "UseDispel", "Magic")) then
+            if A.SonicBlast:IsReady(unit) and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
                 return A.SonicBlast:Show(icon)
             end		
-	
 	    end
         
         -- call precombat
@@ -547,18 +717,17 @@ A[3] = function(icon, isMulti)
    		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
             local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		    
-  	        -- CounterShot
-  	        if useKick and A.CounterShot:IsReady() and not ShouldStop then 
-		  	    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-          	        return A.CounterShot:Show(icon)
-         	    end 
-         	end 		
+			-- Interrupt
+            local Interrupt = Interrupts()
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end  		
 		    -- Self heal, if below setting value
             if A.Exhilaration:IsReady("player") and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "ExhilarationHP") then
                 return A.Exhilaration:Show(icon)
             end
             -- mendpet
-            if A.MendPet:IsReady("player") and Pet:IsActive() and Unit("pet"):HealthPercent() > 0 and Unit("pet"):HealthPercent() <= Action.GetToggle(2, "MendPet") and not Unit("pet"):HasBuffs(A.MendPet.ID, true) then
+            if A.MendPet:IsReady("player") and Pet:IsActive() and Unit("pet"):HealthPercent() > 0 and Unit("pet"):HealthPercent() <= Action.GetToggle(2, "MendPet") and Unit("pet"):HasBuffs(A.MendPet.ID, true) == 0 then
 			    return A.MendPet:Show(icon)
             end
 	        -- summon_pet if not active
@@ -568,10 +737,6 @@ A[3] = function(icon, isMulti)
             -- call_action_list,name=purge_dispellmagic
             if true then
                 local ShouldReturn = PurgeDispellMagic(unit); if ShouldReturn then return ShouldReturn; end
-            end
-            -- call_action_list,name=survival
-            if true then
-                local ShouldReturn = Survival(); if ShouldReturn then return ShouldReturn; end
             end
             -- use_items
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)&(target.health.pct<35|!essence.condensed_lifeforce.major)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
@@ -600,7 +765,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
