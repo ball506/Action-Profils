@@ -19,36 +19,54 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PRIEST_SHADOW] = {
-    WhispersoftheDamned                    = Action.Create({Type = "Spell", ID = 275722 }),
-    SearingDialogue                        = Action.Create({Type = "Spell", ID = 272788 }),
-    DeathThroes                            = Action.Create({Type = "Spell", ID = 278659 }),
-    ThoughtHarvester                       = Action.Create({Type = "Spell", ID = 288340 }),
-    SpitefulApparitions                    = Action.Create({Type = "Spell", ID = 277682 }),
-    ShadowformBuff                         = Action.Create({Type = "Spell", ID = 232698 }),
-    Shadowform                             = Action.Create({Type = "Spell", ID = 232698 }),
-    MindBlast                              = Action.Create({Type = "Spell", ID = 8092 }),
-    VampiricTouchDebuff                    = Action.Create({Type = "Spell", ID = 34914 }),
-    VampiricTouch                          = Action.Create({Type = "Spell", ID = 34914 }),
-    VoidformBuff                           = Action.Create({Type = "Spell", ID = 194249 }),
-    ChorusofInsanityBuff                   = Action.Create({Type = "Spell", ID = 278661 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    ChorusofInsanity                       = Action.Create({Type = "Spell", ID = 278661 }),
-    VoidEruption                           = Action.Create({Type = "Spell", ID = 228260 }),
-    DarkAscension                          = Action.Create({Type = "Spell", ID = 280711 }),
-    MindSear                               = Action.Create({Type = "Spell", ID = 48045 }),
-    HarvestedThoughtsBuff                  = Action.Create({Type = "Spell", ID = 288343 }),
-    VoidBolt                               = Action.Create({Type = "Spell", ID = 205448 }),
-    ShadowWordDeath                        = Action.Create({Type = "Spell", ID = 32379 }),
-    SurrenderToMadness                     = Action.Create({Type = "Spell", ID = 193223 }),
-    DarkVoid                               = Action.Create({Type = "Spell", ID = 263346 }),
-    ShadowWordPainDebuff                   = Action.Create({Type = "Spell", ID = 589 }),
-    Mindbender                             = Action.Create({Type = "Spell", ID = 200174 }),
-    ShadowCrash                            = Action.Create({Type = "Spell", ID = 205385 }),
-    ShadowWordPain                         = Action.Create({Type = "Spell", ID = 589 }),
-    Misery                                 = Action.Create({Type = "Spell", ID = 238558 }),
-    VoidTorrent                            = Action.Create({Type = "Spell", ID = 263165 }),
-    MindFlay                               = Action.Create({Type = "Spell", ID = 15407 }),
-    ShadowWordVoid                         = Action.Create({Type = "Spell", ID = 205351 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    WhispersoftheDamned                    = Action.Create({ Type = "Spell", ID = 275722 }),
+    SearingDialogue                        = Action.Create({ Type = "Spell", ID = 272788 }),
+    DeathThroes                            = Action.Create({ Type = "Spell", ID = 278659 }),
+    ThoughtHarvester                       = Action.Create({ Type = "Spell", ID = 288340 }),
+    SpitefulApparitions                    = Action.Create({ Type = "Spell", ID = 277682 }),
+    ShadowformBuff                         = Action.Create({ Type = "Spell", ID = 232698 }),
+    Shadowform                             = Action.Create({ Type = "Spell", ID = 232698 }),
+    MindBlast                              = Action.Create({ Type = "Spell", ID = 8092 }),
+    VampiricTouchDebuff                    = Action.Create({ Type = "Spell", ID = 34914 }),
+    VampiricTouch                          = Action.Create({ Type = "Spell", ID = 34914 }),
+    VoidformBuff                           = Action.Create({ Type = "Spell", ID = 194249 }),
+    ChorusofInsanityBuff                   = Action.Create({ Type = "Spell", ID = 278661 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ChorusofInsanity                       = Action.Create({ Type = "Spell", ID = 278661 }),
+    VoidEruption                           = Action.Create({ Type = "Spell", ID = 228260 }),
+    DarkAscension                          = Action.Create({ Type = "Spell", ID = 280711 }),
+    MindSear                               = Action.Create({ Type = "Spell", ID = 48045 }),
+    HarvestedThoughtsBuff                  = Action.Create({ Type = "Spell", ID = 288343 }),
+    VoidBolt                               = Action.Create({ Type = "Spell", ID = 205448 }),
+    ShadowWordDeath                        = Action.Create({ Type = "Spell", ID = 32379 }),
+    SurrenderToMadness                     = Action.Create({ Type = "Spell", ID = 193223 }),
+    DarkVoid                               = Action.Create({ Type = "Spell", ID = 263346 }),
+    ShadowWordPainDebuff                   = Action.Create({ Type = "Spell", ID = 589 }),
+    Mindbender                             = Action.Create({ Type = "Spell", ID = 200174 }),
+    ShadowCrash                            = Action.Create({ Type = "Spell", ID = 205385 }),
+    ShadowWordPain                         = Action.Create({ Type = "Spell", ID = 589 }),
+    Misery                                 = Action.Create({ Type = "Spell", ID = 238558 }),
+    VoidTorrent                            = Action.Create({ Type = "Spell", ID = 263165 }),
+    MindFlay                               = Action.Create({ Type = "Spell", ID = 15407 }),
+    ShadowWordVoid                         = Action.Create({ Type = "Spell", ID = 205351 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -61,6 +79,8 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -141,22 +161,15 @@ local VarVtMisTraitRanksCheck = 0;
 local VarVtMisSdCheck = 0;
 local VarDotsUp = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarMindBlastTargets = 0
   VarSwpTraitRanksCheck = 0
   VarVtTraitRanksCheck = 0
   VarVtMisTraitRanksCheck = 0
   VarVtMisSdCheck = 0
   VarDotsUp = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -288,7 +301,7 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- memory_of_lucid_dreams,if=(buff.voidform.stack>20&insanity<=50)|buff.voidform.stack>(26+7*buff.bloodlust.up)|(current_insanity_drain*((gcd.max*2)+action.mind_blast.cast_time))>insanity
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Unit("player"):Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Unit("player"):Insanity()) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Player:Insanity() <= 50) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > (26 + 7 * num(Unit("player"):HasHeroism)) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Player:Insanity()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy
@@ -312,7 +325,7 @@ A[3] = function(icon, isMulti)
                 return A.TheUnboundForce:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=time<=10|(buff.chorus_of_insanity.stack>=15&buff.voidform.up)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- ripple_in_space
@@ -358,7 +371,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_death,target_if=target.time_to_die<3|buff.voidform.down
             if A.ShadowWordDeath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, EvaluateCycleShadowWordDeath135) then
+                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, "min", EvaluateCycleShadowWordDeath135) then
                     return A.ShadowWordDeath:Show(icon) 
                 end
             end
@@ -376,7 +389,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_blast,target_if=spell_targets.mind_sear<variable.mind_blast_targets
             if A.MindBlast:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindBlast, 40, EvaluateCycleMindBlast154) then
+                if Action.Utils.CastTargetIf(A.MindBlast, 40, "min", EvaluateCycleMindBlast154) then
                     return A.MindBlast:Show(icon) 
                 end
             end
@@ -386,19 +399,19 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_pain,target_if=refreshable&target.time_to_die>((-1.2+3.3*spell_targets.mind_sear)*variable.swp_trait_ranks_check*(1-0.012*azerite.searing_dialogue.rank*spell_targets.mind_sear)),if=!talent.misery.enabled
             if A.ShadowWordPain:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, EvaluateCycleShadowWordPain165) then
+                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, "min", EvaluateCycleShadowWordPain165) then
                     return A.ShadowWordPain:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check*(1+0.10*azerite.searing_dialogue.rank*spell_targets.mind_sear))
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, EvaluateCycleVampiricTouch184) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch184) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=dot.shadow_word_pain.refreshable,if=(talent.misery.enabled&target.time_to_die>((1.0+2.0*spell_targets.mind_sear)*variable.vt_mis_trait_ranks_check*(variable.vt_mis_sd_check*spell_targets.mind_sear)))
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, EvaluateCycleVampiricTouch201) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch201) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
@@ -408,7 +421,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
             if A.MindSear:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindSear, 40, EvaluateCycleMindSear220) then
+                if Action.Utils.CastTargetIf(A.MindSear, 40, "min", EvaluateCycleMindSear220) then
                     return A.MindSear:Show(icon) 
                 end
             end
@@ -481,7 +494,7 @@ A[3] = function(icon, isMulti)
                 return A.ShadowCrash:Show(icon)
             end
             -- mind_blast,if=variable.dots_up&((raid_event.movement.in>cast_time+0.5&raid_event.movement.in<4)|!talent.shadow_word_void.enabled|buff.voidform.down|buff.voidform.stack>14&(insanity<70|charges_fractional>1.33)|buff.voidform.stack<=14&(insanity<60|charges_fractional>1.33))
-            if A.MindBlast:IsReady(unit) and (bool(VarDotsUp) and ((10000000000 > A.MindBlast:GetSpellCastTime() + 0.5 and 10000000000 < 4) or not A.ShadowWordVoid:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Unit("player"):Insanity() < 70 or A.MindBlast:ChargesFractionalP() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Unit("player"):Insanity() < 60 or A.MindBlast:ChargesFractionalP() > 1.33))) then
+            if A.MindBlast:IsReady(unit) and (bool(VarDotsUp) and ((10000000000 > A.MindBlast:GetSpellCastTime() + 0.5 and 10000000000 < 4) or not A.ShadowWordVoid:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Player:Insanity() < 70 or A.MindBlast:ChargesFractionalP() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Player:Insanity() < 60 or A.MindBlast:ChargesFractionalP() > 1.33))) then
                 return A.MindBlast:Show(icon)
             end
             -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
@@ -508,14 +521,14 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- potion,if=buff.bloodlust.react|target.time_to_die<=80|target.health.pct<35
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent() < 35) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent() < 35) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
@@ -536,7 +549,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -567,7 +580,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -618,5 +631,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

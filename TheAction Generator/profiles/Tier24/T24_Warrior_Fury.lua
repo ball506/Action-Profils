@@ -19,34 +19,51 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARRIOR_FURY] = {
-    RecklessnessBuff                       = Action.Create({Type = "Spell", ID = 1719 }),
-    Recklessness                           = Action.Create({Type = "Spell", ID = 1719 }),
-    HeroicLeap                             = Action.Create({Type = "Spell", ID = 6544 }),
-    Siegebreaker                           = Action.Create({Type = "Spell", ID = 280772 }),
-    Rampage                                = Action.Create({Type = "Spell", ID = 184367 }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    FrothingBerserker                      = Action.Create({Type = "Spell", ID = 215571 }),
-    Carnage                                = Action.Create({Type = "Spell", ID = 202922 }),
-    EnrageBuff                             = Action.Create({Type = "Spell", ID = 184362 }),
-    Massacre                               = Action.Create({Type = "Spell", ID = 206315 }),
-    Execute                                = Action.Create({Type = "Spell", ID = 5308 }),
-    FuriousSlash                           = Action.Create({Type = "Spell", ID = 100130 }),
-    FuriousSlashBuff                       = Action.Create({Type = "Spell", ID = 202539 }),
-    Bladestorm                             = Action.Create({Type = "Spell", ID = 46924 }),
-    Bloodthirst                            = Action.Create({Type = "Spell", ID = 23881 }),
-    ColdSteelHotBlood                      = Action.Create({Type = "Spell", ID =  }),
-    DragonRoar                             = Action.Create({Type = "Spell", ID = 118000 }),
-    RagingBlow                             = Action.Create({Type = "Spell", ID = 85288 }),
-    Whirlwind                              = Action.Create({Type = "Spell", ID = 190411 }),
-    Charge                                 = Action.Create({Type = "Spell", ID = 100 }),
-    SiegebreakerBuff                       = Action.Create({Type = "Spell", ID =  }),
-    GuardianofAzerothBuff                  = Action.Create({Type = "Spell", ID =  }),
-    MeatCleaverBuff                        = Action.Create({Type = "Spell", ID = 280392 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    RecklessnessBuff                       = Action.Create({ Type = "Spell", ID = 1719 }),
+    Recklessness                           = Action.Create({ Type = "Spell", ID = 1719 }),
+    HeroicLeap                             = Action.Create({ Type = "Spell", ID = 6544 }),
+    Siegebreaker                           = Action.Create({ Type = "Spell", ID = 280772 }),
+    Rampage                                = Action.Create({ Type = "Spell", ID = 184367 }),
+    FrothingBerserker                      = Action.Create({ Type = "Spell", ID = 215571 }),
+    Carnage                                = Action.Create({ Type = "Spell", ID = 202922 }),
+    EnrageBuff                             = Action.Create({ Type = "Spell", ID = 184362 }),
+    Massacre                               = Action.Create({ Type = "Spell", ID = 206315 }),
+    Execute                                = Action.Create({ Type = "Spell", ID = 5308 }),
+    FuriousSlash                           = Action.Create({ Type = "Spell", ID = 100130 }),
+    FuriousSlashBuff                       = Action.Create({ Type = "Spell", ID = 202539 }),
+    Bladestorm                             = Action.Create({ Type = "Spell", ID = 46924 }),
+    Bloodthirst                            = Action.Create({ Type = "Spell", ID = 23881 }),
+    ColdSteelHotBlood                      = Action.Create({ Type = "Spell", ID =  }),
+    DragonRoar                             = Action.Create({ Type = "Spell", ID = 118000 }),
+    RagingBlow                             = Action.Create({ Type = "Spell", ID = 85288 }),
+    Whirlwind                              = Action.Create({ Type = "Spell", ID = 190411 }),
+    Charge                                 = Action.Create({ Type = "Spell", ID = 100 }),
+    SiegebreakerBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
+    MeatCleaverBuff                        = Action.Create({ Type = "Spell", ID = 280392 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -59,6 +76,8 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -130,12 +149,6 @@ local A = setmetatable(Action[ACTION_CONST_WARRIOR_FURY], { __index = Action })
 
 
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -229,7 +242,7 @@ A[3] = function(icon, isMulti)
                 return A.Siegebreaker:Show(icon)
             end
             -- rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
-            if A.Rampage:IsReady(unit) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Unit("player"):Rage() > 90))) then
+            if A.Rampage:IsReady(unit) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) or (A.FrothingBerserker:IsSpellLearned() or A.Carnage:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90) or A.Massacre:IsSpellLearned() and (Unit("player"):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() or Player:Rage() > 90))) then
                 return A.Rampage:Show(icon)
             end
             -- execute
@@ -261,7 +274,7 @@ A[3] = function(icon, isMulti)
                 return A.Bloodthirst:Show(icon)
             end
             -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90)
-            if A.RagingBlow:IsReady(unit) and (A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and Unit("player"):Rage() < 80) or (A.FrothingBerserker:IsSpellLearned() and Unit("player"):Rage() < 90)) then
+            if A.RagingBlow:IsReady(unit) and (A.Carnage:IsSpellLearned() or (A.Massacre:IsSpellLearned() and Player:Rage() < 80) or (A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90)) then
                 return A.RagingBlow:Show(icon)
             end
             -- furious_slash,if=talent.furious_slash.enabled
@@ -276,7 +289,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -340,15 +353,15 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- recklessness,if=!essence.condensed_lifeforce.major&!essence.blood_of_the_enemy.major|cooldown.guardian_of_azeroth.remains>20|buff.guardian_of_azeroth.up|cooldown.blood_of_the_enemy.remains<gcd
-            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(A.CondensedLifeforce:EssenceIsMajorUseable()) and not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or A.GuardianofAzeroth:GetCooldown() > 20 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
+            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or A.GuardianofAzeroth:GetCooldown() > 20 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
                 return A.Recklessness:Show(icon)
             end
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
+            if A.Whirlwind:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not Unit("player"):HasBuffs(A.MeatCleaverBuff.ID, true)) then
                 return A.Whirlwind:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
-            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) and not bool(A.CondensedLifeforce:EssenceIsMajorUseable())))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID))))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- blood_fury
@@ -381,7 +394,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -412,7 +425,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -463,5 +476,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

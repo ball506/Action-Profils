@@ -19,31 +19,49 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    WakeofAshes                            = Action.Create({Type = "Spell", ID = 255937 }),
-    AvengingWrathBuff                      = Action.Create({Type = "Spell", ID = 31884 }),
-    CrusadeBuff                            = Action.Create({Type = "Spell", ID = 231895 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    ShieldofVengeance                      = Action.Create({Type = "Spell", ID = 184662 }),
-    AvengingWrath                          = Action.Create({Type = "Spell", ID = 31884 }),
-    InquisitionBuff                        = Action.Create({Type = "Spell", ID = 84963 }),
-    Inquisition                            = Action.Create({Type = "Spell", ID = 84963 }),
-    Crusade                                = Action.Create({Type = "Spell", ID = 231895 }),
-    RighteousVerdict                       = Action.Create({Type = "Spell", ID = 267610 }),
-    ExecutionSentence                      = Action.Create({Type = "Spell", ID = 267798 }),
-    DivineStorm                            = Action.Create({Type = "Spell", ID = 53385 }),
-    DivinePurposeBuff                      = Action.Create({Type = "Spell", ID = 223819 }),
-    EmpyreanPowerBuff                      = Action.Create({Type = "Spell", ID = 286393 }),
-    JudgmentDebuff                         = Action.Create({Type = "Spell", ID = 197277 }),
-    TemplarsVerdict                        = Action.Create({Type = "Spell", ID = 85256 }),
-    HammerofWrath                          = Action.Create({Type = "Spell", ID = 24275 }),
-    BladeofJustice                         = Action.Create({Type = "Spell", ID = 184575 }),
-    Judgment                               = Action.Create({Type = "Spell", ID = 20271 }),
-    Consecration                           = Action.Create({Type = "Spell", ID = 205228 }),
-    CrusaderStrike                         = Action.Create({Type = "Spell", ID = 35395 }),
-    Sequence                               = Action.Create({Type = "Spell", ID =  }),
-    Rebuke                                 = Action.Create({Type = "Spell", ID = 96231 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    WakeofAshes                            = Action.Create({ Type = "Spell", ID = 255937 }),
+    AvengingWrathBuff                      = Action.Create({ Type = "Spell", ID = 31884 }),
+    CrusadeBuff                            = Action.Create({ Type = "Spell", ID = 231895 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    ShieldofVengeance                      = Action.Create({ Type = "Spell", ID = 184662 }),
+    AvengingWrath                          = Action.Create({ Type = "Spell", ID = 31884 }),
+    InquisitionBuff                        = Action.Create({ Type = "Spell", ID = 84963 }),
+    Inquisition                            = Action.Create({ Type = "Spell", ID = 84963 }),
+    Crusade                                = Action.Create({ Type = "Spell", ID = 231895 }),
+    RighteousVerdict                       = Action.Create({ Type = "Spell", ID = 267610 }),
+    ExecutionSentence                      = Action.Create({ Type = "Spell", ID = 267798 }),
+    DivineStorm                            = Action.Create({ Type = "Spell", ID = 53385 }),
+    DivinePurposeBuff                      = Action.Create({ Type = "Spell", ID = 223819 }),
+    EmpyreanPowerBuff                      = Action.Create({ Type = "Spell", ID = 286393 }),
+    JudgmentDebuff                         = Action.Create({ Type = "Spell", ID = 197277 }),
+    TemplarsVerdict                        = Action.Create({ Type = "Spell", ID = 85256 }),
+    HammerofWrath                          = Action.Create({ Type = "Spell", ID = 24275 }),
+    BladeofJustice                         = Action.Create({ Type = "Spell", ID = 184575 }),
+    Judgment                               = Action.Create({ Type = "Spell", ID = 20271 }),
+    Consecration                           = Action.Create({ Type = "Spell", ID = 205228 }),
+    CrusaderStrike                         = Action.Create({ Type = "Spell", ID = 35395 }),
+    Sequence                               = Action.Create({ Type = "Spell", ID =  }),
+    Rebuke                                 = Action.Create({ Type = "Spell", ID = 96231 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -56,6 +74,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -132,18 +152,11 @@ local A = setmetatable(Action[ACTION_CONST_PALADIN_RETRIBUTION], { __index = Act
 local VarDsCastable = 0;
 local VarHow = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarDsCastable = 0
   VarHow = 0
-	end 
 end)
 
-local EnemyRanges = {40, 8, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -213,11 +226,11 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- potion,if=(buff.bloodlust.react|buff.avenging_wrath.up|buff.crusade.up&buff.crusade.remains<25|target.time_to_die<=40)
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25 or Unit(unit):TimeToDie() <= 40)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and ((Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) < 25 or Unit(unit):TimeToDie() <= 40)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 75)) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2 or (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 75)) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
@@ -233,7 +246,7 @@ A[3] = function(icon, isMulti)
                 return A.AvengingWrath:Show(icon)
             end
             -- crusade,if=holy_power>=4
-            if A.Crusade:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HolyPower() >= 4) then
+            if A.Crusade:IsReady(unit) and A.BurstIsON(unit) and (Player:HolyPower() >= 4) then
                 return A.Crusade:Show(icon)
             end
         end
@@ -242,14 +255,14 @@ A[3] = function(icon, isMulti)
         local function Finishers(unit)
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled
             if (true) then
-                VarDsCastable = num(MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and not A.RighteousVerdict:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and A.RighteousVerdict:IsSpellLearned())
+                VarDsCastable = num(MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and not A.RighteousVerdict:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and A.RighteousVerdict:IsSpellLearned())
             end
             -- inquisition,if=buff.inquisition.down|buff.inquisition.remains<5&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3
-            if A.Inquisition:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 5 and Unit("player"):HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Unit("player"):HolyPower() >= 3) then
+            if A.Inquisition:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 5 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3) then
                 return A.Inquisition:Show(icon)
             end
             -- execution_sentence,if=spell_targets.divine_storm<=2&(!talent.crusade.enabled|cooldown.crusade.remains>gcd*2)
-            if A.ExecutionSentence:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2 and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2)) then
+            if A.ExecutionSentence:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) <= 2 and (not A.Crusade:IsSpellLearned() or A.Crusade:GetCooldown() > A.GetGCD() * 2)) then
                 return A.ExecutionSentence:Show(icon)
             end
             -- divine_storm,if=variable.ds_castable&buff.divine_purpose.react
@@ -277,27 +290,27 @@ A[3] = function(icon, isMulti)
                 VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (bool(Unit("player"):HasBuffsDown(A.AvengingWrathBuff.ID, true)) or bool(Unit("player"):HasBuffsDown(A.CrusadeBuff.ID, true)))))
             end
             -- call_action_list,name=finishers,if=holy_power>=5
-            if (Unit("player"):HolyPower() >= 5) then
+            if (Player:HolyPower() >= 5) then
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)
-            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and (Unit("player"):HolyPower() <= 0 or Unit("player"):HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD())) then
+            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15 or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD())) then
                 return A.WakeofAshes:Show(icon)
             end
             -- blade_of_justice,if=holy_power<=2|(holy_power=3&(cooldown.hammer_of_wrath.remains>gcd*2|variable.HoW))
-            if A.BladeofJustice:IsReady(unit) and (Unit("player"):HolyPower() <= 2 or (Unit("player"):HolyPower() == 3 and (A.HammerofWrath:GetCooldown() > A.GetGCD() * 2 or bool(VarHow)))) then
+            if A.BladeofJustice:IsReady(unit) and (Player:HolyPower() <= 2 or (Player:HolyPower() == 3 and (A.HammerofWrath:GetCooldown() > A.GetGCD() * 2 or bool(VarHow)))) then
                 return A.BladeofJustice:Show(icon)
             end
             -- judgment,if=holy_power<=2|(holy_power<=4&(cooldown.blade_of_justice.remains>gcd*2|variable.HoW))
-            if A.Judgment:IsReady(unit) and (Unit("player"):HolyPower() <= 2 or (Unit("player"):HolyPower() <= 4 and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or bool(VarHow)))) then
+            if A.Judgment:IsReady(unit) and (Player:HolyPower() <= 2 or (Player:HolyPower() <= 4 and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or bool(VarHow)))) then
                 return A.Judgment:Show(icon)
             end
             -- hammer_of_wrath,if=holy_power<=4
-            if A.HammerofWrath:IsReady(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.HammerofWrath:IsReady(unit) and (Player:HolyPower() <= 4) then
                 return A.HammerofWrath:Show(icon)
             end
             -- consecration,if=holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2
-            if A.Consecration:IsReady(unit) and (Unit("player"):HolyPower() <= 2 or Unit("player"):HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Unit("player"):HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2) then
+            if A.Consecration:IsReady(unit) and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2) then
                 return A.Consecration:Show(icon)
             end
             -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&(target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up)
@@ -305,7 +318,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- crusader_strike,if=cooldown.crusader_strike.charges_fractional>=1.75&(holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2&cooldown.consecration.remains>gcd*2)
-            if A.CrusaderStrike:IsReady(unit) and (A.CrusaderStrike:ChargesFractionalP() >= 1.75 and (Unit("player"):HolyPower() <= 2 or Unit("player"):HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Unit("player"):HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2)) then
+            if A.CrusaderStrike:IsReady(unit) and (A.CrusaderStrike:ChargesFractionalP() >= 1.75 and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2)) then
                 return A.CrusaderStrike:Show(icon)
             end
             -- call_action_list,name=finishers
@@ -313,11 +326,11 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- crusader_strike,if=holy_power<=4
-            if A.CrusaderStrike:IsReady(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.CrusaderStrike:IsReady(unit) and (Player:HolyPower() <= 4) then
                 return A.CrusaderStrike:Show(icon)
             end
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HolyPower() <= 4) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:HolyPower() <= 4) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -348,7 +361,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -377,7 +390,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -408,7 +421,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -459,5 +472,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

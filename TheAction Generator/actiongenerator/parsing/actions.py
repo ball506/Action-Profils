@@ -251,7 +251,7 @@ class Action(Decorable):
                                     f'local function {cycle_evaluate_name}(unit)\n'
                                     f'  return {if_condition}\n'
                                     'end')
-        cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, {cycle_evaluate_name}) then\n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
+        cycle_cast = f'if Action.Utils.CastTargetIf({self.execution().object_().print_lua()}, {str(self.range_)}, "min", {cycle_evaluate_name}) then\n    return {self.execution().object_().print_lua()}:Show(icon) \nend'
         lua_string += ('\n'
                     f'if {condition.print_lua()} then\n'
                     f'{indent(cycle_cast)}\n'
@@ -410,7 +410,7 @@ class PrecombatAction(Action):
         exec_cast = self.execution().object_().print_cast()
         lua_string += (
             '\n'
-            f'if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then \n'
+            f'if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then \n'
             f'    {exec_cast}\n'
             f'end')
         return indent(indent(lua_string))

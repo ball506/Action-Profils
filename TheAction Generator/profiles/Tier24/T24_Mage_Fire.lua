@@ -19,39 +19,57 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MAGE_FIRE] = {
-    ArcaneIntellectBuff                    = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneIntellect                        = Action.Create({Type = "Spell", ID = 1459 }),
-    MirrorImage                            = Action.Create({Type = "Spell", ID = 55342 }),
-    Pyroblast                              = Action.Create({Type = "Spell", ID = 11366 }),
-    LivingBomb                             = Action.Create({Type = "Spell", ID = 44457 }),
-    CombustionBuff                         = Action.Create({Type = "Spell", ID = 190319 }),
-    Combustion                             = Action.Create({Type = "Spell", ID = 190319 }),
-    Meteor                                 = Action.Create({Type = "Spell", ID = 153561 }),
-    RuneofPowerBuff                        = Action.Create({Type = "Spell", ID = 116014 }),
-    RuneofPower                            = Action.Create({Type = "Spell", ID = 116011 }),
-    Firestarter                            = Action.Create({Type = "Spell", ID = 205026 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    FireBlast                              = Action.Create({Type = "Spell", ID = 108853 }),
-    BlasterMasterBuff                      = Action.Create({Type = "Spell", ID = 274598 }),
-    BlasterMaster                          = Action.Create({Type = "Spell", ID = 274596 }),
-    FlameOn                                = Action.Create({Type = "Spell", ID = 205029 }),
-    HyperthreadWristwraps300142            = Action.Create({Type = "Spell", ID =  }),
-    Scorch                                 = Action.Create({Type = "Spell", ID = 2948 }),
-    HeatingUpBuff                          = Action.Create({Type = "Spell", ID = 48107 }),
-    HotStreakBuff                          = Action.Create({Type = "Spell", ID = 48108 }),
-    Fireball                               = Action.Create({Type = "Spell", ID = 133 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Flamestrike                            = Action.Create({Type = "Spell", ID = 2120 }),
-    FlamePatch                             = Action.Create({Type = "Spell", ID = 205037 }),
-    PyroclasmBuff                          = Action.Create({Type = "Spell", ID = 269651 }),
-    PhoenixFlames                          = Action.Create({Type = "Spell", ID = 257541 }),
-    DragonsBreath                          = Action.Create({Type = "Spell", ID = 31661 }),
-    SearingTouch                           = Action.Create({Type = "Spell", ID = 269644 }),
-    AlexstraszasFury                       = Action.Create({Type = "Spell", ID = 235870 }),
-    Kindling                               = Action.Create({Type = "Spell", ID = 155148 }),
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneIntellectBuff                    = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneIntellect                        = Action.Create({ Type = "Spell", ID = 1459 }),
+    MirrorImage                            = Action.Create({ Type = "Spell", ID = 55342 }),
+    Pyroblast                              = Action.Create({ Type = "Spell", ID = 11366 }),
+    LivingBomb                             = Action.Create({ Type = "Spell", ID = 44457 }),
+    CombustionBuff                         = Action.Create({ Type = "Spell", ID = 190319 }),
+    Combustion                             = Action.Create({ Type = "Spell", ID = 190319 }),
+    Meteor                                 = Action.Create({ Type = "Spell", ID = 153561 }),
+    RuneofPowerBuff                        = Action.Create({ Type = "Spell", ID = 116014 }),
+    RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
+    Firestarter                            = Action.Create({ Type = "Spell", ID = 205026 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    FireBlast                              = Action.Create({ Type = "Spell", ID = 108853 }),
+    BlasterMasterBuff                      = Action.Create({ Type = "Spell", ID = 274598 }),
+    BlasterMaster                          = Action.Create({ Type = "Spell", ID = 274596 }),
+    FlameOn                                = Action.Create({ Type = "Spell", ID = 205029 }),
+    HyperthreadWristwraps300142            = Action.Create({ Type = "Spell", ID =  }),
+    Scorch                                 = Action.Create({ Type = "Spell", ID = 2948 }),
+    HeatingUpBuff                          = Action.Create({ Type = "Spell", ID = 48107 }),
+    HotStreakBuff                          = Action.Create({ Type = "Spell", ID = 48108 }),
+    Fireball                               = Action.Create({ Type = "Spell", ID = 133 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Flamestrike                            = Action.Create({ Type = "Spell", ID = 2120 }),
+    FlamePatch                             = Action.Create({ Type = "Spell", ID = 205037 }),
+    PyroclasmBuff                          = Action.Create({ Type = "Spell", ID = 269651 }),
+    PhoenixFlames                          = Action.Create({ Type = "Spell", ID = 257541 }),
+    DragonsBreath                          = Action.Create({ Type = "Spell", ID = 31661 }),
+    SearingTouch                           = Action.Create({ Type = "Spell", ID = 269644 }),
+    AlexstraszasFury                       = Action.Create({ Type = "Spell", ID = 235870 }),
+    Kindling                               = Action.Create({ Type = "Spell", ID = 155148 }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -64,6 +82,8 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -145,7 +165,7 @@ local VarOnUseCutoff = 0;
 local VarPhoenixPooling = 0;
 local VarFireBlastPooling = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarDisableCombustion = 0
   VarCombustionRopCutoff = 0
   VarCombustionOnUse = 0
@@ -153,15 +173,8 @@ A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				functi
   VarOnUseCutoff = 0
   VarPhoenixPooling = 0
   VarFireBlastPooling = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -306,7 +319,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&essence.memory_of_lucid_dreams.major&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&action.rune_of_power.executing&action.rune_of_power.execute_remains<0.6|(cooldown.combustion.ready|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
-            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (A.Combustion:GetCooldown() == 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
+            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (A.Combustion:GetCooldown() == 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
                 return A.FireBlast:Show(icon)
             end
             -- call_action_list,name=active_talents
@@ -669,7 +682,7 @@ end
                 local ShouldReturn = CombustionPhase(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=(essence.memory_of_lucid_dreams.major|essence.memory_of_lucid_dreams.minor&azerite.blaster_master.enabled)&charges=max_charges&!buff.hot_streak.react&!(buff.heating_up.react&(buff.combustion.up&(action.fireball.in_flight|action.pyroblast.in_flight|action.scorch.executing)|target.health.pct<=30&action.scorch.executing))&!(!buff.heating_up.react&!buff.hot_streak.react&buff.combustion.down&(action.fireball.in_flight|action.pyroblast.in_flight))
-            if A.FireBlast:IsReady(unit) and ((bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(essence.memory_of_lucid_dreams.minor) and bool(A.BlasterMaster:GetAzeriteRank())) and A.FireBlast:ChargesP() == A.FireBlast:MaxCharges() and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not (bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or bool(action.scorch.executing)) or Unit(unit):HealthPercent() <= 30 and bool(action.scorch.executing))) and not (not bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
+            if A.FireBlast:IsReady(unit) and ((bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID)) and bool(A.BlasterMaster:GetAzeriteRank())) and A.FireBlast:ChargesP() == A.FireBlast:MaxCharges() and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not (bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or bool(action.scorch.executing)) or Unit(unit):HealthPercent() <= 30 and bool(action.scorch.executing))) and not (not bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
                 return A.FireBlast:Show(icon)
             end
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=firestarter.active&charges>=1&(!variable.fire_blast_pooling|buff.rune_of_power.up)&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)&(!action.fireball.executing&!action.pyroblast.in_flight&buff.heating_up.up|action.fireball.executing&buff.hot_streak.down|action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
@@ -698,7 +711,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -729,7 +742,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -780,5 +793,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

@@ -19,49 +19,67 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DRUID_FERAL] = {
-    Regrowth                               = Action.Create({Type = "Spell", ID = 8936 }),
-    BloodtalonsBuff                        = Action.Create({Type = "Spell", ID = 145152 }),
-    Bloodtalons                            = Action.Create({Type = "Spell", ID = 155672 }),
-    WildFleshrending                       = Action.Create({Type = "Spell", ID = 279527 }),
-    CatFormBuff                            = Action.Create({Type = "Spell", ID = 768 }),
-    CatForm                                = Action.Create({Type = "Spell", ID = 768 }),
-    ProwlBuff                              = Action.Create({Type = "Spell", ID = 5215 }),
-    Prowl                                  = Action.Create({Type = "Spell", ID = 5215 }),
-    BerserkBuff                            = Action.Create({Type = "Spell", ID = 106951 }),
-    Berserk                                = Action.Create({Type = "Spell", ID = 106951 }),
-    TigersFury                             = Action.Create({Type = "Spell", ID = 5217 }),
-    TigersFuryBuff                         = Action.Create({Type = "Spell", ID = 5217 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    FeralFrenzy                            = Action.Create({Type = "Spell", ID = 274837 }),
-    Incarnation                            = Action.Create({Type = "Spell", ID = 102543 }),
-    IncarnationBuff                        = Action.Create({Type = "Spell", ID = 102543 }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    Rake                                   = Action.Create({Type = "Spell", ID = 1822 }),
-    RakeDebuff                             = Action.Create({Type = "Spell", ID = 155722 }),
-    SavageRoar                             = Action.Create({Type = "Spell", ID = 52610 }),
-    PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
-    SavageRoarBuff                         = Action.Create({Type = "Spell", ID = 52610 }),
-    PrimalWrath                            = Action.Create({Type = "Spell", ID = 285381 }),
-    RipDebuff                              = Action.Create({Type = "Spell", ID = 1079 }),
-    Rip                                    = Action.Create({Type = "Spell", ID = 1079 }),
-    Sabertooth                             = Action.Create({Type = "Spell", ID = 202031 }),
-    Maim                                   = Action.Create({Type = "Spell", ID = 22570 }),
-    IronJawsBuff                           = Action.Create({Type = "Spell", ID = 276026 }),
-    FerociousBiteMaxEnergy                 = Action.Create({Type = "Spell", ID = 22568 }),
-    FerociousBite                          = Action.Create({Type = "Spell", ID = 22568 }),
-    PredatorySwiftnessBuff                 = Action.Create({Type = "Spell", ID = 69369 }),
-    LunarInspiration                       = Action.Create({Type = "Spell", ID = 155580 }),
-    BrutalSlash                            = Action.Create({Type = "Spell", ID = 202028 }),
-    ThrashCat                              = Action.Create({Type = "Spell", ID = 106830 }),
-    ThrashCatDebuff                        = Action.Create({Type = "Spell", ID = 106830 }),
-    ScentofBlood                           = Action.Create({Type = "Spell", ID = 285564 }),
-    ScentofBloodBuff                       = Action.Create({Type = "Spell", ID = 285646 }),
-    SwipeCat                               = Action.Create({Type = "Spell", ID = 106785 }),
-    MoonfireCat                            = Action.Create({Type = "Spell", ID = 155625 }),
-    MoonfireCatDebuff                      = Action.Create({Type = "Spell", ID = 155625 }),
-    ClearcastingBuff                       = Action.Create({Type = "Spell", ID = 135700 }),
-    Shred                                  = Action.Create({Type = "Spell", ID = 5221 }),
-    ShadowmeldBuff                         = Action.Create({Type = "Spell", ID = 58984 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    Regrowth                               = Action.Create({ Type = "Spell", ID = 8936 }),
+    BloodtalonsBuff                        = Action.Create({ Type = "Spell", ID = 145152 }),
+    Bloodtalons                            = Action.Create({ Type = "Spell", ID = 155672 }),
+    WildFleshrending                       = Action.Create({ Type = "Spell", ID = 279527 }),
+    CatFormBuff                            = Action.Create({ Type = "Spell", ID = 768 }),
+    CatForm                                = Action.Create({ Type = "Spell", ID = 768 }),
+    ProwlBuff                              = Action.Create({ Type = "Spell", ID = 5215 }),
+    Prowl                                  = Action.Create({ Type = "Spell", ID = 5215 }),
+    BerserkBuff                            = Action.Create({ Type = "Spell", ID = 106951 }),
+    Berserk                                = Action.Create({ Type = "Spell", ID = 106951 }),
+    TigersFury                             = Action.Create({ Type = "Spell", ID = 5217 }),
+    TigersFuryBuff                         = Action.Create({ Type = "Spell", ID = 5217 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    FeralFrenzy                            = Action.Create({ Type = "Spell", ID = 274837 }),
+    Incarnation                            = Action.Create({ Type = "Spell", ID = 102543 }),
+    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102543 }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    Rake                                   = Action.Create({ Type = "Spell", ID = 1822 }),
+    RakeDebuff                             = Action.Create({ Type = "Spell", ID = 155722 }),
+    SavageRoar                             = Action.Create({ Type = "Spell", ID = 52610 }),
+    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
+    SavageRoarBuff                         = Action.Create({ Type = "Spell", ID = 52610 }),
+    PrimalWrath                            = Action.Create({ Type = "Spell", ID = 285381 }),
+    RipDebuff                              = Action.Create({ Type = "Spell", ID = 1079 }),
+    Rip                                    = Action.Create({ Type = "Spell", ID = 1079 }),
+    Sabertooth                             = Action.Create({ Type = "Spell", ID = 202031 }),
+    Maim                                   = Action.Create({ Type = "Spell", ID = 22570 }),
+    IronJawsBuff                           = Action.Create({ Type = "Spell", ID = 276026 }),
+    FerociousBiteMaxEnergy                 = Action.Create({ Type = "Spell", ID = 22568 }),
+    FerociousBite                          = Action.Create({ Type = "Spell", ID = 22568 }),
+    PredatorySwiftnessBuff                 = Action.Create({ Type = "Spell", ID = 69369 }),
+    LunarInspiration                       = Action.Create({ Type = "Spell", ID = 155580 }),
+    BrutalSlash                            = Action.Create({ Type = "Spell", ID = 202028 }),
+    ThrashCat                              = Action.Create({ Type = "Spell", ID = 106830 }),
+    ThrashCatDebuff                        = Action.Create({ Type = "Spell", ID = 106830 }),
+    ScentofBlood                           = Action.Create({ Type = "Spell", ID = 285564 }),
+    ScentofBloodBuff                       = Action.Create({ Type = "Spell", ID = 285646 }),
+    SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
+    MoonfireCat                            = Action.Create({ Type = "Spell", ID = 155625 }),
+    MoonfireCatDebuff                      = Action.Create({ Type = "Spell", ID = 155625 }),
+    ClearcastingBuff                       = Action.Create({ Type = "Spell", ID = 135700 }),
+    Shred                                  = Action.Create({ Type = "Spell", ID = 5221 }),
+    ShadowmeldBuff                         = Action.Create({ Type = "Spell", ID = 58984 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -74,6 +92,8 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -150,18 +170,11 @@ local A = setmetatable(Action[ACTION_CONST_DRUID_FERAL], { __index = Action })
 local VarUseThrash = 0;
 local VarOpenerDone = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarUseThrash = 0
   VarOpenerDone = 0
-	end 
 end)
 
-local EnemyRanges = {8, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -198,11 +211,11 @@ end
 
 
 local function EvaluateCyclePrimalWrath93(unit)
-    return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4
+    return MultiUnits:GetByRangeInCombat(5, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4
 end
 
 local function EvaluateCyclePrimalWrath104(unit)
-    return MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2
+    return MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2
 end
 
 local function EvaluateCycleRip113(unit)
@@ -281,11 +294,11 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
-            if A.Berserk:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 5 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
+            if A.Berserk:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 5 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
                 return A.Berserk:Show(icon)
             end
             -- tigers_fury,if=energy.deficit>=60
-            if A.TigersFury:IsReady(unit) and (Unit("player"):EnergyDeficitPredicted() >= 60) then
+            if A.TigersFury:IsReady(unit) and (Player:EnergyDeficitPredicted() >= 60) then
                 return A.TigersFury:Show(icon)
             end
             -- berserking
@@ -293,11 +306,11 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
             -- feral_frenzy,if=combo_points=0
-            if A.FeralFrenzy:IsReady(unit) and (Unit("player"):ComboPoints() == 0) then
+            if A.FeralFrenzy:IsReady(unit) and (Player:ComboPoints() == 0) then
                 return A.FeralFrenzy:Show(icon)
             end
             -- incarnation,if=energy>=30&(cooldown.tigers_fury.remains>15|buff.tigers_fury.up)
-            if A.Incarnation:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 15 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
+            if A.Incarnation:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 15 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
                 return A.Incarnation:Show(icon)
             end
             -- potion,name=battle_potion_of_agility,if=target.time_to_die<65|(time_to_die<180&(buff.berserk.up|buff.incarnation.up))
@@ -305,7 +318,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofAgility:Show(icon)
             end
             -- shadowmeld,if=combo_points<5&energy>=action.rake.cost&dot.rake.pmultiplier<2.1&buff.tigers_fury.up&(buff.bloodtalons.up|!talent.bloodtalons.enabled)&(!talent.incarnation.enabled|cooldown.incarnation.remains>18)&!buff.incarnation.up
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ComboPoints() < 5 and Unit("player"):EnergyPredicted() >= A.Rake:Cost() and A.PMultiplier(unit, A.RakeDebuff.ID) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:ComboPoints() < 5 and Player:EnergyPredicted() >= A.Rake:Cost() and A.PMultiplier(unit, A.RakeDebuff.ID) < 2.1 and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) then
                 return A.Shadowmeld:Show(icon)
             end
             -- use_items
@@ -325,21 +338,21 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath93) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath93) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, EvaluateCyclePrimalWrath104) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath104) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rip, 8, EvaluateCycleRip113) then
+                if Action.Utils.CastTargetIf(A.Rip, 8, "min", EvaluateCycleRip113) then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -370,7 +383,7 @@ A[3] = function(icon, isMulti)
         --Generators
         local function Generators(unit)
             -- regrowth,if=talent.bloodtalons.enabled&buff.predatory_swiftness.up&buff.bloodtalons.down&combo_points=4&dot.rake.remains<4
-            if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff.ID, true)) and Unit("player"):ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 4) then
+            if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff.ID, true)) and Player:ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 4) then
                 return A.Regrowth:Show(icon)
             end
             -- regrowth,if=talent.bloodtalons.enabled&buff.bloodtalons.down&buff.predatory_swiftness.up&talent.lunar_inspiration.enabled&dot.rake.remains<1
@@ -378,12 +391,12 @@ A[3] = function(icon, isMulti)
                 return A.Regrowth:Show(icon)
             end
             -- brutal_slash,if=spell_targets.brutal_slash>desired_targets
-            if A.BrutalSlash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.BrutalSlash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.BrutalSlash:Show(icon)
             end
             -- pool_resource,for_next=1
             -- thrash_cat,if=(refreshable)&(spell_targets.thrash_cat>2)
-            if A.ThrashCat:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff.ID, true)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+            if A.ThrashCat:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff.ID, true)) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 2)) then
                 if A.ThrashCat:IsUsablePPool() then
                     return A.ThrashCat:Show(icon)
                 else
@@ -392,7 +405,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- thrash_cat,if=(talent.scent_of_blood.enabled&buff.scent_of_blood.down)&spell_targets.thrash_cat>3
-            if A.ThrashCat:IsReady(unit) and ((A.ScentofBlood:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.ScentofBloodBuff.ID, true))) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.ThrashCat:IsReady(unit) and ((A.ScentofBlood:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.ScentofBloodBuff.ID, true))) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 3) then
                 if A.ThrashCat:IsUsablePPool() then
                     return A.ThrashCat:Show(icon)
                 else
@@ -411,19 +424,19 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- rake,target_if=!ticking|(!talent.bloodtalons.enabled&remains<duration*0.3)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake224) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake224) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rake,target_if=talent.bloodtalons.enabled&buff.bloodtalons.up&((remains<=7)&persistent_multiplier>dot.rake.pmultiplier*0.85)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, EvaluateCycleRake253) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake253) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- moonfire_cat,if=buff.bloodtalons.up&buff.predatory_swiftness.down&combo_points<5
-            if A.MoonfireCat:IsReady(unit) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.PredatorySwiftnessBuff.ID, true)) and Unit("player"):ComboPoints() < 5) then
+            if A.MoonfireCat:IsReady(unit) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.PredatorySwiftnessBuff.ID, true)) and Player:ComboPoints() < 5) then
                 return A.MoonfireCat:Show(icon)
             end
             -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))
@@ -432,13 +445,13 @@ A[3] = function(icon, isMulti)
             end
             -- moonfire_cat,target_if=refreshable
             if A.MoonfireCat:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, EvaluateCycleMoonfireCat296) then
+                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, "min", EvaluateCycleMoonfireCat296) then
                     return A.MoonfireCat:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- thrash_cat,if=refreshable&((variable.use_thrash=2&(!buff.incarnation.up|azerite.wild_fleshrending.enabled))|spell_targets.thrash_cat>1)
-            if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff.ID, true) and ((VarUseThrash == 2 and (not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) or bool(A.WildFleshrending:GetAzeriteRank()))) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if A.ThrashCat:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.ThrashCatDebuff.ID, true) and ((VarUseThrash == 2 and (not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) or bool(A.WildFleshrending:GetAzeriteRank()))) or MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 if A.ThrashCat:IsUsablePPool() then
                     return A.ThrashCat:Show(icon)
                 else
@@ -451,7 +464,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- swipe_cat,if=spell_targets.swipe_cat>1
-            if A.SwipeCat:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.SwipeCat:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 if A.SwipeCat:IsUsablePPool() then
                     return A.SwipeCat:Show(icon)
                 else
@@ -459,7 +472,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- shred,if=dot.rake.remains>(action.shred.cost+action.rake.cost-energy)%energy.regen|buff.clearcasting.react
-            if A.Shred:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) > (A.Shred:Cost() + A.Rake:Cost() - Unit("player"):EnergyPredicted()) / Unit("player"):EnergyRegen() or bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true))) then
+            if A.Shred:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) > (A.Shred:Cost() + A.Rake:Cost() - Player:EnergyPredicted()) / Player:EnergyRegen() or bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true))) then
                 return A.Shred:Show(icon)
             end
         end
@@ -491,7 +504,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -516,16 +529,16 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
             if A.FerociousBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FerociousBite, 8, EvaluateCycleFerociousBite412) then
+                if Action.Utils.CastTargetIf(A.FerociousBite, 8, "min", EvaluateCycleFerociousBite412) then
                     return A.FerociousBite:Show(icon) 
                 end
             end
             -- regrowth,if=combo_points=5&buff.predatory_swiftness.up&talent.bloodtalons.enabled&buff.bloodtalons.down&(!buff.incarnation.up|dot.rip.remains<8)
-            if A.Regrowth:IsReady(unit) and (Unit("player"):ComboPoints() == 5 and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff.ID, true) and A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff.ID, true)) and (not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) or Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 8)) then
+            if A.Regrowth:IsReady(unit) and (Player:ComboPoints() == 5 and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff.ID, true) and A.Bloodtalons:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BloodtalonsBuff.ID, true)) and (not Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) or Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 8)) then
                 return A.Regrowth:Show(icon)
             end
             -- run_action_list,name=finishers,if=combo_points>4
-            if (Unit("player"):ComboPoints() > 4) then
+            if (Player:ComboPoints() > 4) then
                 return Finishers(unit);
             end
             -- run_action_list,name=generators
@@ -538,7 +551,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -569,7 +582,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -620,5 +633,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

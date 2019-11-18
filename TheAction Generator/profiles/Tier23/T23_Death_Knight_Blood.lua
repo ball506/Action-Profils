@@ -19,27 +19,45 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
-    DeathStrike                            = Action.Create({Type = "Spell", ID = 49998 }),
-    BloodDrinker                           = Action.Create({Type = "Spell", ID = 206931 }),
-    DancingRuneWeaponBuff                  = Action.Create({Type = "Spell", ID = 81256 }),
-    Marrowrend                             = Action.Create({Type = "Spell", ID = 195182 }),
-    BoneShieldBuff                         = Action.Create({Type = "Spell", ID = 195181 }),
-    BloodBoil                              = Action.Create({Type = "Spell", ID = 50842 }),
-    HemostasisBuff                         = Action.Create({Type = "Spell", ID = 273947 }),
-    Ossuary                                = Action.Create({Type = "Spell", ID = 219786 }),
-    Bonestorm                              = Action.Create({Type = "Spell", ID = 194844 }),
-    Heartbreaker                           = Action.Create({Type = "Spell", ID = 221536 }),
-    DeathandDecay                          = Action.Create({Type = "Spell", ID = 43265 }),
-    RuneStrike                             = Action.Create({Type = "Spell", ID = 210764 }),
-    HeartStrike                            = Action.Create({Type = "Spell", ID = 206930 }),
-    CrimsonScourgeBuff                     = Action.Create({Type = "Spell", ID = 81141 }),
-    RapidDecomposition                     = Action.Create({Type = "Spell", ID = 194662 }),
-    Consumption                            = Action.Create({Type = "Spell", ID = 205223 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    DancingRuneWeapon                      = Action.Create({Type = "Spell", ID = 49028 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Tombstone                              = Action.Create({Type = "Spell", ID = 219809 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    DeathStrike                            = Action.Create({ Type = "Spell", ID = 49998 }),
+    BloodDrinker                           = Action.Create({ Type = "Spell", ID = 206931 }),
+    DancingRuneWeaponBuff                  = Action.Create({ Type = "Spell", ID = 81256 }),
+    Marrowrend                             = Action.Create({ Type = "Spell", ID = 195182 }),
+    BoneShieldBuff                         = Action.Create({ Type = "Spell", ID = 195181 }),
+    BloodBoil                              = Action.Create({ Type = "Spell", ID = 50842 }),
+    HemostasisBuff                         = Action.Create({ Type = "Spell", ID = 273947 }),
+    Ossuary                                = Action.Create({ Type = "Spell", ID = 219786 }),
+    Bonestorm                              = Action.Create({ Type = "Spell", ID = 194844 }),
+    Heartbreaker                           = Action.Create({ Type = "Spell", ID = 221536 }),
+    DeathandDecay                          = Action.Create({ Type = "Spell", ID = 43265 }),
+    RuneStrike                             = Action.Create({ Type = "Spell", ID = 210764 }),
+    HeartStrike                            = Action.Create({ Type = "Spell", ID = 206930 }),
+    CrimsonScourgeBuff                     = Action.Create({ Type = "Spell", ID = 81141 }),
+    RapidDecomposition                     = Action.Create({ Type = "Spell", ID = 194662 }),
+    Consumption                            = Action.Create({ Type = "Spell", ID = 205223 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    DancingRuneWeapon                      = Action.Create({ Type = "Spell", ID = 49028 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Tombstone                              = Action.Create({ Type = "Spell", ID = 219809 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -52,6 +70,8 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -123,12 +143,6 @@ local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_BLOOD], { __index = Actio
 
 
 
-local EnemyRanges = {5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -194,7 +208,7 @@ A[3] = function(icon, isMulti)
         --Standard
         local function Standard(unit)
             -- death_strike,if=runic_power.deficit<=10
-            if A.DeathStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() <= 10) then
+            if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= 10) then
                 return A.DeathStrike:Show(icon)
             end
             -- blooddrinker,if=!buff.dancing_rune_weapon.up
@@ -202,35 +216,35 @@ A[3] = function(icon, isMulti)
                 return A.BloodDrinker:Show(icon)
             end
             -- marrowrend,if=(buff.bone_shield.remains<=rune.time_to_3|buff.bone_shield.remains<=(gcd+cooldown.blooddrinker.ready*talent.blooddrinker.enabled*2)|buff.bone_shield.stack<3)&runic_power.deficit>=20
-            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Unit("player"):RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Unit("player"):RunicPowerDeficit() >= 20) then
+            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Player:RunicPowerDeficit() >= 20) then
                 return A.Marrowrend:Show(icon)
             end
             -- blood_boil,if=charges_fractional>=1.8&(buff.hemostasis.stack<=(5-spell_targets.blood_boil)|spell_targets.blood_boil>2)
-            if A.BloodBoil:IsReady(unit) and (A.BloodBoil:ChargesFractionalP() >= 1.8 and (Unit("player"):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRangeInCombat(40, 5, 10)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
+            if A.BloodBoil:IsReady(unit) and (A.BloodBoil:ChargesFractionalP() >= 1.8 and (Unit("player"):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRangeInCombat(5, 5, 10)) or MultiUnits:GetByRangeInCombat(5, 5, 10) > 2)) then
                 return A.BloodBoil:Show(icon)
             end
             -- marrowrend,if=buff.bone_shield.stack<5&talent.ossuary.enabled&runic_power.deficit>=15
-            if A.Marrowrend:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 5 and A.Ossuary:IsSpellLearned() and Unit("player"):RunicPowerDeficit() >= 15) then
+            if A.Marrowrend:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 5 and A.Ossuary:IsSpellLearned() and Player:RunicPowerDeficit() >= 15) then
                 return A.Marrowrend:Show(icon)
             end
             -- bonestorm,if=runic_power>=100&!buff.dancing_rune_weapon.up
-            if A.Bonestorm:IsReady(unit) and (Unit("player"):RunicPower() >= 100 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
+            if A.Bonestorm:IsReady(unit) and (Player:RunicPower() >= 100 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.Bonestorm:Show(icon)
             end
             -- death_strike,if=runic_power.deficit<=(15+buff.dancing_rune_weapon.up*5+spell_targets.heart_strike*talent.heartbreaker.enabled*2)|target.time_to_die<10
-            if A.DeathStrike:IsReady(unit) and (Unit("player"):RunicPowerDeficit() <= (15 + num(Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) * 5 + MultiUnits:GetByRangeInCombat(40, 5, 10) * num(A.Heartbreaker:IsSpellLearned()) * 2) or Unit(unit):TimeToDie() < 10) then
+            if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= (15 + num(Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) * 5 + MultiUnits:GetByRangeInCombat(5, 5, 10) * num(A.Heartbreaker:IsSpellLearned()) * 2) or Unit(unit):TimeToDie() < 10) then
                 return A.DeathStrike:Show(icon)
             end
             -- death_and_decay,if=spell_targets.death_and_decay>=3
-            if A.DeathandDecay:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.DeathandDecay:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3) then
                 return A.DeathandDecay:Show(icon)
             end
             -- rune_strike,if=(charges_fractional>=1.8|buff.dancing_rune_weapon.up)&rune.time_to_3>=gcd
-            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:ChargesFractionalP() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Unit("player"):RuneTimeToX(3) >= A.GetGCD()) then
+            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:ChargesFractionalP() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Player:RuneTimeToX(3) >= A.GetGCD()) then
                 return A.RuneStrike:Show(icon)
             end
             -- heart_strike,if=buff.dancing_rune_weapon.up|rune.time_to_4<gcd
-            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Unit("player"):RuneTimeToX(4) < A.GetGCD()) then
+            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Player:RuneTimeToX(4) < A.GetGCD()) then
                 return A.HeartStrike:Show(icon)
             end
             -- blood_boil,if=buff.dancing_rune_weapon.up
@@ -238,7 +252,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodBoil:Show(icon)
             end
             -- death_and_decay,if=buff.crimson_scourge.up|talent.rapid_decomposition.enabled|spell_targets.death_and_decay>=2
-            if A.DeathandDecay:IsReady(unit) and (Unit("player"):HasBuffs(A.CrimsonScourgeBuff.ID, true) or A.RapidDecomposition:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.DeathandDecay:IsReady(unit) and (Unit("player"):HasBuffs(A.CrimsonScourgeBuff.ID, true) or A.RapidDecomposition:IsSpellLearned() or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) then
                 return A.DeathandDecay:Show(icon)
             end
             -- consumption
@@ -250,7 +264,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodBoil:Show(icon)
             end
             -- heart_strike,if=rune.time_to_3<gcd|buff.bone_shield.stack>6
-            if A.HeartStrike:IsReady(unit) and (Unit("player"):RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
+            if A.HeartStrike:IsReady(unit) and (Player:RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
                 return A.HeartStrike:Show(icon)
             end
             -- rune_strike
@@ -258,14 +272,14 @@ A[3] = function(icon, isMulti)
                 return A.RuneStrike:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -311,7 +325,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -342,7 +356,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -393,5 +407,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

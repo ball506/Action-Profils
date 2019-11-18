@@ -240,7 +240,7 @@ class LuaRange(LuaArray):
         condition.parent_action.context.add_range(range_)
         LuaArray.__init__(self,
                           object_=None,
-                          method=Method('MultiUnits:GetByRangeInCombat(40, 5, 10)'),
+                          method=Method(f'MultiUnits:GetByRangeInCombat({range_}, 5, 10)'),
                           index=range_,
                           type_=type_)
 

@@ -19,43 +19,60 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 883 }),
-    AspectoftheWildBuff                    = Action.Create({Type = "Spell", ID = 193530 }),
-    AspectoftheWild                        = Action.Create({Type = "Spell", ID = 193530 }),
-    PrimalInstinctsBuff                    = Action.Create({Type = "Spell", ID = 279810 }),
-    PrimalInstincts                        = Action.Create({Type = "Spell", ID = 279806 }),
-    EssenceoftheFocusingIris               = Action.Create({Type = "Spell", ID =  }),
-    BestialWrathBuff                       = Action.Create({Type = "Spell", ID = 19574 }),
-    BestialWrath                           = Action.Create({Type = "Spell", ID = 19574 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    KillerInstinct                         = Action.Create({Type = "Spell", ID = 273887 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    FrenzyBuff                             = Action.Create({Type = "Spell", ID = 272790 }),
-    PotionofUnbridledFuryBuff              = Action.Create({Type = "Spell", ID =  }),
-    UnbridledFuryBuff                      = Action.Create({Type = "Spell", ID =  }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    BarbedShot                             = Action.Create({Type = "Spell", ID = 217200 }),
-    BarbedShotDebuff                       = Action.Create({Type = "Spell", ID =  }),
-    Multishot                              = Action.Create({Type = "Spell", ID = 2643 }),
-    BeastCleaveBuff                        = Action.Create({Type = "Spell", ID = 118455, "pet" }),
-    Stampede                               = Action.Create({Type = "Spell", ID = 201430 }),
-    OneWiththePack                         = Action.Create({Type = "Spell", ID = 199528 }),
-    ChimaeraShot                           = Action.Create({Type = "Spell", ID = 53209 }),
-    AMurderofCrows                         = Action.Create({Type = "Spell", ID = 131894 }),
-    Barrage                                = Action.Create({Type = "Spell", ID = 120360 }),
-    KillCommand                            = Action.Create({Type = "Spell", ID = 34026 }),
-    RapidReload                            = Action.Create({Type = "Spell", ID =  }),
-    DireBeast                              = Action.Create({Type = "Spell", ID = 120679 }),
-    CobraShot                              = Action.Create({Type = "Spell", ID = 193455 }),
-    SpittingCobra                          = Action.Create({Type = "Spell", ID = 194407 }),
-    DanceofDeath                           = Action.Create({Type = "Spell", ID =  }),
-    DanceofDeathBuff                       = Action.Create({Type = "Spell", ID =  }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883 }),
+    AspectoftheWildBuff                    = Action.Create({ Type = "Spell", ID = 193530 }),
+    AspectoftheWild                        = Action.Create({ Type = "Spell", ID = 193530 }),
+    PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810 }),
+    PrimalInstincts                        = Action.Create({ Type = "Spell", ID = 279806 }),
+    EssenceoftheFocusingIris               = Action.Create({ Type = "Spell", ID =  }),
+    BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574 }),
+    BestialWrath                           = Action.Create({ Type = "Spell", ID = 19574 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    KillerInstinct                         = Action.Create({ Type = "Spell", ID = 273887 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790 }),
+    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
+    UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
+    BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID =  }),
+    Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
+    BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455, "pet" }),
+    Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
+    OneWiththePack                         = Action.Create({ Type = "Spell", ID = 199528 }),
+    ChimaeraShot                           = Action.Create({ Type = "Spell", ID = 53209 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
+    KillCommand                            = Action.Create({ Type = "Spell", ID = 34026 }),
+    RapidReload                            = Action.Create({ Type = "Spell", ID =  }),
+    DireBeast                              = Action.Create({ Type = "Spell", ID = 120679 }),
+    CobraShot                              = Action.Create({ Type = "Spell", ID = 193455 }),
+    SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
+    DanceofDeath                           = Action.Create({ Type = "Spell", ID =  }),
+    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -68,6 +85,8 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -139,12 +158,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_BEASTMASTERY], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -261,11 +274,11 @@ A[3] = function(icon, isMulti)
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.AspectoftheWild:IsReady(unit) and Unit("player"):HasBuffsDown(A.AspectoftheWildBuff.ID, true) and (not bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(A.EssenceoftheFocusingIris:EssenceIsMajorUseable()) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists())) then
+            if A.AspectoftheWild:IsReady(unit) and Unit("player"):HasBuffsDown(A.AspectoftheWildBuff.ID, true) and (not bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(Azerite:EssenceHasMajor(A.EssenceoftheFocusingIris.ID)) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists())) then
                 return A.AspectoftheWild:Show(icon)
             end
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BestialWrath:IsReady(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(A.EssenceoftheFocusingIris:EssenceIsMajorUseable()) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists())) then
+            if A.BestialWrath:IsReady(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(Azerite:EssenceHasMajor(A.EssenceoftheFocusingIris.ID)) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists())) then
                 return A.BestialWrath:Show(icon)
             end
         end
@@ -395,7 +408,7 @@ A[3] = function(icon, isMulti)
                 return A.Multishot:Show(icon)
             end
             -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-            if A.CobraShot:IsReady(unit) and (A.KillCommand:GetCooldown() > Unit("player"):FocusTimeToMaxPredicted() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not bool(A.RapidReload:GetAzeriteRank()))) then
+            if A.CobraShot:IsReady(unit) and (A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or not bool(A.RapidReload:GetAzeriteRank()))) then
                 return A.CobraShot:Show(icon)
             end
             -- spitting_cobra
@@ -411,7 +424,7 @@ A[3] = function(icon, isMulti)
                 return A.BarbedShot:Show(icon)
             end
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.bestial_wrath.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):Focus() + Unit("player"):FocusRegen() * A.GetGCD() < Unit("player"):FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<2|pet.cat.buff.frenzy.stack>2|!azerite.primal_instincts.enabled
@@ -467,7 +480,7 @@ A[3] = function(icon, isMulti)
                 return A.Barrage:Show(icon)
             end
             -- cobra_shot,if=(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd|buff.memory_of_lucid_dreams.up)&cooldown.kill_command.remains>1
-            if A.CobraShot:IsReady(unit) and ((Unit("player"):Focus() - A.CobraShot:Cost() + Unit("player"):FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD() or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) and A.KillCommand:GetCooldown() > 1) then
+            if A.CobraShot:IsReady(unit) and ((Player:Focus() - A.CobraShot:Cost() + Player:FocusRegen() * (A.KillCommand:GetCooldown() - 1) > A.KillCommand:Cost() or A.KillCommand:GetCooldown() > 1 + A.GetGCD() or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) and A.KillCommand:GetCooldown() > 1) then
                 return A.CobraShot:Show(icon)
             end
             -- spitting_cobra
@@ -482,7 +495,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -491,7 +504,7 @@ A[3] = function(icon, isMulti)
                     -- auto_shot
             -- use_items
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)&(target.health.pct<35|!essence.condensed_lifeforce.major)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and (Unit("player"):GetSpellLastCast(A.AspectoftheWild) or not A.CyclotronicBlast:IsExists() and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true)) and (Unit(unit):HealthPercent() < 35 or not bool(A.CondensedLifeforce:EssenceIsMajorUseable())) or (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and (Unit("player"):GetSpellLastCast(A.AspectoftheWild) or not A.CyclotronicBlast:IsExists() and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true)) and (Unit(unit):HealthPercent() < 35 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID))) or (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5
@@ -516,7 +529,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -547,7 +560,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -598,5 +611,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

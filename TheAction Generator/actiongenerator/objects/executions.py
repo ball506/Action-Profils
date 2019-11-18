@@ -255,13 +255,10 @@ class Spell(LuaNamed, LuaCastable):
         fullstring = (f'A.{self.lua_name()}')
         substring = "Buff"
         substring2 = "Debuff"
-        substring3 = "DeBuffDebuff"
-        substring4 = "ID, true:BaseDuration"			
+        substring3 = "DeBuffDebuff"		
         if re.search(substring, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         elif re.search(substring2, fullstring):			
-            string1 = f'A.{self.lua_name()}.ID, true'
-        elif re.search(substring4, fullstring):
             string1 = f'A.{self.lua_name()}.ID, true'
         else:
             string1 = f'A.{self.lua_name()}'

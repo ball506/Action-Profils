@@ -19,38 +19,56 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MONK_WINDWALKER] = {
-    ChiBurst                               = Action.Create({Type = "Spell", ID = 123986 }),
-    SerenityBuff                           = Action.Create({Type = "Spell", ID = 152173 }),
-    Serenity                               = Action.Create({Type = "Spell", ID = 152173 }),
-    FistoftheWhiteTiger                    = Action.Create({Type = "Spell", ID = 261947 }),
-    ChiWave                                = Action.Create({Type = "Spell", ID = 115098 }),
-    RisingSunKick                          = Action.Create({Type = "Spell", ID = 107428 }),
-    MarkoftheCraneDebuff                   = Action.Create({Type = "Spell", ID = 228287 }),
-    WhirlingDragonPunch                    = Action.Create({Type = "Spell", ID = 152175 }),
-    FistsofFury                            = Action.Create({Type = "Spell", ID = 113656 }),
-    EnergizingElixir                       = Action.Create({Type = "Spell", ID = 115288 }),
-    TigerPalm                              = Action.Create({Type = "Spell", ID = 100780 }),
-    RushingJadeWind                        = Action.Create({Type = "Spell", ID = 261715 }),
-    RushingJadeWindBuff                    = Action.Create({Type = "Spell", ID = 261715 }),
-    SpinningCraneKick                      = Action.Create({Type = "Spell", ID = 101546 }),
-    HitCombo                               = Action.Create({Type = "Spell", ID = 196741 }),
-    FlyingSerpentKick                      = Action.Create({Type = "Spell", ID = 101545 }),
-    BokProcBuff                            = Action.Create({Type = "Spell", ID = 116768 }),
-    BlackoutKick                           = Action.Create({Type = "Spell", ID = 100784 }),
-    InvokeXuentheWhiteTiger                = Action.Create({Type = "Spell", ID = 123904 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    TouchofDeath                           = Action.Create({Type = "Spell", ID = 115080 }),
-    StormEarthandFire                      = Action.Create({Type = "Spell", ID = 137639 }),
-    DanceofChijiBuff                       = Action.Create({Type = "Spell", ID =  }),
-    SwiftRoundhouseBuff                    = Action.Create({Type = "Spell", ID = 278710 }),
-    SpearHandStrike                        = Action.Create({Type = "Spell", ID = 116705 }),
-    TouchofKarma                           = Action.Create({Type = "Spell", ID = 122470 }),
-    StormEarthandFireBuff                  = Action.Create({Type = "Spell", ID = 137639 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ChiBurst                               = Action.Create({ Type = "Spell", ID = 123986 }),
+    SerenityBuff                           = Action.Create({ Type = "Spell", ID = 152173 }),
+    Serenity                               = Action.Create({ Type = "Spell", ID = 152173 }),
+    FistoftheWhiteTiger                    = Action.Create({ Type = "Spell", ID = 261947 }),
+    ChiWave                                = Action.Create({ Type = "Spell", ID = 115098 }),
+    RisingSunKick                          = Action.Create({ Type = "Spell", ID = 107428 }),
+    MarkoftheCraneDebuff                   = Action.Create({ Type = "Spell", ID = 228287 }),
+    WhirlingDragonPunch                    = Action.Create({ Type = "Spell", ID = 152175 }),
+    FistsofFury                            = Action.Create({ Type = "Spell", ID = 113656 }),
+    EnergizingElixir                       = Action.Create({ Type = "Spell", ID = 115288 }),
+    TigerPalm                              = Action.Create({ Type = "Spell", ID = 100780 }),
+    RushingJadeWind                        = Action.Create({ Type = "Spell", ID = 261715 }),
+    RushingJadeWindBuff                    = Action.Create({ Type = "Spell", ID = 261715 }),
+    SpinningCraneKick                      = Action.Create({ Type = "Spell", ID = 101546 }),
+    HitCombo                               = Action.Create({ Type = "Spell", ID = 196741 }),
+    FlyingSerpentKick                      = Action.Create({ Type = "Spell", ID = 101545 }),
+    BokProcBuff                            = Action.Create({ Type = "Spell", ID = 116768 }),
+    BlackoutKick                           = Action.Create({ Type = "Spell", ID = 100784 }),
+    InvokeXuentheWhiteTiger                = Action.Create({ Type = "Spell", ID = 123904 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    TouchofDeath                           = Action.Create({ Type = "Spell", ID = 115080 }),
+    StormEarthandFire                      = Action.Create({ Type = "Spell", ID = 137639 }),
+    DanceofChijiBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    SwiftRoundhouseBuff                    = Action.Create({ Type = "Spell", ID = 278710 }),
+    SpearHandStrike                        = Action.Create({ Type = "Spell", ID = 116705 }),
+    TouchofKarma                           = Action.Create({ Type = "Spell", ID = 122470 }),
+    StormEarthandFireBuff                  = Action.Create({ Type = "Spell", ID = 137639 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -63,6 +81,8 @@ Action[ACTION_CONST_MONK_WINDWALKER] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -134,12 +154,6 @@ local A = setmetatable(Action[ACTION_CONST_MONK_WINDWALKER], { __index = Action 
 
 
 
-local EnemyRanges = {40, 8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -187,7 +201,7 @@ local function EvaluateTargetIfFilterTigerPalm62(unit)
 end
 
 local function EvaluateTargetIfTigerPalm73(unit)
-  return Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not Unit("player"):GetSpellLastCast(A.TigerPalm))
+  return Player:ChiMax() - Player:Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not Unit("player"):GetSpellLastCast(A.TigerPalm))
 end
 
 
@@ -196,7 +210,7 @@ local function EvaluateTargetIfFilterBlackoutKick85(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick100(unit)
-  return not Unit("player"):GetSpellLastCast(A.BlackoutKick) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() < 4))
+  return not Unit("player"):GetSpellLastCast(A.BlackoutKick) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
 end
 
 
@@ -218,7 +232,7 @@ local function EvaluateTargetIfFilterRisingSunKick206(unit)
 end
 
 local function EvaluateTargetIfRisingSunKick213(unit)
-  return Unit("player"):Chi() >= 5
+  return Player:Chi() >= 5
 end
 
 
@@ -231,7 +245,7 @@ local function EvaluateTargetIfFilterBlackoutKick254(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick271(unit)
-  return not Unit("player"):GetSpellLastCast(A.BlackoutKick) and (A.RisingSunKick:GetCooldown() > 3 or Unit("player"):Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Unit("player"):Chi() >= 4 or (Unit("player"):Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm))) and Unit("player"):HasBuffsStacks(A.SwiftRoundhouseBuff.ID, true) < 2
+  return not Unit("player"):GetSpellLastCast(A.BlackoutKick) and (A.RisingSunKick:GetCooldown() > 3 or Player:Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm))) and Unit("player"):HasBuffsStacks(A.SwiftRoundhouseBuff.ID, true) < 2
 end
 
 
@@ -240,7 +254,7 @@ local function EvaluateTargetIfFilterTigerPalm287(unit)
 end
 
 local function EvaluateTargetIfTigerPalm296(unit)
-  return not Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2
+  return not Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:ChiMax() - Player:Chi() >= 2
 end
 
 
@@ -249,7 +263,7 @@ local function EvaluateTargetIfFilterTigerPalm332(unit)
 end
 
 local function EvaluateTargetIfTigerPalm345(unit)
-  return (Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 2 and not Unit("player"):GetSpellLastCast(A.TigerPalm)
+  return (Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Player:ChiMax() - Player:Chi() >= 2 and not Unit("player"):GetSpellLastCast(A.TigerPalm)
 end
 
 
@@ -303,11 +317,11 @@ A[3] = function(icon, isMulti)
                 return A.WhirlingDragonPunch:Show(icon)
             end
             -- energizing_elixir,if=!prev_gcd.1.tiger_palm&chi<=1&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):Chi() <= 1 and Unit("player"):EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() <= 1 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             -- fists_of_fury,if=energy.time_to_max>3
-            if A.FistsofFury:IsReady(unit) and (Unit("player"):EnergyTimeToMaxPredicted() > 3) then
+            if A.FistsofFury:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 3) then
                 return A.FistsofFury:Show(icon)
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down
@@ -315,15 +329,15 @@ A[3] = function(icon, isMulti)
                 return A.RushingJadeWind:Show(icon)
             end
             -- spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&(((chi>3|cooldown.fists_of_fury.remains>6)&(chi>=5|cooldown.fists_of_fury.remains>2))|energy.time_to_max<=3)
-            if A.SpinningCraneKick:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.SpinningCraneKick) and (((Unit("player"):Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Unit("player"):Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Unit("player"):EnergyTimeToMaxPredicted() <= 3)) then
+            if A.SpinningCraneKick:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.SpinningCraneKick) and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3)) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- chi_burst,if=chi<=3
-            if A.ChiBurst:IsReady(unit) and (Unit("player"):Chi() <= 3) then
+            if A.ChiBurst:IsReady(unit) and (Player:Chi() <= 3) then
                 return A.ChiBurst:Show(icon)
             end
             -- fist_of_the_white_tiger,if=chi.max-chi>=3
-            if A.FistoftheWhiteTiger:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 3) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 3) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi>=2&(!talent.hit_combo.enabled|!prev_gcd.1.tiger_palm)
@@ -367,7 +381,7 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and Unit("player"):EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment
@@ -387,7 +401,7 @@ A[3] = function(icon, isMulti)
                 return A.TouchofDeath:Show(icon)
             end
             -- storm_earth_and_fire,if=cooldown.storm_earth_and_fire.charges=2|(cooldown.fists_of_fury.remains<=6&chi>=3&cooldown.rising_sun_kick.remains<=1)|target.time_to_die<=15
-            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 6 and Unit("player"):Chi() >= 3 and A.RisingSunKick:GetCooldown() <= 1) or Unit(unit):TimeToDie() <= 15) then
+            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:ChargesP() == 2 or (A.FistsofFury:GetCooldown() <= 6 and Player:Chi() >= 3 and A.RisingSunKick:GetCooldown() <= 1) or Unit(unit):TimeToDie() <= 15) then
                 return A.StormEarthandFire:Show(icon)
             end
             -- serenity,if=cooldown.rising_sun_kick.remains<=2|target.time_to_die<=12
@@ -405,11 +419,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- fists_of_fury,if=(buff.bloodlust.up&prev_gcd.1.rising_sun_kick)|buff.serenity.remains<1|(active_enemies>1&active_enemies<5)
-            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5)) then
+            if A.FistsofFury:IsReady(unit) and ((Unit("player"):HasHeroism and Unit("player"):GetSpellLastCast(A.RisingSunKick)) or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(8, 5, 10) < 5)) then
                 return A.FistsofFury:Show(icon)
             end
             -- spinning_crane_kick,if=!prev_gcd.1.spinning_crane_kick&(active_enemies>=3|(active_enemies=2&prev_gcd.1.blackout_kick))
-            if A.SpinningCraneKick:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.SpinningCraneKick) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 or (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick)))) then
+            if A.SpinningCraneKick:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.SpinningCraneKick) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 or (MultiUnits:GetByRangeInCombat(8, 5, 10) == 2 and Unit("player"):GetSpellLastCast(A.BlackoutKick)))) then
                 return A.SpinningCraneKick:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains
@@ -433,7 +447,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- fists_of_fury,if=energy.time_to_max>3
-            if A.FistsofFury:IsReady(unit) and (Unit("player"):EnergyTimeToMaxPredicted() > 3) then
+            if A.FistsofFury:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 3) then
                 return A.FistsofFury:Show(icon)
             end
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains
@@ -447,15 +461,15 @@ A[3] = function(icon, isMulti)
                 return A.SpinningCraneKick:Show(icon)
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             -- fist_of_the_white_tiger,if=chi<=2
-            if A.FistoftheWhiteTiger:IsReady(unit) and (Unit("player"):Chi() <= 2) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and (Player:Chi() <= 2) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- energizing_elixir,if=chi<=3&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Chi() <= 3 and Unit("player"):EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (Player:Chi() <= 3 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.blackout_kick&(cooldown.rising_sun_kick.remains>3|chi>=3)&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm))&buff.swift_roundhouse.stack<2
@@ -469,7 +483,7 @@ A[3] = function(icon, isMulti)
                 return A.ChiWave:Show(icon)
             end
             -- chi_burst,if=chi.max-chi>=1&active_enemies=1|chi.max-chi>=2
-            if A.ChiBurst:IsReady(unit) and (Unit("player"):ChiMax() - Unit("player"):Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):ChiMax() - Unit("player"):Chi() >= 2) then
+            if A.ChiBurst:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Player:ChiMax() - Player:Chi() >= 2) then
                 return A.ChiBurst:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=!prev_gcd.1.tiger_palm&chi.max-chi>=2
@@ -479,14 +493,14 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- flying_serpent_kick,if=prev_gcd.1.blackout_kick&chi>3&buff.swift_roundhouse.stack<2,interrupt=1
-            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Unit("player"):Chi() > 3 and Unit("player"):HasBuffsStacks(A.SwiftRoundhouseBuff.ID, true) < 2) then
+            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.BlackoutKick) and Player:Chi() > 3 and Unit("player"):HasBuffsStacks(A.SwiftRoundhouseBuff.ID, true) < 2) then
                 return A.FlyingSerpentKick:Show(icon)
             end
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -502,7 +516,7 @@ A[3] = function(icon, isMulti)
                 return A.TouchofKarma:Show(icon)
             end
             -- potion,if=buff.serenity.up|buff.storm_earth_and_fire.up|(!talent.serenity.enabled&trinket.proc.agility.react)|buff.bloodlust.react|target.time_to_die<=60
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or (not A.Serenity:IsSpellLearned() and bool(trinket.proc.agility.react)) or Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 60) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or (not A.Serenity:IsSpellLearned() and bool(trinket.proc.agility.react)) or Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 60) then
                 A.ProlongedPower:Show(icon)
             end
             -- call_action_list,name=serenity,if=buff.serenity.up
@@ -510,7 +524,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Serenity(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- fist_of_the_white_tiger,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2))&chi.max-chi>=3
-            if A.FistoftheWhiteTiger:IsReady(unit) and ((Unit("player"):EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Unit("player"):ChiMax() - Unit("player"):Chi() >= 3) then
+            if A.FistoftheWhiteTiger:IsReady(unit) and ((Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2)) and Player:ChiMax() - Player:Chi() >= 3) then
                 return A.FistoftheWhiteTiger:Show(icon)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2))&chi.max-chi>=2&!prev_gcd.1.tiger_palm
@@ -537,7 +551,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -568,7 +582,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -619,5 +633,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

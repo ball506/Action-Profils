@@ -19,40 +19,57 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 688 }),
-    GrimoireofSacrifice                    = Action.Create({Type = "Spell", ID = 108503 }),
-    SoulFire                               = Action.Create({Type = "Spell", ID = 6353 }),
-    Incinerate                             = Action.Create({Type = "Spell", ID = 29722 }),
-    RainofFire                             = Action.Create({Type = "Spell", ID = 5740 }),
-    CrashingChaosBuff                      = Action.Create({Type = "Spell", ID =  }),
-    GrimoireofSupremacy                    = Action.Create({Type = "Spell", ID = 266086 }),
-    Havoc                                  = Action.Create({Type = "Spell", ID = 80240 }),
-    RainofFireDebuff                       = Action.Create({Type = "Spell", ID = 5740 }),
-    ChannelDemonfire                       = Action.Create({Type = "Spell", ID = 196447 }),
-    ImmolateDebuff                         = Action.Create({Type = "Spell", ID = 157736 }),
-    Immolate                               = Action.Create({Type = "Spell", ID = 348 }),
-    Cataclysm                              = Action.Create({Type = "Spell", ID = 152108 }),
-    HavocDebuff                            = Action.Create({Type = "Spell", ID = 80240 }),
-    ChaosBolt                              = Action.Create({Type = "Spell", ID = 116858 }),
-    Inferno                                = Action.Create({Type = "Spell", ID = 270545 }),
-    FireandBrimstone                       = Action.Create({Type = "Spell", ID = 196408 }),
-    BackdraftBuff                          = Action.Create({Type = "Spell", ID = 117828 }),
-    Conflagrate                            = Action.Create({Type = "Spell", ID = 17962 }),
-    Shadowburn                             = Action.Create({Type = "Spell", ID = 17877 }),
-    SummonInfernal                         = Action.Create({Type = "Spell", ID = 1122 }),
-    DarkSoulInstability                    = Action.Create({Type = "Spell", ID = 113858 }),
-    DarkSoulInstabilityBuff                = Action.Create({Type = "Spell", ID = 113858 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    GrimoireofSupremacyBuff                = Action.Create({Type = "Spell", ID = 266091 }),
-    InternalCombustion                     = Action.Create({Type = "Spell", ID = 266134 }),
-    ShadowburnDebuff                       = Action.Create({Type = "Spell", ID = 17877 }),
-    Flashover                              = Action.Create({Type = "Spell", ID = 267115 }),
-    CrashingChaos                          = Action.Create({Type = "Spell", ID =  }),
-    Eradication                            = Action.Create({Type = "Spell", ID = 196412 }),
-    EradicationDebuff                      = Action.Create({Type = "Spell", ID = 196414 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 688 }),
+    GrimoireofSacrifice                    = Action.Create({ Type = "Spell", ID = 108503 }),
+    SoulFire                               = Action.Create({ Type = "Spell", ID = 6353 }),
+    Incinerate                             = Action.Create({ Type = "Spell", ID = 29722 }),
+    RainofFire                             = Action.Create({ Type = "Spell", ID = 5740 }),
+    CrashingChaosBuff                      = Action.Create({ Type = "Spell", ID =  }),
+    GrimoireofSupremacy                    = Action.Create({ Type = "Spell", ID = 266086 }),
+    Havoc                                  = Action.Create({ Type = "Spell", ID = 80240 }),
+    RainofFireDebuff                       = Action.Create({ Type = "Spell", ID = 5740 }),
+    ChannelDemonfire                       = Action.Create({ Type = "Spell", ID = 196447 }),
+    ImmolateDebuff                         = Action.Create({ Type = "Spell", ID = 157736 }),
+    Immolate                               = Action.Create({ Type = "Spell", ID = 348 }),
+    Cataclysm                              = Action.Create({ Type = "Spell", ID = 152108 }),
+    HavocDebuff                            = Action.Create({ Type = "Spell", ID = 80240 }),
+    ChaosBolt                              = Action.Create({ Type = "Spell", ID = 116858 }),
+    Inferno                                = Action.Create({ Type = "Spell", ID = 270545 }),
+    FireandBrimstone                       = Action.Create({ Type = "Spell", ID = 196408 }),
+    BackdraftBuff                          = Action.Create({ Type = "Spell", ID = 117828 }),
+    Conflagrate                            = Action.Create({ Type = "Spell", ID = 17962 }),
+    Shadowburn                             = Action.Create({ Type = "Spell", ID = 17877 }),
+    SummonInfernal                         = Action.Create({ Type = "Spell", ID = 1122 }),
+    DarkSoulInstability                    = Action.Create({ Type = "Spell", ID = 113858 }),
+    DarkSoulInstabilityBuff                = Action.Create({ Type = "Spell", ID = 113858 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    GrimoireofSupremacyBuff                = Action.Create({ Type = "Spell", ID = 266091 }),
+    InternalCombustion                     = Action.Create({ Type = "Spell", ID = 266134 }),
+    ShadowburnDebuff                       = Action.Create({ Type = "Spell", ID = 17877 }),
+    Flashover                              = Action.Create({ Type = "Spell", ID = 267115 }),
+    CrashingChaos                          = Action.Create({ Type = "Spell", ID =  }),
+    Eradication                            = Action.Create({ Type = "Spell", ID = 196412 }),
+    EradicationDebuff                      = Action.Create({ Type = "Spell", ID = 196414 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -65,6 +82,8 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -140,17 +159,10 @@ local A = setmetatable(Action[ACTION_CONST_WARLOCK_DESTRUCTION], { __index = Act
 ------------------------------------------
 local VarPoolSoulShards = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarPoolSoulShards = 0
-	end 
 end)
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -184,24 +196,26 @@ local function IsSchoolFree()
 end 
 
 local function FutureShard ()
-  local Shard = Player:SoulShards()
-  if not Player:IsCasting() then
-    return Shard
-  else
-    if Player:IsCasting(A.UnstableAffliction) 
-        or Player:IsCasting(A.SeedOfCorruption) then
-      return Shard - 1
-    elseif Player:IsCasting(A.SummonDoomGuard) 
-        or Player:IsCasting(A.SummonDoomGuardSuppremacy) 
-        or Player:IsCasting(A.SummonInfernal) 
-        or Player:IsCasting(A.SummonInfernalSuppremacy) 
-        or Player:IsCasting(A.GrimoireFelhunter) 
-        or Player:IsCasting(A.SummonFelhunter) then
-      return Shard - 1
+    local Shard = Player:SoulShards()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    
+    if not Unit("player"):IsCasting() then
+        return Shard
     else
-      return Shard
+        if spellID = A.UnstableAffliction.ID 
+                or spellID = A.SeedOfCorruption.ID then
+            return Shard - 1
+        elseif spellID = A.SummonDoomGuard.ID 
+                or spellID = A.SummonDoomGuardSuppremacy.ID 
+                or spellID = A.SummonInfernal.ID
+                or spellID = A.SummonInfernalSuppremacy.ID 
+                or spellID = A.GrimoireFelhunter.ID 
+                or spellID = A.SummonFelhunter.ID then
+            return Shard - 1
+        else
+            return Shard
+        end
     end
-  end
 end
 
 
@@ -282,7 +296,7 @@ A[3] = function(icon, isMulti)
             end
             -- immolate,cycle_targets=1,if=remains<5&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate46) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate46) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -292,7 +306,7 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&active_enemies<4
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc71) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc71) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -314,12 +328,12 @@ A[3] = function(icon, isMulti)
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(!talent.grimoire_of_supremacy.enabled|!talent.inferno.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc106) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc106) then
                     return A.Havoc:Show(icon) 
                 end
             end
             -- incinerate,if=talent.fire_and_brimstone.enabled&buff.backdraft.up&soul_shard<5-0.2*active_enemies
-            if A.Incinerate:IsReady(unit) and (A.FireandBrimstone:IsSpellLearned() and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Unit("player"):SoulShardsP < 5 - 0.2 * MultiUnits:GetByRangeInCombat(40, 5, 10)) then
+            if A.Incinerate:IsReady(unit) and (A.FireandBrimstone:IsSpellLearned() and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Player:SoulShardsP < 5 - 0.2 * MultiUnits:GetByRangeInCombat(40, 5, 10)) then
                 return A.Incinerate:Show(icon)
             end
             -- soul_fire
@@ -351,7 +365,7 @@ A[3] = function(icon, isMulti)
                 return A.Immolate:Show(icon)
             end
             -- conflagrate,if=talent.grimoire_of_supremacy.enabled&cooldown.summon_infernal.remains<4.5&!buff.backdraft.up&soul_shard<4.3
-            if A.Conflagrate:IsReady(unit) and (A.GrimoireofSupremacy:IsSpellLearned() and A.SummonInfernal:GetCooldown() < 4.5 and not Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Unit("player"):SoulShardsP < 4.3) then
+            if A.Conflagrate:IsReady(unit) and (A.GrimoireofSupremacy:IsSpellLearned() and A.SummonInfernal:GetCooldown() < 4.5 and not Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Player:SoulShardsP < 4.3) then
                 return A.Conflagrate:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.summon_infernal.up|cooldown.summon_infernal.remains<=4
@@ -367,11 +381,11 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- dark_soul_instability,if=pet.infernal.active&(pet.infernal.remains<20.5|pet.infernal.remains<22&soul_shard>=3.6|!talent.grimoire_of_supremacy.enabled)
-            if A.DarkSoulInstability:IsReady(unit) and (bool(pet.infernal.active) and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) < 20.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) < 22 and Unit("player"):SoulShardsP >= 3.6 or not A.GrimoireofSupremacy:IsSpellLearned())) then
+            if A.DarkSoulInstability:IsReady(unit) and (bool(pet.infernal.active) and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) < 20.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) < 22 and Player:SoulShardsP >= 3.6 or not A.GrimoireofSupremacy:IsSpellLearned())) then
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=pet.infernal.active&(pet.infernal.remains<15.5|soul_shard<3.5&(buff.dark_soul_instability.up|!talent.grimoire_of_supremacy.enabled&dot.immolate.remains>12))
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Unit("player"):SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(pet.infernal.active) and (pet.infernal.remains < 15.5 or Player:SoulShardsP < 3.5 and (Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) or not A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) > 12))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die>cooldown.summon_infernal.duration+30
@@ -379,7 +393,7 @@ A[3] = function(icon, isMulti)
                 return A.SummonInfernal:Show(icon)
             end
             -- guardian_of_azeroth,if=time>30&target.time_to_die>cooldown.guardian_of_azeroth.duration+30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration() + 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() > 30 and Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration() + 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- summon_infernal,if=talent.dark_soul_instability.enabled&cooldown.dark_soul_instability.remains>target.time_to_die
@@ -395,7 +409,7 @@ A[3] = function(icon, isMulti)
                 return A.DarkSoulInstability:Show(icon)
             end
             -- memory_of_lucid_dreams,if=cooldown.summon_infernal.remains>target.time_to_die&(pet.infernal.remains<15.5|buff.dark_soul_instability.up&soul_shard<3)
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Unit("player"):SoulShardsP < 3)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() and (pet.infernal.remains < 15.5 or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) and Player:SoulShardsP < 3)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- summon_infernal,if=target.time_to_die<30
@@ -431,15 +445,15 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- berserking,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Berserking:Show(icon)
             end
             -- blood_fury,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.BloodFury:Show(icon)
             end
             -- fireblood,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|(!essence.memory_of_lucid_dreams.major|buff.memory_of_lucid_dreams.remains)&(!talent.dark_soul_instability.enabled|buff.dark_soul_instability.remains))|target.time_to_die<=15
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(pet.infernal.active) and (not A.GrimoireofSupremacy:IsSpellLearned() or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) and (not A.DarkSoulInstability:IsSpellLearned() or bool(Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true)))) or Unit(unit):TimeToDie() <= 15) then
                 return A.Fireblood:Show(icon)
             end
             -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
@@ -472,7 +486,7 @@ A[3] = function(icon, isMulti)
         --GosupInfernal
         local function GosupInfernal(unit)
             -- rain_of_fire,if=soul_shard=5&!buff.backdraft.up&buff.memory_of_lucid_dreams.up&buff.grimoire_of_supremacy.stack<=10
-            if A.RainofFire:IsReady(unit) and (Unit("player"):SoulShardsP == 5 and not Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff.ID, true) <= 10) then
+            if A.RainofFire:IsReady(unit) and (Player:SoulShardsP == 5 and not Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff.ID, true) <= 10) then
                 return A.RainofFire:Show(icon)
             end
             -- chaos_bolt,if=buff.backdraft.up
@@ -480,7 +494,7 @@ A[3] = function(icon, isMulti)
                 return A.ChaosBolt:Show(icon)
             end
             -- chaos_bolt,if=soul_shard>=4.2-buff.memory_of_lucid_dreams.up
-            if A.ChaosBolt:IsReady(unit) and (Unit("player"):SoulShardsP >= 4.2 - num(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) then
+            if A.ChaosBolt:IsReady(unit) and (Player:SoulShardsP >= 4.2 - num(Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) then
                 return A.ChaosBolt:Show(icon)
             end
             -- chaos_bolt,if=!cooldown.conflagrate.up
@@ -492,11 +506,11 @@ A[3] = function(icon, isMulti)
                 return A.ChaosBolt:Show(icon)
             end
             -- conflagrate,if=buff.backdraft.down&buff.memory_of_lucid_dreams.up&soul_shard>=1.3
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and Unit("player"):SoulShardsP >= 1.3) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and Player:SoulShardsP >= 1.3) then
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=buff.backdraft.down&!buff.memory_of_lucid_dreams.up&(soul_shard>=2.8|charges_fractional>1.9&soul_shard>=1.3)
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Unit("player"):SoulShardsP >= 2.8 or A.Conflagrate:ChargesFractionalP() > 1.9 and Unit("player"):SoulShardsP >= 1.3)) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Player:SoulShardsP >= 2.8 or A.Conflagrate:ChargesFractionalP() > 1.9 and Player:SoulShardsP >= 1.3)) then
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=pet.infernal.remains<5
@@ -524,7 +538,7 @@ A[3] = function(icon, isMulti)
         --Havoc
         local function Havoc(unit)
             -- conflagrate,if=buff.backdraft.down&soul_shard>=1&soul_shard<=4
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Unit("player"):SoulShardsP >= 1 and Unit("player"):SoulShardsP <= 4) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Player:SoulShardsP >= 1 and Player:SoulShardsP <= 4) then
                 return A.Conflagrate:Show(icon)
             end
             -- immolate,if=talent.internal_combustion.enabled&remains<duration*0.5|!talent.internal_combustion.enabled&refreshable
@@ -570,7 +584,7 @@ end
             end
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
             if A.Immolate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Immolate, 40, EvaluateCycleImmolate507) then
+                if Action.Utils.CastTargetIf(A.Immolate, 40, "min", EvaluateCycleImmolate507) then
                     return A.Immolate:Show(icon) 
                 end
             end
@@ -604,7 +618,7 @@ end
             end
             -- havoc,cycle_targets=1,if=!(target=self.target)&(dot.immolate.remains>dot.immolate.duration*0.5|!talent.internal_combustion.enabled)&(!cooldown.summon_infernal.ready|!talent.grimoire_of_supremacy.enabled|talent.grimoire_of_supremacy.enabled&pet.infernal.remains<=10)
             if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, EvaluateCycleHavoc572) then
+                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc572) then
                     return A.Havoc:Show(icon) 
                 end
             end
@@ -621,11 +635,11 @@ end
                 VarPoolSoulShards = num(MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15 and (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + A.SummonInfernal:BaseDuration() > Unit(unit):TimeToDie()))
             end
             -- conflagrate,if=buff.backdraft.down&soul_shard>=1.5-0.3*talent.flashover.enabled&!variable.pool_soul_shards
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Unit("player"):SoulShardsP >= 1.5 - 0.3 * num(A.Flashover:IsSpellLearned()) and not bool(VarPoolSoulShards)) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and Player:SoulShardsP >= 1.5 - 0.3 * num(A.Flashover:IsSpellLearned()) and not bool(VarPoolSoulShards)) then
                 return A.Conflagrate:Show(icon)
             end
             -- shadowburn,if=soul_shard<2&(!variable.pool_soul_shards|charges>1)
-            if A.Shadowburn:IsReady(unit) and (Unit("player"):SoulShardsP < 2 and (not bool(VarPoolSoulShards) or A.Shadowburn:ChargesP() > 1)) then
+            if A.Shadowburn:IsReady(unit) and (Player:SoulShardsP < 2 and (not bool(VarPoolSoulShards) or A.Shadowburn:ChargesP() > 1)) then
                 return A.Shadowburn:Show(icon)
             end
             -- chaos_bolt,if=(talent.grimoire_of_supremacy.enabled|azerite.crashing_chaos.enabled)&pet.infernal.active|buff.dark_soul_instability.up|buff.reckless_force.react&buff.reckless_force.remains>cast_time
@@ -641,7 +655,7 @@ end
                 return A.ChaosBolt:Show(icon)
             end
             -- chaos_bolt,if=(soul_shard>=4.5-0.2*active_enemies)&(!talent.grimoire_of_supremacy.enabled|cooldown.summon_infernal.remains>7)
-            if A.ChaosBolt:IsReady(unit) and ((Unit("player"):SoulShardsP >= 4.5 - 0.2 * MultiUnits:GetByRangeInCombat(40, 5, 10)) and (not A.GrimoireofSupremacy:IsSpellLearned() or A.SummonInfernal:GetCooldown() > 7)) then
+            if A.ChaosBolt:IsReady(unit) and ((Player:SoulShardsP >= 4.5 - 0.2 * MultiUnits:GetByRangeInCombat(40, 5, 10)) and (not A.GrimoireofSupremacy:IsSpellLearned() or A.SummonInfernal:GetCooldown() > 7)) then
                 return A.ChaosBolt:Show(icon)
             end
             -- conflagrate,if=charges>1
@@ -658,7 +672,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -689,7 +703,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -740,5 +754,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

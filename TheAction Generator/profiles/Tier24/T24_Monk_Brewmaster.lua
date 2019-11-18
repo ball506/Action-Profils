@@ -19,40 +19,58 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MONK_BREWMASTER] = {
-    ChiBurst                               = Action.Create({Type = "Spell", ID = 123986 }),
-    ChiWave                                = Action.Create({Type = "Spell", ID = 115098 }),
-    DampenHarm                             = Action.Create({Type = "Spell", ID = 122278 }),
-    FortifyingBrewBuff                     = Action.Create({Type = "Spell", ID = 115203 }),
-    FortifyingBrew                         = Action.Create({Type = "Spell", ID = 115203 }),
-    DampenHarmBuff                         = Action.Create({Type = "Spell", ID = 122278 }),
-    DiffuseMagicBuff                       = Action.Create({Type = "Spell", ID =  }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    InvokeNiuzaotheBlackOx                 = Action.Create({Type = "Spell", ID = 132578 }),
-    IronskinBrew                           = Action.Create({Type = "Spell", ID = 115308 }),
-    BlackoutComboBuff                      = Action.Create({Type = "Spell", ID = 228563 }),
-    ElusiveBrawlerBuff                     = Action.Create({Type = "Spell", ID =  }),
-    IronskinBrewBuff                       = Action.Create({Type = "Spell", ID = 215479 }),
-    Brews                                  = Action.Create({Type = "Spell", ID = 115308 }),
-    BlackOxBrew                            = Action.Create({Type = "Spell", ID = 115399 }),
-    PurifyingBrew                          = Action.Create({Type = "Spell", ID = 119582 }),
-    KegSmash                               = Action.Create({Type = "Spell", ID = 121253 }),
-    TigerPalm                              = Action.Create({Type = "Spell", ID = 100780 }),
-    RushingJadeWind                        = Action.Create({Type = "Spell", ID = 116847 }),
-    RushingJadeWindBuff                    = Action.Create({Type = "Spell", ID = 116847 }),
-    SpecialDelivery                        = Action.Create({Type = "Spell", ID =  }),
-    ExpelHarm                              = Action.Create({Type = "Spell", ID =  }),
-    BlackoutStrike                         = Action.Create({Type = "Spell", ID = 205523 }),
-    ConcentratedFlameDebuff                = Action.Create({Type = "Spell", ID =  }),
-    HeartEssence                           = Action.Create({Type = "Spell", ID = 298554 }),
-    TheCrucibleofFlame                     = Action.Create({Type = "Spell", ID =  }),
-    BreathofFire                           = Action.Create({Type = "Spell", ID = 115181 }),
-    BreathofFireDotDebuff                  = Action.Create({Type = "Spell", ID = 123725 }),
-    BlackoutCombo                          = Action.Create({Type = "Spell", ID = 196736 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ChiBurst                               = Action.Create({ Type = "Spell", ID = 123986 }),
+    ChiWave                                = Action.Create({ Type = "Spell", ID = 115098 }),
+    DampenHarm                             = Action.Create({ Type = "Spell", ID = 122278 }),
+    FortifyingBrewBuff                     = Action.Create({ Type = "Spell", ID = 115203 }),
+    FortifyingBrew                         = Action.Create({ Type = "Spell", ID = 115203 }),
+    DampenHarmBuff                         = Action.Create({ Type = "Spell", ID = 122278 }),
+    DiffuseMagicBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    InvokeNiuzaotheBlackOx                 = Action.Create({ Type = "Spell", ID = 132578 }),
+    IronskinBrew                           = Action.Create({ Type = "Spell", ID = 115308 }),
+    BlackoutComboBuff                      = Action.Create({ Type = "Spell", ID = 228563 }),
+    ElusiveBrawlerBuff                     = Action.Create({ Type = "Spell", ID =  }),
+    IronskinBrewBuff                       = Action.Create({ Type = "Spell", ID = 215479 }),
+    Brews                                  = Action.Create({ Type = "Spell", ID = 115308 }),
+    BlackOxBrew                            = Action.Create({ Type = "Spell", ID = 115399 }),
+    PurifyingBrew                          = Action.Create({ Type = "Spell", ID = 119582 }),
+    KegSmash                               = Action.Create({ Type = "Spell", ID = 121253 }),
+    TigerPalm                              = Action.Create({ Type = "Spell", ID = 100780 }),
+    RushingJadeWind                        = Action.Create({ Type = "Spell", ID = 116847 }),
+    RushingJadeWindBuff                    = Action.Create({ Type = "Spell", ID = 116847 }),
+    SpecialDelivery                        = Action.Create({ Type = "Spell", ID =  }),
+    ExpelHarm                              = Action.Create({ Type = "Spell", ID =  }),
+    BlackoutStrike                         = Action.Create({ Type = "Spell", ID = 205523 }),
+    ConcentratedFlameDebuff                = Action.Create({ Type = "Spell", ID =  }),
+    HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
+    TheCrucibleofFlame                     = Action.Create({ Type = "Spell", ID =  }),
+    BreathofFire                           = Action.Create({ Type = "Spell", ID = 115181 }),
+    BreathofFireDotDebuff                  = Action.Create({ Type = "Spell", ID = 123725 }),
+    BlackoutCombo                          = Action.Create({ Type = "Spell", ID = 196736 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -65,6 +83,8 @@ Action[ACTION_CONST_MONK_BREWMASTER] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -136,12 +156,6 @@ local A = setmetatable(Action[ACTION_CONST_MONK_BREWMASTER], { __index = Action 
 
 
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -214,7 +228,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -280,11 +294,11 @@ A[3] = function(icon, isMulti)
                 return A.BlackOxBrew:Show(icon)
             end
             -- black_ox_brew,if=(energy+(energy.regen*cooldown.keg_smash.remains))<40&buff.blackout_combo.down&cooldown.keg_smash.up
-            if A.BlackOxBrew:IsReady(unit) and ((Unit("player"):EnergyPredicted() + (Unit("player"):EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
+            if A.BlackOxBrew:IsReady(unit) and ((Player:EnergyPredicted() + (Player:EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
                 return A.BlackOxBrew:Show(icon)
             end
             -- keg_smash,if=spell_targets>=2
-            if A.KegSmash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) then
+            if A.KegSmash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.KegSmash:Show(icon)
             end
             -- tiger_palm,if=talent.rushing_jade_wind.enabled&buff.blackout_combo.up&buff.rushing_jade_wind.up
@@ -312,7 +326,7 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
             -- heart_essence,if=!essence.the_crucible_of_flame.major
-            if A.HeartEssence:IsReady(unit) and (not bool(A.TheCrucibleofFlame:EssenceIsMajorUseable())) then
+            if A.HeartEssence:IsReady(unit) and (not bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID))) then
                 return A.HeartEssence:Show(icon)
             end
             -- expel_harm,if=buff.gift_of_the_ox.stack>=3
@@ -340,11 +354,11 @@ A[3] = function(icon, isMulti)
                 return A.ExpelHarm:Show(icon)
             end
             -- tiger_palm,if=!talent.blackout_combo.enabled&cooldown.keg_smash.remains>gcd&(energy+(energy.regen*(cooldown.keg_smash.remains+gcd)))>=65
-            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Unit("player"):EnergyPredicted() + (Unit("player"):EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
+            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Player:EnergyPredicted() + (Player:EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
                 return A.TigerPalm:Show(icon)
             end
             -- arcane_torrent,if=energy<31
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() < 31) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyPredicted() < 31) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- rushing_jade_wind
@@ -357,7 +371,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -388,7 +402,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -439,5 +453,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

@@ -20,7 +20,7 @@ class Resource(BuildExpression):
             call = condition.condition_list[1]
         else:
             call = 'value'
-        self.object_ = Literal('Unit("player")')
+        self.object_ = Literal('Player')
         self.method = None
         self.args = []
         super().__init__(call)

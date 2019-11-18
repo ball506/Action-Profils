@@ -19,45 +19,63 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARRIOR_ARMS] = {
-    Skullsplitter                          = Action.Create({Type = "Spell", ID = 260643 }),
-    DeadlyCalm                             = Action.Create({Type = "Spell", ID = 262228 }),
-    DeadlyCalmBuff                         = Action.Create({Type = "Spell", ID = 262228 }),
-    Ravager                                = Action.Create({Type = "Spell", ID = 152277 }),
-    ColossusSmash                          = Action.Create({Type = "Spell", ID = 167105 }),
-    Warbreaker                             = Action.Create({Type = "Spell", ID = 262161 }),
-    ColossusSmashDebuff                    = Action.Create({Type = "Spell", ID = 208086 }),
-    Bladestorm                             = Action.Create({Type = "Spell", ID = 227847 }),
-    Cleave                                 = Action.Create({Type = "Spell", ID = 845 }),
-    Slam                                   = Action.Create({Type = "Spell", ID = 1464 }),
-    CrushingAssaultBuff                    = Action.Create({Type = "Spell", ID = 278826 }),
-    MortalStrike                           = Action.Create({Type = "Spell", ID = 12294 }),
-    OverpowerBuff                          = Action.Create({Type = "Spell", ID = 7384 }),
-    Dreadnaught                            = Action.Create({Type = "Spell", ID = 262150 }),
-    ExecutionersPrecisionBuff              = Action.Create({Type = "Spell", ID = 242188 }),
-    Execute                                = Action.Create({Type = "Spell", ID = 163201 }),
-    Overpower                              = Action.Create({Type = "Spell", ID = 7384 }),
-    SweepingStrikesBuff                    = Action.Create({Type = "Spell", ID = 260708 }),
-    TestofMight                            = Action.Create({Type = "Spell", ID = 275529 }),
-    TestofMightBuff                        = Action.Create({Type = "Spell", ID = 275540 }),
-    DeepWoundsDebuff                       = Action.Create({Type = "Spell", ID = 262115 }),
-    SuddenDeathBuff                        = Action.Create({Type = "Spell", ID = 52437 }),
-    StoneHeartBuff                         = Action.Create({Type = "Spell", ID = 225947 }),
-    SweepingStrikes                        = Action.Create({Type = "Spell", ID = 260708 }),
-    Whirlwind                              = Action.Create({Type = "Spell", ID = 1680 }),
-    FervorofBattle                         = Action.Create({Type = "Spell", ID = 202316 }),
-    Rend                                   = Action.Create({Type = "Spell", ID = 772 }),
-    RendDebuff                             = Action.Create({Type = "Spell", ID = 772 }),
-    AngerManagement                        = Action.Create({Type = "Spell", ID = 152278 }),
-    SeismicWave                            = Action.Create({Type = "Spell", ID = 277639 }),
-    Charge                                 = Action.Create({Type = "Spell", ID = 100 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Avatar                                 = Action.Create({Type = "Spell", ID = 107574 }),
-    Massacre                               = Action.Create({Type = "Spell", ID = 281001 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    Skullsplitter                          = Action.Create({ Type = "Spell", ID = 260643 }),
+    DeadlyCalm                             = Action.Create({ Type = "Spell", ID = 262228 }),
+    DeadlyCalmBuff                         = Action.Create({ Type = "Spell", ID = 262228 }),
+    Ravager                                = Action.Create({ Type = "Spell", ID = 152277 }),
+    ColossusSmash                          = Action.Create({ Type = "Spell", ID = 167105 }),
+    Warbreaker                             = Action.Create({ Type = "Spell", ID = 262161 }),
+    ColossusSmashDebuff                    = Action.Create({ Type = "Spell", ID = 208086 }),
+    Bladestorm                             = Action.Create({ Type = "Spell", ID = 227847 }),
+    Cleave                                 = Action.Create({ Type = "Spell", ID = 845 }),
+    Slam                                   = Action.Create({ Type = "Spell", ID = 1464 }),
+    CrushingAssaultBuff                    = Action.Create({ Type = "Spell", ID = 278826 }),
+    MortalStrike                           = Action.Create({ Type = "Spell", ID = 12294 }),
+    OverpowerBuff                          = Action.Create({ Type = "Spell", ID = 7384 }),
+    Dreadnaught                            = Action.Create({ Type = "Spell", ID = 262150 }),
+    ExecutionersPrecisionBuff              = Action.Create({ Type = "Spell", ID = 242188 }),
+    Execute                                = Action.Create({ Type = "Spell", ID = 163201 }),
+    Overpower                              = Action.Create({ Type = "Spell", ID = 7384 }),
+    SweepingStrikesBuff                    = Action.Create({ Type = "Spell", ID = 260708 }),
+    TestofMight                            = Action.Create({ Type = "Spell", ID = 275529 }),
+    TestofMightBuff                        = Action.Create({ Type = "Spell", ID = 275540 }),
+    DeepWoundsDebuff                       = Action.Create({ Type = "Spell", ID = 262115 }),
+    SuddenDeathBuff                        = Action.Create({ Type = "Spell", ID = 52437 }),
+    StoneHeartBuff                         = Action.Create({ Type = "Spell", ID = 225947 }),
+    SweepingStrikes                        = Action.Create({ Type = "Spell", ID = 260708 }),
+    Whirlwind                              = Action.Create({ Type = "Spell", ID = 1680 }),
+    FervorofBattle                         = Action.Create({ Type = "Spell", ID = 202316 }),
+    Rend                                   = Action.Create({ Type = "Spell", ID = 772 }),
+    RendDebuff                             = Action.Create({ Type = "Spell", ID = 772 }),
+    AngerManagement                        = Action.Create({ Type = "Spell", ID = 152278 }),
+    SeismicWave                            = Action.Create({ Type = "Spell", ID = 277639 }),
+    Charge                                 = Action.Create({ Type = "Spell", ID = 100 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Avatar                                 = Action.Create({ Type = "Spell", ID = 107574 }),
+    Massacre                               = Action.Create({ Type = "Spell", ID = 281001 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -70,6 +88,8 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -141,12 +161,6 @@ local A = setmetatable(Action[ACTION_CONST_WARRIOR_ARMS], { __index = Action })
 
 
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -207,7 +221,7 @@ local function APL()
         --Execute
         local function Execute(unit)
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
+            if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=!buff.deadly_calm.up&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
@@ -227,11 +241,11 @@ local function APL()
                 return A.DeadlyCalm:Show(icon)
             end
             -- bladestorm,if=rage<30&!buff.deadly_calm.up
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):Rage() < 30 and not Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true)) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Player:Rage() < 30 and not Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true)) then
                 return A.Bladestorm:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
-            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) then
                 return A.Cleave:Show(icon)
             end
             -- slam,if=buff.crushing_assault.up
@@ -259,7 +273,7 @@ local function APL()
         --FiveUnit(unit)
         local function FiveUnit(unit)(unit)
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
+            if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=(!talent.warbreaker.enabled|cooldown.warbreaker.remains<2)
@@ -299,7 +313,7 @@ local function APL()
                 return A.Whirlwind:Show(icon)
             end
             -- whirlwind,if=buff.deadly_calm.up|rage>60
-            if A.Whirlwind:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() > 60) then
+            if A.Whirlwind:IsReady(unit) and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Player:Rage() > 60) then
                 return A.Whirlwind:Show(icon)
             end
             -- overpower
@@ -315,11 +329,11 @@ local function APL()
         --Hac
         local function Hac(unit)
             -- rend,if=remains<=duration*0.3&(!raid_event.adds.up|buff.sweeping_strikes.up)
-            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
+            if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(cooldown.deadly_calm.remains>3|!talent.deadly_calm.enabled)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (A.DeadlyCalm:GetCooldown() > 3 or not A.DeadlyCalm:IsSpellLearned())) then
+            if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and (A.DeadlyCalm:GetCooldown() > 3 or not A.DeadlyCalm:IsSpellLearned())) then
                 return A.Skullsplitter:Show(icon)
             end
             -- deadly_calm,if=(cooldown.bladestorm.remains>6|talent.ravager.enabled&cooldown.ravager.remains>6)&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
@@ -327,39 +341,39 @@ local function APL()
                 return A.DeadlyCalm:Show(icon)
             end
             -- ravager,if=(raid_event.adds.up|raid_event.adds.in>target.time_to_die)&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
-            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > Unit(unit):TimeToDie()) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
+            if A.Ravager:IsReady(unit) and A.BurstIsON(unit) and (((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or 10000000000 > Unit(unit):TimeToDie()) and (A.ColossusSmash:GetCooldown() < 2 or (A.Warbreaker:IsSpellLearned() and A.Warbreaker:GetCooldown() < 2))) then
                 return A.Ravager:Show(icon)
             end
             -- colossus_smash,if=raid_event.adds.up|raid_event.adds.in>40|(raid_event.adds.in>20&talent.anger_management.enabled)
-            if A.ColossusSmash:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 40 or (10000000000 > 20 and A.AngerManagement:IsSpellLearned())) then
+            if A.ColossusSmash:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or 10000000000 > 40 or (10000000000 > 20 and A.AngerManagement:IsSpellLearned())) then
                 return A.ColossusSmash:Show(icon)
             end
             -- warbreaker,if=raid_event.adds.up|raid_event.adds.in>40|(raid_event.adds.in>20&talent.anger_management.enabled)
-            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 40 or (10000000000 > 20 and A.AngerManagement:IsSpellLearned())) then
+            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and ((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or 10000000000 > 40 or (10000000000 > 20 and A.AngerManagement:IsSpellLearned())) then
                 return A.Warbreaker:Show(icon)
             end
             -- bladestorm,if=(debuff.colossus_smash.up&raid_event.adds.in>target.time_to_die)|raid_event.adds.up&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and 10000000000 > Unit(unit):TimeToDie()) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 4.5 and not bool(A.TestofMight:GetAzeriteRank())) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and 10000000000 > Unit(unit):TimeToDie()) or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) and ((Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 4.5 and not bool(A.TestofMight:GetAzeriteRank())) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) then
                 return A.Bladestorm:Show(icon)
             end
             -- overpower,if=!raid_event.adds.up|(raid_event.adds.up&azerite.seismic_wave.enabled)
-            if A.Overpower:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and bool(A.SeismicWave:GetAzeriteRank()))) then
+            if A.Overpower:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or ((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) and bool(A.SeismicWave:GetAzeriteRank()))) then
                 return A.Overpower:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
-            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) then
                 return A.Cleave:Show(icon)
             end
             -- execute,if=!raid_event.adds.up|(!talent.cleave.enabled&dot.deep_wounds.remains<2)|buff.sudden_death.react
-            if A.Execute:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2) or bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true))) then
+            if A.Execute:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2) or bool(Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true))) then
                 return A.Execute:Show(icon)
             end
             -- mortal_strike,if=!raid_event.adds.up|(!talent.cleave.enabled&dot.deep_wounds.remains<2)
-            if A.MortalStrike:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2)) then
+            if A.MortalStrike:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or (not A.Cleave:IsSpellLearned() and Unit(unit):HasDeBuffs(A.DeepWoundsDebuff.ID, true) < 2)) then
                 return A.MortalStrike:Show(icon)
             end
             -- whirlwind,if=raid_event.adds.up
-            if A.Whirlwind:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if A.Whirlwind:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 return A.Whirlwind:Show(icon)
             end
             -- overpower
@@ -371,7 +385,7 @@ local function APL()
                 return A.Whirlwind:Show(icon)
             end
             -- slam,if=!talent.fervor_of_battle.enabled&!raid_event.adds.up
-            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 return A.Slam:Show(icon)
             end
         end
@@ -383,7 +397,7 @@ local function APL()
                 return A.Rend:Show(icon)
             end
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
-            if A.Skullsplitter:IsReady(unit) and (Unit("player"):Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
+            if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true)))) then
                 return A.Skullsplitter:Show(icon)
             end
             -- ravager,if=!buff.deadly_calm.up&(cooldown.colossus_smash.remains<2|(talent.warbreaker.enabled&cooldown.warbreaker.remains<2))
@@ -411,7 +425,7 @@ local function APL()
                 return A.Bladestorm:Show(icon)
             end
             -- cleave,if=spell_targets.whirlwind>2
-            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.Cleave:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) then
                 return A.Cleave:Show(icon)
             end
             -- overpower,if=azerite.seismic_wave.rank=3
@@ -423,7 +437,7 @@ local function APL()
                 return A.MortalStrike:Show(icon)
             end
             -- whirlwind,if=talent.fervor_of_battle.enabled&(buff.deadly_calm.up|rage>=60)
-            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() >= 60)) then
+            if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned() and (Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Player:Rage() >= 60)) then
                 return A.Whirlwind:Show(icon)
             end
             -- overpower
@@ -435,14 +449,14 @@ local function APL()
                 return A.Whirlwind:Show(icon)
             end
             -- slam,if=!talent.fervor_of_battle.enabled&(!azerite.test_of_might.enabled|debuff.colossus_smash.up|buff.deadly_calm.up|rage>=60)
-            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and (not bool(A.TestofMight:GetAzeriteRank()) or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Unit("player"):Rage() >= 60)) then
+            if A.Slam:IsReady(unit) and (not A.FervorofBattle:IsSpellLearned() and (not bool(A.TestofMight:GetAzeriteRank()) or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) or Player:Rage() >= 60)) then
                 return A.Slam:Show(icon)
             end
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
   if Everyone.TargetIsValid() then
@@ -464,7 +478,7 @@ local function APL()
                 return A.Berserking:Show(icon)
             end
             -- arcane_torrent,if=debuff.colossus_smash.down&cooldown.mortal_strike.remains>1.5&rage<50
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and A.MortalStrike:GetCooldown() > 1.5 and Unit("player"):Rage() < 50) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and A.MortalStrike:GetCooldown() > 1.5 and Player:Rage() < 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- lights_judgment,if=debuff.colossus_smash.down
@@ -484,15 +498,15 @@ local function APL()
                 return A.Avatar:Show(icon)
             end
             -- sweeping_strikes,if=spell_targets.whirlwind>1&(cooldown.bladestorm.remains>10|cooldown.colossus_smash.remains>8|azerite.test_of_might.enabled)
-            if A.SweepingStrikes:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and (A.Bladestorm:GetCooldown() > 10 or A.ColossusSmash:GetCooldown() > 8 or bool(A.TestofMight:GetAzeriteRank()))) then
+            if A.SweepingStrikes:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and (A.Bladestorm:GetCooldown() > 10 or A.ColossusSmash:GetCooldown() > 8 or bool(A.TestofMight:GetAzeriteRank()))) then
                 return A.SweepingStrikes:Show(icon)
             end
             -- run_action_list,name=hac,if=raid_event.adds.exists
-            if ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if ((MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 return Hac(unit);
             end
             -- run_action_list,name=five_target,if=spell_targets.whirlwind>4
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) > 4) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) > 4) then
                 return FiveUnitunit(unit);
             end
             -- run_action_list,name=execute,if=(talent.massacre.enabled&target.health.pct<35)|target.health.pct<20
@@ -509,7 +523,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -540,7 +554,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -591,5 +605,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

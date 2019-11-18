@@ -19,40 +19,58 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
-    HuntersMarkDebuff                      = Action.Create({Type = "Spell", ID = 257284 }),
-    HuntersMark                            = Action.Create({Type = "Spell", ID = 257284 }),
-    DoubleTap                              = Action.Create({Type = "Spell", ID = 260402 }),
-    TrueshotBuff                           = Action.Create({Type = "Spell", ID = 288613 }),
-    Trueshot                               = Action.Create({Type = "Spell", ID = 288613 }),
-    AimedShot                              = Action.Create({Type = "Spell", ID = 19434 }),
-    UnerringVisionBuff                     = Action.Create({Type = "Spell", ID = 274447 }),
-    UnerringVision                         = Action.Create({Type = "Spell", ID = 274444 }),
-    CallingtheShots                        = Action.Create({Type = "Spell", ID = 260404 }),
-    SurgingShots                           = Action.Create({Type = "Spell", ID = 287707 }),
-    Streamline                             = Action.Create({Type = "Spell", ID = 260367 }),
-    FocusedFire                            = Action.Create({Type = "Spell", ID = 278531 }),
-    RapidFire                              = Action.Create({Type = "Spell", ID = 257044 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    CarefulAim                             = Action.Create({Type = "Spell", ID = 260228 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    ExplosiveShot                          = Action.Create({Type = "Spell", ID = 212431 }),
-    Barrage                                = Action.Create({Type = "Spell", ID = 120360 }),
-    AMurderofCrows                         = Action.Create({Type = "Spell", ID = 131894 }),
-    SerpentSting                           = Action.Create({Type = "Spell", ID = 271788 }),
-    SerpentStingDebuff                     = Action.Create({Type = "Spell", ID = 271788 }),
-    ArcaneShot                             = Action.Create({Type = "Spell", ID = 185358 }),
-    MasterMarksmanBuff                     = Action.Create({Type = "Spell", ID = 269576 }),
-    PreciseShotsBuff                       = Action.Create({Type = "Spell", ID = 260242 }),
-    IntheRhythm                            = Action.Create({Type = "Spell", ID = 264198 }),
-    PiercingShot                           = Action.Create({Type = "Spell", ID = 198670 }),
-    SteadyShot                             = Action.Create({Type = "Spell", ID = 56641 }),
-    TrickShotsBuff                         = Action.Create({Type = "Spell", ID = 257622 }),
-    Multishot                              = Action.Create({Type = "Spell", ID = 257620 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    HuntersMarkDebuff                      = Action.Create({ Type = "Spell", ID = 257284 }),
+    HuntersMark                            = Action.Create({ Type = "Spell", ID = 257284 }),
+    DoubleTap                              = Action.Create({ Type = "Spell", ID = 260402 }),
+    TrueshotBuff                           = Action.Create({ Type = "Spell", ID = 288613 }),
+    Trueshot                               = Action.Create({ Type = "Spell", ID = 288613 }),
+    AimedShot                              = Action.Create({ Type = "Spell", ID = 19434 }),
+    UnerringVisionBuff                     = Action.Create({ Type = "Spell", ID = 274447 }),
+    UnerringVision                         = Action.Create({ Type = "Spell", ID = 274444 }),
+    CallingtheShots                        = Action.Create({ Type = "Spell", ID = 260404 }),
+    SurgingShots                           = Action.Create({ Type = "Spell", ID = 287707 }),
+    Streamline                             = Action.Create({ Type = "Spell", ID = 260367 }),
+    FocusedFire                            = Action.Create({ Type = "Spell", ID = 278531 }),
+    RapidFire                              = Action.Create({ Type = "Spell", ID = 257044 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    CarefulAim                             = Action.Create({ Type = "Spell", ID = 260228 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    ExplosiveShot                          = Action.Create({ Type = "Spell", ID = 212431 }),
+    Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    SerpentSting                           = Action.Create({ Type = "Spell", ID = 271788 }),
+    SerpentStingDebuff                     = Action.Create({ Type = "Spell", ID = 271788 }),
+    ArcaneShot                             = Action.Create({ Type = "Spell", ID = 185358 }),
+    MasterMarksmanBuff                     = Action.Create({ Type = "Spell", ID = 269576 }),
+    PreciseShotsBuff                       = Action.Create({ Type = "Spell", ID = 260242 }),
+    IntheRhythm                            = Action.Create({ Type = "Spell", ID = 264198 }),
+    PiercingShot                           = Action.Create({ Type = "Spell", ID = 198670 }),
+    SteadyShot                             = Action.Create({ Type = "Spell", ID = 56641 }),
+    TrickShotsBuff                         = Action.Create({ Type = "Spell", ID = 257622 }),
+    Multishot                              = Action.Create({ Type = "Spell", ID = 257620 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -65,6 +83,8 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -136,12 +156,6 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_MARKSMANSHIP], { __index = Act
 
 
 
-local EnemyRanges = {40}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -255,7 +269,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&ca_execute|target.time_to_die<25
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and bool(ca_execute) or Unit(unit):TimeToDie() < 25) then
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and bool(ca_execute) or Unit(unit):TimeToDie() < 25) then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- trueshot,if=cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|(target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
@@ -283,11 +297,11 @@ A[3] = function(icon, isMulti)
                 return A.SerpentSting:Show(icon)
             end
             -- rapid_fire,if=focus<50&(buff.bloodlust.up&buff.trueshot.up|buff.trueshot.down)
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)))) then
+            if A.RapidFire:IsReady(unit) and (Player:Focus() < 50 and (Unit("player"):HasHeroism and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)))) then
                 return A.RapidFire:Show(icon)
             end
             -- arcane_shot,if=buff.master_marksman.up&buff.trueshot.up&focus+cast_regen<focus.max
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.ArcaneShot:GetSpellCastTime) < Player:FocusMax()) then
                 return A.ArcaneShot:Show(icon)
             end
             -- aimed_shot,if=buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up
@@ -295,7 +309,7 @@ A[3] = function(icon, isMulti)
                 return A.AimedShot:Show(icon)
             end
             -- rapid_fire,if=focus+cast_regen<focus.max|azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled
-            if A.RapidFire:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Unit("player"):FocusMax() or bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned()) then
+            if A.RapidFire:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.RapidFire:GetSpellCastTime) < Player:FocusMax() or bool(A.FocusedFire:GetAzeriteRank()) or A.IntheRhythm:GetAzeriteRank() > 1 or bool(A.SurgingShots:GetAzeriteRank()) or A.Streamline:IsSpellLearned()) then
                 return A.RapidFire:Show(icon)
             end
             -- piercing_shot
@@ -303,7 +317,7 @@ A[3] = function(icon, isMulti)
                 return A.PiercingShot:Show(icon)
             end
             -- arcane_shot,if=focus>85|(buff.precise_shots.up|focus>45&cooldown.trueshot.remains&target.time_to_die<25)&buff.trueshot.down|target.time_to_die<5
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):Focus() > 85 or (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Unit("player"):Focus() > 45 and bool(A.Trueshot:GetCooldown()) and Unit(unit):TimeToDie() < 25) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+            if A.ArcaneShot:IsReady(unit) and (Player:Focus() > 85 or (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Player:Focus() > 45 and bool(A.Trueshot:GetCooldown()) and Unit(unit):TimeToDie() < 25) and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
                 return A.ArcaneShot:Show(icon)
             end
             -- steady_shot
@@ -335,7 +349,7 @@ A[3] = function(icon, isMulti)
                 return A.RapidFire:Show(icon)
             end
             -- multishot,if=buff.trick_shots.down|buff.precise_shots.up|focus>70
-            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Unit("player"):Focus() > 70) then
+            if A.Multishot:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) or Player:Focus() > 70) then
                 return A.Multishot:Show(icon)
             end
             -- piercing_shot
@@ -358,7 +372,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -384,7 +398,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -415,7 +429,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -466,5 +480,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

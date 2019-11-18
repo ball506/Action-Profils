@@ -19,31 +19,49 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_WARRIOR_PROTECTION] = {
-    ThunderClap                            = Action.Create({Type = "Spell", ID = 6343 }),
-    AvatarBuff                             = Action.Create({Type = "Spell", ID = 107574 }),
-    DemoralizingShout                      = Action.Create({Type = "Spell", ID = 1160 }),
-    BoomingVoice                           = Action.Create({Type = "Spell", ID = 202743 }),
-    AnimaofDeath                           = Action.Create({Type = "Spell", ID =  }),
-    LastStandBuff                          = Action.Create({Type = "Spell", ID =  }),
-    DragonRoar                             = Action.Create({Type = "Spell", ID = 118000 }),
-    Revenge                                = Action.Create({Type = "Spell", ID = 6572 }),
-    Ravager                                = Action.Create({Type = "Spell", ID = 228920 }),
-    ShieldBlock                            = Action.Create({Type = "Spell", ID = 2565 }),
-    ShieldSlam                             = Action.Create({Type = "Spell", ID = 23922 }),
-    ShieldBlockBuff                        = Action.Create({Type = "Spell", ID = 132404 }),
-    UnstoppableForce                       = Action.Create({Type = "Spell", ID = 275336 }),
-    Avatar                                 = Action.Create({Type = "Spell", ID = 107574 }),
-    Devastate                              = Action.Create({Type = "Spell", ID = 20243 }),
-    Intercept                              = Action.Create({Type = "Spell", ID = 198304 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    IgnorePain                             = Action.Create({Type = "Spell", ID = 190456 }),
-    TheCrucibleofFlame                     = Action.Create({Type = "Spell", ID =  }),
-    LastStand                              = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ThunderClap                            = Action.Create({ Type = "Spell", ID = 6343 }),
+    AvatarBuff                             = Action.Create({ Type = "Spell", ID = 107574 }),
+    DemoralizingShout                      = Action.Create({ Type = "Spell", ID = 1160 }),
+    BoomingVoice                           = Action.Create({ Type = "Spell", ID = 202743 }),
+    AnimaofDeath                           = Action.Create({ Type = "Spell", ID =  }),
+    LastStandBuff                          = Action.Create({ Type = "Spell", ID =  }),
+    DragonRoar                             = Action.Create({ Type = "Spell", ID = 118000 }),
+    Revenge                                = Action.Create({ Type = "Spell", ID = 6572 }),
+    Ravager                                = Action.Create({ Type = "Spell", ID = 228920 }),
+    ShieldBlock                            = Action.Create({ Type = "Spell", ID = 2565 }),
+    ShieldSlam                             = Action.Create({ Type = "Spell", ID = 23922 }),
+    ShieldBlockBuff                        = Action.Create({ Type = "Spell", ID = 132404 }),
+    UnstoppableForce                       = Action.Create({ Type = "Spell", ID = 275336 }),
+    Avatar                                 = Action.Create({ Type = "Spell", ID = 107574 }),
+    Devastate                              = Action.Create({ Type = "Spell", ID = 20243 }),
+    Intercept                              = Action.Create({ Type = "Spell", ID = 198304 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    IgnorePain                             = Action.Create({ Type = "Spell", ID = 190456 }),
+    TheCrucibleofFlame                     = Action.Create({ Type = "Spell", ID =  }),
+    LastStand                              = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -56,6 +74,8 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -127,12 +147,6 @@ local A = setmetatable(Action[ACTION_CONST_WARRIOR_PROTECTION], { __index = Acti
 
 
 
-local EnemyRanges = {5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -258,7 +272,7 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ThunderClap:Show(icon)
             end
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
@@ -287,7 +301,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
             if A.AshvanesRazorCoral:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, EvaluateCycleAshvanesRazorCoral82) then
+                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral82) then
                     return A.AshvanesRazorCoral:Show(icon) 
                 end
             end
@@ -323,7 +337,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -331,7 +345,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
             -- intercept,if=time=0
-            if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime == 0) then
+            if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime() == 0) then
                 return A.Intercept:Show(icon)
             end
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
@@ -364,7 +378,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-            if A.IgnorePain:IsReady(unit) and (Unit("player"):RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
+            if A.IgnorePain:IsReady(unit) and (Player:RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
                 return A.IgnorePain:Show(icon)
             end
             -- worldvein_resonance,if=cooldown.avatar.remains<=2
@@ -392,7 +406,7 @@ A[3] = function(icon, isMulti)
                 return A.Avatar:Show(icon)
             end
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3) then
                 return Aoe(unit);
             end
             -- call_action_list,name=st
@@ -405,7 +419,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -436,7 +450,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -487,5 +501,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

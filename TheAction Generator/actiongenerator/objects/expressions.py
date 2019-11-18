@@ -311,7 +311,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is spell_haste.
         """
-        return LuaExpression(self.player_unit, Method('SpellHaste'))
+        return Literal('Player:SpellHaste()')
 
     def set_bonus(self):
         """
@@ -396,7 +396,7 @@ class Expression(Decorable):
         """
         Return the condition when the prefix is gcd.
         """
-        return Literal('A.GetGCD()')  # GCD.build(self)
+        return GCD.build(self)
 
     def time(self):
         """
@@ -663,7 +663,7 @@ class Aura(Expires):
         Return the arguments for the expression {aura}.spell.stack.
         """
         if self.spell.simc == BLOODLUST:
-            self.method = Method('HasHeroism', type_=BOOL)
+            self.method = Method('HasHeroism()', type_=BOOL)
             self.args = []
         else:
             self.method = Method(f'Has{self.simc.print_lua()}sStacks')
@@ -835,7 +835,7 @@ class GCD(BuildExpression):
             call = condition.condition_list[1]
         else:
             call = 'value'
-        self.object_ = condition.player_unit
+        self.object_ = None
         self.method = None
         self.args = []
         super().__init__(call)
@@ -844,7 +844,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.remains.
         """
-        self.method = Method('GCDRemains')
+        self.method = Method('A.GetCurrentGCD()')
 
     def max(self):
         """
@@ -856,7 +856,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.
         """
-        self.method = Method('A.GetGCD')
+        self.method = Method('A.GetGCD()')
 
 
 class PMultiplier(BuildExpression):
@@ -901,7 +901,7 @@ class Time(BuildExpression):
         """
         Return the arguments for the expression time.
         """
-        self.method = Method('Unit("player"):CombatTime')
+        self.method = Method('Unit("player"):CombatTime()')
 
 
 class Artifact(BuildExpression):
@@ -1075,7 +1075,6 @@ class Buff(BuildExpression, Aura):
         call = condition.condition_list[2]
         super().__init__(call)
 
-
 class Cooldown(BuildExpression, Expires):
     """
     Represent the expression for a cooldown. condition.
@@ -1129,11 +1128,19 @@ class Essence(BuildExpression):
         """
         self.method = Method('IsSpellLearned()')
     
+    def minor(self):
+        """
+        Return the arguments for the expression essence.spell.major.
+        """
+        self.object_ = Literal('Azerite')
+        self.method = Method(f'EssenceHasMinor(A.{self.spell.lua_name()}.ID)')
+
     def major(self):
         """
         Return the arguments for the expression essence.spell.major.
         """
-        self.method = Method('EssenceIsMajorUseable()')
+        self.object_ = Literal('Azerite')
+        self.method = Method(f'EssenceHasMajor(A.{self.spell.lua_name()}.ID)')
 
     def rank(self):
         """

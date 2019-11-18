@@ -1,5 +1,5 @@
 local TMW                                   = TMW
-local Action								= Action
+local A     								= Action
 local TeamCache								= Action.TeamCache
 local EnemyTeam								= Action.EnemyTeam
 local FriendlyTeam							= Action.FriendlyTeam
@@ -12,6 +12,13 @@ local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetS
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib                                = LibStub("PetLibrary")
 local Unit                                  = Action.Unit 
+local EventFrame = CreateFrame("Frame", "Taste_EventFrame", UIParent)
+local Events = {} -- All Events
+local CombatEvents = {} -- Combat Log Unfiltered
+local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
+local PetCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PetGUID filter
+local PrefixCombatEvents = {}
+local SuffixCombatEvents = {}
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -141,9 +148,34 @@ function A.Player:AttackPower()
 end
 
 ------------------------------------
+--- HasHeroism simc reference
+------------------------------------
+local HeroismBuff = {
+    [1] = 90355, -- Ancient Hysteria
+    [2] = 92825, -- Bloodlust
+    [3] = 932182, -- Heroism
+    [4] = 9160452, -- Netherwinds
+    [5] = 980353, -- Time Warp
+    [6] = 9178207, -- Drums of Fury
+    [7] = 935475, -- Drums of War
+    [8] = 9230935, -- Drums of Montain
+    [9] = 9256740 -- Drums of Maelstrom
+}
+
+function Unit:HasHeroism()
+    for i = 1, #HeroismBuff do
+        local Buff = HeroismBuff[i]
+		if self:HasBuffs(HeroismBuff[i], true) then
+            return true
+        end
+    end
+    return false
+end
+
+------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
-function HasDeBuffsDown(spell, byID)
+function Unit:HasDeBuffsDown(spell, byID)
     local unit
     if A.IsUnitEnemy("mouseover") then 
         unit = "mouseover"
@@ -156,19 +188,31 @@ function HasDeBuffsDown(spell, byID)
 	    ID = true
 	end
 	
-    return (Unit(unit):HasDeBuffs(spell, ID) < 1 and true) or false
+    return (self:HasDeBuffs(spell, ID) == 0 and true) or false
 end
 
 ------------------------------------
 --- HasBuffsDown simc reference
 ------------------------------------
-function HasBuffsDown(spell, byID)
+function Unit:HasBuffsDown(spell, byID)
     ID = byID
 	if not ID then
 	    ID = true
 	end
 	
-    return (Unit("player"):HasBuffs(spell, ID) < 1 and true) or false
+    return (self:HasBuffs(spell, ID) == 0 and true) or false
+end
+
+------------------------------------
+--- HasDeBuffsRefreshable simc reference
+------------------------------------
+function Unit:HasDeBuffsRefreshable(spell, byID)
+    ID = byID
+	if not ID then
+	    ID = true
+	end
+	
+    return (self:HasDeBuffs(spell, ID) < 5 or self:HasBuffsDown(spell, ID) and true) or false
 end
 
 -------------------------------------------------------------------------------
@@ -207,6 +251,55 @@ if petClass == "WARLOCK" then
 	    30213, -- Legion Strike
 	    89751, --Felstorm
 	})
+end
+
+-------------------------------------------------------------------------------
+-- Event register
+-------------------------------------------------------------------------------
+-- Register a handler for an event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not Events[Event] then
+            Events[Event] = { Handler }
+            EventFrame:RegisterEvent(Event)
+        else
+            tableinsert(Events[Event], Handler)
+        end
+    end
+end
+
+-- Register a handler for a combat event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForCombatEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not CombatEvents[Event] then
+            CombatEvents[Event] = { Handler }
+        else
+            tableinsert(CombatEvents[Event], Handler)
+        end
+    end
+end
+
+-- Register a handler for a self combat event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForSelfCombatEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not SelfCombatEvents[Event] then
+            SelfCombatEvents[Event] = { Handler }
+        else
+            tableinsert(SelfCombatEvents[Event], Handler)
+        end
+    end
 end
 
 -------------------------------------------------------------------------------

@@ -113,6 +113,24 @@ class Context(Decorable):
             '-- Spells\n'
             f'Action[ACTION_CONST_{class_}_{spec}] = '
             '{\n'
+            '    -- Racial\n'
+            '    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),\n'
+            '    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),\n'
+            '    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),\n'
+            '    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),\n'
+            '    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),\n'
+            '    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),\n'
+            '    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),\n'
+            '    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), \n'
+            '    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),\n'
+            '    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  \n'  
+            '    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),\n'
+            '    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core \n'
+            '    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), \n'
+            '    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   \n' 
+            '    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it\n'
+            '    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it\n'
+            '    -- Generics\n'
             )
         for i, spell in enumerate(self.spells.values()):
             spell_id = str(self.player.spell_property(spell, spell.type_, ''))
@@ -142,15 +160,17 @@ class Context(Decorable):
             and not spell.lua_name() == 'CondensedLifeforce'
             and not spell.lua_name() == 'CyclotronicBlast'
             and not spell.lua_name() == 'Stealth'
-            and not spell.lua_name() == 'Stealth'			
-			"""
+            and not spell.lua_name() == 'MemoryofLucidDreamsBuff'			
+            and not spell.lua_name() == 'OutofRangeBuff'
+            and not spell.lua_name() == 'OutofRange'
+            """
 			Class Specifics
 			"""
             and not spell.lua_name() == 'RakeBleed'
 			):
                 lua_spells += (f'    {spell.lua_name():38} = '
                 'Action.Create('
-                '{Type = "Spell", '
+                '{ Type = "Spell", '
                 f'ID = {spell_id}{pet_str}'
                 ' })')
                 lua_spells += ',\n' if i < len(self.spells) - 1 else '\n'
@@ -167,6 +187,8 @@ class Context(Decorable):
             '    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), \n'
             '    -- Potions\n'
             '    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), \n' 
+            '    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), \n'    
+            '    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), \n' 
             '    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), \n'
             '    -- Trinkets\n'
             '    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),\n'
@@ -273,10 +295,9 @@ class Context(Decorable):
             )
             for var in self.variables.values():
                 lua_variables += f'local {var.lua_name()} = {var.default};\n'
-            lua_variables += f'\nA.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()\n'
+            lua_variables += f'\nA.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()\n'
             for var in self.variables.values():
                 lua_variables += f'  {var.lua_name()} = {var.default}\n'
-            lua_variables += f'	end \n'
             lua_variables += f'end)\n'
 			
         return lua_variables
@@ -301,12 +322,7 @@ class Context(Decorable):
         Print the custom code.
         """
         lua_ranges = ", ".join(str(r) for r in sorted(self.ranges, reverse=True))
-        return (f'local EnemyRanges = {{{lua_ranges}}}\n'
-                f'local function UpdateRanges()\n'
-                f'  for _, i in ipairs(EnemyRanges) do\n'
-                f'    HL.GetEnemies(i);\n'
-                f'  end\n'
-                f'end\n')
+        return ('')
 
     def print_settings(self):
         """

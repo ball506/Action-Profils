@@ -19,54 +19,72 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_ROGUE_SUBTLETY] = {
-    StealthBuff                            = Action.Create({Type = "Spell", ID = 1784 }),
-    MarkedForDeath                         = Action.Create({Type = "Spell", ID = 137619 }),
-    ShurikenStorm                          = Action.Create({Type = "Spell", ID = 197835 }),
-    Gloomblade                             = Action.Create({Type = "Spell", ID = 200758 }),
-    Perforate                              = Action.Create({Type = "Spell", ID =  }),
-    Backstab                               = Action.Create({Type = "Spell", ID = 53 }),
-    ShadowDance                            = Action.Create({Type = "Spell", ID = 185313 }),
-    ShadowDanceBuff                        = Action.Create({Type = "Spell", ID = 185313 }),
-    ShurikenTornadoBuff                    = Action.Create({Type = "Spell", ID =  }),
-    SymbolsofDeath                         = Action.Create({Type = "Spell", ID = 212283 }),
-    NightbladeDebuff                       = Action.Create({Type = "Spell", ID = 195452 }),
-    ShurikenTornado                        = Action.Create({Type = "Spell", ID =  }),
-    PoolResource                           = Action.Create({Type = "Spell", ID = 9999000010 }),
-    ShadowBlades                           = Action.Create({Type = "Spell", ID = 121471 }),
-    ShadowFocus                            = Action.Create({Type = "Spell", ID = 108209 }),
-    NightsVengeance                        = Action.Create({Type = "Spell", ID =  }),
-    NightsVengeanceBuff                    = Action.Create({Type = "Spell", ID =  }),
-    SymbolsofDeathBuff                     = Action.Create({Type = "Spell", ID = 212283 }),
-    Subterfuge                             = Action.Create({Type = "Spell", ID = 108208 }),
-    ShadowBladesBuff                       = Action.Create({Type = "Spell", ID = 121471 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    LifebloodBuff                          = Action.Create({Type = "Spell", ID = 295078 }),
-    Eviscerate                             = Action.Create({Type = "Spell", ID = 196819 }),
-    Nightblade                             = Action.Create({Type = "Spell", ID = 195452 }),
-    DarkShadow                             = Action.Create({Type = "Spell", ID = 245687 }),
-    ReplicatingShadows                     = Action.Create({Type = "Spell", ID =  }),
-    SecretTechnique                        = Action.Create({Type = "Spell", ID =  }),
-    Vanish                                 = Action.Create({Type = "Spell", ID = 1856 }),
-    FindWeaknessDebuff                     = Action.Create({Type = "Spell", ID =  }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    TheFirstDance                          = Action.Create({Type = "Spell", ID =  }),
-    Nightstalker                           = Action.Create({Type = "Spell", ID = 14062 }),
-    Shadowstrike                           = Action.Create({Type = "Spell", ID = 185438 }),
-    FindWeakness                           = Action.Create({Type = "Spell", ID =  }),
-    VanishBuff                             = Action.Create({Type = "Spell", ID = 1856 }),
-    DeeperStratagem                        = Action.Create({Type = "Spell", ID = 193531 }),
-    BladeIntheShadows                      = Action.Create({Type = "Spell", ID =  }),
-    Weaponmaster                           = Action.Create({Type = "Spell", ID =  }),
-    Inevitability                          = Action.Create({Type = "Spell", ID =  }),
-    Vigor                                  = Action.Create({Type = "Spell", ID = 14983 }),
-    MasterofShadows                        = Action.Create({Type = "Spell", ID =  }),
-    Alacrity                               = Action.Create({Type = "Spell", ID =  }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    StealthBuff                            = Action.Create({ Type = "Spell", ID = 1784 }),
+    MarkedForDeath                         = Action.Create({ Type = "Spell", ID = 137619 }),
+    ShurikenStorm                          = Action.Create({ Type = "Spell", ID = 197835 }),
+    Gloomblade                             = Action.Create({ Type = "Spell", ID = 200758 }),
+    Perforate                              = Action.Create({ Type = "Spell", ID =  }),
+    Backstab                               = Action.Create({ Type = "Spell", ID = 53 }),
+    ShadowDance                            = Action.Create({ Type = "Spell", ID = 185313 }),
+    ShadowDanceBuff                        = Action.Create({ Type = "Spell", ID = 185313 }),
+    ShurikenTornadoBuff                    = Action.Create({ Type = "Spell", ID =  }),
+    SymbolsofDeath                         = Action.Create({ Type = "Spell", ID = 212283 }),
+    NightbladeDebuff                       = Action.Create({ Type = "Spell", ID = 195452 }),
+    ShurikenTornado                        = Action.Create({ Type = "Spell", ID =  }),
+    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
+    ShadowBlades                           = Action.Create({ Type = "Spell", ID = 121471 }),
+    ShadowFocus                            = Action.Create({ Type = "Spell", ID = 108209 }),
+    NightsVengeance                        = Action.Create({ Type = "Spell", ID =  }),
+    NightsVengeanceBuff                    = Action.Create({ Type = "Spell", ID =  }),
+    SymbolsofDeathBuff                     = Action.Create({ Type = "Spell", ID = 212283 }),
+    Subterfuge                             = Action.Create({ Type = "Spell", ID = 108208 }),
+    ShadowBladesBuff                       = Action.Create({ Type = "Spell", ID = 121471 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    Eviscerate                             = Action.Create({ Type = "Spell", ID = 196819 }),
+    Nightblade                             = Action.Create({ Type = "Spell", ID = 195452 }),
+    DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687 }),
+    ReplicatingShadows                     = Action.Create({ Type = "Spell", ID =  }),
+    SecretTechnique                        = Action.Create({ Type = "Spell", ID =  }),
+    Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
+    FindWeaknessDebuff                     = Action.Create({ Type = "Spell", ID =  }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    TheFirstDance                          = Action.Create({ Type = "Spell", ID =  }),
+    Nightstalker                           = Action.Create({ Type = "Spell", ID = 14062 }),
+    Shadowstrike                           = Action.Create({ Type = "Spell", ID = 185438 }),
+    FindWeakness                           = Action.Create({ Type = "Spell", ID =  }),
+    VanishBuff                             = Action.Create({ Type = "Spell", ID = 1856 }),
+    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
+    BladeIntheShadows                      = Action.Create({ Type = "Spell", ID =  }),
+    Weaponmaster                           = Action.Create({ Type = "Spell", ID =  }),
+    Inevitability                          = Action.Create({ Type = "Spell", ID =  }),
+    Vigor                                  = Action.Create({ Type = "Spell", ID = 14983 }),
+    MasterofShadows                        = Action.Create({ Type = "Spell", ID =  }),
+    Alacrity                               = Action.Create({ Type = "Spell", ID =  }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -79,6 +97,8 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -157,20 +177,13 @@ local VarShdThreshold = 0;
 local VarShdComboPoints = 0;
 local VarStealthThreshold = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarUsePriorityRotation = 0
   VarShdThreshold = 0
   VarShdComboPoints = 0
   VarStealthThreshold = 0
-	end 
 end)
 
-local EnemyRanges = {40, 10}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -209,16 +222,16 @@ local function EvaluateTargetIfFilterMarkedForDeath81(unit)
 end
 
 local function EvaluateTargetIfMarkedForDeath86(unit)
-  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Unit("player"):ComboPointsDeficit() or not Unit("player"):IsStealthed(true, true) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend())
+  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Player:ComboPointsDeficit() or not Unit("player"):IsStealthed(true, true) and Player:ComboPointsDeficit() >= CPMaxSpend())
 end
 
 
 local function EvaluateCycleNightblade244(unit)
-  return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and (bool(A.NightsVengeance:GetAzeriteRank()) or not bool(A.ReplicatingShadows:GetAzeriteRank()) or MultiUnits:GetByRangeInCombat(40, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Unit("player"):ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
+  return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (bool(A.NightsVengeance:GetAzeriteRank()) or not bool(A.ReplicatingShadows:GetAzeriteRank()) or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
 end
 
 local function EvaluateCycleShadowstrike381(unit)
-  return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
+  return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
 end
 
 --- ======= ACTION LISTS =======
@@ -265,7 +278,7 @@ A[3] = function(icon, isMulti)
         --Build
         local function Build(unit)
             -- shuriken_storm,if=spell_targets>=2+(talent.gloomblade.enabled&azerite.perforate.rank>=2&position_back)
-            if A.ShurikenStorm:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 + num((A.Gloomblade:IsSpellLearned() and A.Perforate:GetAzeriteRank() >= 2 and bool(position_back)))) then
+            if A.ShurikenStorm:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 + num((A.Gloomblade:IsSpellLearned() and A.Perforate:GetAzeriteRank() >= 2 and bool(position_back)))) then
                 return A.ShurikenStorm:Show(icon)
             end
             -- gloomblade
@@ -294,7 +307,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1,if=!talent.shadow_focus.enabled
             -- shuriken_tornado,if=energy>=60&dot.nightblade.ticking&cooldown.symbols_of_death.up&cooldown.shadow_dance.charges>=1
-            if A.ShurikenTornado:IsReady(unit) and (Unit("player"):EnergyPredicted() >= 60 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
+            if A.ShurikenTornado:IsReady(unit) and (Player:EnergyPredicted() >= 60 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and A.SymbolsofDeath:GetCooldown() == 0 and A.ShadowDance:ChargesP() >= 1) then
                 if A.ShurikenTornado:IsUsablePPool() then
                     return A.ShurikenTornado:Show(icon)
                 else
@@ -302,7 +315,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- symbols_of_death,if=dot.nightblade.ticking&!cooldown.shadow_blades.up&(!talent.shuriken_tornado.enabled|talent.shadow_focus.enabled|cooldown.shuriken_tornado.remains>2)&(!essence.blood_of_the_enemy.major|cooldown.blood_of_the_enemy.remains>2)&(azerite.nights_vengeance.rank<2|buff.nights_vengeance.up)
-            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not bool(A.BloodoftheEnemy:EssenceIsMajorUseable()) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
+            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
                 return A.SymbolsofDeath:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.all&combo_points.deficit>=cp_max_spend)
@@ -312,11 +325,11 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.all&combo_points.deficit>=cp_max_spend
-            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthed(true, true) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend()) then
+            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthed(true, true) and Player:ComboPointsDeficit() >= CPMaxSpend()) then
                 return A.MarkedForDeath:Show(icon)
             end
             -- shadow_blades,if=!stealthed.all&dot.nightblade.ticking&combo_points.deficit>=2
-            if A.ShadowBlades:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):ComboPointsDeficit() >= 2) then
+            if A.ShadowBlades:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Player:ComboPointsDeficit() >= 2) then
                 return A.ShadowBlades:Show(icon)
             end
             -- shuriken_tornado,if=talent.shadow_focus.enabled&dot.nightblade.ticking&buff.symbols_of_death.up
@@ -328,7 +341,7 @@ A[3] = function(icon, isMulti)
                 return A.ShadowDance:Show(icon)
             end
             -- potion,if=buff.bloodlust.react|buff.symbols_of_death.up&(buff.shadow_blades.up|cooldown.shadow_blades.remains<=10)
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (Unit("player"):HasBuffs(A.ShadowBladesBuff.ID, true) or A.ShadowBlades:GetCooldown() <= 10)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (Unit("player"):HasBuffs(A.ShadowBladesBuff.ID, true) or A.ShadowBlades:GetCooldown() <= 10)) then
                 A.ProlongedPower:Show(icon)
             end
             -- blood_fury,if=buff.symbols_of_death.up
@@ -348,7 +361,7 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&dot.nightblade.ticking&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
+            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Player:EnergyDeficitPredicted() >= 30) then
                 A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.shadow_dance.up&cooldown.symbols_of_death.remains<10
@@ -369,7 +382,7 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.symbols_of_death.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=!cooldown.shadow_blades.up&cooldown.symbols_of_death.up|target.time_to_die<=10
@@ -381,11 +394,11 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=(spell_targets.shuriken_storm>=2|raid_event.adds.in>60)&!cooldown.symbols_of_death.up&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) and not A.SymbolsofDeath:GetCooldown() == 0 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Unit("player"):EnergyDeficitPredicted() >= 30) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60) and not A.SymbolsofDeath:GetCooldown() == 0 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Player:EnergyDeficitPredicted() >= 30) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.shuriken_storm>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
@@ -401,7 +414,7 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<40&buff.symbols_of_death.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -423,7 +436,7 @@ A[3] = function(icon, isMulti)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
             if A.Nightblade:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Nightblade, 40, EvaluateCycleNightblade244) then
+                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade244) then
                     return A.Nightblade:Show(icon) 
                 end
             end
@@ -448,12 +461,12 @@ A[3] = function(icon, isMulti)
                 VarShdThreshold = num(A.ShadowDance:ChargesFractionalP() >= 1.75)
             end
             -- vanish,if=!variable.shd_threshold&combo_points.deficit>1&debuff.find_weakness.remains<1&cooldown.symbols_of_death.remains>=3
-            if A.Vanish:IsReady(unit) and (not bool(VarShdThreshold) and Unit("player"):ComboPointsDeficit() > 1 and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and A.SymbolsofDeath:GetCooldown() >= 3) then
+            if A.Vanish:IsReady(unit) and (not bool(VarShdThreshold) and Player:ComboPointsDeficit() > 1 and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and A.SymbolsofDeath:GetCooldown() >= 3) then
                 return A.Vanish:Show(icon)
             end
             -- pool_resource,for_next=1,extra_amount=40
             -- shadowmeld,if=energy>=40&energy.deficit>=10&!variable.shd_threshold&combo_points.deficit>1&debuff.find_weakness.remains<1
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyPredicted() >= 40 and Unit("player"):EnergyDeficitPredicted() >= 10 and not bool(VarShdThreshold) and Unit("player"):ComboPointsDeficit() > 1 and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1) then
+            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 40 and Player:EnergyDeficitPredicted() >= 10 and not bool(VarShdThreshold) and Player:ComboPointsDeficit() > 1 and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1) then
                 if A.Shadowmeld:IsUsablePPool(40) then
                     return A.Shadowmeld:Show(icon)
                 else
@@ -462,14 +475,14 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=shd_combo_points,value=combo_points.deficit>=4
             if (true) then
-                VarShdComboPoints = num(Unit("player"):ComboPointsDeficit() >= 4)
+                VarShdComboPoints = num(Player:ComboPointsDeficit() >= 4)
             end
             -- variable,name=shd_combo_points,value=combo_points.deficit<=1+2*azerite.the_first_dance.enabled,if=variable.use_priority_rotation&(talent.nightstalker.enabled|talent.dark_shadow.enabled)
             if (bool(VarUsePriorityRotation) and (A.Nightstalker:IsSpellLearned() or A.DarkShadow:IsSpellLearned())) then
-                VarShdComboPoints = num(Unit("player"):ComboPointsDeficit() <= 1 + 2 * A.TheFirstDance:GetAzeriteRank())
+                VarShdComboPoints = num(Player:ComboPointsDeficit() <= 1 + 2 * A.TheFirstDance:GetAzeriteRank())
             end
             -- shadow_dance,if=variable.shd_combo_points&(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets.shuriken_storm>=4&cooldown.symbols_of_death.remains>10)&(azerite.nights_vengeance.rank<2|buff.nights_vengeance.up)
-            if A.ShadowDance:IsReady(unit) and (bool(VarShdComboPoints) and (not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (bool(VarShdThreshold) or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) >= 1.2 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
+            if A.ShadowDance:IsReady(unit) and (bool(VarShdComboPoints) and (not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (bool(VarShdThreshold) or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) >= 1.2 or MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
                 return A.ShadowDance:Show(icon)
             end
             -- shadow_dance,if=variable.shd_combo_points&target.time_to_die<cooldown.symbols_of_death.remains&!raid_event.adds.up
@@ -481,41 +494,41 @@ A[3] = function(icon, isMulti)
         --Stealthed
         local function Stealthed(unit)
             -- shadowstrike,if=(talent.find_weakness.enabled|spell_targets.shuriken_storm<3)&(buff.stealth.up|buff.vanish.up)
-            if A.Shadowstrike:IsReady(unit) and ((A.FindWeakness:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) and (Unit("player"):HasBuffs(A.StealthBuff.ID, true) or Unit("player"):HasBuffs(A.VanishBuff.ID, true))) then
+            if A.Shadowstrike:IsReady(unit) and ((A.FindWeakness:IsSpellLearned() or MultiUnits:GetByRangeInCombat(10, 5, 10) < 3) and (Unit("player"):HasBuffs(A.StealthBuff.ID, true) or Unit("player"):HasBuffs(A.VanishBuff.ID, true))) then
                 return A.Shadowstrike:Show(icon)
             end
             -- call_action_list,name=finish,if=buff.shuriken_tornado.up&combo_points.deficit<=2
-            if (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) and Unit("player"):ComboPointsDeficit() <= 2) then
+            if (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) and Player:ComboPointsDeficit() <= 2) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=finish,if=spell_targets.shuriken_storm=4&combo_points>=4
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) == 4 and Unit("player"):ComboPoints() >= 4) then
+            if (MultiUnits:GetByRangeInCombat(10, 5, 10) == 4 and Player:ComboPoints() >= 4) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=finish,if=combo_points.deficit<=1-(talent.deeper_stratagem.enabled&(buff.vanish.up|azerite.the_first_dance.enabled&!talent.dark_shadow.enabled&!talent.subterfuge.enabled&spell_targets.shuriken_storm<3))
-            if (Unit("player"):ComboPointsDeficit() <= 1 - num((A.DeeperStratagem:IsSpellLearned() and (Unit("player"):HasBuffs(A.VanishBuff.ID, true) or bool(A.TheFirstDance:GetAzeriteRank()) and not A.DarkShadow:IsSpellLearned() and not A.Subterfuge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3)))) then
+            if (Player:ComboPointsDeficit() <= 1 - num((A.DeeperStratagem:IsSpellLearned() and (Unit("player"):HasBuffs(A.VanishBuff.ID, true) or bool(A.TheFirstDance:GetAzeriteRank()) and not A.DarkShadow:IsSpellLearned() and not A.Subterfuge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(10, 5, 10) < 3)))) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- gloomblade,if=azerite.perforate.rank>=2&spell_targets.shuriken_storm<=2&position_back
-            if A.Gloomblade:IsReady(unit) and (A.Perforate:GetAzeriteRank() >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2 and bool(position_back)) then
+            if A.Gloomblade:IsReady(unit) and (A.Perforate:GetAzeriteRank() >= 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 2 and bool(position_back)) then
                 return A.Gloomblade:Show(icon)
             end
             -- shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
             if A.Shadowstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, EvaluateCycleShadowstrike381) then
+                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike381) then
                     return A.Shadowstrike:Show(icon) 
                 end
             end
             -- shadowstrike,if=!talent.deeper_stratagem.enabled&azerite.blade_in_the_shadows.rank=3&spell_targets.shuriken_storm=3
-            if A.Shadowstrike:IsReady(unit) and (not A.DeeperStratagem:IsSpellLearned() and A.BladeIntheShadows:GetAzeriteRank() == 3 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3) then
+            if A.Shadowstrike:IsReady(unit) and (not A.DeeperStratagem:IsSpellLearned() and A.BladeIntheShadows:GetAzeriteRank() == 3 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 3) then
                 return A.Shadowstrike:Show(icon)
             end
             -- shadowstrike,if=variable.use_priority_rotation&(talent.find_weakness.enabled&debuff.find_weakness.remains<1|talent.weaponmaster.enabled&spell_targets.shuriken_storm<=4|azerite.inevitability.enabled&buff.symbols_of_death.up&spell_targets.shuriken_storm<=3+azerite.blade_in_the_shadows.enabled)
-            if A.Shadowstrike:IsReady(unit) and (bool(VarUsePriorityRotation) and (A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 or A.Weaponmaster:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4 or bool(A.Inevitability:GetAzeriteRank()) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 + A.BladeIntheShadows:GetAzeriteRank())) then
+            if A.Shadowstrike:IsReady(unit) and (bool(VarUsePriorityRotation) and (A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 or A.Weaponmaster:IsSpellLearned() and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 4 or bool(A.Inevitability:GetAzeriteRank()) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 3 + A.BladeIntheShadows:GetAzeriteRank())) then
                 return A.Shadowstrike:Show(icon)
             end
             -- shuriken_storm,if=spell_targets>=3
-            if A.ShurikenStorm:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.ShurikenStorm:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3) then
                 return A.ShurikenStorm:Show(icon)
             end
             -- shadowstrike
@@ -526,7 +539,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -545,12 +558,12 @@ A[3] = function(icon, isMulti)
                 return Stealthed(unit);
             end
             -- nightblade,if=target.time_to_die>6&remains<gcd.max&combo_points>=4-(time<10)*2
-            if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.GetGCD() and Unit("player"):ComboPoints() >= 4 - num((Unit("player"):CombatTime < 10)) * 2) then
+            if A.Nightblade:IsReady(unit) and (Unit(unit):TimeToDie() > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.GetGCD() and Player:ComboPoints() >= 4 - num((Unit("player"):CombatTime() < 10)) * 2) then
                 return A.Nightblade:Show(icon)
             end
             -- variable,name=use_priority_rotation,value=priority_rotation&spell_targets.shuriken_storm>=2
             if (true) then
-                VarUsePriorityRotation = num(bool(priority_rotation) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2)
+                VarUsePriorityRotation = num(bool(priority_rotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2)
             end
             -- call_action_list,name=stealth_cds,if=variable.use_priority_rotation
             if (bool(VarUsePriorityRotation)) then
@@ -558,30 +571,30 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=stealth_threshold,value=25+talent.vigor.enabled*35+talent.master_of_shadows.enabled*25+talent.shadow_focus.enabled*20+talent.alacrity.enabled*10+15*(spell_targets.shuriken_storm>=3)
             if (true) then
-                VarStealthThreshold = 25 + num(A.Vigor:IsSpellLearned()) * 35 + num(A.MasterofShadows:IsSpellLearned()) * 25 + num(A.ShadowFocus:IsSpellLearned()) * 20 + num(A.Alacrity:IsSpellLearned()) * 10 + 15 * num((MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3))
+                VarStealthThreshold = 25 + num(A.Vigor:IsSpellLearned()) * 35 + num(A.MasterofShadows:IsSpellLearned()) * 25 + num(A.ShadowFocus:IsSpellLearned()) * 20 + num(A.Alacrity:IsSpellLearned()) * 10 + 15 * num((MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3))
             end
             -- call_action_list,name=stealth_cds,if=energy.deficit<=variable.stealth_threshold
-            if (Unit("player"):EnergyDeficitPredicted() <= VarStealthThreshold) then
+            if (Player:EnergyDeficitPredicted() <= VarStealthThreshold) then
                 local ShouldReturn = StealthCds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- nightblade,if=azerite.nights_vengeance.enabled&!buff.nights_vengeance.up&combo_points.deficit>1&(spell_targets.shuriken_storm<2|variable.use_priority_rotation)&(cooldown.symbols_of_death.remains<=3|(azerite.nights_vengeance.rank>=2&buff.symbols_of_death.remains>3&!stealthed.all&cooldown.shadow_dance.charges_fractional>=0.9))
-            if A.Nightblade:IsReady(unit) and (bool(A.NightsVengeance:GetAzeriteRank()) and not Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true) and Unit("player"):ComboPointsDeficit() > 1 and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or bool(VarUsePriorityRotation)) and (A.SymbolsofDeath:GetCooldown() <= 3 or (A.NightsVengeance:GetAzeriteRank() >= 2 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) > 3 and not Unit("player"):IsStealthed(true, true) and A.ShadowDance:ChargesFractionalP() >= 0.9))) then
+            if A.Nightblade:IsReady(unit) and (bool(A.NightsVengeance:GetAzeriteRank()) and not Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true) and Player:ComboPointsDeficit() > 1 and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or bool(VarUsePriorityRotation)) and (A.SymbolsofDeath:GetCooldown() <= 3 or (A.NightsVengeance:GetAzeriteRank() >= 2 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) > 3 and not Unit("player"):IsStealthed(true, true) and A.ShadowDance:ChargesFractionalP() >= 0.9))) then
                 return A.Nightblade:Show(icon)
             end
             -- call_action_list,name=finish,if=combo_points.deficit<=1|target.time_to_die<=1&combo_points>=3
-            if (Unit("player"):ComboPointsDeficit() <= 1 or Unit(unit):TimeToDie() <= 1 and Unit("player"):ComboPoints() >= 3) then
+            if (Player:ComboPointsDeficit() <= 1 or Unit(unit):TimeToDie() <= 1 and Player:ComboPoints() >= 3) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=finish,if=spell_targets.shuriken_storm=4&combo_points>=4
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) == 4 and Unit("player"):ComboPoints() >= 4) then
+            if (MultiUnits:GetByRangeInCombat(10, 5, 10) == 4 and Player:ComboPoints() >= 4) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=build,if=energy.deficit<=variable.stealth_threshold
-            if (Unit("player"):EnergyDeficitPredicted() <= VarStealthThreshold) then
+            if (Player:EnergyDeficitPredicted() <= VarStealthThreshold) then
                 local ShouldReturn = Build(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- arcane_torrent,if=energy.deficit>=15+energy.regen
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyDeficitPredicted() >= 15 + Unit("player"):EnergyRegen()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- arcane_pulse
@@ -598,7 +611,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -629,7 +642,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -680,5 +693,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

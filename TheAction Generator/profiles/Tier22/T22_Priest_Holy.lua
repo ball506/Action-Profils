@@ -19,19 +19,37 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_PRIEST_HOLY] = {
-    Smite                                  = Action.Create({Type = "Spell", ID =  }),
-    HolyFire                               = Action.Create({Type = "Spell", ID =  }),
-    HolyFireDebuff                         = Action.Create({Type = "Spell", ID =  }),
-    HolyWordChastise                       = Action.Create({Type = "Spell", ID =  }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    DivineStar                             = Action.Create({Type = "Spell", ID =  }),
-    Halo                                   = Action.Create({Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
-    HolyNova                               = Action.Create({Type = "Spell", ID =  }),
-    Apotheosis                             = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    Smite                                  = Action.Create({ Type = "Spell", ID =  }),
+    HolyFire                               = Action.Create({ Type = "Spell", ID =  }),
+    HolyFireDebuff                         = Action.Create({ Type = "Spell", ID =  }),
+    HolyWordChastise                       = Action.Create({ Type = "Spell", ID =  }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    DivineStar                             = Action.Create({ Type = "Spell", ID =  }),
+    Halo                                   = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    HolyNova                               = Action.Create({ Type = "Spell", ID =  }),
+    Apotheosis                             = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -44,6 +62,8 @@ Action[ACTION_CONST_PRIEST_HOLY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -115,12 +135,6 @@ local A = setmetatable(Action[ACTION_CONST_PRIEST_HOLY], { __index = Action })
 
 
 
-local EnemyRanges = {40, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -189,7 +203,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -197,19 +211,19 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- use_items
             -- potion,if=buff.bloodlust.react|(raid_event.adds.up&(raid_event.adds.remains>20|raid_event.adds.duration<20))|target.time_to_die<=30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (0 > 20 or raid_event.adds.duration < 20)) or Unit(unit):TimeToDie() <= 30) then
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (0 > 20 or raid_event.adds.duration < 20)) or Unit(unit):TimeToDie() <= 30) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.remains<=gcd|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) <= A.GetGCD() or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_word_chastise,if=spell_targets.holy_nova<5
-            if A.HolyWordChastise:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.HolyWordChastise:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) < 5) then
                 return A.HolyWordChastise:Show(icon)
             end
             -- holy_fire,if=dot.holy_fire.ticking&(dot.holy_fire.refreshable|dot.holy_fire.stack<2)&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and (Unit(unit):HasDeBuffsRefreshable(A.HolyFireDebuff.ID, true) or Unit(unit):HasDeBuffsStacks(A.HolyFireDebuff.ID, true) < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- berserking,if=raid_event.adds.in>30|raid_event.adds.remains>8|raid_event.adds.duration<8
@@ -225,11 +239,11 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- divine_star,if=(raid_event.adds.in>5|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.divine_star>1
-            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 1) then
                 return A.DivineStar:Show(icon)
             end
             -- halo,if=(raid_event.adds.in>14|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.halo>0
-            if A.Halo:IsReady(unit) and ((10000000000 > 14 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.Halo:IsReady(unit) and ((10000000000 > 14 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.Halo:Show(icon)
             end
             -- lights_judgment,if=raid_event.adds.in>50|raid_event.adds.remains>4|raid_event.adds.duration<4
@@ -237,15 +251,15 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- arcane_pulse,if=(raid_event.adds.in>40|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.arcane_pulse>2
-            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and ((10000000000 > 40 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 2) then
                 return A.ArcanePulse:Show(icon)
             end
             -- holy_fire,if=!dot.holy_fire.ticking&spell_targets.holy_nova<7
-            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 7) then
+            if A.HolyFire:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.HolyFireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 7) then
                 return A.HolyFire:Show(icon)
             end
             -- holy_nova,if=spell_targets.holy_nova>3
-            if A.HolyNova:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+            if A.HolyNova:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) > 3) then
                 return A.HolyNova:Show(icon)
             end
             -- apotheosis,if=active_enemies<5&(raid_event.adds.in>15|raid_event.adds.in>raid_event.adds.cooldown-5)
@@ -261,11 +275,11 @@ A[3] = function(icon, isMulti)
                 return A.HolyFire:Show(icon)
             end
             -- divine_star,if=(raid_event.adds.in>5|raid_event.adds.remains>2|raid_event.adds.duration<2)&spell_targets.divine_star>0
-            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.DivineStar:IsReady(unit) and ((10000000000 > 5 or 0 > 2 or raid_event.adds.duration < 2) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.DivineStar:Show(icon)
             end
             -- holy_nova,if=raid_event.movement.remains>gcd*0.3&spell_targets.holy_nova>0
-            if A.HolyNova:IsReady(unit) and (raid_event.movement.remains > A.GetGCD() * 0.3 and MultiUnits:GetByRangeInCombat(40, 5, 10) > 0) then
+            if A.HolyNova:IsReady(unit) and (raid_event.movement.remains > A.GetGCD() * 0.3 and MultiUnits:GetByRangeInCombat(5, 5, 10) > 0) then
                 return A.HolyNova:Show(icon)
             end
         end
@@ -274,7 +288,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -305,7 +319,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -356,5 +370,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

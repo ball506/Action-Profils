@@ -19,43 +19,61 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_MAGE_ARCANE] = {
-    ArcaneIntellectBuff                    = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneIntellect                        = Action.Create({Type = "Spell", ID = 1459 }),
-    ArcaneFamiliarBuff                     = Action.Create({Type = "Spell", ID = 210126 }),
-    ArcaneFamiliar                         = Action.Create({Type = "Spell", ID = 205022 }),
-    Equipoise                              = Action.Create({Type = "Spell", ID = 286027 }),
-    MirrorImage                            = Action.Create({Type = "Spell", ID = 55342 }),
-    ArcaneBlast                            = Action.Create({Type = "Spell", ID = 30451 }),
-    Evocation                              = Action.Create({Type = "Spell", ID = 12051 }),
-    ChargedUp                              = Action.Create({Type = "Spell", ID = 205032 }),
-    ArcaneChargeBuff                       = Action.Create({Type = "Spell", ID = 36032 }),
-    NetherTempest                          = Action.Create({Type = "Spell", ID = 114923 }),
-    NetherTempestDebuff                    = Action.Create({Type = "Spell", ID = 114923 }),
-    RuneofPowerBuff                        = Action.Create({Type = "Spell", ID = 116014 }),
-    ArcanePowerBuff                        = Action.Create({Type = "Spell", ID = 12042 }),
-    RuleofThreesBuff                       = Action.Create({Type = "Spell", ID = 264774 }),
-    Overpowered                            = Action.Create({Type = "Spell", ID = 155147 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    RuneofPower                            = Action.Create({Type = "Spell", ID = 116011 }),
-    ArcanePower                            = Action.Create({Type = "Spell", ID = 12042 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    PresenceofMind                         = Action.Create({Type = "Spell", ID = 205025 }),
-    PresenceofMindBuff                     = Action.Create({Type = "Spell", ID = 205025 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    ArcaneOrb                              = Action.Create({Type = "Spell", ID = 153626 }),
-    Resonance                              = Action.Create({Type = "Spell", ID = 205028 }),
-    ArcaneBarrage                          = Action.Create({Type = "Spell", ID = 44425 }),
-    ArcaneExplosion                        = Action.Create({Type = "Spell", ID = 1449 }),
-    ArcaneMissiles                         = Action.Create({Type = "Spell", ID = 5143 }),
-    ClearcastingBuff                       = Action.Create({Type = "Spell", ID = 263725 }),
-    Amplification                          = Action.Create({Type = "Spell", ID = 236628 }),
-    ArcanePummeling                        = Action.Create({Type = "Spell", ID = 270669 }),
-    Supernova                              = Action.Create({Type = "Spell", ID = 157980 }),
-    BlinkAny                               = Action.Create({Type = "Spell", ID =  })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    ArcaneIntellectBuff                    = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneIntellect                        = Action.Create({ Type = "Spell", ID = 1459 }),
+    ArcaneFamiliarBuff                     = Action.Create({ Type = "Spell", ID = 210126 }),
+    ArcaneFamiliar                         = Action.Create({ Type = "Spell", ID = 205022 }),
+    Equipoise                              = Action.Create({ Type = "Spell", ID = 286027 }),
+    MirrorImage                            = Action.Create({ Type = "Spell", ID = 55342 }),
+    ArcaneBlast                            = Action.Create({ Type = "Spell", ID = 30451 }),
+    Evocation                              = Action.Create({ Type = "Spell", ID = 12051 }),
+    ChargedUp                              = Action.Create({ Type = "Spell", ID = 205032 }),
+    ArcaneChargeBuff                       = Action.Create({ Type = "Spell", ID = 36032 }),
+    NetherTempest                          = Action.Create({ Type = "Spell", ID = 114923 }),
+    NetherTempestDebuff                    = Action.Create({ Type = "Spell", ID = 114923 }),
+    RuneofPowerBuff                        = Action.Create({ Type = "Spell", ID = 116014 }),
+    ArcanePowerBuff                        = Action.Create({ Type = "Spell", ID = 12042 }),
+    RuleofThreesBuff                       = Action.Create({ Type = "Spell", ID = 264774 }),
+    Overpowered                            = Action.Create({ Type = "Spell", ID = 155147 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
+    ArcanePower                            = Action.Create({ Type = "Spell", ID = 12042 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    PresenceofMind                         = Action.Create({ Type = "Spell", ID = 205025 }),
+    PresenceofMindBuff                     = Action.Create({ Type = "Spell", ID = 205025 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    ArcaneOrb                              = Action.Create({ Type = "Spell", ID = 153626 }),
+    Resonance                              = Action.Create({ Type = "Spell", ID = 205028 }),
+    ArcaneBarrage                          = Action.Create({ Type = "Spell", ID = 44425 }),
+    ArcaneExplosion                        = Action.Create({ Type = "Spell", ID = 1449 }),
+    ArcaneMissiles                         = Action.Create({ Type = "Spell", ID = 5143 }),
+    ClearcastingBuff                       = Action.Create({ Type = "Spell", ID = 263725 }),
+    Amplification                          = Action.Create({ Type = "Spell", ID = 236628 }),
+    ArcanePummeling                        = Action.Create({ Type = "Spell", ID = 270669 }),
+    Supernova                              = Action.Create({ Type = "Spell", ID = 157980 }),
+    BlinkAny                               = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -68,6 +86,8 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -145,19 +165,12 @@ local VarConserveMana = 0;
 local VarTotalBurns = 0;
 local VarAverageBurnLength = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarConserveMana = 0
   VarTotalBurns = 0
   VarAverageBurnLength = 0
-	end 
 end)
 
-local EnemyRanges = {40, 10}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -320,7 +333,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- rune_of_power,if=!buff.arcane_power.up&(mana.pct>=50|cooldown.arcane_power.remains=0)&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
-            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Unit("player"):ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
+            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Player:ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
                 return A.RuneofPower:Show(icon)
             end
             -- berserking
@@ -361,7 +374,7 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneBarrage:Show(icon)
             end
             -- arcane_explosion,if=active_enemies>=3
-            if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+            if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3) then
                 return A.ArcaneExplosion:Show(icon)
             end
             -- arcane_missiles,if=buff.clearcasting.react&active_enemies<3&(talent.amplification.enabled|(!talent.overpowered.enabled&azerite.arcane_pummeling.rank>=2)|buff.arcane_power.down),chain=1
@@ -417,19 +430,19 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- arcane_missiles,if=mana.pct<=95&buff.clearcasting.react&active_enemies<3,chain=1
-            if A.ArcaneMissiles:IsReady(unit) and (Unit("player"):ManaPercentageP() <= 95 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
+            if A.ArcaneMissiles:IsReady(unit) and (Player:ManaPercentageP() <= 95 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneMissiles:Show(icon)
             end
             -- arcane_barrage,if=((buff.arcane_charge.stack=buff.arcane_charge.max_stack)&((mana.pct<=variable.conserve_mana)|(talent.rune_of_power.enabled&cooldown.arcane_power.remains>cooldown.rune_of_power.full_recharge_time&mana.pct<=variable.conserve_mana+25))|(talent.arcane_orb.enabled&cooldown.arcane_orb.remains<=gcd&cooldown.arcane_power.remains>10))|mana.pct<=(variable.conserve_mana-10)
-            if A.ArcaneBarrage:IsReady(unit) and (((Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax) and ((Unit("player"):ManaPercentageP() <= VarConserveMana) or (A.RuneofPower:IsSpellLearned() and A.ArcanePower:GetCooldown() > A.RuneofPower:FullRechargeTimeP() and Unit("player"):ManaPercentageP() <= VarConserveMana + 25)) or (A.ArcaneOrb:IsSpellLearned() and A.ArcaneOrb:GetCooldown() <= A.GetGCD() and A.ArcanePower:GetCooldown() > 10)) or Unit("player"):ManaPercentageP() <= (VarConserveMana - 10)) then
+            if A.ArcaneBarrage:IsReady(unit) and (((Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax) and ((Player:ManaPercentageP() <= VarConserveMana) or (A.RuneofPower:IsSpellLearned() and A.ArcanePower:GetCooldown() > A.RuneofPower:FullRechargeTimeP() and Player:ManaPercentageP() <= VarConserveMana + 25)) or (A.ArcaneOrb:IsSpellLearned() and A.ArcaneOrb:GetCooldown() <= A.GetGCD() and A.ArcanePower:GetCooldown() > 10)) or Player:ManaPercentageP() <= (VarConserveMana - 10)) then
                 return A.ArcaneBarrage:Show(icon)
             end
             -- supernova,if=mana.pct<=95
-            if A.Supernova:IsReady(unit) and (Unit("player"):ManaPercentageP() <= 95) then
+            if A.Supernova:IsReady(unit) and (Player:ManaPercentageP() <= 95) then
                 return A.Supernova:Show(icon)
             end
             -- arcane_explosion,if=active_enemies>=3&(mana.pct>=variable.conserve_mana|buff.arcane_charge.stack=3)
-            if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and (Unit("player"):ManaPercentageP() >= VarConserveMana or Unit("player"):ArcaneChargesP == 3)) then
+            if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 and (Player:ManaPercentageP() >= VarConserveMana or Unit("player"):ArcaneChargesP == 3)) then
                 return A.ArcaneExplosion:Show(icon)
             end
             -- arcane_blast
@@ -496,7 +509,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -527,7 +540,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -578,5 +591,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

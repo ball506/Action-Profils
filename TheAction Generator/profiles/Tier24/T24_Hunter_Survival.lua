@@ -19,49 +19,66 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_HUNTER_SURVIVAL] = {
-    SummonPet                              = Action.Create({Type = "Spell", ID = 883 }),
-    SteelTrapDebuff                        = Action.Create({Type = "Spell", ID = 162487 }),
-    SteelTrap                              = Action.Create({Type = "Spell", ID = 162488 }),
-    Harpoon                                = Action.Create({Type = "Spell", ID = 190925 }),
-    MongooseBite                           = Action.Create({Type = "Spell", ID = 259387 }),
-    CoordinatedAssaultBuff                 = Action.Create({Type = "Spell", ID = 266779 }),
-    BlurofTalonsBuff                       = Action.Create({Type = "Spell", ID = 277969 }),
-    RaptorStrike                           = Action.Create({Type = "Spell", ID = 186270 }),
-    FlankingStrike                         = Action.Create({Type = "Spell", ID = 269751 }),
-    KillCommand                            = Action.Create({Type = "Spell", ID = 259489 }),
-    WildfireBomb                           = Action.Create({Type = "Spell", ID = 259495 }),
-    WildfireBombDebuff                     = Action.Create({Type = "Spell", ID = 269747 }),
-    MemoryofLucidDreamsBuff                = Action.Create({Type = "Spell", ID =  }),
-    MongooseFuryBuff                       = Action.Create({Type = "Spell", ID = 259388 }),
-    SerpentSting                           = Action.Create({Type = "Spell", ID = 259491 }),
-    SerpentStingDebuff                     = Action.Create({Type = "Spell", ID = 259491 }),
-    AMurderofCrows                         = Action.Create({Type = "Spell", ID = 131894 }),
-    CoordinatedAssault                     = Action.Create({Type = "Spell", ID = 266779 }),
-    TipoftheSpearBuff                      = Action.Create({Type = "Spell", ID = 260286 }),
-    ShrapnelBombDebuff                     = Action.Create({Type = "Spell", ID = 270339 }),
-    Chakrams                               = Action.Create({Type = "Spell", ID = 259391 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    BerserkingBuff                         = Action.Create({Type = "Spell", ID = 26297 }),
-    GuardianofAzerothBuff                  = Action.Create({Type = "Spell", ID =  }),
-    BloodFuryBuff                          = Action.Create({Type = "Spell", ID = 20572 }),
-    PotionofUnbridledFuryBuff              = Action.Create({Type = "Spell", ID =  }),
-    AspectoftheEagle                       = Action.Create({Type = "Spell", ID = 186289 }),
-    WildfireInfusion                       = Action.Create({Type = "Spell", ID = 271014 }),
-    Carve                                  = Action.Create({Type = "Spell", ID = 187708 }),
-    GuerrillaTactics                       = Action.Create({Type = "Spell", ID = 264332 }),
-    LatentPoisonDebuff                     = Action.Create({Type = "Spell", ID = 273286 }),
-    BloodseekerDebuff                      = Action.Create({Type = "Spell", ID = 259277 }),
-    Butchery                               = Action.Create({Type = "Spell", ID = 212436 }),
-    InternalBleedingDebuff                 = Action.Create({Type = "Spell", ID = 270343 }),
-    VipersVenomBuff                        = Action.Create({Type = "Spell", ID = 268552 }),
-    TermsofEngagement                      = Action.Create({Type = "Spell", ID = 265895 }),
-    VipersVenom                            = Action.Create({Type = "Spell", ID = 268501 }),
-    AlphaPredator                          = Action.Create({Type = "Spell", ID = 269737 }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883 }),
+    SteelTrapDebuff                        = Action.Create({ Type = "Spell", ID = 162487 }),
+    SteelTrap                              = Action.Create({ Type = "Spell", ID = 162488 }),
+    Harpoon                                = Action.Create({ Type = "Spell", ID = 190925 }),
+    MongooseBite                           = Action.Create({ Type = "Spell", ID = 259387 }),
+    CoordinatedAssaultBuff                 = Action.Create({ Type = "Spell", ID = 266779 }),
+    BlurofTalonsBuff                       = Action.Create({ Type = "Spell", ID = 277969 }),
+    RaptorStrike                           = Action.Create({ Type = "Spell", ID = 186270 }),
+    FlankingStrike                         = Action.Create({ Type = "Spell", ID = 269751 }),
+    KillCommand                            = Action.Create({ Type = "Spell", ID = 259489 }),
+    WildfireBomb                           = Action.Create({ Type = "Spell", ID = 259495 }),
+    WildfireBombDebuff                     = Action.Create({ Type = "Spell", ID = 269747 }),
+    MongooseFuryBuff                       = Action.Create({ Type = "Spell", ID = 259388 }),
+    SerpentSting                           = Action.Create({ Type = "Spell", ID = 259491 }),
+    SerpentStingDebuff                     = Action.Create({ Type = "Spell", ID = 259491 }),
+    AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
+    CoordinatedAssault                     = Action.Create({ Type = "Spell", ID = 266779 }),
+    TipoftheSpearBuff                      = Action.Create({ Type = "Spell", ID = 260286 }),
+    ShrapnelBombDebuff                     = Action.Create({ Type = "Spell", ID = 270339 }),
+    Chakrams                               = Action.Create({ Type = "Spell", ID = 259391 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
+    AspectoftheEagle                       = Action.Create({ Type = "Spell", ID = 186289 }),
+    WildfireInfusion                       = Action.Create({ Type = "Spell", ID = 271014 }),
+    Carve                                  = Action.Create({ Type = "Spell", ID = 187708 }),
+    GuerrillaTactics                       = Action.Create({ Type = "Spell", ID = 264332 }),
+    LatentPoisonDebuff                     = Action.Create({ Type = "Spell", ID = 273286 }),
+    BloodseekerDebuff                      = Action.Create({ Type = "Spell", ID = 259277 }),
+    Butchery                               = Action.Create({ Type = "Spell", ID = 212436 }),
+    InternalBleedingDebuff                 = Action.Create({ Type = "Spell", ID = 270343 }),
+    VipersVenomBuff                        = Action.Create({ Type = "Spell", ID = 268552 }),
+    TermsofEngagement                      = Action.Create({ Type = "Spell", ID = 265895 }),
+    VipersVenom                            = Action.Create({ Type = "Spell", ID = 268501 }),
+    AlphaPredator                          = Action.Create({ Type = "Spell", ID = 269737 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -74,6 +91,8 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -149,17 +168,10 @@ local A = setmetatable(Action[ACTION_CONST_HUNTER_SURVIVAL], { __index = Action 
 ------------------------------------------
 local VarCarveCdr = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarCarveCdr = 0
-	end 
 end)
 
-local EnemyRanges = {8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -226,7 +238,7 @@ local function CurrentMongooseBite ()
 end
 
 local function EvaluateCycleCarveCdr412(unit)
-    return (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 5)
+    return (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5) and (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5)
 end
 
 local function EvaluateTargetIfFilterMongooseBite448(unit)
@@ -243,7 +255,7 @@ local function EvaluateTargetIfFilterKillCommand465(unit)
 end
 
 local function EvaluateTargetIfKillCommand478(unit)
-  return Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax()
+  return Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
 end
 
 
@@ -327,19 +339,19 @@ local function APL()
                 return A.RaptorStrike:Show(icon)
             end
             -- flanking_strike,if=focus+cast_regen<focus.max
-            if A.FlankingStrike:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.FlankingStrike:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Player:FocusMax()) then
                 return A.FlankingStrike:Show(icon)
             end
             -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-10
-            if A.KillCommand:IsReady(unit) and (A.KillCommand:FullRechargeTimeP() < 1.5 * A.GetGCD() and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax() - 10) then
+            if A.KillCommand:IsReady(unit) and (A.KillCommand:FullRechargeTimeP() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() - 10) then
                 return A.KillCommand:Show(icon)
             end
             -- steel_trap,if=focus+cast_regen<focus.max
-            if A.SteelTrap:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.SteelTrap:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Player:FocusMax()) then
                 return A.SteelTrap:Show(icon)
             end
             -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up|!dot.wildfire_bomb.ticking&buff.mongoose_fury.stack<1)
-            if A.WildfireBomb:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1)) then
+            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1)) then
                 return A.WildfireBomb:Show(icon)
             end
             -- serpent_sting,if=!dot.serpent_sting.ticking&!buff.coordinated_assault.up
@@ -347,7 +359,7 @@ local function APL()
                 return A.SerpentSting:Show(icon)
             end
             -- kill_command,if=focus+cast_regen<focus.max&(buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
-            if A.KillCommand:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Unit("player"):Focus() < A.MongooseBite:Cost())) then
+            if A.KillCommand:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < A.MongooseBite:Cost())) then
                 return A.KillCommand:Show(icon)
             end
             -- serpent_sting,if=refreshable&!buff.coordinated_assault.up&buff.mongoose_fury.stack<5
@@ -363,7 +375,7 @@ local function APL()
                 return A.CoordinatedAssault:Show(icon)
             end
             -- mongoose_bite,if=buff.mongoose_fury.up|focus+cast_regen>focus.max-10|buff.coordinated_assault.up
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Unit("player"):FocusMax() - 10 or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Player:Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Player:FocusMax() - 10 or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.MongooseBite:Show(icon)
             end
             -- raptor_strike
@@ -395,7 +407,7 @@ local function APL()
                 return A.AMurderofCrows:Show(icon)
             end
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd|focus+cast_regen<focus.max&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
                 return A.WildfireBomb:Show(icon)
             end
             -- coordinated_assault
@@ -407,11 +419,11 @@ local function APL()
                 return A.MongooseBite:Show(icon)
             end
             -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-20
-            if A.KillCommand:IsReady(unit) and (A.KillCommand:FullRechargeTimeP() < 1.5 * A.GetGCD() and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax() - 20) then
+            if A.KillCommand:IsReady(unit) and (A.KillCommand:FullRechargeTimeP() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() - 20) then
                 return A.KillCommand:Show(icon)
             end
             -- steel_trap,if=focus+cast_regen<focus.max
-            if A.SteelTrap:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.SteelTrap:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Player:FocusMax()) then
                 return A.SteelTrap:Show(icon)
             end
             -- raptor_strike,if=buff.tip_of_the_spear.stack=3|dot.shrapnel_bomb.ticking
@@ -423,7 +435,7 @@ local function APL()
                 return A.MongooseBite:Show(icon)
             end
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>30&dot.serpent_sting.remains>5*gcd
-            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Unit("player"):Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
                 return A.WildfireBomb:Show(icon)
             end
             -- chakrams,if=!buff.mongoose_fury.remains
@@ -435,7 +447,7 @@ local function APL()
                 return A.SerpentSting:Show(icon)
             end
             -- kill_command,if=focus+cast_regen<focus.max&(buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
-            if A.KillCommand:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Unit("player"):Focus() < A.MongooseBite:Cost())) then
+            if A.KillCommand:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < A.MongooseBite:Cost())) then
                 return A.KillCommand:Show(icon)
             end
             -- raptor_strike
@@ -443,11 +455,11 @@ local function APL()
                 return A.RaptorStrike:Show(icon)
             end
             -- mongoose_bite,if=buff.mongoose_fury.up|focus>40|dot.shrapnel_bomb.ticking
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Unit("player"):Focus() > 40 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true)) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Player:Focus() > 40 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true)) then
                 return A.MongooseBite:Show(icon)
             end
             -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
-            if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Unit("player"):Focus() > 50) then
+            if A.WildfireBomb:IsReady(unit) and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() or S.ShrapnelBomb:IsLearned() and Player:Focus() > 50) then
                 return A.WildfireBomb:Show(icon)
             end
         end
@@ -475,7 +487,7 @@ local function APL()
                 return A.Berserking:Show(icon)
             end
             -- potion,if=buff.guardian_of_azeroth.up&(buff.berserking.up|buff.blood_fury.up|!race.troll)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)|!essence.condensed_lifeforce.major&buff.coordinated_assault.up
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not bool(A.CondensedLifeforce:EssenceIsMajorUseable()) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 A.BattlePotionofAgility:Show(icon)
             end
             -- aspect_of_the_eagle,if=target.distance>=6
@@ -487,7 +499,7 @@ local function APL()
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
-            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or bool(A.CyclotronicBlast:GetCooldown()) or not bool(A.MemoryofLucidDreams:EssenceIsMajorUseable()) and bool(A.CoordinatedAssault:GetCooldown())) then
+            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or bool(A.CyclotronicBlast:GetCooldown()) or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and bool(A.CoordinatedAssault:GetCooldown())) then
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
@@ -499,7 +511,7 @@ local function APL()
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- memory_of_lucid_dreams,if=focus<focus.max-30&buff.coordinated_assault.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):Focus() < Unit("player"):FocusMax() - 30 and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() < Player:FocusMax() - 30 and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.coordinated_assault.up
@@ -536,7 +548,7 @@ local function APL()
         local function Cleave(unit)
             -- variable,name=carve_cdr,op=setif,value=active_enemies,value_else=5,condition=active_enemies<5
             if  then
-                if Action.Utils.CastTargetIf(VarCarveCdr, 8, EvaluateCycleCarveCdr412) then
+                if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr412) then
                     return VarCarveCdr:Show(icon) 
                 end
             end
@@ -581,7 +593,7 @@ local function APL()
                 return A.Carve:Show(icon)
             end
             -- flanking_strike,if=focus+cast_regen<focus.max
-            if A.FlankingStrike:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.FlankingStrike:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Player:FocusMax()) then
                 return A.FlankingStrike:Show(icon)
             end
             -- wildfire_bomb,if=dot.wildfire_bomb.refreshable|talent.wildfire_infusion.enabled
@@ -633,7 +645,7 @@ local function APL()
                 return A.Harpoon:Show(icon)
             end
             -- flanking_strike,if=focus+cast_regen<focus.max
-            if A.FlankingStrike:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.FlankingStrike:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.FlankingStrike:GetSpellCastTime) < Player:FocusMax()) then
                 return A.FlankingStrike:Show(icon)
             end
             -- raptor_strike,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
@@ -645,15 +657,15 @@ local function APL()
                 return A.MongooseBite:Show(icon)
             end
             -- kill_command,if=focus+cast_regen<focus.max
-            if A.KillCommand:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.KillCommand:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()) then
                 return A.KillCommand:Show(icon)
             end
             -- steel_trap,if=focus+cast_regen<focus.max
-            if A.SteelTrap:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.SteelTrap:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Player:FocusMax()) then
                 return A.SteelTrap:Show(icon)
             end
             -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up|!dot.wildfire_bomb.ticking&buff.mongoose_fury.stack<1)
-            if A.WildfireBomb:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1)) then
+            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1)) then
                 return A.WildfireBomb:Show(icon)
             end
             -- mongoose_bite,if=buff.mongoose_fury.stack>5&!cooldown.coordinated_assault.remains
@@ -673,7 +685,7 @@ local function APL()
                 return A.CoordinatedAssault:Show(icon)
             end
             -- mongoose_bite,if=buff.mongoose_fury.up|focus+cast_regen>focus.max-20&talent.vipers_venom.enabled|focus+cast_regen>focus.max-1&talent.terms_of_engagement.enabled|buff.coordinated_assault.up
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Unit("player"):FocusMax() - 20 and A.VipersVenom:IsSpellLearned() or Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Unit("player"):FocusMax() - 1 and A.TermsofEngagement:IsSpellLearned() or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) or Player:Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Player:FocusMax() - 20 and A.VipersVenom:IsSpellLearned() or Player:Focus() + Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime) > Player:FocusMax() - 1 and A.TermsofEngagement:IsSpellLearned() or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.MongooseBite:Show(icon)
             end
             -- raptor_strike
@@ -693,7 +705,7 @@ local function APL()
         --Wfi
         local function Wfi(unit)
             -- harpoon,if=focus+cast_regen<focus.max&talent.terms_of_engagement.enabled
-            if A.Harpoon:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.Harpoon:GetSpellCastTime) < Unit("player"):FocusMax() and A.TermsofEngagement:IsSpellLearned()) then
+            if A.Harpoon:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.Harpoon:GetSpellCastTime) < Player:FocusMax() and A.TermsofEngagement:IsSpellLearned()) then
                 return A.Harpoon:Show(icon)
             end
             -- mongoose_bite,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
@@ -709,11 +721,11 @@ local function APL()
                 return A.SerpentSting:Show(icon)
             end
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max|(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() or (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Unit("player"):FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
                 return A.WildfireBomb:Show(icon)
             end
             -- kill_command,if=focus+cast_regen<focus.max-focus.regen
-            if A.KillCommand:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Unit("player"):FocusMax() - Unit("player"):FocusRegen()) then
+            if A.KillCommand:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() - Player:FocusRegen()) then
                 return A.KillCommand:Show(icon)
             end
             -- a_murder_of_crows
@@ -721,7 +733,7 @@ local function APL()
                 return A.AMurderofCrows:Show(icon)
             end
             -- steel_trap,if=focus+cast_regen<focus.max
-            if A.SteelTrap:IsReady(unit) and (Unit("player"):Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Unit("player"):FocusMax()) then
+            if A.SteelTrap:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Player:FocusMax()) then
                 return A.SteelTrap:Show(icon)
             end
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd
@@ -773,7 +785,7 @@ local function APL()
   if Everyone.TargetIsValid() then
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
             -- auto_attack
@@ -783,31 +795,31 @@ local function APL()
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=apwfi,if=active_enemies<3&talent.chakrams.enabled&talent.alpha_predator.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and A.Chakrams:IsSpellLearned() and A.AlphaPredator:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and A.Chakrams:IsSpellLearned() and A.AlphaPredator:IsSpellLearned()) then
                 local ShouldReturn = Apwfi(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=wfi,if=active_enemies<3&talent.chakrams.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and A.Chakrams:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and A.Chakrams:IsSpellLearned()) then
                 local ShouldReturn = Wfi(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=st,if=active_enemies<3&!talent.alpha_predator.enabled&!talent.wildfire_infusion.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and not A.AlphaPredator:IsSpellLearned() and not A.WildfireInfusion:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and not A.AlphaPredator:IsSpellLearned() and not A.WildfireInfusion:IsSpellLearned()) then
                 local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=apst,if=active_enemies<3&talent.alpha_predator.enabled&!talent.wildfire_infusion.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and A.AlphaPredator:IsSpellLearned() and not A.WildfireInfusion:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and A.AlphaPredator:IsSpellLearned() and not A.WildfireInfusion:IsSpellLearned()) then
                 local ShouldReturn = Apst(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=apwfi,if=active_enemies<3&talent.alpha_predator.enabled&talent.wildfire_infusion.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and A.AlphaPredator:IsSpellLearned() and A.WildfireInfusion:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and A.AlphaPredator:IsSpellLearned() and A.WildfireInfusion:IsSpellLearned()) then
                 local ShouldReturn = Apwfi(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=wfi,if=active_enemies<3&!talent.alpha_predator.enabled&talent.wildfire_infusion.enabled
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and not A.AlphaPredator:IsSpellLearned() and A.WildfireInfusion:IsSpellLearned()) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) < 3 and not A.AlphaPredator:IsSpellLearned() and A.WildfireInfusion:IsSpellLearned()) then
                 local ShouldReturn = Wfi(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=cleave,if=active_enemies>1
-            if (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 local ShouldReturn = Cleave(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- concentrated_flame
@@ -824,7 +836,7 @@ end
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -855,7 +867,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -906,5 +918,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 

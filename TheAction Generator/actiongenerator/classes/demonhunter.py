@@ -27,6 +27,7 @@ DEFAULT_POTION = {
 
 DEFAULT_RANGE = {
     DEMONHUNTER: {
+    8
     },
 }
 
@@ -71,6 +72,7 @@ SPELL_INFO = {
                                        RANGE:     30},
             'felblade':               {SPELL:     232893},
             'fel_eruption':           {SPELL:     211881},
+            'fel_barrage':            {SPELL:     258925},
             'fel_mastery':            {SPELL:     192939},
             'first_blood':            {SPELL:     206416},
             'master_of_the_glaive':   {SPELL:     203556},
@@ -83,6 +85,7 @@ SPELL_INFO = {
             'fury_of_the_illidari':   {SPELL:     201467,
                                        RANGE:     40},
             'fel_devastation':        {SPELL:     212084},
+            'eyes_of_rage':           {SPELL:     278500},
             'shear':                  {SPELL:     203782},
             'sigil_of_flame':         {SPELL:     204596},
             'soul_cleave':            {SPELL:     228477},

@@ -19,43 +19,61 @@ local setmetatable                           = setmetatable
 
 -- Spells
 Action[ACTION_CONST_ROGUE_OUTLAW] = {
-    MarkedForDeath                         = Action.Create({Type = "Spell", ID = 137619 }),
-    RolltheBones                           = Action.Create({Type = "Spell", ID = 193316 }),
-    SliceandDiceBuff                       = Action.Create({Type = "Spell", ID = 5171 }),
-    SliceandDice                           = Action.Create({Type = "Spell", ID = 5171 }),
-    AdrenalineRushBuff                     = Action.Create({Type = "Spell", ID = 13750 }),
-    AdrenalineRush                         = Action.Create({Type = "Spell", ID = 13750 }),
-    PistolShot                             = Action.Create({Type = "Spell", ID = 185763 }),
-    BroadsideBuff                          = Action.Create({Type = "Spell", ID = 193356 }),
-    QuickDraw                              = Action.Create({Type = "Spell", ID = 196938 }),
-    OpportunityBuff                        = Action.Create({Type = "Spell", ID = 195627 }),
-    SinisterStrike                         = Action.Create({Type = "Spell", ID = 193315 }),
-    BloodFury                              = Action.Create({Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({Type = "Spell", ID = 274738 }),
-    BladeFlurry                            = Action.Create({Type = "Spell", ID = 13877 }),
-    BladeFlurryBuff                        = Action.Create({Type = "Spell", ID = 13877 }),
-    GhostlyStrike                          = Action.Create({Type = "Spell", ID = 196937 }),
-    KillingSpree                           = Action.Create({Type = "Spell", ID = 51690 }),
-    BladeRush                              = Action.Create({Type = "Spell", ID = 271877 }),
-    Vanish                                 = Action.Create({Type = "Spell", ID = 1856 }),
-    Shadowmeld                             = Action.Create({Type = "Spell", ID = 58984 }),
-    BetweentheEyes                         = Action.Create({Type = "Spell", ID = 199804 }),
-    RuthlessPrecisionBuff                  = Action.Create({Type = "Spell", ID =  }),
-    Deadshot                               = Action.Create({Type = "Spell", ID = 272936 }),
-    AceUpYourSleeve                        = Action.Create({Type = "Spell", ID =  }),
-    RolltheBonesBuff                       = Action.Create({Type = "Spell", ID =  }),
-    Dispatch                               = Action.Create({Type = "Spell", ID =  }),
-    Ambush                                 = Action.Create({Type = "Spell", ID = 8676 }),
-    LoadedDiceBuff                         = Action.Create({Type = "Spell", ID = 240837 }),
-    GrandMeleeBuff                         = Action.Create({Type = "Spell", ID =  }),
-    SnakeEyes                              = Action.Create({Type = "Spell", ID =  }),
-    SnakeEyesBuff                          = Action.Create({Type = "Spell", ID =  }),
-    SkullandCrossbonesBuff                 = Action.Create({Type = "Spell", ID =  }),
-    ArcaneTorrent                          = Action.Create({Type = "Spell", ID = 50613 }),
-    ArcanePulse                            = Action.Create({Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({Type = "Spell", ID = 255647 })
+    -- Racial
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    MarkedForDeath                         = Action.Create({ Type = "Spell", ID = 137619 }),
+    RolltheBones                           = Action.Create({ Type = "Spell", ID = 193316 }),
+    SliceandDiceBuff                       = Action.Create({ Type = "Spell", ID = 5171 }),
+    SliceandDice                           = Action.Create({ Type = "Spell", ID = 5171 }),
+    AdrenalineRushBuff                     = Action.Create({ Type = "Spell", ID = 13750 }),
+    AdrenalineRush                         = Action.Create({ Type = "Spell", ID = 13750 }),
+    PistolShot                             = Action.Create({ Type = "Spell", ID = 185763 }),
+    BroadsideBuff                          = Action.Create({ Type = "Spell", ID = 193356 }),
+    QuickDraw                              = Action.Create({ Type = "Spell", ID = 196938 }),
+    OpportunityBuff                        = Action.Create({ Type = "Spell", ID = 195627 }),
+    SinisterStrike                         = Action.Create({ Type = "Spell", ID = 193315 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BladeFlurry                            = Action.Create({ Type = "Spell", ID = 13877 }),
+    BladeFlurryBuff                        = Action.Create({ Type = "Spell", ID = 13877 }),
+    GhostlyStrike                          = Action.Create({ Type = "Spell", ID = 196937 }),
+    KillingSpree                           = Action.Create({ Type = "Spell", ID = 51690 }),
+    BladeRush                              = Action.Create({ Type = "Spell", ID = 271877 }),
+    Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    BetweentheEyes                         = Action.Create({ Type = "Spell", ID = 199804 }),
+    RuthlessPrecisionBuff                  = Action.Create({ Type = "Spell", ID =  }),
+    Deadshot                               = Action.Create({ Type = "Spell", ID = 272936 }),
+    AceUpYourSleeve                        = Action.Create({ Type = "Spell", ID =  }),
+    RolltheBonesBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    Dispatch                               = Action.Create({ Type = "Spell", ID =  }),
+    Ambush                                 = Action.Create({ Type = "Spell", ID = 8676 }),
+    LoadedDiceBuff                         = Action.Create({ Type = "Spell", ID = 240837 }),
+    GrandMeleeBuff                         = Action.Create({ Type = "Spell", ID =  }),
+    SnakeEyes                              = Action.Create({ Type = "Spell", ID =  }),
+    SnakeEyesBuff                          = Action.Create({ Type = "Spell", ID =  }),
+    SkullandCrossbonesBuff                 = Action.Create({ Type = "Spell", ID =  }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -68,6 +86,8 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -145,19 +165,12 @@ local VarBladeFlurrySync = 0;
 local VarAmbushCondition = 0;
 local VarRtbReroll = 0;
 
-A.Listener:Add("ACTION_EVENT_COMBAT_TRACKER", "PLAYER_REGEN_ENABLED", 				function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarBladeFlurrySync = 0
   VarAmbushCondition = 0
   VarRtbReroll = 0
-	end 
 end)
 
-local EnemyRanges = {40, 8}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
 
 local function num(val)
@@ -432,7 +445,7 @@ local function EvaluateTargetIfFilterMarkedForDeath51(unit)
 end
 
 local function EvaluateTargetIfMarkedForDeath56(unit)
-  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Unit("player"):ComboPointsDeficit() or not Unit("player"):IsStealthed(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1)
+  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and (Unit(unit):TimeToDie() < Player:ComboPointsDeficit() or not Unit("player"):IsStealthed(true, false) and Player:ComboPointsDeficit() >= CPMaxSpend() - 1)
 end
 
 
@@ -488,7 +501,7 @@ A[3] = function(icon, isMulti)
         --Build
         local function Build(unit)
             -- pistol_shot,if=combo_points.deficit>=1+buff.broadside.up+talent.quick_draw.enabled&buff.opportunity.up
-            if A.PistolShot:IsReady(unit) and (Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(A.QuickDraw:IsSpellLearned()) and Unit("player"):HasBuffs(A.OpportunityBuff.ID, true)) then
+            if A.PistolShot:IsReady(unit) and (Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(A.QuickDraw:IsSpellLearned()) and Unit("player"):HasBuffs(A.OpportunityBuff.ID, true)) then
                 return A.PistolShot:Show(icon)
             end
             -- sinister_strike
@@ -500,11 +513,11 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- potion,if=buff.bloodlust.react|buff.adrenaline_rush.up
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true)) then
                 A.ProlongedPower:Show(icon)
             end
             -- use_item,name=variable_intensity_gigavolt_oscillating_reactor,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
-            if A.VariableIntensityGigavoltOscillatingReactor:IsReady(unit) and (Unit("player"):HasHeroism or Unit(unit):TimeToDie() <= 20 or Unit("player"):ComboPointsDeficit() <= 2) then
+            if A.VariableIntensityGigavoltOscillatingReactor:IsReady(unit) and (Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 20 or Player:ComboPointsDeficit() <= 2) then
                 A.VariableIntensityGigavoltOscillatingReactor:Show(icon)
             end
             -- blood_fury
@@ -524,7 +537,7 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1
-            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and Unit("player"):EnergyTimeToMaxPredicted() > 1) then
+            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and Player:EnergyTimeToMaxPredicted() > 1) then
                 return A.AdrenalineRush:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.rogue&combo_points.deficit>=cp_max_spend-1)
@@ -534,23 +547,23 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1
-            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthed(true, false) and Unit("player"):ComboPointsDeficit() >= CPMaxSpend() - 1) then
+            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and not Unit("player"):IsStealthed(true, false) and Player:ComboPointsDeficit() >= CPMaxSpend() - 1) then
                 return A.MarkedForDeath:Show(icon)
             end
             -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
-            if A.BladeFlurry:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and not Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 0 > 8 or 10000000000 > (2 - A.BladeFlurry:ChargesFractionalP()) * 25)) then
+            if A.BladeFlurry:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and not Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true) and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or 0 > 8 or 10000000000 > (2 - A.BladeFlurry:ChargesFractionalP()) * 25)) then
                 return A.BladeFlurry:Show(icon)
             end
             -- ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
-            if A.GhostlyStrike:IsReady(unit) and (bool(VarBladeFlurrySync) and Unit("player"):ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true))) then
+            if A.GhostlyStrike:IsReady(unit) and (bool(VarBladeFlurrySync) and Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true))) then
                 return A.GhostlyStrike:Show(icon)
             end
             -- killing_spree,if=variable.blade_flurry_sync&(energy.time_to_max>5|energy<15)
-            if A.KillingSpree:IsReady(unit) and (bool(VarBladeFlurrySync) and (Unit("player"):EnergyTimeToMaxPredicted() > 5 or Unit("player"):EnergyPredicted() < 15)) then
+            if A.KillingSpree:IsReady(unit) and (bool(VarBladeFlurrySync) and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15)) then
                 return A.KillingSpree:Show(icon)
             end
             -- blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1
-            if A.BladeRush:IsReady(unit) and (bool(VarBladeFlurrySync) and Unit("player"):EnergyTimeToMaxPredicted() > 1) then
+            if A.BladeRush:IsReady(unit) and (bool(VarBladeFlurrySync) and Player:EnergyTimeToMaxPredicted() > 1) then
                 return A.BladeRush:Show(icon)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
@@ -570,7 +583,7 @@ A[3] = function(icon, isMulti)
                 return A.BetweentheEyes:Show(icon)
             end
             -- slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
-            if A.SliceandDice:IsReady(unit) and (Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < (1 + Unit("player"):ComboPoints()) * 1.8) then
+            if A.SliceandDice:IsReady(unit) and (Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDiceBuff.ID, true) < (1 + Player:ComboPoints()) * 1.8) then
                 return A.SliceandDice:Show(icon)
             end
             -- roll_the_bones,if=buff.roll_the_bones.remains<=3|variable.rtb_reroll
@@ -597,7 +610,7 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
@@ -625,11 +638,11 @@ A[3] = function(icon, isMulti)
             end
             -- variable,name=ambush_condition,value=combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up
             if (true) then
-                VarAmbushCondition = num(Unit("player"):ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) and Unit("player"):EnergyPredicted() > 60 and not Unit("player"):HasBuffs(A.SkullandCrossbonesBuff.ID, true))
+                VarAmbushCondition = num(Player:ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) and Player:EnergyPredicted() > 60 and not Unit("player"):HasBuffs(A.SkullandCrossbonesBuff.ID, true))
             end
             -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
             if (true) then
-                VarBladeFlurrySync = num(MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and 10000000000 > 20 or Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true))
+                VarBladeFlurrySync = num(MultiUnits:GetByRangeInCombat(8, 5, 10) < 2 and 10000000000 > 20 or Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true))
             end
             -- call_action_list,name=stealth,if=stealthed.all
             if (Unit("player"):IsStealthed(true, true)) then
@@ -640,7 +653,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))
-            if (Unit("player"):ComboPoints() >= CPMaxSpend() - (num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(Unit("player"):HasBuffs(A.OpportunityBuff.ID, true))) * num((A.QuickDraw:IsSpellLearned() and (not A.MarkedForDeath:IsSpellLearned() or A.MarkedForDeath:GetCooldown() > 1)))) then
+            if (Player:ComboPoints() >= CPMaxSpend() - (num(Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)) + num(Unit("player"):HasBuffs(A.OpportunityBuff.ID, true))) * num((A.QuickDraw:IsSpellLearned() and (not A.MarkedForDeath:IsSpellLearned() or A.MarkedForDeath:GetCooldown() > 1)))) then
                 local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- call_action_list,name=build
@@ -648,7 +661,7 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = Build(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- arcane_torrent,if=energy.deficit>=15+energy.regen
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):EnergyDeficitPredicted() >= 15 + Unit("player"):EnergyRegen()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
                 return A.ArcaneTorrent:Show(icon)
             end
             -- arcane_pulse
@@ -665,7 +678,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    local SelfDefensive = SelfDefensives()
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -696,7 +709,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -747,5 +760,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end
+end]]--
 
