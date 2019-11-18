@@ -335,6 +335,126 @@ A[2] = function(icon)
     end                                                                                 
 end
 
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+		
+    -- Blur
+    local Blur = A.GetToggle(2, "Blur")
+    if     Blur >= 0 and A.Blur:IsReady("player") and 
+    (
+        (     -- Auto 
+            Blur >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            Blur < 100 and 
+            Unit("player"):HealthPercent() <= Blur
+        )
+    ) 
+    then 
+        return A.Blur
+    end
+	
+    -- Darkness
+    local Darkness = A.GetToggle(2, "Darkness")
+    if     Darkness >= 0 and A.Darkness:IsReady("player") and 
+    (
+        (     -- Auto 
+            Darkness >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            Darkness < 100 and 
+            Unit("player"):HealthPercent() <= Darkness
+        )
+    ) 
+    then 
+        return A.Darkness
+    end     
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.Disrupt
+    end 
+    
+    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+        return A.ChaosNova              
+    end 
+	
+    if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+        return A.FelEruption              
+    end 	
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -637,19 +757,11 @@ A[3] = function(icon, isMulti)
    		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
             local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		
-  	        -- Disrupt
-  	        if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
-		      	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-              	    return A.Disrupt:Show(icon)
-             	end 
-      	    end 
-	
-     	    -- ChaosNova
-      	    if useCC and S.ChaosNova:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
-	  	    	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-     	            return A.ChaosNova:Show(icon)
-			    end
-     	    end 
+			-- Interrupt
+            local Interrupt = Interrupts()
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end  
 		
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
@@ -717,7 +829,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
