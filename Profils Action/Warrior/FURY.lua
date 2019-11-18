@@ -323,9 +323,9 @@ A[3] = function(icon, isMulti)
             -- Simcraft 
             -- Cooldowns --						
 			--blood_of_the_enemy,if=buff.recklessness.up
-			if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) then                             
+			if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then                             
                 return A.BloodoftheEnemy:Show(icon)                                                 
-            elseif not inHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 then 
+            elseif not inHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then 
 				return A.BloodoftheEnemy:Show(icon)   
 			end 
 
