@@ -110,7 +110,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- Defensives -- ",
+                        ANY = " -- Self Defensives -- ",
                     },
                 },
             },
@@ -120,7 +120,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "ExhilarationHP",
-                    DBV = 90, -- Set healthpercentage @99% life. 
+                    DBV = 100, -- Set healthpercentage @99% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(109304) .. " (%)",
@@ -131,11 +131,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "MendPet",
-                    DBV = 90, -- Set healthpercentage @99% life. 
+                    DB = "SpiritMendHP",
+                    DBV = 100, -- Set healthpercentage @99% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(136) .. " (%)",
+                        ANY = A.GetSpellInfo(90361) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -144,10 +144,38 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "Turtle",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(186265) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Pet Defensives -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "MendPet",
+                    DBV = 90, -- Set healthpercentage @99% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(136) .. " (%)",
                     }, 
                     M = {},
                 },
