@@ -396,6 +396,8 @@ A[3] = function(icon, isMulti)
   	        -- SolarBeam
   	        if useKick and A.SolarBeam:IsReady() and A.SolarBeam:IsSpellLearned() then 
 		      	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+				    -- Notification					
+                    Action.SendNotification("Solar Beam on: " .. UnitName(unit), A.SolarBeam.ID) 
           	        return A.SolarBeam:Show(icon)
              	end 
           	end 	
@@ -403,6 +405,8 @@ A[3] = function(icon, isMulti)
      	    -- MightyBash
       	    if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
 	  		    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+				    -- Notification					
+                    Action.SendNotification("Mighty Bash on: " .. UnitName(unit), A.MightyBash.ID) 
      	            return A.MightyBash:Show(icon)
      	        end 
      	    end 	
@@ -411,6 +415,8 @@ A[3] = function(icon, isMulti)
 			if unit ~= "targettarget" and A.Soothe:IsReady(unit, nil, nil, true) 
 			and A.Soothe:AbsentImun(unit, Temp.AuraForOnlyCCAndStun) and A.AuraIsValid(unit, "UseExpelEnrage", "Enrage") 
 			then 
+			 -- Notification					
+                Action.SendNotification("Soothe on: " .. UnitName(unit), A.Soothe.ID) 					
                 return A.Soothe:Show(icon)
             end
             
@@ -455,7 +461,7 @@ A[3] = function(icon, isMulti)
 			
 			-- Pandemic
 			if true then
-                if Pandemic(unit) then
+                if Pandemic(unit) then 
 				    return true
 				end
 			end
@@ -498,11 +504,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=shiver_venom_relic,if=!buff.ca_inc.up&!buff.bloodlust.up,target_if=dot.shiver_venom.stack>=5
-            if A.ShiverVenomRelic:IsReady(unit) then
+            if A.ShiverVenomRelic:IsReady(unit) and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) then
                 if (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) then
-    				if (Unit("player"):HasBuffs(CaIncID, true) == 0 and not Unit("player"):HasHeroism()) then
-                        return A.ShiverVenomRelic:Show(icon) 
-					end
+                    return A.ShiverVenomRelic:Show(icon) 
                 end
             end
 			
@@ -603,7 +607,9 @@ A[3] = function(icon, isMulti)
                     if Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 then
 	                    if Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 then
 					        if (Unit(unit):HasDeBuffs(A.StellarFlareDebuff.ID, true) > 6 or not A.StellarFlare:IsSpellLearned()) and (Unit("player"):HasBuffs(CaIncID, true) == 0 and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:IsSpellLearned())) and AP_Check(A.Incarnation))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or AP_Check(CaInc))) then
-                                return A.Incarnation:Show(icon)
+                                -- Notification					
+                                Action.SendNotification("Activated burst phase", A.Incarnation.ID)
+								return A.Incarnation:Show(icon)
                             end
                         end						
                     end
@@ -613,7 +619,9 @@ A[3] = function(icon, isMulti)
                     if Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 8 then
 	                    if Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 12 then
 	                        if (not A.Starlord:IsSpellLearned() or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) > 0) and (Unit("player"):HasBuffs(CaIncID, true) == 0 and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) or ((A.MemoryofLucidDreams:GetCooldown() > 20 or not bool(A.MemoryofLucidDreams:IsSpellLearned())) and AP_Check(A.CelestialAlignment))) and (Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or AP_Check(CaInc))) then
-                                return A.CelestialAlignment:Show(icon) 
+                                -- Notification					
+                                Action.SendNotification("Activated burst phase", A.CelestialAlignment.ID)
+								return A.CelestialAlignment:Show(icon) 
 							end
 					    end
                     end
