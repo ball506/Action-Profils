@@ -71,14 +71,14 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
     -- Pet
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
-    MendPet                                = Action.Create({ Type = "Spell", ID = 136  }),
+    MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
     RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
-    SpiritShock                            = Action.Create({ Type = "Spell", ID = 264265 }), -- Pet dispell/purge
-    SonicBlast                             = Action.Create({ Type = "Spell", ID = 264263 }), -- Pet dispell/purge
+    SpiritShock                            = Action.Create({ Type = "Spell", ID = 264265, Color = "BLUE" }), -- Pet dispell/purge
+    SonicBlast                             = Action.Create({ Type = "Spell", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
     CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
     Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
-	SpiritMend                             = Action.Create({ Type = "Spell", ID = 90361}), 
-	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248}), 
+	SpiritMend                             = Action.Create({ Type = "Spell", ID = 90361, Color = "YELLOW"}), 
+	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
     -- Trinkets
@@ -266,6 +266,8 @@ local function SelfDefensives()
         )
     ) 
     then 
+		    -- Notification					
+        Action.SendNotification("[DEF] Spirit Mend", A.SpiritMend.ID)
         return A.SpiritMend
     end
 	
@@ -301,7 +303,9 @@ local function SelfDefensives()
             Unit("player"):HealthPercent() <= AspectoftheTurtle
         )
     ) 
-    then 
+    then
+		    -- Notification					
+        Action.SendNotification("[DEF] Aspect of the Turtle", A.AspectoftheTurtle.ID)	
         return A.AspectoftheTurtle
     end     
     -- Stoneform on self dispel (only PvE)
@@ -315,10 +319,14 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
     if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	    -- Notification					
+        Action.SendNotification("Counter Shot interrupting on Target ", A.CounterShot.ID)
         return A.CounterShot
     end 
     
     if useCC and A.BindingShot:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.BindingShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	    -- Notification					
+        Action.SendNotification("Binding Shot interrupting...", A.BindingShot.ID)
         return A.BindingShot              
     end          
 	    
@@ -585,6 +593,8 @@ A[3] = function(icon, isMulti)
 			
 			-- bestial_wrath
             if A.BestialWrath:IsReady("player") and A.BurstIsON(unit) then
+				-- Notification					
+                Action.SendNotification("Activated burst on Target", A.BestialWrath.ID) 
                 return A.BestialWrath:Show(icon)
             end
 			
@@ -592,22 +602,33 @@ A[3] = function(icon, isMulti)
             if A.BurstIsON(unit) and A.AspectoftheWild:IsReady("player") 
 			and (A.BarbedShot:GetSpellChargesFrac() < 2 or Unit("pet"):HasBuffsStacks(A.FrenzyBuff.ID, true) > 2 or not bool(A.PrimalInstincts:GetAzeriteRank())) 
 			then
+    			-- Notification					
+                Action.SendNotification("Aspect of the Wild on Target", A.AspectoftheWild.ID)
                 return A.AspectoftheWild:Show(icon)
             end
 			
             -- barbed_shot,maintain_frenzy_buff_up
-			if A.BarbedShot:IsReady(unit) and A.BarbedShot:GetSpellChargesFrac() > 1.6 and (Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > 0 
-			and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) < A.GetCurrentGCD() + 2 + A.GetPing()) 
-			then
+			if A.BarbedShot:IsReady(unit) and A.BarbedShot:GetSpellChargesFrac() >= 1.6 and A.KillCommand:GetCooldown() > 1.5
+ 			then
+                return A.BarbedShot:Show(icon)
+            end
+			
+            -- barbed_shot,maintain_frenzy_buff_up
+			if A.BarbedShot:IsReady(unit) and A.BarbedShot:GetSpellCharges() >= 1 and (Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > 0 
+			and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) <= A.GetCurrentGCD() + A.GetGCD() + A.GetPing()) 
+			and ((Action.GetToggle(2, "AoE") and Unit("pet"):HasBuffs(A.BeastCleaveBuff.ID, true) >= A.GetCurrentGCD() + A.GetGCD() * 2 + A.GetPing()) or not Action.GetToggle(2, "AoE"))
+ 			then
                 return A.BarbedShot:Show(icon)
             end
 			
             -- multishot,if=gcd.max-pet.cat.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Action.GetToggle(2, "AoE") and (Unit("pet"):HasBuffs(A.BeastCleaveBuff.ID, true) < 2 + A.GetPing()) 
+            if A.Multishot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Action.GetToggle(2, "AoE") and (Unit("pet"):HasBuffs(A.BeastCleaveBuff.ID, true) < A.GetCurrentGCD() + A.GetPing()) 
 			then
+			    -- Notification					
+                Action.SendNotification("Maintaining aoe buff on pet", A.BeastCleaveBuff.ID)
                 return A.Multishot:Show(icon)
-            end			
-						
+            end					
+			
             -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
             if A.Multishot:IsReady(unit) and A.GetToggle(2, "AoE") and (bool(A.RapidReload:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
                 return A.Multishot:Show(icon)
@@ -686,7 +707,7 @@ A[3] = function(icon, isMulti)
 			 
             -- cobra_shot,if=(focus-cost+focus.regen*(cooldown.kill_command.remains-1)>action.kill_command.cost|cooldown.kill_command.remains>1+gcd|buff.memory_of_lucid_dreams.up)&cooldown.kill_command.remains>1
             if A.CobraShot:IsReady(unit) 
-			and (A.KillCommand:GetCooldown() > 1.5 + A.GetCurrentGCD() and (Player:Focus() > 65 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0)) 
+			and (A.KillCommand:GetCooldown() > 1.5 + A.GetCurrentGCD() and (Player:Focus() > 60 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0)) 
 			then
                 return A.CobraShot:Show(icon)
             end
