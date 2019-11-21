@@ -355,7 +355,7 @@ function Action.SendNotification(message, spell, delay, incombat)
 	if Enabled then
 	    -- Option 1 : Combat only		
 	    if message and spell and incombat then 
-	        if (TMW.time <= endtimer) and ActionUnit("player"):CombatTime() > 1 then 
+	        if (TMW.time <= endtimer) and Unit("player"):CombatTime() > 1 then 
 	            Action.NotificationIsValid = true
 	            Action.NotificationMessage = message 				
             else
