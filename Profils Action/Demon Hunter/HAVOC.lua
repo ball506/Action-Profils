@@ -611,7 +611,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(20, 5, 10) > 1) then
+            if A.EyeBeam:IsReady(unit) then
                 return A.EyeBeam:Show(icon)
             end
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
@@ -691,7 +691,7 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and (MultiUnits:GetByRangeInCombat(20, 5, 10) > 1 and (not (MultiUnits:GetByRangeInCombat(20, 5, 10) > 1) or (MultiUnits:GetByRangeInCombat(20, 5, 10) > 1)) and not bool(VarWaitingForMomentum)) then
+            if A.EyeBeam:IsReady(unit) and not bool(VarWaitingForMomentum) then
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
@@ -753,12 +753,11 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
 		    -- Interrupt Handler 	 	
-  		    local unit = "target"
-   		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+   		    local useKick, useCC, useRacial = Action.InterruptIsValid("target", "TargetMouseover")    
             local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		
 			-- Interrupt
-            local Interrupt = Interrupts()
+            local Interrupt = Interrupts(unit)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end  
