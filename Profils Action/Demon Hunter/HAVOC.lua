@@ -751,7 +751,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
 		    -- Interrupt Handler 	 	
    		    local useKick, useCC, useRacial = Action.InterruptIsValid("target", "TargetMouseover")    
             local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
