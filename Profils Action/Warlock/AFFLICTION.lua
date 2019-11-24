@@ -179,13 +179,13 @@ local function HandleMultidots()
 		    return false
 		end
     elseif choice == "In Dungeon" then 
-		if Player:InDungeon() then
+		if IsInGroup() then
     		return true
 		else
 		    return false
 		end
 	elseif choice == "In PvP" then 	
-		if Player:InPvP() then 
+		if IsInPvP() then 
     		return true
 		else
 		    return false
