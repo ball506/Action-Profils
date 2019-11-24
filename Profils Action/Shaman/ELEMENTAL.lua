@@ -38,6 +38,7 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
     TotemMastery                           = Action.Create({ Type = "Spell", ID = 210643 }),
+    AncestralGuidance                      = Action.Create({ Type = "Spell", ID = 108281 }),
     StormkeeperBuff                        = Action.Create({ Type = "Spell", ID = 191634 }),
     Stormkeeper                            = Action.Create({ Type = "Spell", ID = 191634 }),
     FireElemental                          = Action.Create({ Type = "Spell", ID = 198067 }),
@@ -289,6 +290,64 @@ local function HandleMultidots()
 	--print(choice)
 end
 
+local function HandleAncestralGuidance()
+    local choice = Action.GetToggle(2, "AncestralGuidanceSelection")
+       
+    if choice == "In Raid" then
+		if IsInRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if IsInGroup() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if IsInPvP() then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
+
+-- Stormkeeper Handler UI --
+local function HandleStormkeeper()
+    local choice = Action.GetToggle(2, "StormkeeperSelection")
+    local unit = "target"
+	
+    if choice == "Everytime" then
+		if A.Stormkeeper:IsReady(unit) then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "Only with CDs On" then 
+		if A.BurstIsON(unit) then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "Only in AoE" then 
+		if MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 then
+    		return true
+		else
+		    return false
+		end
+    else
+		return false
+    end
+	--print(choice)
+end
+
 local function ExpectedCombatLength()
     local BossTTD = 0
 	if not A.IsInPvP then 
@@ -365,13 +424,103 @@ local function EvaluateCycleFlameShock946(unit)
     return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true)
 end
 
+
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+	
+		
+    -- HealingSurgeHP
+    local HealingSurge = A.GetToggle(2, "HealingSurgeHP")
+    if     HealingSurge >= 0 and A.HealingSurge:IsReady("player") and 
+    (
+        (     -- Auto 
+            HealingSurge >= 100 and 
+            (
+                -- HP lose per sec >= 40
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 40 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.40 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            HealingSurge < 100 and 
+            Unit("player"):HealthPercent() <= HealingSurge
+        )
+    ) 
+    then 
+        return A.HealingSurge
+    end
+	
+    -- AstralShift
+    local AstralShift = A.GetToggle(2, "AstralShiftHP")
+    if     AstralShift >= 0 and A.AstralShift:IsReady("player") and 
+    (
+        (     -- Auto 
+            AstralShift >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AstralShift < 100 and 
+            Unit("player"):HealthPercent() <= AstralShift
+        )
+    ) 
+    then 
+        return A.AstralShift
+    end     
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
     --------------------
     --- ROTATION VAR ---
     --------------------
-    local isMoving = A.isMoving
+    local isMoving = Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
@@ -399,8 +548,10 @@ A[3] = function(icon, isMulti)
             end
             -- earth_elemental,if=!talent.primal_elementalist.enabled
             -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
-            if A.Stormkeeper:IsReady(unit) and Unit("player"):HasBuffsDown(A.StormkeeperBuff.ID, true) and (A.Stormkeeper:IsSpellLearned() and ((MultiUnits:GetByRangeInCombat(40, 5, 10) - 1) < 3 or 10000000000 > 50)) then
-                return A.Stormkeeper:Show(icon)
+            if A.Stormkeeper:IsReady(unit) and not isMoving and Unit("player"):HasBuffsDown(A.StormkeeperBuff.ID, true) and A.Stormkeeper:IsSpellLearned() then
+                if HandleStormkeeper() then 
+                    return A.Stormkeeper:Show(icon)
+				end
             end
             -- fire_elemental,if=!talent.storm_elemental.enabled
             if A.FireElemental:IsReady(unit) and A.BurstIsON(unit) and (not A.StormElemental:IsSpellLearned()) then
@@ -415,29 +566,31 @@ A[3] = function(icon, isMulti)
 			((Pull > 0.1 and Pull <= A.LavaBurst:GetSpellCastTime() + A.GetGCD()) or not Action.GetToggle(1, "DBM")) then
                 return A.PotionofUnbridledFury:Show(icon)
             end
+            -- chain_lightning,if=spell_targets.chain_lightning>2
+            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40, 5) >= 2) and
+			((Pull > 0.1 and Pull <= A.ChainLightning:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
+                return A.ChainLightning:Show(icon)
+            end			
             -- elemental_blast,if=talent.elemental_blast.enabled
             if A.ElementalBlast:IsReady(unit) and (A.ElementalBlast:IsSpellLearned()) and
 			((Pull > 0.1 and Pull <= A.ElementalBlast:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.ElementalBlast:Show(icon)
             end
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
-            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) and
+            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRange(40, 5) < 2) and
 			((Pull > 0.1 and Pull <= A.LavaBurst:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.LavaBurst:Show(icon)
-            end
-            -- chain_lightning,if=spell_targets.chain_lightning>2
-            if A.ChainLightning:IsReady(unit) and (MultiUnits:GetByRange(40, 5) > 2) and
-			((Pull > 0.1 and Pull <= A.ChainLightning:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
-                return A.ChainLightning:Show(icon)
             end
         end
         
         --Aoe
         local function Aoe(unit)
             -- stormkeeper,if=talent.stormkeeper.enabled
-            if A.Stormkeeper:IsReady("player") and (A.Stormkeeper:IsSpellLearned()) then
-                return A.Stormkeeper:Show(icon)
-            end
+            if A.Stormkeeper:IsReady("player") and not isMoving and (A.Stormkeeper:IsSpellLearned()) then
+                if HandleStormkeeper() then 
+                    return A.Stormkeeper:Show(icon)
+				end
+			end
 			-- 5 Eye of the Storm if Storm Elemental is up and we got Primal Elementalists
     	    if A.EyeOfTheStorm:IsReady(unit) and A.EyeOfTheStorm:GetCooldown() < 0.1 and A.PrimalElementalist:IsSpellLearned() and A.BurstIsON(unit) and Pet:IsActive(77942) and A.CallLightning:GetCooldown() > 0.1 then
                 return A.EyeOfTheStorm:Show(icon)
@@ -451,19 +604,19 @@ A[3] = function(icon, isMulti)
                 return A.LiquidMagmaTotem:Show(icon)
             end
             -- earthquake,if=!talent.master_of_the_elements.enabled|buff.stormkeeper.up|maelstrom>=(100-4*spell_targets.chain_lightning)|buff.master_of_the_elements.up|spell_targets.chain_lightning>3
-            if A.Earthquake:IsReady("player") and Player:Maelstrom() > 60 then
+            if A.Earthquake:IsReady("player") and Player:Maelstrom() >= 60 then
                 return A.Earthquake:Show(icon)
             end
             -- chain_lightning,if=buff.stormkeeper.remains<3*gcd*buff.stormkeeper.stack
-            if A.ChainLightning:IsReady(unit) and Player:Maelstrom() < 90 then
+            if A.ChainLightning:IsReady(unit) and MultiUnits:GetByRangeInCombat(40, 5) > 2 and (not isMoving or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0) and Player:Maelstrom() < 90 then
                 return A.ChainLightning:Show(icon)
             end
             -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
-            if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true)) then
+            if A.LavaBurst:IsReady(unit) and (not isMoving or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) > 0 then
                 return A.LavaBurst:Show(icon)
             end
             -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
-            if A.Icefury:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
+            if A.Icefury:IsReady(unit) and not isMoving and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
                 return A.Icefury:Show(icon)
             end
             -- frost_shock,if=spell_targets.chain_lightning<4&buff.icefury.up&!buff.ascendance.up
@@ -471,7 +624,7 @@ A[3] = function(icon, isMulti)
                 return A.FrostShock:Show(icon)
             end
             -- elemental_blast,if=talent.elemental_blast.enabled&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-            if A.ElementalBlast:IsReady(unit) and (A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
+            if A.ElementalBlast:IsReady(unit) and not isMoving and (A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
                 return A.ElementalBlast:Show(icon)
             end
             -- lava_beam,if=talent.ascendance.enabled
@@ -484,7 +637,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock148) then
+                if Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -493,274 +646,8 @@ A[3] = function(icon, isMulti)
                 return A.FrostShock:Show(icon)
             end
         end
-        
-        --Funnel
-        local function Funnel(unit)
-            -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock163) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0)) then
-                return A.Ascendance:Show(icon)
-            end
-            -- elemental_blast,if=talent.elemental_blast.enabled&(talent.master_of_the_elements.enabled&buff.master_of_the_elements.up&maelstrom<60|!talent.master_of_the_elements.enabled)&(!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)|azerite.natural_harmony.rank=3&buff.wind_gust.stack<14)
-            if A.ElementalBlast:IsReady(unit) and (A.ElementalBlast:IsSpellLearned() and (A.MasteroftheElements:IsSpellLearned() and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0 and Player:Maelstrom() < 60 or not A.MasteroftheElements:IsSpellLearned()) and (not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) or A.NaturalHarmony:GetAzeriteRank() == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)) then
-                return A.ElementalBlast:Show(icon)
-            end
-            -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)&(!talent.surge_of_power.enabled|buff.surge_of_power.up|maelstrom>=44)
-            if A.Stormkeeper:IsReady(unit) and (A.Stormkeeper:IsSpellLearned() and ((MultiUnits:GetByRangeInCombat(40, 5, 10) - 1) < 3) and (not A.SurgeofPower:IsSpellLearned() or Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 or Player:Maelstrom() >= 44)) then
-                return A.Stormkeeper:Show(icon)
-            end
-            -- liquid_magma_totem,if=talent.liquid_magma_totem.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
-            if A.LiquidMagmaTotem:IsReady(unit) and (A.LiquidMagmaTotem:IsSpellLearned() and ((MultiUnits:GetByRangeInCombat(40, 5, 10) - 1) < 3)) then
-                return A.LiquidMagmaTotem:Show(icon)
-            end
-            -- lightning_bolt,if=buff.stormkeeper.up&spell_targets.chain_lightning<6&(azerite.lava_shock.rank*buff.lava_shock.stack)<36&(buff.master_of_the_elements.up&!talent.surge_of_power.enabled|buff.surge_of_power.up)
-            if A.LightningBolt:IsReady(unit) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 6 and (A.LavaShock:GetAzeriteRank() * Unit("player"):HasBuffsStacks(A.LavaShockBuff.ID, true)) < 36 and (Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0 and not A.SurgeofPower:IsSpellLearned() or Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0)) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled|(azerite.lava_shock.rank*buff.lava_shock.stack<36)&buff.stormkeeper.up&cooldown.lava_burst.remains<=gcd)
-            if A.EarthShock:IsReady(unit) and (not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and A.MasteroftheElements:IsSpellLearned() and (Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) or A.LavaBurst:GetCooldown() > 0 and Player:Maelstrom() >= 92 + 30 * num(A.CalltheThunder:IsSpellLearned()) or (A.LavaShock:GetAzeriteRank() * Unit("player"):HasBuffsStacks(A.LavaShockBuff.ID, true) < 36) and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and A.LavaBurst:GetCooldown() <= A.GetGCD())) then
-                return A.EarthShock:Show(icon)
-            end
-            -- earth_shock,if=!talent.master_of_the_elements.enabled&!(azerite.igneous_potential.rank>2&buff.ascendance.up)&(buff.stormkeeper.up|maelstrom>=90+30*talent.call_the_thunder.enabled|!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)&expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)>=30*(1+(azerite.echo_of_the_elementals.rank>=2)))
-            if A.EarthShock:IsReady(unit) and (not A.MasteroftheElements:IsSpellLearned() and not (A.IgneousPotential:GetAzeriteRank() > 2 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) or Player:Maelstrom() >= 90 + 30 * num(A.CalltheThunder:IsSpellLearned()) or not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) and expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) >= 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))))) then
-                return A.EarthShock:Show(icon)
-            end
-            -- earth_shock,if=talent.surge_of_power.enabled&!buff.surge_of_power.up&cooldown.lava_burst.remains<=gcd&(!talent.storm_elemental.enabled&!(cooldown.fire_elemental.remains>120)|talent.storm_elemental.enabled&!(cooldown.storm_elemental.remains>120))
-            if A.EarthShock:IsReady(unit) and (A.SurgeofPower:IsSpellLearned() and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and A.LavaBurst:GetCooldown() <= A.GetGCD() and (not A.StormElemental:IsSpellLearned() and not (A.FireElemental:GetCooldown() > 120) or A.StormElemental:IsSpellLearned() and not (A.StormElemental:GetCooldown() > 120))) then
-                return A.EarthShock:Show(icon)
-            end
-            -- lightning_bolt,if=cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled&(azerite.igneous_potential.rank<2|!buff.lava_surge.up&buff.bloodlust.up)
-            if A.LightningBolt:IsReady(unit) and (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned() and (A.IgneousPotential:GetAzeriteRank() < 2 or not Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) and Unit("player"):HasHeroism())) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- lightning_bolt,if=(buff.stormkeeper.remains<1.1*gcd*buff.stormkeeper.stack|buff.stormkeeper.up&buff.master_of_the_elements.up)
-            if A.LightningBolt:IsReady(unit) and ((Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) < 1.1 * A.GetGCD() * Unit("player"):HasBuffsStacks(A.StormkeeperBuff.ID, true) or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true))) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&talent.master_of_the_elements.enabled&buff.icefury.up&buff.master_of_the_elements.up
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and A.MasteroftheElements:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true)) then
-                return A.FrostShock:Show(icon)
-            end
-            -- lava_burst,if=buff.ascendance.up
-            if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock362) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- lava_burst,if=talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains)%150))<(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150)))) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- lava_burst,if=!talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains)%150))<(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (not A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150)))) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- lightning_bolt,if=buff.surge_of_power.up
-            if A.LightningBolt:IsReady(unit) and (Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react&!talent.master_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and not A.MasteroftheElements:IsSpellLearned()) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- icefury,if=talent.icefury.enabled&!(maelstrom>75&cooldown.lava_burst.remains<=0)&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-            if A.Icefury:IsReady(unit) and (A.Icefury:IsSpellLearned() and not (Player:Maelstrom() > 75 and A.LavaBurst:GetCooldown() <= 0) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
-                return A.Icefury:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:GetSpellCharges() > num(A.EchooftheElements:IsSpellLearned())) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&buff.icefury.remains<1.1*gcd*buff.icefury.stack
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < 1.1 * A.GetGCD() * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true)) then
-                return A.FrostShock:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock483) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- totem_mastery,if=talent.totem_mastery.enabled&(buff.resonance_totem.remains<6|(buff.resonance_totem.remains<(buff.ascendance.duration+cooldown.ascendance.remains)&cooldown.ascendance.remains<15))
-            if A.TotemMastery:IsReady("player") and (A.TotemMastery:IsSpellLearned() and (ResonanceTotemTime() < 6 or (ResonanceTotemTime() < (15 + A.Ascendance:GetCooldown()) and A.Ascendance:GetCooldown() < 15))) then
-                return A.TotemMastery:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&(buff.icefury.remains<gcd*4*buff.icefury.stack|buff.stormkeeper.up|!talent.master_of_the_elements.enabled)
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and (Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < A.GetGCD() * 4 * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true) or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) or not A.MasteroftheElements:IsSpellLearned())) then
-                return A.FrostShock:Show(icon)
-            end
-            -- lightning_bolt
-            if A.LightningBolt:IsReady(unit) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- flame_shock,moving=1,target_if=refreshable
-            if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock528) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and isMoving and (Unit(unit):GetRange() > 6) then
-                return A.FlameShock:Show(icon)
-            end
-            -- frost_shock,moving=1
-            if A.FrostShock:IsReady(unit) and isMoving then
-                return A.FrostShock:Show(icon)
-            end
-        end
-        
-        --SingleUnit
-        local function SingleUnit(unit)
-            -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock545) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and not A.Icefury:GetCooldown() == 0)) then
-                return A.Ascendance:Show(icon)
-            end
-            -- elemental_blast,if=talent.elemental_blast.enabled&(talent.master_of_the_elements.enabled&buff.master_of_the_elements.up&maelstrom<60|!talent.master_of_the_elements.enabled)&(!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)|azerite.natural_harmony.rank=3&buff.wind_gust.stack<14)
-            if A.ElementalBlast:IsReady(unit) and (A.ElementalBlast:IsSpellLearned() and (A.MasteroftheElements:IsSpellLearned() and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0 and Player:Maelstrom() < 60 or not A.MasteroftheElements:IsSpellLearned()) and (not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) or A.NaturalHarmony:GetAzeriteRank() == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)) then
-                return A.ElementalBlast:Show(icon)
-            end
-            -- stormkeeper,if=talent.stormkeeper.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)&(!talent.surge_of_power.enabled|buff.surge_of_power.up|maelstrom>=44)
-            if A.Stormkeeper:IsReady(unit) and (A.Stormkeeper:IsSpellLearned() and ((MultiUnits:GetByRangeInCombat(40, 5, 10) - 1) < 3) and (not A.SurgeofPower:IsSpellLearned() or Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) or Player:Maelstrom() >= 44)) then
-                return A.Stormkeeper:Show(icon)
-            end
-            -- liquid_magma_totem,if=talent.liquid_magma_totem.enabled&(raid_event.adds.count<3|raid_event.adds.in>50)
-            if A.LiquidMagmaTotem:IsReady(unit) and (A.LiquidMagmaTotem:IsSpellLearned() and ((MultiUnits:GetByRangeInCombat(40, 5, 10) - 1) < 3)) then
-                return A.LiquidMagmaTotem:Show(icon)
-            end
-            -- lightning_bolt,if=buff.stormkeeper.up&spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack)<26&(buff.master_of_the_elements.up&!talent.surge_of_power.enabled|buff.surge_of_power.up)
-            if A.LightningBolt:IsReady(unit) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and (A.LavaShock:GetAzeriteRank() * Unit("player"):HasBuffsStacks(A.LavaShockBuff.ID, true)) < 26 and (Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0 and not A.SurgeofPower:IsSpellLearned() or Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0)) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- earthquake,if=(spell_targets.chain_lightning>1|azerite.tectonic_thunder.rank>=3&!talent.surge_of_power.enabled&azerite.lava_shock.rank<1)&azerite.lava_shock.rank*buff.lava_shock.stack<(36+3*azerite.tectonic_thunder.rank*spell_targets.chain_lightning)&(!talent.surge_of_power.enabled|!dot.flame_shock.refreshable|cooldown.storm_elemental.remains>120)&(!talent.master_of_the_elements.enabled|buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled)
-            --if A.Earthquake:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or A.TectonicThunder:GetAzeriteRank() >= 3 and not A.SurgeofPower:IsSpellLearned() and A.LavaShock:GetAzeriteRank() < 1) and A.LavaShock:GetAzeriteRank() * Unit("player"):HasBuffsStacks(A.LavaShockBuff.ID, true) < (36 + 3 * A.TectonicThunder:GetAzeriteRank() * MultiUnits:GetByRangeInCombat(40, 5, 10)) and (not A.SurgeofPower:IsSpellLearned() or not Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) or A.StormElemental:GetCooldown() > 120) and (not A.MasteroftheElements:IsSpellLearned() or Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) or A.LavaBurst:GetCooldown() > 0 and Player:Maelstrom() >= 92 + 30 * num(A.CalltheThunder:IsSpellLearned()))) then
-            --    return A.Earthquake:Show(icon)
-            --end
-            -- earth_shock,if=!buff.surge_of_power.up&talent.master_of_the_elements.enabled&(buff.master_of_the_elements.up|cooldown.lava_burst.remains>0&maelstrom>=92+30*talent.call_the_thunder.enabled|spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack<26)&buff.stormkeeper.up&cooldown.lava_burst.remains<=gcd)
-            if A.EarthShock:IsReady(unit) and (Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) == 0 and A.MasteroftheElements:IsSpellLearned() and (Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0 or A.LavaBurst:GetCooldown() > 0 and Player:Maelstrom() >= 92 + 30 * num(A.CalltheThunder:IsSpellLearned()) or MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and (A.LavaShock:GetAzeriteRank() * Unit("player"):HasBuffsStacks(A.LavaShockBuff.ID, true) < 26) and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and A.LavaBurst:GetCooldown() <= A.GetGCD())) then
-                return A.EarthShock:Show(icon)
-            end
-            -- earth_shock,if=!talent.master_of_the_elements.enabled&!(azerite.igneous_potential.rank>2&buff.ascendance.up)&(buff.stormkeeper.up|maelstrom>=90+30*talent.call_the_thunder.enabled|!(cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled)&expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)>=30*(1+(azerite.echo_of_the_elementals.rank>=2)))
-            if A.EarthShock:IsReady(unit) and (not A.MasteroftheElements:IsSpellLearned() and not (A.IgneousPotential:GetAzeriteRank() > 2 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) and (Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 or Player:Maelstrom() >= 90 + 30 * num(A.CalltheThunder:IsSpellLearned()) or not (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned()) and expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) >= 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))))) then
-                return A.EarthShock:Show(icon)
-            end
-            -- earth_shock,if=talent.surge_of_power.enabled&!buff.surge_of_power.up&cooldown.lava_burst.remains<=gcd&(!talent.storm_elemental.enabled&!(cooldown.fire_elemental.remains>120)|talent.storm_elemental.enabled&!(cooldown.storm_elemental.remains>120))
-            if A.EarthShock:IsReady(unit) and (A.SurgeofPower:IsSpellLearned() and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and A.LavaBurst:GetCooldown() <= A.GetGCD() and (not A.StormElemental:IsSpellLearned() and not (A.FireElemental:GetCooldown() > 120) or A.StormElemental:IsSpellLearned() and not (A.StormElemental:GetCooldown() > 120))) then
-                return A.EarthShock:Show(icon)
-            end
-            -- lightning_lasso
-            if A.LightningLasso:IsReady(unit) then
-                return A.LightningLasso:Show(icon)
-            end
-            -- lightning_bolt,if=cooldown.storm_elemental.remains>120&talent.storm_elemental.enabled&(azerite.igneous_potential.rank<2|!buff.lava_surge.up&buff.bloodlust.up)
-            if A.LightningBolt:IsReady(unit) and (A.StormElemental:GetCooldown() > 120 and A.StormElemental:IsSpellLearned() and (A.IgneousPotential:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) == 0 and Unit("player"):HasHeroism())) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- lightning_bolt,if=(buff.stormkeeper.remains<1.1*gcd*buff.stormkeeper.stack|buff.stormkeeper.up&buff.master_of_the_elements.up)
-            if A.LightningBolt:IsReady(unit) and ((Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) < 1.1 * A.GetGCD() * Unit("player"):HasBuffsStacks(A.StormkeeperBuff.ID, true) or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0)) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&talent.master_of_the_elements.enabled&buff.icefury.up&buff.master_of_the_elements.up
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and A.MasteroftheElements:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) > 0) then
-                return A.FrostShock:Show(icon)
-            end
-            -- lava_burst,if=buff.ascendance.up
-            if A.LavaBurst:IsReady(unit) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock774) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- lava_burst,if=talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains)%150))<(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 and (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.StormElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.StormElemental:GetCooldown()) / 150)))) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- lava_burst,if=!talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.fire_elemental.remains)%150))<(expected_combat_length-time-cooldown.fire_elemental.remains-150*floor((expected_combat_length-time-cooldown.fire_elemental.remains)%150)))
-            if A.LavaBurst:IsReady(unit) and (not A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 and (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown() - 150 * math.floor ((1.16 * (expected_combat_length - Unit("player"):CombatTime()) - A.FireElemental:GetCooldown()) / 150)) < (expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown() - 150 * math.floor ((expected_combat_length - Unit("player"):CombatTime() - A.FireElemental:GetCooldown()) / 150)))) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- lightning_bolt,if=buff.surge_of_power.up
-            if A.LightningBolt:IsReady(unit) and (Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react&!talent.master_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and not A.MasteroftheElements:IsSpellLearned()) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- icefury,if=talent.icefury.enabled&!(maelstrom>75&cooldown.lava_burst.remains<=0)&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-            if A.Icefury:IsReady(unit) and (A.Icefury:IsSpellLearned() and not (Player:Maelstrom() > 75 and A.LavaBurst:GetCooldown() <= 0) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
-                return A.Icefury:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:GetSpellCharges() > num(A.EchooftheElements:IsSpellLearned())) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&buff.icefury.remains<1.1*gcd*buff.icefury.stack
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < 1.1 * A.GetGCD() * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true)) then
-                return A.FrostShock:Show(icon)
-            end
-            -- lava_burst,if=cooldown_react
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0) then
-                return A.LavaBurst:Show(icon)
-            end
-            -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock895) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- totem_mastery,if=talent.totem_mastery.enabled&(buff.resonance_totem.remains<6|(buff.resonance_totem.remains<(buff.ascendance.duration+cooldown.ascendance.remains)&cooldown.ascendance.remains<15))
-            if A.TotemMastery:IsReady("player") and (A.TotemMastery:IsSpellLearned() and (ResonanceTotemTime() < 6 or (ResonanceTotemTime() < (15 + A.Ascendance:GetCooldown()) and A.Ascendance:GetCooldown() < 15))) then
-                return A.TotemMastery:Show(icon)
-            end
-            -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&(buff.icefury.remains<gcd*4*buff.icefury.stack|buff.stormkeeper.up|!talent.master_of_the_elements.enabled)
-            if A.FrostShock:IsReady(unit) and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and (Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < A.GetGCD() * 4 * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true) or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) or not A.MasteroftheElements:IsSpellLearned())) then
-                return A.FrostShock:Show(icon)
-            end
-            -- chain_lightning,if=buff.tectonic_thunder.up&!buff.stormkeeper.up&spell_targets.chain_lightning>1
-            if A.ChainLightning:IsReady(unit) and (Unit("player"):HasBuffs(A.TectonicThunderBuff.ID, true) > 0 and not Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
-                return A.ChainLightning:Show(icon)
-            end
-            -- lightning_bolt
-            if A.LightningBolt:IsReady(unit) then
-                return A.LightningBolt:Show(icon)
-            end
-            -- flame_shock,moving=1,target_if=refreshable
-            if A.FlameShock:IsReady(unit) and isMoving then
-                if Action.Utils.CastTargetIf(A.FlameShock, 40, "min", EvaluateCycleFlameShock946) then
-                    return A.FlameShock:Show(icon) 
-                end
-            end
-            -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and isMoving and (Unit(unit):GetRange() > 6) then
-                return A.FlameShock:Show(icon)
-            end
-            -- frost_shock,moving=1
-            if A.FrostShock:IsReady(unit) and isMoving then
-                return A.FrostShock:Show(icon)
-            end
-        end
+            
+
 		
 		local function CustomST(unit)
 		
@@ -774,7 +661,9 @@ A[3] = function(icon, isMulti)
 		    end		
 		    -- 2 Stormkeeper
 		    if A.Stormkeeper:IsReady(unit) and not isMoving and A.Stormkeeper:IsSpellLearned() then 
-                return A.Stormkeeper:Show(icon)
+                if HandleStormkeeper() then 
+                    return A.Stormkeeper:Show(icon)
+				end
             end		
 		    -- 3 Fire Elemental
             if A.FireElemental:IsReady(unit) and A.BurstIsON(unit) and (not A.StormElemental:IsSpellLearned()) then
@@ -849,12 +738,12 @@ A[3] = function(icon, isMulti)
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 		
-				    -- Ghost Wolf
-		    if Unit(unit):GetRange() > 40 and A.GhostWolf:IsReady("player") and Unit("player"):HasBuffs(A.GhostWolfBuff.ID, true) == 0 and Action.GetToggle(2, "UseGhostWolf") then
-		       	-- Notification					
-                Action.SendNotification("Out of range, auto Ghost Wolf", A.GhostWolf.ID)
-    		    return A.GhostWolf:Show(icon)
-		    end
+		-- Ghost Wolf
+		if Unit(unit):GetRange() > 40 and A.GhostWolf:IsReady("player") and Unit("player"):HasBuffs(A.GhostWolfBuff.ID, true) == 0 and Action.GetToggle(2, "UseGhostWolf") then
+		   	-- Notification					
+            Action.SendNotification("Out of range, auto Ghost Wolf", A.GhostWolf.ID)
+    	    return A.GhostWolf:Show(icon)
+		end
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
@@ -876,7 +765,11 @@ A[3] = function(icon, isMulti)
      	            return A.CapacitorTotem:Show(icon)
      	        end 
      	    end 
-
+			-- Earth Shield
+            if A.EarthShield:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "EarthShieldHP") then
+                return A.EarthShield:Show(icon)
+            end
+			
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
             -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
@@ -884,18 +777,6 @@ A[3] = function(icon, isMulti)
                 return A.Purge:Show(icon)
             end	
 
-		    -- Earth Shield
-            if A.EarthShield:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "EarthShieldHP") then
-                return A.EarthShield:Show(icon)
-            end
-		    -- Healing Surge
-            if A.HealingSurge:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "HealingSurgeHP") then
-                return A.HealingSurge:Show(icon)
-            end
-		    -- Astral Shift
-            if A.AstralShift:IsReady("player") and Unit("player"):HealthPercent() <= Action.GetToggle(2, "AstralShiftHP") then
-                return A.AstralShift:Show(icon)
-            end
             -- potion,if=expected_combat_length-time<30|cooldown.fire_elemental.remains>120|cooldown.storm_elemental.remains>120
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (expected_combat_length - Unit("player"):CombatTime() < 30 or A.FireElemental:GetCooldown() > 120 or A.StormElemental:GetCooldown() > 120) then
                 return A.PotionofUnbridledFury:Show(icon)
@@ -957,7 +838,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodFury:Show(icon)
             end
             -- berserking,if=!talent.ascendance.enabled|buff.ascendance.up
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.Ascendance:IsSpellLearned() or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
+            if A.Berserking:AutoRacial(unit) and not Unit("player"):HasHeroism() and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.Ascendance:IsSpellLearned() or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
                 return A.Berserking:Show(icon)
             end
             -- fireblood,if=!talent.ascendance.enabled|buff.ascendance.up|cooldown.ascendance.remains>50
@@ -976,7 +857,7 @@ A[3] = function(icon, isMulti)
 			    return
 			end
             -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
-            if (MultiUnits:GetByRange(40, 5) > 1 or Action.GetToggle(2, "AoE")) and Aoe(unit) then
+            if Aoe(unit) and (MultiUnits:GetByRangeInCombat(40, 5) > 2 and Action.GetToggle(2, "AoE")) then
                 return true
             end
 			--print("Active Enemies: " .. MultiUnits:GetByRange(40, 3))
@@ -985,7 +866,7 @@ A[3] = function(icon, isMulti)
             --    return Funnel(unit);
             --end
             -- run_action_list,name=single_target
-            if CustomST(unit) and (MultiUnits:GetByRange(40, 5) == 1 or not Action.GetToggle(2, "AoE"))  then
+            if CustomST(unit) and (MultiUnits:GetByRangeInCombat(40, 5) < 3 or not Action.GetToggle(2, "AoE"))  then
                 return true
             end
         end
@@ -993,36 +874,67 @@ A[3] = function(icon, isMulti)
 
     -- End on EnemyRotation()
 
- 	   	-- Mouseover DPS Rotation
-	   	-- Only handling mouseover multidots and dots refreshable
-	   	local function MouseoverRotation(unit)
+   	-- Mouseover DPS Rotation
+   	-- Only handling mouseover multidots and dots refreshable
+   	local function MouseoverRotation(unit)
+	
+	   	-- Variables
+       	inRange = A.ChainLightning:IsInRange(unit)
 		
-		   	-- Variables
-          	inRange = A.ChainLightning:IsInRange(unit)
-		
-		   	-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
-          	-- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-          	-- Purge
-		   	if A.Purge:IsReady(unit) and Action.GetToggle(2, "mouseover") and not ShouldStop and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
-                return A.Purge:Show(icon)
-          	end	
+	   	-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
+       	-- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
+       	-- Purge
+	   	if A.Purge:IsReady(unit) and Action.GetToggle(2, "mouseover") and not ShouldStop and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+            return A.Purge:Show(icon)
+       	end	
   	        
-			-- WindShear
-  	        if useKick and A.WindShear:IsReady(unit) and not ShouldStop then 
-		  	    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-          	        return A.WindShear:Show(icon)
-         	    end 
-         	end 		
+		-- WindShear
+        if useKick and A.WindShear:IsReady(unit) and not ShouldStop then 
+	  	    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	        return A.WindShear:Show(icon)
+       	    end 
+       	end 		
 				
-		   	-- FlameShock
-		   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 5 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
-		   		return A.FlameShock:Show(icon)
-		   	end			
-		
-	   	end
-
-    -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    	-- FlameShock
+	   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 5 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
+	   		return A.FlameShock:Show(icon)
+	   	end			
+	
+   	end
+	
+   	-- FriendlyTeam Rotation
+   	-- Only handling mouseover multidots and dots refreshable
+   	local function FriendlyRotation()
+       	-- AncestralGuidance
+       	local AncestralGuidance = A.GetToggle(2, "AncestralGuidanceHP")
+       	if HandleAncestralGuidance() and
+		AncestralGuidance >= 0 and A.AncestralGuidance:IsReady("player") and 
+       	(
+           	(    -- Auto 
+               	AncestralGuidance >= 100 and 
+               	(
+                    FriendlyTeam():GetDMG() > FriendlyTeam():GetHPS()
+               	)
+           	) or 
+           	(    -- Custom
+               	AncestralGuidance < 100 and 
+				-- HP lose per sec >= 40
+                FriendlyTeam():GetDMG() * 100 / FriendlyTeam():HealthMax() >= AncestralGuidance or 
+                FriendlyTeam():GetRealTimeDMG() >= FriendlyTeam():HealthMax() * AncestralGuidance / 100 
+           	)
+       	) 
+       	then 
+           	return A.AncestralGuidance
+       	end	
+   	end
+    
+	-- Friendly Rotation
+    if FriendlyRotation() then
+        return true
+    end
+    
+	-- Defensive
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -1104,5 +1016,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
-
+end
+]]--

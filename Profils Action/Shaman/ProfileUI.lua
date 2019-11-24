@@ -242,9 +242,37 @@ A.Data.ProfileUI = {
                         frFR = "Forcera certains spells à être utilisés sur le GCD",
                     }, 
                     M = {},
-                }, 
-                
+                },                 
             },  
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+			{
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Only with CDs On", value = "Only with CDs On" },
+						{ text = "Only in AoE", value = "Only in AoE" },
+                        { text = "Everytime", value = "Everytime" },
+
+                    },
+                    MULT = false,
+                    DB = "StormkeeperSelection",
+                    DBV = "Only with CDs", 
+                    L = { 
+                        ANY = "Stormkeeper usage",
+                    }, 
+                    TT = { 
+                        enUS = "Choose how Stormkeeper should be used.", 
+                        ruRU = "Choose how Stormkeeper should be used.",
+                    }, 
+                    M = {},
+                },	
+			},	
+
             { -- [4] 4th Row
 
                 {
@@ -509,6 +537,61 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Ancestral Guidance -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AncestralGuidanceSelection",
+                    DBV = "In Dungeon", 
+                    L = { 
+                        ANY = "Ancestral Guidance usage",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically Ancestral Guidance units.", 
+                        ruRU = "Choose where you want to automatically Ancestral Guidance units.",
+                    }, 
+                    M = {},
+                },	
+			},	
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AncestralGuidanceHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Defensive Logic",
+                    },
+                    TT = { 
+                        enUS = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                        ruRU = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                        frFR = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                    },					
+                    M = {},
+                },
+			},
+
             { -- [4] 4th Row
                 {
                     E = "LayoutSpace",                                                                         
