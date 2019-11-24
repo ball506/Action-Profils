@@ -77,8 +77,8 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
 	-- Misc
     BurningRush                          = Action.Create({ Type = "Spell", ID = 278727     }),
     Channeling                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-	StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    --TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+	--StopCast 				             = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
     -- Buffs
     GrimoireofSacrificeBuff              = Action.Create({ Type = "Spell", ID = 196099, Hidden = true     }),
     ActiveUasBuff                        = Action.Create({ Type = "Spell", ID = 233490, Hidden = true     }),
@@ -125,7 +125,6 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
     -- Misc
-	TargetEnemy                          = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
     ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     -- Hidden Heart of Azeroth
@@ -602,8 +601,8 @@ A[3] = function(icon, isMulti)
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
 	DetermineEssenceRanks()
 	-- Multidots var
-	--MissingCorruption = MultiUnits:GetByRangeMissedDoTs(40, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-	--MissingAgony = MultiUnits:GetByRangeMissedDoTs(40, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingCorruption = MultiUnits:GetByRangeMissedDoTs(40, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingAgony = MultiUnits:GetByRangeMissedDoTs(40, 5, A.Agony.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     --print(MissingVampiricTouch)
     local AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(40, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
  	local AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(40, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
@@ -646,7 +645,7 @@ A[3] = function(icon, isMulti)
         local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
 		
 		-- Out of combat with DBM Pull timer support
-		if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+		if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
      	    
 			-- summon_pet
        		if SummonPet:IsReady(unit) and not ShouldStop and (not isMoving) and not Pet:IsActive() and not Unit("player"):HasBuffs(A.GrimoireofSacrificeBuff.ID, true) then
@@ -681,7 +680,7 @@ A[3] = function(icon, isMulti)
 		end
 	
 		-- Out of combat without DBM Pull timer support
-		if not inCombat and Unit(unit):IsExists() and not Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then
+		if not inCombat and Unit(unit):IsExists() and not Action.GetToggle(1, "DBM") and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
 			
         	-- summon_pet
         	if SummonPet:IsReady(unit) and (not isMoving) and not ShouldStop and not Pet:IsActive() then
@@ -889,7 +888,7 @@ A[3] = function(icon, isMulti)
         end 
 
 		-- Combat started and valid unit
-		if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then
+		if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
 			
 			-- Demon Armor PvP
 			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and not Unit("player"):HasBuffs(A.DemonArmor.ID, true) then 
@@ -912,7 +911,7 @@ A[3] = function(icon, isMulti)
 			    if contagion <= A.UnstableAffliction:GetSpellCastTime() + A.GetPing() + A.GetGCD() then
 				    if (A.SummonDarkglare:GetCooldown() > time_to_shard * 6) or not A.BurstIsON(unit) then
 					    Action.SendNotification("Stopping cast to maintain UA", A.UnstableAffliction.ID)
-                        return A.StopCast:Show(icon)
+                        return A:Show(icon, ACTION_CONST_STOPCAST) -- A.StopCast:Show(icon)
 					end
 			    end
 			end
@@ -922,20 +921,20 @@ A[3] = function(icon, isMulti)
 			if A.IsInPvP and castLeft > 0 and Unit("player"):IsControlAble("silence") 
             and (Unit("player"):IsFocused("MELEE") or EnemyTeam("HEALER"):GetRange() <= 30) 
 			then
-                return A.StopCast:Show(icon)
+                return A:Show(icon, ACTION_CONST_STOPCAST) -- A.StopCast:Show(icon)
 			end
 
 		    -- Auto Multi Dot	  
-	        if not Unit("player"):GetSpellLastCast(A.TargetEnemy.ID, true)  and Action.GetToggle(2, "AutoDot") and CanMultidot 
-		    and ((MissingAgony >= 1 or MissingCorruption >= 1) or (AgonyToRefresh >= 1)) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 5 
+	        if Action.GetToggle(2, "AutoDot") and CanMultidot 
+		    and (MissingAgony >= 1 or MissingCorruption >= 1) and MultiUnits:GetByRange(40, 5) >= 2 and MultiUnits:GetByRange(40, 5) <= 5 
 		    and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 8 
 			then
-                return A.TargetEnemy:Show(icon)
+                return A:Show(icon, ACTION_CONST_AUTOTARGET) -- A.TargetEnemy:Show(icon)
             end	
 				
             -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
             if (true) then
-                VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 5 or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 8)
+                VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRange(40, 5) >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetByRange(40, 5) >= 5 or MultiUnits:GetByRange(40, 5) >= 8)
             end
 		
             -- variable,name=padding,op=set,value=action.shadow_bolt.execute_time*azerite.cascading_calamity.enabled
@@ -950,7 +949,7 @@ A[3] = function(icon, isMulti)
 		
             -- variable,name=maintain_se,value=spell_targets.seed_of_corruption_aoe<=1+talent.writhe_in_agony.enabled+talent.absolute_corruption.enabled*2+(talent.writhe_in_agony.enabled&talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>2)+(talent.siphon_life.enabled&!talent.creeping_death.enabled&!talent.drain_soul.enabled)+raid_event.invulnerable.up
             if (true) then
-                VarMaintainSe = num(MultiUnits:GetByRangeInCombat(40, 5, 10) <= 1 + num(A.WritheInAgony:IsSpellLearned()) + num(A.AbsoluteCorruption:IsSpellLearned()) * 2 + num((A.WritheInAgony:IsSpellLearned() and A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) + num((A.SiphonLife:IsSpellLearned() and not A.CreepingDeath:IsSpellLearned() and not A.DrainSoul:IsSpellLearned())))
+                VarMaintainSe = num(MultiUnits:GetByRange(40, 5) <= 1 + num(A.WritheInAgony:IsSpellLearned()) + num(A.AbsoluteCorruption:IsSpellLearned()) * 2 + num((A.WritheInAgony:IsSpellLearned() and A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRange(40, 5) > 2)) + num((A.SiphonLife:IsSpellLearned() and not A.CreepingDeath:IsSpellLearned() and not A.DrainSoul:IsSpellLearned())))
             end		
 		
 		    -- #1 Burst on current target 
@@ -1223,7 +1222,7 @@ A[3] = function(icon, isMulti)
         end			
 
         -- Mouseover
-        if unit == "mouseover" and not Unit(unit):IsTotem() then 
+        if unit == "mouseover" then  -- and not Unit(unit):IsTotem()
 	
 			-- Variables
 		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover") 
