@@ -73,11 +73,11 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
     MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
     RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
-    SpiritShock                            = Action.Create({ Type = "Spell", ID = 264265, Color = "BLUE" }), -- Pet dispell/purge
-    SonicBlast                             = Action.Create({ Type = "Spell", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
+    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "BLUE" }), -- Pet dispell/purge
+    SonicBlast                             = Action.Create({ Type = "SpellSingleColor", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
     CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
     Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
-	SpiritMend                             = Action.Create({ Type = "Spell", ID = 90361, Color = "YELLOW"}), 
+	SpiritMend                             = Action.Create({ Type = "SpellSingleColor", ID = 90361, Color = "YELLOW"}), 
 	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
@@ -739,7 +739,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
 		    -- Interrupt Handler
  	 	
   		    local unit = "target"
