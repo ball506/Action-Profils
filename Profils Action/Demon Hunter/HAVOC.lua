@@ -607,7 +607,7 @@ A[3] = function(icon, isMulti)
         --Demonic
         local function Demonic(unit)
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
@@ -619,11 +619,11 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
                 return A.BladeDance:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- immolation_aura
@@ -683,7 +683,7 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit)  and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- immolation_aura
@@ -695,7 +695,7 @@ A[3] = function(icon, isMulti)
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
