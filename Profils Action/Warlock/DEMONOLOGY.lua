@@ -892,7 +892,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
             -- potion,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
             if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
                 return A.BattlePotionofIntellect:Show(icon)
