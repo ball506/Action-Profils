@@ -17,7 +17,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "[TEST]v2 (21.11.2019)",
+    DateTime = "v2 (21.11.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DRUID_FERAL] = {
