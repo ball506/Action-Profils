@@ -385,7 +385,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
 		
 		    -- Interrupt Handler 	 	
   		    local unit = "target"
