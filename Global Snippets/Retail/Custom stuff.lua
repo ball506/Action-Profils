@@ -165,7 +165,7 @@ local HeroismBuff = {
 function Unit:HasHeroism()
     for i = 1, #HeroismBuff do
         local Buff = HeroismBuff[i]
-		if self:HasBuffs(HeroismBuff[i], true) then
+		if self:HasBuffs(HeroismBuff[i], true) > 0 then
             return true
         end
     end
