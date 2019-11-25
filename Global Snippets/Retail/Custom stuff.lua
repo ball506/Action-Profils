@@ -12,13 +12,19 @@ local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetS
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib                                = LibStub("PetLibrary")
 local Unit                                  = Action.Unit 
-local EventFrame = CreateFrame("Frame", "Taste_EventFrame", UIParent)
+local huge                                  = math.huge
+local UnitBuff                              = _G.UnitBuff
+local EventFrame                            = CreateFrame("Frame", "Taste_EventFrame", UIParent)
+
 local Events = {} -- All Events
 local CombatEvents = {} -- Combat Log Unfiltered
 local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
 local PetCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PetGUID filter
 local PrefixCombatEvents = {}
 local SuffixCombatEvents = {}
+
+Action.TasteRotation = {}
+
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -43,12 +49,10 @@ local currentClass = select(2, UnitClass("player"))
 
 if currentClass == "WARRIOR" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Warrior"
-    Action.Print("Automatically loaded profile : [Taste]Action - Warrior")
 end
 
 if currentClass == "WARLOCK" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Warlock"
-    Action.Print("Automatically loaded profile : [Taste]Action - Warlock")
 end
 
 if currentClass == "ROGUE" then
@@ -58,44 +62,42 @@ end
 
 if currentClass == "SHAMAN" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Shaman"
-    Action.Print("Automatically loaded profile : [Taste]Action - Shaman")
 end
 
 if currentClass == "DEATHKNIGHT" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Death Knight"
-    Action.Print("Automatically loaded profile : [Taste]Action - Death Knight")
 end
 
 if currentClass == "PRIEST" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Priest"
-    Action.Print("Automatically loaded profile : [Taste]Action - Priest")
 end
 
 if currentClass == "PALADIN" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Paladin"
-    Action.Print("Automatically loaded profile : [Taste]Action - Paladin")
 end
 
 if currentClass == "MAGE" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Mage"
-    Action.Print("Automatically loaded profile : [Taste]Action - Mage")
 end
 
 if currentClass == "HUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Hunter"
-    Action.Print("Automatically loaded profile : [Taste]Action - Hunter")
 end
 
 if currentClass == "DRUID" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
-    Action.Print("Automatically loaded profile : [Taste]Action - Druid")
 end
 
 if currentClass == "DEMONHUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Demon Hunter"
-    Action.Print("Automatically loaded profile : [Taste]Action - Demon Hunter")
 end
 
+TMW:RegisterCallback("TMW_ON_PROFILE", function(event, profileEvent, arg2, arg3)
+local profileName = TMW.db:GetCurrentProfile()
+if profileName:match("Taste") then
+    A.Print("Loaded " .. profileName)
+end
+end)
 
 -------------------------------------------------------------------------------
 -- Trinkets
@@ -125,7 +127,7 @@ function TrinketIsAllowed()
 end
     
 -- Trinkets checker
-function TrinketON()
+function TR.TrinketON()
   return ( (Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]) )
 end
 
@@ -150,69 +152,71 @@ end
 ------------------------------------
 --- HasHeroism simc reference
 ------------------------------------
-local HeroismBuff = {
-    [1] = 90355, -- Ancient Hysteria
-    [2] = 92825, -- Bloodlust
-    [3] = 932182, -- Heroism
-    [4] = 9160452, -- Netherwinds
-    [5] = 980353, -- Time Warp
-    [6] = 9178207, -- Drums of Fury
-    [7] = 935475, -- Drums of War
-    [8] = 9230935, -- Drums of Montain
-    [9] = 9256740 -- Drums of Maelstrom
+
+local HeroismBuff = {    
+    [90355] =  true, -- Ancient Hysteria
+    [92825] =  true, -- Bloodlust
+    [932182] =  true, -- Heroism
+    [9160452] =  true, -- Netherwinds
+    [980353] =  true, -- Time Warp
+    [9178207] =  true, -- Drums of Fury
+    [935475] =  true, -- Drums of War
+    [9230935] =  true, -- Drums of Montain
+    [9256740] =  true, -- Drums of Maelstrom
 }
 
 function Unit:HasHeroism()
-    for i = 1, #HeroismBuff do
-        local Buff = HeroismBuff[i]
-		if self:HasBuffs(HeroismBuff[i], true) > 0 then
-            return true
-        end
-    end
-    return false
-end
+    local player = "player"
+    -- @return boolean 
+    local auraName
+    for i = 1, huge do 
+        auraName = UnitBuff(player, i, "HELPFUL PLAYER")
+        if not auraName then 
+            break 
+        elseif HeroismBuff[auraName] then 
+            return true 
+        end 
+    end 
+end 
 
 ------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
 function Unit:HasDeBuffsDown(spell, byID)
-    local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
-    end 
+	local unitID = self.UnitID
 	
     ID = byID
 	if not ID then
 	    ID = true
 	end
 	
-    return (self:HasDeBuffs(spell, ID) == 0 and true) or false
+    return (self(unitID):HasDeBuffs(spell, ID) == 0 and true) or false
 end
 
 ------------------------------------
 --- HasBuffsDown simc reference
 ------------------------------------
 function Unit:HasBuffsDown(spell, byID)
+    local unitID = self.UnitID
     ID = byID
 	if not ID then
 	    ID = true
 	end
 	
-    return (self:HasBuffs(spell, ID) == 0 and true) or false
+    return (self(unitID):HasBuffs(spell, ID) == 0 and true) or false
 end
 
 ------------------------------------
 --- HasDeBuffsRefreshable simc reference
 ------------------------------------
 function Unit:HasDeBuffsRefreshable(spell, byID)
+    local unitID = self.UnitID
     ID = byID
 	if not ID then
 	    ID = true
 	end
 	
-    return (self:HasDeBuffs(spell, ID) < 5 or self:HasBuffsDown(spell, ID) and true) or false
+    return (self(unitID):HasDeBuffs(spell, ID) < 5 or self(unitID):HasBuffsDown(spell, ID) and true) or false
 end
 
 -------------------------------------------------------------------------------
@@ -222,6 +226,7 @@ function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, 
 	-- @return number
 	-- @usage A.MultiUnits:GetByRangeDoTsToRefresh(@number, @number, @table or @number, @number, @number)
 	-- deBuffs is required, refreshTime too, rest options are optimal
+    local unitID = self.UnitID
 	local total = 0
 	local nameplates = self:GetActiveUnitPlates()
 	
