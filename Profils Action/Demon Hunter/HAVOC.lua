@@ -574,7 +574,22 @@ A[3] = function(icon, isMulti)
                 return A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 20) and Unit(unit):HealthPercent() < 31 ) then
+            if A.AshvanesRazorCoral:IsReady(unit) 
+			and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) 
+				or 
+				    (
+				        (
+						    (
+							Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 10 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 15 
+							)
+						or 
+						    (
+						    Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0
+						    )
+					    )
+					)
+				) 
+			then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
