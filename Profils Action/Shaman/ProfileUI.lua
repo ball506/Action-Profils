@@ -250,28 +250,31 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-			{
+            { -- [5] 5th Row     
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "Only with CDs On", value = "Only with CDs On" },
-						{ text = "Only in AoE", value = "Only in AoE" },
-                        { text = "Everytime", value = "Everytime" },
-
+                        { text = "Burst Only", value = 1 },
+                        { text = "Aoe Only", value = 2 },
+                        { text = "Everytime", value = 3 },
                     },
-                    MULT = false,
-                    DB = "StormkeeperSelection",
-                    DBV = "Only with CDs", 
+                    MULT = true,
+                    DB = "StormkeeperMode",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                        [3] = false,
+                    }, 
                     L = { 
-                        ANY = "Stormkeeper usage",
+                        ANY = A.GetSpellInfo(191634),
                     }, 
                     TT = { 
-                        enUS = "Choose how Stormkeeper should be used.", 
-                        ruRU = "Choose how Stormkeeper should be used.",
+                        enUS = "Customize your Stormkeeper options. Multiple checks possible.", 
+                        ruRU = "Customize your Stormkeeper options. Multiple checks possible.", 
                     }, 
                     M = {},
-                },	
-			},	
+                },
+            },
 
             { -- [4] 4th Row
 

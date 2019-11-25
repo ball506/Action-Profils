@@ -93,16 +93,7 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     CallLightning                         = Action.Create({ Type = "Spell", ID = 157348 , Hidden = true     }),
     -- Defensive
 	AstralShift                           = Action.Create({ Type = "Spell", ID = 108271     }),	
-    -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    ShiverVenomDebuff                    = Action.Create({ Type = "Spell", ID = 301624, Hidden = true     }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
@@ -321,31 +312,16 @@ end
 
 -- Stormkeeper Handler UI --
 local function HandleStormkeeper()
-    local choice = Action.GetToggle(2, "StormkeeperSelection")
+    local choice = A.GetToggle(2, "StormkeeperMode")
+	--print(choice) 
     local unit = "target"
-	
-    if choice == "Everytime" then
-		if A.Stormkeeper:IsReady(unit) then
-    		return true
-		else
-		    return false
-		end
-    elseif choice == "Only with CDs On" then 
-		if A.BurstIsON(unit) then
-    		return true
-		else
-		    return false
-		end
-    elseif choice == "Only in AoE" then 
-		if MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 then
-    		return true
-		else
-		    return false
-		end
-    else
-		return false
-    end
-	--print(choice)
+
+    return     (
+        (A.BurstIsON(unit) and choice[1]) or
+        (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and choice[2]) or
+        (A.Stormkeeper:IsReady(unit) and choice[3]) 
+    ) or
+	false	
 end
 
 local function ExpectedCombatLength()
@@ -567,7 +543,7 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
             -- chain_lightning,if=spell_targets.chain_lightning>2
-            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40, 5) >= 2) and
+            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40, 5) > 1) and
 			((Pull > 0.1 and Pull <= A.ChainLightning:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.ChainLightning:Show(icon)
             end			
@@ -577,7 +553,7 @@ A[3] = function(icon, isMulti)
                 return A.ElementalBlast:Show(icon)
             end
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
-            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRange(40, 5) < 2) and
+            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned()) and
 			((Pull > 0.1 and Pull <= A.LavaBurst:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.LavaBurst:Show(icon)
             end
@@ -612,7 +588,7 @@ A[3] = function(icon, isMulti)
                 return A.ChainLightning:Show(icon)
             end
             -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
-            if A.LavaBurst:IsReady(unit) and (not isMoving or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) > 0 then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and (not isMoving or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) > 0 then
                 return A.LavaBurst:Show(icon)
             end
             -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
@@ -620,7 +596,7 @@ A[3] = function(icon, isMulti)
                 return A.Icefury:Show(icon)
             end
             -- frost_shock,if=spell_targets.chain_lightning<4&buff.icefury.up&!buff.ascendance.up
-            if A.FrostShock:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
+            if A.FrostShock:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
                 return A.FrostShock:Show(icon)
             end
             -- elemental_blast,if=talent.elemental_blast.enabled&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
@@ -632,7 +608,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaBeam:Show(icon)
             end
             -- lava_burst,moving=1,if=talent.ascendance.enabled
-            if A.LavaBurst:IsReady(unit) and isMoving and (A.Ascendance:IsSpellLearned()) then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and isMoving and (A.Ascendance:IsSpellLearned()) then
                 return A.LavaBurst:Show(icon)
             end
             -- flame_shock,moving=1,target_if=refreshable
@@ -646,8 +622,6 @@ A[3] = function(icon, isMulti)
                 return A.FrostShock:Show(icon)
             end
         end
-            
-
 		
 		local function CustomST(unit)
 		
@@ -699,7 +673,7 @@ A[3] = function(icon, isMulti)
 		        return A.EarthShock:Show(icon)
 		    end
             -- 18 lava_burst
-            if A.LavaBurst:IsReady(unit) and not isMoving and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Player:Maelstrom() <= 90 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) == 0 then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and not isMoving and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Player:Maelstrom() <= 90 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) == 0 then
                 return A.LavaBurst:Show(icon)
             end
             -- 17 frost_shock
@@ -711,7 +685,7 @@ A[3] = function(icon, isMulti)
                 return A.LightningBolt:Show(icon)
             end
 		    -- 14 Lavaburst while moving
-            if A.LavaBurst:IsReady(unit) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 and Player:Maelstrom() <= 90 then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 and Player:Maelstrom() <= 90 then
                 return A.LavaBurst:Show(icon)
             end		
             -- 15 lightning_bolt while moving w buff sk
@@ -723,7 +697,7 @@ A[3] = function(icon, isMulti)
                 return A.FrostShock:Show(icon)
             end	
             -- 12 Lavaburst		
-            if A.LavaBurst:IsReady(unit) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and Player:Maelstrom() <= 80 then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and Player:Maelstrom() <= 80 then
                 return A.LavaBurst:Show(icon)
             end	
 	        -- 15 lightning_bolt while moving w buff sk
@@ -734,7 +708,7 @@ A[3] = function(icon, isMulti)
        
 	
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 		
@@ -796,25 +770,32 @@ A[3] = function(icon, isMulti)
                 Action.SendNotification("Storm Elemental burst", A.StormElemental.ID)
 				return A.StormElemental:Show(icon)
             end
+			-- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
+            if A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) 
+			and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 
+			and A.ShiverVenomRelic:IsReady(unit) 
+			then
+                return A.ShiverVenomRelic:Show(icon)
+            end
             -- earth_elemental,if=!talent.primal_elementalist.enabled|talent.primal_elementalist.enabled&(cooldown.fire_elemental.remains<120&!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120&talent.storm_elemental.enabled)
             -- concentrated_flame
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force
@@ -822,7 +803,7 @@ A[3] = function(icon, isMulti)
                 return A.TheUnboundForce:Show(icon)
             end
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- ripple_in_space
