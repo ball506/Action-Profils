@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     -- Racials
@@ -408,7 +409,7 @@ local function APL(icon)
         -- snapshot_stats
         if Everyone.TargetIsValid() then
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 0.1 and Pull <= 6 then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and Pull > 0.1 and Pull <= 6 then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
             -- potion
@@ -440,11 +441,11 @@ local function APL(icon)
                 if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_agility 6"; end
             end
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
             -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
-            if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
+            if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() then
                 if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 8"; end
             end
             -- guardian_of_azeroth
@@ -623,19 +624,19 @@ local function APL(icon)
             if HR.Cast(S.AspectoftheEagle, Action.GetToggle(2, "OffGCDasOffGCD")) then return "aspect_of_the_eagle 320"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=equipped.dribbling_inkpod&(debuff.razor_coral_debuff.down|time_to_pct_30<1|(health.pct<30&buff.guardian_of_azeroth.up|buff.memory_of_lucid_dreams.up))|(!equipped.dribbling_inkpod&(buff.memory_of_lucid_dreams.up|buff.guardian_of_azeroth.up&cooldown.guardian_of_azeroth.remains>175)|debuff.razor_coral_debuff.down)|target.time_to_die<20
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (I.DribblingInkpod:IsEquipped() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToX(30) < 1 or (Target:HealthPercentage() < 30 and (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or Player:BuffP(S.MemoryofLucidDreams))) or (not I.DribblingInkpod:IsEquipped() and (Player:BuffP(S.MemoryofLucidDreams) or (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 175)) or Target:DebuffDownP(S.RazorCoralDebuff)) or Target:TimeToDie() < 20) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (I.DribblingInkpod:IsEquipped() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToX(30) < 1 or (Target:HealthPercentage() < 30 and (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or Player:BuffP(S.MemoryofLucidDreams))) or (not I.DribblingInkpod:IsEquipped() and (Player:BuffP(S.MemoryofLucidDreams) or (S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 175)) or Target:DebuffDownP(S.RazorCoralDebuff)) or Target:TimeToDie() < 20) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 321"; end
         end       
 		-- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
-        if I.GalecallersBoon:IsEquipReady() and TrinketON() and (bool(S.MemoryofLucidDreams:CooldownRemainsP()) or S.WildfireInfusion:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP()) or bool(I.PocketsizedComputationDevice:CooldownRemainsP()) or not S.MemoryofLucidDreams:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP())) then
+        if I.GalecallersBoon:IsEquipReady() and TR.TrinketON() and (bool(S.MemoryofLucidDreams:CooldownRemainsP()) or S.WildfireInfusion:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP()) or bool(I.PocketsizedComputationDevice:CooldownRemainsP()) or not S.MemoryofLucidDreams:IsAvailable() and bool(S.CoordinatedAssault:CooldownRemainsP())) then
             if HR.Cast(I.GalecallersBoon) then return "galecallers_boon 322"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 8"; end
         end
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 323"; end
         end
         -- focused_azerite_beam
@@ -942,7 +943,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- Muzzle
   	    if useKick and S.Muzzle:IsReady() and not ShouldStop then 

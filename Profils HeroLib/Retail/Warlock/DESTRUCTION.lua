@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     -- Racial
@@ -716,27 +717,27 @@ local function APL(icon)
         end
         -- use_items,if=pet.infernal.active&(!talent.grimoire_of_supremacy.enabled|pet.infernal.remains<=20)|target.time_to_die<=20
         -- use_item,name=pocketsized_computation_device,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TR.TrinketON() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 248"; end
         end
         -- use_item,name=rotcrusted_voodoo_doll,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.RotcrustedVoodooDoll:IsEquipReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.RotcrustedVoodooDoll:IsEquipReady() and TR.TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll 249"; end
         end
         -- use_item,name=shiver_venom_relic,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.ShiverVenomRelic:IsEquipped() and TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
+        if I.ShiverVenomRelic:IsEquipped() and TR.TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and S.SummonInfernal:CooldownRemainsP() >= 20 then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic 250"; end
         end
         -- use_item,name=aquipotent_nautilus,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.AquipotentNautilus:IsEquipReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.AquipotentNautilus:IsEquipReady() and TR.TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
             if HR.Cast(I.AquipotentNautilus) then return "aquipotent_nautilus 251"; end
         end
         -- use_item,name=tidestorm_codex,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.TidestormCodex:IsEquipReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.TidestormCodex:IsEquipReady() and TR.TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
             if HR.Cast(I.TidestormCodex) then return "tidestorm_codex 252"; end
         end
         -- use_item,name=vial_of_storms,if=dot.immolate.remains>=5&(cooldown.summon_infernal.remains>=20|target.time_to_die<30)
-        if I.VialofStorms:IsEquipReady() and TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
+        if I.VialofStorms:IsEquipReady() and TR.TrinketON() and (Target:DebuffRemainsP(S.ImmolateDebuff) >= 5 and (S.SummonInfernal:CooldownRemainsP() >= 20 or Target:TimeToDie() < 30)) then
             if HR.Cast(I.VialofStorms) then return "vial_of_storms 253"; end
         end
     end
@@ -921,7 +922,7 @@ local function APL(icon)
         
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
         -- PetKick
         if useKick and S.PetKick:IsReady() and Target:IsInterruptible() then 

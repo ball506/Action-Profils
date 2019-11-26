@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_ROGUE_OUTLAW] = {
     -- Racial
@@ -693,26 +694,26 @@ local function Trinkets()
         -- Trinkets
         -- actions.cds+=/use_item,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
         if (true) then
-            if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and not ShouldStop and TrinketON() then
+            if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and not ShouldStop and TR.TrinketON() then
                if HR.Cast(I.GalecallersBoon) then return "Cast GalecallersBoon"; end
             end
-            if I.LustrousGoldenPlumage:IsEquipped() and I.LustrousGoldenPlumage:IsReady() and not ShouldStop and TrinketON() then
+            if I.LustrousGoldenPlumage:IsEquipped() and I.LustrousGoldenPlumage:IsReady() and not ShouldStop and TR.TrinketON() then
                 if HR.Cast(I.LustrousGoldenPlumage) then return "Cast LustrousGoldenPlumage"; end
             end
-            if I.InvocationOfYulon:IsEquipped() and I.InvocationOfYulon:IsReady() and not ShouldStop and TrinketON() then
+            if I.InvocationOfYulon:IsEquipped() and I.InvocationOfYulon:IsReady() and not ShouldStop and TR.TrinketON() then
                 if HR.Cast(I.InvocationOfYulon) then return "Cast InvocationOfYulon"; end
             end
             -- actions.cds+=/use_item,name=azsharas_font_of_power,if=!buff.adrenaline_rush.up&!buff.blade_flurry.up&cooldown.adrenaline_rush.remains<15
-            if I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop and TrinketON() and not Player:BuffP(S.AdrenalineRush) and not Player:BuffP(S.BladeFlurry) and S.AdrenalineRush:CooldownRemainsP() < 15 then
+            if I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop and TR.TrinketON() and not Player:BuffP(S.AdrenalineRush) and not Player:BuffP(S.BladeFlurry) and S.AdrenalineRush:CooldownRemainsP() < 15 then
                 if HR.Cast(I.FontOfPower) then return "Cast FontOfPower"; end
             end
             -- if=!stealthed.all&buff.adrenaline_rush.down&buff.memory_of_lucid_dreams.down&energy.time_to_max>4&rtb_buffs<5
-            if I.ComputationDevice:IsEquipped() and I.ComputationDevice:IsReady() and not ShouldStop and TrinketON() and not Player:IsStealthedP(true, true)
+            if I.ComputationDevice:IsEquipped() and I.ComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and not Player:IsStealthedP(true, true)
             and not Player:BuffP(S.AdrenalineRush) and not Player:BuffP(S.LucidDreamsBuff) and EnergyTimeToMaxRounded() > 4 and RtB_Buffs() < 5 then
                 if HR.Cast(I.ComputationDevice) then return "Cast ComputationDevice"; end
             end
             -- actions.cds+=/use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<32&target.health.pct>=30|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=20-10*debuff.blood_of_the_enemy.up|target.time_to_die<60)&buff.adrenaline_rush.remains>18
-            if I.RazorCoral:IsEquipped() and I.RazorCoral:IsReady() and not ShouldStop and TrinketON() then
+            if I.RazorCoral:IsEquipped() and I.RazorCoral:IsReady() and not ShouldStop and TR.TrinketON() then
                 local CastRazorCoral;
                 if S.RazorCoralDebuff:ActiveCount() == 0 then
                     CastRazorCoral = true;
@@ -732,7 +733,7 @@ local function Trinkets()
                 end
             end
             -- Emulate SimC default behavior to use at max stacks
-            if I.VigorTrinket:IsEquipped() and I.VigorTrinket:IsReady() and not ShouldStop and TrinketON() and Player:BuffStack(S.VigorTrinketBuff) == 6 then
+            if I.VigorTrinket:IsEquipped() and I.VigorTrinket:IsReady() and not ShouldStop and TR.TrinketON() and Player:BuffStack(S.VigorTrinketBuff) == 6 then
                 if HR.Cast(I.VigorTrinket) then return "Cast VigorTrinket"; end
             end
         end
@@ -886,7 +887,7 @@ end
   		local randomInterrupt = math.random(25, 70)
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")  
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 			 
   	    -- Kick
   	    if useKick and S.Kick:IsReady() and Target:IsInRange("Melee") and not ShouldStop and ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then 

@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DEMONHUNTER_VENGEANCE] = {
   -- Racial
@@ -316,7 +317,7 @@ local function APL(icon)
             if HR.Cast(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion precombat"; end
         end
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power precombat"; end
         end
         -- Cyclotronic Blast
@@ -511,7 +512,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- Disrupt
   	    if useKick and S.Disrupt:IsReady() and not ShouldStop then 

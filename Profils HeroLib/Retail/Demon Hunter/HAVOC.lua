@@ -330,7 +330,7 @@ local function APL(icon)
                 if HR.Cast(S.Metamorphosis, Action.GetToggle(2, "OffGCDasOffGCD")) then return "metamorphosis 6"; end
             end
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and not ShouldStop then
+            if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() and not ShouldStop then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
 		end
@@ -394,24 +394,24 @@ local function APL(icon)
             if HR.Cast(I.PotionofFocusedResolve) then return "battle_potion_of_agility 55"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and ActionUnit("target"):IsBoss() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30) then
+        if Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and ActionUnit("target"):IsBoss() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
+        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
 
         -- use_item,name=galecallers_boon,if=!talent.fel_barrage.enabled|cooldown.fel_barrage.ready
-        if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and TrinketON() and not ShouldStop and (not S.FelBarrage:IsAvailable() or S.FelBarrage:CooldownUpP()) then
+        if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and TR.TrinketON() and not ShouldStop and (not S.FelBarrage:IsAvailable() or S.FelBarrage:CooldownUpP()) then
             if HR.Cast(I.GalecallersBoon) then return "galecallers_boon 56"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=buff.metamorphosis.up&buff.memory_of_lucid_dreams.down&(!variable.blade_dance|!cooldown.blade_dance.ready)
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() and not ShouldStop and S.CyclotronicBlast:IsAvailable() and (Player:BuffP(S.MetamorphosisBuff) and Player:BuffDownP(S.MemoryofLucidDreams) and (not bool(VarBladeDance) or not S.BladeDance:IsReady() and not ShouldStop)) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TR.TrinketON() and not ShouldStop and S.CyclotronicBlast:IsAvailable() and (Player:BuffP(S.MetamorphosisBuff) and Player:BuffDownP(S.MemoryofLucidDreams) and (not bool(VarBladeDance) or not S.BladeDance:IsReady() and not ShouldStop)) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast 57"; end
         end
         -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and not ShouldStop and (S.Metamorphosis:CooldownRemainsP() < 10 or S.Metamorphosis:CooldownRemainsP() > 60) then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() and not ShouldStop and (S.Metamorphosis:CooldownRemainsP() < 10 or S.Metamorphosis:CooldownRemainsP() > 60) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 60"; end
         end
         -- use_items,if=buff.metamorphosis.up
@@ -612,7 +612,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- Disrupt
   	    if useKick and S.Disrupt:IsReady() and Target:IsInterruptible() then 

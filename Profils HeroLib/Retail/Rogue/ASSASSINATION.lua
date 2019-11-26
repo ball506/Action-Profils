@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     -- Racial
@@ -1023,7 +1024,7 @@ local function CDs ()
             if S.Vendetta:IsCastable() and not Player:IsStealthedP(true, false) and Target:DebuffP(S.Rupture) and not Target:DebuffP(S.Vendetta)
                 and (not S.Subterfuge:IsAvailable() or not S.ShroudedSuffocation:AzeriteEnabled() or Target:PMultiplier(S.Garrote) > 1 and (Cache.EnemiesCount[10] < 6 or not S.Vanish:CooldownUpP()))
                 and (not S.Nightstalker:IsAvailable() or not S.Exsanguinate:IsAvailable() or S.Exsanguinate:CooldownRemainsP() < 5 - 2 * num(S.DeeperStratagem:IsAvailable()))
-                and (not TrinketON() or not I.FontOfPower:IsEquipped() or S.ShroudedSuffocation:AzeriteEnabled() or S.RazorCoralDebuff:ActiveCount() == 0 or I.RazorCoral:CooldownRemains() < 10 and S.ToxicBlade:CooldownRemainsP() <= 1) then
+                and (not TR.TrinketON() or not I.FontOfPower:IsEquipped() or S.ShroudedSuffocation:AzeriteEnabled() or S.RazorCoralDebuff:ActiveCount() == 0 or I.RazorCoral:CooldownRemains() < 10 and S.ToxicBlade:CooldownRemainsP() <= 1) then
                 if HR.Cast(S.Vendetta, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Vendetta"; end
             end
             if S.Vanish:IsCastable() and not Player:IsTanking(Target) and Target:DebuffRemainsP(S.Rupture) > 3 then
@@ -1081,7 +1082,7 @@ local function CDs ()
         -- actions.cds=potion,if=buff.bloodlust.react|target.time_to_die<=60|debuff.vendetta.up&cooldown.vanish.remains<5
 
         -- Trinkets
-        if TrinketON() then
+        if TR.TrinketON() then
             -- use_item,name=galecallers_boon,if=cooldown.vendetta.remains>45
             if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and not ShouldStop and S.Vendetta:CooldownRemains() > 45 then
                 if HR.Cast(I.GalecallersBoon) then return "Cast Galecallers Boon"; end
@@ -1464,7 +1465,7 @@ local function APL(icon)
                     if HR.Cast(S.MarkedforDeath, Action.GetToggle(2, "GCDasOffGCD")) then return "Cast Marked for Death (OOC)"; end
                 end
                 -- actions.precombat+=/use_item,name=azsharas_font_of_power
-                if TrinketON() and I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop then
+                if TR.TrinketON() and I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop then
                     if HR.Cast(I.FontOfPower) then return "Use Font of Power (OOC)"; end
                 end
             end
@@ -1474,7 +1475,7 @@ local function APL(icon)
 	-- Make use of all trinkets of the game
 	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
 	local function TrinketsRotation(icon)
-	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+	    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
        	-- Trinkets
        	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
@@ -1504,7 +1505,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		     
 		-- ShadowStep in combat and not in range
         --if S.ShadowStep:IsReady() and Player:CanAttack(Target) and not Target:IsDeadOrGhost() and Target:Exists() then
@@ -1539,7 +1540,7 @@ local function APL(icon)
         Energy_Regen_Combined = Player:EnergyRegen() + PoisonedBleeds * 7 / (2 * Player:SpellHaste());
 
         -- Special Font of Power Handling
-        if TrinketON() then
+        if TR.TrinketON() then
             -- use_item,name=azsharas_font_of_power,if=!stealthed.all&master_assassin_remains=0&cooldown.vendetta.remains<10+10*equipped.ashvanes_razor_coral&!debuff.vendetta.up&!debuff.toxic_blade.up
             if I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop and MasterAssassinRemains() <= 0
                 and S.Vendetta:CooldownRemains() < 10 + 10 * num(I.RazorCoral:IsEquipped()) and not Target:DebuffP(S.Vendetta) and not Target:DebuffP(S.ToxicBladeDebuff) then
@@ -1556,7 +1557,7 @@ local function APL(icon)
         if ShouldReturn then return ShouldReturn; end
 		
         -- actions+=/call_action_list,name=cds,if=(!talent.master_assassin.enabled|dot.garrote.ticking)&(!equipped.azsharas_font_of_power|!trinket.azsharas_font_of_power.cooldown.up)
-        if not S.MasterAssassin:IsAvailable() or Target:DebuffP(S.Garrote) and (not TrinketON() or not I.FontOfPower:IsEquipped() or not I.FontOfPower:IsReady() and not ShouldStop) then
+        if not S.MasterAssassin:IsAvailable() or Target:DebuffP(S.Garrote) and (not TR.TrinketON() or not I.FontOfPower:IsEquipped() or not I.FontOfPower:IsReady() and not ShouldStop) then
             ShouldReturn = CDs();
             if ShouldReturn then return ShouldReturn; end
         end

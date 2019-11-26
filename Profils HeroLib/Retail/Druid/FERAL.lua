@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DRUID_FERAL] = {
     -- Racial
@@ -340,7 +341,7 @@ local function APL(icon)
             if HR.Cast(S.Regrowth) then return "regrowth 3"; end
         end
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 10"; end
         end
         -- cat_form
@@ -425,19 +426,19 @@ local function APL(icon)
             if HR.Cast(S.Shadowmeld, Action.GetToggle(2, "OffGCDasOffGCD")) then return "shadowmeld 58"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.time_to_pct_30<1.5|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=25-10*debuff.blood_of_the_enemy.up|target.time_to_die<40)&buff.tigers_fury.remains>10
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:DebuffP(S.ConductiveInkDebuff) and Target:TimeToX(30) < 1.5 or Target:DebuffDownP(S.ConductiveInkDebuff) and (Target:DebuffStackP(S.RazorCoralDebuff) >= 25 - 10 * num(Target:DebuffP(S.BloodoftheEnemy)) or Target:TimeToDie() < 40) and Player:BuffRemainsP(S.TigersFuryBuff) > 10) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TR.TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or Target:DebuffP(S.ConductiveInkDebuff) and Target:TimeToX(30) < 1.5 or Target:DebuffDownP(S.ConductiveInkDebuff) and (Target:DebuffStackP(S.RazorCoralDebuff) >= 25 - 10 * num(Target:DebuffP(S.BloodoftheEnemy)) or Target:TimeToDie() < 40) and Player:BuffRemainsP(S.TigersFuryBuff) > 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
-        if I.PocketsizedComputationDevice:IsEquipped() and S.CyclotronicBlast:IsAvailable() and TrinketON() and ((Player:EnergyDeficitPredicted() >= Player:EnergyRegen() * 3) and Player:BuffDownP(S.TigersFuryBuff) and not S.JungleFury:AzeriteEnabled()) then
+        if I.PocketsizedComputationDevice:IsEquipped() and S.CyclotronicBlast:IsAvailable() and TR.TrinketON() and ((Player:EnergyDeficitPredicted() >= Player:EnergyRegen() * 3) and Player:BuffDownP(S.TigersFuryBuff) and not S.JungleFury:AzeriteEnabled()) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast 60"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=buff.tigers_fury.up&azerite.jungle_fury.enabled
-        if I.PocketsizedComputationDevice:IsEquipped() and S.CyclotronicBlast:IsAvailable() and TrinketON() and (Player:BuffP(S.TigersFuryBuff) and S.JungleFury:AzeriteEnabled()) then
+        if I.PocketsizedComputationDevice:IsEquipped() and S.CyclotronicBlast:IsAvailable() and TR.TrinketON() and (Player:BuffP(S.TigersFuryBuff) and S.JungleFury:AzeriteEnabled()) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast 61"; end
         end
         -- use_item,effect_name=azsharas_font_of_power,if=energy.deficit>=50
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() and (Player:EnergyDeficitPredicted() >= 50) then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() and (Player:EnergyDeficitPredicted() >= 50) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 62"; end
         end
         -- use_items,if=buff.tigers_fury.up|target.time_to_die<20
@@ -660,7 +661,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- SkullBash
   	    if useKick and S.SkullBash:IsReady() and not ShouldStop then 

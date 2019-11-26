@@ -12,6 +12,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
+local TR                                     = Action.TasteRotation
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -426,16 +427,16 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
+	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+        return A.FelEruption              
+    end 
+	
     if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.Disrupt
     end 
     
     if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.ChaosNova              
-    end 
-	
-    if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-        return A.FelEruption              
     end 	
 	    
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -622,7 +623,7 @@ A[3] = function(icon, isMulti)
         --Demonic
         local function Demonic(unit)
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
@@ -634,11 +635,11 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
                 return A.BladeDance:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- immolation_aura
@@ -698,7 +699,7 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit)  and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit)  and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- immolation_aura
@@ -710,7 +711,7 @@ A[3] = function(icon, isMulti)
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 8 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
@@ -769,7 +770,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() then
 		    -- Interrupt Handler 	 	
    		    local useKick, useCC, useRacial = Action.InterruptIsValid("target", "TargetMouseover")    
-            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
 			-- Interrupt
             local Interrupt = Interrupts(unit)
@@ -780,12 +781,12 @@ A[3] = function(icon, isMulti)
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
             -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-            if A.ConsumeMagic:IsReady(unit) and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
+            if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
                 return A.ConsumeMagic:Show(icon)
             end	
 		
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 7 and (Action.AuraIsValid("target", "UseDispel", "Dispel") or Player:Fury() < 80) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 7 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 80) then
                 return A.ArcaneTorrent:Show(icon)
             end	
             -- auto_attack

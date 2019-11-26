@@ -298,7 +298,7 @@ local function APL(icon)
         -- snapshot_stats
         if Everyone.TargetIsValid() then
 		    -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and Pull > 1 and Pull <= 6 then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
             -- memory_of_lucid_dreams
@@ -322,7 +322,7 @@ local function APL(icon)
         -- snapshot_stats
         if Everyone.TargetIsValid() then
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
             end
             -- memory_of_lucid_dreams
@@ -612,7 +612,7 @@ local function APL(icon)
 		-- Interrupt Handler
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- Pummel
   	    if useKick and S.Pummel:IsReady() and Target:IsInRange(5) and not ShouldStop then 
@@ -657,11 +657,11 @@ local function APL(icon)
             if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 378"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and ActionUnit("target"):IsBoss() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30) then
+        if Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and ActionUnit("target"):IsBoss() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
+        if not Player:InRaid() and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
 		-- Non SIMC Custom Trinket1

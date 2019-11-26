@@ -12,6 +12,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
+local TR                                     = Action.TasteRotation
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -744,7 +745,7 @@ A[3] = function(icon, isMulti)
  	 	
   		    local unit = "target"
    		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		    
 			-- Interrupt
             local Interrupt = Interrupts(unit)

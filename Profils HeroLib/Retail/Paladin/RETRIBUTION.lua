@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   -- Racial
@@ -304,7 +305,7 @@ local function APL(icon)
             if HR.CastLeft(S.ShieldofVengeance) then return "shield_of_vengeance 30"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(buff.avenging_wrath.remains>=20|buff.crusade.stack=10&buff.crusade.remains>15)&(cooldown.guardian_of_azeroth.remains>90|target.time_to_die<30|!essence.condensed_lifeforce.major)
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Player:BuffRemainsP(S.AvengingWrath) >= 20 or Player:BuffStackP(S.CrusadeBuff) == 10 and Player:BuffRemainsP(S.CrusadeBuff) > 15) and (S.GuardianofAzeroth:CooldownRemainsP() > 90 or Target:TimeToDie() < 30 or not S.GuardianofAzeroth:IsAvailable())) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Player:BuffRemainsP(S.AvengingWrath) >= 20 or Player:BuffStackP(S.CrusadeBuff) == 10 and Player:BuffRemainsP(S.CrusadeBuff) > 15) and (S.GuardianofAzeroth:CooldownRemainsP() > 90 or Target:TimeToDie() < 30 or not S.GuardianofAzeroth:IsAvailable())) then
             if HR.Cast(I.AshvanesRazorCoral) then reutrn "ashvanes_razor_coral"; end
         end
         -- the_unbound_force,if=time<=2|buff.reckless_force.up
@@ -336,7 +337,7 @@ local function APL(icon)
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-        if I.PocketsizedComputationDevice:IsEquipReady() and TrinketON() and (not (Player:BuffP(S.AvengingWrathBuff) or Player:BuffP(S.CrusadeBuff)) and (S.BladeofJustice:CooldownRemainsP() > PlayerGCD * 3 and S.Judgment:CooldownRemainsP() > PlayerGCD * 3)) then
+        if I.PocketsizedComputationDevice:IsEquipReady() and TR.TrinketON() and (not (Player:BuffP(S.AvengingWrathBuff) or Player:BuffP(S.CrusadeBuff)) and (S.BladeofJustice:CooldownRemainsP() > PlayerGCD * 3 and S.Judgment:CooldownRemainsP() > PlayerGCD * 3)) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "cyclotronic_blast"; end
         end
         -- avenging_wrath,if=(!talent.inquisition.enabled|buff.inquisition.up)&holy_power>=3
@@ -473,7 +474,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")          
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
 		-- Rebuke
   	    if useKick and S.Rebuke:IsReady() and not ShouldStop then 

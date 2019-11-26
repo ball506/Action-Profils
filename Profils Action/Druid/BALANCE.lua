@@ -21,7 +21,7 @@ local tinsert                                = table.insert
 local CombatLogGetCurrentEventInfo           = CombatLogGetCurrentEventInfo
 local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower =
 UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
-
+local TR                                     = Action.TasteRotation
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -390,7 +390,7 @@ A[3] = function(icon, isMulti)
 		    -- Interrupt Handler 	 	
   		    local unit = "target"
    		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 	        local castLeft, _, spellID, _, notKickAble = Unit(unit):IsCastingRemains()
 		
   	        -- SolarBeam

@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
   -- Racial
@@ -251,7 +252,7 @@ local function APL(icon)
     if Player:AffectingCombat() then
         
 		-- Interrupt Handler
- 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+ 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         

@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_MAGE_ARCANE] = {
     -- Racials
@@ -463,7 +464,7 @@ local function APL(icon)
             if HR.Cast(S.LightsJudgment) then return "lights_judgment 72"; end
         end
         -- use_item,name=azsharas_font_of_power,if=cooldown.arcane_power.remains<5|time_to_die<cooldown.arcane_power.remains
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and (S.ArcanePower:CooldownRemainsP() < 5 or Target:TimeToDie() < S.ArcanePower:CooldownRemainsP()) then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and (S.ArcanePower:CooldownRemainsP() < 5 or Target:TimeToDie() < S.ArcanePower:CooldownRemainsP()) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 73"; end
         end
         -- rune_of_power,if=!buff.arcane_power.up&(mana.pct>=50|cooldown.arcane_power.remains=0)&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
@@ -554,11 +555,11 @@ local function APL(icon)
             if HR.Cast(S.ArcaneBlast) then return "arcane_blast 243"; end
         end
         -- use_item,name=tidestorm_codex,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-        if I.TidestormCodex:IsEquipReady() and TrinketON() and (Player:BuffDownP(S.RuneofPowerBuff) and not bool(Player:BuffStackP(S.ArcanePowerBuff)) and S.ArcanePower:CooldownRemainsP() > 20) then
+        if I.TidestormCodex:IsEquipReady() and TR.TrinketON() and (Player:BuffDownP(S.RuneofPowerBuff) and not bool(Player:BuffStackP(S.ArcanePowerBuff)) and S.ArcanePower:CooldownRemainsP() > 20) then
             if HR.Cast(I.TidestormCodex) then return "tidestorm_codex 249"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.RuneofPowerBuff) and Player:BuffDownP(S.ArcanePowerBuff) and S.ArcanePower:CooldownRemainsP() > 20) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and (Player:BuffDownP(S.RuneofPowerBuff) and Player:BuffDownP(S.ArcanePowerBuff) and S.ArcanePower:CooldownRemainsP() > 20) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 250"; end
         end
         -- rune_of_power,if=buff.arcane_charge.stack=buff.arcane_charge.max_stack&(full_recharge_time<=execute_time|full_recharge_time<=cooldown.arcane_power.remains|target.time_to_die<=cooldown.arcane_power.remains)
@@ -700,7 +701,7 @@ local function APL(icon)
         
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
 		-- Counterspell
         if useKick and S.Counterspell:IsReady() and not ShouldStop then 

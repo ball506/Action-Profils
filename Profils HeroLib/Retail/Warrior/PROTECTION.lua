@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     -- Racial
@@ -306,7 +307,7 @@ local function APL(icon)
 		if Everyone.TargetIsValid() then
         -- snapshot_stats
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() and Pull > 1 and Pull <= 6 then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power precombat"; end
         end
         -- memory_of_lucid_dreams
@@ -332,7 +333,7 @@ local function APL(icon)
 		if Everyone.TargetIsValid() then
         -- snapshot_stats
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power precombat"; end
         end
         -- memory_of_lucid_dreams
@@ -435,11 +436,11 @@ local function APL(icon)
             if HR.Cast(S.ShieldSlam) then return "shield_slam 70"; end
         end
         -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) == 0) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TR.TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) == 0) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 71"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) > 7 and (S.Avatar:CooldownRemainsP() < 5 or Player:BuffP(S.AvatarBuff))) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and not ShouldStop and TR.TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) > 7 and (S.Avatar:CooldownRemainsP() < 5 or Player:BuffP(S.AvatarBuff))) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 72"; end
         end
         -- dragon_roar
@@ -507,7 +508,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- Pummel
   	    if useKick and S.Pummel:IsReady() and not ShouldStop then 
@@ -530,7 +531,7 @@ local function APL(icon)
         end
         -- use_items,if=cooldown.avatar.remains>20
         -- use_item,name=grongs_primal_rage,if=buff.avatar.down
-        if I.GrongsPrimalRage:IsEquipped() and I.GrongsPrimalRage:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.AvatarBuff)) then
+        if I.GrongsPrimalRage:IsEquipped() and I.GrongsPrimalRage:IsReady() and not ShouldStop and TR.TrinketON() and (Player:BuffDownP(S.AvatarBuff)) then
             if HR.Cast(I.GrongsPrimalRage) then return "grongs_primal_rage 87"; end
         end
 		-- Non SIMC Custom Trinket1

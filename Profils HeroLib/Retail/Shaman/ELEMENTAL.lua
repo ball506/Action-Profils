@@ -843,27 +843,27 @@ local function APL(icon)
 	
 	local function Trinkets()
 	    -- use_item,name=azsharas_font_of_power,if=cooldown.combustion.remains<=5+15*variable.font_double_on_use
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power high_priority"; end
         end
         -- use_item,name=rotcrusted_voodoo_doll,if=cooldown.combustion.remains>variable.on_use_cutoff
-        if I.RotcrustedVoodooDoll:IsEquipped() and I.RotcrustedVoodooDoll:IsReady() and TrinketON() then
+        if I.RotcrustedVoodooDoll:IsEquipped() and I.RotcrustedVoodooDoll:IsReady() and TR.TrinketON() then
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll high_priority"; end
         end
         -- use_item,name=aquipotent_nautilus,if=cooldown.combustion.remains>variable.on_use_cutoff
-        if I.AquipotentNautilus:IsEquipped() and I.AquipotentNautilus:IsReady() and TrinketON() then
+        if I.AquipotentNautilus:IsEquipped() and I.AquipotentNautilus:IsReady() and TR.TrinketON() then
             if HR.Cast(I.AquipotentNautilus) then return "aquipotent_nautilus high_priority"; end
         end
         -- use_item,name=shiver_venom_relic,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and not ShouldStop and TrinketON() then
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and not ShouldStop and TR.TrinketON() then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
         end
         -- use_item,effect_name=harmonic_dematerializer
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and TR.TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "harmonic_dematerializer high_priority"; end
         end
         -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TrinketON() then
+        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TR.TrinketON() then
             if HR.Cast(I.BalefireBranch) then return "balefire_branch combustion"; end
         end
 	end
@@ -1018,7 +1018,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- WindShear
   	    if useKick and S.WindShear:IsReadyP(30) and not ShouldStop then 

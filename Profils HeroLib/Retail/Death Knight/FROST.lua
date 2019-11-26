@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
   -- Racial
@@ -502,7 +503,7 @@ local function APL(icon)
         end
     end
     local function Cooldowns()
-        if (TrinketON()) then
+        if (TR.TrinketON()) then
             -- use_item,name=azsharas_font_of_power,if=(cooldown.empowered_rune_weapon.ready&!variable.other_on_use_equipped)|(cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)
             if I.AzsharasFontofPower:IsEquipReady() and ((S.EmpowerRuneWeapon:CooldownUpP() and not bool(VarOoUE)) or (S.PillarofFrost:CooldownRemainsP() <= 10 and bool(VarOoUE))) then
                 if HR.Cast(I.AzsharasFontofPower) then return ""; end
@@ -773,7 +774,7 @@ local function APL(icon)
     if Player:AffectingCombat() then
         
 		-- Interrupt Handler
- 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+ 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         

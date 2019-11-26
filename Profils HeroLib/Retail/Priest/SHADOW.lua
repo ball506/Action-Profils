@@ -393,7 +393,7 @@ local function APL(icon)
             end
 
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 0.1 and ((not S.ShadowWordVoid:IsAvailable() and Pull <= S.MindBlast:CastTime() + 5) or (S.ShadowWordVoid:IsAvailable() and Pull <= S.ShadowWordVoid:CastTime() + 5)) then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and Pull > 0.1 and ((not S.ShadowWordVoid:IsAvailable() and Pull <= S.MindBlast:CastTime() + 5) or (S.ShadowWordVoid:IsAvailable() and Pull <= S.ShadowWordVoid:CastTime() + 5)) then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 50"; end
             end
 			-- potion
@@ -438,7 +438,7 @@ local function APL(icon)
                 if HR.Cast(S.Shadowform, Action.GetToggle(2, "GCDasOffGCD")) then return "shadowform 44"; end
             end
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 50"; end
             end
             -- mind_blast,if=spell_targets.mind_sear<2|azerite.thought_harvester.rank=0
@@ -458,11 +458,11 @@ local function APL(icon)
 	
     local function CritCds()
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power critcds"; end
         end
         -- use_item,effect_name=cyclotronic_blast
-        if I.PocketsizedComputationDevice:IsEquipReady() and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipReady() and TR.TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device critcds"; end
         end
     end
@@ -859,7 +859,7 @@ local function APL(icon)
         
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
 		-- Silence
         if useKick and S.Silence:IsReady() and not ShouldStop then 
@@ -897,7 +897,7 @@ local function APL(icon)
             if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 283"; end
         end
         -- use_item,name=shiver_venom_relicif=!buff.ca_inc.up,target_if=dot.shiver_venom.stack>=5
-        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TR.TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
             if HR.CastCycle(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
         end
 		-- Non SIMC Custom Trinket1

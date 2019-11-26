@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
   -- Racial
@@ -312,7 +313,7 @@ local function APL(icon)
         end
         if Everyone.TargetIsValid() then
 		    -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and Pull > 1 and Pull <= 6 then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
             -- potion
@@ -340,7 +341,7 @@ local function APL(icon)
         end
         if Everyone.TargetIsValid() then
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 7"; end
             end
             -- army_of_the_dead,delay=2
@@ -582,7 +583,7 @@ local function APL(icon)
     if Player:AffectingCombat() then
         
 		-- Interrupt Handler
- 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+ 	 	local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
@@ -629,7 +630,7 @@ local function APL(icon)
         if S.Berserking:IsCastableP() and HR.CDsON() and (Player:BuffP(S.UnholyFrenzyBuff) or S.SummonGargoyle:TimeSinceLastCast() <= 35 or (S.ArmyoftheDamned:IsAvailable() and S.Apocalypse:TimeSinceLastCast() <= 15)) then
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 256"; end
         end
-        if (TrinketON()) then
+        if (TR.TrinketON()) then
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
             if I.AzsharasFontofPower:IsEquipReady() and (HL.CombatTime() > 20 or not I.RampingAmplitudeGigavoltEngine:IsEquipped() or not I.VisionofDemise:IsEquipped()) then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 258"; end

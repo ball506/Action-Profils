@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     -- Racial
@@ -696,7 +697,7 @@ local function CDs ()
 
       -- Trinkets
       -- actions.cds+=/use_items,if=buff.symbols_of_death.up|target.time_to_die<20
-      if TrinketON() then
+      if TR.TrinketON() then
         local DefaultTrinketCondition = Player:BuffP(S.SymbolsofDeath) or Target:FilteredTimeToDie("<", 20);
         if I.GalecallersBoon:IsEquipped() and I.GalecallersBoon:IsReady() and not ShouldStop and DefaultTrinketCondition then
           if HR.Cast(I.GalecallersBoon) then return "Cast GalecallersBoon"; end
@@ -901,7 +902,7 @@ local function APL(icon)
                         if HR.Cast(S.MarkedforDeath, Action.GetToggle(2, "OffGCDasOffGCD")) then return "Cast Marked for Death (OOC)"; end
                     end
                     -- actions.precombat+=/use_item,name=azsharas_font_of_power
-                    if TrinketON() and I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop then
+                    if TR.TrinketON() and I.FontOfPower:IsEquipped() and I.FontOfPower:IsReady() and not ShouldStop then
                         if HR.Cast(I.FontOfPower) then return "Cast Font of Power"; end
                     end
                     if S.ShadowBlades:IsCastable() and not Player:Buff(S.ShadowBlades) then
@@ -952,7 +953,7 @@ local function APL(icon)
  	 		
   			local unit = "target"
    			local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		        
   	    	-- Kick
   	    	if useKick and S.Kick:IsReady() and not ShouldStop then 

@@ -290,7 +290,7 @@ A[3] = function(icon, isMulti)
 	local inAoE					= A.GetToggle(2, "AoE")
 	local inHoldAoE			 	= A.GetToggle(2, "holdAoE")
 	local minHoldAoE			= A.GetToggle(2, "holdAoENum")
-    --local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+    --local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 			
 	local function EnemyRotation(unitID)
 		-- Variables

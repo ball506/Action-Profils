@@ -271,7 +271,7 @@ local function APL(icon)
 		if Everyone.TargetIsValid() then
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and Pull > 1 and Pull <= 6 then
+            if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() and Pull > 1 and Pull <= 6 then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
             end
             -- memory_of_lucid_dreams
@@ -304,7 +304,7 @@ local function APL(icon)
 		if Everyone.TargetIsValid() then
         -- snapshot_stats
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
         end
         -- memory_of_lucid_dreams
@@ -383,29 +383,29 @@ local function APL(icon)
 	-- Razor Coral logic with Eternal Palace
 	local function RazorCoralUsage()
 		-- Sivara - a bit pre 30%
-        if (Target:NPCID() == 151881 or Target:NPCID() == 155144) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
+        if (Target:NPCID() == 151881 or Target:NPCID() == 155144) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Radiance - I think also a bit pre 30%
-        if Target:NPCID() == 152364 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
+        if Target:NPCID() == 152364 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Behemoth 20 sec pre phase change or line up with last CDs on the phase.
         -- Black Water Behemot timerNextPhase
         -- InstanceDifficulty - See https://wow.gamepedia.com/DifficultyID
-        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) and I.AshvanesRazorCoral:IsReady() and TrinketON() then
+        if (Target:NPCID() == 154986 or Target:NPCID() == 150653) and Action.DBM_GetTimer("timerNextPhase") > 0 and Action.DBM_GetTimer("timerNextPhase") <= 20 and I.AshvanesRazorCoral:IsEquipped() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral behemot"; end
         end 
 		-- Ashvane - a bit pre 30%
-        if (Target:NPCID() == 153142 or Target:NPCID() == 152236) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
+        if (Target:NPCID() == 153142 or Target:NPCID() == 152236) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Orgozoa - keep for end fight in lower realm
-        if Target:NPCID() == 152128 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
+        if Target:NPCID() == 152128 and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 		-- Court -  a bit pre 30%
-        if (Target:NPCID() == 152853 or Target:NPCID() == 152852) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
+        if (Target:NPCID() == 152853 or Target:NPCID() == 152852) and I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (S.RazorCoralDebuff:ActiveCount() == 0 or (S.RazorCoralDebuff:ActiveCount() > 15 and Target:HealthPercentage() <= 33)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 115"; end
         end
 	end
@@ -452,7 +452,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-  	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+  	    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
 		-- Pummel
   	    if useKick and S.Pummel:IsReady() and not ShouldStop then 
@@ -565,7 +565,7 @@ local function APL(icon)
 		--	end
         --end 	
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or (Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10)) then
+        if I.AshvanesRazorCoral:IsEquipped() and I.AshvanesRazorCoral:IsReady() and TR.TrinketON() and (not Target:DebuffP(S.RazorCoralDebuff) or (Target:DebuffP(S.RazorCoralDebuff) and Target:HealthPercentage() <= 30 and Target:TimeToDie() >= 10)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 59"; end
         end
 		-- Non SIMC Custom Trinket1

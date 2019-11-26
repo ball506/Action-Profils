@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_DRUID_BALANCE] = {
     -- Racial
@@ -484,7 +485,7 @@ local function APL(icon)
             if HR.Cast(S.MoonkinForm, Action.GetToggle(2, "GCDasOffGCD")) then return "moonkin_form 39"; end
         end
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power precombat"; end
         end
         -- potion,dynamic_prepot=1
@@ -538,7 +539,7 @@ local function APL(icon)
            if HR.Cast(S.CelestialAlignment) then return "" end
         end
         -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TrinketON() then
+        if I.BalefireBranch:IsEquipped() and I.BalefireBranch:IsReady() and TR.TrinketON() then
             if HR.Cast(I.BalefireBranch) then return "balefire_branch combustion"; end
         end
 	    -- fury_of_elune,if=(buff.celestial_alignment.up|buff.incarnation.up)|(cooldown.celestial_alignment.remains>30|cooldown.incarnation.remains>30)
@@ -555,7 +556,7 @@ local function APL(icon)
             if HR.Cast(S.Berserking, Action.GetToggle(2, "GCDasOffGCD")) then return "berserking 65"; end
         end
         -- use_item,name=azsharas_font_of_power,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TrinketON() and (Player:BuffDownP(CaInc()) and DoTsUp())then
+        if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and TR.TrinketON() and (Player:BuffDownP(CaInc()) and DoTsUp())then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 73" end
         end
         -- guardian_of_azeroth,if=(!talent.starlord.enabled|buff.starlord.up)&!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
@@ -563,11 +564,11 @@ local function APL(icon)
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 94" end
         end
         -- use_item,effect_name=cyclotronic_blast,if=!buff.ca_inc.up,target_if=dot.moonfire.ticking&dot.sunfire.ticking&(!talent.stellar_flare.enabled|dot.stellar_flare.ticking)
-        if I.PocketsizedComputationDevice:IsEquipped() and EvaluateCyclePocketsizedComputationDevice103(Target) and I.PocketsizedComputationDevice:IsReady() and S.CyclotronicBlast:IsAvailable() and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipped() and EvaluateCyclePocketsizedComputationDevice103(Target) and I.PocketsizedComputationDevice:IsReady() and S.CyclotronicBlast:IsAvailable() and TR.TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 117" end
         end
         -- use_item,name=shiver_venom_relicif=!buff.ca_inc.up,target_if=dot.shiver_venom.stack>=5
-        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
+        if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and TR.TrinketON() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic 105"; end
         end
         -- blood_of_the_enemy,if=cooldown.ca_inc.remains>30
@@ -767,7 +768,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- SolarBeam
   	    if useKick and S.SolarBeam:IsReady() and S.SolarBeam:IsAvailable() and Target:IsInterruptible() then 

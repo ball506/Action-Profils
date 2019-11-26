@@ -14,6 +14,7 @@ local Unit                                    = Action.Unit
 --local Azerite                                 = LibStub("AzeriteTraits")
 
 local setmetatable                            = setmetatable
+local TR                                     = Action.TasteRotation
 
 
 Action[ACTION_CONST_DRUID_RESTORATION] = {

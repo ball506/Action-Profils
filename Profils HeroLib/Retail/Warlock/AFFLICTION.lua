@@ -605,7 +605,7 @@ local function APL(icon)
         --if TargetIsValid() then
         -- use_item,name=azsharas_font_of_power
         -- Using main icon, since only Haunt will be suggested precombat if equipped and that's optional
-        if I.AzsharasFontofPower:IsEquipped() and TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() then
+        if I.AzsharasFontofPower:IsEquipped() and TR.TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 15"; end
         end
         -- seed_of_corruption,if=spell_targets.seed_of_corruption_aoe>=3&!equipped.169314
@@ -625,7 +625,7 @@ local function APL(icon)
     
     local function Cooldowns()
         -- use_item,name=azsharas_font_of_power,if=(!talent.phantom_singularity.enabled|cooldown.phantom_singularity.remains<4*spell_haste|!cooldown.phantom_singularity.remains)&cooldown.summon_darkglare.remains<19*spell_haste+soul_shard*azerite.dreadful_calling.rank&dot.agony.remains&dot.corruption.remains&(dot.siphon_life.remains|!talent.siphon_life.enabled)
-        if I.AzsharasFontofPower:IsEquipped() and TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() and ((not S.PhantomSingularity:IsAvailable() or S.PhantomSingularity:CooldownRemainsP() < 4 * Player:SpellHaste() or S.PhantomSingularity:CooldownUpP()) and S.SummonDarkglare:CooldownRemainsP() < 19 * Player:SpellHaste() + Player:SoulShardsP() * S.DreadfulCalling:AzeriteRank() and Target:DebuffP(S.AgonyDebuff) and Target:DebuffP(S.CorruptionDebuff) and (Target:DebuffP(S.SiphonLifeDebuff) or not S.SiphonLife:IsAvailable())) then
+        if I.AzsharasFontofPower:IsEquipped() and TR.TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() and ((not S.PhantomSingularity:IsAvailable() or S.PhantomSingularity:CooldownRemainsP() < 4 * Player:SpellHaste() or S.PhantomSingularity:CooldownUpP()) and S.SummonDarkglare:CooldownRemainsP() < 19 * Player:SpellHaste() + Player:SoulShardsP() * S.DreadfulCalling:AzeriteRank() and Target:DebuffP(S.AgonyDebuff) and Target:DebuffP(S.CorruptionDebuff) and (Target:DebuffP(S.SiphonLifeDebuff) or not S.SiphonLife:IsAvailable())) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 30"; end
         end
         -- potion,if=(talent.dark_soul_misery.enabled&cooldown.summon_darkglare.up&cooldown.dark_soul.up)|cooldown.summon_darkglare.up|target.time_to_die<30
@@ -654,27 +654,27 @@ local function APL(icon)
             if HR.Cast(S.UnleashHeartOfAzeroth) then return ""; end
         end
         -- use_item,name=pocketsized_computation_device,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.PocketsizedComputationDevice:IsEquipped() and TrinketON() and I.PocketsizedComputationDevice:IsReady() and Action.AbsentImun(nil, unit, "DamageMagicImun") and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.PocketsizedComputationDevice:IsEquipped() and TR.TrinketON() and I.PocketsizedComputationDevice:IsReady() and Action.AbsentImun(nil, unit, "DamageMagicImun") and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 50"; end
         end
         -- use_item,name=rotcrusted_voodoo_doll,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.RotcrustedVoodooDoll:IsEquipped() and TrinketON() and not ShouldStop and I.RotcrustedVoodooDoll:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.RotcrustedVoodooDoll:IsEquipped() and TR.TrinketON() and not ShouldStop and I.RotcrustedVoodooDoll:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll"; end
         end
         -- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.ShiverVenomRelic:IsEquipped() and TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.ShiverVenomRelic:IsEquipped() and TR.TrinketON() and not ShouldStop and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and I.ShiverVenomRelic:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
         end
         -- use_item,name=aquipotent_nautilus,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.AquipotentNautilus:IsEquipped() and TrinketON() and not ShouldStop and I.AquipotentNautilus:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.AquipotentNautilus:IsEquipped() and TR.TrinketON() and not ShouldStop and I.AquipotentNautilus:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.AquipotentNautilus) then return "aquipotent_nautilus"; end
         end
         -- use_item,name=tidestorm_codex,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.TidestormCodex:IsEquipped() and TrinketON() and not ShouldStop and I.TidestormCodex:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.TidestormCodex:IsEquipped() and TR.TrinketON() and not ShouldStop and I.TidestormCodex:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.TidestormCodex) then return "tidestorm_codex"; end
         end
         -- use_item,name=vial_of_storms,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-        if I.VialofStorms:IsEquipped() and TrinketON() and not ShouldStop and I.VialofStorms:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
+        if I.VialofStorms:IsEquipped() and TR.TrinketON() and not ShouldStop and I.VialofStorms:IsReady() and (S.SummonDarkglare:CooldownRemainsP() >= 25 and (bool(S.Deathbolt:CooldownRemainsP()) or not S.Deathbolt:IsAvailable())) then
             if HR.Cast(I.VialofStorms) then return "vial_of_storms"; end
         end
         -- worldvein_resonance,if=buff.lifeblood.stack<3
@@ -980,7 +980,7 @@ local function APL(icon)
     if Player:AffectingCombat() and not PrepareAshvaneBurst() then
 	
 	    -- Interrupt Handler
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         
@@ -1126,7 +1126,7 @@ local function APL(icon)
             if HR.Cast(S.VileTaint) then return "vile_taint 861" end
         end
         -- use_item,name=azsharas_font_of_power,if=time<=3
-        if I.AzsharasFontofPower:IsEquipped() and TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() and (HL.CombatTime() <= 3) then
+        if I.AzsharasFontofPower:IsEquipped() and TR.TrinketON() and not ShouldStop and I.AzsharasFontofPower:IsReady() and (HL.CombatTime() <= 3) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 879"; end
         end
         -- phantom_singularity,if=time<=35

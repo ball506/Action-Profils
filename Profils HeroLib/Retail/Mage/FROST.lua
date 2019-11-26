@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_MAGE_FROST] = {
     -- Racials
@@ -434,11 +435,11 @@ local function APL(icon)
             if HR.Cast(S.ConeofCold) then return "cone_of_cold 48"; end
         end
         -- use_item,name=tidestorm_codex,if=buff.icy_veins.down&buff.rune_of_power.down
-        if I.TidestormCodex:IsEquipReady() and TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
+        if I.TidestormCodex:IsEquipReady() and TR.TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
             if HR.Cast(I.TidestormCodex) then return "tidestorm_codex 49"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device aoe"; end
         end
         -- frostbolt
@@ -486,7 +487,7 @@ local function APL(icon)
         end
         -- use_items
         -- use_item,name=pocketsized_computation_device,if=!cooldown.cyclotronic_blast.duration
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device 100"; end
         end
         -- blood_fury
@@ -559,11 +560,11 @@ local function APL(icon)
             if HR.Cast(S.IceNova) then return "ice_nova 183"; end
         end
         -- use_item,name=tidestorm_codex,if=buff.icy_veins.down&buff.rune_of_power.down
-        if I.TidestormCodex:IsEquipReady() and TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
+        if I.TidestormCodex:IsEquipReady() and TR.TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
             if HR.Cast(I.TidestormCodex) then return "tidestorm_codex 218"; end
         end
         -- use_item,effect_name=cyclotronic_blast,if=buff.icy_veins.down&buff.rune_of_power.down
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and (Player:BuffDownP(S.IcyVeins) and Player:BuffDownP(S.RuneofPowerBuff)) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device single"; end
         end
         -- Manual addition of Ice Lance with FoF proc if not using Glacial Spike
@@ -643,7 +644,7 @@ local function APL(icon)
         
         local unit = "target"
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		        
 		-- Counterspell
         if useKick and S.Counterspell:IsReady() and not ShouldStop then 

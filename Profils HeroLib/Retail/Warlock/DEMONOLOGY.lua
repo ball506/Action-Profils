@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     -- Racial
@@ -243,14 +244,6 @@ local function trinketReady(trinketPosition)
 	end	
 	
     return true
-end
-
-local function TrinketON()
-    if trinketReady(1) or trinketReady(2) then
-        return true
-	else
-	    return false
-	end
 end
 
 -- Stuns
@@ -985,7 +978,7 @@ local function APL(icon)
   end
   local function NetherPortalBuilding()
     -- use_item,name=azsharas_font_of_power,if=cooldown.nether_portal.remains<=5*spell_haste
-    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() and (S.NetherPortal:CooldownRemainsP() <= 5 * Player:SpellHaste()) then
+    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() and (S.NetherPortal:CooldownRemainsP() <= 5 * Player:SpellHaste()) then
         if HR.Cast(I.AzsharasFontofPower) then reutrn "azsharas_font_of_power 295"; end
     end
     -- guardian_of_azeroth,if=!cooldown.nether_portal.remains&soul_shard>=5
@@ -1051,7 +1044,7 @@ local function APL(icon)
     
     --- In Combat
     if Player:AffectingCombat() then
-	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+	    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
         -- Interrupts
     --Everyone.Interrupt(40, S.SpellLock, Settings.Commons.OffGCDasOffGCD.SpellLock, StunInterrupts);
     -- potion,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
@@ -1059,7 +1052,7 @@ local function APL(icon)
         if HR.Cast(I.PotionofUnbridledFury) then return "battle_potion_of_intellect 322"; end
     end
     -- use_item,name=azsharas_font_of_power,if=cooldown.summon_demonic_tyrant.remains<=20&!talent.nether_portal.enabled
-    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() <= 20 and not S.NetherPortal:IsAvailable()) then
+    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() <= 20 and not S.NetherPortal:IsAvailable()) then
         if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
     end
     -- use_items,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
@@ -1088,27 +1081,27 @@ local function APL(icon)
         if HR.Cast(S.RippleInSpace) then return "ripple_in_space 335"; end
     end
     -- use_item,name=pocketsized_computation_device,if=cooldown.summon_demonic_tyrant.remains>=20&cooldown.summon_demonic_tyrant.remains<=cooldown.summon_demonic_tyrant.duration-15|target.time_to_die<=30
-    if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 20 and S.SummonDemonicTyrant:CooldownRemainsP() <= 75 or Target:TimeToDie() <= 30) then
+    if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 20 and S.SummonDemonicTyrant:CooldownRemainsP() <= 75 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
     end
     -- use_item,name=rotcrusted_voodoo_doll,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.RotcrustedVoodooDoll:IsEquipped() and I.RotcrustedVoodooDoll:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.RotcrustedVoodooDoll:IsEquipped() and I.RotcrustedVoodooDoll:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.RotcrustedVoodooDoll) then return "rotcrusted_voodoo_doll"; end
     end
     -- use_item,name=shiver_venom_relic,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.ShiverVenomRelic:IsEquipped() and I.ShiverVenomRelic:IsReady() and Target:DebuffStackP(S.ShiverVenomDebuff) >= 5 and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.ShiverVenomRelic) then return "shiver_venom_relic"; end
     end
     -- use_item,name=aquipotent_nautilus,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.AquipotentNautilus:IsEquipped() and I.AquipotentNautilus:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.AquipotentNautilus:IsEquipped() and I.AquipotentNautilus:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.AquipotentNautilus) then return "aquipotent_nautilus"; end
     end
     -- use_item,name=tidestorm_codex,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.TidestormCodex:IsEquipped() and I.TidestormCodex:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.TidestormCodex:IsEquipped() and I.TidestormCodex:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.TidestormCodex) then return "tidestorm_codex"; end
     end
     -- use_item,name=vial_of_storms,if=(cooldown.summon_demonic_tyrant.remains>=25|target.time_to_die<=30)
-    if I.VialofStorms:IsEquipped() and I.VialofStorms:IsReady() and not ShouldStop and TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
+    if I.VialofStorms:IsEquipped() and I.VialofStorms:IsReady() and not ShouldStop and TR.TrinketON() and (S.SummonDemonicTyrant:CooldownRemainsP() >= 25 or Target:TimeToDie() <= 30) then
         if HR.Cast(I.VialofStorms) then return "vial_of_storms"; end
     end
 	-- Non SIMC Custom Trinket1
@@ -1129,7 +1122,7 @@ local function APL(icon)
         local ShouldReturn = Opener(); if ShouldReturn then return ShouldReturn; end
     end
     -- use_item,name=azsharas_font_of_power,if=(time>30|!talent.nether_portal.enabled)&talent.grimoire_felguard.enabled&(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15)|target.time_to_die<=35
-    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TrinketON() and ((HL.CombatTime() > 30 or not S.NetherPortal:IsAvailable()) and S.GrimoireFelguard:IsAvailable() and (Target:TimeToDie() > 120 or Target:TimeToDie() < S.SummonDemonicTyrant:CooldownRemainsP() + 15) or Target:TimeToDie() <= 35) then
+    if I.AzsharasFontofPower:IsEquipped() and I.AzsharasFontofPower:IsReady() and not ShouldStop and TR.TrinketON() and ((HL.CombatTime() > 30 or not S.NetherPortal:IsAvailable()) and S.GrimoireFelguard:IsAvailable() and (Target:TimeToDie() > 120 or Target:TimeToDie() < S.SummonDemonicTyrant:CooldownRemainsP() + 15) or Target:TimeToDie() <= 35) then
         if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
     end
     -- hand_of_guldan,if=azerite.explosive_potential.rank&time<5&soul_shard>2&buff.explosive_potential.down&buff.wild_imps.stack<3&!prev_gcd.1.hand_of_guldan&&!prev_gcd.2.hand_of_guldan

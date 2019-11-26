@@ -12,7 +12,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
-
+local TR                                     = Action.TasteRotation
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -725,7 +725,7 @@ A[3] = function(icon, isMulti)
 		    -- Interrupt Handler 	 	
   		    local unit = "target"
    		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-            local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	        -- WindShear
   	        if useKick and A.WindShear:IsReady(unit) and not ShouldStop then 

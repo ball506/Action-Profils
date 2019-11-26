@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
     -- Racial
@@ -451,7 +452,7 @@ local function APL(icon)
             if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 37"; end
         end
         -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 41"; end
         end
         -- blood_fury,if=variable.cooldown_sync
@@ -488,15 +489,15 @@ local function APL(icon)
             if HR.Cast(S.Ascendance, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ascendance 69"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Target:TimeToDie() < 20 and Target:DebuffStackP(S.RazorCoralDebuff) > 2)) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Target:TimeToDie() < 20 and Target:DebuffStackP(S.RazorCoralDebuff) > 2)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 73"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>2&debuff.conductive_ink_debuff.down&(buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) > 2 and Target:DebuffDownP(S.ConductiveInkDebuff) and (Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6)) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) > 2 and Target:DebuffDownP(S.ConductiveInkDebuff) and (Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6)) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 79"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=(debuff.conductive_ink_debuff.up|buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)&target.health.pct<31
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and ((Target:DebuffP(S.ConductiveInkDebuff) or Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6) and Target:HealthPercentage() < 31) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and ((Target:DebuffP(S.ConductiveInkDebuff) or Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6) and Target:HealthPercentage() < 31) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 95"; end
         end
         -- use_items
@@ -752,7 +753,7 @@ local function APL(icon)
  	 	
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-	    local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+	    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
      	 -- WindShear
       	if useKick and S.WindShear:IsReady() and not ShouldStop then 

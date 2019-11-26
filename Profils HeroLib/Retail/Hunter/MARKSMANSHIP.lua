@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     -- Racials
@@ -357,7 +358,7 @@ local function APL(icon)
                 if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams"; end
             end
             -- use_item,name=azsharas_font_of_power
-            if I.AzsharasFontofPower:IsEquipReady() and TrinketON() then
+            if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
                 if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
             end
             -- trueshot,precast_time=1.5,if=active_enemies>2
@@ -606,7 +607,7 @@ local function APL(icon)
 		-- Interrupt Handler
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 		
   	    -- CounterShot
   	    if useKick and S.CounterShot:IsReady() and not ShouldStop then 
@@ -620,15 +621,15 @@ local function APL(icon)
         end
         -- auto_shot
         -- use_item,name=azsharas_font_of_power,if=cooldown.trueshot.remains<18|target.time_to_die<40
-        if I.AzsharasFontofPower:IsEquipReady() and TrinketON() and (S.Trueshot:CooldownRemainsP() < 18 or Target:TimeToDie() < 40) then
+        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() and (S.Trueshot:CooldownRemainsP() < 18 or Target:TimeToDie() < 40) then
             if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power"; end
         end
 		-- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5
-        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TrinketON() and (Player:BuffDownP(S.TrueshotBuff) or Target:DebuffP(S.BloodoftheEnemy)) then
+        if I.PocketsizedComputationDevice:IsEquipped() and I.PocketsizedComputationDevice:IsReady() and not ShouldStop and TR.TrinketON() and (Player:BuffDownP(S.TrueshotBuff) or Target:DebuffP(S.BloodoftheEnemy)) then
             if HR.Cast(I.PocketsizedComputationDevice) then return "pocketsized_computation_device"; end
         end
         -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major.rank3&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
-        if I.AshvanesRazorCoral:IsEquipReady() and TrinketON() and (Player:BuffP(S.TrueshotBuff) and ((S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or not Spell(299358):IsAvailable() and (Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80)) or Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToDie() < 20) then
+        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Player:BuffP(S.TrueshotBuff) and ((S.GuardianofAzeroth:IsAvailable() and S.GuardianofAzeroth:CooldownRemainsP() > 150) or not Spell(299358):IsAvailable() and (Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80)) or Target:DebuffDownP(S.RazorCoralDebuff) or Target:TimeToDie() < 20) then
             if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral"; end
         end
         -- use_items,if=buff.trueshot.up|!talent.calling_the_shots.enabled|target.time_to_die<20

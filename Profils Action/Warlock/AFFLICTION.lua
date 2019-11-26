@@ -14,7 +14,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
-
+local TR                                     = Action.TasteRotation
 
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Racial
@@ -642,7 +642,7 @@ A[3] = function(icon, isMulti)
 	    -- Interrupt vars		
         local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")  
 		-- Trinkets vars
-        local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+        local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 		
 		-- Out of combat with DBM Pull timer support
 		if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
@@ -693,7 +693,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- use_item,name=azsharas_font_of_power
-        	if A.AzsharasFontofPower:IsExists() and (not isMoving) and TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) then
+        	if A.AzsharasFontofPower:IsExists() and (not isMoving) and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) then
             	return A.AzsharasFontofPower:Show(icon)
         	end
 			
@@ -857,7 +857,6 @@ A[3] = function(icon, isMulti)
                 if Fillers(unit) then 
                     return true 
                 end 
-				Action.SendNotification("Preparing burst...", A.SummonDarkglare.ID)
             end
 						
             -- seed_of_corruption,if=variable.use_seed
@@ -894,14 +893,20 @@ A[3] = function(icon, isMulti)
 			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and not Unit("player"):HasBuffs(A.DemonArmor.ID, true) then 
 	            return A.DemonArmor:Show(icon)
             end 
-		   
-		   -- PetKick
-            if useKick and A.PetKick:IsReady(unit) then 
-		        if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-                    return A.PetKick:Show(icon)
-                end 
-            end 
+			
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end
             
+			-- Burst incoming notification
+			local TimeToBurst = A.SummonDarkglare:GetCooldown() 
+			if A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() <= time_to_shard * (5 - Player:SoulShardsP()) and Unit("player"):CombatTime() > 30 then
+			    Action.SendNotification("Preparing burst : " .. TimeToBurst .. " sec", A.SummonDarkglare.ID)
+				--return
+			end
+			
 			-- Locals variables
             local castLeft, _, _, _, notKickAble = Unit("player"):IsCastingRemains()
             local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = A.Unit("player"):IsCasting()
@@ -956,7 +961,7 @@ A[3] = function(icon, isMulti)
 		    if A.BurstIsON(unit) and unit ~= "mouseover" then 
                 
 				-- use_item,name=azsharas_font_of_power,if=(!talent.phantom_singularity.enabled|cooldown.phantom_singularity.remains<4*spell_haste|!cooldown.phantom_singularity.remains)&cooldown.summon_darkglare.remains<19*spell_haste+soul_shard*azerite.dreadful_calling.rank&dot.agony.remains&dot.corruption.remains&(dot.siphon_life.remains|!talent.siphon_life.enabled)
-                if TrinketON() and not ShouldStop and not isMoving and A.AzsharasFontofPower:IsReady(unit) and ((not A.PhantomSingularity:IsSpellLearned() or A.PhantomSingularity:GetCooldown() < 4 * Player:SpellHaste() or A.PhantomSingularity:GetCooldown() == 0) and A.SummonDarkglare:GetCooldown() < 19 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) or not A.SiphonLife:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and not isMoving and A.AzsharasFontofPower:IsReady(unit) and ((not A.PhantomSingularity:IsSpellLearned() or A.PhantomSingularity:GetCooldown() < 4 * Player:SpellHaste() or A.PhantomSingularity:GetCooldown() == 0) and A.SummonDarkglare:GetCooldown() < 19 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 0 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) > 0 or not A.SiphonLife:IsSpellLearned())) then
                     return A.AzsharasFontofPower:Show(icon)
                 end
 				
@@ -992,32 +997,32 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- use_item,name=pocketsized_computation_device,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and A.PocketsizedComputationDevice:IsReady(unit) and A.PocketsizedComputationDevice:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and A.PocketsizedComputationDevice:IsReady(unit) and A.PocketsizedComputationDevice:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.PocketsizedComputationDevice:Show(icon)
                 end
 				
                 -- use_item,name=rotcrusted_voodoo_doll,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.RotcrustedVoodooDoll:IsReady(unit) and A.RotcrustedVoodooDoll:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and A.RotcrustedVoodooDoll:IsReady(unit) and A.RotcrustedVoodooDoll:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.RotcrustedVoodooDoll:Show(icon)
                 end
 				
                 -- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 and A.ShiverVenomRelic:IsReady(unit) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 and A.ShiverVenomRelic:IsReady(unit) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.ShiverVenomRelic:Show(icon)
                 end
 				
                 -- use_item,name=aquipotent_nautilus,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.AquipotentNautilus:IsReady(unit) and A.AquipotentNautilus:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and A.AquipotentNautilus:IsReady(unit) and A.AquipotentNautilus:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.AquipotentNautilus:Show(icon)
                 end
 				
                 -- use_item,name=tidestorm_codex,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.TidestormCodex:IsReady(unit) and A.TidestormCodex:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and A.TidestormCodex:IsReady(unit) and A.TidestormCodex:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.TidestormCodex:Show(icon)
                 end
 				
                 -- use_item,name=vial_of_storms,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-                if TrinketON() and not ShouldStop and A.VialofStorms:IsReady(unit) and A.VialofStorms:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and A.VialofStorms:IsReady(unit) and A.VialofStorms:AbsentImun(unit, Temp.TotalAndMag) and (A.SummonDarkglare:GetCooldown() >= 25 and (A.Deathbolt:GetCooldown() or not A.Deathbolt:IsSpellLearned())) then
                     return A.VialofStorms:Show(icon)
                 end
 				
@@ -1034,11 +1039,11 @@ A[3] = function(icon, isMulti)
             end
 		
 		    -- Make use of all trinkets of the game EXCEPT Blacklisted ones that need specific behavior
-           	if TrinketON() and A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, Temp.TotalAndMag)  then 
+           	if TR.TrinketON() and A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, Temp.TotalAndMag)  then 
       	   	    return A.Trinket1:Show(icon)
    	        end 
               
-   		    if TrinketON() and A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, Temp.TotalAndMag)  then 
+   		    if TR.TrinketON() and A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, Temp.TotalAndMag)  then 
        	       	return A.Trinket2:Show(icon)
    	        end  	   	
      		
@@ -1182,7 +1187,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- use_item,name=azsharas_font_of_power,if=time<=3
-            if A.AzsharasFontofPower:IsExists() and not isMoving and TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 3) then
+            if A.AzsharasFontofPower:IsExists() and not isMoving and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 3) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 		
