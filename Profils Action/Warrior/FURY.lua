@@ -10,7 +10,7 @@ local Player								= Action.Player
 local MultiUnits							= Action.MultiUnits
 local UnitCooldown							= Action.UnitCooldown
 local Unit									= Action.Unit 
-
+local TR                                     = Action.TasteRotation
 local setmetatable							= setmetatable
 
 Action[ACTION_CONST_WARRIOR_FURY] = {
