@@ -315,13 +315,46 @@ local function HandleStormkeeper()
     local choice = A.GetToggle(2, "StormkeeperMode")
 	--print(choice) 
     local unit = "target"
+    -- CDs ON
+    if choice[1] then 
+	    return A.BurstIsON(unit) or false 
+	-- AoE Only
+	elseif choice[2] then
+	    -- also checks CDs
+	    if choice[1] then
+		    return A.BurstIsON(unit) or false
+		else
+		    return true
+		end
+	-- Everytime
+	elseif choice[3] then
+        return A.Stormkeeper:IsReady(unit) or false
+	else
+	    return false
+	end
+		
+end
 
-    return     (
-        (A.BurstIsON(unit) and choice[1]) or
-        (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and choice[2]) or
-        (A.Stormkeeper:IsReady(unit) and choice[3]) 
-    ) or
-	false	
+-- FlameShockTTD
+local function HandleFlameShockTTD()
+    local FlameShock = A.GetToggle(2, "FlameShockTTD")
+    if     FlameShock >= 0 and 
+    (
+        (     -- Auto 
+            FlameShock >= 100 and 
+            (
+                -- TTD > 15
+                Unit("target"):TimeToDie() > 15
+            ) 
+        ) or 
+        (    -- Custom
+            FlameShock < 100 and 
+            Unit("target"):HealthPercent() > FlameShock
+        )
+    ) 
+    then 
+        return true
+    end
 end
 
 local function ExpectedCombatLength()
@@ -519,7 +552,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- totem_mastery
-            if A.TotemMastery:IsReady("player") and ResonanceTotemTime() < 6 then
+            if A.TotemMastery:IsReady("player") and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 then
                 return A.TotemMastery:Show(icon)
             end
             -- earth_elemental,if=!talent.primal_elementalist.enabled
@@ -584,7 +617,7 @@ A[3] = function(icon, isMulti)
                 return A.Earthquake:Show(icon)
             end
             -- chain_lightning,if=buff.stormkeeper.remains<3*gcd*buff.stormkeeper.stack
-            if A.ChainLightning:IsReady(unit) and MultiUnits:GetByRangeInCombat(40, 5) > 2 and (not isMoving or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0) and Player:Maelstrom() < 90 then
+            if A.ChainLightning:IsReady(unit) and MultiUnits:GetByRangeInCombat(40, 5) > 2 and (not isMoving or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 1) and Player:Maelstrom() < 90 then
                 return A.ChainLightning:Show(icon)
             end
             -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
@@ -612,7 +645,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaBurst:Show(icon)
             end
             -- flame_shock,moving=1,target_if=refreshable
-            if A.FlameShock:IsReady(unit) and isMoving then
+            if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and isMoving then
                 if Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) then
                     return A.FlameShock:Show(icon) 
                 end
@@ -626,11 +659,11 @@ A[3] = function(icon, isMulti)
 		local function CustomST(unit)
 		
 		    -- 0 TotemMastery
-            if A.TotemMastery:IsReady(unit) and ResonanceTotemTime() < 6 and A.TotemMastery:IsSpellLearned() then
+            if A.TotemMastery:IsReady(unit) and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 and A.TotemMastery:IsSpellLearned() then
                 return A.TotemMastery:Show(icon)
             end
 	        -- 1 FLame shock
-	        if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and Unit(unit):TimeToDie() > 15 then 
+	        if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and Unit(unit):TimeToDie() > 15 then 
 	            return A.FlameShock:Show(icon)
 		    end		
 		    -- 2 Stormkeeper
@@ -673,7 +706,10 @@ A[3] = function(icon, isMulti)
 		        return A.EarthShock:Show(icon)
 		    end
             -- 18 lava_burst
-            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) and not isMoving and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Player:Maelstrom() <= 90 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) == 0 then
+            if A.LavaBurst:IsReady(unit) and not Pet:IsActive(77942) 
+			and (not isMoving or Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0) 
+			and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:GetSpellCastTime() and Player:Maelstrom() <= 90 and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) == 0 
+			then
                 return A.LavaBurst:Show(icon)
             end
             -- 17 frost_shock
@@ -756,7 +792,7 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
             -- totem_mastery,if=talent.totem_mastery.enabled&buff.resonance_totem.remains<2
-            if A.TotemMastery:IsReady("player") and (A.TotemMastery:IsSpellLearned() and ResonanceTotemTime() < 2) then
+            if A.TotemMastery:IsReady("player") and A.LastPlayerCastName ~= A.TotemMastery:Info() and (A.TotemMastery:IsSpellLearned() and ResonanceTotemTime() < 2) then
                 return A.TotemMastery:Show(icon)
             end
             -- use_items
@@ -832,10 +868,9 @@ A[3] = function(icon, isMulti)
             end
 			-- Aoe Prediction Notification
 			local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
-			if FutureMaelstromPower() >= 60 and spellID == A.ChainLightning.ID then
+			if FutureMaelstromPower() >= 60 and spellID == A.ChainLightning.ID and A.GetToggle(2, "AoE") then
 			    -- Notification					
                 Action.SendNotification("Earthquake soon! Get your mouse ready", A.Earthquake.ID)
-			    return
 			end
             -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
             if Aoe(unit) and (MultiUnits:GetByRangeInCombat(40, 5) > 2 and Action.GetToggle(2, "AoE")) then

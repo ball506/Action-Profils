@@ -274,6 +274,22 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "FlameShockTTD",
+                    DBV = 100, 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(188389) .. " min TTD",
+                    }, 
+	                TT = { 
+                        enUS = "Customize minimum target health percent to use Flame Shock", 
+                        ruRU = "Customize minimum target health percent to use Flame Shock", 
+					}, 
+                    M = {},
+                },
             },
 
             { -- [4] 4th Row
