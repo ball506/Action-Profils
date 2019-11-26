@@ -22,7 +22,6 @@ local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGU
 local PetCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PetGUID filter
 local PrefixCombatEvents = {}
 local SuffixCombatEvents = {}
-
 Action.TasteRotation = {}
 
 -------------------------------------------------------------------------------
@@ -103,6 +102,7 @@ end)
 -- Trinkets
 -------------------------------------------------------------------------------
 
+
 -- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
 local BlackListedTrinkets = {
 
@@ -111,7 +111,7 @@ local BlackListedTrinkets = {
     [3] = 169311, -- AshvanesRazorCoral
 }
 
-function TrinketIsAllowed()
+function Action.TasteRotation:TrinketIsAllowed()
     local Trinket1IsAllowed = true
 	local Trinket2IsAllowed = true
      
@@ -127,7 +127,7 @@ function TrinketIsAllowed()
 end
     
 -- Trinkets checker
-function TR.TrinketON()
+function Action.TasteRotation:TrinketON()
   return ( (Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]) )
 end
 
@@ -226,7 +226,6 @@ function Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, 
 	-- @return number
 	-- @usage A.MultiUnits:GetByRangeDoTsToRefresh(@number, @number, @table or @number, @number, @number)
 	-- deBuffs is required, refreshTime too, rest options are optimal
-    local unitID = self.UnitID
 	local total = 0
 	local nameplates = self:GetActiveUnitPlates()
 	
