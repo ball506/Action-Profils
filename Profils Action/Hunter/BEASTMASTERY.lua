@@ -349,6 +349,30 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
+-- BestialWrath Handler UI --
+local function HandleBestialWrath()
+    local choice = A.GetToggle(2, "BestialWrathMode")
+	--print(choice) 
+    local unit = "target"
+    -- CDs ON
+    if choice[1] then 
+	    return A.BurstIsON(unit) or false 
+	-- AoE Only
+	elseif choice[2] then
+	    -- also checks CDs
+	    if choice[1] then
+		    return (A.BurstIsON(unit) and MultiUnits:GetActiveEnemies() >= 2) or false
+		else
+		    return MultiUnits:GetActiveEnemies() >= 2 or false
+		end
+	-- Everytime
+	elseif choice[3] then
+        return A.BestialWrath:IsReady(unit) or false
+	else
+	    return false
+	end		
+end
+
 -- [1] CC AntiFake Rotation
 --[[local function AntiFakeStun(unit) 
     return 
@@ -516,7 +540,8 @@ A[3] = function(icon, isMulti)
                 return A.AspectoftheWild:Show(icon)
             end
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BestialWrath:IsReady("player") and not inCombat and A.BurstIsON(unit) and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(Azerite:EssenceHasMajor(A.FocusedAzeriteBeam.ID)) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+            if A.BestialWrath:IsReady("player") and HandleBestialWrath() 
+			and not inCombat and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true) and (bool(A.PrimalInstincts:GetAzeriteRank()) and not bool(Azerite:EssenceHasMajor(A.FocusedAzeriteBeam.ID)) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
 			and ((Pull > 0.1 and Pull <= 1.6) or not Action.GetToggle(1, "DBM")) 
 			then
                 return A.BestialWrath:Show(icon)
@@ -593,7 +618,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- bestial_wrath
-            if A.BestialWrath:IsReady("player") and A.BurstIsON(unit) then
+            if A.BestialWrath:IsReady("player") and HandleBestialWrath() then
 				-- Notification					
                 Action.SendNotification("Activated burst on Target", A.BestialWrath.ID) 
                 return A.BestialWrath:Show(icon)
@@ -637,7 +662,10 @@ A[3] = function(icon, isMulti)
 					
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.bestial_wrath.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetCooldown() < A.GetGCD() or Unit(unit):TimeToDie() < 5) 
+			and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() 
+			and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)
+			and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0 
+			and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetCooldown() < A.GetGCD() or Unit(unit):TimeToDie() < 5) 
 			then
                 return A.ConcentratedFlame:Show(icon)
             end
