@@ -241,7 +241,7 @@ local function FutureMaelstromPower()
             elseif spellID == A.LavaBurst.ID then
                 return MaelstromPower + 10 + resonance
             elseif spellID == A.ChainLightning.ID then
-                local enemiesHit = min(MultiUnits:GetByRange(40, 5), 3)
+                local enemiesHit = min(MultiUnits:GetActiveEnemies(), 3)
                     return MaelstromPower + 4 * enemiesHit * factor + resonance
             elseif spellID == A.Icefury.ID then
                 return MaelstromPower + 25 * factor + resonance
@@ -324,7 +324,7 @@ local function HandleStormkeeper()
 	    if choice[1] then
 		    return A.BurstIsON(unit) or false
 		else
-		    return true
+		    return MultiUnits:GetActiveEnemies() > 2 or false
 		end
 	-- Everytime
 	elseif choice[3] then
@@ -394,7 +394,7 @@ end
 
 
 local function EvaluateCycleFlameShock47(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and (MultiUnits:GetByRange(40, 5) < (5 - num(not A.TotemMastery:IsSpellLearned())) or not A.StormElemental:IsSpellLearned() and (A.FireElemental:GetCooldown() > (120 + 14 * Player:SpellHaste()) or A.FireElemental:GetCooldown() < (24 - 14 * Player:SpellHaste()))) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetByRange(40, 5) == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and (MultiUnits:GetActiveEnemies() < (5 - num(not A.TotemMastery:IsSpellLearned())) or not A.StormElemental:IsSpellLearned() and (A.FireElemental:GetCooldown() > (120 + 14 * Player:SpellHaste()) or A.FireElemental:GetCooldown() < (24 - 14 * Player:SpellHaste()))) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetActiveEnemies() == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)
 end
 
 local function EvaluateCycleFlameShock148(unit)
@@ -406,7 +406,7 @@ local function EvaluateCycleFlameShock163(unit)
 end
 
 local function EvaluateCycleFlameShock362(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
 end
 
 local function EvaluateCycleFlameShock483(unit)
@@ -422,7 +422,7 @@ local function EvaluateCycleFlameShock545(unit)
 end
 
 local function EvaluateCycleFlameShock774(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
+    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
 end
 
 local function EvaluateCycleFlameShock895(unit)
@@ -576,7 +576,7 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
             -- chain_lightning,if=spell_targets.chain_lightning>2
-            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40, 5) > 1) and
+            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40) > 1) and
 			((Pull > 0.1 and Pull <= A.ChainLightning:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.ChainLightning:Show(icon)
             end			
@@ -617,7 +617,7 @@ A[3] = function(icon, isMulti)
                 return A.Earthquake:Show(icon)
             end
             -- chain_lightning,if=buff.stormkeeper.remains<3*gcd*buff.stormkeeper.stack
-            if A.ChainLightning:IsReady(unit) and MultiUnits:GetByRangeInCombat(40, 5) > 2 and (not isMoving or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 1) and Player:Maelstrom() < 90 then
+            if A.ChainLightning:IsReady(unit) and MultiUnits:GetActiveEnemies() > 2 and (not isMoving or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 1) and Player:Maelstrom() < 90 then
                 return A.ChainLightning:Show(icon)
             end
             -- lava_burst,if=buff.lava_surge.up&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)&dot.flame_shock.ticking
@@ -625,15 +625,15 @@ A[3] = function(icon, isMulti)
                 return A.LavaBurst:Show(icon)
             end
             -- icefury,if=spell_targets.chain_lightning<4&!buff.ascendance.up
-            if A.Icefury:IsReady(unit) and not isMoving and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
+            if A.Icefury:IsReady(unit) and not isMoving and (MultiUnits:GetActiveEnemies() < 4 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
                 return A.Icefury:Show(icon)
             end
             -- frost_shock,if=spell_targets.chain_lightning<4&buff.icefury.up&!buff.ascendance.up
-            if A.FrostShock:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
+            if A.FrostShock:IsReady(unit) and (MultiUnits:GetActiveEnemies() < 4 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0) then
                 return A.FrostShock:Show(icon)
             end
             -- elemental_blast,if=talent.elemental_blast.enabled&spell_targets.chain_lightning<4&(!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120)
-            if A.ElementalBlast:IsReady(unit) and not isMoving and (A.ElementalBlast:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
+            if A.ElementalBlast:IsReady(unit) and not isMoving and (A.ElementalBlast:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120)) then
                 return A.ElementalBlast:Show(icon)
             end
             -- lava_beam,if=talent.ascendance.enabled
@@ -873,7 +873,7 @@ A[3] = function(icon, isMulti)
                 Action.SendNotification("Earthquake soon! Get your mouse ready", A.Earthquake.ID)
 			end
             -- run_action_list,name=aoe,if=active_enemies>2&(spell_targets.chain_lightning>2|spell_targets.lava_beam>2)
-            if Aoe(unit) and (MultiUnits:GetByRangeInCombat(40, 5) > 2 and Action.GetToggle(2, "AoE")) then
+            if Aoe(unit) and (MultiUnits:GetActiveEnemies() > 2 and Action.GetToggle(2, "AoE")) then
                 return true
             end
 			--print("Active Enemies: " .. MultiUnits:GetByRange(40, 3))
@@ -882,7 +882,7 @@ A[3] = function(icon, isMulti)
             --    return Funnel(unit);
             --end
             -- run_action_list,name=single_target
-            if CustomST(unit) and (MultiUnits:GetByRangeInCombat(40, 5) < 3 or not Action.GetToggle(2, "AoE"))  then
+            if CustomST(unit) and (MultiUnits:GetActiveEnemies() < 3 or not Action.GetToggle(2, "AoE"))  then
                 return true
             end
         end
@@ -912,7 +912,7 @@ A[3] = function(icon, isMulti)
        	end 		
 				
     	-- FlameShock
-	   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 5 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
+	   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetActiveEnemies() <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 5 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
 	   		return A.FlameShock:Show(icon)
 	   	end			
 	
