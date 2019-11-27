@@ -367,7 +367,7 @@ local function HandleBestialWrath()
 		end
 	-- Everytime
 	elseif choice[3] then
-        return A.BestialWrath:IsReady(unit) or false
+        return A.BestialWrath:IsReady("player") or false
 	else
 	    return false
 	end		
@@ -780,12 +780,7 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end  
-			
-		    -- Self heal, if below setting value
-            if A.Exhilaration:IsReady("player") and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "ExhilarationHP") then
-                return A.Exhilaration:Show(icon)
-            end
-			
+				
             -- mendpet
             if A.MendPet:IsReady("player") and Pet:IsActive() and Unit("pet"):HealthPercent() > 0 and Unit("pet"):HealthPercent() <= Action.GetToggle(2, "MendPet") and Unit("pet"):HasBuffs(A.MendPet.ID, true) == 0 then
 			    return A.MendPet:Show(icon)
