@@ -482,11 +482,11 @@ local function EvaluateTargetIfFilterSiphonLife254(unit)
 end
 
 local function EvaluateTargetIfSiphonLife293(unit)
-    return (MultiUnits:GetByRangeAppliedDoTs(40, 10, A.SiphonLife.ID, 5) < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetByRangeInCombat(40, 5, 10) and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) == 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or A.SummonDarkglare:GetCooldown() > Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime())
+    return (MultiUnits:GetByRangeAppliedDoTs(40, 10, A.SiphonLife.ID, 5) < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetActiveEnemies() and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) == 0 and MultiUnits:GetActiveEnemies() == 1 or A.SummonDarkglare:GetCooldown() > Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime())
 end
 
 local function EvaluateCycleCorruption300(unit)
-    return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= 4) and Unit(unit):TimeToDie() > 10
+    return MultiUnits:GetActiveEnemies() < 3 + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= 4) and Unit(unit):TimeToDie() > 10
 end
 
 local function EvaluateCycleDrainSoul479(unit)
@@ -698,7 +698,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- seed_of_corruption,if=spell_targets.seed_of_corruption_aoe>=3&!equipped.169314
-        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and not A.AzsharasFontofPower:IsExists()) then
+        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetActiveEnemies() >= 3 and not A.AzsharasFontofPower:IsExists()) then
             	return A.SeedofCorruption:Show(icon)
         	end
 			
@@ -708,7 +708,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- shadow_bolt,if=!talent.haunt.enabled&spell_targets.seed_of_corruption_aoe<3&!equipped.169314
-        	if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and (not A.Haunt:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and not A.AzsharasFontofPower:IsExists()) then
+        	if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and (not A.Haunt:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 3 and not A.AzsharasFontofPower:IsExists()) then
             	return A.ShadowBolt:Show(icon)
         	end
 			
@@ -738,7 +738,7 @@ A[3] = function(icon, isMulti)
         local function Fillers(unit)
 		
             -- unstable_affliction,line_cd=15,if=cooldown.deathbolt.remains<=gcd*2&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up&cooldown.summon_darkglare.remains>20
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving) and not ShouldStop and A.Deathbolt:GetCooldown() <= A.GetGCD() * 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and A.SummonDarkglare:GetCooldown() > 20 then
+            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and (not isMoving) and not ShouldStop and A.Deathbolt:GetCooldown() <= A.GetGCD() * 2 and MultiUnits:GetActiveEnemies() == 1 and A.SummonDarkglare:GetCooldown() > 20 then
                 return A.UnstableAffliction:Show(icon)
             end
 			
@@ -773,17 +773,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- drain_life,if=talent.siphon_life.enabled&buff.inevitable_demise.stack>=50-20*(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up>=2)&dot.agony.remains>5*spell_haste&dot.corruption.remains>gcd&(dot.siphon_life.remains>gcd|!talent.siphon_life.enabled)&(debuff.haunt.remains>5*spell_haste|!talent.haunt.enabled)&contagion>5*spell_haste
-            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.SiphonLife:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > A.GetGCD() and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) > A.GetGCD() or not A.SiphonLife:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
+            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.SiphonLife:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetActiveEnemies() >= 2) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > A.GetGCD() and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) > A.GetGCD() or not A.SiphonLife:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
                 return A.DrainLife:Show(icon)
             end
 			
             -- drain_life,if=talent.writhe_in_agony.enabled&buff.inevitable_demise.stack>=50-20*(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up>=3)-5*(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up=2)&dot.agony.remains>5*spell_haste&dot.corruption.remains>gcd&(debuff.haunt.remains>5*spell_haste|!talent.haunt.enabled)&contagion>5*spell_haste
-            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.WritheInAgony:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) - 5 * num(MultiUnits:GetByRangeInCombat(40, 5, 10) == 2) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and Target.DebuffRemainsP(A.CorruptionDebuff) > A.GetGCD() and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
+            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.WritheInAgony:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetActiveEnemies() >= 3) - 5 * num(MultiUnits:GetActiveEnemies() == 2) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and Target.DebuffRemainsP(A.CorruptionDebuff) > A.GetGCD() and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
                 return A.DrainLife:Show(icon)
             end
 			
             -- drain_life,if=talent.absolute_corruption.enabled&buff.inevitable_demise.stack>=50-20*(spell_targets.seed_of_corruption_aoe-raid_event.invulnerable.up>=4)&dot.agony.remains>5*spell_haste&(debuff.haunt.remains>5*spell_haste|!talent.haunt.enabled)&contagion>5*spell_haste
-            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.AbsoluteCorruption:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
+            if A.DrainLife:IsReady(unit) and (not isMoving) and not ShouldStop and A.AbsoluteCorruption:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.InevitableDemiseBuff.ID, true) >= 50 - 20 * num(MultiUnits:GetActiveEnemies() >= 4) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 * Player:SpellHaste() and (Unit(unit):HasDeBuffs(A.HauntDebuff.ID, true) > 5 * Player:SpellHaste() or not A.Haunt:IsSpellLearned()) and contagion > 5 * Player:SpellHaste() then
                 return A.DrainLife:Show(icon)
             end
 			
@@ -865,7 +865,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unstable_affliction,if=!variable.use_seed&!prev_gcd.1.summon_darkglare&(talent.deathbolt.enabled&cooldown.deathbolt.remains<=execute_time&!azerite.cascading_calamity.enabled|(soul_shard>=5&spell_targets.seed_of_corruption_aoe<2|soul_shard>=2&spell_targets.seed_of_corruption_aoe>=2)&target.time_to_die>4+execute_time&spell_targets.seed_of_corruption_aoe=1|target.time_to_die<=8+execute_time*soul_shard)
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and not isMoving and not ShouldStop and not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare.ID, true) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() or (Player:SoulShardsP() >= 5 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or Player:SoulShardsP() >= 2 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP()) then
+            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and not isMoving and not ShouldStop and not bool(VarUseSeed) and not Unit("player"):GetSpellLastCast(A.SummonDarkglare.ID, true) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() or (Player:SoulShardsP() >= 5 and MultiUnits:GetActiveEnemies() < 2 or Player:SoulShardsP() >= 2 and MultiUnits:GetActiveEnemies() >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetActiveEnemies() == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP()) then
                 return A.UnstableAffliction:Show(icon)
             end
 			
@@ -931,7 +931,7 @@ A[3] = function(icon, isMulti)
 
 		    -- Auto Multi Dot	  
 	        if Action.GetToggle(2, "AutoDot") and CanMultidot 
-		    and (MissingAgony >= 1 or MissingCorruption >= 1) and MultiUnits:GetByRange(40, 5) >= 2 and MultiUnits:GetByRange(40, 5) <= 5 
+		    and (MissingAgony >= 1 or MissingCorruption >= 1) and MultiUnits:GetActiveEnemies() >= 2 and MultiUnits:GetActiveEnemies() <= 5 
 		    and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 8 
 			then
                 return A:Show(icon, ACTION_CONST_AUTOTARGET) -- A.TargetEnemy:Show(icon)
@@ -939,7 +939,7 @@ A[3] = function(icon, isMulti)
 				
             -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
             if (true) then
-                VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRange(40, 5) >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetByRange(40, 5) >= 5 or MultiUnits:GetByRange(40, 5) >= 8)
+                VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetActiveEnemies() >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetActiveEnemies() >= 5 or MultiUnits:GetActiveEnemies() >= 8)
             end
 		
             -- variable,name=padding,op=set,value=action.shadow_bolt.execute_time*azerite.cascading_calamity.enabled
@@ -954,7 +954,7 @@ A[3] = function(icon, isMulti)
 		
             -- variable,name=maintain_se,value=spell_targets.seed_of_corruption_aoe<=1+talent.writhe_in_agony.enabled+talent.absolute_corruption.enabled*2+(talent.writhe_in_agony.enabled&talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>2)+(talent.siphon_life.enabled&!talent.creeping_death.enabled&!talent.drain_soul.enabled)+raid_event.invulnerable.up
             if (true) then
-                VarMaintainSe = num(MultiUnits:GetByRange(40, 5) <= 1 + num(A.WritheInAgony:IsSpellLearned()) + num(A.AbsoluteCorruption:IsSpellLearned()) * 2 + num((A.WritheInAgony:IsSpellLearned() and A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetByRange(40, 5) > 2)) + num((A.SiphonLife:IsSpellLearned() and not A.CreepingDeath:IsSpellLearned() and not A.DrainSoul:IsSpellLearned())))
+                VarMaintainSe = num(MultiUnits:GetActiveEnemies() <= 1 + num(A.WritheInAgony:IsSpellLearned()) + num(A.AbsoluteCorruption:IsSpellLearned()) * 2 + num((A.WritheInAgony:IsSpellLearned() and A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetActiveEnemies() > 2)) + num((A.SiphonLife:IsSpellLearned() and not A.CreepingDeath:IsSpellLearned() and not A.DrainSoul:IsSpellLearned())))
             end		
 		
 		    -- #1 Burst on current target 
@@ -987,7 +987,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- dark_soul,if=target.time_to_die<20+gcd|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up|talent.sow_the_seeds.enabled&cooldown.summon_darkglare.remains>=cooldown.summon_darkglare.duration-10
-                if A.DarkSoulMisery:IsReady("player") and A.BurstIsON(unit) and (Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or A.SowtheSeeds:IsSpellLearned() and A.SummonDarkglare:GetCooldown() >= 20 - 10) then
+                if A.DarkSoulMisery:IsReady("player") and A.BurstIsON(unit) and (Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetActiveEnemies() > 1 or A.SowtheSeeds:IsSpellLearned() and A.SummonDarkglare:GetCooldown() >= 20 - 10) then
                     return A.DarkSoulMisery:Show(icon)
                 end
 				
@@ -1053,7 +1053,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- haunt,if=spell_targets.seed_of_corruption_aoe<=2+raid_event.invulnerable.up
-            if A.Haunt:IsReady(unit, nil, nil, PredictSpells) and not isMoving and A.Haunt:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and not ShouldStop and (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2) then
+            if A.Haunt:IsReady(unit, nil, nil, PredictSpells) and not isMoving and A.Haunt:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and not ShouldStop and (MultiUnits:GetActiveEnemies() <= 2) then
                return A.Haunt:Show(icon)
             end
 			
@@ -1095,7 +1095,7 @@ A[3] = function(icon, isMulti)
             end 
 			
 			-- Soulshatter
-			if A.IsInPvP and A.Soulshatter:IsReady() and A.Soulshatter:IsSpellLearned() and MultiUnits:GetByRange(40, 5) >= 3
+			if A.IsInPvP and A.Soulshatter:IsReady() and A.Soulshatter:IsSpellLearned() and MultiUnits:GetActiveEnemies() >= 3
 			-- Get applied Corruption and Agony
             and AppliedCorruption >= 4 and AppliedAgony >= 4 
 			then 
@@ -1108,12 +1108,12 @@ A[3] = function(icon, isMulti)
             end
 		
             -- summon_darkglare,if=dot.agony.ticking&dot.corruption.ticking&(buff.active_uas.stack=5|soul_shard=0)&(!talent.phantom_singularity.enabled|dot.phantom_singularity.remains)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=gcd|!cooldown.deathbolt.remains|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up)
-            if A.SummonDarkglare:IsReady("player") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) or A.AbsoluteCorruption:IsSpellLearned()) and (ActiveUAs(unit) == 5 or Player:SoulShardsP() == 0) and (not A.PhantomSingularity:IsSpellLearned() or Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or A.Deathbolt:GetCooldown() == 0 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if A.SummonDarkglare:IsReady("player") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) or A.AbsoluteCorruption:IsSpellLearned()) and (ActiveUAs(unit) == 5 or Player:SoulShardsP() == 0) and (not A.PhantomSingularity:IsSpellLearned() or Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true)) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= A.GetGCD() or A.Deathbolt:GetCooldown() == 0 or MultiUnits:GetActiveEnemies() > 1)) then
                 return A.SummonDarkglare:Show(icon)
             end
 		
             -- deathbolt,if=cooldown.summon_darkglare.remains&spell_targets.seed_of_corruption_aoe=1+raid_event.invulnerable.up&(!essence.vision_of_perfection.minor&!azerite.dreadful_calling.rank|cooldown.summon_darkglare.remains>30)
-            if A.Deathbolt:IsReady(unit) and not ShouldStop and ActiveUAs(unit) >= 1 and Player:SoulShardsP() <= 1 and (A.SummonDarkglare:GetCooldown() >= 30 and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and (not A.VisionofPerfectionMinor:IsSpellLearned() and not A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() > 30)) then
+            if A.Deathbolt:IsReady(unit) and not ShouldStop and ActiveUAs(unit) >= 1 and Player:SoulShardsP() <= 1 and (A.SummonDarkglare:GetCooldown() >= 30 and MultiUnits:GetActiveEnemies() == 1 and (not A.VisionofPerfectionMinor:IsSpellLearned() and not A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() > 30)) then
                 return A.Deathbolt:Show(icon)
             end 
 		
@@ -1152,7 +1152,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- corruption,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314&!talent.absolute_corruption.enabled&(talent.siphon_life.enabled|spell_targets.seed_of_corruption_aoe>1&spell_targets.seed_of_corruption_aoe<=3)
-            if A.Corruption:IsReady(unit) and not ShouldStop and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.AzsharasFontofPower:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 3)) then
+            if A.Corruption:IsReady(unit) and not ShouldStop and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.AzsharasFontofPower:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() <= 3)) then
                 return A.Corruption:Show(icon)
             end
 		
@@ -1244,17 +1244,17 @@ A[3] = function(icon, isMulti)
             end		
 	
             -- actions.mouseover+=/Agony
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(40, 4) <= 4) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= 5.4 and A.Agony:IsReady(unit, true) and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetActiveEnemies() <= 4) and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= 5.4 and A.Agony:IsReady(unit, true) and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
                 return A.Agony:Show(icon)
             end 
             
             -- actions.mouseover+=/Corruption
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(40, 4) <= 4) and Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= 4.2 and A.Corruption:IsReady(unit, true) and A.Corruption:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Corruption.ID then
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetActiveEnemies() <= 4) and Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= 4.2 and A.Corruption:IsReady(unit, true) and A.Corruption:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Corruption.ID then
 			    return A.Corruption:Show(icon)
             end 
 			
             -- actions.mouseover+=/SiphonLife
-            if     (A.GetToggle(2, "AoE") or MultiUnits:GetByRange(40, 4) <= 4) and Unit(unit):HasDeBuffs(A.SiphonLife.ID, true) <= 4.5 and A.SiphonLife:IsReady(unit, true) and A.SiphonLife:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.SiphonLife.ID then 
+            if     (A.GetToggle(2, "AoE") or MultiUnits:GetActiveEnemies() <= 4) and Unit(unit):HasDeBuffs(A.SiphonLife.ID, true) <= 4.5 and A.SiphonLife:IsReady(unit, true) and A.SiphonLife:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.SiphonLife.ID then 
                 return A.SiphonLife:Show(icon)
             end 			
 		end	
