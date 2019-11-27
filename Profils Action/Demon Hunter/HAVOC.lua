@@ -253,6 +253,30 @@ local function MetamorphosisCooldownAdjusted()
   return A.Metamorphosis:CooldownRemainsP()
 end
 
+-- EyeBeam Handler UI --
+local function HandleEyeBeam()
+    local choice = A.GetToggle(2, "EyeBeamMode")
+	--print(choice) 
+    local unit = "target"
+    -- CDs ON
+    if choice[1] then 
+	    return A.BurstIsON(unit) or false 
+	-- AoE Only
+	elseif choice[2] then
+	    -- also checks CDs
+	    if choice[1] then
+		    return (A.BurstIsON(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) or false
+		else
+		    return MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or false
+		end
+	-- Everytime
+	elseif choice[3] then
+        return A.EyeBeam:IsReady(unit) or false
+	else
+	    return false
+	end		
+end
+
 -- FelRush handler
 local function UseMoves()
   return Action.GetToggle(2, "UseMoves") --or S.FelRush:Charges() == 2  
@@ -427,7 +451,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.FelEruption              
     end 
 	
@@ -435,7 +459,7 @@ local function Interrupts(unit)
         return A.Disrupt
     end 
     
-    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.ChaosNova              
     end 	
 	    
@@ -627,7 +651,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) then
+            if A.EyeBeam:IsReady(unit) and HandleEyeBeam()  then
                 return A.EyeBeam:Show(icon)
             end
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
@@ -707,7 +731,7 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not bool(VarWaitingForMomentum) then
+            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and not bool(VarWaitingForMomentum) then
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
@@ -719,7 +743,7 @@ A[3] = function(icon, isMulti)
                 return A.Felblade:Show(icon)
             end
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
+            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
                 return A.EyeBeam:Show(icon)
             end
             -- annihilation,if=(talent.demon_blades.enabled|!variable.waiting_for_momentum|fury.deficit<30|buff.metamorphosis.remains<5)&!variable.pooling_for_blade_dance&!variable.waiting_for_dark_slash
@@ -731,7 +755,7 @@ A[3] = function(icon, isMulti)
                 return A.ChaosStrike:Show(icon)
             end
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
                 return A.EyeBeam:Show(icon)
             end
             -- demons_bite

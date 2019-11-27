@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.0 (21.11.2019)",
+    DateTime = "v2.0.1 (27.11.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {          
@@ -96,21 +96,28 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
                 {
-                    E = "Checkbox", 
-                    DB = "UseEyeBeam",
-                    DBV = true,
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Burst Only", value = 1 },
+                        { text = "Aoe Only", value = 2 },
+                        { text = "Everytime", value = 3 },
+                    },
+                    MULT = true,
+                    DB = "EyeBeamMode",
+                    DBV = {
+                        [1] = false, 
+                        [2] = false,
+                        [3] = true,
+                    }, 
                     L = { 
-                        enUS = "Use Eyebeam as soon as possible", 
-                        ruRU = "Use Eyebeam on cooldown", 
-                        frFR = "Utiliser Rayon Accablant dès que possible",
+                        ANY = A.GetSpellInfo(198013) .. " settings",
                     }, 
                     TT = { 
-                        enUS = "Use Eyebeam as soon as possible or use QueueMacro depending on your current needs", 
-                        ruRU = "Use Eyebeam as soon as possible or use QueueMacro depending on your current needs", 
-                        frFR = "Use Eyebeam as soon as possible or use QueueMacro depending on your current needs",
+                        enUS = "Customize your Eye Beam options. Multiple checks possible.", 
+                        ruRU = "Customize your Eye Beam options. Multiple checks possible.", 
                     }, 
                     M = {},
-                },				
+                },			
             },
             { -- [4] 4th Row
 
@@ -132,7 +139,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "Darkness",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(196718) .. " (%)",
@@ -144,7 +151,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "Blur",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(198589) .. " (%)",
