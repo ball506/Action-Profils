@@ -233,6 +233,8 @@ local function SelfDefensives()
         )
     ) 
     then 
+	    -- Notification					
+        Action.SendNotification("[DEF] Exhilaration", A.Exhilaration.ID)
         return A.Exhilaration
     end
     -- SpiritMend
@@ -361,9 +363,9 @@ local function HandleBestialWrath()
 	elseif choice[2] then
 	    -- also checks CDs
 	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetActiveEnemies() >= 2) or false
+		    return (A.BurstIsON(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.GetToggle(2, "AoE")) or false
 		else
-		    return MultiUnits:GetActiveEnemies() >= 2 or false
+		    return (MultiUnits:GetActiveEnemies() > 2 and A.GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
