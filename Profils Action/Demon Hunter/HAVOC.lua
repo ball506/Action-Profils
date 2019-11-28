@@ -265,9 +265,9 @@ local function HandleEyeBeam()
 	elseif choice[2] then
 	    -- also checks CDs
 	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) or false
+		    return (A.BurstIsON(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and A.GetToggle(2, "AoE")) or false
 		else
-		    return MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or false
+		    return (MultiUnits:GetByRangeInCombat(8, 5, 10) > 2 and A.GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
