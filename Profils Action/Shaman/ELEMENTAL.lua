@@ -324,7 +324,7 @@ local function HandleStormkeeper()
 	    if choice[1] then
 		    return A.BurstIsON(unit) or false
 		else
-		    return MultiUnits:GetActiveEnemies() > 2 or false
+		    return (MultiUnits:GetActiveEnemies() > 2 and A.GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
@@ -775,7 +775,7 @@ A[3] = function(icon, isMulti)
                 return A.FlameShock:Show(icon)
             end
 		    -- 14 Lavaburst while moving
-            if A.LavaBurst:IsReady(unit) and isMoving and Target:DebuffRemainsP(A.FlameShockDebuff) >= A.LavaBurst:CastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 and FutureMaelstromPower() <= 90 then
+            if A.LavaBurst:IsReady(unit) and isMoving and A.LastPlayerCastName ~= A.LavaBurst:Info() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) >= A.LavaBurst:CastTime() and Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 and FutureMaelstromPower() <= 90 then
                 return A.LavaBurst:Show(icon)
             end		
             -- 15 lightning_bolt while moving w buff sk
@@ -1014,7 +1014,7 @@ A[3] = function(icon, isMulti)
                 return true
             end
             -- run_action_list,name=single_target
-            if MOTE(unit) and A.MasteroftheElements:IsSpellLearned() then
+            if MOTE(unit) and A.MasteroftheElements:IsSpellLearned() and (MultiUnits:GetActiveEnemies() < 3 or not Action.GetToggle(2, "AoE")) then
                 return true
             end
             -- run_action_list,name=single_target
