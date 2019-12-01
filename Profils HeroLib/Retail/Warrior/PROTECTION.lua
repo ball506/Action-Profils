@@ -393,7 +393,7 @@ local function APL(icon)
             if HR.Cast(S.Ravager) then return "ravager 16"; end
         end
         -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-        if S.ShieldBlock:IsReadyP() and not ShouldStop and (S.ShieldSlam:CooldownUpP() and Player:BuffDownP(S.ShieldBlockBuff) and offensiveShieldBlock()) then
+        if S.ShieldBlock:IsReadyP() and not ShouldStop and (S.ShieldSlam:CooldownUpP() and Player:BuffDownP(S.LastStandBuff) and Player:BuffDownP(S.ShieldBlockBuff) and offensiveShieldBlock()) then
             if HR.Cast(S.ShieldBlock, Action.GetToggle(2, "GCDasOffGCD")) then return "shield_block 18"; end
         end
         -- shield_slam
@@ -412,7 +412,7 @@ local function APL(icon)
             if HR.Cast(S.ThunderClap) then return "thunder_clap 26"; end
         end
         -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-        if S.ShieldBlock:IsReadyP() and not ShouldStop and (S.ShieldSlam:CooldownUpP() and Player:BuffDownP(S.ShieldBlockBuff)) then
+        if S.ShieldBlock:IsReadyP() and Player:BuffDownP(S.LastStandBuff) and not ShouldStop and (S.ShieldSlam:CooldownUpP() and Player:BuffDownP(S.ShieldBlockBuff)) then
             if HR.Cast(S.ShieldBlock, Action.GetToggle(2, "GCDasOffGCD")) then return "shield_block 32"; end
         end
         -- shield_slam,if=buff.shield_block.up
