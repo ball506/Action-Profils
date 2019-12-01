@@ -17,6 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
+local UnitGUID = UnitGUID
 
 Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     -- Racial
@@ -267,7 +268,7 @@ local Interrupts = {
     -- Exsanguinate Expression
     local BleedDuration, BleedExpires;
     function HL.Exsanguinated (Unit, SpellName)
-      BleedGUID = Unit:GUID();
+      BleedGUID = Unit(unit):InfoGUID();
       if BleedGUID then
         if SpellName == "Garrote" then
           if HL.BleedTable.Assassination.Garrote[BleedGUID] then
