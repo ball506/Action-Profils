@@ -689,7 +689,9 @@ A[3] = function(icon, isMulti)
             if A.FlameShock:IsReady(unit) and not ShouldStop then
 			    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 or not Unit("player"):HasHeroism()) and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) == 0 
 				then
-                    return A.FlameShock:Show(icon)
+                    if Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) then
+                        return A.FlameShock:Show(icon) 
+                    end
 				end
             end
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
@@ -744,7 +746,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaBurst:Show(icon)
             end
             -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0  then
+            if A.FlameShock:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() < 3 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0  then
                 return A.FlameShock:Show(icon)
             end
             -- lava_burst,if=talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains)%150))<(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)))
@@ -801,7 +803,7 @@ A[3] = function(icon, isMulti)
                 return A.FlameShock:Show(icon)
             end
             -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and not ShouldStop and isMoving then
+            if A.FlameShock:IsReady(unit) and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and not ShouldStop and isMoving then
                 return A.FlameShock:Show(icon)
             end
 		    -- 14 Lavaburst while moving
