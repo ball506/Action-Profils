@@ -219,7 +219,7 @@ function Unit:HasDeBuffsRefreshable(spell, byID)
 	    ID = true
 	end
 	
-    return (self(unitID):HasDeBuffs(spell, ID) < 5 or self(unitID):HasBuffsDown(spell, ID) and true) or false
+    return (self(unitID):HasDeBuffs(spell, ID) < 5 or self(unitID):HasDeBuffsDown(spell, ID) and true) or false
 end
 
 -------------------------------------------------------------------------------
