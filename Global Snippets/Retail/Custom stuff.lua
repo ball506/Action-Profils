@@ -153,30 +153,33 @@ end
 --- HasHeroism simc reference
 ------------------------------------
 
-local HeroismBuff = {    
+local HeroismBuff = { 
+    [2825] =  true, -- Bloodlust Horde 
+    [32182] =  true, -- Heroism Ally  		
     [90355] =  true, -- Ancient Hysteria
-    [92825] =  true, -- Bloodlust
-    [932182] =  true, -- Heroism
-    [9160452] =  true, -- Netherwinds
-    [980353] =  true, -- Time Warp
-    [9178207] =  true, -- Drums of Fury
-    [935475] =  true, -- Drums of War
-    [9230935] =  true, -- Drums of Montain
-    [9256740] =  true, -- Drums of Maelstrom
+    [160452] =  true, -- Netherwinds
+    [80353] =  true, -- Time Warp
+    [178207] =  true, -- Drums of Fury
+    [35475] =  true, -- Drums of War
+    [230935] =  true, -- Drums of Montain
+    [256740] =  true, -- Drums of Maelstrom
+    --[974] =  true, -- Test Earth Shield
 }
 
 function Unit:HasHeroism()
-    local player = "player"
+    local unitID = self.UnitID
+	--print(unitID)
     -- @return boolean 
-    local auraName
+    local spellId 
     for i = 1, huge do 
-        auraName = UnitBuff(player, i, "HELPFUL PLAYER")
-        if not auraName then 
+        name,_,_,_,_,_,_,_,_,spellId = UnitBuff(unitID, i, "HELPFUL")
+        if not spellId  then 
             break 
-        elseif HeroismBuff[auraName] then 
+        elseif HeroismBuff[spellId] then 
             return true 
         end 
     end 
+	return false
 end 
 
 ------------------------------------
@@ -185,7 +188,7 @@ end
 function Unit:HasDeBuffsDown(spell, byID)
 	local unitID = self.UnitID
 	
-    ID = byID
+    local ID = byID
 	if not ID then
 	    ID = true
 	end
@@ -198,7 +201,7 @@ end
 ------------------------------------
 function Unit:HasBuffsDown(spell, byID)
     local unitID = self.UnitID
-    ID = byID
+    local ID = byID
 	if not ID then
 	    ID = true
 	end
@@ -211,7 +214,7 @@ end
 ------------------------------------
 function Unit:HasDeBuffsRefreshable(spell, byID)
     local unitID = self.UnitID
-    ID = byID
+    local ID = byID
 	if not ID then
 	    ID = true
 	end
