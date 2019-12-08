@@ -548,9 +548,9 @@ end
 
 -- SelfDefensives
 local function SelfDefensives(unit)
-    local HPLoosePerSecond = ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax()
+    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
 		
-    if ActionUnit("player"):CombatTime() == 0 then 
+    if Unit("player"):CombatTime() == 0 then 
         return 
     end 
 
@@ -562,27 +562,27 @@ local function SelfDefensives(unit)
             Evade >= 100 and 
             (
                 -- HP lose per sec >= 20
-                ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                 -- TTD 
-                ActionUnit("player"):TimeToDieX(25) < 5 or 
+                Unit("player"):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        ActionUnit("player"):UseDeff() or 
+                        Unit("player"):UseDeff() or 
                         (
-                            ActionUnit("player", 5):HasFlags() and 
-                            ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                            ActionUnit("player"):IsFocused() 
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
                         )
                     )
                 )
             ) and 
-            ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             Evade < 100 and 
-            ActionUnit("player"):HealthPercent() <= Evade
+            Unit("player"):HealthPercent() <= Evade
         )
     ) 
     then 
@@ -597,27 +597,27 @@ local function SelfDefensives(unit)
                 Feint >= 100 and 
                 (
                     -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                     -- TTD 
-                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    Unit("player"):TimeToDieX(25) < 5 or 
                     (
                         A.IsInPvP and 
                         (
-                            ActionUnit("player"):UseDeff() or 
+                            Unit("player"):UseDeff() or 
                             (
-                                ActionUnit("player", 5):HasFlags() and 
-                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                                ActionUnit("player"):IsFocused() 
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
                             )
                         )
                     )
                 ) and 
-                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
             ) or 
             (    -- Custom
                 Feint < 100 and 
-                ActionUnit("player"):HealthPercent() <= Feint
+                Unit("player"):HealthPercent() <= Feint
             )
         ) 
         then 
@@ -632,27 +632,27 @@ local function SelfDefensives(unit)
                 CrimsonVial >= 100 and 
                 (
                     -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                     -- TTD 
-                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    Unit("player"):TimeToDieX(25) < 5 or 
                     (
                         A.IsInPvP and 
                         (
-                            ActionUnit("player"):UseDeff() or 
+                            Unit("player"):UseDeff() or 
                             (
-                                ActionUnit("player", 5):HasFlags() and 
-                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                                ActionUnit("player"):IsFocused() 
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
                             )
                         )
                     )
                 ) and 
-                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
             ) or 
             (    -- Custom
                 CrimsonVial < 100 and 
-                ActionUnit("player"):HealthPercent() <= CrimsonVial
+                Unit("player"):HealthPercent() <= CrimsonVial
             )
         ) 
         then 
@@ -667,27 +667,27 @@ local function SelfDefensives(unit)
                 CloakofShadow >= 100 and 
                 (
                     -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                     -- TTD 
-                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    Unit("player"):TimeToDieX(25) < 5 or 
                     (
                         A.IsInPvP and 
                         (
-                            ActionUnit("player"):UseDeff() or 
+                            Unit("player"):UseDeff() or 
                             (
-                                ActionUnit("player", 5):HasFlags() and 
-                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                                ActionUnit("player"):IsFocused() 
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
                             )
                         )
                     )
                 ) and 
-                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
             ) or 
             (    -- Custom
                 CloakofShadow < 100 and 
-                ActionUnit("player"):HealthPercent() <= CloakofShadow
+                Unit("player"):HealthPercent() <= CloakofShadow
             )
         ) 
         then 
@@ -702,27 +702,27 @@ local function SelfDefensives(unit)
                 Vanish >= 100 and 
                 (
                     -- HP lose per sec >= 20
-                    ActionUnit("player"):GetDMG() * 100 / ActionUnit("player"):HealthMax() >= 20 or 
-                    ActionUnit("player"):GetRealTimeDMG() >= ActionUnit("player"):HealthMax() * 0.20 or 
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                     -- TTD 
-                    ActionUnit("player"):TimeToDieX(25) < 5 or 
+                    Unit("player"):TimeToDieX(25) < 5 or 
                     (
                         A.IsInPvP and 
                         (
-                            ActionUnit("player"):UseDeff() or 
+                            Unit("player"):UseDeff() or 
                             (
-                                ActionUnit("player", 5):HasFlags() and 
-                                ActionUnit("player"):GetRealTimeDMG() > 0 and 
-                                ActionUnit("player"):IsFocused() 
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
                             )
                         )
                     )
                 ) and 
-                ActionUnit("player"):HasBuffs("DeffBuffs", true) == 0
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
             ) or 
             (    -- Custom
                 Vanish < 100 and 
-                ActionUnit("player"):HealthPercent() <= Vanish
+                Unit("player"):HealthPercent() <= Vanish
             )
         ) 
     then 
@@ -827,7 +827,7 @@ local function EvaluateCycleMutilate291(unit)
 end
 
 local function EvaluateCycleGarrote408(unit)
-  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= Unit("target") and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))
+  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= Unit("target") and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(SSBuffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))
 end
 
 local function EvaluateCycleRupture555(unit)
@@ -848,7 +848,7 @@ local function EvaluateTargetIfFilterGarrote762(unit)
 end
 
 local function EvaluateTargetIfGarrote793(unit)
-  return A.Subterfuge:IsSpellLearned() and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() > Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 18 or not bool(ss_buffed))
+  return A.Subterfuge:IsSpellLearned() and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() > Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 18 or not bool(SSBuffed))
 end
 
 
@@ -868,10 +868,16 @@ A[3] = function(icon, isMulti)
 	local MasterAssassinRemains = MasterAssassinRemains()
 	local SSBuffedTargetsAbovePandemic = SSBuffedTargetsAbovePandemic()
 	local NonSSBuffedTargets = NonSSBuffedTargets()
-	local ss_buffed = SSBuffed()
+	local SSBuffed = SSBuffed()
 	-- Spell ID Changes check
     local Stealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent
-    ------------------------------------------------------
+	local RuptureThreshold = (4 + ComboPoints * 4) * 0.3;
+    local RuptureDMGThreshold = S.Envenom:Damage() * Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
+    local GarroteDMGThreshold = S.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
+    local PriorityRotation = UsePriorityRotation();
+    
+	
+	------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
@@ -981,7 +987,9 @@ A[3] = function(icon, isMulti)
 			
             -- call_action_list,name=essences,if=!stealthed.all&dot.rupture.ticking&master_assassin_remains=0
             if (not Player:IsStealthed() and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and MasterAssassinRemains == 0) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+                if Essences(unit) then
+				    return true
+				end
             end
 			
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
@@ -1158,7 +1166,7 @@ A[3] = function(icon, isMulti)
             
 			-- pool_resource,for_next=1
             -- garrote,if=(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>4&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
-            if A.Garrote:IsReady(unit) and ((not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(ss_buffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 4 and (MasterAssassinRemains == 0 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))) then
+            if A.Garrote:IsReady(unit) and ((not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(SSBuffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 4 and (MasterAssassinRemains == 0 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))) then
                 if Player:EnergyPredicted() >= A.Garrote:GetSpellPowerCostCache() then
 					return A.Garrote:SetQueue()
                 else
@@ -1202,7 +1210,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- garrote,if=azerite.shrouded_suffocation.enabled&buff.subterfuge.up&buff.subterfuge.remains<1.3&!ss_buffed
-            if A.Garrote:IsReady(unit) and (bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3 and not bool(ss_buffed)) then
+            if A.Garrote:IsReady(unit) and (bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3 and not bool(SSBuffed)) then
                 if Player:EnergyPredicted() >= A.Garrote:GetSpellPowerCostCache() then
 					return A.Garrote:SetQueue()
                 else
@@ -1369,25 +1377,47 @@ local function PartyRotation(unit)
     if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
         return A.SingeMagic:Show(icon)
     end
+end ]]--
+
+-----------------------------------------
+--           ARENA ROTATION  
+-----------------------------------------
+
+local function ArenaRotation(icon, unit)
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not ActionPlayer:IsMounted() then              
+        local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		local useKickHeal, useCCHeal, useRacialHeal = A.InterruptIsValid(EnemyHealerUnitID, "TargetMouseover")  
+		
+		-- Blind on Enemy Healer
+        if A.Blind:IsReady(EnemyHealerUnitID) and Unit(EnemyHealerUnitID):GetRange() <= 15 and not Unit(EnemyHealerUnitID):InLOS() and Unit(EnemyHealerUnitID):IsControlAble("disorient", 25) and Unit(unit):HealthPercent() <= 30 then
+            return A.Blind:Show(icon)
+        end 
+		
+        -- Shadowstep into KidneyShot or Interrupt
+        if A.ShadowStep:IsReady(EnemyHealerUnitID) and Unit(EnemyHealerUnitID):GetRange() <= 25 and Unit(unit):HealthPercent() <= 30 and not Unit(EnemyHealerUnitID):InLOS() and Unit(EnemyHealerUnitID):InCC() < 1 then
+            return A.ShadowStep:Show(icon)              
+        end
+		
+		-- Kidney Shot on enemies with burst damage buff
+        if A.KidneyShot:IsReady(unit) and inMelee and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+            return A.KidneyShot:Show(icon)
+        end          
+
+        -- Disarm
+        if A.DisarmIsReady(unit) and not Unit(unit):InLOS() then
+            return A.Disarm:Show(icon)
+        end 
+    end 
 end 
 
-A[6] = function(icon)
+A[6] = function(icon)    
     return ArenaRotation(icon, "arena1")
 end
 
-A[7] = function(icon)
-    local Party = PartyRotation("party1") 
-    if Party then 
-        return Party:Show(icon)
-    end 
+A[7] = function(icon)   
     return ArenaRotation(icon, "arena2")
 end
 
-A[8] = function(icon)
-    local Party = PartyRotation("party2") 
-    if Party then 
-        return Party:Show(icon)
-    end     
+A[8] = function(icon)   
     return ArenaRotation(icon, "arena3")
-end]]--
-
+end
