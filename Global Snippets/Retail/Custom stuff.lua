@@ -70,7 +70,7 @@ if currentClass == "DEATHKNIGHT" then
 end
 
 if currentClass == "PRIEST" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Priest"
+    Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Priest"
 end
 
 if currentClass == "PALADIN" then
@@ -189,7 +189,7 @@ end
 
 -- attack_power
 function A.Player:AttackPower()
-    return UnitAttackPower(self.UnitID)
+    return UnitAttackPower("player")
 end
 
 ------------------------------------
