@@ -410,6 +410,15 @@ A[3] = function(icon)
 				return A.PocketsizedComputationDevice:Show(icon)
 			end
 			
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.time_to_pct_30<1.5|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=25-10*debuff.blood_of_the_enemy.up|target.time_to_die<40)&buff.tigers_fury.remains>10
+            if A.AshvanesRazorCoral:IsReady(unit) 
+			and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) 
+			and Unit(unit):TimeToDieX(30) < 1.5 or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0
+			and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 20) and Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) > 10) 
+			then
+                A.AshvanesRazorCoral:Show(icon)
+            end
+			
 			-- Trinkets
             if A.Trinket1:IsReady(unitID) and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket1:AbsentImun(unitID, "DamageMagicImun") and Trinket1IsAllowed and 
 			Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and canCast then 
