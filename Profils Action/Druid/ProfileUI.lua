@@ -14,191 +14,251 @@ local FriendlyTeam                                    = A.FriendlyTeam
 local TeamCache                                        = A.TeamCache
 local InstanceInfo                                    = A.InstanceInfo
 local select                                        = select
+local L 											= {}
+
+L.MOUSEOVER 										= {
+	enUS = "Use\n@mouseover", 
+	ruRU = "Использовать\n@mouseover",
+}
+L.MOUSEOVER_TT 										= {
+	enUS = "Will unlock use actions for @mouseover units\nExample: Pummel, Charge,  Intercept, Disarm",
+}
+L.AOE 										= {
+	enUS = "Use AoE", 
+}
+L.AOE_TT 										= {
+	enUS = "Enable multiunits actions",
+}
+L.CANCELBOP 										= {
+	enUS = "Cancelaura Blessing of Protection",
+}
+L.CANCELBOP_TT 										= {
+	enUS = "Automatically removes the buff effect Blessing of Protection on you if your health more than 50% and in combat",
+}
+L.DAMAGE											= {
+	enUS = " -- Damage Options -- ",
+}
+L.OPENER											= {
+	enUS = " -- Opener -- ",
+}
+L.DEFENSIVE											= {
+	enUS = " -- Deffensives -- ",
+}
+L.OPENER_SPELL									= {
+	enUS = "Buffs Ability",
+}	
+L.OPENER_SPELL_TT									= {
+	enUS = "Buffs Ability used in Opener rotation.",
+}	
+L.OPENER_SPELL_DISTANCE						= {
+	enUS = "Buffs Ability Distance",
+}	
+L.OPENER_SPELL_DISTANCE_TT									= {
+	enUS = "Distance from target to use buffs ability in Opener rotation.",
+}
+L.OPENER_PROWL_DISTANCE						= { 
+	enUS = A.GetSpellInfo(5215) .. " Target Distance",
+}
+L.OPENER_PROWL_DISTANCE_TT									= {
+	enUS = A.GetSpellInfo(5215) .. " if target is at this distance or less.",
+}
+L.TIGERS_FURY_SYNC				= {
+	enUS = A.GetSpellInfo(5217) .. " sync with " .. A.GetSpellInfo(155672)
+}
+L.TIGERS_FURY_SYNC_TT			= {
+	enUS = "Use " .. A.GetSpellInfo(5217) .. " only with " .. A.GetSpellInfo(155672) .. " buffs." 
+}
+
+L.REGROWTH_OFFENSIVE 			= {
+	enUS = A.GetSpellInfo(8936) .. " Offensive"
+}
+L.REGROWTH_OFFENSIVE_TT			= {
+	enUS = "Only use " .. A.GetSpellInfo(8936) .. " offensive when " .. A.GetSpellInfo(155672) .. " talent selected." 
+}
+L.REGROWTH_DEFENSIVE 			= {
+	enUS = A.GetSpellInfo(8936) .. " (%)"
+}
+L.SURVIVAL_INSTINCTS 			= {
+	enUS = A.GetSpellInfo(61336) .. " (%)"
+}
+L.THORNS_SELF			= {
+	enUS = A.GetSpellInfo(236696) .. " PvP (%)"
+}
+L.ABYSSAL_POT			= {
+	enUS = "Abyssal Healing Potion (%)"
+}
+L.BARKSKIN 			= {
+	enUS = A.GetSpellInfo(22812) .. " (%)"
+}
+L.SWIFTMEND 			= {
+	enUS = A.GetSpellInfo(18562) .. " (%)"
+}
+L.MULTIDOT				= {
+	enUS = "Auto Multi DoT",
+}	
+L.MULTIDOT_TT				= {
+	enUS = "Auto swap target for apply Moonfire / Sunfire.",
+}	
+L.MULTIDOT_DISTANCE			= {
+	enUS = "Multi DoT Search Distance",
+}	
+L.MULTIDOT_DISTANCE_TT		= {
+	enUS = "Max Ranged for check if enemy have DoT.",
+}	
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2 (02.12.2019)",
+    DateTime = "v2.0.1 (08.12.2019)",
     -- Class settings
     [2] = {        
-        [ACTION_CONST_DRUID_FERAL] = {
-            { -- [7]
+        [ACTION_CONST_DRUID_FERAL] = {             
+            { -- [1]                            
                 {
-                    E = "Header",
-                    L = {
-                        ANY = " -- General -- ",
-                    },
-                },
-            },		
-            { -- [1] 1st Row
-		
-                {
-                    E = "Checkbox", 
-                    DB = "mouseover",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use @mouseover", 
-                        ruRU = "Использовать @mouseover", 
-                        frFR = "Utiliser les fonctions @mouseover",
-                    }, 
-                    TT = { 
-                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
-                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
-                        frFR = "Activera les actions via @mouseover\n Exemple: Ressusciter, Soigner",
-                    }, 
-                    M = {},
+					E 		= "Checkbox", 
+					DB 		= "mouseover",
+					DBV 	= true,
+					L 		= L.MOUSEOVER,
+					TT 		= L.MOUSEOVER_TT, 
+					M 		= {},
                 },
                 {
-                    E = "Checkbox", 
-                    DB = "AoE",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use AoE", 
-                        ruRU = "Использовать AoE", 
-                        frFR = "Utiliser l'AoE",
-                    }, 
-                    TT = { 
-                        enUS = "Enable multiunits actions", 
-                        ruRU = "Включает действия для нескольких целей", 
-                        frFR = "Activer les actions multi-unités",
-                    }, 
-                    M = {
-					    Custom = "/run Action.AoEToggleMode()",
-						-- It does call func CraftMacro(L[CL], macro above, 1) -- 1 means perCharacter tab in MacroUI, if nil then will be used allCharacters tab in MacroUI
-						Value = value or nil, 
-						-- Very Very Optional, no idea why it will be need however.. 
-						TabN = '@number' or nil,								
-						Print = '@string' or nil,
-					},
-                }, 
+					E 		= "Checkbox", 
+					DB 		= "AoE",
+					DBV 	= true,
+					L 		= L.AOE,
+					TT		= L.AOE_TT,
+					M 		= {},
+                },
+				{
+					E 		= "Checkbox", 
+					DB 		= "CancelauraBOP",
+					DBV 	= true,
+					L 		= L.CANCELBOP,
+					TT		= L.CANCELBOP_TT,
+					M 		= {},
+				},				
+            },
+			{ -- [2]
                 {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
-            },  
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
+                    E 		= "Header",
+					L 		= L.OPENER, 
                 },
             },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Defensives -- ",
-                    },
-                },
-            },			
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "Regrowth",
-                    DBV = 60, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(8936) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "Renewal",
-                    DBV = 60, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(108238) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "SurvivalInstincts",
-                    DBV = 30, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(61336) .. " (%)",
-                    }, 
-                    M = {},
-                },
-            },
-            { -- [4] 4th Row
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            }, 
-            { -- [7]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- PvP -- ",
-                    },
-                },
-            },
-            { -- [5] 5th Row     
+			{ -- [3]
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "ON MELEE BURST", value = "ON MELEE BURST" },
-                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
-                        { text = "OFF", value = "OFF" },
-                    },
-                    DB = "FearPvP",
-                    DBV = "ON MELEE BURST",
-                    L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782),
-                    }, 
-                    TT = { 
-                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
-                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "@arena1", value = 1 },
-                        { text = "@arena2", value = 2 },
-                        { text = "@arena3", value = 3 },
-                        { text = "primary", value = 4 },
+                        { text = A.GetSpellInfo(106951), 	value = "Berserk" },
+						{ text = A.GetSpellInfo(5217), 		value = "TigersFury" },                        
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "OpenerSpells",
                     DBV = {
                         [1] = true, 
                         [2] = true,
-                        [3] = true,
-                        [4] = true,
                     }, 
-                    L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(5782) .. " units",
-                    }, 
-                    TT = { 
-                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
-                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
-                    }, 
-                    M = {},
+                    L 		= L.OPENER_SPELL,
+                    TT		= L.OPENER_SPELL_TT,	 
+                    M		= {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 5, 
+					MAX 	= 20,							
+					DB 		= "OpenerSpellsDistance",
+					DBV 	= 12,
+					ONLYOFF = true,
+					L 		= L.OPENER_SPELL_DISTANCE,
+					TT		= L.OPENER_SPELL_DISTANCE_TT,
+					M 		= {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 20, 
+					MAX 	= 50,							
+					DB 		= "ProwlDistance",
+					DBV 	= 35,
+					ONLYOFF = true,
+					L 		= L.OPENER_PROWL_DISTANCE,
+					TT		= L.OPENER_PROWL_DISTANCE_TT,
+					M 		= {},
+                },				
+            },
+			{ -- [4]
+                {
+                    E 		= "Header",
+					L 		= L.DAMAGE, 
                 },
             },
-        },
+			{ -- [5]
+				{
+					E 		= "Checkbox", 
+					DB 		= "TigersFurySync",
+					DBV 	= true,
+					L 		= L.TIGERS_FURY_SYNC,
+					TT		= L.TIGERS_FURY_SYNC_TT,
+					M 		= {},
+				},
+				{
+					E 		= "Checkbox", 
+					DB 		= "RegrowthOffensive",
+					DBV 	= true,
+					L 		= L.REGROWTH_OFFENSIVE,
+					TT		= L.REGROWTH_OFFENSIVE_TT,
+					M 		= {},
+				},
+			},
+			{ -- [6]
+                {
+                    E 		= "Header",
+					L 		= L.DEFENSIVE, 
+                },
+            },
+			{ -- [7]
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "RegrowthDefensive",
+					DBV 	= 100,
+					ONOFF 	= true,
+					L 		= L.REGROWTH_DEFENSIVE,
+					M 		= {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "SurvivalInstincts",
+					DBV 	= 100,
+					ONOFF 	= true,
+					L 		= L.SURVIVAL_INSTINCTS,
+					M 		= {},
+                },				
+            },
+			{ -- [8]
+				{
+                    E 		= "Slider", 													
+					MIN 	= 0, 
+                    MAX 	= 100,  						
+					DB 		= "ThornsPvP",
+					DBV 	= 75,
+					ONLYON = true,
+					L 		= L.THORNS_SELF,
+					M 		= {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "AbyssalPot",
+					DBV 	= 100,
+					ONOFF 	= true,
+					L 		= L.ABYSSAL_POT,
+					M 		= {},
+                },				
+            },
+		},
         [ACTION_CONST_DRUID_GUARDIAN] = {
             { -- [7]
                 {
@@ -534,6 +594,30 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "SwiftmendHP",
+					DBV 	= 50,
+					ONOFF 	= true,
+					L 		= {
+					        ANY = A.GetSpellInfo(18562) .. " (%)",
+					},
+					M 		= {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "AbyssalPot",
+					DBV 	= 20,
+					ONOFF 	= true,
+					L 		= {
+					           ANY = A.GetSpellInfo(301308) .. " (%)",
+					},
+					M 		= {},
+                },	
 
             }, 
             { -- [7] Multidots settings
@@ -560,6 +644,22 @@ A.Data.ProfileUI = {
                         frFR = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
                     }, 
                     M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 15, 
+					MAX 	= 40,							
+					DB 		= "MultiDotDistance",
+					DBV 	= 25,
+					ONLYOFF = true,
+					L 		= { 
+                        ANY = "Multidots Range",
+                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                    }, 
+					M 		= {},
                 },
                 {
                     E = "Dropdown",                                                         

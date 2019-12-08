@@ -1,5 +1,5 @@
 -----------------------------
--- Taste TMW Action Rotation
+-- ZakLL TMW Action Rotation
 -----------------------------
 
 local TMW = TMW 
