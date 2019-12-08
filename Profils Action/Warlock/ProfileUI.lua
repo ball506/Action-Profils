@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.1 (26.11.2019)",
+    DateTime = "v2.0.2 (08.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -200,6 +200,22 @@ A.Data.ProfileUI = {
                         frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
                     }, 
                     M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 15, 
+					MAX 	= 40,							
+					DB 		= "MultiDotDistance",
+					DBV 	= 25,
+					ONLYOFF = true,
+					L 		= { 
+                        ANY = "Multidots Range",
+                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                    }, 
+					M 		= {},
                 },
                 {
                     E = "Dropdown",                                                         

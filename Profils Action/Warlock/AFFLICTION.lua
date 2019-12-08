@@ -599,13 +599,15 @@ A[3] = function(icon, isMulti)
 	local unit = "player"
     local time_to_shard = TimeToShard()
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
+	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
+	
 	DetermineEssenceRanks()
 	-- Multidots var
-	MissingCorruption = MultiUnits:GetByRangeMissedDoTs(40, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-	MissingAgony = MultiUnits:GetByRangeMissedDoTs(40, 5, A.Agony.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingCorruption = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	MissingAgony = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Agony.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     --print(MissingVampiricTouch)
-    local AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(40, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
- 	local AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(40, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+ 	local AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     --print(AppliedVampiricTouch)
     --CorruptionToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 146739, 5)
     --AgonyToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 980, 5)
@@ -803,7 +805,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight()) then
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight()) then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
@@ -923,20 +925,19 @@ A[3] = function(icon, isMulti)
 			
 			-- Fake stop cast PvP			
 			-- Need to find a way to track if unit got interrupt available ?
-			if A.IsInPvP and castLeft > 0 and Unit("player"):IsControlAble("silence") 
-            and (Unit("player"):IsFocused("MELEE") or EnemyTeam("HEALER"):GetRange() <= 30) 
-			then
-                return A:Show(icon, ACTION_CONST_STOPCAST) -- A.StopCast:Show(icon)
-			end
+			--if A.IsInPvP and castLeft > 0 and Unit("player"):IsControlAble("silence") 
+            --and (Unit("player"):IsFocused("MELEE") or EnemyTeam("HEALER"):GetRange() <= 30) 
+			--then
+            --    return A:Show(icon, ACTION_CONST_STOPCAST) -- A.StopCast:Show(icon)
+			--end
 
-		    -- Auto Multi Dot	  
-	        if Action.GetToggle(2, "AutoDot") and CanMultidot 
-		    and (MissingAgony >= 1 or MissingCorruption >= 1) and MultiUnits:GetActiveEnemies() >= 2 and MultiUnits:GetActiveEnemies() <= 5 
-		    and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) >= 8 
-			then
-                return A:Show(icon, ACTION_CONST_AUTOTARGET) -- A.TargetEnemy:Show(icon)
-            end	
-				
+			-- Auto Multidot
+			if Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 0 and Action.GetToggle(2, "AutoDot") and CanMultidot
+		    and (MissingAgony >= 1 or MissingCorruption >= 1) and 
+		   (Unit("player"):HasBuffs(A.DarkSoulMisery.ID, true) == 0 ) then
+			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
+		    end	
+							
             -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
             if (true) then
                 VarUseSeed = num(A.SowtheSeeds:IsSpellLearned() and MultiUnits:GetActiveEnemies() >= 3 or A.SiphonLife:IsSpellLearned() and MultiUnits:GetActiveEnemies() >= 5 or MultiUnits:GetActiveEnemies() >= 8)
@@ -982,7 +983,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- memory_of_lucid_dreams,if=time>30
-                if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and A.BurstIsON(unit) and (Unit("player"):CombatTime() > 30) then
+                if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and A.BurstIsON(unit) and (Unit("player"):CombatTime() > 30) then
                     return A.MemoryofLucidDreams:Show(icon)
                 end
 				
@@ -992,7 +993,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- blood_of_the_enemy,if=pet.darkglare.remains|(!cooldown.deathbolt.remains|!talent.deathbolt.enabled)&cooldown.summon_darkglare.remains>=80&essence.blood_of_the_enemy.rank>1
-                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (A.SummonDarkglare:GetCooldown() > 160 or (A.Deathbolt:GetCooldown() == 0 or not A.Deathbolt:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() >= 80 and not A.BloodoftheEnemy:ID() == 297108) then
+                if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (A.SummonDarkglare:GetCooldown() > 160 or (A.Deathbolt:GetCooldown() == 0 or not A.Deathbolt:IsSpellLearned()) and A.SummonDarkglare:GetCooldown() >= 80 and not A.BloodoftheEnemy:ID() == 297108) then
                     return A.BloodoftheEnemy:Show(icon)
                 end
 				
@@ -1027,12 +1028,12 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- worldvein_resonance,if=buff.lifeblood.stack<3
-                if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+                if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                     return A.WorldveinResonance:Show(icon)
                 end
 				
                 -- ripple_in_space
-                if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
+                if A.RippleinSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
                     return A.RippleinSpace:Show(icon)
                 end
 				
@@ -1123,7 +1124,7 @@ A[3] = function(icon, isMulti)
             end 
 		
             -- the_unbound_force,if=buff.reckless_force.remains
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) then
                 return A.TheUnboundForce:Show(icon)
             end
 		
@@ -1140,7 +1141,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- memory_of_lucid_dreams,if=time<30
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit("player"):CombatTime() < 30) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Unit("player"):CombatTime() < 30) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 		
@@ -1202,7 +1203,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- guardian_of_azeroth,if=cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled|(azerite.dreadful_calling.rank|essence.vision_of_perfection.rank)&time>30&target.time_to_die>=210)&(dot.phantom_singularity.remains|dot.vile_taint.remains|!talent.phantom_singularity.enabled&!talent.vile_taint.enabled)|target.time_to_die<30+gcd
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 + Player:SoulShardsP() * num(A.DreadfulCalling:GetAzeriteRank() >= 1) or ((A.DreadfulCalling:GetAzeriteRank() >= 1 or A.VisionofPerfectionMinor:IsSpellLearned()) and Unit("player"):CombatTime() > 30 and Unit(unit):TimeToDie() >= 210) and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 + Player:SoulShardsP() * num(A.DreadfulCalling:GetAzeriteRank() >= 1) or ((A.DreadfulCalling:GetAzeriteRank() >= 1 or A.VisionofPerfectionMinor:IsSpellLearned()) and Unit("player"):CombatTime() > 30 and Unit(unit):TimeToDie() >= 210) and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 		
