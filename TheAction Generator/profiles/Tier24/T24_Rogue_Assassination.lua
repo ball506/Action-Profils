@@ -13,6 +13,8 @@ local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
 local UnitGUID = UnitGUID
+local TR                                     = Action.TasteRotation
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -207,6 +209,11 @@ local VarUseFiller = 0;
 local VarSkipCycleGarrote = 0;
 local VarSkipCycleRupture = 0;
 local VarSkipRupture = 0;
+-- Lua
+local mathmin = math.min;
+local pairs = pairs;
+local tableconcat = table.concat;
+local tostring = tostring;
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarVendettaSubterfugeCondition = 0
@@ -221,7 +228,23 @@ A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarSkipRupture = 0
 end)
 
+------------------------------------
+--- RegisterDamage simc reference
+------------------------------------
+-- Register the spell damage formula.
+--[[function A:RegisterDamage(Function)
+  self.DamageFormula = Function
+end
 
+-- Get the spell damage formula if it exists.
+function A:Damage()
+  return self.DamageFormula and self.DamageFormula() or 0
+end
+
+-- attack_power
+function A.Player:AttackPower()
+    return UnitAttackPower("player")
+end]]--
 
 local function num(val)
     if val then return 1 else return 0 end
@@ -258,130 +281,8 @@ end
 ---------------------------------------------------
 local BleedTickTime, ExsanguinatedBleedTickTime = 2 / Player:SpellHaste(), 1 / Player:SpellHaste();
 local Stealth;
-local RuptureThreshold, RuptureDMGThreshold, GarroteDMGThreshold;
 local ComboPoints, ComboPointsDeficit, Energy_Regen_Combined, PoisonedBleeds;
 local PriorityRotation;
-
------------------------------------------------------------------------------
------------------------------ EVENTS HANDLERS -------------------------------
-  -- Arguments Variables
-  local DestGUID, SpellID;
-
-  -- TODO: Register/Unregister Events on SpecChange
-  A.BleedTable = {
-    Assassination = {
-      Garrote = {},
-      Rupture = {}
-    },
-    Subtlety = {
-      Nightblade = {},
-    }
-  };
-  local BleedGUID;
-  --- Exsanguinated Handler
-    -- Exsanguinate Expression
-    local BleedDuration, BleedExpires;
-    function A.Exsanguinated (unit, SpellName)
-      
-	  BleedGUID = Unit(unit):InfoGUID();
-      if BleedGUID then
-        if SpellName == "Garrote" then
-          if A.BleedTable.Assassination.Garrote[BleedGUID] then
-              return A.BleedTable.Assassination.Garrote[BleedGUID][3];
-          end
-        elseif SpellName == "Rupture" then
-          if A.BleedTable.Assassination.Rupture[BleedGUID] then
-              return A.BleedTable.Assassination.Rupture[BleedGUID][3];
-          end
-        end
-      end
-      return false;
-    end
-    -- Exsanguinate OnCast Listener
-    A:RegisterForSelfCombatEvent(
-      function (...)
-        DestGUID, _, _, _, SpellID = select(8, ...);
-
-        -- Exsanguinate
-        if SpellID == 200806 then
-          for Key, _ in pairs(A.BleedTable.Assassination) do
-            for Key2, _ in pairs(A.BleedTable.Assassination[Key]) do
-              if Key2 == DestGUID then
-                  -- Change the Exsanguinate info to true
-                  A.BleedTable.Assassination[Key][Key2][3] = true;
-              end
-            end
-          end
-        end
-      end
-      , "SPELL_CAST_SUCCESS"
-    );
-    -- Bleed infos
-    local function GetBleedInfos (GUID, SpellID)
-      -- Core API is not used since we don't want cached informations
-      for i = 1, A.MAXIMUM do
-        local auraInfo = {UnitAura(GUID, i, "HARMFUL|PLAYER")};
-        if auraInfo[10] == SpellID then
-          return auraInfo[5];
-        end
-      end
-      return nil
-    end
-    -- Bleed OnApply/OnRefresh Listener
-    A:RegisterForSelfCombatEvent(
-      function (...)
-        DestGUID, _, _, _, SpellID = select(8, ...);
-
-        --- Record the Bleed Target and its Infos
-        -- Garrote
-        if SpellID == 703 then
-          BleedDuration, BleedExpires = GetBleedInfos(DestGUID, SpellID);
-          A.BleedTable.Assassination.Garrote[DestGUID] = {BleedDuration, BleedExpires, false};
-        -- Rupture
-        elseif SpellID == 1943 then
-          BleedDuration, BleedExpires = GetBleedInfos(DestGUID, SpellID);
-          A.BleedTable.Assassination.Rupture[DestGUID] = {BleedDuration, BleedExpires, false};
-        end
-      end
-      , "SPELL_AURA_APPLIED"
-      , "SPELL_AURA_REFRESH"
-    );
-    -- Bleed OnRemove Listener
-    A:RegisterForSelfCombatEvent(
-      function (...)
-        DestGUID, _, _, _, SpellID = select(8, ...);
-
-        -- Removes the Unit from Garrote Table
-        if SpellID == 703 then
-          if A.BleedTable.Assassination.Garrote[DestGUID] then
-              A.BleedTable.Assassination.Garrote[DestGUID] = nil;
-          end
-        -- Removes the Unit from Rupture Table
-        elseif SpellID == 1943 then
-          if A.BleedTable.Assassination.Rupture[DestGUID] then
-              A.BleedTable.Assassination.Rupture[DestGUID] = nil;
-          end
-        end
-      end
-      , "SPELL_AURA_REMOVED"
-    );
-    -- Bleed OnUnitDeath Listener
-    A:RegisterForCombatEvent(
-      function (...)
-        DestGUID = select(8, ...);
-
-        -- Removes the Unit from Garrote Table
-        if A.BleedTable.Assassination.Garrote[DestGUID] then
-          A.BleedTable.Assassination.Garrote[DestGUID] = nil;
-        end
-        -- Removes the Unit from Rupture Table
-        if A.BleedTable.Assassination.Rupture[DestGUID] then
-          A.BleedTable.Assassination.Rupture[DestGUID] = nil;
-        end
-      end
-      , "UNIT_DIED"
-      , "UNIT_DESTROYED"
-    );
 
 ---------------------------------------------------
 ---------- ASSASSINATION SPECIFICS ----------------
@@ -458,6 +359,32 @@ local function CPSpend()
     return mathmin(Player:ComboPoints(), CPMaxSpend());
 end
 
+local function NighstalkerMultiplier ()
+    return A.Nightstalker:IsSpellLearned() and Unit("player"):IsStealthed() and 1.5 or 1;
+end
+local function SubterfugeGarroteMultiplier ()
+    return A.Subterfuge:IsSpellLearned() and Unit("player"):IsStealthed() and 2 or 1;
+end
+--[[
+A.RegisterPMultiplier( -- Garrote dot and action
+	A.Garrote.ID,    -- Garrote action
+	A.GarroteDebuff.ID,  -- GarroteDebuff dot
+		{function ()
+				return (A.Nightstalker:IsSpellLearned() and Unit("player"):IsStealthed() and 1.5) or (A.Subterfuge:IsSpellLearned() and Unit("player"):IsStealthed() and 2) or 1
+		end}
+)
+
+A.RegisterPMultiplier( -- Rupture dot and action
+	A.Rupture.ID,    -- Rupture action
+	A.RuptureDebuff.ID,  -- RuptureDebuff dot
+		{function ()
+				return A.Nightstalker:IsSpellLearned() and Unit("player"):IsStealthed() and 1.5 or 1
+		end}
+
+)
+]]--
+	
+--[[
 -- Spells Damage
 A.Envenom:RegisterDamage(
 -- Envenom DMG Formula:
@@ -473,7 +400,7 @@ function ()
         -- Aura Multiplier (SpellID: 137037)
         1.27 *
         -- Toxic Blade Multiplier
-        (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0 and 1.3 or 1) *
+        (A.ToxicBlade:IsSpellLearned() and 1.3 or 1) *
         -- Deeper Stratagem Multiplier
         (A.DeeperStratagem:IsSpellLearned() and 1.05 or 1) *
         -- Mastery Finisher Multiplier
@@ -495,30 +422,7 @@ A.Mutilate:RegisterDamage(
             (1 + Player:VersatilityDmgPct()/100);
     end
 );
-local function NighstalkerMultiplier ()
-    return A.Nightstalker:IsSpellLearned() and Unit("player"):IsStealthed() and 1.5 or 1;
-end
-local function SubterfugeGarroteMultiplier ()
-    return A.Subterfuge:IsSpellLearned() and Unit("player"):IsStealthed() and 2 or 1;
-end
-
-A.RegisterPMultiplier( -- Garrote dot and action
-	A.Garrote.ID,    -- Garrote action
-	A.GarroteDebuff.ID,  -- GarroteDebuff dot
-
-    {NighstalkerMultiplier},
-    {SubterfugeGarroteMultiplier}
-)
-
-A.RegisterPMultiplier( -- Rupture dot and action
-	A.Rupture.ID,    -- Rupture action
-	A.RuptureDebuff.ID,  -- RuptureDebuff dot
-
-    {NighstalkerMultiplier}
-)
-
-
-
+]]--
 -- Stealth
 function Stealth(Stealth, Setting)
     if Action.GetToggle(2, "StealthOOC") and Stealth:IsReady("player") and not Unit("player"):IsStealthed() then
@@ -765,17 +669,13 @@ RefreshPoisons = A.MakeFunctionCachedDynamic(RefreshPoisons)
 	
 -- Check if the Priority Rotation variable should be set
 local function UsePriorityRotation()
-    if Cache.EnemiesCount[10] < 2 then
+    if MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 then
         return false
     end
     if Action.GetToggle(2, "UsePriorityRotation") == "Always" then
         return true
     end
     if Action.GetToggle(2, "UsePriorityRotation") == "On Bosses" and Unit(unit):IsInBossList() then
-        return true
-    end
-    -- Zul Mythic
-    if Unit("player"):InstanceDifficulty() == 16 and Unit(unit):NPCID() == 138967 then
         return true
     end
     return false
@@ -808,6 +708,35 @@ local function SSBuffedTargetsAbovePandemic()
     return count;
 end
 
+-- Multidot Handler UI --
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if IsInRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if IsInGroup() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if A.IsInPvP then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
 
 local function EvaluateTargetIfFilterMarkedForDeath31(unit)
   return Unit(unit):TimeToDie()
@@ -827,7 +756,7 @@ local function EvaluateCycleMutilate291(unit)
 end
 
 local function EvaluateCycleGarrote408(unit)
-  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= Unit("target") and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(SSBuffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))
+  return not bool(VarSkipCycleGarrote) and Unit(unit) ~= Unit("target") and (not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.Garrote.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(SSBuffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 12 and (MasterAssassinRemains == 0 or not Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))
 end
 
 local function EvaluateCycleRupture555(unit)
@@ -839,7 +768,7 @@ local function EvaluateTargetIfFilterGarrote709(unit)
 end
 
 local function EvaluateTargetIfGarrote744(unit)
-  return A.Subterfuge:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 12 or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 2
+  return A.Subterfuge:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 12 or A.PMultiplier(unit, A.Garrote.ID) <= 1) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 2
 end
 
 
@@ -871,429 +800,287 @@ A[3] = function(icon, isMulti)
 	local SSBuffed = SSBuffed()
 	-- Spell ID Changes check
     local Stealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent
-	local RuptureThreshold = (4 + ComboPoints * 4) * 0.3;
-    local RuptureDMGThreshold = S.Envenom:Damage() * Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
-    local GarroteDMGThreshold = S.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
+	local RuptureThreshold = (4 + Player:ComboPoints() * 4) * 0.3;
+    --local RuptureDMGThreshold = A.Envenom:Damage() * Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
+    --local GarroteDMGThreshold = A.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
     local PriorityRotation = UsePriorityRotation();
-    
+	-- Multidots var
+	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
+	local MissingRupture = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.RuptureDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	local MissingGarrote = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.GarroteDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local CanMultidot = HandleMultidots()	
+
+
 	
 	------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Cds, Direct, Dot, Essences, Stealthed
-        
-		--Precombat
-        local function Precombat(unit)
-            -- flask
-            -- augmentation
-            -- food
-            -- snapshot_stats
-            -- potion
-            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                return A.PotionofUnbridledFury:Show(icon)
-            end
-            -- marked_for_death,precombat_seconds=5,if=raid_event.adds.in>15
-            if A.MarkedForDeath:IsReady(unit) then
-                return A.MarkedForDeath:Show(icon)
-            end
-            -- stealth
-            if Stealth:IsReady(unit) then
-                return Stealth:Show(icon)
-            end
-            -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) and A.BurstIsON(unit) then
-                return A.AzsharasFontofPower:Show(icon)
-            end
-        end
-		
-        --Essences
-        local function Essences(unit)
-            -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Player:EnergyTimeToMaxPredicted() > 1 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0
-			and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetCooldown() < A.GetGCD())) 
-			then
-                return A.ConcentratedFlame:Show(icon)
-            end
-            -- blood_of_the_enemy,if=debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up&combo_points.deficit<=1|debuff.vendetta.remains<=10)|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0
-			and Player:ComboPointsDeficit() <= 1 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) <= 10) or Unit(unit):TimeToDie() <= 10) 
-			then
-                return A.BloodoftheEnemy:Show(icon)
-            end
-            -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (A.Vendetta:GetCooldown() < 3 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 or Unit(unit):TimeToDie() < 30) 
-			then
-                return A.GuardianofAzeroth:Show(icon)
-            end
-            -- guardian_of_azeroth,if=floor((target.time_to_die-30)%cooldown)>floor((target.time_to_die-30-cooldown.vendetta.remains)%cooldown)
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (math.floor ((Unit(unit):TimeToDie() - 30) / A.GuardianofAzeroth:GetCooldown()) > math.floor ((Unit(unit):TimeToDie() - 30 - A.Vendetta:GetCooldown()) / A.GuardianofAzeroth:GetCooldown())) 
-			then
-                return A.GuardianofAzeroth:Show(icon)
-            end
-            -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and Player:EnergyPredicted() < 70) 
-			then
-                return A.FocusedAzeriteBeam:Show(icon)
-            end
-            -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 ) 
-			then
-                return A.PurifyingBlast:Show(icon)
-            end
-            -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) 
-			then
-                return A.TheUnboundForce:Show(icon)
-            end
-            -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			then
-                return A.RippleInSpace:Show(icon)
-            end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) 
-			then
-                return A.WorldveinResonance:Show(icon)
-            end
-            -- memory_of_lucid_dreams,if=energy<50&!cooldown.vendetta.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Player:EnergyPredicted() < 50 and not A.Vendetta:GetCooldown() == 0) 
-			then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-        end
-        
-        --Cooldowns
-        local function Cds(unit)
-		
-            -- use_item,name=azsharas_font_of_power,if=!stealthed.all&master_assassin_remains=0&(cooldown.vendetta.remains<?cooldown.toxic_blade.remains)<10+10*equipped.ashvanes_razor_coral&!debuff.vendetta.up&!debuff.toxic_blade.up
-            if A.AzsharasFontofPower:IsReady(unit) and 
-			(
-			not Player:IsStealthed() and MasterAssassinRemains == 0 
-			and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0
-			) 
-			then
-                return A.AzsharasFontofPower:Show(icon)
-            end
-			
-            -- call_action_list,name=essences,if=!stealthed.all&dot.rupture.ticking&master_assassin_remains=0
-            if (not Player:IsStealthed() and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and MasterAssassinRemains == 0) then
-                if Essences(unit) then
-				    return true
-				end
-            end
-			
-            -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
-            if A.MarkedForDeath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MarkedForDeath, 40, "min", EvaluateTargetIfFilterMarkedForDeath31, EvaluateTargetIfMarkedForDeath36) then 
-                    return A.MarkedForDeath:Show(icon) 
-                end
-            end
-			
-            -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend
-            if A.MarkedForDeath:IsReady(unit) and (Player:ComboPointsDeficit() >= CPMaxSpend()) then
-                return A.MarkedForDeath:Show(icon)
-            end
-			
-            -- variable,name=vendetta_subterfuge_condition,value=!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier>1&(spell_targets.fan_of_knives<6|!cooldown.vanish.up)
-            local VarVendettaSubterfugeCondition = num(not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) > 1 and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 6 or not A.Vanish:GetCooldown() == 0))
-            -- variable,name=vendetta_nightstalker_condition,value=!talent.nightstalker.enabled|!talent.exsanguinate.enabled|cooldown.exsanguinate.remains<5-2*talent.deeper_stratagem.enabled
-            local VarVendettaNightstalkerCondition = num(not A.Nightstalker:IsSpellLearned() or not A.Exsanguinate:IsSpellLearned() or A.Exsanguinate:GetCooldown() < 5 - 2 * num(A.DeeperStratagem:IsSpellLearned()))
-            -- variable,name=variable,name=vendetta_font_condition,value=!equipped.azsharas_font_of_power|azerite.shrouded_suffocation.enabled|debuff.razor_coral_debuff.down|trinket.ashvanes_razor_coral.cooldown.remains<10&(cooldown.toxic_blade.remains<1|debuff.toxic_blade.up)
-            local VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or bool(A.ShroudedSuffocation:GetAzeriteRank()) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0))
-            
-			-- vendetta,if=!stealthed.rogue&dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition
-            if A.Vendetta:IsReady(unit) and (not Player:IsStealthed() and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and bool(VarVendettaSubterfugeCondition) and bool(VarVendettaNightstalkerCondition) and bool(VarVendettaFontCondition)) then
-                return A.Vendetta:Show(icon)
-            end
-			
-            -- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
-            if A.Vanish:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and bool(VarSingleUnit)) and Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1 and (not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) then
-                return A.Vanish:Show(icon)
-            end
-			
-            -- vanish,if=talent.nightstalker.enabled&!talent.exsanguinate.enabled&combo_points>=cp_max_spend&debuff.vendetta.up
-            if A.Vanish:IsReady(unit) and (A.Nightstalker:IsSpellLearned() and not A.Exsanguinate:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.Vanish:Show(icon)
-            end
-			
-            -- variable,name=ss_vanish_condition,value=azerite.shrouded_suffocation.enabled&(non_ss_buffed_targets>=1|spell_targets.fan_of_knives=3)&(ss_buffed_targets_above_pandemic=0|spell_targets.fan_of_knives>=6)
-            local VarSsVanishCondition = num(bool(A.ShroudedSuffocation:GetAzeriteRank()) and (NonSSBuffedTargets >= 1 or MultiUnits:GetByRangeInCombat(10, 5, 10) == 3) and (SSBuffedTargetsAbovePandemic == 0 or MultiUnits:GetByRangeInCombat(10, 5, 10) >= 6))
-			
-            -- pool_resource,for_next=1,extra_amount=45
-            -- vanish,if=talent.subterfuge.enabled&!stealthed.rogue&cooldown.garrote.up&(variable.ss_vanish_condition|!azerite.shrouded_suffocation.enabled&dot.garrote.refreshable)&combo_points.deficit>=((1+2*azerite.shrouded_suffocation.enabled)*spell_targets.fan_of_knives)>?4&raid_event.adds.in>12
-            if A.Vanish:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and not Player:IsStealthed() and A.Garrote:GetCooldown() == 0 and (bool(VarSsVanishCondition) or not bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true)) and Player:ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank()) * MultiUnits:GetByRangeInCombat(10, 5, 10)) > 4)) then
-                if A.Vanish:IsReady("player") and Player:EnergyPredicted() >= 45 then
-					return A.Vanish:SetQueue()
-                else
-		            -- Notification					
-                    Action.SendNotification("Pooling energy for Vanish burst", A.Vanish.ID)
-                    return A.PoolResource:Show(icon)
-                end
-            end
-			
-            -- vanish,if=talent.master_assassin.enabled&!stealthed.all&master_assassin_remains<=0&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up)&(!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up)
-            if A.Vanish:IsReady(unit) and (A.MasterAssassin:IsSpellLearned() and not Player:IsStealthed() and MasterAssassinRemains <= 0 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 5 and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0) and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) > 0)) then
-                return A.Vanish:Show(icon)
-            end
-			
-            -- shadowmeld,if=!stealthed.all&azerite.shrouded_suffocation.enabled&dot.garrote.refreshable&dot.garrote.pmultiplier<=1&combo_points.deficit>=1
-            if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Player:IsStealthed() and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 and Player:ComboPointsDeficit() >= 1) then
-                return A.Shadowmeld:Show(icon)
-            end
-			
-            -- exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
-            if A.Exsanguinate:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4 + 4 * CPMaxSpend() and not Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true)) then
-                return A.Exsanguinate:Show(icon)
-            end
-			
-            -- toxic_blade,if=dot.rupture.ticking&(!equipped.azsharas_font_of_power|cooldown.vendetta.remains>10)
-            if A.ToxicBlade:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and (not A.AzsharasFontofPower:IsExists() or A.Vendetta:GetCooldown() > 10)) then
-                return A.ToxicBlade:Show(icon)
-            end
-			
-            -- potion,if=buff.bloodlust.react|debuff.vendetta.up
-            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                A.PotionofUnbridledFury:Show(icon)
-            end
-			
-            -- blood_fury,if=debuff.vendetta.up
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.BloodFury:Show(icon)
-            end
-			
-            -- berserking,if=debuff.vendetta.up
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.Berserking:Show(icon)
-            end
-			
-            -- fireblood,if=debuff.vendetta.up
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.Fireblood:Show(icon)
-            end
-			
-            -- ancestral_call,if=debuff.vendetta.up
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.AncestralCall:Show(icon)
-            end
-			
-            -- use_item,name=galecallers_boon,if=cooldown.vendetta.remains>45
-            if A.GalecallersBoon:IsReady(unit) and (A.Vendetta:GetCooldown() > 45) then
-                return A.GalecallersBoon:Show(icon)
-            end
-			
-            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 10 - 4 * num(A.AzsharasFontofPower:IsExists()) or Unit(unit):TimeToDie() < 20) then
-                return A.AshvanesRazorCoral:Show(icon)
-            end
-			
-            -- use_item,effect_name=cyclotronic_blast,if=master_assassin_remains=0&!debuff.vendetta.up&!debuff.toxic_blade.up&buff.memory_of_lucid_dreams.down&energy<80&dot.rupture.remains>4
-            if A.CyclotronicBlast:IsReady(unit) and (MasterAssassinRemains == 0 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Player:EnergyPredicted() < 80 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
-                return A.CyclotronicBlast:Show(icon)
-            end
-			
-            -- use_item,name=lustrous_golden_plumage,if=debuff.vendetta.up
-            if A.LustrousGoldenPlumage:IsReady(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
-                return A.LustrousGoldenPlumage:Show(icon)
-            end
-			
-            -- use_items
-        end
-        
-        --Direct
-        local function Direct(unit)
-		
-            -- envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|!variable.single_target)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
-            if A.Envenom:IsReady(unit) and (Player:ComboPoints() >= 4 + num(A.DeeperStratagem:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) or Player:EnergyDeficitPredicted() <= 25 + VarEnergyRegenCombined or not bool(VarSingleUnit)) and (not A.Exsanguinate:IsSpellLearned() or A.Exsanguinate:GetCooldown() > 2)) then
-                return A.Envenom:Show(icon)
-            end
-			
-            -- variable,name=use_filler,value=combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined|!variable.single_target
-            local VarUseFiller = num(Player:ComboPointsDeficit() > 1 or Player:EnergyDeficitPredicted() <= 25 + VarEnergyRegenCombined or not bool(VarSingleUnit))
-			
-            -- fan_of_knives,if=variable.use_filler&azerite.echoing_blades.enabled&spell_targets.fan_of_knives>=2
-            if A.FanofKnives:IsReady(unit) and A.GetToggle(2, "AoE") and (bool(VarUseFiller) and bool(A.EchoingBlades:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2) then
-                return A.FanofKnives:Show(icon)
-            end
-            -- fan_of_knives,if=variable.use_filler&(buff.hidden_blades.stack>=19|(!priority_rotation&spell_targets.fan_of_knives>=4+(azerite.double_dose.rank>2)+stealthed.rogue))
-            if A.FanofKnives:IsReady(unit) and A.GetToggle(2, "AoE") and (bool(VarUseFiller) and (Unit("player"):HasBuffsStacks(A.HiddenBladesBuff.ID, true) >= 19 or (not bool(priority_rotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 + num((A.DoubleDose:GetAzeriteRank() > 2)) + num(Unit("player"):IsStealthed(true, false))))) then
-                return A.FanofKnives:Show(icon)
-            end
-            -- fan_of_knives,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives>=3
-            if A.FanofKnives:IsReady(unit) and A.GetToggle(2, "AoE") then
-                if Action.Utils.CastTargetIf(A.FanofKnives, 10, "min", EvaluateCycleFanofKnives270) then
-                    return A.FanofKnives:Show(icon) 
-                end
-            end
-            -- blindside,if=variable.use_filler&(buff.blindside.up|!talent.venom_rush.enabled&!azerite.double_dose.enabled)
-            if A.Blindside:IsReady(unit) and (bool(VarUseFiller) and (Unit("player"):HasBuffs(A.BlindsideBuff.ID, true) or not A.VenomRush:IsSpellLearned() and not bool(A.DoubleDose:GetAzeriteRank()))) then
-                return A.Blindside:Show(icon)
-            end
-            -- mutilate,target_if=!dot.deadly_poison_dot.ticking,if=variable.use_filler&spell_targets.fan_of_knives=2
-            if A.Mutilate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Mutilate, 40, "min", EvaluateCycleMutilate291) then
-                    return A.Mutilate:Show(icon) 
-                end
-            end
-            -- mutilate,if=variable.use_filler
-            if A.Mutilate:IsReady(unit) and (bool(VarUseFiller)) then
-                return A.Mutilate:Show(icon)
-            end
-        end
-        
-        --Dot
-        local function Dot(unit)
-            -- variable,name=skip_cycle_garrote,value=priority_rotation&spell_targets.fan_of_knives>3&(dot.garrote.remains<cooldown.garrote.duration|poisoned_bleeds>5)
-            local VarSkipCycleGarrote = num(bool(priority_rotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) > 3 and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < A.Garrote:BaseDuration() or PoisonedBleeds() > 5))
-            -- variable,name=skip_cycle_rupture,value=priority_rotation&spell_targets.fan_of_knives>3&(debuff.toxic_blade.up|(poisoned_bleeds>5&!azerite.scent_of_blood.enabled))
-            local VarSkipCycleRupture = num(bool(priority_rotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) > 3 and (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0 or (PoisonedBleeds() > 5 and not bool(A.ScentofBlood:GetAzeriteRank()))))
-            -- variable,name=skip_rupture,value=debuff.vendetta.up&(debuff.toxic_blade.up|master_assassin_remains>0)&dot.rupture.remains>2
-            local VarSkipRupture = num(Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 and (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0 or MasterAssassinRemains > 0) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 2)
-            
-			-- rupture,if=talent.exsanguinate.enabled&((combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1)|(!ticking&(time>10|combo_points>=2)))
-            if A.Rupture:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and ((Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1) or (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) == 0 and (Unit("player"):CombatTime() > 10 or Player:ComboPoints() >= 2)))) then
-                return A.Rupture:Show(icon)
-            end
-            
-			-- pool_resource,for_next=1
-            -- garrote,if=(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>4&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
-            if A.Garrote:IsReady(unit) and ((not A.Subterfuge:IsSpellLearned() or not (A.Vanish:GetCooldown() == 0 and A.Vendetta:GetCooldown() <= 4)) and Player:ComboPointsDeficit() >= 1 + 3 * num((bool(A.ShroudedSuffocation:GetAzeriteRank()) and A.Vanish:GetCooldown() == 0)) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) and (A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Garrote") or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= GarroteTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and not bool(SSBuffed) and (Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)) > 4 and (MasterAssassinRemains == 0 or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 and bool(A.ShroudedSuffocation:GetAzeriteRank()))) then
-                if Player:EnergyPredicted() >= A.Garrote:GetSpellPowerCostCache() then
-					return A.Garrote:SetQueue()
-                else
-			        -- Notification					
-                    Action.SendNotification("Pooling energy for Garrote burst", A.Garrote.ID)
-                    return A.PoolResource:Show(icon)
-                end
-            end
-            
-			-- pool_resource,for_next=1
-            -- garrote,cycle_targets=1,if=!variable.skip_cycle_garrote&target!=Unit("target")&(!talent.subterfuge.enabled|!(cooldown.vanish.up&cooldown.vendetta.remains<=4))&combo_points.deficit>=1+3*(azerite.shrouded_suffocation.enabled&cooldown.vanish.up)&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&!ss_buffed&(target.time_to_die-remains)>12&(master_assassin_remains=0|!ticking&azerite.shrouded_suffocation.enabled)
-            if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateCycleGarrote408) then
-                    return A.Garrote:Show(icon) 
-                end
-            end
-            
-			-- crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
-            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) < 2 + num((MultiUnits:GetByRangeInCombat(40, 5, 10) >= 5)) and Player:ComboPoints() >= 4) then
-                return A.CrimsonTempest:Show(icon)
-            end
-            
-			-- rupture,if=!variable.skip_rupture&combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
-            if A.Rupture:IsReady(unit) and (not bool(VarSkipRupture) and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffsRefreshable(A.RuptureDebuff.ID, true) and (A.PMultiplier(unit, A.RuptureDebuff.ID) <= 1 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= RuptureTickTime and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and (not A.Exsanguinated(unit, "Rupture") or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) <= RuptureTickTime * 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 + A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
-                return A.Rupture:Show(icon)
-            end
-            
-			-- rupture,cycle_targets=1,if=!variable.skip_cycle_rupture&!variable.skip_rupture&target!=Unit("target")&combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&(!exsanguinated|remains<=tick_time*2&spell_targets.fan_of_knives>=3+azerite.shrouded_suffocation.enabled)&target.time_to_die-remains>4
-            if A.Rupture:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rupture, 5, "min", EvaluateCycleRupture555) then
-                    return A.Rupture:Show(icon) 
-                end
-            end
-        end
-                
-        --Stealthed
-        local function Stealthed(unit)
-            -- rupture,if=combo_points>=4&(talent.nightstalker.enabled|talent.subterfuge.enabled&(talent.exsanguinate.enabled&cooldown.exsanguinate.remains<=2|!ticking)&variable.single_target)&target.time_to_die-remains>6
-            if A.Rupture:IsReady(unit) and (Player:ComboPoints() >= 4 and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and (A.Exsanguinate:IsSpellLearned() and A.Exsanguinate:GetCooldown() <= 2 or Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) == 0) and bool(VarSingleUnit)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 6) then
-                return A.Rupture:Show(icon)
-            end
-            -- pool_resource,for_next=1
-            -- garrote,if=azerite.shrouded_suffocation.enabled&buff.subterfuge.up&buff.subterfuge.remains<1.3&!ss_buffed
-            if A.Garrote:IsReady(unit) and (bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3 and not bool(SSBuffed)) then
-                if Player:EnergyPredicted() >= A.Garrote:GetSpellPowerCostCache() then
-					return A.Garrote:SetQueue()
-                else
-			        -- Notification					
-                    Action.SendNotification("Pooling energy for Garrote burst", A.Garrote.ID)
-                    return A.PoolResource:Show(icon)
-                end
-            end
-            -- pool_resource,for_next=1
-            -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&(remains<12|pmultiplier<=1)&target.time_to_die-remains>2
-            if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote709, EvaluateTargetIfGarrote744) then 
-                    return A.Garrote:Show(icon) 
-                end
-            end
-            -- rupture,if=talent.subterfuge.enabled&azerite.shrouded_suffocation.enabled&!dot.rupture.ticking&variable.single_target
-            if A.Rupture:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) == 0 and bool(VarSingleUnit)) then
-                return A.Rupture:Show(icon)
-            end
-            -- pool_resource,for_next=1
-            -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&azerite.shrouded_suffocation.enabled&target.time_to_die>remains&(remains<18|!ss_buffed)
-            if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote762, EvaluateTargetIfGarrote793) then 
-                    return A.Garrote:Show(icon) 
-                end
-            end
-            -- pool_resource,for_next=1
-            -- garrote,if=talent.subterfuge.enabled&talent.exsanguinate.enabled&cooldown.exsanguinate.remains<1&prev_gcd.1.rupture&dot.rupture.remains>5+4*cp_max_spend
-            if A.Garrote:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and A.Exsanguinate:IsSpellLearned() and A.Exsanguinate:GetCooldown() < 1 and Unit("player"):GetSpellLastCast(A.Rupture) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 5 + 4 * CPMaxSpend()) then
-                if Player:EnergyPredicted() >= A.Garrote:GetSpellPowerCostCache() then
-					return A.Garrote:SetQueue()
-                else
-			        -- Notification					
-                    Action.SendNotification("Pooling energy for Garrote burst", A.Garrote.ID)
-                    return A.PoolResource:Show(icon)
-                end
-            end
-        end
-        
-        
-        -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
-        end
-		
-		
-		-- Defensive
-        local RefreshPoisons = RefreshPoisons()
-        if RefreshPoisons then 
-            -- Notification					
-            Action.SendNotification("Auto refreshing poisons", A.CripplingPoison.ID)
-            return RefreshPoisons:Show(icon)
-        end 
 
+        local inMelee = A.Mutilate:IsInRange(unit)
+				
+		-- Out of combat / Precombat
+        if Unit("player"):CombatTime() == 0 then		
+		    -- RefreshPoisons
+            local RefreshPoisons = RefreshPoisons()
+            if RefreshPoisons then 
+                -- Notification					
+                Action.SendNotification("Auto refreshing poisons", A.CripplingPoison.ID)
+                return RefreshPoisons:Show(icon)
+            end 
+		
+		    local CurrentStealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth; -- w/ or w/o Subterfuge Talent		
+	        -- Stealth out of combat
+            if not inCombat and Unit("player"):HasBuffs(A.VanishBuff.ID) == 0 and Action.GetToggle(2, "StealthOOC") and not Unit("player"):HasFlags() and CurrentStealth:IsReady("player") and Unit("player"):HasBuffs(CurrentStealth.ID) == 0 then
+                -- Notification					
+                Action.SendNotification("Auto Stealthing", A.Stealth.ID)
+                return CurrentStealth:Show(icon)
+            end 		
+		
+		
+		-- Sap out of combat
+		if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 and Unit(unit):IsControlAble("incapacitate") and Unit("player"):GetDR("incapacitate") > 25 then
+		    if Unit(unit):HasDeBuffs(A.Sap.ID) == 0 then 
+			    -- Notification					
+                Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
+			    return A.Sap:Show(icon)
+			else 
+			    if Unit(unit):HasDeBuffs(A.Sap.ID) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID) <= 1 then
+    			    -- Notification					
+                    Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
+			        return A.Sap:Show(icon)
+				end
+			end
+		end			
+		
+		end
+		-- ShadowStep
+		--if Unit(unit):CombatTime() > 0 and A.ShadowStep:IsReady(unit) and Unit(unit):GetRange() > 7 and Unit(unit):GetRange() <= 25 then
+			-- ShadowStep
+		--    if A.ShadowStep:IsReady(unit) then
+		--	    return A.ShadowStep:Show(icon)
+		--    end			
+		--end		
+		
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
 		    local VarSingleUnit = num(MultiUnits:GetByRangeInCombat(10, 5, 10) < 2)
 			local VarEnergyRegenCombined = Player:EnergyRegen() + PoisonedBleeds() * 7 / (2 * Player:SpellHaste())
 			
-            -- stealth
-            if Stealth:IsReady(unit) then
-                return Stealth:Show(icon)
-            end
+        -- Marked for Death
+		if A.MarkedForDeath:IsReady(unit) and Player:ComboPoints() <= 1 and A.ToxicBlade:IsSpellLearned() and A.MarkedForDeath:IsSpellLearned() then
+			return A.MarkedForDeath:Show(icon)
+		end
+		
+		-- Vanish to garrote when in fight
+		if Player:IsStealthed() and Unit(unit):CombatTime() > 0 and (A.LastPlayerCastName == A.Vanish:Info() or A.LastPlayerCastName == A.Rupture:Info()) then
+			-- Garrote
+		    if A.Garrote:IsReady(unit) then
+			    return A.Garrote:Show(icon)
+		    end			
+		end	
+				
+		-- Garrote
+		if A.Garrote:IsReady(unit) and Player:ComboPoints() < 5  and (not Unit(unit):HasDeBuffs(A.Garrote.ID) or Unit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
+			return A.Garrote:Show(icon)
+		end	
+		
+		-- Rupture with refresh
+		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Garrote.ID) > 0 and 
+		(
+		    Unit(unit):HasDeBuffs(A.Rupture.ID) == 0
+			   or 
+			Unit(unit):HasDeBuffs(A.Rupture.ID) <= 6
+		) 
+		then
+			return A.Rupture:Show(icon)
+		end
+		
+		-- Auto Multidot
+		if Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 0  
+		   and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
+		   and (MissingGarrote >= 1 or MissingRupture >= 1) 
+		   and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 ) and MultiUnits:GetByRange(8, 5, 10) > 1 and MultiUnits:GetByRange(10, 5, 10) < 5
+		then
+		   return A:Show(icon, ACTION_CONST_AUTOTARGET)
+		end	
+		
+   		-- Envenom
+		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID) > 5 then
+			return A.Envenom:Show(icon)
+		end
+		
+		-- Blood of the Enemy
+        if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and 
+		    (
+			    (A.IsInPvP and Unit(unit):HealthPercent() <= 75) or not A.IsInPvP
+			) and 
+			Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 4 and Unit(unit):HasDeBuffs(A.Vendetta.ID) > 0
+		then
+			return A.BloodoftheEnemy:Show(icon)                                                                                                 
+        end
+		
+		-- Vendetta
+		if A.Vendetta:IsReady(unit) and Unit(unit):HasDeBuffs(A.Vendetta.ID) == 0 and A.BurstIsON(unit) and Player:ComboPoints() >= 5 and 
+		    (
+			    (A.IsInPvP and Unit(unit):HealthPercent() <= 75) or not A.IsInPvP
+			) and 
+			Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 4 and Player:Energy() <= 80 
+        then
+			return A.Vendetta:Show(icon)
+		end		
+		
+		-- Toxic Blade
+		if A.ToxicBlade:IsReady(unit) and A.ToxicBlade:IsSpellLearned() and 
+		Player:ComboPoints() < 5 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 4 and Unit(unit):HasDeBuffs(A.Rupture.ID) > 0 
+		then
+			return A.ToxicBlade:Show(icon)
+		end		
+		
+		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
+        if A.KidneyShot:IsReady(unit) and inMelee and Player:ComboPoints() >= 4 and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+   			-- Notification					
+            Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
+			return A.KidneyShot:Show(icon)
+        end	
+       
+	   -- Full Kidney Shot
+		if A.KidneyShot:IsReady(unit) and Unit(unit):HealthPercent() <= 50 and Player:ComboPoints() >= 5 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
+            return A.KidneyShot:Show(icon)              
+        end
+				
+		-- Neuro
+		if A.Neuro:IsSpellLearned() and A.Neuro:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 75 and not Player:IsStealthed() then
+			return A.Neuro:Show(icon)
+		end
+		
+		-- Shiv
+		if A.Shiv:IsSpellLearned() and A.Shiv:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 50 and Action.AbsentImun(unit, "DamagePhysImun", true) and A.Shiv:IsReady(unit) and not Unit(unit):InCC()  then
+			return A.Shiv:Show(icon)
+   		end
+		
+        -- Death From Above
+		if A.DFA:IsSpellLearned() and A.DFA:IsReady(unit) and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Unit(unit):GetRange() <= 15 and Action.AbsentImun("target", "DamagePhysImun", true) then
+			return A.DFA:Show(icon)
+   	    end		
+
+		-- Mutilate
+		if A.Mutilate:IsReady(unit) and (Player:ComboPoints() < 5 or (Player:ComboPoints() <= 5 and A.Subterfuge:IsSpellLearned())) then
+			return A.Mutilate:Show(icon)
+		end			
+
+		-- Mouseover KidneyShot on enemy trying to leave with less than 30% HP
+        if unit ~= "mouseover" and Player:ComboPoints() >= 4 and Unit(unit):HealthPercent() <= 30 and  Unit(unit):GetRange() <= 5 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
+            return A.KidneyShot:Show(icon)
+        end	
+		
+		-- PoisonedKnife
+		if A.PoisonedKnife:IsReady(unit) and Unit(unit):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID) < 2  then
+			return A.PoisonedKnife:Show(icon)
+		end
+		
+		-- AoE Fan of Knives to spread poisons
+		if (isMulti or A.GetToggle(2,"AoE")) and Player:ComboPoints() < 5 and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady(unit, true) then
+			return A.FanofKnives:Show(icon)
+		end	
+
+		-- Bursting #2
+        if unit ~= "mouseover" and A.BurstIsON(unit) then                         
+            -- Simcraft 
+            -- Cooldowns --
+                        
+            if inMelee then 
+                -- Racials 
+                if A.BloodFury:AutoRacial(unit) then 
+                    return A.BloodFury:Show(icon)
+                end 
+                                
+                if A.Fireblood:AutoRacial(unit) then 
+                    return A.Fireblood:Show(icon)
+                end 
+                                
+                if A.AncestralCall:AutoRacial(unit) then 
+                    return A.AncestralCall:Show(icon)
+                end 
+                                
+                if A.Berserking:AutoRacial(unit) then 
+                    return A.Berserking:Show(icon)
+                end 
+                                
+                -- Trinkets
+                if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket1:Show(icon)
+                end 
+                                
+                if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                    return A.Trinket2:Show(icon)
+                end                                         
+            end 
 			
-            -- call_action_list,name=stealthed,if=stealthed.rogue
-            if Stealthed(unit) and Player:IsStealthed() then
-                return true
-            end
-			
-            -- call_action_list,name=cds,if=(!talent.master_assassin.enabled|dot.garrote.ticking)
-            if Cds(unit) and ((not A.MasterAssassin:IsSpellLearned() or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 0)) then
-                return true
-            end
-			
-            -- call_action_list,name=dot
-            if Dot(unit) then
-                return true
-            end
-			
-            -- call_action_list,name=direct
-            if Direct(unit) then
-                return true
-            end
+            -- call_action_list,name=essences
+            if (isMulti or A.GetToggle(2, "AoE")) and A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) then                                                                 
+                return A.BloodoftheEnemy:Show(icon)                                                                                                 
+            end 
+                        
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) then 
+                return A.FocusedAzeriteBeam:Show(icon)
+            end 
+                        
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) then 
+                return A.GuardianofAzeroth:Show(icon)
+            end 
+                        
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) then 
+                return A.WorldveinResonance:Show(icon)
+            end 
+        end
+
+		-- Agressive CC Burst Rotation
+		local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
+		if (Unit(unit):HealthPercent() <= 40 or Unit(EnemyHealerUnitID):InCC() >= 5) then
+		    -- SmokeBomb under 30% HP
+		    if A.SmokeBomb:IsSpellLearned() and Action.GetToggle(2, "SmokeBombFinishComco") then
+		    	if inMelee then
+			        if A.SmokeBomb:IsReady(unit) and Unit(unit):TimeToDieX(30) < 6 and Unit(unit):HealthPercent() <= 30 then
+					    -- Notification					
+                        Action.SendNotification("Offensive Smoke Bomb", A.SmokeBomb.ID)
+                        return A.SmokeBomb:Show(icon)
+                    end
+			    end
+	        end
+			-- Garrote 
+			if inMelee and A.Garrote:IsReady(unit) and A.Garrote:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and (not Unit(unit):HasDeBuffs(A.Garrote.ID) or Unit(unit):HasDeBuffs(A.Garrote.ID) <= 2) then
+				return A.Garrote:Show(icon)
+			end
+			-- KidneyShot
+			if inMelee and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and Unit(unit):HasDeBuffs(A.Rupture.ID) > 0 then
+				return A.KidneyShot:Show(icon)
+			end
+			-- Rupture
+			if inMelee and A.Rupture:IsReady(unit) and A.Rupture:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and (not Unit(unit):HasDeBuffs(A.Rupture.ID) or Unit(unit):HasDeBuffs(A.Rupture.ID) <= 2) then
+				return A.Rupture:Show(icon)
+			end
+			-- Envenom
+			if inMelee and A.Envenom:IsReady(unit) and A.Envenom:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() >= 5 and ((A.ToxicBlade:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID) >= 2) or not A.ToxicBlade:IsSpellLearned()) and Unit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
+				return A.Envenom:Show(icon)
+			end
+			-- Vendetta
+			if inMelee and A.Vendetta:IsReady(unit) and A.Vendetta:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and A.BurstIsON(unit) and Unit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
+				return A.Vendetta:Show(icon)
+			end
+			-- ToxicBlade
+			if inMelee and A.ToxicBlade:IsSpellLearned() and A.ToxicBlade:IsReady(unit) and A.ToxicBlade:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.Rupture.ID) > 2 then
+				return A.ToxicBlade:Show(icon)
+			end
+			-- MarkedForDeath
+			if inMelee and A.MarkedForDeath:IsReady(unit) and A.MarkedForDeath:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() <= 1 then
+				return A.MarkedForDeath:Show(icon)
+			end
+            -- Mutilate
+			if inMelee and A.Mutilate:IsReady(unit) and A.Mutilate:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Player:ComboPoints() < 5 then
+				return A.Mutilate:Show(icon)
+			end
+		end
 			
             -- arcane_torrent,if=energy.deficit>=15+variable.energy_regen_combined
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + VarEnergyRegenCombined) then
@@ -1315,7 +1102,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 

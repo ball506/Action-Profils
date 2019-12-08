@@ -19,7 +19,7 @@ local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v1.20 (06.10.2019)",
+    DateTime = "v2.0 (08.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {       
@@ -900,19 +900,79 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [7] Multidots settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Multidots settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Enable auto Multidots", 
+                        ruRU = "Использовать auto Multidots", 
+                        frFR = "Activer le Multidots auto", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Автоматически многоточечные юниты.\nУбедитесь, что вы находитесь перед именной табличкой врагов, на которую должен нацелиться бот. \nУбедитесь, что вы правильно связали клавишу TargetEnemy в игре и в GG.",
+                        frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
+                    }, 
+                    M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 1, 
+					MAX 	= 5,							
+					DB 		= "MultiDotDistance",
+					DBV 	= 5,
+					ONLYOFF = true,
+					L 		= { 
+                        ANY = "Multidots Range",
+                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                    }, 
+					M 		= {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AutoDotSelection",
+                    DBV = "In Raid", 
+                    L = { 
+                        ANY = "Multidots where",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+                    }, 
+                    M = {},
+                },				
+			},
             { -- [4] 4th Row
 
                 {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Defensives -- ",
-                    },
-                },
+            { -- [7]                 
+                E = "Header",
+                L = {
+                    ANY = " -- Defensives -- ",
+                },                
             },
             { -- [3] 3rd Row 
                 {

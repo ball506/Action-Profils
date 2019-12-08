@@ -49,6 +49,13 @@ local currentSpec = GetSpecialization()
 local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
 print(currentSpec)
 
+-- Druid
+if currentClass == "DRUID" then
+    if currentSpec == 2 then 
+        A.Print("Loaded [ZakLL]Druid - Feral")
+    end
+end
+
 if currentClass == "WARRIOR" then
     Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Warrior"
 end
@@ -84,7 +91,6 @@ end
 if currentClass == "HUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Hunter"
 end
-
 
 if currentClass == "DEMONHUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Demon Hunter"
@@ -140,6 +146,7 @@ else
     A.Print("No Profile compatible with current spec")
 end
 end)
+
 
 -------------------------------------------------------------------------------
 -- Trinkets
