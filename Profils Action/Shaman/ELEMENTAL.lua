@@ -673,7 +673,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and isMoving then
-                if Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) then
+                if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -687,9 +687,14 @@ A[3] = function(icon, isMulti)
         local function MOTE(unit)
             -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) and not ShouldStop then
-			    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 or not Unit("player"):HasHeroism()) and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) == 0 
+			    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or A.StormElemental:IsSpellLearned() 
+				and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() 
+				and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 
+				and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) 
+				and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 
+				or not Unit("player"):HasHeroism()) and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) == 0 
 				then
-                    if Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) then
+                    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) then
                         return A.FlameShock:Show(icon) 
                     end
 				end
@@ -745,10 +750,6 @@ A[3] = function(icon, isMulti)
             if A.LavaBurst:IsReady(unit) and not isMoving and Player:Maelstrom() < 90 and A.LastPlayerCastName ~= A.LavaBurst:Info() and not A.LavaBurst:IsSpellInFlight() and not ShouldStop and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
                 return A.LavaBurst:Show(icon)
             end
-            -- flame_shock,target_if=refreshable&active_enemies>1&buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() < 3 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0  then
-                return A.FlameShock:Show(icon)
-            end
             -- lava_burst,if=talent.storm_elemental.enabled&cooldown_react&buff.surge_of_power.up&(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)<30*(1+(azerite.echo_of_the_elementals.rank>=2))|(1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains-150*floor((1.16*(expected_combat_length-time)-cooldown.storm_elemental.remains)%150))<(expected_combat_length-time-cooldown.storm_elemental.remains-150*floor((expected_combat_length-time-cooldown.storm_elemental.remains)%150)))
             if A.LavaBurst:IsReady(unit) and not isMoving and Player:Maelstrom() < 90 and A.LastPlayerCastName ~= A.LavaBurst:Info() and not A.LavaBurst:IsSpellInFlight() and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) == 0 and not ShouldStop and (A.StormElemental:IsSpellLearned() and A.LavaBurst:GetCooldown() == 0 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) and (Unit(unit):TimeToDie() - A.StormElemental:GetCooldown() - 150 * math.floor ((Unit(unit):TimeToDie() - A.StormElemental:GetCooldown()) / 150) < 30 * (1 + num((A.EchooftheElementals:GetAzeriteRank() >= 2))) or (1.16 * Unit(unit):TimeToDie() - A.StormElemental:GetCooldown() - 150 * math.floor ((1.16 * Unit(unit):TimeToDie() - A.StormElemental:GetCooldown()) / 150)) < (Unit(unit):TimeToDie() - A.StormElemental:GetCooldown() - 150 * math.floor ((Unit(unit):TimeToDie() - A.StormElemental:GetCooldown()) / 150)))) then
                 return A.LavaBurst:Show(icon)
@@ -779,7 +780,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaBurst:Show(icon)
             end
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and Unit("player"):HasBuffs(A.SurgeofPowerBuff) == 0 then
+            if A.FlameShock:IsReady(unit) and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and Unit("player"):HasBuffs(A.SurgeofPowerBuff) == 0 then
                 return A.FlameShock:Show(icon)
             end
             -- totem_mastery,if=talent.totem_mastery.enabled&(buff.resonance_totem.remains<6|(buff.resonance_totem.remains<(buff.ascendance.duration+cooldown.ascendance.remains)&cooldown.ascendance.remains<15))
@@ -799,11 +800,11 @@ A[3] = function(icon, isMulti)
                 return A.LightningBolt:Show(icon)
             end
             -- flame_shock,moving=1,target_if=refreshable
-            if A.FlameShock:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and isMoving then
+            if A.FlameShock:IsReady(unit) and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and isMoving then
                 return A.FlameShock:Show(icon)
             end
             -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and not ShouldStop and isMoving then
+            if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and not ShouldStop and isMoving then
                 return A.FlameShock:Show(icon)
             end
 		    -- 14 Lavaburst while moving
