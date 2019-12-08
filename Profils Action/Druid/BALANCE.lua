@@ -96,6 +96,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
 	Cyclone                                = Action.Create({ Type = "Spell", ID = 33786 }),
     -- Defensive
 	Barkskin                               = Action.Create({ Type = "Spell", ID = 22812   }),	
+	Swiftmend								= Action.Create({ Type = "Spell", ID = 18562}), -- Talent 3/3 -- Resto Affinity
 	CancelStarlord                         = Action.Create({ Type = "Spell", ID = 208683, Hidden = true}), -- 208683 Gladiator medaillon remap
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -111,6 +112,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+	AbissalHealing						   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -218,6 +220,12 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	AttackTypes 							= {"TotalImun", "DamageMagicImun"},
+	AuraForStun								= {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},	
+	AuraForCC								= {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+	AuraForOnlyCCAndStun					= {"CCTotalImun", "StunImun"},
+	AuraForDisableMag						= {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	AuraForInterrupt						= {"TotalImun", "DamagePhysImun", "KickImun"},
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
@@ -335,6 +343,33 @@ local function EvaluateCycleShiverVenomRelic122(unit)
     return (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) and (Unit("player"):HasBuffs(CaIncID, true) == 0 and not Unit("player"):HasHeroism())
 end
 
+local function SelfDefensives()
+	-- Renewal
+	local Renewal = A.GetToggle(2, "RenewalHP")
+    if A.Renewal:IsReady("player") and Unit("player"):HealthPercent() <= Renewal then
+        return A.Renewal:Show(icon)
+    end			
+	
+    -- Barkskin	
+	local Barkskin = A.GetToggle(2, "BarkskinHP")	
+	if A.Barkskin:IsReady("player") and Unit("player"):HealthPercent() <= Barkskin and Unit("player"):CombatTime() > 0 then
+		return A.Barkskin
+	end
+	
+	-- Swiftmend
+	local Swiftmend = A.GetToggle(2, "SwiftmendHP")	
+	if A.Swiftmend:IsReady("player") and  Unit("player"):HealthPercent() <= Swiftmend then
+		return A.Swiftmend
+	end
+	
+	-- HealingPotion
+	local PotHeal = A.GetToggle(2, "AbyssalPot")
+	if A.AbissalHealing:IsReady("player") and  Unit("player"):HealthPercent() <= PotHeal and Unit("player"):CombatTime() > 0 then
+		return A.AbissalHealing
+	end
+	
+end
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -349,11 +384,13 @@ A[3] = function(icon, isMulti)
     local unit = "player"
     local CaIncID = CaIncID()
 	local CaInc = CaInc()
-    local MoonfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 2, A.Moonfire.ID, 5)
-    local SunfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 2, A.Sunfire.ID, 5)
-	local MissingSunfire = MultiUnits:GetByRangeMissedDoTs(40, 2, A.Sunfire.ID, 10)
-	local MissingMoonfire = MultiUnits:GetByRangeMissedDoTs(40, 2, A.Moonfire.ID, 10)
-	
+	local isMultiDoT = A.GetToggle(2, "MultiDot")
+	local isMultiDoTRange = A.GetToggle(2, "MultiDotDistance")	
+    local MoonfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(isMultiDoTRange, 2, A.Moonfire.ID, 5)
+    local SunfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(isMultiDoTRange, 2, A.Sunfire.ID, 5)
+	local MissingSunfire = MultiUnits:GetByRangeMissedDoTs(isMultiDoTRange, 2, A.Sunfire.ID, 10)
+	local MissingMoonfire = MultiUnits:GetByRangeMissedDoTs(isMultiDoTRange, 2, A.Moonfire.ID, 10)
+
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -396,23 +433,15 @@ A[3] = function(icon, isMulti)
         end
 		
 		-- Auto multidot
-        local usedtab = false
 		local function Multidots(unit)
 		    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) > 0 and MultiUnits:GetActiveEnemies() <= 5 and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) > 0 and A.GetToggle(2, "AoE") and
 		    (
-			    (MissingSunfire >= 1 or SunfireToRefresh >= 1 )
+			    (MissingSunfire >= 1 )
 				or 
-				(MissingMoonfire >= 1 or MoonfireToRefresh >= 1 )
+				(MissingMoonfire >= 1 )
 			) 
 			then
-			    local currentTime = TMW.time
-		        local timestamp = currentTime + 2
-				local usedtab = true
-				print("Current Time: " .. currentTime)
-				print("TimeStamp: " .. timestamp)
-				if TMW.time > timestamp then
-			        return A:Show(icon, ACTION_CONST_AUTOTARGET)
-				end
+			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end		
 		end
         
@@ -420,22 +449,70 @@ A[3] = function(icon, isMulti)
 		local function Pandemic(unit)
 		    --sunfire
 		    if A.Sunfire:IsReady(unit) then
-			    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) <= 5.4 and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) then
+			    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) <= 5.4 and A.LastPlayerCastID ~= A.Sunfire.ID and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Sunfire)
+				and (
+				        VarAzSs == 0 or
+				        (
+				            Unit("player"):HasBuffs(CaIncID, true) == 0 
+				        ) 
+				        or A.LastPlayerCastID ~= A.Sunfire.ID
+					) 					
+				and (
+				        (Unit("player"):HasBuffs(CaIncID, true) >= 7) or
+		                (Unit("player"):HasBuffs(CaIncID, true) == 0)
+		            )
+		        or  (
+				        Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) <= 10
+					) 
+				then
 				    return A.Sunfire:Show(icon)
                 end	
 			end
-			-- moonfire
-			if A.Moonfire:IsReady(unit) then
-			    if Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 6.6 and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) then
+			
+		    --moonfire
+		    if A.Moonfire:IsReady(unit) then
+			    if Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 5.4 and A.LastPlayerCastID ~= A.Moonfire.ID and IsSchoolNatureUP() and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Moonfire)
+				and (
+				        VarAzSs == 0 or
+				        (
+				            Unit("player"):HasBuffs(CaIncID, true) == 0 
+				        ) 
+				        or A.LastPlayerCastID ~= A.Moonfire.ID
+					) 					
+				and (
+				        (Unit("player"):HasBuffs(CaIncID, true) >= 7) or
+		                (Unit("player"):HasBuffs(CaIncID, true) == 0)
+		            )
+		        or  (
+				        Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 10
+					) 
+				then
 				    return A.Moonfire:Show(icon)
                 end	
 			end
-			-- stellar_flare
-			if A.StellarFlare:IsReady(unit) and A.StellarFlare:IsSpellLearned() then
-			    if Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= 7.2 and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) then
+			
+		    --stellar_flare
+		    if A.StellarFlare:IsReady(unit) then
+			    if Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= 5.4 and A.LastPlayerCastID ~= A.StellarFlare.ID and IsSchoolNatureUP() and A.StellarFlare:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.StellarFlare)
+				and (
+				        VarAzSs == 0 or
+				        (
+				            Unit("player"):HasBuffs(CaIncID, true) == 0 
+				        ) 
+				        or A.LastPlayerCastID ~= A.StellarFlare.ID
+					) 					
+				and (
+				        (Unit("player"):HasBuffs(CaIncID, true) >= 7) or
+		                (Unit("player"):HasBuffs(CaIncID, true) == 0)
+		            )
+		        or  (
+				        Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= 10
+					) 
+				then
 				    return A.StellarFlare:Show(icon)
-                end					
+                end	
 			end
+
 		end
 		
 		-- Burst
@@ -552,25 +629,51 @@ A[3] = function(icon, isMulti)
 			    -- Notification					
                 Action.SendNotification("Soothe on: " .. UnitName(unit), A.Soothe.ID) 					
                 return A.Soothe:Show(icon)
-            end
-            
-			-- Defensives
-            if A.Renewal:IsReady(unit) and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "RenewalHP") then
-                return A.Renewal:Show(icon)
-            end
-			
-			-- Barkskin
-            if A.Barkskin:IsReady(unit) and not ShouldStop and Unit("player"):HealthPercent() <= Action.GetToggle(2, "BarkskinHP") then
-                return A.Barkskin:Show(icon)
-            end			
-			
+            end         
+		
 			-- Auto multidots
             if (isMulti or A.GetToggle(2, "AoE")) and HandleMultidots() then 
                 if Multidots(unit) then 
 				    return true
 				end
-			end			
-				
+			end		
+
+			-- Burst
+			if unit ~= "mouseover" and A.BurstIsON(unit) then
+                if Burst(unit) then 
+				    return true
+				end
+			end	
+
+		    -- Starlord CancelBuff
+		    if A.Starlord:IsSpellLearned() and Unit("player"):HasBuffs(A.StarlordBuff.ID, true) <= 5 and Unit("player"):HasBuffs(A.StarlordBuff.ID, true) > 0 and FutureAstralPower() >= 80 
+			then
+			    Player:CancelBuff(A.StarlordBuff:Info())
+		    end
+			
+		    -- Spenders
+			
+			-- starfall
+		    if A.Starfall:IsReady(unit, true) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.Starfall:AbsentImun(unit, Temp.TotalAndPhys) and 
+		    ((Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 8) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= VarSfTargets) and
+		    (Unit(unit):TimeToDie() + 1) * MultiUnits:GetActiveEnemies() > A.Starfall:GetSpellPowerCost() / 2.5)  
+			then
+			    return A.Starfall:Show(icon)
+		    end
+			
+		    -- starsurge
+		    if A.Starsurge:IsReady(unit) and IsSchoolArcaneUP() and A.Starsurge:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and
+		    ((A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 5) or not 
+		    A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 0 or 
+		    A.Incarnation:IsSpellLearned() and Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 0))) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() < VarSfTargets or not A.GetToggle(2, "AoE")) and 
+		    Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and 
+		    Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (VarAzSs == 0 or 
+		    (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
+		    A.LastPlayerCastID ~= A.Starsurge.ID) or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) 
+			then
+			    return A.Starsurge:Show(icon)
+		    end			
+							
 			-- Pandemic
 			if true then
                 if Pandemic(unit) then 
@@ -617,11 +720,13 @@ A[3] = function(icon, isMulti)
 			
             -- use_item,name=shiver_venom_relic,if=!buff.ca_inc.up&!buff.bloodlust.up,target_if=dot.shiver_venom.stack>=5
             if A.ShiverVenomRelic:IsReady(unit) and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) then
-                if (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5) then
+                if (Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 
+				or Unit(unit):TimeToDie() <= 5 and MultiUnits:GetActiveEnemies() >= 3 and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 3) 
+				and Unit("player"):HasBuffs(CaIncID, true) == 0 then
                     return A.ShiverVenomRelic:Show(icon) 
                 end
             end
-			
+				
 	 		-- Non SIMC Custom Trinket1
 	        if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
        	        if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
@@ -713,41 +818,8 @@ A[3] = function(icon, isMulti)
 			and AP_Check(A.ForceofNature)) 
 			then
                 return A.ForceofNature:Show(icon)
-            end
+            end	
 
-			-- Burst
-			if unit ~= "mouseover" and A.BurstIsON(unit) then
-                if Burst(unit) then 
-				    return true
-				end
-			end		
-
-		    -- Starlord CancelBuff
-		    if A.Starlord:IsSpellLearned() and Unit("player"):HasBuffs(A.StarlordBuff.ID, true) <= 5 and Unit("player"):HasBuffs(A.StarlordBuff.ID, true) > 0 and FutureAstralPower() >= 80 
-			then
-			    Player:CancelBuff(A.StarlordBuff:Info())
-		    end
-			
-		    -- Spenders
-		    if A.Starfall:IsReady(unitID, true) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.Starfall:AbsentImun(unitID, Temp.AttackTypes) and 
-		    ((Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 8) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= VarSfTargets) and
-		    (Unit(unitID):TimeToDie() + 1) * MultiUnits:GetActiveEnemies() > A.Starfall:GetSpellPowerCost() / 2.5)  
-			then
-			    return A.Starfall:Show(icon)
-		    end
-		
-		    if A.Starsurge:IsReady(unitID) and IsSchoolArcaneUP() and A.Starsurge:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and
-		    ((A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 5) or not 
-		    A.Starlord:IsSpellLearned() and (Unit("player"):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 0 or 
-		    A.Incarnation:IsSpellLearned() and Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 0))) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() < VarSfTargets or not A.GetToggle(2, "AoE")) and 
-		    Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and 
-		    Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (VarAzSs == 0 or 
-		    (Unit("player"):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
-		    A.LastPlayerCastID ~= A.Starsurge.ID) or Unit(unitID):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) 
-			then
-			    return A.Starsurge:Show(icon)
-		    end
-			
             -- new_moon,if=ap_check
             if A.NewMoon:IsReady(unit) and AP_Check(A.NewMoon) then
                 return A.NewMoon:Show(icon)
@@ -765,7 +837,7 @@ A[3] = function(icon, isMulti)
 			
 			
             -- lunar_strike,if=buff.solar_empowerment.stack<3&(ap_check|buff.lunar_empowerment.stack=3)&((buff.warrior_of_elune.up|buff.lunar_empowerment.up|spell_targets>=2&!buff.solar_empowerment.up)&(!variable.az_ss|!buff.ca_inc.up)|variable.az_ss&buff.ca_inc.up&prev.solar_wrath)
-            if A.LunarStrike:IsReady(unit) and 
+            if A.LunarStrike:IsReady(unit) and IsSchoolArcaneUP() and A.LunarStrike:AbsentImun(unit, Temp.TotalAndPhys) and 
 			(
 			    Unit("player"):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 2 
 			    and (AP_Check(A.LunarStrike) or Unit("player"):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) == 3) and 
@@ -783,15 +855,25 @@ A[3] = function(icon, isMulti)
             end
 			
             -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
-            if A.SolarWrath:IsReady(unit) and (VarAzSs < 3 or Unit("player"):HasBuffs(CaIncID, true) == 0 or A.LastPlayerCastID ~= A.SolarWrath.ID) 
+            if A.SolarWrath:IsReady(unit) and IsSchoolNatureUP() and A.SolarWrath:AbsentImun(unit, Temp.TotalAndPhys) and 
+			    (
+				    VarAzSs < 3 or Unit("player"):HasBuffs(CaIncID, true) == 0 or A.LastPlayerCastID ~= A.SolarWrath.ID
+				) 
 			then
                 return A.SolarWrath:Show(icon)
-            end
-			
+            end			
 	
 		    --Move
-		    if A.Sunfire:IsReady(unit) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and inMoving then
-		    	return A.Sunfire:Show(icon)
+		    if A.Sunfire:IsReady(unit) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
+		    (VarAzSs == 0 or (Unit("player"):HasBuffs(CaIncID, true) == 0) or 
+		     A.LastPlayerCastID ~= A.Sunfire.ID) then
+			    return A.Sunfire:Show(icon)
+		    end
+		
+		    if A.Moonfire:IsReady(unit) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
+		    (VarAzSs == 0 or (Unit("player"):HasBuffs(CaIncID, true) == 0) or 
+		    A.LastPlayerCastID ~= A.Moonfire.ID) then
+			    return A.Moonfire:Show(icon)
 		    end
         end
     end
@@ -817,7 +899,7 @@ A[3] = function(icon, isMulti)
     end
 	
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -874,7 +956,7 @@ local function FreezingTrapUsedByEnemy()
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
     then 
-        local Caster = UnitCooldown:Getunit("arena", 3355)
+        local Caster = UnitCooldown:GetUnitID("arena", 3355)
         if Caster and Unit(Caster):GetRange() <= 40 then 
             return true 
         end 
