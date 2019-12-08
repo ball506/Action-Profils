@@ -45,9 +45,12 @@ end
 -------------------------------------------------------------------------------
 -- Load default profils for each class
 local currentClass = select(2, UnitClass("player"))
+local currentSpec = GetSpecialization()
+local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
+print(currentSpec)
 
 if currentClass == "WARRIOR" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Warrior"
+    Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Warrior"
 end
 
 if currentClass == "WARLOCK" then
@@ -56,7 +59,6 @@ end
 
 if currentClass == "ROGUE" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Rogue"
-    Action.Print("Automatically loaded profile : [Taste]Action - Rogue")
 end
 
 if currentClass == "SHAMAN" then
@@ -83,18 +85,59 @@ if currentClass == "HUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Hunter"
 end
 
-if currentClass == "DRUID" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
-end
 
 if currentClass == "DEMONHUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Demon Hunter"
 end
 
+if currentClass == "DRUID" then
+    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
+end
+
+
+--[[CheckProfilePerSpecialization = function()
+	-- Druid
+	if currentClass == "DRUID" then
+	    if currentSpec == 2 then 
+            Action.Data.DefaultProfile[currentClass] = "[ZakLL]Druid - Feral"
+	    else
+	        Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
+	    end
+	end
+end
+
+
+--A.Listener:Add("TASTE_EVENTS_SPEC_PROFILE", "PLAYER_SPECIALIZATION_CHANGED", 	CheckProfilePerSpecialization)
+--TMW:RegisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", 					CheckProfilePerSpecialization)
+
+TMW:RegisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", function()
+    local currentClass = select(2, UnitClass("player"))
+    local currentSpec = GetSpecialization()
+	-- Druid
+	if currentClass == "DRUID" then
+	    if currentSpec == 2 then 
+            Action.Data.DefaultProfile[currentClass] = "[ZakLL]Druid - Feral"
+	    else
+	        Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
+	    end
+	end
+end)
+]]--
+
 TMW:RegisterCallback("TMW_ON_PROFILE", function(event, profileEvent, arg2, arg3)
 local profileName = TMW.db:GetCurrentProfile()
 if profileName:match("Taste") then
+    if currentClass == "DRUID" then
+	    if currentSpec == 2 then
+            A.Print("Loaded ZakLL - Feral")
+		else
+		    A.Print("Loaded " .. profileName)
+		end
+	end
+elseif profileName:match("ZakLL") then
     A.Print("Loaded " .. profileName)
+else
+    A.Print("No Profile compatible with current spec")
 end
 end)
 
