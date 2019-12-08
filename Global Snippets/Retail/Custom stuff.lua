@@ -85,7 +85,7 @@ if currentClass == "PALADIN" then
 end
 
 if currentClass == "MAGE" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Mage"
+    Action.Data.DefaultProfile[currentClass] = "[Taste&ZakLL]Action - Mage"
 end
 
 if currentClass == "HUNTER" then
@@ -97,7 +97,7 @@ if currentClass == "DEMONHUNTER" then
 end
 
 if currentClass == "DRUID" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
+    Action.Data.DefaultProfile[currentClass] = "[Taste&ZakLL]Action - Druid"
 end
 
 
