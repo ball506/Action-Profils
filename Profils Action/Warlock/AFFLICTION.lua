@@ -185,7 +185,7 @@ local function HandleMultidots()
 		    return false
 		end
 	elseif choice == "In PvP" then 	
-		if IsInPvP() then 
+		if A.IsInPvP then 
     		return true
 		else
 		    return false
@@ -603,8 +603,8 @@ A[3] = function(icon, isMulti)
 	
 	DetermineEssenceRanks()
 	-- Multidots var
-	MissingCorruption = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-	MissingAgony = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Agony.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	local MissingCorruption = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	local MissingAgony = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Agony.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     --print(MissingVampiricTouch)
     local AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
  	local AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
