@@ -19,7 +19,7 @@ local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0 (08.12.2019)",
+    DateTime = "TEST v2.0 (08.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {       
@@ -749,33 +749,33 @@ A.Data.ProfileUI = {
             { -- [2] 2nd Row
                 {
                     E = "Checkbox", 
-                    DB = "RangedMultiDoT",
+                    DB = "VanishBurst",
                     DBV = true,
                     L = { 
-                        enUS = "Suggest Ranged Multi-DoT", 
-                        ruRU = "Suggest Ranged Multi-DoT", 
-                        frFR = "Suggest Ranged Multi-DoT",
+                        enUS = "Vanish burst", 
+                        ruRU = "Vanish burst",  
+                        frFR = "Vanish burst", 
                     }, 
                     TT = { 
-                        enUS = "Suggest multi-DoT targets at Fan of Knives range (10 yards) instead of only melee range. Disabling will only suggest DoT targets within melee range.", 
-                        ruRU = "Suggest multi-DoT targets at Fan of Knives range (10 yards) instead of only melee range. Disabling will only suggest DoT targets within melee range.", 
-                        frFR = "Suggest multi-DoT targets at Fan of Knives range (10 yards) instead of only melee range. Disabling will only suggest DoT targets within melee range.",
+                        enUS = "Suggest Vanish during fight to increase dps. \nBe careful : if you need Vanish later in the fight you can either block it and disable this option.", 
+                        ruRU = "Suggest Vanish during fight to increase dps. \nBe careful : if you need Vanish later in the fight you can either block it and disable this option.", 
+                        frFR = "Suggest Vanish during fight to increase dps. \nBe careful : if you need Vanish later in the fight you can either block it and disable this option.", 
                     }, 
                     M = {},
                 }, 
                 {
                     E = "Checkbox", 
-                    DB = "AlwaysSuggestGarrote",
-                    DBV = false,
+                    DB = "IWSubterfuge",
+                    DBV = true,
                     L = { 
-                        enUS = "Always Suggest Garrote", 
-                        ruRU = "Always Suggest Garrote", 
-                        frFR = "Always Suggest Garrote",
+                        enUS = "Iron Wire combo", 
+                        ruRU = "Iron Wire combo", 
+                        frFR = "Iron Wire combo", 
                     }, 
                     TT = { 
-                        enUS = "Don't prevent Garrote suggestions when using Subterfuge and Vanish is ready. These should ideally be synced, but can be useful if holding Vanish for specific fights.", 
-                        ruRU = "Don't prevent Garrote suggestions when using Subterfuge and Vanish is ready. These should ideally be synced, but can be useful if holding Vanish for specific fights.", 
-                        frFR = "Don't prevent Garrote suggestions when using Subterfuge and Vanish is ready. These should ideally be synced, but can be useful if holding Vanish for specific fights.",
+                        enUS = "Will use garrote on the maximum targets available around you if Iron Wire and Subterfuge talents are learned.\nVery useful in high mythic+ key to set a 15% damage debuff on 3+ targets for 8sec. ", 
+                        ruRU = "Will use garrote on the maximum targets available around you if Iron Wire and Subterfuge talents are learned.\nVery useful in high mythic+ key to set a 15% damage debuff on 3+ targets for 8sec. ",
+                        frFR = "Will use garrote on the maximum targets available around you if Iron Wire and Subterfuge talents are learned.\nVery useful in high mythic+ key to set a 15% damage debuff on 3+ targets for 8sec. ",
                     }, 
                     M = {},
                 },
