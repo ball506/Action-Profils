@@ -282,8 +282,9 @@ local function HandleMultidots()
 	--print(choice)
 end
 
-local function HandleAncestralGuidance()
-    local choice = Action.GetToggle(2, "AncestralGuidanceSelection")
+-- Multidot Handler UI --
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
        
     if choice == "In Raid" then
 		if IsInRaid() then
@@ -560,11 +561,12 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-    local AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(40, 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
-    local FlameShockToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 188389, 5)
-    local MissingFlameShock = MultiUnits:GetByRangeMissedDoTs(40, 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(Action.GetToggle(2, "MultiDotDistance"), 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local FlameShockToRefresh = MultiUnits:GetByRangeDoTsToRefresh(Action.GetToggle(2, "MultiDotDistance"), 5, 188389, 5)
+    local MissingFlameShock = MultiUnits:GetByRangeMissedDoTs(Action.GetToggle(2, "MultiDotDistance"), 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
 	local CanMultidot = HandleMultidots()
 	local expected_combat_length = ExpectedCombatLength()
+	
 	--print(ResonanceTotemTime())
 	--print(Unit("player"):HasHeroism())
     ------------------------------------------------------
@@ -673,7 +675,7 @@ A[3] = function(icon, isMulti)
             end
             -- flame_shock,moving=1,target_if=refreshable
             if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and isMoving then
-                if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) then
+                if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) then
                     return A.FlameShock:Show(icon) 
                 end
             end
@@ -686,15 +688,15 @@ A[3] = function(icon, isMulti)
 		-- MasteroftheElements Build
         local function MOTE(unit)
             -- flame_shock,target_if=(!ticking|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<2*gcd|dot.flame_shock.remains<=gcd|talent.ascendance.enabled&dot.flame_shock.remains<(cooldown.ascendance.remains+buff.ascendance.duration)&cooldown.ascendance.remains<4&(!talent.storm_elemental.enabled|talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120))&(buff.wind_gust.stack<14|azerite.igneous_potential.rank>=2|buff.lava_surge.up|!buff.bloodlust.up)&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) and not ShouldStop then
+            if A.FlameShock:IsReady(unit) then
 			    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or A.StormElemental:IsSpellLearned() 
-				and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() 
+				and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7 or A.Ascendance:IsSpellLearned() 
 				and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 
 				and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) 
 				and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 
 				or not Unit("player"):HasHeroism()) and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) == 0 
 				then
-                    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) then
+                    if (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) then
                         return A.FlameShock:Show(icon) 
                     end
 				end
@@ -780,7 +782,7 @@ A[3] = function(icon, isMulti)
                 return A.LavaBurst:Show(icon)
             end
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
-            if A.FlameShock:IsReady(unit) and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and Unit("player"):HasBuffs(A.SurgeofPowerBuff) == 0 then
+            if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) and Unit("player"):HasBuffs(A.SurgeofPowerBuff) == 0 then
                 return A.FlameShock:Show(icon)
             end
             -- totem_mastery,if=talent.totem_mastery.enabled&(buff.resonance_totem.remains<6|(buff.resonance_totem.remains<(buff.ascendance.duration+cooldown.ascendance.remains)&cooldown.ascendance.remains<15))
@@ -800,11 +802,11 @@ A[3] = function(icon, isMulti)
                 return A.LightningBolt:Show(icon)
             end
             -- flame_shock,moving=1,target_if=refreshable
-            if A.FlameShock:IsReady(unit) and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and isMoving then
+            if A.FlameShock:IsReady(unit) and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) and isMoving then
                 return A.FlameShock:Show(icon)
             end
             -- flame_shock,moving=1,if=movement.distance>6
-            if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and not ShouldStop and isMoving then
+            if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) and not ShouldStop and isMoving then
                 return A.FlameShock:Show(icon)
             end
 		    -- 14 Lavaburst while moving
@@ -833,7 +835,7 @@ A[3] = function(icon, isMulti)
                 return A.TotemMastery:Show(icon)
             end
 	        -- 1 FLame shock
-	        if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 6) and Unit(unit):TimeToDie() > 15 then 
+	        if A.FlameShock:IsReady(unit) and HandleFlameShockTTD() and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) then 
 	            return A.FlameShock:Show(icon)
 		    end		
 		    -- 2 Stormkeeper
@@ -971,18 +973,18 @@ A[3] = function(icon, isMulti)
 				return A.StormElemental:Show(icon)
             end
 			-- use_item,name=shiver_venom_relic,if=cooldown.summon_darkglare.remains>=25&(cooldown.deathbolt.remains|!talent.deathbolt.enabled)
-            if A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) 
+            if A.BurstIsON(unit) and A.ShiverVenomRelic:AbsentImun(unit, Temp.TotalAndMag) 
 			and Unit(unit):HasDeBuffsStacks(A.ShiverVenomDebuff.ID, true) >= 5 
 			and A.ShiverVenomRelic:IsReady(unit) 
 			then
                 return A.ShiverVenomRelic:Show(icon)
             end			
 			-- Trinket 1
-         	if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
+         	if A.BurstIsON(unit) and A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
       	     	return A.Trinket1:Show(icon)
    	        end 
             -- Trinket 2			
-   		    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
+   		    if A.BurstIsON(unit) and A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
        	      	return A.Trinket2:Show(icon)
    	        end 
             -- earth_elemental,if=!talent.primal_elementalist.enabled|talent.primal_elementalist.enabled&(cooldown.fire_elemental.remains<120&!talent.storm_elemental.enabled|cooldown.storm_elemental.remains<120&talent.storm_elemental.enabled)
@@ -1038,6 +1040,20 @@ A[3] = function(icon, isMulti)
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.Ascendance:IsSpellLearned() or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0 or A.Ascendance:GetCooldown() > 50) then
                 return A.AncestralCall:Show(icon)
             end
+			
+			-- Auto Multidot
+		    if Unit(unit):TimeToDie() >= 10  
+		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
+		       and (
+        	    	    MissingFlameShock >= 1 and Unit(unit):HasDeBuffs(A.FlameShock.ID, true) > 0 
+
+			        ) 
+		       and (Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) == 0 ) and (Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 )
+			   and MultiUnits:GetByRange(Action.GetToggle(2, "MultiDotDistance"), 5, 10) > 1 and MultiUnits:GetByRange(Action.GetToggle(2, "MultiDotDistance"), 5, 10) <= 4 
+		    then
+		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
+		    end	
+			
 			-- Aoe Prediction Notification
 			local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
 			if FutureMaelstromPower() >= 60 and spellID == A.ChainLightning.ID and A.GetToggle(2, "AoE") then
@@ -1083,7 +1099,7 @@ A[3] = function(icon, isMulti)
        	end 		
 				
     	-- FlameShock
-	   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetActiveEnemies() <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 5 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
+	   	if A.FlameShock:IsReady(unit) and Action.GetToggle(2, "mouseover") and MultiUnits:GetActiveEnemies() <= 3 and not ShouldStop and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0) and not Unit("player"):GetSpellLastCast(A.FlameShock.ID, true) and Unit(unit):TimeToDie() >= 15 then
 	   		return A.FlameShock:Show(icon)
 	   	end			
 	
