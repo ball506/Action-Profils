@@ -544,11 +544,11 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
@@ -650,11 +650,11 @@ A[3] = function(icon, isMulti)
         --Demonic
         local function Demonic(unit)
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
                 return A.EyeBeam:Show(icon)
             end
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
@@ -662,11 +662,11 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
                 return A.BladeDance:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- immolation_aura
@@ -684,10 +684,6 @@ A[3] = function(icon, isMulti)
             -- chaos_strike,if=!variable.pooling_for_blade_dance&!variable.pooling_for_eye_beam
             if A.ChaosStrike:IsReady(unit) and (not bool(VarPoolingForBladeDance) and not bool(VarPoolingForEyeBeam) or (Player:Fury() > 40)) then
                 return A.ChaosStrike:Show(icon)
-            end
-            -- fel_rush,if=talent.demon_blades.enabled&!cooldown.eye_beam.ready&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10))
-            if A.FelRush:IsReady(unit) and UseMoves() and (A.DemonBlades:IsSpellLearned() and not A.EyeBeam:GetCooldown() == 0 and (A.FelRush:ChargesP() == 2 or (10000000000 > 10 and 10000000000 > 10))) then
-                return A.FelRush:Show(icon)
             end
             -- demons_bite
             if A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() then
@@ -717,16 +713,12 @@ A[3] = function(icon, isMulti)
             if A.VengefulRetreat:IsReady(unit) and UseMoves() and (A.Momentum:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true)) and Unit("player"):CombatTime() > 1) then
                 return A.VengefulRetreat:Show(icon)
             end
-            -- fel_rush,if=(variable.waiting_for_momentum|talent.fel_mastery.enabled)&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10))
-            if A.FelRush:IsReady(unit) and UseMoves() and ((bool(VarWaitingForMomentum) or A.FelMastery:IsSpellLearned()) and (A.FelRush:ChargesP() == 2 )) then
-                return A.FelRush:Show(icon)
-            end
             -- fel_barrage,if=!variable.waiting_for_momentum&(active_enemies>desired_targets|raid_event.adds.in>30)
             if A.FelBarrage:IsReady(unit) and (not bool(VarWaitingForMomentum) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
                 return A.FelBarrage:Show(icon)
             end
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit)  and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
+            if A.DeathSweep:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.DeathSweep:Show(icon)
             end
             -- immolation_aura
@@ -734,11 +726,11 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and not bool(VarWaitingForMomentum) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam() and not bool(VarWaitingForMomentum) then
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
                 return A.BladeDance:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
@@ -746,7 +738,7 @@ A[3] = function(icon, isMulti)
                 return A.Felblade:Show(icon)
             end
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
                 return A.EyeBeam:Show(icon)
             end
             -- annihilation,if=(talent.demon_blades.enabled|!variable.waiting_for_momentum|fury.deficit<30|buff.metamorphosis.remains<5)&!variable.pooling_for_blade_dance&!variable.waiting_for_dark_slash
@@ -758,16 +750,12 @@ A[3] = function(icon, isMulti)
                 return A.ChaosStrike:Show(icon)
             end
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
                 return A.EyeBeam:Show(icon)
             end
             -- demons_bite
             if A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() then
                 return A.DemonsBite:Show(icon)
-            end
-            -- fel_rush,if=!talent.momentum.enabled&raid_event.movement.in>charges*10&talent.demon_blades.enabled
-            if A.FelRush:IsReady(unit) and UseMoves() and (not A.Momentum:IsSpellLearned() and A.DemonBlades:IsSpellLearned()) then
-                return A.FelRush:Show(icon)
             end
             -- felblade,if=movement.distance>15|buff.out_of_range.up
             if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) then
@@ -811,7 +799,27 @@ A[3] = function(icon, isMulti)
             if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
                 return A.ConsumeMagic:Show(icon)
             end	
-		
+			
+			-----------------------------
+            -- Specials Dungeon behavior
+	        local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(unit):IsCastingRemains()
+			
+			-- Tol Dagor : Deadeye	
+            -- Use Blade Dance 100% chance dodge just before end of cast...			
+            if A.BladeDance:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing()) then
+                return A.BladeDance:Show(icon)
+            end
+			-- Use Death Sweep 100% chance dodge just before end of cast...
+            if A.DeathSweep:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing()) then
+                return A.DeathSweep:Show(icon)
+            end		
+			
+            -- Tol Dagor : Upheaval
+			-- Fel Rush
+            --if A.FelRush:IsReady("player") and Unit("player"):HasBuffs(257608, true) > 0 and Unit("player"):HasBuffs(257608, true) > 0	then
+            --    return A.FelRush:Show(icon)
+            --end				
+			
             -- Arcane Torrent dispell or if FuryDeficit >= 30
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 7 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 80) then
                 return A.ArcaneTorrent:Show(icon)
