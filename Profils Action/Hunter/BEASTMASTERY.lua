@@ -666,7 +666,7 @@ A[3] = function(icon, isMulti)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() 
 			and Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)
-			and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0 
+			and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 
 			and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetCooldown() < A.GetGCD() or Unit(unit):TimeToDie() < 5) 
 			then
                 return A.ConcentratedFlame:Show(icon)

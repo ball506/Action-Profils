@@ -703,7 +703,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&spell_targets.implosion<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- soul_strike,if=soul_shard<5&buff.demonic_core.stack<=2
@@ -1055,7 +1055,7 @@ A[3] = function(icon, isMulti)
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&!pet.demonic_tyrant.active
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(Pet:IsActive(A.DemonicTyrant.ID))) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight() and not bool(Pet:IsActive(A.DemonicTyrant.ID))) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- call_action_list,name=build_a_shard
