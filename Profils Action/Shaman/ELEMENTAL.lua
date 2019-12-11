@@ -81,24 +81,25 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
 	EarthElemental                         = Action.Create({ Type = "Spell", ID = 198103 }), -- Earth Elemental manual queue
 	-- Utilities
-    LightningLasso                        = Action.Create({ Type = "Spell", ID = 305483     }),
-    CapacitorTotem                        = Action.Create({ Type = "Spell", ID = 192058     }),
-    Purge                                 = Action.Create({ Type = "Spell", ID = 370     }),
-    GhostWolf                             = Action.Create({ Type = "Spell", ID = 2645     }),
-    EarthShield                           = Action.Create({ Type = "Spell", ID = 974     }),
-    HealingSurge                          = Action.Create({ Type = "Spell", ID = 8004     }),
-	PrimalElementalist                    = Action.Create({ Type = "Spell", ID = 117013 , Hidden = true     }),
-    GhostWolfBuff                         = Action.Create({ Type = "Spell", ID = 2645, Hidden = true     }),	
+    LightningLasso                         = Action.Create({ Type = "Spell", ID = 305483     }),
+    CapacitorTotem                         = Action.Create({ Type = "Spell", ID = 192058     }),
+    Purge                                  = Action.Create({ Type = "Spell", ID = 370     }),
+    GhostWolf                              = Action.Create({ Type = "Spell", ID = 2645     }),
+    EarthShield                            = Action.Create({ Type = "Spell", ID = 974     }),
+    HealingSurge                           = Action.Create({ Type = "Spell", ID = 8004     }),
+	PrimalElementalist                     = Action.Create({ Type = "Spell", ID = 117013 , Hidden = true     }),
+    GhostWolfBuff                          = Action.Create({ Type = "Spell", ID = 2645, Hidden = true     }),	
     -- Storm Elemental   
-    EyeOfTheStorm                         = Action.Create({ Type = "Spell", ID = 157375 , Hidden = true     }), 
-    CallLightning                         = Action.Create({ Type = "Spell", ID = 157348 , Hidden = true     }),
+    EyeOfTheStorm                          = Action.Create({ Type = "Spell", ID = 157375 , Hidden = true     }), 
+    CallLightning                          = Action.Create({ Type = "Spell", ID = 157348 , Hidden = true     }),
     -- Defensive
-	AstralShift                           = Action.Create({ Type = "Spell", ID = 108271     }),	
-    ShiverVenomDebuff                    = Action.Create({ Type = "Spell", ID = 301624, Hidden = true     }),
+	AstralShift                            = Action.Create({ Type = "Spell", ID = 108271     }),	
+    ShiverVenomDebuff                      = Action.Create({ Type = "Spell", ID = 301624, Hidden = true     }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+	AbyssalHealingPotion    			   = Action.Create({ Type = "Potion", ID = 169451}),
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -253,8 +254,8 @@ local function FutureMaelstromPower()
     end
 end
 
-local function HandleMultidots()
-    local choice = Action.GetToggle(2, "AutoDotSelection")
+local function HandleAncestralGuidance()
+    local choice = Action.GetToggle(2, "AncestralGuidanceSelection")
        
     if choice == "In Raid" then
 		if IsInRaid() then
@@ -263,13 +264,13 @@ local function HandleMultidots()
 		    return false
 		end
     elseif choice == "In Dungeon" then 
-		if Player:InDungeon() then
+		if IsInGroup() then
     		return true
 		else
 		    return false
 		end
 	elseif choice == "In PvP" then 	
-		if Player:InPvP() then 
+		if A.IsInPvP then 
     		return true
 		else
 		    return false
@@ -508,6 +509,41 @@ local function SelfDefensives()
     then 
         return A.HealingSurge
     end
+	
+    -- Abyssal Healing Potion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 25
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end  
 	
     -- AstralShift
     local AstralShift = A.GetToggle(2, "AstralShiftHP")
@@ -1043,17 +1079,17 @@ A[3] = function(icon, isMulti)
 			
 			-- Auto Multidot
 		    if Unit(unit):TimeToDie() >= 10  
-		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
+		       and Action.GetToggle(2, "AutoDot") and CanMultidot
 		       and (
         	    	    MissingFlameShock >= 1 and Unit(unit):HasDeBuffs(A.FlameShock.ID, true) > 0 
 
 			        ) 
 		       and (Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) == 0 ) and (Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 )
-			   and MultiUnits:GetByRange(Action.GetToggle(2, "MultiDotDistance"), 5, 10) > 1 and MultiUnits:GetByRange(Action.GetToggle(2, "MultiDotDistance"), 5, 10) <= 4 
+			   and MultiUnits:GetByRange(Action.GetToggle(2, "MultiDotDistance"), 5, 10) <= 2 
 		    then
 		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end	
-			
+						
 			-- Aoe Prediction Notification
 			local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
 			if FutureMaelstromPower() >= 60 and spellID == A.ChainLightning.ID and A.GetToggle(2, "AoE") then
