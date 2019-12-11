@@ -1033,7 +1033,10 @@ A[3] = function(icon, isMulti)
 		        (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0)
 				or 
 				-- Execute phase
-                (Unit(unit):HealthPercent() <= 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 25 )
+                (
+				    Unit(unit):HealthPercent() <= 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 10 
+					and (A.Vendetta:GetCooldown() == 0 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) 
+				)
 			) 
 		then
             return A.AshvanesRazorCoral:Show(icon)
