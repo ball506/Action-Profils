@@ -446,16 +446,19 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	-- Fel Eruption
+	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
         return A.FelEruption              
     end 
 	
+    -- Chaos Nova    
+    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
+        return A.ChaosNova              
+    end 
+	
+	-- Disrupt
     if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.Disrupt
-    end 
-    
-    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-        return A.ChaosNova              
     end 	
 	    
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -699,7 +702,7 @@ A[3] = function(icon, isMulti)
                 return A.Annihilation:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and (Player:Fury() < 80) then
+            if A.Felblade:IsReady(unit) and (Player:Fury() < 60) then
                 return A.Felblade:Show(icon)
             end
             -- chaos_strike,if=!variable.pooling_for_blade_dance&!variable.pooling_for_eye_beam
@@ -711,29 +714,18 @@ A[3] = function(icon, isMulti)
                 return A.DemonsBite:Show(icon)
             end
             -- throw_glaive,if=buff.out_of_range.up
-            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) then
+            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
                 return A.ThrowGlaive:Show(icon)
             end
-            -- fel_rush,if=movement.distance>15|buff.out_of_range.up
-            if A.FelRush:IsReady(unit) and (Unit(unit):GetRange() > 15) and UseMoves() then
-                return A.FelRush:Show(icon)
-            end
-            -- vengeful_retreat,if=movement.distance>15
-            if A.VengefulRetreat:IsReady(unit) and UseMoves() and (Unit(unit):GetRange() > 15) then
-                return A.VengefulRetreat:Show(icon)
-            end
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned()) then
+            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
                 return A.ThrowGlaive:Show(icon)
             end
         end
               
         --Normal
         local function Normal(unit)
-            -- vengeful_retreat,if=talent.momentum.enabled&buff.prepared.down&time>1
-            if A.VengefulRetreat:IsReady(unit) and UseMoves() and (A.Momentum:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true)) and Unit("player"):CombatTime() > 1) then
-                return A.VengefulRetreat:Show(icon)
-            end
+
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
             if A.FelBarrage:IsReady(unit) and 
 			(
@@ -787,19 +779,15 @@ A[3] = function(icon, isMulti)
                 return A.DemonsBite:Show(icon)
             end
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) then
+            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
                 return A.Felblade:Show(icon)
             end
-            -- fel_rush,if=movement.distance>15|(buff.out_of_range.up&!talent.momentum.enabled)
-            if A.FelRush:IsReady(unit) and UseMoves() and (Unit(unit):GetRange() > 15 and not A.Momentum:IsSpellLearned()) then
-                return A.FelRush:Show(icon)
-            end
-            -- vengeful_retreat,if=movement.distance>15
-            if A.VengefulRetreat:IsReady(unit) and UseMoves() and (Unit(unit):GetRange() > 15) then
-                return A.VengefulRetreat:Show(icon)
+            -- throw_glaive,if=buff.out_of_range.up
+            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+                return A.ThrowGlaive:Show(icon)
             end
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned()) then
+            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
                 return A.ThrowGlaive:Show(icon)
             end
         end
@@ -847,10 +835,29 @@ A[3] = function(icon, isMulti)
 			-- Fel Rush
             --if A.FelRush:IsReady("player") and Unit("player"):HasBuffs(257608, true) > 0 and Unit("player"):HasBuffs(257608, true) > 0	then
             --    return A.FelRush:Show(icon)
-            --end				
+            --end	
 			
+			-- Fel Rush & VengefulRetreat special combo
+			
+			-- VengefulRetreat
+            if A.VengefulRetreat:IsReady("player") and A.Momentum:IsSpellLearned()
+			and Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true) and Unit("player"):CombatTime() > 3 
+			then				
+                return A.VengefulRetreat:Show(icon)
+            end
+			
+			-- ThrowGlaive
+			--if A.LastPlayerCastID == A.VengefulRetreat.ID and A.ThrowGlaive:IsReadyByPassCastGCD(unit, nil, nil, true) and A.VengefulRetreat:GetCooldown() >= 19 and A.VengefulRetreat:GetCooldown() <= 20 then
+			--	return A.ThrowGlaive:Show(icon)
+			--end			
+			
+			-- FelRush
+			if (A.LastPlayerCastID == A.VengefulRetreat.ID or (Unit(unit):GetRange() >= 15 and UseMoves())) and A.FelRush:IsReadyByPassCastGCD(unit, nil, nil, true) then
+			    return A.FelRush:Show(icon)
+			end
+						
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 7 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 80) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 4 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 60) then
                 return A.ArcaneTorrent:Show(icon)
             end	
 
@@ -929,7 +936,7 @@ end
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
     then 
-        local Caster = UnitCooldown:GetUnitID("arena", 3355)
+        local Caster = UnitCooldown:Getunit("arena", 3355)
         if Caster and Unit(Caster):GetRange() <= 40 then 
             return true 
         end 
