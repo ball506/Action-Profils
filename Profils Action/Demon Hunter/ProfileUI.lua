@@ -340,6 +340,22 @@ A.Data.ProfileUI = {
                         frFR = "Save at least 1 Infernal Strike charge for mobility.",
                     }, 
                     M = {},
+                },	
+                {
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Automatic Taunt", 
+                        frFR = "Automatic Taunt",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Torment whenever available.", 
+                        ruRU = "If activated, will use automatically use Torment whenever available.",  
+                        frFR = "If activated, will use automatically use Torment whenever available.", 
+                    }, 
+                    M = {},
                 },				
             },
             { -- [4] 4th Row
