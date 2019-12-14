@@ -1026,6 +1026,13 @@ A[3] = function(icon, isMulti)
 		then
             return A.Vanish:Show(icon)
         end
+		
+        if A.Exsanguinate:IsSpellLearned() and A.Exsanguinate:IsReady(unit) and
+            -- actions.cds+=/exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
+            Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 + 4 * CPMaxSpend() and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 5.4
+		then
+            return A.Exsanguinate:Show(icon)
+        end
 
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
         if A.AshvanesRazorCoral:IsReady(unit) 
