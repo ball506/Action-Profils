@@ -389,7 +389,7 @@ local function APL(icon)
             if HR.Cast(I.SuperiorSteelskinPotion) then return "superior_steelskin_potion cooldowns"; end
         end
         -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-        if S.ConcentratedFlame:IsCastable() and not ShouldStop and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight() or S.ConcentratedFlame:FullRechargeTimeP() < Player:GCD()) then
+        if S.ConcentratedFlame:IsCastable() and not ShouldStop and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight() or S.ConcentratedFlame:GetSpellChargesFullRechargeTime() < Player:GCD()) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame cooldowns"; end
         end
         -- worldvein_resonance,if=buff.lifeblood.stack<3

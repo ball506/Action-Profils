@@ -248,7 +248,7 @@ Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Soul Fragments function taking into consideration aura lag
 local function UpdateSoulFragments()
-    SoulFragments = Unit("player"):HasBuffsStacks(A.SoulFragments)
+    SoulFragments = Unit("player"):HasBuffsStacks(A.SoulFragments.ID, true)
 		
     -- Casting Spirit Bomb or Soul Cleave immediately updates the buff
     if Unit("player"):GetSpellLastCast(A.SpiritBomb.ID, true) < A.GetGCD()
@@ -326,7 +326,7 @@ A[3] = function(icon, isMulti)
     local IsTanking = Unit("player"):IsTanking("target", 8) or Unit("player"):IsTankingAoE(8)
     UpdateSoulFragments()
     UpdateIsInMeleeRange()
-  
+    local SoulFragments = Unit("player"):HasBuffsStacks(A.SoulFragments.ID, true)
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -515,7 +515,9 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-            -- auto_attack
+            
+			-- auto_attack
+			
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
             -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
@@ -524,7 +526,7 @@ A[3] = function(icon, isMulti)
             end	
 			
 		    -- Taunt 
-            if not A.IsInPvP and A.Role == "TANK" and A.GetToggle(2, "AutoTaunt") and combatTime > 3.1 and A.Torment:IsReady(unit, nil, nil, nil, true) and not Unit(unit):IsPlayer() and Unit("player"):ThreatSituation(unit) ~= 3 and not Unit(unit .. "target"):IsTank() then 
+            if not A.IsInPvP and A.Role == "TANK" and A.GetToggle(2, "AutoTaunt") and combatTime > 3.1 and A.Torment:IsReady(unit) and not Unit(unit):IsPlayer() and Unit("player"):ThreatSituation(unit) ~= 3 and not Unit(unit .. "target"):IsTank() then 
                 return A.Torment:Show(icon) 
             end 
 			
@@ -532,14 +534,17 @@ A[3] = function(icon, isMulti)
             if (A.CharredFlesh:IsSpellLearned()) and Brand(unit) then
                 return true
             end
+			
             -- call_action_list,name=defensives
             if Defensives(unit) then
                 return true
             end
+			
             -- call_action_list,name=cooldowns
             if Cooldowns(unit) then
                 return true
             end
+			
             -- call_action_list,name=normal
             if Normal(unit) then
                 return true
