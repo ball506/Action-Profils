@@ -360,6 +360,66 @@ function Action:RegisterForSelfCombatEvent(Handler, ...)
 end
 
 -------------------------------------------------------------------------------
+-- Tanks specifics functions
+-------------------------------------------------------------------------------
+
+local ActiveMitigationSpells = {
+    Buff = {
+        -- PR Legion
+        191941, -- Darkstrikes (VotW - 1st)
+        204151, -- Darkstrikes (VotW - 1st)
+        -- T20 ToS
+        239932 -- Felclaws (KJ)
+    },
+    Debuff = {},
+    Cast = {
+        -- PR Legion
+        197810, -- Wicked Slam (ARC - 3rd)
+        197418, -- Vengeful Shear (BRH - 2nd)
+        198079, -- Hateful Gaze (BRH - 3rd)
+        214003, -- Coup de Grace (BRH - Trash)
+        235751, -- Timber Smash (CotEN - 1st)
+        193668, -- Savage Blade (HoV - 4th)
+        227493, -- Mortal Strike (LOWR - 4th)
+        228852, -- Shared Suffering (LOWR - 4th)
+        193211, -- Dark Slash (MoS - 1st)
+        200732, -- Molten Crash (NL - 4th)
+        -- T20 ToS
+        241635, -- Hammer of Creation (Maiden)
+        241636, -- Hammer of Obliteration (Maiden)
+        236494, -- Desolate (Avatar)
+        239932, -- Felclaws (KJ)
+        -- T21 Antorus
+        254919, -- Forging Strike (Kin'garoth)
+        244899, -- Fiery Strike (Coven)
+        245458, -- Foe Breaker (Aggramar)
+        248499, -- Sweeping Scythe (Argus)
+        258039 -- Deadly Scythe (Argus)
+    },
+    Channel = {}
+}
+
+-- Active Mitigation checks
+-- Predict dangerous attacks and use defensives if needed
+function Player:ActiveMitigationNeeded()
+    -- Specials Dungeon behavior
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("target"):IsCastingRemains()
+		
+    if Unit("player"):IsTanking("target") then
+        if ActiveMitigationSpells.Cast[spellID] then
+            return true
+        end
+        for _, Buff in pairs(ActiveMitigationSpells.Buff) do
+            if Unit("target"):HasBuffs(Buff, true) > 0 then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+
+-------------------------------------------------------------------------------
 -- DogTags
 -------------------------------------------------------------------------------
 local DogTag = LibStub("LibDogTag-3.0", true)
