@@ -19,7 +19,7 @@ local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "TEST v2.0 (10.12.2019)",
+    DateTime = "TEST v2.0.3 (14.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {       
@@ -162,24 +162,22 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Defensives -- ",
-                    },
-                },
+            { -- [7]                 
+                E = "Header",
+                L = {
+                    ANY = " -- Defensives -- ",
+                },                
             },
             { -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "RolltheBonesLeechHP",
-                    DBV = 30, -- Set healthpercentage @60% life. 
+                    DB = "RiposteHP",
+                    DBV = 30, -- Set healthpercentage @70% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(193316) .. " (%)",
+                        ANY = A.GetSpellInfo(5277) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -200,7 +198,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "FeintHP",
-                    DBV = 35, -- Set healthpercentage @70% life. 
+                    DBV = 30, -- Set healthpercentage @70% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(1966) .. " (%)",
@@ -208,7 +206,54 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "VanishDefensive",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1856) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "CloakofShadowHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(31224) .. " (%)",
+                    }, 
+                    M = {},
+                },
+
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Roll the Bones -- ",
+                    },
+                },
+            },
             { -- [4] 4th Row
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "RolltheBonesLeechHP",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(193316) .. " (%)",
+                    }, 
+                    M = {},
+                },
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -238,6 +283,65 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
             }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },		
             { -- [7]
                 {
                     E = "Header",
