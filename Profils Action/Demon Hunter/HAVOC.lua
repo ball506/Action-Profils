@@ -721,7 +721,7 @@ A[3] = function(icon, isMulti)
                 return A.Annihilation:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and (Player:Fury() < 60) then
+            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and (Player:Fury() < 60) then
                 return A.Felblade:Show(icon)
             end
             -- chaos_strike,if=!variable.pooling_for_blade_dance&!variable.pooling_for_eye_beam
@@ -733,7 +733,7 @@ A[3] = function(icon, isMulti)
                 return A.DemonsBite:Show(icon)
             end			
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
             -- throw_glaive,if=buff.out_of_range.up
@@ -778,7 +778,7 @@ A[3] = function(icon, isMulti)
                 return A.BladeDance:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and Player:Fury() <= 80 then
+            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and Player:Fury() <= 80 then
                 return A.Felblade:Show(icon)
             end
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
@@ -802,7 +802,7 @@ A[3] = function(icon, isMulti)
                 return A.DemonsBite:Show(icon)
             end
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
             -- throw_glaive,if=buff.out_of_range.up
@@ -880,7 +880,7 @@ A[3] = function(icon, isMulti)
 			end
 			
 			-- Felblade
-			if (A.LastPlayerCastID == A.FelRush.ID and Unit(unit):GetRange() >= 2 and UseMoves()) and A.Felblade:IsReadyByPassCastGCD(unit, nil, nil, true) then
+			if (A.LastPlayerCastID == A.FelRush.ID and Unit(unit):GetRange() >= 2 and UseMoves()) and A.Felblade:IsSpellLearned() and A.Felblade:IsReadyByPassCastGCD(unit, nil, nil, true) then
 			    return A.Felblade:Show(icon)
 			end
 			
