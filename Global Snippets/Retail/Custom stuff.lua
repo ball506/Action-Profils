@@ -15,7 +15,7 @@ local Unit                                  = Action.Unit
 local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
 local EventFrame                            = CreateFrame("Frame", "Taste_EventFrame", UIParent)
-
+local UnitIsUnit                            = UnitIsUnit
 local Events = {} -- All Events
 local CombatEvents = {} -- Combat Log Unfiltered
 local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
@@ -363,6 +363,7 @@ end
 -- Tanks specifics functions
 -------------------------------------------------------------------------------
 
+-- To update for BFA
 local ActiveMitigationSpells = {
     Buff = {
         -- PR Legion
@@ -418,6 +419,83 @@ function Player:ActiveMitigationNeeded()
     return false
 end
 
+-------------------------------------------------------------------------------
+-- Rogue Marked for death special functions
+-------------------------------------------------------------------------------
+-- Check if the unit is coded as blacklisted for Marked for Death (Rogue) or not.
+-- Most of the time if the unit doesn't really die and isn't the last unit of an instance.
+
+-- Not Facing Unit Blacklist
+A.UnitNotInFront = Player
+A.UnitNotInFrontTime = 0
+A.LastUnitCycled = Player
+A.LastUnitCycledTime = 0
+
+Action:RegisterForEvent(function(Event, MessageType, Message)
+    if MessageType == 50 and Message == SPELL_FAILED_UNIT_NOT_INFRONT then
+        A.UnitNotInFront = A.LastUnitCycled
+        A.UnitNotInFrontTime = A.LastUnitCycledTime
+    end
+end, "UI_ERROR_MESSAGE")
+
+local SpecialMfdBlacklistData = {
+  --- Legion
+  ----- Dungeons (7.0 Patch) -----
+  --- Halls of Valor
+  -- Hymdall leaves the fight at 10%.
+  [94960] = true,
+  -- Solsten and Olmyr doesn't "really" die
+  [102558] = true,
+  [97202] = true,
+  -- Fenryr leaves the fight at 60%. We take 50% as check value since it doesn't get immune at 60%.
+  [95674] = function(self) return self:HealthPercentage() > 50 and true or false end,
+
+  ----- Trial of Valor (T19 - 7.1 Patch) -----
+  --- Odyn
+  -- Hyrja & Hymdall leaves the fight at 25% during first stage and 85%/90% during second stage (HM/MM)
+  [114360] = true,
+  [114361] = true,
+
+  --- Warlord of Draenor (WoD)
+  ----- HellFire Citadel (T18 - 6.2 Patch) -----
+  --- Hellfire Assault
+  -- Mar'Tak doesn't die and leave fight at 50% (blocked at 1hp anyway).
+  [93023] = true,
+
+  ----- Dungeons (6.0 Patch) -----
+  --- Shadowmoon Burial Grounds
+  -- Carrion Worm : They doesn't die but leave the area at 10%.
+  [88769] = true,
+  [76057] = true
+}
+
+-- IsMfdBlacklisted function
+function Unit:IsMfdBlacklisted()
+    local npcid = self:NPCID()
+    if SpecialMfdBlacklistData[npcid] then
+        if type(SpecialMfdBlacklistData[npcid]) == "boolean" then
+            return true
+        else
+            return SpecialMfdBlacklistData[npcid](self)
+        end
+    end
+    return false
+end
+
+-- Get if two unit are the same.
+function Unit:IsUnit(Other)
+    return UnitIsUnit(self.UnitID, Other.UnitID)
+end
+
+-------------------------------------------------------------------------------
+-- Facing blacklisted check
+-------------------------------------------------------------------------------
+function Unit:IsFacingBlacklisted()
+    if self:IsUnit(A.UnitNotInFront) and TMW.time - A.UnitNotInFrontTime <= A.GetGCD() * A.GetToggle(2, "BlacklistNotFacingExpireMultiplier") then
+        return true
+    end
+    return false
+end
 
 -------------------------------------------------------------------------------
 -- DogTags
