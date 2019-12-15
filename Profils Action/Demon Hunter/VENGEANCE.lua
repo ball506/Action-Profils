@@ -335,7 +335,7 @@ A[3] = function(icon, isMulti)
 		local Precombat, Brand, Cooldowns, Defensives, Normal
 		-- Return boolean		
 		local IsInDanger = IsInDanger(unit)
-		
+		local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
         --Precombat
         local function Precombat(unit)
             -- flask
