@@ -490,13 +490,23 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-	-- Eyebeam protection channel
-	if Unit("player"):IsCastingRemains(A.EyeBeam) then 
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
 	
+	-- Eyebeam protection channel
+	local CanCast = true
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
+		-- @return:
+		-- [1] Currect Casting Left Time (seconds) (@number)
+		-- [2] Current Casting Left Time (percent) (@number)
+		-- [3] spellID (@number)
+		-- [4] spellName (@string)
+		-- [5] notInterruptable (@boolean, false is able to be interrupted)
+		-- [6] isChannel (@boolean)
+	if percentLeft > 0 and spellID == A.EyeBeam.ID and isChannel then 
+	    CanCast = false
+	else
+	    CanCast = true
+	end
+	--print(CanCast)
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -551,42 +561,42 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (
 			        (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())
 			    ) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.metamorphosis.up|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=fury<40&buff.metamorphosis.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -602,7 +612,7 @@ A[3] = function(icon, isMulti)
                 return A.Metamorphosis:Show(icon)
             end
             -- nemesis,target_if=min:target.time_to_die,if=raid_event.adds.exists&debuff.nemesis.down&(active_enemies>desired_targets|raid_event.adds.in>60)
-            if A.Nemesis:IsSpellLearned() and not ShouldStop and A.Nemesis:IsReady(unit) 
+            if A.Nemesis:IsSpellLearned() and A.Nemesis:IsReady(unit) 
 			and (
 			       -- Unit("player"):HasBuffs("DamageBuffs") > 0
 					--or
@@ -612,42 +622,30 @@ A[3] = function(icon, isMulti)
                 return A.Nemesis:Show(icon) 
             end
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
-            if A.PotionofUnbridledFury:IsReady(unit) and not ShouldStop and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
                 return A.PotionofUnbridledFury:Show(icon)
             end
-	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
-           	    if A.BurstIsON(unit) then 
-      	       	    return A.Trinket1:Show(icon)
-   	            end 		
-	        end
-		
-		    -- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
-       	        if A.BurstIsON(unit) then 
-      	       	    return A.Trinket2:Show(icon)
-   	            end 	
-	        end
             -- use_item,name=galecallers_boon,if=!talent.fel_barrage.enabled|cooldown.fel_barrage.ready
-            if A.GalecallersBoon:IsReady(unit) and not ShouldStop and (not A.FelBarrage:IsSpellLearned() or A.FelBarrage:GetCooldown() == 0) then
+            if A.GalecallersBoon:IsReady(unit) and (not A.FelBarrage:IsSpellLearned() or A.FelBarrage:GetCooldown() == 0) then
                 return A.GalecallersBoon:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.metamorphosis.up&buff.memory_of_lucid_dreams.down&(!variable.blade_dance|!cooldown.blade_dance.ready)
-            if A.CyclotronicBlast:IsReady(unit) and not ShouldStop and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
                 return A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and not ShouldStop 
-			and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) 
+            if A.AshvanesRazorCoral:IsReady(unit)  
+			and (
+			    Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) 
 				or 
 				    (
 				        (
 						    (
-							Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 10 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 15 
+							    Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 10 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 15 
 							)
-						or 
+						    or 
 						    (
-						    Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0
+						        Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0
 						    )
 					    )
 					)
@@ -656,7 +654,7 @@ A[3] = function(icon, isMulti)
                 return A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
-            if A.AzsharasFontofPower:IsReady(unit) and not ShouldStop and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
+            if A.AzsharasFontofPower:IsReady(unit) and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- use_items,if=buff.metamorphosis.up
@@ -664,6 +662,7 @@ A[3] = function(icon, isMulti)
             if Essences(unit) then
                 return true
             end
+
         end
         
         --DarkSlash
@@ -885,7 +884,7 @@ A[3] = function(icon, isMulti)
 			end
 			
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 4 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 60) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 4 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 80) then
                 return A.ArcaneTorrent:Show(icon)
             end	
 
@@ -893,6 +892,20 @@ A[3] = function(icon, isMulti)
             if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) and Cooldown(unit) then
                 return true
             end
+			
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
+           	    if A.BurstIsON(unit) then 
+      	       	    return A.Trinket1:Show(icon)
+   	            end 		
+	        end
+		
+		    -- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
+       	        if A.BurstIsON(unit) then 
+      	       	    return A.Trinket2:Show(icon)
+   	            end 	
+	        end
             -- pick_up_fragment,if=fury.deficit>=35&(!azerite.eyes_of_rage.enabled|cooldown.eye_beam.remains>1.4)
             --if A.PickUpFragment:IsReady(unit) and (Player:FuryDeficit() >= 35 and (not bool(A.EyesofRage:GetAzeriteRank()) or A.EyeBeam:GetCooldown() > 1.4)) then
             --    return A.PickUpFragment:Show(icon)
