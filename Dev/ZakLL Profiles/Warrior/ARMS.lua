@@ -32,15 +32,13 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	EscapeArtist						= Action.Create({ Type = "Spell", ID = 20589}),
 	EveryManforHimself					= Action.Create({ Type = "Spell", ID = 59752}),
 	-- CrownControl
-	StormBolt							= Action.Create({ Type = "Spell", ID = 107570}),
 	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
 	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", QueueForbidden = true    }),
 	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
 	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),  
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
 	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
-	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true    }),
-	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true    }), -- PvP Talent 
+	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true}),
 	-- Suppotive  
 	RallyingCry							= Action.Create({ Type = "Spell", ID = 97462}),
 	-- Self Defensive
@@ -94,7 +92,9 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	Dreadnaught							= Action.Create({ Type = "Spell", ID = 262150, isTalent = true}),	-- Talent 7/2
 	Ravager								= Action.Create({ Type = "Spell", ID = 152277, isTalent = true}),	-- Talent 7/3
    -- PvP Talents
-   
+	WarBanner							= Action.Create({ Type = "Spell", ID = 236320, isTalent = true}), -- PvP Talent
+	SharpenBlade						= Action.Create({ Type = "Spell", ID = 198817, isTalent = true}), -- PvP Talent
+	Disarm								= Action.Create({ Type = "Spell", ID = 236077, isTalent = true}), -- PvP Talent 
 	-- Hidden
 	SeismicWave							= Action.Create({ Type = "Spell", ID = 277639, Hidden = true}), -- Simcraft Azerite
 	TestofMight							= Action.Create({ Type = "Spell", ID = 275529, Hidden = true}), -- Simcraft Azerite
@@ -574,20 +574,9 @@ A[3] = function(icon)
 			end
 		end
 		
-	end
+	end	
 	
-	
-	if A.IsUnitEnemy("target") and not Unit("target"):IsDead() and not A.IsInPvP then 
-        unitID = "target"
-        
-        if EnemyPvE(unitID) then 
-            return true 
-        end 
-    end
-	
-	
-	
-	local function EnemyRotation(unit)
+	local function EnemyPvP(unit)
 		-- Variables
         inMelee = A.MortalStrike:IsInRange(unit)
 
@@ -651,6 +640,23 @@ A[3] = function(icon)
 			return A.WarBanner:Show(icon)
 		end	
  	end 
+	
+	
+	if A.IsUnitEnemy("target") and not Unit("target"):IsDead() and not A.IsInPvP then 
+        unitID = "target"
+        
+        if EnemyPvE(unitID) then 
+            return true 
+        end 
+    end
+	
+	if A.IsUnitEnemy("target") and not Unit("target"):IsDead() and A.IsInPvP then 
+        unitID = "target"
+        
+        if EnemyPvP(unitID) then 
+            return true 
+        end 
+    end
 
 end  
 
