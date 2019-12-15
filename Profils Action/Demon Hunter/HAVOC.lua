@@ -490,6 +490,12 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
+	-- Eyebeam protection channel
+	if Unit("player"):IsCastingRemains(A.EyeBeam) then 
+	    ShouldStop = true
+	else
+	    ShouldStop = false
+	end
 	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -499,19 +505,19 @@ A[3] = function(icon, isMulti)
         
         -- auto_attack
         -- variable,name=blade_dance,value=talent.first_blood.enabled|spell_targets.blade_dance1>=(3-talent.trail_of_ruin.enabled)
-        local VarBladeDance = (A.FirstBlood:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) >= (3 - num(A.TrailofRuin:IsSpellLearned())))
+        local VarBladeDance = num(A.FirstBlood:IsSpellLearned() or MultiUnits:GetByRange(8, 5, 10) >= (3 - num(A.TrailofRuin:IsSpellLearned())))
         -- variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
-        local VarWaitingForNemesis = (not (not A.Nemesis:IsSpellLearned() or A.Nemesis:GetCooldown() == 0 or A.Nemesis:GetCooldown() > Unit(unit):TimeToDie() or A.Nemesis:GetCooldown() > 60))           
+        local VarWaitingForNemesis = num(not (not A.Nemesis:IsSpellLearned() or A.Nemesis:GetCooldown() == 0 or A.Nemesis:GetCooldown() > Unit(unit):TimeToDie() or A.Nemesis:GetCooldown() > 60))           
         -- variable,name=pooling_for_meta,value=!talent.demonic.enabled&cooldown.metamorphosis.remains<6&fury.deficit>30&(!variable.waiting_for_nemesis|cooldown.nemesis.remains<10)            
-        local VarPoolingForMeta = (not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Player:Fury() < 90 and (not bool(VarWaitingForNemesis) or A.Nemesis:GetCooldown() < 10))            
+        local VarPoolingForMeta = num(not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Player:Fury() < 90 and (not bool(VarWaitingForNemesis) or A.Nemesis:GetCooldown() < 10))            
         -- variable,name=pooling_for_blade_dance,value=variable.blade_dance&(fury<75-talent.first_blood.enabled*20)            
-        local VarPoolingForBladeDance = (bool(VarBladeDance) and (Player:Fury() < 75 - num(A.FirstBlood:IsSpellLearned()) * 20))           
+        local VarPoolingForBladeDance = num(bool(VarBladeDance) and (Player:Fury() < 75 - num(A.FirstBlood:IsSpellLearned()) * 20))           
         -- variable,name=pooling_for_eye_beam,value=talent.demonic.enabled&!talent.blind_fury.enabled&cooldown.eye_beam.remains<(gcd.max*2)&fury.deficit>20
-        local  VarPoolingForEyeBeam = (A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Player:Fury() < 100)            
+        local  VarPoolingForEyeBeam = num(A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Player:Fury() < 100)            
         -- variable,name=waiting_for_dark_slash,value=talent.dark_slash.enabled&!variable.pooling_for_blade_dance&!variable.pooling_for_meta&cooldown.dark_slash.up
-        local VarWaitingForDarkSlash = (A.DarkSlash:IsSpellLearned() and not bool(VarPoolingForBladeDance) and not bool(VarPoolingForMeta) and A.DarkSlash:GetCooldown() == 0)           
+        local VarWaitingForDarkSlash = num(A.DarkSlash:IsSpellLearned() and not bool(VarPoolingForBladeDance) and not bool(VarPoolingForMeta) and A.DarkSlash:GetCooldown() == 0)           
         -- variable,name=waiting_for_momentum,value=talent.momentum.enabled&!buff.momentum.up
-        local VarWaitingForMomentum = (A.Momentum:IsSpellLearned() and Unit("player"):HasBuffs(A.MomentumBuff.ID, true) == 0)
+        local VarWaitingForMomentum = num(A.Momentum:IsSpellLearned() and Unit("player"):HasBuffs(A.MomentumBuff.ID, true) == 0)
             
 		
 		--Precombat
@@ -533,11 +539,11 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
             -- metamorphosis,if=!azerite.chaotic_transformation.enabled
-            if A.Metamorphosis:IsReady(unit) and Unit("player"):HasBuffsDown(A.MetamorphosisBuff.ID, true) and (not bool(A.ChaoticTransformation:GetAzeriteRank())) and ((Pull > 0.1 and Pull <= 0.2) or not Action.GetToggle(1, "DBM")) then
+            if A.Metamorphosis:IsReady("player") and Unit("player"):HasBuffsDown(A.MetamorphosisBuff.ID, true) and (not bool(A.ChaoticTransformation:GetAzeriteRank())) and ((Pull > 0.1 and Pull <= 0.2) or not Action.GetToggle(1, "DBM")) then
                 return A.Metamorphosis:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(unit) and not ShouldStop then
                 return A.AzsharasFontofPower:Show(icon)
             end
         end
@@ -545,42 +551,42 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (
 			        (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())
 			    ) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.metamorphosis.up|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 ) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=fury<40&buff.metamorphosis.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and not ShouldStop and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -588,15 +594,15 @@ A[3] = function(icon, isMulti)
         --Cooldown
         local function Cooldown(unit)
             -- metamorphosis,if=!(talent.demonic.enabled|variable.pooling_for_meta|variable.waiting_for_nemesis)|target.time_to_die<25
-            if A.Metamorphosis:IsReady(unit) and (not (A.Demonic:IsSpellLearned()) or Unit(unit):TimeToDie() < 25) then
+            if A.Metamorphosis:IsReady("player") and (not (A.Demonic:IsSpellLearned()) or Unit(unit):TimeToDie() < 25) then
                 return A.Metamorphosis:Show(icon)
             end
             -- metamorphosis,if=talent.demonic.enabled&(!azerite.chaotic_transformation.enabled|(cooldown.eye_beam.remains>20&(!variable.blade_dance|cooldown.blade_dance.remains>gcd.max)))
-            if A.Metamorphosis:IsReady(unit) and (A.Demonic:IsSpellLearned() and (not bool(A.ChaoticTransformation:GetAzeriteRank()) or (A.EyeBeam:GetCooldown() > 20 and (not bool(VarBladeDance) or A.BladeDance:GetCooldown() > A.GetGCD())))) then
+            if A.Metamorphosis:IsReady("player") and (A.Demonic:IsSpellLearned() and (not bool(A.ChaoticTransformation:GetAzeriteRank()) or (A.EyeBeam:GetCooldown() > 20 and (not bool(VarBladeDance) or A.BladeDance:GetCooldown() > A.GetGCD())))) then
                 return A.Metamorphosis:Show(icon)
             end
             -- nemesis,target_if=min:target.time_to_die,if=raid_event.adds.exists&debuff.nemesis.down&(active_enemies>desired_targets|raid_event.adds.in>60)
-            if A.Nemesis:IsSpellLearned() and A.Nemesis:IsReady(unit) 
+            if A.Nemesis:IsSpellLearned() and not ShouldStop and A.Nemesis:IsReady(unit) 
 			and (
 			       -- Unit("player"):HasBuffs("DamageBuffs") > 0
 					--or
@@ -606,19 +612,32 @@ A[3] = function(icon, isMulti)
                 return A.Nemesis:Show(icon) 
             end
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
-                return A.BattlePotionofAgility:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and not ShouldStop and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
+                return A.PotionofUnbridledFury:Show(icon)
             end
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
+           	    if A.BurstIsON(unit) then 
+      	       	    return A.Trinket1:Show(icon)
+   	            end 		
+	        end
+		
+		    -- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
+       	        if A.BurstIsON(unit) then 
+      	       	    return A.Trinket2:Show(icon)
+   	            end 	
+	        end
             -- use_item,name=galecallers_boon,if=!talent.fel_barrage.enabled|cooldown.fel_barrage.ready
-            if A.GalecallersBoon:IsReady(unit) and (not A.FelBarrage:IsSpellLearned() or A.FelBarrage:GetCooldown() == 0) then
+            if A.GalecallersBoon:IsReady(unit) and not ShouldStop and (not A.FelBarrage:IsSpellLearned() or A.FelBarrage:GetCooldown() == 0) then
                 return A.GalecallersBoon:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.metamorphosis.up&buff.memory_of_lucid_dreams.down&(!variable.blade_dance|!cooldown.blade_dance.ready)
-            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
+            if A.CyclotronicBlast:IsReady(unit) and not ShouldStop and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not bool(VarBladeDance) or not A.BladeDance:GetCooldown() == 0)) then
                 return A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) 
+            if A.AshvanesRazorCoral:IsReady(unit) and not ShouldStop 
 			and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) 
 				or 
 				    (
@@ -637,13 +656,13 @@ A[3] = function(icon, isMulti)
                 return A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
+            if A.AzsharasFontofPower:IsReady(unit) and not ShouldStop and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- use_items,if=buff.metamorphosis.up
             -- call_action_list,name=essences
-            if (true) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            if Essences(unit) then
+                return true
             end
         end
         
@@ -686,11 +705,11 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3))) then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance) and A.Metamorphosis:GetCooldown() > 0) then
                 return A.BladeDance:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.BladeDance:Show(icon)
             end
             -- immolation_aura
@@ -712,13 +731,17 @@ A[3] = function(icon, isMulti)
             -- demons_bite
             if A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() then
                 return A.DemonsBite:Show(icon)
+            end			
+            -- felblade,if=movement.distance>15|buff.out_of_range.up
+            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
+                return A.Felblade:Show(icon)
             end
             -- throw_glaive,if=buff.out_of_range.up
-            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and not A.Momentum:IsSpellLearned() then
                 return A.ThrowGlaive:Show(icon)
             end
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) then
                 return A.ThrowGlaive:Show(icon)
             end
         end
@@ -751,7 +774,7 @@ A[3] = function(icon, isMulti)
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) and A.EyeBeam:GetCooldown() > 3 then
+            if A.BladeDance:IsReady(unit) and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (bool(VarBladeDance)) then
                 return A.BladeDance:Show(icon)
             end
             -- felblade,if=fury.deficit>=40
@@ -779,15 +802,15 @@ A[3] = function(icon, isMulti)
                 return A.DemonsBite:Show(icon)
             end
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+            if A.Felblade:IsReady(unit) and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
             -- throw_glaive,if=buff.out_of_range.up
-            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+            if A.ThrowGlaive:IsReady(unit) and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and not A.Momentum:IsSpellLearned() then
                 return A.ThrowGlaive:Show(icon)
             end
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) and A.LastPlayerCastID ~= A.VengefulRetreat.ID then
+            if A.ThrowGlaive:IsReady(unit) and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) then
                 return A.ThrowGlaive:Show(icon)
             end
         end
@@ -840,7 +863,7 @@ A[3] = function(icon, isMulti)
 			-- Fel Rush & VengefulRetreat special combo
 			
 			-- VengefulRetreat
-            if A.VengefulRetreat:IsReady("player") and A.Momentum:IsSpellLearned()
+            if A.VengefulRetreat:IsReady("player") and A.Momentum:IsSpellLearned() and (A.Felblade:IsReady(unit) or A.Felblade:GetCooldown() < 2 or not A.Felblade:IsSpellLearned())
 			and Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true) and Unit("player"):CombatTime() > 3 
 			then				
                 return A.VengefulRetreat:Show(icon)
@@ -855,44 +878,39 @@ A[3] = function(icon, isMulti)
 			if (A.LastPlayerCastID == A.VengefulRetreat.ID or (Unit(unit):GetRange() >= 15 and UseMoves())) and A.FelRush:IsReadyByPassCastGCD(unit, nil, nil, true) then
 			    return A.FelRush:Show(icon)
 			end
-						
+			
+			-- Felblade
+			if (A.LastPlayerCastID == A.FelRush.ID and Unit(unit):GetRange() >= 2 and UseMoves()) and A.Felblade:IsReadyByPassCastGCD(unit, nil, nil, true) then
+			    return A.Felblade:Show(icon)
+			end
+			
             -- Arcane Torrent dispell or if FuryDeficit >= 30
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 4 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 60) then
                 return A.ArcaneTorrent:Show(icon)
             end	
 
             -- call_action_list,name=cooldown,if=gcd.remains=0
-            if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) then
-                local ShouldReturn = Cooldown(unit); if ShouldReturn then return ShouldReturn; end
+            if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) and Cooldown(unit) then
+                return true
             end
             -- pick_up_fragment,if=fury.deficit>=35&(!azerite.eyes_of_rage.enabled|cooldown.eye_beam.remains>1.4)
             --if A.PickUpFragment:IsReady(unit) and (Player:FuryDeficit() >= 35 and (not bool(A.EyesofRage:GetAzeriteRank()) or A.EyeBeam:GetCooldown() > 1.4)) then
             --    return A.PickUpFragment:Show(icon)
             --end
-	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
-           	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun") and A.BurstIsON(unit) then 
-      	       	    return A.Trinket1:Show(icon)
-   	            end 		
-	        end
-		
-		    -- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
-       	        if A.Trinket2:AbsentImun(unit, "DamageMagicImun") and A.BurstIsON(unit) then 
-      	       	    return A.Trinket2:Show(icon)
-   	            end 	
-	        end
+
             -- call_action_list,name=dark_slash,if=talent.dark_slash.enabled&(variable.waiting_for_dark_slash|debuff.dark_slash.up)
             if (A.DarkSlash:IsSpellLearned() and (bool(VarWaitingForDarkSlash) or Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true) > 0)) then
-                local ShouldReturn = DarkSlash(unit); if ShouldReturn then return ShouldReturn; end
+			    if DarkSlash(unit) then 
+				    return true
+                end
             end
             -- run_action_list,name=demonic,if=talent.demonic.enabled
-            if (A.Demonic:IsSpellLearned()) then
-                return Demonic(unit);
+            if (A.Demonic:IsSpellLearned()) and Demonic(unit) then
+                return true 
             end
             -- run_action_list,name=normal
-            if (true) then
-                return Normal(unit);
+            if Normal(unit) then
+                return true
             end
         end
     end
