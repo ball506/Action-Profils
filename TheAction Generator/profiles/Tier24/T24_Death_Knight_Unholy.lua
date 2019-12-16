@@ -54,7 +54,6 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     DarkTransformation                     = Action.Create({ Type = "Spell", ID = 63560 }),
     SummonGargoyle                         = Action.Create({ Type = "Spell", ID = 49206 }),
     UnholyFrenzy                           = Action.Create({ Type = "Spell", ID = 207289 }),
-    VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
     MagusoftheDead                         = Action.Create({ Type = "Spell", ID = 288417 }),
     SoulReaper                             = Action.Create({ Type = "Spell", ID = 130736 }),
     UnholyBlight                           = Action.Create({ Type = "Spell", ID = 115989 }),
@@ -383,7 +382,7 @@ A[3] = function(icon, isMulti)
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- purifying_blast,if=!death_and_decay.ticking
