@@ -126,7 +126,6 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
     PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
     RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
     ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
@@ -150,6 +149,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
     ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
 	LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295137, Hidden = true     }),
+    RecklessForceCounter                   = Action.Create({ Type = "Spell", ID = 302917     }),
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
@@ -731,7 +731,7 @@ A[3] = function(icon, isMulti)
         -- variable,name=bte_condition,value=buff.ruthless_precision.up|(azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled)&buff.roll_the_bones.up
         local VarBteCondition = (Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (A.Deadshot:GetAzeriteRank() > 0 or A.AceUpYourSleeve:GetAzeriteRank() > 0) and RtB_Buffs > 0) and true or false
         -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
-        local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) < 2 or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
+        local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) >= 2 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
 		--print(VarBladeFlurrySync)
 		-- Trinkets vars
         local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
@@ -808,7 +808,7 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.blade_flurry.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=variable.blade_flurry_sync&cooldown.between_the_eyes.up&variable.bte_condition
@@ -828,7 +828,7 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
@@ -872,11 +872,11 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- call_action_list,name=essences,if=!stealthed.all
-            if (not Player:IsStealthed()) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            if (not Player:IsStealthed()) and Essences(unit) then
+                return true
             end
             -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1&(!equipped.azsharas_font_of_power|cooldown.latent_arcana.remains>20)
-            if A.AdrenalineRush:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 1 and (not A.AzsharasFontofPower:IsExists() or A.LatentArcana:GetCooldown() > 20)) then
+            if A.AdrenalineRush:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 1 ) then
                 return A.AdrenalineRush:Show(icon)
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1
@@ -888,15 +888,15 @@ A[3] = function(icon, isMulti)
                 return A.BladeFlurry:Show(icon)
             end
             -- ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
-            if A.GhostlyStrike:IsReady(unit) and (VarBladeFlurrySync and Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
+            if A.GhostlyStrike:IsReady(unit) and (Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
                 return A.GhostlyStrike:Show(icon)
             end
             -- killing_spree,if=variable.blade_flurry_sync&(energy.time_to_max>5|energy<15)
-            if A.KillingSpree:IsReady(unit) and (VarBladeFlurrySync and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15)) then
+            if A.KillingSpree:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15) then
                 return A.KillingSpree:Show(icon)
             end
             -- blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1
-            if A.BladeRush:IsReady(unit) and (VarBladeFlurrySync and Player:EnergyTimeToMaxPredicted() > 1) then
+            if A.BladeRush:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 1) then
                 return A.BladeRush:Show(icon)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
@@ -939,7 +939,13 @@ A[3] = function(icon, isMulti)
                 return A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.adrenaline_rush.up&!buff.blade_flurry.up&cooldown.adrenaline_rush.remains<15
-            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and A.AdrenalineRush:GetCooldown() < 15) then
+            if A.AzsharasFontofPower:IsReady(unit) and 
+			    (
+				    Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 
+					and 
+					A.AdrenalineRush:GetCooldown() < 15
+				) 
+			then
                 return A.AzsharasFontofPower:Show(icon)
             end			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
@@ -993,8 +999,8 @@ A[3] = function(icon, isMulti)
         end
                 
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then 
+            return true
         end
 
         -- In Combat
@@ -1045,10 +1051,12 @@ A[3] = function(icon, isMulti)
             -- run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))*(azerite.ace_up_your_sleeve.rank<2|!cooldown.between_the_eyes.up|!buff.roll_the_bones.up)
             if Finish(unit) and 
 			    (
-				    Player:ComboPoints() >= CPMaxSpend() 
-					                        - (num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) + num(Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0)) 
-											* num((A.QuickDraw:IsSpellLearned() and (not A.MarkedforDeath:IsSpellLearned() or A.MarkedforDeath:GetCooldown() > 1))) 
-											* num((A.AceUpYourSleeve:GetAzeriteRank() < 2 or not A.BetweentheEyes:GetCooldown() == 0 or Unit("player"):HasBuffs(A.RolltheBones.ID, true) == 0))
+				    Player:ComboPoints() >= CPMaxSpend() -
+					                           (
+											      num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) 
+												  + 
+												  num(Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0)
+												) 
 				) 
 			then
                 return true
