@@ -14,12 +14,11 @@ local FriendlyTeam                                    = A.FriendlyTeam
 local TeamCache                                        = A.TeamCache
 local InstanceInfo                                    = A.InstanceInfo
 local select                                        = select
-local HL                                            = HeroLib 
-local HeroUnit                                      = HL.Unit
+
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.4 (15.12.2019)",
+    DateTime = "v2.0.4 (16.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {       
@@ -110,7 +109,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "UseDPSVanish",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Use Vanish for DPS", 
                         ruRU = "Use Vanish for DPS", 
@@ -126,7 +125,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "PrecombatAR",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Show Precombat Adrenaline Rush", 
                         ruRU = "Показать предкомбат адреналина", 
