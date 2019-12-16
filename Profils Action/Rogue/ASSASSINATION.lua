@@ -669,6 +669,38 @@ local function RefreshPoisons()
 end
 RefreshPoisons = A.MakeFunctionCachedDynamic(RefreshPoisons)
 
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.Kick
+    end 
+    
+    if useCC and not A.Kick:IsReady(unit) and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        return A.KidneyShot              
+    end          
+	
+	if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        return A.CheapShot              
+    end
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 	
 -- Check if the Priority Rotation variable should be set
 local function UsePriorityRotation()
@@ -891,6 +923,12 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() then
 		    local VarSingleUnit = num(MultiUnits:GetByRangeInCombat(10, 5, 10) < 2)
 			local VarEnergyRegenCombined = Player:EnergyRegen() + PoisonedBleeds() * 7 / (2 * Player:SpellHaste())
+
+		-- Interrupt
+        local Interrupt = Interrupts(unit)
+        if Interrupt then 
+            return Interrupt:Show(icon)
+        end
 			
         -- Marked for Death
 		if A.MarkedForDeath:IsReady(unit) and Player:ComboPoints() <= 1 and A.ToxicBlade:IsSpellLearned() and A.MarkedForDeath:IsSpellLearned() then
