@@ -319,6 +319,7 @@ A[3] = function(icon, isMulti)
     --------------------
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
+    local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
@@ -517,6 +518,11 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() then
             
 			-- auto_attack
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end
 			
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
