@@ -309,45 +309,56 @@ A.Data.ProfileUI = {
 						Print = '@string' or nil,
 					},
                 }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
                 
             },  
-            { -- [2] 2nd Row 
-				-- Splash Data
+            { -- [4] 4th Row
+
                 {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "USE COMBAT LOGS", value = "USE COMBAT LOGS" }, 
-                        { text = "USE SPLASH DATA", value = "USE SPLASH DATA" },                   
-                        { text = "USE NAMEPLATES", value = "USE NAMEPLATES" },
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Rotation Settings -- ",
                     },
-                    DB = "AoeDetectionMode",
-                    DBV = "USE COMBAT LOGS",
+                },
+            },	
+            {
+    			{
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
                     L = { 
-                        ANY = "AoE Detection Mode",
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Automatic Taunt", 
+                        frFR = "Automatic Taunt",
                     }, 
                     TT = { 
-                        enUS = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                        ruRU = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
+                        enUS = "If activated, will use automatically use Torment whenever available.", 
+                        ruRU = "If activated, will use automatically use Torment whenever available.",  
+                        frFR = "If activated, will use automatically use Torment whenever available.", 
                     }, 
                     M = {},
-                },	
-            },
+                },
+    			{
+                    E = "Checkbox", 
+                    DB = "OffensiveRage",
+                    DBV = true,
+                    L = { 
+                        enUS = "Offensive Rage use", 
+                        ruRU = "Offensive Rage use",
+                        frFR = "Offensive Rage use",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will priorize dps over survivability.", 
+                        ruRU = "If activated, will priorize dps over survivability.",  
+                        frFR = "If activated, will priorize dps over survivability.",  
+                    }, 
+                    M = {},
+                },
+			}, 
             { -- [4] 4th Row
 
                 {
@@ -368,7 +379,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "BarkskinHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(22812) .. " (%)",
@@ -380,7 +391,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "LunarBeamHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(204066) .. " (%)",
@@ -391,8 +402,8 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "FrenziedRegenHP",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "FrenziedRegenerationHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(22842) .. " (%)",
@@ -406,7 +417,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "SurvivalInstinctsHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(61336) .. " (%)",
@@ -417,13 +428,97 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "BristlingFurRage",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DB = "IronfurHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(155835) .. " (%)",
+                        ANY = A.GetSpellInfo(192081) .. " (%)",
                     }, 
                     M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "BristlingFurRage",
+                    DBV = 70, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(155835) .. " Rage",
+                    }, 
+                    TT = { 
+                        enUS = "Minimum rage required before using Bristling Fur", 
+                        ruRU = "Minimum rage required before using Bristling Fur", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [7] Multidots settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Multidots settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Enable auto Multidots", 
+                        ruRU = "Использовать auto Multidots", 
+                        frFR = "Activer le Multidots auto", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Автоматически многоточечные юниты.\nУбедитесь, что вы находитесь перед именной табличкой врагов, на которую должен нацелиться бот. \nУбедитесь, что вы правильно связали клавишу TargetEnemy в игре и в GG.",
+                        frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
+                    }, 
+                    M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 1, 
+					MAX 	= 5,							
+					DB 		= "MultiDotDistance",
+					DBV 	= 5,
+					ONLYOFF = true,
+					L 		= { 
+                        ANY = "Multidots Range",
+                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                    }, 
+					M 		= {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AutoDotSelection",
+                    DBV = "In Raid", 
+                    L = { 
+                        ANY = "Multidots where",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+                    }, 
+                    M = {},
+                },				
+			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
                 },
             },
             { -- [4] 4th Row

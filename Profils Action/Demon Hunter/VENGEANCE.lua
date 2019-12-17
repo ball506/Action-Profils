@@ -200,7 +200,7 @@ end
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local EnemiesCasting = MultiUnits.GetByRangeCasting(30, 5, true, "TargetMouseover")
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
 	
 	-- Sigil of Chains (Snare)
 	if useCC and A.SigilofChains:IsReady("player") and A.SigilofChains:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):GetRange() > 5 then 
@@ -319,6 +319,7 @@ A[3] = function(icon, isMulti)
     --------------------
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
+    local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
@@ -517,6 +518,11 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() then
             
 			-- auto_attack
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end
 			
 		    -- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")

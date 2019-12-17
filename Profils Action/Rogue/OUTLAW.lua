@@ -126,7 +126,6 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
     PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
     RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
     ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
@@ -149,6 +148,8 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
     ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+	LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295137, Hidden = true     }),
+    RecklessForceCounter                   = Action.Create({ Type = "Spell", ID = 302917     }),
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
@@ -453,29 +454,23 @@ local function MfDSniping (MarkedforDeath)
 
         BestUnit, BestUnitTTD = nil, 60;
 		local unit = "target"
-        local MOTTD = Unit("mouseover"):IsInRange(30) and Unit("mouseover"):TimeToDie() or 11111;
-        local TTD;
-        for _, Unit in pairs(MultiUnits:GetActiveUnitPlates()) do
-		    
-			if  Unit("mouseover"):IsExists() then 
-			    unit = "mouseover"
-			else
-			    unit = "target"
-			end
-			
-            TTD = Unit(unit):TimeToDie();
-			
+		local MOunit = "mouseover"
+        local MOTTD = Unit("mouseover"):GetRange() <= 30 and Unit("mouseover"):TimeToDie() or 11111;
+        local TTD = Unit(unit):TimeToDie()
+		
+        for _, CycleUnit in pairs(MultiUnits:GetActiveUnitPlates()) do
+		                			
             -- Note: Increased the SimC condition by 50% since we are slower.
 			-- TEST - REMOVED 50% lowered value on Action
-            if not Unit:IsMfdBlacklisted() and TTD < Player:ComboPointsDeficit() * 1 and TTD < BestUnitTTD then
+            if not Unit(CycleUnit):IsMfdBlacklisted() and TTD < Player:ComboPointsDeficit() * 1 and TTD < BestUnitTTD then
                 if MOTTD - TTD > 1 then
-                    BestUnit, BestUnitTTD = Unit, TTD;
+                    BestUnit, BestUnitTTD = Unit(CycleUnit), TTD;
                 else
                    BestUnit, BestUnitTTD = MouseOver, MOTTD;
                 end
             end
         end
-        if BestUnit and BestUnit:InfoGUID() ~= Unit(unit):InfoGUID() then
+        if BestUnit and BestUnit:InfoGUID() ~= Unit(CycleUnit):InfoGUID() then
             return A:Show(icon, ACTION_CONST_AUTOTARGET)
         end
     end
@@ -668,6 +663,39 @@ local function SelfDefensives(unit)
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.Kick
+    end 
+    
+	if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        return A.Gouge              
+    end          
+	
+	if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        return A.CheapShot              
+    end
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
 local function EvaluateTargetIfFilterMarkedforDeath55(unit)
   return Unit(unit):TimeToDie()
 end
@@ -688,6 +716,8 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
+	local RtB_Buffs = RtB_Buffs() 
+	local RtB_Reroll = RtB_Reroll()
 	CheckGoodBuffs()
     --print(RtB_Buffs())
 	--print(RtB_Reroll())
@@ -699,9 +729,9 @@ A[3] = function(icon, isMulti)
         -- variable,name=ambush_condition,value=combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up&!buff.keep_your_wits_about_you.up
         local VarAmbushCondition = (Player:ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) and Player:EnergyPredicted() > 60 and Unit("player"):HasBuffs(A.SkullandCrossbones.ID, true) == 0 and Unit("player"):HasBuffs(A.KeepYourWitsBuff.ID, true) == 0) and true or false
         -- variable,name=bte_condition,value=buff.ruthless_precision.up|(azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled)&buff.roll_the_bones.up
-        local VarBteCondition = (Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (bool(A.Deadshot:GetAzeriteRank()) or bool(A.AceUpYourSleeve:GetAzeriteRank())) and Unit("player"):HasBuffs(A.RolltheBones.ID, true) > 0) and true or false
+        local VarBteCondition = (Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (A.Deadshot:GetAzeriteRank() > 0 or A.AceUpYourSleeve:GetAzeriteRank() > 0) and RtB_Buffs > 0) and true or false
         -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
-        local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) < 2 or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
+        local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) >= 2 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
 		--print(VarBladeFlurrySync)
 		-- Trinkets vars
         local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
@@ -744,7 +774,7 @@ A[3] = function(icon, isMulti)
                 return A.Stealth:Show(icon)
             end
             -- roll_the_bones,precombat_seconds=2
-            if A.RolltheBones:IsReady("player") and RtB_Reroll() 
+            if A.RolltheBones:IsReady("player") and RtB_Reroll 
 			and (Pull > 0 and Pull <= 3 or not A.GetToggle(1, "DBM"))
 			then
                 return A.RolltheBones:Show(icon)
@@ -778,11 +808,11 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.blade_flurry.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=variable.blade_flurry_sync&cooldown.between_the_eyes.up&variable.bte_condition
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (VarBladeFlurrySync and A.BetweentheEyes:GetCooldown() == 0 and VarBteCondition) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BetweentheEyes:GetCooldown() == 0 then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth
@@ -798,7 +828,7 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
@@ -818,7 +848,7 @@ A[3] = function(icon, isMulti)
         --Build
         local function Build(unit)
             -- pistol_shot,if=buff.opportunity.up&(buff.keep_your_wits_about_you.stack<14|buff.deadshot.up|energy<45)
-            if A.PistolShot:IsReady(unit) and Player:ComboPoints() < 5 and 
+            if A.PistolShot:IsReady(unit) and 
 			    (
 				    Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0 
 					and 
@@ -842,18 +872,12 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- call_action_list,name=essences,if=!stealthed.all
-            if (not Player:IsStealthed()) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            if (not Player:IsStealthed()) and Essences(unit) then
+                return true
             end
             -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1&(!equipped.azsharas_font_of_power|cooldown.latent_arcana.remains>20)
-            if A.AdrenalineRush:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 1 and (not A.AzsharasFontofPower:IsExists() or A.LatentArcana:GetCooldown() > 20)) then
+            if A.AdrenalineRush:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 1 ) then
                 return A.AdrenalineRush:Show(icon)
-            end
-            -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.rogue&combo_points.deficit>=cp_max_spend-1)
-            if A.MarkedforDeath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MarkedforDeath, 8, "min", EvaluateTargetIfFilterMarkedforDeath55, EvaluateTargetIfMarkedforDeath60) then 
-                    return A.MarkedforDeath:Show(icon) 
-                end
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1
             if A.MarkedforDeath:IsReady(unit) and (not Player:IsStealthed() and Player:ComboPointsDeficit() >= CPMaxSpend() - 1) then
@@ -864,15 +888,15 @@ A[3] = function(icon, isMulti)
                 return A.BladeFlurry:Show(icon)
             end
             -- ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
-            if A.GhostlyStrike:IsReady(unit) and (VarBladeFlurrySync and Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
+            if A.GhostlyStrike:IsReady(unit) and (Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
                 return A.GhostlyStrike:Show(icon)
             end
             -- killing_spree,if=variable.blade_flurry_sync&(energy.time_to_max>5|energy<15)
-            if A.KillingSpree:IsReady(unit) and (VarBladeFlurrySync and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15)) then
+            if A.KillingSpree:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15) then
                 return A.KillingSpree:Show(icon)
             end
             -- blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1
-            if A.BladeRush:IsReady(unit) and (VarBladeFlurrySync and Player:EnergyTimeToMaxPredicted() > 1) then
+            if A.BladeRush:IsReady(unit) and (Player:EnergyTimeToMaxPredicted() > 1) then
                 return A.BladeRush:Show(icon)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
@@ -915,20 +939,36 @@ A[3] = function(icon, isMulti)
                 return A.CyclotronicBlast:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=!buff.adrenaline_rush.up&!buff.blade_flurry.up&cooldown.adrenaline_rush.remains<15
-            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and A.AdrenalineRush:GetCooldown() < 15) then
+            if A.AzsharasFontofPower:IsReady(unit) and 
+			    (
+				    Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 
+					and 
+					A.AdrenalineRush:GetCooldown() < 15
+				) 
+			then
                 return A.AzsharasFontofPower:Show(icon)
-            end
-            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<32&target.health.pct>=30|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=20-10*debuff.blood_of_the_enemy.up|target.time_to_die<60)&buff.adrenaline_rush.remains>18
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HealthPercent() < 32 and Unit(unit):HealthPercent() >= 30 or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) == 0 and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 20 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) > 0) or Unit(unit):TimeToDie() < 60) and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) > 18) then
+            end			
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
+            if A.AshvanesRazorCoral:IsReady(unit) 
+	    	and (
+		            (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0)
+		    		or 
+			    	-- Execute phase
+                    (
+			    	    Unit(unit):HealthPercent() <= 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 10 
+			    	) 
+		    	) 
+		    then
                 return A.AshvanesRazorCoral:Show(icon)
-            end
+            end	
+			
             -- use_items,if=buff.bloodlust.react|target.time_to_die<=20|combo_points.deficit<=2
         end
                 
         --Finish
         local function Finish(unit)
             -- between_the_eyes,if=variable.bte_condition
-            if A.BetweentheEyes:IsReady(unit) and (VarBteCondition) then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (VarBteCondition) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
@@ -936,15 +976,15 @@ A[3] = function(icon, isMulti)
                 return A.SliceandDice:Show(icon)
             end
             -- roll_the_bones,if=buff.roll_the_bones.remains<=3|variable.rtb_reroll
-            if A.RolltheBones:IsReady("player") and RtB_Reroll() then
+            if A.RolltheBones:IsReady("player") and RtB_Reroll then
                 return A.RolltheBones:Show(icon)
             end
             -- between_the_eyes,if=azerite.ace_up_your_sleeve.enabled|azerite.deadshot.enabled
-            if A.BetweentheEyes:IsReady(unit) and (bool(A.AceUpYourSleeve:GetAzeriteRank()) or bool(A.Deadshot:GetAzeriteRank())) then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (A.AceUpYourSleeve:GetAzeriteRank() > 0 or A.Deadshot:GetAzeriteRank() > 0) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- dispatch
-            if A.Dispatch:IsReady(unit) then
+            if A.Dispatch:IsReadyByPassCastGCD(unit, nil, nil, true) then
                 return A.Dispatch:Show(icon)
             end
         end
@@ -958,8 +998,8 @@ A[3] = function(icon, isMulti)
         end
                 
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then 
+            return true
         end
 
         -- In Combat
@@ -967,7 +1007,7 @@ A[3] = function(icon, isMulti)
             -- MfD Sniping
             MfDSniping(A.MarkedforDeath)
 			
-			-- stealth
+    		-- stealth
             if A.Stealth:IsReady(unit) and not Player:IsStealthed() and Unit("player"):HasBuffs(A.VanishBuff.ID, true) == 0 then
                 return A.Stealth:Show(icon)
             end
@@ -996,6 +1036,12 @@ A[3] = function(icon, isMulti)
                 return true
             end
 			
+		    -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end
+			
             -- call_action_list,name=cds
             if Cds(unit) then
                 return true
@@ -1004,7 +1050,12 @@ A[3] = function(icon, isMulti)
             -- run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))*(azerite.ace_up_your_sleeve.rank<2|!cooldown.between_the_eyes.up|!buff.roll_the_bones.up)
             if Finish(unit) and 
 			    (
-				    Player:ComboPoints() >= CPMaxSpend() - (num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) + num(Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0)) * num((A.QuickDraw:IsSpellLearned() and (not A.MarkedforDeath:IsSpellLearned() or A.MarkedforDeath:GetCooldown() > 1))) * num((A.AceUpYourSleeve:GetAzeriteRank() < 2 or not A.BetweentheEyes:GetCooldown() == 0 or Unit("player"):HasBuffs(A.RolltheBones.ID, true) == 0))
+				    Player:ComboPoints() >= CPMaxSpend() -
+					                           (
+											      num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) 
+												  + 
+												  num(Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0)
+												) 
 				) 
 			then
                 return true

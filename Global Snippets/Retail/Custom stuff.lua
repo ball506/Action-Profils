@@ -469,6 +469,34 @@ local SpecialMfdBlacklistData = {
   [76057] = true
 }
 
+-- Get the unit GUID.
+function Unit:GUID()
+    return UnitGUID(self.UnitID)
+end
+
+-- Get the unit NPC ID.
+function Unit:NPCID(BypassCache)
+    if not BypassCache and self.UseCache and self.UnitNPCID then
+        return self.UnitNPCID
+    end
+
+    local GUID = self:GUID()
+    if GUID then
+        local UnitInfo = {}
+
+        if not UnitInfo.NPCID then
+            local type, _, _, _, _, npcid = strsplit('-', GUID)
+            if type == "Creature" or type == "Pet" or type == "Vehicle" then
+                UnitInfo.NPCID = tonumber(npcid)
+            else
+                UnitInfo.NPCID = -2
+            end
+        end
+        return UnitInfo.NPCID
+    end
+    return -1
+end
+
 -- IsMfdBlacklisted function
 function Unit:IsMfdBlacklisted()
     local npcid = self:NPCID()
