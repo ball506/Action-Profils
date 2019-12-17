@@ -74,6 +74,7 @@ Action[ACTION_CONST_DRUID_BALANCE] 			= {
 	-- Hidden	
 	ArcanicPulsar							= Action.Create({ Type = "Spell", ID = 287773, Hidden = true}), -- Simcraft Azerite
 	StreakingStars							= Action.Create({ Type = "Spell", ID = 272871, Hidden = true}), -- Simcraft Azerite
+	BurstDamage								= Action.Create({ Type = "Spell", ID = 194223, Hidden = true}), -- Simcraft Azerite
 	CancelBuff								= Action.Create({ Type = "SpellSingleColor", ID = 209749, Color = "GREEN"}),
 }
 
@@ -96,6 +97,7 @@ local Temp 									= {
 	AuraForInterrupt						= {"TotalImun", "DamagePhysImun", "KickImun"},
 	OpenerRotation							= false,
 	UsedReshift								= false,
+	CountReset								= 0,
 }
 
 local function IsSchoolNatureUP()
@@ -162,6 +164,14 @@ local function AP_Check(spell)
 	end
 end
 
+function Action:ExecuteTime()
+	if self:GetSpellCastTime() > A.GetGCD() + A.GetCurrentGCD() then
+		return self:GetSpellCastTime()
+	else
+		return A.GetGCD() + A.GetCurrentGCD()
+	end
+end
+
 local BlackListedTrinkets = {
     [1] = 167555, -- Pocket Sized Computation Device
 	[2] = 169314, -- Azsharas Font of Power
@@ -218,6 +228,12 @@ A[3] = function(icon)
 	local TrinketON								= ((Action.GetToggle(1, "Trinkets")[1]) or (Action.GetToggle(1, "Trinkets")[2]))
 
 	--Misc
+	if A.Incarnation.IsSpellLearned() then
+		A.BurstDamage = A.Incarnation
+	else 
+		A.BurstDamage = A.CelestialAlignment
+	end
+	
 	SS_Rank = A.StreakingStars:GetAzeriteRank()
 	
 	if A.ArcanicPulsar:GetAzeriteRank() >= 1 then
@@ -246,9 +262,12 @@ A[3] = function(icon)
 		canCast = false
 	end
 	
-	if A.FocusedAzeriteBeam:IsReady(player) then
-		return A.CelestialAlignment:Show(icon)
-	end
+	if not A.StellarFlare:IsSpellInCasting() and Temp.CountReset > 0 then
+		Temp.CountReset = Temp.CountReset - 1
+	end 
+	--if combatTime == 0 then
+	--	Temp.OpenerRotation = true
+	--end
 	
 	local function Enemy(unitID)		
 		-- Purge (high) 
@@ -256,8 +275,12 @@ A[3] = function(icon)
 			return A.Soothe:Show(icon)
 		end 
 		
-		if A.GetToggle(1, "StopCast") and Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) > 7.2 and A.StellarFlare:IsSpellInCasting() then
-			return A:Show(icon, ACTION_CONST_STOPCAST)
+		--if A.GetToggle(1, "StopCast") and Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) > 7.2 and A.StellarFlare:IsSpellInCasting() then
+		--	return A:Show(icon, ACTION_CONST_STOPCAST)
+		--end
+		
+		if A.StellarFlare:IsSpellInCasting() and Temp.CountReset == 0 then
+			Temp.CountReset = 15
 		end
 		
 		if Unit(unitID):HasDeBuffs(A.Sunfire.ID, true) > 0 and Unit(unitID):HasDeBuffs(A.Moonfire.ID, true) > 0 and isMultiDoT and
@@ -265,6 +288,30 @@ A[3] = function(icon)
 		(Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) then
 			return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		end		
+		
+		--if Temp.OpenerRotation then
+	--		if A.StellarFlare:IsReady(unitID) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.StellarFlare:AbsentImun(unitID, Temp.AttackTypes) and A.LastPlayerCastName ~= A.StellarFlare:Info() and 
+	--		Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) < 7.2 then
+	--			return A.StellarFlare:Show(icon)
+	--		end
+			
+	--		if A.Sunfire:IsReady(unitID) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and Unit(unitID):HasDeBuffs(A.Sunfire.ID, true) < 5.4 then
+	--			return A.Sunfire:Show(icon)
+	--		end
+			
+	--		if A.Moonfire:IsReady(unitID) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and Unit(unitID):HasDeBuffs(A.Moonfire.ID, true) < 6.6 then
+	--			return A.Moonfire:Show(icon)
+	--		end
+			
+	--		if Unit(unitID):HasDeBuffs(A.Sunfire.ID, true) > 0 and Unit(unitID):HasDeBuffs(A.Moonfire.ID, true) > 0 and (not A.StellarFlare:IsSpellLearned() or
+		--	Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) > 0) then
+	--			Temp.OpenerRotation = false
+		--	end
+	--	end
+		
+		--if Temp.OpenerRotation then
+		--	return true
+	--	end
 		
 		-- Burst
 		if unitID ~= "mouseover" and A.BurstIsON(unitID) then		
@@ -314,13 +361,13 @@ A[3] = function(icon)
 		end
 		
 		-- Essences
-		if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (inAoE and MultiUnits:GetActiveEnemies() >= 2 or Unit(unitID):IsBoss()) and canCast then
+		if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unitID) and (inAoE and MultiUnits:GetActiveEnemies() >= 2 or Unit(unitID):IsBoss()) and canCast and
+		Unit(player):HasBuffs(A.BurstDamage.ID, true) == 0 then
 			return A.FocusedAzeriteBeam:Show(icon)
 		end
 		
 		-- Spenders
-		if A.Starlord:IsSpellLearned() and Unit(player):HasBuffs(A.StarlordBuff.ID, true) <= 5 and Unit(player):HasBuffs(A.StarlordBuff.ID, true) > 0 and 
-		FutureAstralPower() >= 80 and Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) == 3 then--and not AP_Check(A.SolarWrath) then
+		if A.Starlord:IsSpellLearned() and  Unit(player):HasBuffs(A.StarlordBuff.ID, true) < 3 and Unit(player):HasBuffs(A.StarlordBuff.ID, true) > 0 and not AP_Check(A.SolarWrath) then
 			return A.CancelBuff:Show(icon)
 		end
 		
@@ -329,16 +376,15 @@ A[3] = function(icon)
 		(Unit(unitID):TimeToDie() + 1) * MultiUnits:GetByRangeInCombat(40, 5, 10) > A.Starfall:GetSpellPowerCost() / 2.5) and canCast then
 			return A.Starfall:Show(icon)
 		end
-		
+
 		if A.Starsurge:IsReady(unitID) and IsSchoolArcaneUP() and A.Starsurge:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and
-		((A.Starlord:IsSpellLearned() and (Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 5 and 
+		((A.Starlord:IsSpellLearned() and (Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 5 and
 		Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8) or not A.Starlord:IsSpellLearned() and (Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or
-		(Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0))) and
-		(inAoE and MultiUnits:GetActiveEnemies() < SF_Target or not inAoE) and Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + 
-		Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and 
-		Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
-		A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or A.LastPlayerCastID ~= A.Starsurge.ID) or 
-		Unit(unitID):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) then
+		Unit(player):HasBuffs(A.BurstDamage.ID, true) > 0)) and (inAoE and MultiUnits:GetActiveEnemies() < SF_Target or not inAoE) and 
+		Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and 
+		Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and 
+		(SS_Rank == 0 or Unit(player):HasBuffs(A.BurstDamage.ID, true) == 0 or A.LastPlayerCastName ~= A.Starsurge:Info()) or 
+		Unit(unitID):TimeToDie() <= A.Starsurge:ExecuteTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) then
 			return A.Starsurge:Show(icon)
 		end
 		
@@ -356,23 +402,28 @@ A[3] = function(icon)
 		
 		-- DoTs 
 		if A.Sunfire:IsReady(unitID) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and (AP_Check(A.Sunfire) and 
-		Unit(unitID):HasDeBuffs(A.Sunfire.ID, true) <= 5.4 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
+		Unit(unitID):HasDeBuffs(A.Sunfire.ID, true) < 5.4 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
 		A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or A.LastPlayerCastID ~= A.Sunfire.ID) and 
-		((Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) >= 7 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) >= 7) or
+		((Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) >= 10 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) >= 10) or
 		(Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0))) then
 			return A.Sunfire:Show(icon)
 		end
 		
 		if A.Moonfire:IsReady(unitID) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unitID, Temp.AttackTypes) and Player:IsStance(4) and (AP_Check(A.Moonfire) and 
-		Unit(unitID):HasDeBuffs(A.Moonfire.ID, true) <= 6.6 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
+		Unit(unitID):HasDeBuffs(A.Moonfire.ID, true) < 6.6 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
 		A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or A.LastPlayerCastID ~= A.Moonfire.ID) and 
-		((Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) >= 7 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) >= 7) or
+		((Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) >= 10 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) >= 10) or
 		(Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0))) then
 			return A.Moonfire:Show(icon)
 		end
 		
 		if A.StellarFlare:IsReady(unitID) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.StellarFlare:AbsentImun(unitID, Temp.AttackTypes) and 
-		Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) < 7.2 and canCast and Player:IsStance(4) then
+		A.LastPlayerCastName ~= A.StellarFlare:Info() and Temp.CountReset == 0 and 
+		(Unit(unitID):HasDeBuffs(A.StellarFlare.ID, true) < 6.4 and (SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or
+		A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or A.LastPlayerCastID ~= A.StellarFlare.ID) and 
+		((Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) >= 10 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) >= 10) or
+		(Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0))) and 
+		canCast and Player:IsStance(4) then
 			return A.StellarFlare:Show(icon)
 		end
 		
@@ -393,17 +444,15 @@ A[3] = function(icon)
 		end
 		
 		--Move
-		if A.Sunfire:IsReady(unitID) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unitID, Temp.AttackTypes) and inMoving and Player:IsStance(4) and 
-		(SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
-		A.LastPlayerCastID ~= A.Sunfire.ID) then
+		if A.Sunfire:IsReady(unitID) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unitID, Temp.AttackTypes) and Player:IsMovingTime() > 0.2 and Player:IsStance(4) then
 			return A.Sunfire:Show(icon)
 		end
 		
-		if A.Moonfire:IsReady(unitID) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unitID, Temp.AttackTypes) and inMoving and Player:IsStance(4) and 
-		(SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
-		A.LastPlayerCastID ~= A.Moonfire.ID) then
-			return A.Moonfire:Show(icon)
-		end
+		--if A.Moonfire:IsReady(unitID) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unitID, Temp.AttackTypes) and inMoving and Player:IsStance(4) and 
+		--(SS_Rank == 0 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
+		--A.LastPlayerCastID ~= A.Moonfire.ID) then
+		--	return A.Moonfire:Show(icon)
+		--end
 	end
 	
 	local function FriendlyRotation(unitID)
