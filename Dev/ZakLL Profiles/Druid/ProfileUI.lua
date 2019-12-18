@@ -1,8 +1,21 @@
-local A												= Action
-local L 											= {}
+local TMW											= TMW 
 
-A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
-A.Data.ProfileUI                                     = {    
+local A                                             = Action
+local UnitCooldown									= A.UnitCooldown
+local Unit											= A.Unit 
+local Player										= A.Player 
+local Pet											= A.Pet
+local LoC											= A.LossOfControl
+local MultiUnits									= A.MultiUnits
+local EnemyTeam										= A.EnemyTeam
+local FriendlyTeam									= A.FriendlyTeam
+local TeamCache										= A.TeamCache
+local InstanceInfo									= A.InstanceInfo
+
+local select										= select
+
+A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]	= true
+A.Data.ProfileUI									= {    
     DateTime = "v2 (18.12.2019)",
     [2] = {        
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -326,5 +339,29 @@ A.Data.ProfileUI                                     = {
                 },	
 			}
 		}
-	}
+	},
+	[7] = {
+		[ACTION_CONST_DRUID_FERAL] = {
+			["stun"] = { Enabled = true, Key = "MightyBash", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_DRUID_FERAL]
+                return   A.MightyBash:IsReadyM(thisunit)                                                            
+            ]] },
+			["kick"] = { Enabled = true, Key = "SkullBash", LUAVER = 6, LUA = [[
+                local A = Action[ACTION_CONST_DRUID_FERAL]
+                return     A.SkullBash:IsReadyM(thisunit) and                         
+                        A.SkullBash:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 
+            ]] },
+		},
+	},
 }
+
+function A.Main_CastBars(unit, list)
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
+        return false 
+    end 
+    
+    if A[A.PlayerSpec] and A[A.PlayerSpec].SkullBash and A[A.PlayerSpec].SkullBash:IsReadyP(unit, nil, true) and A[A.PlayerSpec].SkullBash:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+        return true         
+    end 
+end 

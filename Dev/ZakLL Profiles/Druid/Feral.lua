@@ -1,4 +1,3 @@
-local TMW 									= TMW 
 local Action 								= Action
 local TeamCache 							= Action.TeamCache
 local EnemyTeam 							= Action.EnemyTeam
@@ -8,6 +7,8 @@ local Player 								= Action.Player
 local MultiUnits 							= Action.MultiUnits
 local UnitCooldown 							= Action.UnitCooldown
 local Unit 									= Action.Unit 
+
+local setmetatable							= setmetatable
 
 Action[ACTION_CONST_DRUID_FERAL] 			= {
     -- Racial
@@ -33,8 +34,11 @@ Action[ACTION_CONST_DRUID_FERAL] 			= {
 	-- Crowd Control
 	EntanglingRoots							= Action.Create({ Type = "Spell", ID = 339}),
 	SkullBash								= Action.Create({ Type = "Spell", ID = 106839}),
-	SkullBashGreen							= Action.Create({ Type = "SpellSingleColor", ID = 106839, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),
-	CastBarsInterrupt						= Action.Create({ Type = "Spell",ID = 106839, Desc = "[CastBars] Interrupt", QueueForbidden = true, BlockForbidden = true}),-- Kick 
+	WildChargeRed							= Action.Create({ Type = "SpellSingleColor", ID = 102401, Color = "RED", Desc = "[1] CC Focus"}), 
+	MightyBashGreen							= Action.Create({ Type = "SpellSingleColor", ID = 5211, Color = "GREEN", Desc = "[1] CC Focus", isTalent = true}), 
+	CycloneFocus							= Action.Create({ Type = "Spell", ID = 33786, Desc = "[1] CC Focus", isTalent = true}), 
+	SkullBashGreen							= Action.Create({ Type = "SpellSingleColor", ID = 106839, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true}),
+
 	-- Suppotive 
 	AbissalHealing							= Action.Create({ Type = "Item", ID = 169451, QueueForbidden = true}),
 	Regrowth								= Action.Create({ Type = "Spell", ID = 8936}),
@@ -75,18 +79,18 @@ Action[ACTION_CONST_DRUID_FERAL] 			= {
 	PocketsizedComputationDevice			= Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true}),
 	
 	--Talents
-	Sabertooth								= Action.Create({ Type = "Spell", ID = 202031, isTalent = true}), -- Talent 1/2
-	LunarInspiration						= Action.Create({ Type = "Spell", ID = 155580, isTalent = true}), -- Talent 1/3
-	WildCharge								= Action.Create({ Type = "Spell", ID = 102401, isTalent = true}), -- Talent 2/3
-	BalanceAffinity							= Action.Create({ Type = "Spell", ID = 197488, isTalent = true}), -- Talent 3/1
-	MightyBash								= Action.Create({ Type = "Spell", ID = 5211, isTalent = true}), -- Talent 4/1
-	Typhoon									= Action.Create({ Type = "Spell", ID = 132469, isTalent = true}), -- Talent 4/3
-	ScentofBlood							= Action.Create({ Type = "Spell", ID = 285564, isTalent = true}), -- Talent 6/1
-	BrutalSlash								= Action.Create({ Type = "Spell", ID = 202028, isTalent = true}), -- Talent 6/2
-	PrimalWrath								= Action.Create({ Type = "Spell", ID = 285381, isTalent = true}), -- Talent 6/3
-	Bloodtalons								= Action.Create({ Type = "Spell", ID = 155672, isTalent = true}), -- Talent 7/2
-	FeralFrenzy								= Action.Create({ Type = "Spell", ID = 274837, isTalent = true}), -- Talent 7/3
-	Thorns									= Action.Create({ Type = "Spell", ID = 236696, isTalent = true}), -- PvP Talent
+	Sabertooth								= Action.Create({ Type = "Spell", ID = 202031, isTalent = true}), 	-- Talent 1/2
+	LunarInspiration						= Action.Create({ Type = "Spell", ID = 155580, isTalent = true}), 	-- Talent 1/3
+	WildCharge								= Action.Create({ Type = "Spell", ID = 102401, isTalent = true}), 	-- Talent 2/3
+	BalanceAffinity							= Action.Create({ Type = "Spell", ID = 197488, isTalent = true}), 	-- Talent 3/1
+	MightyBash								= Action.Create({ Type = "Spell", ID = 5211, isTalent = true}), 	-- Talent 4/1
+	Typhoon									= Action.Create({ Type = "Spell", ID = 132469, isTalent = true}),	-- Talent 4/3
+	ScentofBlood							= Action.Create({ Type = "Spell", ID = 285564, isTalent = true}), 	-- Talent 6/1
+	BrutalSlash								= Action.Create({ Type = "Spell", ID = 202028, isTalent = true}), 	-- Talent 6/2
+	PrimalWrath								= Action.Create({ Type = "Spell", ID = 285381, isTalent = true}), 	-- Talent 6/3
+	Bloodtalons								= Action.Create({ Type = "Spell", ID = 155672, isTalent = true}), 	-- Talent 7/2
+	FeralFrenzy								= Action.Create({ Type = "Spell", ID = 274837, isTalent = true}), 	-- Talent 7/3
+	Thorns									= Action.Create({ Type = "Spell", ID = 236696, isTalent = true}), 	-- PvP Talent
 	--Hidden
 	RepeatPerformanceDebuff					= Action.Create({ Type = "Spell", ID = 301244, Hidden = true}), -- Queens Court - Repeat Performance debuff
 	WildChargeCat							= Action.Create({ Type = "Spell", ID = 49376, Hidden = true}),	
@@ -116,6 +120,43 @@ local Temp 									= {
 	OpenerRotation							= false,
 	UsedReshift								= false,
 }
+-- [1] CC Focus AntiFake Rotation
+A[1] = function(icon)  
+	local unitID = "focus"
+	
+	if A.WildCharge:IsSpellLearned() and A.MightyBashGreen:IsSpellLearned() and A.MightyBashGreen:GetCooldown() == 0 and Unit(unitID):GetRange() >= 8 and Unit(unitID):GetRange() <= 28
+	and A.WildChargeRed:IsReady(unitID) then
+		return A.WildChargeRed:Show(icon)
+	end
+	
+	 if A.MightyBashGreen:IsReady(unitID) and A.MightyBashGreen:AbsentImun(unitID, Temp.AuraForStun) and 
+	 Unit(unitID):IsControlAble("stun", 0) and A.IsUnitEnemy(unitID) then
+		return A.MightyBashGreen:Show(icon)
+	 end
+	 
+	 if A.CycloneFocus:IsReady(unitID) and A.MightyBash:GetCooldown() > 0 then
+		return A.CycloneFocus:Show(icon)
+	 end
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)	
+	-- Note: This will ignore energy check!
+	local unitID
+	if A.IsUnitEnemy("target") then 
+		unitID = "target"	
+	end 
+			
+	if unitID then 		
+		local castLeft, _, _, _, notKickAble = Unit(unitID):IsCastingRemains()
+		if castLeft > 0 then 
+			-- Kick 
+			if not notKickAble and A.SkullBashGreen:IsReady(unit, nil, nil, true) and A.SkullBashGreen:AbsentImun(unitID, Temp.AuraForInterrupt) then 
+				return A.SkullBashGreen:Show(icon)	
+			end 
+		end 
+	end 																		
+end
 
 local function InMelee(unitID)
 	-- @return boolean 
@@ -155,12 +196,12 @@ function Action:IsEnoughEnergyPool(Offset)
 end
 
 -- [Cast Bars]
-function Action.Main_CastBars(unitID, list) 
+--function Action.Main_CastBars(unitID, list) 
 	-- IsReadyM here just to skip gcd and block checks
-	if A.IsInitialized and A.Zone == "pvp" and A.CastBarsInterrupt:IsReadyM(unitID) and A.InterruptIsValid(unitID, list) and A.CastBarsInterrupt:AbsentImun(unitID, Temp.AuraForInterrupt) then  
-		return true 		
-	end 
-end
+--	if A.IsInitialized and A.Zone == "pvp" and A.CastBarsInterrupt:IsReadyM(unitID) and A.InterruptIsValid(unitID, list) and A.CastBarsInterrupt:AbsentImun(unitID, Temp.AuraForInterrupt) then  
+--		return true 		
+--	end 
+--end
 
 local function SelfDefensives()
 	if Unit(player):CombatTime() == 0 then 
@@ -232,25 +273,6 @@ local function Interrupts(unitID)
     end    
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
--- [2] Kick AntiFake Rotation
-A[2] = function(icon)	
-	-- Note: This will ignore energy check!
-	local unitID
-	if A.IsUnitEnemy("target") then 
-		unitID = "target"	
-	end 
-			
-	if unitID then 		
-		local castLeft, _, _, _, notKickAble = Unit(unitID):IsCastingRemains()
-		if castLeft > 0 then 
-			-- Kick 
-			if not notKickAble and A.SkullBashGreen:IsReady(unit, nil, nil, true) and A.SkullBashGreen:AbsentImun(unitID, Temp.AuraForInterrupt) then 
-				return A.SkullBashGreen:Show(icon)	
-			end 
-		end 
-	end 																		
-end
 
 -- [3] Single Rotation
 A[3] = function(icon)
@@ -633,6 +655,11 @@ A[3] = function(icon)
     end
 end
 
+-- [4] AoE Rotation
+A[4] = function(icon)
+    return A[3](icon, true)
+end 
+
 local function ArenaRotation(icon, unitID)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then     
 		--Dispell Enrage
@@ -703,8 +730,3 @@ A[8] = function(icon)
     
     return ArenaRotation(icon, "arena3")
 end
-
--- Nil (nothing for profile here, just wipe to nil)
-A[1] = nil 
-A[4] = nil 
-A[5] = nil 
