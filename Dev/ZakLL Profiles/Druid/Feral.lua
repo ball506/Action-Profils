@@ -36,10 +36,11 @@ Action[ACTION_CONST_DRUID_FERAL] 			= {
 	SkullBashGreen							= Action.Create({ Type = "SpellSingleColor", ID = 106839, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),
 	CastBarsInterrupt						= Action.Create({ Type = "Spell",ID = 106839, Desc = "[CastBars] Interrupt", QueueForbidden = true, BlockForbidden = true}),-- Kick 
 	-- Suppotive 
-	AbissalHealing							= Action.Create({ Type = "Potion", ID = 169451}),
+	AbissalHealing							= Action.Create({ Type = "Item", ID = 169451, QueueForbidden = true}),
 	Regrowth								= Action.Create({ Type = "Spell", ID = 8936}),
 	Soothe									= Action.Create({ Type = "Spell", ID = 2908}),
 	RemoveCorruption						= Action.Create({ Type = "Spell", ID = 2782}),
+	SurvivalInstincts						= Action.Create({ Type = "Spell", ID = 61336}),
 	-- Spells
 	CatForm									= Action.Create({ Type = "Spell", ID = 768}),
 	BearForm								= Action.Create({ Type = "Spell", ID = 5487}),
@@ -201,6 +202,21 @@ local function SelfDefensives()
     then 
         return A.Regrowth
     end 	
+	
+	local AbyssalPot = A.GetToggle(2, "AbyssalPot")
+	if AbyssalPot >= 0 and ((AbyssalPot >= 100 and Unit(player):TimeToDie() <= 4 and Unit(player):HealthPercent() <= 30) or
+	AbyssalPot < 100 and Unit(player):HealthPercent() <= AbyssalPot) then
+		return A.AbyssalPot
+	end
+	
+	
+	local SurvivalInstinctsD = A.GetToggle(2, "SurvivalInstincts")
+	if SurvivalInstinctsD >= 0 and A.SurvivalInstincts:IsReady(player) and A.LastPlayerCastName ~= A.SurvivalInstincts:Info() and 
+	((SurvivalInstinctsD >= 100 and ((not A.IsInPvP and Unit(player):HealthPercent() < 30 and Unit(player):TimeToDieX(15) < 6) or 
+	(A.IsInPvP and (Unit(player):UseDeff() or (Unit(player, 5):HasFlags() and Unit(player):GetRealTimeDMG() > 0 and Unit(player):IsFocused(nil, true))))) and
+	Unit(player):HasBuffs("DeffBuffs") == 0) or (SurvivalInstinctsD < 100 and Unit(player):HealthPercent() <= SurvivalInstinctsD and Unit(player):HasBuffs(A.SurvivalInstincts.ID) == 0)) then
+		return A.SurvivalInstincts
+	end
 end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
@@ -279,10 +295,6 @@ A[3] = function(icon)
 	if combatTime == 0 then
 		Temp.OpenerRotation = true
 	end
-	
---	if Unit("player"):HealthPercent() < 50 then
-	--	return A.AbissalHealing:Show(icon)
-	--end
 	
 	local function Enemy(unitID)
 		
