@@ -974,7 +974,6 @@ A[3] = function(icon, isMulti)
 			    	-- Execute phase
                     (
 			    	    Unit(unit):HealthPercent() <= 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 10 
-			    		and (A.AdrenalineRush:GetCooldown() == 0 or Unit(unit):HasDeBuffs(A.AdrenalineRush.ID, true) > 0) 
 			    	) 
 		    	) 
 		    then
