@@ -857,17 +857,16 @@ A[3] = function(icon, isMulti)
         local inMelee = A.Mutilate:IsInRange(unit)
 			
 		-- Out of combat / Precombat
-        if not inCombat then		
-		    			
+        if not inCombat then			    			
 		
 		    -- Sap out of combat
-		    if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 and Unit(unit):IsControlAble("incapacitate") and Unit("player"):GetDR("incapacitate") > 25 then
-		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 then 
+		    if A.IsInPvP and A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
 			        -- Notification					
                     Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
 			        return A.Sap:Show(icon)
 			    else 
-			        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 then
+			        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
     			        -- Notification					
                         Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
 			            return A.Sap:Show(icon)
@@ -898,6 +897,12 @@ A[3] = function(icon, isMulti)
 		    -- Garrote opener
 		    if A.Garrote:IsReady(unit) and Unit("player"):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 and 
 			(Pull > 0 and Pull <= 5 or not A.GetToggle(1, "DBM")) 
+			and
+			    (
+				    (Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):GetDR("incapacitate") < 50 ) 
+					or
+					Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0
+				)
 			and
 		        (
 		           Player:IsStealthed() 

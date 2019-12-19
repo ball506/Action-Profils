@@ -198,6 +198,7 @@ local VarBladeFlurrySync = 0;
 local VarAmbushCondition = 0;
 local VarBteCondition = 0;
 local VarRtbReroll = 0;
+local SapUsed = 0;
 -- Lua
 local mathmin = math.min;
 local pairs = pairs;
@@ -757,13 +758,13 @@ A[3] = function(icon, isMulti)
             -- food
             -- snapshot_stats
 		    -- Sap out of combat
-		    if A.IsInPvP and A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 and Unit(unit):IsControlAble("incapacitate") and Unit("player"):GetDR("incapacitate") > 25 then
-		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 then 
+		    if A.IsInPvP and A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
 			        -- Notification					
                     Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
 			        return A.Sap:Show(icon)
 			    else 
-			        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 then
+			        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
     			        -- Notification					
                         Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
 			            return A.Sap:Show(icon)
@@ -814,6 +815,12 @@ A[3] = function(icon, isMulti)
             -- ambush
             if A.Ambush:IsReady(unit) 
 			and (Pull > 0 and Pull < 1 or not A.GetToggle(1, "DBM"))
+			and
+			    (
+				    (Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):GetDR("incapacitate") < 50 ) 
+					or
+					Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0
+				)
 			then
                 return A.Ambush:Show(icon)
             end
