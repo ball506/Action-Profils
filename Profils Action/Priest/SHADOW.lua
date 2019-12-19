@@ -95,30 +95,30 @@ local function IsSchoolShadowUP()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+local function Interrupts(unitID)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unitID, "TargetMouseover")    
     
-    if useKick and A.Silence:IsReady(unit) and A.Silence:AbsentImun(unit, Temp.AuraForInterrupt, true) and Unit(unit):CanInterrupt(true) then 
+    if useKick and A.Silence:IsReady(unitID) and A.Silence:AbsentImun(unitID, Temp.AuraForInterrupt, true) and Unit(unitID):CanInterrupt(true) then 
         return A.Silence
     end 
     
-    if useCC and A.PsychicHorror:IsReady(unit) and A.PsychicHorror:AbsentImun(unit, Temp.TotalAndMagicAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.PsychicHorror:IsReady(unitID) and A.PsychicHorror:AbsentImun(unitID, Temp.TotalAndMagicAndCC, true) and Unit(unitID):IsControlAble("stun", 0) then 
         return A.StormBolt              
     end          
     
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+    if useRacial and A.QuakingPalm:AutoRacial(unitID) then 
         return A.QuakingPalm
     end 
     
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
+    if useRacial and A.Haymaker:AutoRacial(unitID) then 
         return A.Haymaker
     end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
+    if useRacial and A.WarStomp:AutoRacial(unitID) then 
         return A.WarStomp
     end 
     
-    if useRacial and A.BullRush:AutoRacial(unit) then 
+    if useRacial and A.BullRush:AutoRacial(unitID) then 
         return A.BullRush
     end      
 end 
@@ -263,7 +263,7 @@ A[3] = function(icon, isMulti)
 					return A.MemoryofLucidDreams:Show(icon)
 				end	
 				
-				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
+				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unitID) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
 					return A.GuardianofAzeroth:Show(icon)
 				end
 				
@@ -277,7 +277,7 @@ A[3] = function(icon, isMulti)
 				end
 			end
 			
-			if A.ShadowCrash:IsReady(unit, true) then 
+			if A.ShadowCrash:IsReady(unitID, true) then 
 				return A.ShadowCrash:Show(icon)
 			end
 			
@@ -329,7 +329,7 @@ A[3] = function(icon, isMulti)
 					return A.MemoryofLucidDreams:Show(icon)
 				end
 				
-				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
+				if A.GuardianofAzeroth:AutoHeartOfAzeroth(unitID) and Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) >  15 then 
 					return A.GuardianofAzeroth:Show(icon)
 				end
 				
@@ -350,7 +350,7 @@ A[3] = function(icon, isMulti)
 				return A.MindSear:Show(icon)
 			end
 			
-			if A.ShadowCrash:IsReady(unit, true) and IsDotsUP(unitID) then 
+			if A.ShadowCrash:IsReady(unitID, true) and IsDotsUP(unitID) then 
 				return A.ShadowCrash:Show(icon)
 			end
 
