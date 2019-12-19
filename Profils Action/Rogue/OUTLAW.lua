@@ -382,7 +382,7 @@ local function RtB_Reroll()
     local RtB_Reroll = false
 	
         -- Defensive Override : Grand Melee if HP < 60
-        if Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercentage() < Action.GetToggle(2, "RolltheBonesLeechHP") then
+        if Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercent() < Action.GetToggle(2, "RolltheBonesLeechHP") then
             RtB_Reroll = (not A.SliceandDice:IsSpellLearned() and Unit("player"):HasBuffs(A.GrandMelee.ID, true) == 0) and true or false;
         -- 1+ Buff
         elseif Action.GetToggle(2, "RolltheBonesLogic") == "1BUFF" then
@@ -667,31 +667,45 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
     if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.Kick
+        -- Notification					
+        Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
+		return A.Kick
     end 
     
 	if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
-        return A.Gouge              
+        -- Notification					
+        Action.SendNotification("Gouge on : " .. UnitName(unit), A.Gouge.ID)
+		return A.Gouge              
     end          
 	
 	if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
-        return A.CheapShot              
+        -- Notification					
+        Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
+		return A.CheapShot              
     end
     
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
+        -- Notification					
+        Action.SendNotification("QuakingPalm on : " .. UnitName(unit), A.QuakingPalm.ID)
+		return A.QuakingPalm
     end 
     
     if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
+        -- Notification					
+        Action.SendNotification("Haymaker on : " .. UnitName(unit), A.Haymaker.ID)
+		return A.Haymaker
     end 
     
     if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
+        -- Notification					
+        Action.SendNotification("WarStomp on : " .. UnitName(unit), A.WarStomp.ID)
+		return A.WarStomp
     end 
     
     if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
+        -- Notification					
+        Action.SendNotification("BullRush on : " .. UnitName(unit), A.BullRush.ID)
+		return A.BullRush
     end      
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
@@ -729,7 +743,7 @@ A[3] = function(icon, isMulti)
         -- variable,name=ambush_condition,value=combo_points.deficit>=2+2*(talent.ghostly_strike.enabled&cooldown.ghostly_strike.remains<1)+buff.broadside.up&energy>60&!buff.skull_and_crossbones.up&!buff.keep_your_wits_about_you.up
         local VarAmbushCondition = (Player:ComboPointsDeficit() >= 2 + 2 * num((A.GhostlyStrike:IsSpellLearned() and A.GhostlyStrike:GetCooldown() < 1)) + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) and Player:EnergyPredicted() > 60 and Unit("player"):HasBuffs(A.SkullandCrossbones.ID, true) == 0 and Unit("player"):HasBuffs(A.KeepYourWitsBuff.ID, true) == 0) and true or false
         -- variable,name=bte_condition,value=buff.ruthless_precision.up|(azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled)&buff.roll_the_bones.up
-        local VarBteCondition = (Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (A.Deadshot:GetAzeriteRank() > 0 or A.AceUpYourSleeve:GetAzeriteRank() > 0) and RtB_Buffs > 0) and true or false
+        local VarBteCondition = ((Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (A.Deadshot:GetAzeriteRank() > 0 or A.AceUpYourSleeve:GetAzeriteRank() > 0) and RtB_Buffs > 0) and true) or false
         -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
         local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) >= 2 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
 		--print(VarBladeFlurrySync)
@@ -848,7 +862,7 @@ A[3] = function(icon, isMulti)
         --Build
         local function Build(unit)
             -- pistol_shot,if=buff.opportunity.up&(buff.keep_your_wits_about_you.stack<14|buff.deadshot.up|energy<45)
-            if A.PistolShot:IsReady(unit) and 
+            if A.PistolShot:IsReadyByPassCastGCD(unit, nil, nil, true) and 
 			    (
 				    Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0 
 					and 
@@ -877,7 +891,9 @@ A[3] = function(icon, isMulti)
             end
             -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1&(!equipped.azsharas_font_of_power|cooldown.latent_arcana.remains>20)
             if A.AdrenalineRush:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 1 ) then
-                return A.AdrenalineRush:Show(icon)
+			    -- Notification					
+                Action.SendNotification("Bursting ", A.AdrenalineRush.ID)
+				return A.AdrenalineRush:Show(icon)
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&!stealthed.rogue&combo_points.deficit>=cp_max_spend-1
             if A.MarkedforDeath:IsReady(unit) and (not Player:IsStealthed() and Player:ComboPointsDeficit() >= CPMaxSpend() - 1) then
@@ -901,7 +917,9 @@ A[3] = function(icon, isMulti)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
             if A.Vanish:IsReady(unit) and (not Player:IsStealthed() and VarAmbushCondition) and A.GetToggle(2, "UseDPSVanish") then
-                return A.Vanish:Show(icon)
+                -- Notification					
+                Action.SendNotification("Vanish burst", A.Vanish.ID)
+				return A.Vanish:Show(icon)
             end
             -- shadowmeld,if=!stealthed.all&variable.ambush_condition
             if A.Shadowmeld:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not Player:IsStealthed() and VarAmbushCondition) then
@@ -969,7 +987,7 @@ A[3] = function(icon, isMulti)
         --Finish
         local function Finish(unit)
             -- between_the_eyes,if=variable.bte_condition
-            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (VarBteCondition) then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (VarBteCondition) and not RtB_Reroll then
                 return A.BetweentheEyes:Show(icon)
             end
             -- slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
@@ -981,11 +999,11 @@ A[3] = function(icon, isMulti)
                 return A.RolltheBones:Show(icon)
             end
             -- between_the_eyes,if=azerite.ace_up_your_sleeve.enabled|azerite.deadshot.enabled
-            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (A.AceUpYourSleeve:GetAzeriteRank() > 0 or A.Deadshot:GetAzeriteRank() > 0) then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and not RtB_Reroll and (A.AceUpYourSleeve:GetAzeriteRank() > 0 or A.Deadshot:GetAzeriteRank() > 0) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- dispatch
-            if A.Dispatch:IsReadyByPassCastGCD(unit, nil, nil, true) then
+            if A.Dispatch:IsReadyByPassCastGCD(unit, nil, nil, true) and not RtB_Reroll then
                 return A.Dispatch:Show(icon)
             end
         end
@@ -1050,14 +1068,21 @@ A[3] = function(icon, isMulti)
 			
             -- run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))*(azerite.ace_up_your_sleeve.rank<2|!cooldown.between_the_eyes.up|!buff.roll_the_bones.up)
             if Finish(unit) and 
-			    (
-				    Player:ComboPoints() >= CPMaxSpend() -
+			(
+    			(
+				    A.QuickDraw:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() -
 					                           (
 											      num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0) 
 												  + 
 												  num(Unit("player"):HasBuffs(A.Opportunity.ID, true) > 0)
 												) 
 				) 
+				or
+				(
+				    not A.QuickDraw:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend()
+				
+				)
+			)
 			then
                 return true
             end
