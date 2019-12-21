@@ -566,12 +566,27 @@ A[3] = function(icon, isMulti)
             if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
                 return A.ConsumeMagic:Show(icon)
             end	
-			
+
 		    -- Taunt 
-            if not A.IsInPvP and A.Role == "TANK" and A.GetToggle(2, "AutoTaunt") and combatTime > 3.1 and A.Torment:IsReady(unit) and not Unit(unit):IsPlayer() and Unit("player"):ThreatSituation(unit) ~= 3 and not Unit(unit .. "target"):IsTank() then 
-                return A.Torment:Show(icon) 
+            if A.GetToggle(2, "AutoTaunt") 
+			and combatTime > 0     
+			then 
+			     -- if not fully aggroed or we are not current target then use taunt
+			    if A.Torment:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+                    return A.Torment:Show(icon)
+				-- else if all good on current target, switch to another one we know we dont currently tank
+                else
+                    local Growl_Nameplates = MultiUnits:GetActiveUnitPlates()
+                    if Torment_Nameplates then  
+                        for Torment_UnitID in pairs(Torment_Nameplates) do             
+                            if not UnitIsUnit("target", Torment_UnitID) and A.Torment:IsReady(Torment_UnitID, true, nil, nil, nil) and not Unit(Torment_UnitID):IsBoss() and Unit(Torment_UnitID):GetRange() <= 30 and not Unit(Torment_UnitID):InLOS() and Unit("player"):ThreatSituation(Torment_UnitID) ~= 3 then 
+                                return A:Show(icon, ACTION_CONST_AUTOTARGET)
+                            end         
+                        end 
+                    end
+				end
             end 
-			
+						
             -- call_action_list,name=brand,if=talent.charred_flesh.enabled
             if (A.CharredFlesh:IsSpellLearned()) and Brand(unit) then
                 return true
