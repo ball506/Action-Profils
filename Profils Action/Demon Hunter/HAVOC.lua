@@ -447,13 +447,18 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Fel Eruption
-	if useCC and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+	if (useCC or useKick) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
         return A.FelEruption              
     end 
 	
     -- Chaos Nova    
-    if useCC and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
+    if (useCC or useKick) and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
         return A.ChaosNova              
+    end 
+    
+	-- Imprison    
+    if (useCC or useKick) and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.Imprison              
     end 
 	
 	-- Disrupt
@@ -568,11 +573,11 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.metamorphosis.up|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and ((IsInRaid() or IsInInstance() and Unit(unit):IsBoss()) or not IsInRaid() or not IsInInstance()) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and ((IsInRaid() or IsInInstance() and Unit(unit):IsBoss()) or not IsInRaid() or not IsInInstance()) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and A.Metamorphosis:GetCooldown() == 0) or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() <= 30) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
@@ -596,7 +601,7 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=fury<40&buff.metamorphosis.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and ((IsInRaid() or IsInInstance() and Unit(unit):IsBoss()) or not IsInRaid() or not IsInInstance()) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -688,7 +693,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
                 return A.EyeBeam:Show(icon)
             end
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
@@ -769,7 +774,7 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
                 return A.EyeBeam:Show(icon)
             end
             -- blade_dance,if=variable.blade_dance
@@ -781,7 +786,7 @@ A[3] = function(icon, isMulti)
                 return A.Felblade:Show(icon)
             end
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
+            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not bool(VarWaitingForDarkSlash)) then
                 return A.EyeBeam:Show(icon)
             end
             -- annihilation,if=(talent.demon_blades.enabled|!variable.waiting_for_momentum|fury.deficit<30|buff.metamorphosis.remains<5)&!variable.pooling_for_blade_dance&!variable.waiting_for_dark_slash
@@ -793,7 +798,7 @@ A[3] = function(icon, isMulti)
                 return A.ChaosStrike:Show(icon)
             end
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
                 return A.EyeBeam:Show(icon)
             end
             -- demons_bite
@@ -959,10 +964,11 @@ end
 A[4] = function(icon)
     return A[3](icon, true)
 end
+
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
---[[local function FreezingTrapUsedByEnemy()
+local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -973,18 +979,30 @@ end
         end 
     end 
 end 
+
 local function ArenaRotation(icon, unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")   
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
-            -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
+        if unit == "arena1" then 
+			-- Disrupt
+   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+      		    return A.Disrupt
+   			end 	
+            -- Imprison Casting BreakAble CC
+            if A.Imprison:IsReady(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
+                return A.Imprison:Show(icon)
             end 
+			-- Purge
+		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
+            -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
+            if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+                return A.ConsumeMagic:Show(icon)
+            end	
         end
     end 
 end 
-local function PartyRotation(unit)
+--[[local function PartyRotation(unit)
     if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
@@ -993,14 +1011,14 @@ local function PartyRotation(unit)
     if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
         return A.SingeMagic:Show(icon)
     end
-end 
+end]]-- 
 
 A[6] = function(icon)
     return ArenaRotation(icon, "arena1")
 end
 
 A[7] = function(icon)
-    local Party = PartyRotation("party1") 
+    --local Party = PartyRotation("party1") 
     if Party then 
         return Party:Show(icon)
     end 
@@ -1008,10 +1026,10 @@ A[7] = function(icon)
 end
 
 A[8] = function(icon)
-    local Party = PartyRotation("party2") 
+    --local Party = PartyRotation("party2") 
     if Party then 
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 
