@@ -420,6 +420,42 @@ A[3] = function(icon, isMulti)
         
         --Defensives
         local function Defensives(unit)
+			
+			-- HealingPotion
+            local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+            if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+            (
+                (     -- Auto 
+                    AbyssalHealingPotion >= 100 and 
+                    (
+                        -- HP lose per sec >= 20
+                        Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                        Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                        -- TTD 
+                        Unit("player"):TimeToDieX(25) < 5 or 
+                        (
+                            A.IsInPvP and 
+                            (
+                               Unit("player"):UseDeff() or 
+                                (
+                                    Unit("player", 5):HasFlags() and 
+                                    Unit("player"):GetRealTimeDMG() > 0 and 
+                                    Unit("player"):IsFocused() 
+                                )
+                            )
+                        )
+                    ) and 
+                    Unit("player"):HasBuffs("DeffBuffs", true) == 0
+                ) or 
+                (    -- Custom
+                    AbyssalHealingPotion < 100 and 
+                    Unit("player"):HealthPercent() <= AbyssalHealingPotion
+                )
+            ) 
+            then 
+                return A.AbyssalHealingPotion:Show(icon)
+            end 
+			
             -- demon_spikes
             if A.DemonSpikes:IsReady(unit) and A.LastPlayerCastID ~= A.DemonSpikes.ID and 
 			    (
