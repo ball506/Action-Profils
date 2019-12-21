@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v1.20 (06.10.2019)",
+    DateTime = "v2.0.1 (21.12.2019)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -60,23 +60,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
+                },  
                 
             },  
             { -- [2] 2nd Row 
@@ -98,12 +82,12 @@ A.Data.ProfileUI = {
                 }, 
                 {
                     E = "Checkbox", 
-                    DB = "AotDOff",
+                    DB = "DisableAotD",
                     DBV = true,
                     L = { 
-                        enUS = "Disable AotD Checks", 
-                        ruRU = "Disable AotD Checks",  
-                        frFR = "Disable AotD Checks", 
+                        enUS = "Disable AotD", 
+                        ruRU = "Disable AotD",  
+                        frFR = "Disable AotD", 
                     }, 
                     TT = { 
                         enUS = "Enable this to option to remove ability checks against Army of the Dead. This can help smooth out the rotation if not using Army on cooldown.", 
@@ -149,6 +133,44 @@ A.Data.ProfileUI = {
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(198589) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DeathPactHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48743) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48707) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "IceboundFortitudeHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48792) .. " (%)",
                     }, 
                     M = {},
                 },
