@@ -71,22 +71,6 @@ A.Data.ProfileUI = {
 						Print = '@string' or nil,
 					},
                 }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
                 
             },  
             { -- [2] 2nd Row
@@ -154,6 +138,25 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 }, 						
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "BladeFlurryTargets",
+                    DBV = 3, -- Set healthpercentage @70% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(13877) .. " Targets number",
+                    }, 
+                    TT = { 
+                        enUS = "How many targets should we have in range before using " .. A.GetSpellInfo(13877), 
+                        ruRU = "How many targets should we have in range before using " .. A.GetSpellInfo(13877),
+                        frFR = "How many targets should we have in range before using " .. A.GetSpellInfo(13877),
+                    },
+                    M = {},
+                },
             },
             { -- [4] 4th Row
 
@@ -230,7 +233,18 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
 			},
             { -- [7] 
                 {
@@ -802,24 +816,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },
             { -- [7]
                 {
@@ -1137,6 +1134,18 @@ A.Data.ProfileUI = {
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(31224) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
                     }, 
                     M = {},
                 },
