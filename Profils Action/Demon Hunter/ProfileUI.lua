@@ -96,6 +96,22 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
                 {
+                    E = "Checkbox", 
+                    DB = "HoABossOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "HoA Boss Only", 
+                        ruRU = "HoA Boss Only",
+                        frFR = "HoA Boss Only", 
+                    }, 
+                    TT = { 
+                        enUS = "Use Hearth of Azeroth only on bosses", 
+                        ruRU = "Use Hearth of Azeroth only on bosses", 
+                        frFR = "Use Hearth of Azeroth only on bosses", 
+                    }, 
+                    M = {},
+                }, 
+                {
                     E = "Dropdown",                                                         
                     OT = {
                         { text = "Burst Only", value = 1 },
