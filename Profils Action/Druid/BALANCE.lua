@@ -112,7 +112,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-	AbissalHealing						   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
+	AbyssalHealingPotion    			   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }),	
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -364,8 +364,8 @@ local function SelfDefensives()
 	
 	-- HealingPotion
 	local PotHeal = A.GetToggle(2, "AbyssalPot")
-	if A.AbissalHealing:IsReady("player") and  Unit("player"):HealthPercent() <= PotHeal and Unit("player"):CombatTime() > 0 then
-		return A.AbissalHealing
+	if A.AbyssalHealingPotion:IsReady("player") and  Unit("player"):HealthPercent() <= PotHeal and Unit("player"):CombatTime() > 0 then
+		return A.AbyssalHealingPotion
 	end
 	
 end

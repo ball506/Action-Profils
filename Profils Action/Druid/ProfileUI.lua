@@ -18,7 +18,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.3 (19.12.2019)",
+    DateTime = "v2.0.4 (21.12.2019)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -419,12 +419,30 @@ A.Data.ProfileUI = {
                         frFR = "Automatic Taunt",
                     }, 
                     TT = { 
-                        enUS = "If activated, will use automatically use Torment whenever available.", 
-                        ruRU = "If activated, will use automatically use Torment whenever available.",  
-                        frFR = "If activated, will use automatically use Torment whenever available.", 
+                        enUS = "If activated, will use automatically use Growl whenever available.", 
+                        ruRU = "If activated, will use automatically use Growl whenever available.",  
+                        frFR = "If activated, will use automatically use Growl whenever available.", 
                     }, 
                     M = {},
                 },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ThreatDamagerLimit",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = "Only 'Damager'\nThreat limit(agro,>= %)",
+						ruRU = "Только 'Урон'\nЛимит угрозы(агро,>= %)", 
+					}, 
+                    TT = { 
+                        enUS = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized", 
+                        ruRU = "OFF - Нет лимита\nЕсли процент угрозы (агро) больше или равен указанному,\nто будет выполняться 'безопасная' ротация\nПо мере возможности перестанут использоваться способности\nвызывающие слишком много угрозы пока\nуровень угрозы (агро) не нормализуется",  
+                        frFR = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized",
+					},    
+                    M = {},
+                },				
     			{
                     E = "Checkbox", 
                     DB = "OffensiveRage",
