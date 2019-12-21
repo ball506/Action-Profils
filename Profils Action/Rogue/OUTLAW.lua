@@ -734,6 +734,21 @@ A[3] = function(icon, isMulti)
 	local RtB_Buffs = RtB_Buffs() 
 	local RtB_Reroll = RtB_Reroll()
 	CheckGoodBuffs()
+	-- FocusedAzeriteBeam protection channel
+	local CanCast = true
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
+		-- @return:
+		-- [1] Currect Casting Left Time (seconds) (@number)
+		-- [2] Current Casting Left Time (percent) (@number)
+		-- [3] spellID (@number)
+		-- [4] spellName (@string)
+		-- [5] notInterruptable (@boolean, false is able to be interrupted)
+		-- [6] isChannel (@boolean)
+	if percentLeft > 0 and spellName == A.FocusedAzeriteBeam:Info() then 
+	    CanCast = false
+	else
+	    CanCast = true
+	end
     --print(RtB_Buffs())
 	--print(RtB_Reroll())
     ------------------------------------------------------
@@ -841,11 +856,13 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60&!buff.adrenaline_rush.up
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2  and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) 
+			and Action.GetToggle(1, "HeartOfAzeroth") 
+			and ((MultiUnits:GetByRange(8, 5, 10) >= 2 or Unit(unit):IsBoss()) and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8, 5, 10) >= 2) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
@@ -1057,7 +1074,7 @@ A[3] = function(icon, isMulti)
             end]]--
             
 			-- call_action_list,name=stealth,if=stealthed.all
-            if (Player:IsStealthed() or Unit("player"):HasBuffs(A.VanishBuff.ID, true) > 0) and Stealth(unit) then
+            if (Player:IsStealthed() or Unit("player"):HasBuffs(A.VanishBuff.ID, true) > 0) and CanCast and Stealth(unit) then
                 return true
             end
 			
@@ -1068,12 +1085,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=cds
-            if Cds(unit) then
+            if Cds(unit) and CanCast then
                 return true
             end
 			
             -- run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))*(azerite.ace_up_your_sleeve.rank<2|!cooldown.between_the_eyes.up|!buff.roll_the_bones.up)
-            if Finish(unit) and 
+            if Finish(unit) and CanCast  and 
 			(
     			(
 				    A.QuickDraw:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() -
@@ -1094,17 +1111,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=build
-            if Build(unit) then
+            if Build(unit) and CanCast then
                 return true
             end
 			
             -- arcane_torrent,if=energy.deficit>=15+energy.regen
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
+            if A.ArcaneTorrent:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
             -- arcane_pulse
-            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") then
+            if A.ArcanePulse:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") then
                 return A.ArcanePulse:Show(icon)
             end
 
