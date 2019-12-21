@@ -498,7 +498,8 @@ A[3] = function(icon, isMulti)
                 return A.BearForm:Show(icon)
             end
             -- potion
-            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
+            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") 
+			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
 			then
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
