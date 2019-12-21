@@ -266,6 +266,20 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {

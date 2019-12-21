@@ -122,7 +122,8 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
     VialofStorms                         = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
     -- Potions
-    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
+	AbyssalHealingPotion    			 = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }),	
     PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
     -- Misc
     CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
@@ -356,6 +357,42 @@ local function SelfDefensives()
     if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
         return A.Stoneform
     end 
+	
+	    -- HealingPotion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end 
+	
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
