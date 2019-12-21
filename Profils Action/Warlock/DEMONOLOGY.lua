@@ -217,322 +217,34 @@ local function FutureShard()
     end
 end
 
-Action.GuardiansTable = {
-    --{ID, name, spawnTime, ImpCasts, Duration, despawnTime}
-    Pets = { 
-    },
-    ImpCount = 0,
-    ImpCastsRemaing = 0,
-    ImpTotalEnergy = 0,
-    WildImpDuration = 0,
-    FelguardDuration = 0,
-    DreadstalkerDuration = 0,
-    DemonicTyrantDuration = 0,
-    VilefiendDuration = 0,
-    -- Used for Wild Imps spawn prediction
-    InnerDemonsNextCast = 0,
-    ImpsSpawnedFromHoG = 0         
-};
-
--- local for pets count & duration functions        
-local PetDurations = {
-    -- en, fr ,de ,ru
-    ["Traqueffroi"] = 12.25,
-    ["Dreadstalker"] = 12.25, 
-    ["Зловещий охотник"] = 12.25, 
-    ["Schreckenspirscher"] = 12.25, 
-    ["Diablotin sauvage"] = 20, 
-    ["Wild Imp"] = 20, 
-    ["Дикий бес"] = 20, 
-    ["Wildwichtel"] = 20,  
-    ["Gangregarde"] = 28, 
-    ["Felguard"] = 20, 
-    ["Страж Скверны"] = 20, 
-    ["Teufelswache"] = 20,  
-    ["Tyran démoniaque"] = 15, 
-    ["Demonic Tyrant"] = 20, 
-    ["Демонический тиран"] = 20, 
-    ["Dämonischer Tyrann"] = 20, 
-    ["Démon abject"] = 15,
-    ["Vilefiend"] = 20, 
-    ["Мерзотень"] = 20, 
-    ["Finsteres Scheusal"] = 20  
- };
-
-local PetTypes = {
-    -- en, fr ,de ,ru
-    ["Traqueffroi"] = true, 
-    ["Dreadstalker"] = true, 
-    ["Зловещий охотник"] = true, 
-    ["Schreckenspirscher"] = true,
-    ["Diablotin sauvage"]  = true, 
-    ["Wild Imp"] = true, 
-    ["Дикий бес"] = true, 
-    ["Wildwichtel"] = true, 
-    ["Gangregarde"] = true, 
-    ["Felguard"] = true, 
-    ["Страж Скверны"] = true, 
-    ["Teufelswache"] = true,   
-    ["Tyran démoniaque"] = true, 
-    ["Demonic Tyrant"] = true, 
-    ["Демонический тиран"] = true, 
-    ["Dämonischer Tyrann"] = true,  
-    ["Démon abject"] = true,
-    ["Vilefiend"] = true, 
-    ["Мерзотень"] = true, 
-    ["Finsteres Scheusal"] = true  
-};
-
-local PetsData = {
-    [98035] = {
-        name = "Dreadstalker",
-        duration = 12.25
-    },
-    [55659] = {
-        name = "Wild Imp",
-        duration = 20
-    },
-    [143622] = {
-        name = "Wild Imp",
-        duration = 20
-    },
-    [17252] = {
-        name = "Felguard",
-        duration = 28
-    },
-    [135002] = {
-        name = "Demonic Tyrant",
-        duration = 15
-    },
-    [135816] = {
-        name = "Vilefiend",
-        duration = 15
-    },
-};  
-
 ---------------------------
 ----- PETS MANAGEMENT -----
 ---------------------------
--- Update the GuardiansTable
-function UpdatePetTable()
-    for key, petTable in pairs(Action.GuardiansTable.Pets) do
-        if petTable then
-            -- Remove expired pets
-            if TMW.time >= petTable.despawnTime then
-                if petTable.name == "Wild Imp" then
-                    Action.GuardiansTable.ImpCount = Action.GuardiansTable.ImpCount - 1
-                end
-                if petTable.name == "Felguard" then
-                    Action.GuardiansTable.FelguardDuration = 0
-                elseif petTable.name == "Dreadstalker" then
-                    Action.GuardiansTable.DreadstalkerDuration = 0
-                elseif petTable.name == "Demonic Tyrant" then
-                    Action.GuardiansTable.DemonicTyrantDuration = 0
-                elseif petTable.name == "Vilefiend" then
-                    Action.GuardiansTable.VilefiendDuration = 0
-                elseif petTable.name == "Wild Imp" then
-                    Action.GuardiansTable.WildImpDuration = 0
-                    Action.GuardiansTable.ImpCastsRemaing = Action.GuardiansTable.ImpCastsRemaing - petTable.ImpCasts
-                    Action.GuardiansTable.ImpTotalEnergy =  Action.GuardiansTable.ImpCastsRemaing * 20
-                end
-                    Action.GuardiansTable.Pets[key] = nil
-            end
-        end
-        -- Remove any imp that has casted all of its bolts
-        if petTable.ImpCasts <= 0 and  petTable.WildImpFrozenEnd < 1 then
-            Action.GuardiansTable.ImpCount = Action.GuardiansTable.ImpCount - 1
-            Action.GuardiansTable.Pets[key] = nil
-        end
-        -- Update Durations
-        if TMW.time <= petTable.despawnTime then
-            petTable.Duration = petTable.despawnTime - TMW.time
-            if petTable.name == "Felguard" then
-                Action.GuardiansTable.FelguardDuration = petTable.Duration
-            elseif petTable.name == "Dreadstalker" then
-                Action.GuardiansTable.DreadstalkerDuration = petTable.Duration
-            elseif petTable.name == "Demonic Tyrant" then
-                Action.GuardiansTable.DemonicTyrantDuration = petTable.Duration
-            elseif petTable.name == "Vilefiend" then
-                Action.GuardiansTable.VilefiendDuration = petTable.Duration
-            elseif petTable.name == "Wild Imp" then
-                Action.GuardiansTable.WildImpDuration = petTable.Duration
-                if petTable.WildImpFrozenEnd ~= 0 then
-                    local ImpTime =  math.floor(petTable.WildImpFrozenEnd - TMW.time + 0.5)
-                    if ImpTime < 1 then 
-                        petTable.WildImpFrozenEnd = 0 
-                    end
-                end
-            end    
-            -- Add Time to pets  
-            if TyrantSpawed then
-                if PetsData[UnitPetID] and PetsData[UnitPetID].name == "Demonic Tyrant" then
-                    for key, petTable in pairs(Action.GuardiansTable.Pets) do
-                        if petTable then
-                            petTable.spawnTime = TMW.time + petTable.Duration + 15 - PetDurations[petTable.name]
-                            petTable.despawnTime = petTable.spawnTime + PetDurations[petTable.name]
-                            if petTable.name == "Wild Imp" then
-                                petTable.WildImpFrozenEnd = TMW.time + 15
-                            end
-                        end
-                    end
-                end
-            end
-        end
-        if TyrantSpawed then 
-            TyrantSpawed = false 
-        end  
-    end    
-end    
-
--- Add demon to table
-A:RegisterEvent("SPELL_SUMMON",
-    function (...)
-    --timestamp,Event,_,_,_,_,_,UnitPetGUID,petName,_,_,SpellID=select(1,...)
-    local timestamp,Event,_,_,_,_,_,UnitPetGUID,_,_,_,SpellID=select(1,...)
-    local _, _, _, _, _, _, _, UnitPetID = string.find(UnitPetGUID, "(%S+)-(%d+)-(%d+)-(%d+)-(%d+)-(%d+)-(%S+)")
-    UnitPetID = tonumber(UnitPetID)
-                
-    -- Add pet
-    if (UnitPetGUID ~= UnitGUID("pet") and Event == "SPELL_SUMMON" and PetsData[UnitPetID]) then
-        local summonedPet = PetsData[UnitPetID]
-        local petTable = {
-            ID = UnitPetGUID,
-            name = summonedPet.name,
-            spawnTime = TMW.time,
-            ImpCasts = 5,
-            Duration = summonedPet.duration,
-            WildImpFrozenEnd = 0,
-            despawnTime = TMW.time + tonumber(summonedPet.duration)
-        }
-        
-		table.insert(Action.GuardiansTable.Pets,petTable)
-            if summonedPet.name == "Wild Imp" then
-                Action.GuardiansTable.ImpCount = Action.GuardiansTable.ImpCount + 1
-                Action.GuardiansTable.ImpCastsRemaing = Action.GuardiansTable.ImpCastsRemaing + 5
-                Action.GuardiansTable.WildImpDuration = PetDurations[petName]
-                petTable.WildImpFrozenEnd = 0 
-            elseif summonedPet.name == "Felguard" then
-                Action.GuardiansTable.FelguardDuration = PetDurations[petName]
-            elseif summonedPet.name == "Dreadstalker" then
-                Action.GuardiansTable.DreadstalkerDuration = PetDurations[petName]
-            elseif summonedPet.name == "Demonic Tyrant" then
-                if not TyrantSpawed then TyrantSpawed = true  end
-                    Action.GuardiansTable.DemonicTyrantDuration = PetDurations[petName]
-                    UpdatePetTable()
-            elseif summonedPet.name == "Vilefiend" then
-                Action.GuardiansTable.VilefiendDuration = PetDurations[petName]   
-            end
-        end        
-        
-        -- Update when next Wild Imp will spawn from Inner Demons talent
-        if UnitPetID == 143622 then
-            Action.GuardiansTable.InnerDemonsNextCast = TMW.time + 12
-        end
-
-        -- Updates how many Wild Imps have yet to spawn from HoG cast
-        if UnitPetID == 55659 and Action.GuardiansTable.ImpsSpawnedFromHoG > 0 then
-            Action.GuardiansTable.ImpsSpawnedFromHoG = Action.GuardiansTable.ImpsSpawnedFromHoG - 1
-        end
-        
-        -- Update the pet table
-        UpdatePetTable()
-    end
-end)
-    
--- Decrement ImpCasts and Implosion Listener
-A:RegisterEvent("SPELL_CAST_SUCCESS",
-    function (...)
-    --local timestamp,Event,_,SourceGUID,SourceName,_,_,UnitPetGUID,petName,_,_,SpellID = select(4, ...);
-    --local timestamp,Event,_,SourceGUID,SourceName,_,_,UnitPetGUID,petName,_,_,spell,SpellName=select(1,...)
-    local SourceGUID,_,_,_,UnitPetGUID,_,_,_,SpellID = select(4, ...);
-        
-    -- Check for imp bolt casts
-    if SpellID == 104318 then
-        for key, petTable in pairs(Action.GuardiansTable.Pets) do
-            if SourceGUID == petTable.ID then
-                if  petTable.WildImpFrozenEnd < 1 then
-                    petTable.ImpCasts = petTable.ImpCasts - 1
-                    Action.GuardiansTable.ImpCastsRemaing = Action.GuardiansTable.ImpCastsRemaing - 1
-                end
-            end
-        end
-        Action.GuardiansTable.ImpTotalEnergy =  Action.GuardiansTable.ImpCastsRemaing * 20
-    end
-                
-    -- Clear the imp table upon Implosion cast or Demonic Tyrant cast if Demonic Consumption is talented
-    if SourceGUID == Player:GUID() and (SpellID == 196277 or (SpellID == 265187 and Spell(267215):IsAvailable())) then
-        for key, petTable in pairs(Action.GuardiansTable.Pets) do
-            if petTable.name == "Wild Imp" then
-                Action.GuardiansTable.Pets[key] = nil
-            end
-        end
-        Action.GuardiansTable.ImpCount = 0
-        Action.GuardiansTable.ImpCastsRemaing = 0
-        Action.GuardiansTable.ImpTotalEnergy = 0
-    end
-    -- Update the imp table
-        UpdatePetTable()
-    end
-end)
-
--- Keep track how many Soul Shards we have
-local SoulShards = 0;
-function UpdateSoulShards()
-    SoulShards = Player:SoulShards()
-end
-
--- On Successful HoG cast add how many Imps will spawn
-A:RegisterEvent("SPELL_CAST_SUCCESS",
-    function(_, event, _, _, _, _, _, _, _, _, _, SpellID)
-        if SpellID == 105174 then
-            Action.GuardiansTable.ImpsSpawnedFromHoG = Action.GuardiansTable.ImpsSpawnedFromHoG + (SoulShards >= 3 and 3 or SoulShards)
-        end
-    end
-end)
-
-local function ImpsSpawnedDuring(miliseconds)
-    local ImpSpawned = 0
-    local SpellCastTime = ( miliseconds / 1000 ) * Player:SpellHaste()
-
-    if TMW.time <= Action.GuardiansTable.InnerDemonsNextCast and (TMW.time + SpellCastTime) >= Action.GuardiansTable.InnerDemonsNextCast then
-        ImpSpawned = ImpSpawned + 1
-    end
-
-    if Player:IsCasting(S.HandOfGuldan) then
-        ImpSpawned = ImpSpawned + (Player:SoulShards() >= 3 and 3 or Player:SoulShards())
-    end
-
-    ImpSpawned = ImpSpawned +  Action.GuardiansTable.ImpsSpawnedFromHoG
-
-    return ImpSpawned
-end
-
--- Pets API ---
 
 -- Function to check for imp count
 local function WildImpsCount()
-    return Action.GuardiansTable.ImpCount or 0
+    return Pet:GetCount(55659) or 0
 end
 
 -- Function to check for remaining Dreadstalker duration
 local function DreadStalkersTime()
-    return Action.GuardiansTable.DreadstalkerDuration or 0
+    return Pet:GetRemainDuration(98035) or 0
 end
 
 -- Function to check for remaining Grimoire Felguard duration
 local function GrimoireFelguardTime()
-    return Action.GuardiansTable.FelguardDuration or 0
+    return Pet:GetRemainDuration(17252) or 0
 end
 
 -- Function to check for Demonic Tyrant duration
 local function DemonicTyrantTime()
-    return Action.GuardiansTable.DemonicTyrantDuration or 0
-end         
+    return Pet:GetRemainDuration(135002) or 0
+end  
 
--- Function to check Total active Imp Energy (More accurate than imp count for "Demonic Consumption" talent)
-local function WildImpTotalEnergy()
-    return Action.GuardiansTable.ImpTotalEnergy or 0
-end
+-- Function to check for Vilefiend duration
+local function VilefiendTime()
+    return Pet:GetRemainDuration(135816) or 0
+end        
 
 -- Check for Real Tyran summoned since VoP randomly summon a Tyran for 35% of its base duration
 local function RealTyranIsActive()
@@ -545,20 +257,9 @@ end
 
 -- SummonDemonicTyrant checker
 local function MegaTyrant()
-    
-    if WildImpTotalEnergy() >= 1000 then 
-        return true
-    end
-    
-    if WildImpsCount() >= 6 and not Player:BuffP(S.DemonicCoreBuff) then
-        return true
-    end
-    
-    if WildImpsCount() + ImpsSpawnedDuring(2000) >= 10 then
-        return true
-    end        
-    
-    return false    
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+	
+    return (WildImpsCount() >= 5 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
 end
 
 -- Multidot Handler UI w/ Doom --
@@ -606,13 +307,21 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-
+    local WildImpsCount = WildImpsCount()
+	local DreadStalkersTime = DreadStalkersTime()
+	local GrimoireFelguardTime = GrimoireFelguardTime()
+	local DemonicTyrantTime = DemonicTyrantTime()
+	local VilefiendTime = VilefiendTime()
+	local RealTyranIsActive = RealTyranIsActive()
+	local MegaTyrant = MegaTyrant()
+	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, BuildAShard, Implosion, NetherPortal, NetherPortalActive, NetherPortalBuilding, Opener
-        --Precombat
+        
+		--Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -621,14 +330,10 @@ A[3] = function(icon, isMulti)
             if A.SummonPet:IsReady(unit) then
                 return A.SummonPet:Show(icon)
             end
-            -- inner_demons,if=talent.inner_demons.enabled
-            if A.InnerDemons:IsReady(unit) and (A.InnerDemons:IsSpellLearned()) then
-                return A.InnerDemons:Show(icon)
-            end
             -- snapshot_stats
             -- potion
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                return A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofUnbridledFury:Show(icon)
             end
             -- demonbolt
             if A.Demonbolt:IsReady(unit) then
@@ -643,7 +348,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime() > 15 or Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):HasHeroism) then
+            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime() > 15 or Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):HasHeroism()) then
                 return A.SoulStrike:Show(icon)
             end
             -- shadow_bolt
@@ -849,7 +554,7 @@ A[3] = function(icon, isMulti)
                 return A.BilescourgeBombers:Show(icon)
             end
             -- soul_strike,line_cd=30,if=!buff.bloodlust.remains|time>5&prev_gcd.1.hand_of_guldan
-            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism or Unit("player"):CombatTime() > 5 and Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
+            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism() or Unit("player"):CombatTime() > 5 and Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
                 return A.SoulStrike:Show(icon)
             end
             -- summon_vilefiend,if=soul_shard=5
@@ -881,21 +586,21 @@ A[3] = function(icon, isMulti)
                 return A.Demonbolt:Show(icon)
             end
             -- call_action_list,name=build_a_shard
-            if (true) then
-                local ShouldReturn = BuildAShard(unit); if ShouldReturn then return ShouldReturn; end
+            if BuildAShard(unit) then
+                return true
             end
         end
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() then
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then
+            return true
         end
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
             -- potion,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)&(!talent.nether_portal.enabled|cooldown.nether_portal.remains>160)|target.time_to_die<30
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
-                return A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) and (not A.NetherPortal:IsSpellLearned() or A.NetherPortal:GetCooldown() > 160) or Unit(unit):TimeToDie() < 30) then
+                return A.PotionofUnbridledFury:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.summon_demonic_tyrant.remains<=20&!talent.nether_portal.enabled
             if A.AzsharasFontofPower:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() <= 20 and not A.NetherPortal:IsSpellLearned()) then
@@ -1059,8 +764,8 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
             -- call_action_list,name=build_a_shard
-            if (true) then
-                local ShouldReturn = BuildAShard(unit); if ShouldReturn then return ShouldReturn; end
+            if BuildAShard(unit) then
+                return true
             end
         end
     end
