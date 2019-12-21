@@ -824,6 +824,7 @@ A[3] = function(icon, isMulti)
     --------------------
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
+	local CombatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
@@ -849,6 +850,21 @@ A[3] = function(icon, isMulti)
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	
+	-- FocusedAzeriteBeam protection channel
+	local CanCast = true
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
+		-- @return:
+		-- [1] Currect Casting Left Time (seconds) (@number)
+		-- [2] Current Casting Left Time (percent) (@number)
+		-- [3] spellID (@number)
+		-- [4] spellName (@string)
+		-- [5] notInterruptable (@boolean, false is able to be interrupted)
+		-- [6] isChannel (@boolean)
+	if percentLeft > 0 and spellName == A.FocusedAzeriteBeam:Info() then 
+	    CanCast = false
+	else
+	    CanCast = true
+	end	
 	------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -936,12 +952,12 @@ A[3] = function(icon, isMulti)
         end
 			
         -- Marked for Death
-		if A.MarkedForDeath:IsReady(unit) and Player:ComboPoints() <= 1 and A.ToxicBlade:IsSpellLearned() and A.MarkedForDeath:IsSpellLearned() then
+		if A.MarkedForDeath:IsReady(unit) and CanCast and Player:ComboPoints() <= 1 and A.ToxicBlade:IsSpellLearned() and A.MarkedForDeath:IsSpellLearned() then
 			return A.MarkedForDeath:Show(icon)
 		end
 		
 		-- Vendetta
-		if A.Vendetta:IsReady(unit) and A.BurstIsON(unit) and Player:ComboPoints() >= 4 and 
+		if A.Vendetta:IsReady(unit) and CanCast and A.BurstIsON(unit) and Player:ComboPoints() >= 4 and 
 		    (
 			    (
 			        (A.IsInPvP and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 0 and Player:EnergyPredicted() <= 80 and Unit(unit):HealthPercent() <= 75) 
@@ -950,13 +966,17 @@ A[3] = function(icon, isMulti)
 			    (
 			        (not A.IsInPvP and (Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 or Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 0) and Player:EnergyPredicted() <= 80)
 			    )
+			or  
+			    Unit("player"):HasHeroism()
+			or
+			    Unit(unit):IsBoss() and CombatTime > 1
 			) 
         then
 			return A.Vendetta:Show(icon)
 		end	
 		
 		-- Blood of the Enemy
-        if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and 
+        if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and 
 		    (
 			    (A.IsInPvP and Unit(unit):HealthPercent() <= 75) or not A.IsInPvP
 			) and 
@@ -966,7 +986,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-        if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+        if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") 
 		and (Player:EnergyTimeToMaxPredicted() > 1 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0
 		and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetCooldown() < A.GetGCD())) 
 		then
@@ -974,7 +994,7 @@ A[3] = function(icon, isMulti)
         end
 		
 		-- Garrote
-		if A.Garrote:IsReady(unit) and 
+		if A.Garrote:IsReady(unit) and CanCast and 
 		    (
 			    Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) == 0
 				or 
@@ -1001,12 +1021,12 @@ A[3] = function(icon, isMulti)
 		end	
 		
 		-- Envenom
-		if A.Envenom:IsReady(unit) and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 then
+		if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 then
 			return A.Envenom:Show(icon)
 		end
 		
 		-- Rupture with refresh
-		if A.Rupture:IsReady(unit) and Player:ComboPoints() >= 4 and 
+		if A.Rupture:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and 
 		(
 		    Unit(unit):HasDeBuffs(A.Rupture.ID, true) == 0
 			or 
@@ -1030,12 +1050,12 @@ A[3] = function(icon, isMulti)
         end	]]--
 		
         -- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
-        if A.Vanish:IsReady("player") and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 and Action.GetToggle(2, "VanishBurst")  and (A.Exsanguinate:IsSpellLearned() and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and bool(VarSingleUnit)) and Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1 and (not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) then
+        if A.Vanish:IsReady("player") and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 and Action.GetToggle(2, "VanishBurst")  and (A.Exsanguinate:IsSpellLearned() and (A.Nightstalker:IsSpellLearned() or A.Subterfuge:IsSpellLearned() and bool(VarSingleUnit)) and Player:ComboPoints() >= CPMaxSpend() and A.Exsanguinate:GetCooldown() < 1 and (not A.Subterfuge:IsSpellLearned() or not bool(A.ShroudedSuffocation:GetAzeriteRank()) or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) then
             return A.Vanish:Show(icon)
         end
 			
         -- vanish,if=talent.nightstalker.enabled&!talent.exsanguinate.enabled&combo_points>=cp_max_spend&debuff.vendetta.up
-        if A.Vanish:IsReady("player") and Action.GetToggle(2, "VanishBurst") and (A.Nightstalker:IsSpellLearned() and not A.Exsanguinate:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
+        if A.Vanish:IsReady("player") and CanCast and Action.GetToggle(2, "VanishBurst") and (A.Nightstalker:IsSpellLearned() and not A.Exsanguinate:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) then
             return A.Vanish:Show(icon)
         end
 			
@@ -1044,7 +1064,7 @@ A[3] = function(icon, isMulti)
 			
         -- pool_resource,for_next=1,extra_amount=45
         -- vanish,if=talent.subterfuge.enabled&!stealthed.rogue&cooldown.garrote.up&(variable.ss_vanish_condition|!azerite.shrouded_suffocation.enabled&dot.garrote.refreshable)&combo_points.deficit>=((1+2*azerite.shrouded_suffocation.enabled)*spell_targets.fan_of_knives)>?4&raid_event.adds.in>12
-        if A.Vanish:IsReady("player") and Action.GetToggle(2, "VanishBurst") 
+        if A.Vanish:IsReady("player") and CanCast and Action.GetToggle(2, "VanishBurst") 
 		and (A.Subterfuge:IsSpellLearned() and not Player:IsStealthed() and A.Garrote:GetCooldown() == 0 
 		and (bool(VarSsVanishCondition) or not bool(A.ShroudedSuffocation:GetAzeriteRank()) and Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true)) 
 		and Player:ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank()) * MultiUnits:GetByRangeInCombat(10, 5, 10)) > 4))
@@ -1059,7 +1079,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- vanish,if=talent.master_assassin.enabled&!stealthed.all&master_assassin_remains<=0&!dot.rupture.refreshable&dot.garrote.remains>3&debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up)&(!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up)
-        if A.Vanish:IsReady("player") and Action.GetToggle(2, "VanishBurst") and 
+        if A.Vanish:IsReady("player") and CanCast and Action.GetToggle(2, "VanishBurst") and 
 		    (
 			    A.MasterAssassin:IsSpellLearned() and not Player:IsStealthed() and MasterAssassinRemains <= 0 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 5 
 				and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 
@@ -1070,7 +1090,7 @@ A[3] = function(icon, isMulti)
             return A.Vanish:Show(icon)
         end
 		
-        if A.Exsanguinate:IsSpellLearned() and A.Exsanguinate:IsReady(unit) and
+        if A.Exsanguinate:IsSpellLearned() and CanCast and A.Exsanguinate:IsReady(unit) and
             -- actions.cds+=/exsanguinate,if=dot.rupture.remains>4+4*cp_max_spend&!dot.garrote.refreshable
             Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 + 4 * CPMaxSpend() and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 5.4
 		then
@@ -1078,7 +1098,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.vendetta.remains>10-4*equipped.azsharas_font_of_power|target.time_to_die<20
-        if A.AshvanesRazorCoral:IsReady(unit) 
+        if A.AshvanesRazorCoral:IsReady(unit) and CanCast and Unit(unit):TimeToDie() > 30
 		and (
 		        (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0)
 				or 
@@ -1093,50 +1113,50 @@ A[3] = function(icon, isMulti)
         end		
 		
         -- toxic_blade,if=dot.rupture.ticking&(!equipped.azsharas_font_of_power|cooldown.vendetta.remains>10)
-        if A.ToxicBlade:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and (not A.AzsharasFontofPower:IsExists() or A.Vendetta:GetCooldown() > 10)) then
+        if A.ToxicBlade:IsReady(unit) and CanCast and (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and (not A.AzsharasFontofPower:IsExists() or A.Vendetta:GetCooldown() > 10)) then
             return A.ToxicBlade:Show(icon)
         end		
 		
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
-        if A.IsInPvP and A.KidneyShot:IsReady(unit) and inMelee and Player:ComboPoints() >= 4 and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+        if A.IsInPvP and A.KidneyShot:IsReady(unit) and CanCast and inMelee and Player:ComboPoints() >= 4 and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
    			-- Notification					
             Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
 			return A.KidneyShot:Show(icon)
         end	
        
 	   -- 'Full' Kidney Shot
-		if A.IsInPvP and A.KidneyShot:IsReady(unit) and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
+		if A.IsInPvP and A.KidneyShot:IsReady(unit) and CanCast and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
             return A.KidneyShot:Show(icon)              
         end
 				
 		-- Neuro
-		if A.IsInPvP and A.Neuro:IsSpellLearned() and A.Neuro:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 75 and not Player:IsStealthed() then
+		if A.IsInPvP and A.Neuro:IsSpellLearned() and CanCast and A.Neuro:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 75 and not Player:IsStealthed() then
 			return A.Neuro:Show(icon)
 		end
 		
 		-- Shiv
-		if A.IsInPvP and A.Shiv:IsSpellLearned() and A.Shiv:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 50 and Action.AbsentImun(unit, "DamagePhysImun", true) and A.Shiv:IsReady(unit) and not Unit(unit):InCC()  then
+		if A.IsInPvP and A.Shiv:IsSpellLearned() and CanCast and A.Shiv:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 50 and Action.AbsentImun(unit, "DamagePhysImun", true) and A.Shiv:IsReady(unit) and not Unit(unit):InCC()  then
 			return A.Shiv:Show(icon)
    		end
 		
         -- Death From Above
-		if A.IsInPvP and A.DFA:IsSpellLearned() and A.DFA:IsReady(unit) and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Unit(unit):GetRange() <= 15 and Action.AbsentImun("target", "DamagePhysImun", true) then
+		if A.IsInPvP and A.DFA:IsSpellLearned() and CanCast and A.DFA:IsReady(unit) and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Unit(unit):GetRange() <= 15 and Action.AbsentImun("target", "DamagePhysImun", true) then
 			return A.DFA:Show(icon)
    	    end		
 
 		-- Mouseover KidneyShot on enemy trying to leave with less than 30% HP
-        if unit ~= "mouseover" and Player:ComboPoints() >= 4 and Unit(unit):HealthPercent() <= 30 and  Unit(unit):GetRange() <= 5 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
+        if unit ~= "mouseover" and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HealthPercent() <= 30 and  Unit(unit):GetRange() <= 5 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
             return A.KidneyShot:Show(icon)
         end	
 		
 		-- PoisonedKnife
-		if A.PoisonedKnife:IsReady(unit) and Unit(unit):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID, true) < 2  then
+		if A.PoisonedKnife:IsReady(unit) and CanCast and Unit(unit):CombatTime() >= 1 and not inMelee and A.PoisonedKnife:AbsentImun(unit, {"TotalImun", "DamagePhysImun"}) and Unit(unit):HasDeBuffs(A.DeadlyPoisonDebuff.ID, true) < 2  then
 			return A.PoisonedKnife:Show(icon)
 		end
 		
 		
 		-- Bursting #2
-        if unit ~= "mouseover" and A.BurstIsON(unit) then                         
+        if unit ~= "mouseover" and A.BurstIsON(unit) and CanCast then                         
             -- Simcraft 
             
 			-- call_action_list,name=essences                        
@@ -1165,14 +1185,14 @@ A[3] = function(icon, isMulti)
 			
             -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and Player:EnergyPredicted() < 70) 
+			and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2) 
 			then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
             if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 ) 
+			and (MultiUnits:GetByRange(8, 5, 10) >= 2 or Unit(unit):IsBoss()) 
 			then
                 return A.PurifyingBlast:Show(icon)
             end
@@ -1206,7 +1226,7 @@ A[3] = function(icon, isMulti)
 			
 			-- Cooldowns --
                         
-            if inMelee then 
+            if inMelee and CanCast then 
 						
                 -- Racials 
                 if A.BloodFury:AutoRacial(unit) then 
@@ -1240,7 +1260,7 @@ A[3] = function(icon, isMulti)
 
 		-- Agressive CC Burst Rotation
 		local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5)
-		if (A.IsInPvP and Unit(unit):HealthPercent() <= 40 or Unit(EnemyHealerUnitID):InCC() >= 5) then
+		if (A.IsInPvP and Unit(unit):HealthPercent() <= 40 or Unit(EnemyHealerUnitID):InCC() >= 5) and CanCast then
 		    
 			-- SmokeBomb under 30% HP
 		    if A.SmokeBomb:IsSpellLearned() and Action.GetToggle(2, "SmokeBombFinishComco") then
@@ -1297,12 +1317,12 @@ A[3] = function(icon, isMulti)
 		end
 		
 		-- AoE Fan of Knives to spread poisons
-		if (isMulti or A.GetToggle(2, "AoE")) and Player:ComboPoints() < 5 and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady("player") then
+		if (isMulti or A.GetToggle(2, "AoE")) and CanCast and Player:ComboPoints() < 5 and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady("player") then
 			return A.FanofKnives:Show(icon)
 		end	
 		
 		-- Mutilate
-		if A.Mutilate:IsReady(unit) and Player:ComboPoints() < 5 and MultiUnits:GetByRangeInCombat(8, 2) <= 2 then
+		if A.Mutilate:IsReady(unit) and CanCast and Player:ComboPoints() < 5 and MultiUnits:GetByRangeInCombat(8, 2) <= 2 then
 			return A.Mutilate:Show(icon)
 		end				
 
