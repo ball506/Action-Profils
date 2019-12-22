@@ -67,7 +67,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "SoloMode",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Enable Solo Mode", 
                         ruRU = "Enable Solo Mode",  
@@ -85,9 +85,9 @@ A.Data.ProfileUI = {
                     DB = "DisableAotD",
                     DBV = true,
                     L = { 
-                        enUS = "Disable AotD", 
-                        ruRU = "Disable AotD",  
-                        frFR = "Disable AotD", 
+                        enUS = "Disable AotD checks", 
+                        ruRU = "Disable AotD checks",  
+                        frFR = "Disable AotD checks", 
                     }, 
                     TT = { 
                         enUS = "Enable this to option to remove ability checks against Army of the Dead. This can help smooth out the rotation if not using Army on cooldown.", 
@@ -128,11 +128,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "Blur",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "IceboundFortitudeHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(198589) .. " (%)",
+                        ANY = A.GetSpellInfo(48792) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -159,18 +159,6 @@ A.Data.ProfileUI = {
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(48707) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "IceboundFortitudeHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(48792) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -285,55 +273,55 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
             { -- [2] 2nd Row 
                 {
                     E = "Checkbox", 
                     DB = "SoloMode",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Enable Solo Mode", 
                         ruRU = "Enable Solo Mode",  
                         frFR = "Enable Solo Mode", 
                     }, 
                     TT = { 
-                        enUS = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
-                        ruRU = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
-                        frFR = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
+                        enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
+                        ruRU = "Активируйте Solo Mode и установите приоритет выживаемости над остальными.\nПолезно для персонажей низкого уровня или во время фазы прокачки.", 
+                        frFR = "Activez le mode solo et priorisez la survie par rapport au reste.\nUtile pour les caractères de bas niveau ou pendant la phase de leveling.", 
                     }, 
                     M = {},
                 }, 
                 {
                     E = "Checkbox", 
-                    DB = "ConserveInfernalStrike",
+                    DB = "UseWraithWalk",
                     DBV = true,
                     L = { 
-                        enUS = "Conserve Infernal Strike", 
-                        ruRU = "Conserve Infernal Strike", 
-                        frFR = "Conserve Infernal Strike",
+                        enUS = "Auto" .. A.GetSpellInfo(212552), 
+                        ruRU = "Авто" .. A.GetSpellInfo(212552), 
+                        frFR = "Auto" .. A.GetSpellInfo(212552), 
                     }, 
                     TT = { 
-                        enUS = "Save at least 1 Infernal Strike charge for mobility.", 
-                        ruRU = "Save at least 1 Infernal Strike charge for mobility.", 
-                        frFR = "Save at least 1 Infernal Strike charge for mobility.",
+                        enUS = "Automatically use " .. A.GetSpellInfo(212552), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(212552), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(212552), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "WraithWalkTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(212552) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(212552) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(212552) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(212552) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
                     }, 
                     M = {},
                 },				
@@ -356,18 +344,25 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
-                    MAX = 5,                            
+                    MAX = 100,                            
                     DB = "UseDeathStrikeHP",
                     DBV = 60, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Use Deathstrike on low HP",
+                        ANY = A.GetSpellInfo(49998) .. " (%)",
                     }, 
-                    TT = { 
-                        enUS = "Set the HP threshold to use DeathStrike.", 
-                        ruRU = "Set the HP threshold to use DeathStrike.", 
-                        frFR = "Set the HP threshold to use DeathStrike.", 
-                    },
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "IceboundFortitudeHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48792) .. " (%)",
+                    }, 
                     M = {},
                 },
             },
