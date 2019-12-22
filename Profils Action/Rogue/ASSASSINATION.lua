@@ -992,6 +992,11 @@ A[3] = function(icon, isMulti)
 			return A.MarkedForDeath:Show(icon)
 		end
 		
+	    -- Sprint if out of range 
+        if A.Sprint:IsReady("player") and isMovingFor > A.GetToggle(2, "SprintTime") and A.GetToggle(2, "UseSprint") then
+            return A.Sprint:Show(icon)
+        end
+		
 		-- Vendetta
 		if A.Vendetta:IsReady(unit) and CanCast and A.BurstIsON(unit) and Player:ComboPoints() >= 4 and 
 		    (
