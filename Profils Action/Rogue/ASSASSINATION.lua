@@ -859,8 +859,9 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
+	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit("player"):CombatTime() > 0
-	local CombatTime = Unit("player"):CombatTime()
+    local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
