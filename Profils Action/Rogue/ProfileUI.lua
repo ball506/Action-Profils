@@ -18,10 +18,11 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.5 (21.12.2019)",
+    DateTime = "v2.0.6 (22.12.2019)",
     -- Class settings
     [2] = {        
-        [ACTION_CONST_ROGUE_OUTLAW] = {       
+        [ACTION_CONST_ROGUE_OUTLAW] = {  
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },		
             { -- [7]
                 {
                     E = "Header",
@@ -135,11 +136,13 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7]                 
-                E = "Header",
-                L = {
-                    ANY = " -- AoE Settings -- ",
-                },                
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- AoE Settings -- ",
+                    },
+                },
             },
             { -- [3] 3rd Row 
                 {
@@ -199,11 +202,13 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7]                 
-                E = "Header",
-                L = {
-                    ANY = " -- Miscellaneous -- ",
-                },                
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Miscellaneous -- ",
+                    },
+                },
             },
             { -- [3] 3rd Row 
                 {
@@ -246,11 +251,13 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7]                 
-                E = "Header",
-                L = {
-                    ANY = " -- Defensives -- ",
-                },                
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
             },
             { -- [3] 3rd Row 
                 {
@@ -328,6 +335,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7] 
                 {
                     E = "Header",
@@ -378,6 +391,12 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
             }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
@@ -436,7 +455,13 @@ A.Data.ProfileUI = {
                     }, 					
                     M = {},
                 },				
-            },		
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
             { -- [7]
                 {
                     E = "Header",
@@ -900,6 +925,12 @@ A.Data.ProfileUI = {
 					},
                 },                 
             },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
@@ -961,6 +992,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [2] 2nd Row
                 {
                     E = "Checkbox", 
@@ -1010,6 +1047,12 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 }, 				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
             },
             { -- [7]
                 {
@@ -1077,6 +1120,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             {
                 {
                     E = "Slider",                                                     
@@ -1115,6 +1164,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7] Multidots settings
                 {
                     E = "Header",
@@ -1183,11 +1238,13 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-            { -- [7]                 
-                E = "Header",
-                L = {
-                    ANY = " -- Defensives -- ",
-                },                
+            { -- [7] Multidots settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
             },
             { -- [3] 3rd Row 
                 {
@@ -1265,6 +1322,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
@@ -1323,6 +1386,12 @@ A.Data.ProfileUI = {
                     }, 					
                     M = {},
                 },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
             },			
             { -- [7]
                 {

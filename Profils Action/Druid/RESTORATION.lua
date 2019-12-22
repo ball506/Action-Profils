@@ -20,128 +20,128 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
     -- Racial
     ArcaneTorrent                             = Action.Create({ Type = "Spell", ID = 50613     }),
     BloodFury                                 = Action.Create({ Type = "Spell", ID = 20572      }),
-    Fireblood                                   = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                              = Action.Create({ Type = "Spell", ID = 274738     }),
+    Fireblood                                 = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                             = Action.Create({ Type = "Spell", ID = 274738     }),
     Berserking                                = Action.Create({ Type = "Spell", ID = 26297    }),
-    ArcanePulse                                  = Action.Create({ Type = "Spell", ID = 260364    }),
-    QuakingPalm                                  = Action.Create({ Type = "Spell", ID = 107079     }),
+    ArcanePulse                               = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                               = Action.Create({ Type = "Spell", ID = 107079     }),
     Haymaker                                  = Action.Create({ Type = "Spell", ID = 287712     }), 
     WarStomp                                  = Action.Create({ Type = "Spell", ID = 20549     }),
     BullRush                                  = Action.Create({ Type = "Spell", ID = 255654     }),    
     GiftofNaaru                               = Action.Create({ Type = "Spell", ID = 59544    }),
-    Shadowmeld                                  = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
-    Stoneform                                  = Action.Create({ Type = "Spell", ID = 20594    }), 
-    WilloftheForsaken                          = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
+    Shadowmeld                                = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                                 = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                         = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
     EscapeArtist                              = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-    EveryManforHimself                          = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                        = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Roots   
-    EntanglingRoots                                = Action.Create({ Type = "Spell", ID = 339    }),
-    MassEntanglement                        = Action.Create({ Type = "Spell", ID = 102359, isTalent = true   }), 
+    EntanglingRoots                           = Action.Create({ Type = "Spell", ID = 339    }),
+    MassEntanglement                          = Action.Create({ Type = "Spell", ID = 102359, isTalent = true   }), 
     -- Disorient
-	Cyclone                                    = Action.Create({ Type = "Spell", ID = 33786, isTalent = true   }), -- PvP Talent
+	Cyclone                                   = Action.Create({ Type = "Spell", ID = 33786, isTalent = true   }), -- PvP Talent
 	-- Stun
 	MightyBash                                = Action.Create({ Type = "Spell", ID = 5211, isTalent = true   }),
 	-- Knockbacks
-	Typhoon                                    = Action.Create({ Type = "Spell", ID = 132469, isTalent = true   }),
+	Typhoon                                   = Action.Create({ Type = "Spell", ID = 132469, isTalent = true   }),
     -- Hots
-    Lifebloom                                  = Action.Create({ Type = "Spell", ID = 33763     }),
-	Rejuvenation                                   = Action.Create({ Type = "Spell", ID = 774     }),
-	RejuvenationGermimation                        = Action.Create({ Type = "Spell", ID = 155777    }),
-    WildGrowth                                  = Action.Create({ Type = "Spell", ID = 48438     }),
-	CenarionWard                                  = Action.Create({ Type = "Spell", ID = 102351, isTalent = true     }),
+    Lifebloom                                 = Action.Create({ Type = "Spell", ID = 33763     }),
+	Rejuvenation                              = Action.Create({ Type = "Spell", ID = 774     }),
+	RejuvenationGermimation                   = Action.Create({ Type = "Spell", ID = 155777    }),
+    WildGrowth                                = Action.Create({ Type = "Spell", ID = 48438     }),
+	CenarionWard                              = Action.Create({ Type = "Spell", ID = 102351, isTalent = true     }),
 	-- Direct Heals
-	Regrowth                                   = Action.Create({ Type = "Spell", ID = 8936     }),
-	Swiftmend                                  = Action.Create({ Type = "Spell", ID = 18562     }),
+	Regrowth                                  = Action.Create({ Type = "Spell", ID = 8936     }),
+	Swiftmend                                 = Action.Create({ Type = "Spell", ID = 18562     }),
     -- Self Defensives
     Barkskin                                  = Action.Create({ Type = "Spell", ID = 22812     }),
 	-- Cooldowns
-	Ironbark                                   = Action.Create({ Type = "Spell", ID = 102342     }),
-	Tranquility                                   = Action.Create({ Type = "Spell", ID = 740     }),
-    Innervate                                   = Action.Create({ Type = "Spell", ID = 29166     }),
+	Ironbark                                  = Action.Create({ Type = "Spell", ID = 102342     }),
+	Tranquility                               = Action.Create({ Type = "Spell", ID = 740     }),
+    Innervate                                 = Action.Create({ Type = "Spell", ID = 29166     }),
     -- Shapeshift
-    TravelForm                                   = Action.Create({ Type = "Spell", ID = 783     }), 
-    BearForm                                     = Action.Create({ Type = "Spell", ID = 5487     }), 
-    CatForm                                     = Action.Create({ Type = "Spell", ID = 768     }), 
-    AquaticForm                                   = Action.Create({ Type = "Spell", ID = 276012     }), 	
+    TravelForm                                = Action.Create({ Type = "Spell", ID = 783     }), 
+    BearForm                                  = Action.Create({ Type = "Spell", ID = 5487     }), 
+    CatForm                                   = Action.Create({ Type = "Spell", ID = 768     }), 
+    AquaticForm                               = Action.Create({ Type = "Spell", ID = 276012     }), 	
     -- Utilities
-	UrsolVortex                                   = Action.Create({ Type = "Spell", ID = 102793     }),
-    NaturesCure                                   = Action.Create({ Type = "Spell", ID = 88423     }),  
-	Dash                                   = Action.Create({ Type = "Spell", ID = 1850     }), 
+	UrsolVortex                               = Action.Create({ Type = "Spell", ID = 102793     }),
+    NaturesCure                               = Action.Create({ Type = "Spell", ID = 88423     }),  
+	Dash                                      = Action.Create({ Type = "Spell", ID = 1850     }), 
 	Rebirth                                   = Action.Create({ Type = "Spell", ID = 20484     }),  -- Combat Rez
-	Revive                                   = Action.Create({ Type = "Spell", ID = 50769     }), 
-	Hibernate                                   = Action.Create({ Type = "Spell", ID = 2637     }), 
-	Soothe                                   = Action.Create({ Type = "Spell", ID = 50769     }), 
-	Prowl                                   = Action.Create({ Type = "Spell", ID = 2908     }), 
-	Revitalize                               = Action.Create({ Type = "Spell", ID = 212040     }), 
-    -- Healing Spells      
-    Efflorescence                                   = Action.Create({ Type = "Spell", ID = 145205     }),
+	Revive                                    = Action.Create({ Type = "Spell", ID = 50769     }), 
+	Hibernate                                 = Action.Create({ Type = "Spell", ID = 2637     }), 
+	Soothe                                    = Action.Create({ Type = "Spell", ID = 50769     }), 
+	Prowl                                     = Action.Create({ Type = "Spell", ID = 2908     }), 
+	Revitalize                                = Action.Create({ Type = "Spell", ID = 212040     }), 
+    -- Healing Spells       
+    Efflorescence                             = Action.Create({ Type = "Spell", ID = 145205     }),
 	Renewal                                   = Action.Create({ Type = "Spell", ID = 108238, isTalent = true     }),
 	-- Talents
 	SouloftheForest                           = Action.Create({ Type = "Spell", ID = 102351, isTalent = true, Hidden = true     }),
-	IncarnationTreeofLife                       = Action.Create({ Type = "Spell", ID = 33891, isTalent = true     }),
-	IncarnationTreeofLifeBuff                       = Action.Create({ Type = "Spell", ID = 117679, Hidden = true     }),
-	Flourish                                   = Action.Create({ Type = "Spell", ID = 197721, isTalent = true     }),
-	Photosynthesis                           = Action.Create({ Type = "Spell", ID = 274902, isTalent = true, Hidden = true     }),
-	Germination                           = Action.Create({ Type = "Spell", ID = 155675, isTalent = true, Hidden = true     }),
-	GuardianAffinity                         = Action.Create({ Type = "Spell", ID = 197491, isTalent = true, Hidden = true     }),
-	FeralAffinity                           = Action.Create({ Type = "Spell", ID = 197490, isTalent = true, Hidden = true     }),
+	IncarnationTreeofLife                     = Action.Create({ Type = "Spell", ID = 33891, isTalent = true     }),
+	IncarnationTreeofLifeBuff                 = Action.Create({ Type = "Spell", ID = 117679, Hidden = true     }),
+	Flourish                                  = Action.Create({ Type = "Spell", ID = 197721, isTalent = true     }),
+	Photosynthesis                            = Action.Create({ Type = "Spell", ID = 274902, isTalent = true, Hidden = true     }),
+	Germination                               = Action.Create({ Type = "Spell", ID = 155675, isTalent = true, Hidden = true     }),
+	GuardianAffinity                          = Action.Create({ Type = "Spell", ID = 197491, isTalent = true, Hidden = true     }),
+	FeralAffinity                             = Action.Create({ Type = "Spell", ID = 197490, isTalent = true, Hidden = true     }),
 	BalanceAffinity                           = Action.Create({ Type = "Spell", ID = 197632, isTalent = true, Hidden = true     }),	
-	InnerPeace                           = Action.Create({ Type = "Spell", ID = 197073, isTalent = true, Hidden = true     }),
-	Stonebark                           = Action.Create({ Type = "Spell", ID = 197061, isTalent = true, Hidden = true     }),
-	Prosperity                           = Action.Create({ Type = "Spell", ID = 200383, isTalent = true, Hidden = true     }),
-	Abundance 	                                = Action.Create({ Type = "Spell", ID = 207383, isTalent = true, Hidden = true     }),
-	SpringBlossoms                           = Action.Create({ Type = "Spell", ID = 207385, isTalent = true, Hidden = true     }),
-	Cultivation                             = Action.Create({ Type = "Spell", ID = 200390, isTalent = true, Hidden = true     }),
+	InnerPeace                                = Action.Create({ Type = "Spell", ID = 197073, isTalent = true, Hidden = true     }),
+	Stonebark                                 = Action.Create({ Type = "Spell", ID = 197061, isTalent = true, Hidden = true     }),
+	Prosperity                                = Action.Create({ Type = "Spell", ID = 200383, isTalent = true, Hidden = true     }),
+	Abundance 	                              = Action.Create({ Type = "Spell", ID = 207383, isTalent = true, Hidden = true     }),
+	SpringBlossoms                            = Action.Create({ Type = "Spell", ID = 207385, isTalent = true, Hidden = true     }),
+	Cultivation                               = Action.Create({ Type = "Spell", ID = 200390, isTalent = true, Hidden = true     }),
     -- PvP Talents
-	Disentanglement                                   = Action.Create({ Type = "Spell", ID = 233673, isTalent = true, Hidden = true     }),
-	EntanglingBark                                   = Action.Create({ Type = "Spell", ID = 247543, isTalent = true, Hidden = true     }),
-	EarlySpring                                   = Action.Create({ Type = "Spell", ID = 203624, isTalent = true, Hidden = true     }),
+	Disentanglement                           = Action.Create({ Type = "Spell", ID = 233673, isTalent = true, Hidden = true     }),
+	EntanglingBark                            = Action.Create({ Type = "Spell", ID = 247543, isTalent = true, Hidden = true     }),
+	EarlySpring                               = Action.Create({ Type = "Spell", ID = 203624, isTalent = true, Hidden = true     }),
 	Nourish                                   = Action.Create({ Type = "Spell", ID = 289022, isTalent = true     }),
-	Overgrowth                                   = Action.Create({ Type = "Spell", ID = 203651, isTalent = true     }),
-	Thorns                                   = Action.Create({ Type = "Spell", ID = 305497, isTalent = true     }),
-	DeepRoots                                   = Action.Create({ Type = "Spell", ID = 233755, isTalent = true, Hidden = true     }),		
-    MarkoftheWild                                   = Action.Create({ Type = "Spell", ID = 289318, isTalent = true     }),
-	FocusedGrowth                                   = Action.Create({ Type = "Spell", ID = 203553, isTalent = true, Hidden = true     }),
-	MasterShapeshifter                                   = Action.Create({ Type = "Spell", ID = 289237, isTalent = true     }),
+	Overgrowth                                = Action.Create({ Type = "Spell", ID = 203651, isTalent = true     }),
+	Thorns                                    = Action.Create({ Type = "Spell", ID = 305497, isTalent = true     }),
+	DeepRoots                                 = Action.Create({ Type = "Spell", ID = 233755, isTalent = true, Hidden = true     }),		
+    MarkoftheWild                             = Action.Create({ Type = "Spell", ID = 289318, isTalent = true     }),
+	FocusedGrowth                             = Action.Create({ Type = "Spell", ID = 203553, isTalent = true, Hidden = true     }),
+	MasterShapeshifter                        = Action.Create({ Type = "Spell", ID = 289237, isTalent = true     }),
 	-- Azerites
-    AutumnLeaves                                   = Action.Create({ Type = "Spell", ID = 274432, Hidden = true     }),
-	EarlyHarvest                                   = Action.Create({ Type = "Spell", ID = 287251, Hidden = true     }),
-	GroveTending                                   = Action.Create({ Type = "Spell", ID = 279778, Hidden = true     }),
-	LivelySpirit                                   = Action.Create({ Type = "Spell", ID = 279642, Hidden = true     }),
-	RampantGrowth                                   = Action.Create({ Type = "Spell", ID = 278515, Hidden = true     }),
-	WakingDream                                   = Action.Create({ Type = "Spell", ID = 278513, Hidden = true     }),
+    AutumnLeaves                              = Action.Create({ Type = "Spell", ID = 274432, Hidden = true     }),
+	EarlyHarvest                              = Action.Create({ Type = "Spell", ID = 287251, Hidden = true     }),
+	GroveTending                              = Action.Create({ Type = "Spell", ID = 279778, Hidden = true     }),
+	LivelySpirit                              = Action.Create({ Type = "Spell", ID = 279642, Hidden = true     }),
+	RampantGrowth                             = Action.Create({ Type = "Spell", ID = 278515, Hidden = true     }),
+	WakingDream                               = Action.Create({ Type = "Spell", ID = 278513, Hidden = true     }),
 	-- Offensives Spells
-    Moonfire                                   = Action.Create({ Type = "Spell", ID = 164812     }),
+    Moonfire                                  = Action.Create({ Type = "Spell", ID = 164812     }),
 	Sunfire                                   = Action.Create({ Type = "Spell", ID = 93402     }),
 	SolarWrath                                   = Action.Create({ Type = "Spell", ID = 5176     }),
 	-- Offensives abilities with Affinity
 	-- Boomkin
-	Starsurge                               = Action.Create({ Type = "Spell", ID = 5176     }),
+	Starsurge                                 = Action.Create({ Type = "Spell", ID = 5176     }),
 	LunarStrike                               = Action.Create({ Type = "Spell", ID = 194153     }),
 	MoonkinForm                               = Action.Create({ Type = "Spell", ID = 24858     }),
 	-- Guardian
-	FrenziedRegeneration                               = Action.Create({ Type = "Spell", ID = 22842     }),
-	Ironfur                               = Action.Create({ Type = "Spell", ID = 192081     }),
-	Thrash                               = Action.Create({ Type = "Spell", ID = 106832     }),
+	FrenziedRegeneration                      = Action.Create({ Type = "Spell", ID = 22842     }),
+	Ironfur                                   = Action.Create({ Type = "Spell", ID = 192081     }),
+	Thrash                                    = Action.Create({ Type = "Spell", ID = 106832     }),
 	-- Feral
-	Shred                               = Action.Create({ Type = "Spell", ID = 5221     }),
-	Rip                               = Action.Create({ Type = "Spell", ID = 1079     }),
-	FerociousBite                               = Action.Create({ Type = "Spell", ID = 22568     }),
-	Rake                               = Action.Create({ Type = "Spell", ID = 1822     }),
-	RakeDebuff                               = Action.Create({ Type = "Spell", ID = 155722	,    Hidden = true }),
-	Swipe                              = Action.Create({ Type = "Spell", ID = 106785 }),
+	Shred                                     = Action.Create({ Type = "Spell", ID = 5221     }),
+	Rip                                       = Action.Create({ Type = "Spell", ID = 1079     }),
+	FerociousBite                             = Action.Create({ Type = "Spell", ID = 22568     }),
+	Rake                                      = Action.Create({ Type = "Spell", ID = 1822     }),
+	RakeDebuff                                = Action.Create({ Type = "Spell", ID = 155722	,    Hidden = true }),
+	Swipe                                     = Action.Create({ Type = "Spell", ID = 106785 }),
     -- Movememnt    
 
     -- Items
-    PotionofReconstitution                     = Action.Create({ Type = "Potion", ID = 168502     }),     
-    CoastalManaPotion                        = Action.Create({ Type = "Potion", ID = 152495     }), 
+    PotionofReconstitution                    = Action.Create({ Type = "Potion", ID = 168502     }),     
+    CoastalManaPotion                         = Action.Create({ Type = "Potion", ID = 152495     }), 
     -- Hidden 
-	ClearCasting                                 = Action.Create({ Type = "Spell", ID = 16870,    Hidden = true }), -- 4/1 Talent +2y increased range of LegSweep  
+	ClearCasting                              = Action.Create({ Type = "Spell", ID = 16870,    Hidden = true }), -- 4/1 Talent +2y increased range of LegSweep  
     TigerTailSweep                            = Action.Create({ Type = "Spell", ID = 264348,     isTalent = true, Hidden = true }), -- 4/1 Talent +2y increased range of LegSweep    
     RisingMist                                = Action.Create({ Type = "Spell", ID = 274909,     isTalent = true, Hidden = true }), -- 7/3 Talent "Fistweaving Rotation by damage healing"
-    SpiritoftheCrane                        = Action.Create({ Type = "Spell", ID = 210802,     isTalent = true, Hidden = true }), -- 3/2 Talent "Mana regen by BlackoutKick"
-    Innervate                                = Action.Create({ Type = "Spell", ID = 29166,     Hidden = true }), -- Buff condition for Mana Tea and Mana Saving
-    TeachingsoftheMonastery                    = Action.Create({ Type = "Spell", ID = 202090,     Hidden = true }), -- Buff condition for Blackout Kick
+    SpiritoftheCrane                          = Action.Create({ Type = "Spell", ID = 210802,     isTalent = true, Hidden = true }), -- 3/2 Talent "Mana regen by BlackoutKick"
+    Innervate                                 = Action.Create({ Type = "Spell", ID = 29166,     Hidden = true }), -- Buff condition for Mana Tea and Mana Saving
+    TeachingsoftheMonastery                   = Action.Create({ Type = "Spell", ID = 202090,     Hidden = true }), -- Buff condition for Blackout Kick
 }
 
 Action:CreateEssencesFor(ACTION_CONST_DRUID_RESTORATION)
@@ -207,7 +207,7 @@ A[2] = function(icon)
     if unit then         
         local total, sleft, _, _, _, notKickAble = Unit(unit):CastTime()
         if sleft > 0 then                                     
-            if A.MightyBash:IsReady(unit, nil, nil, true) and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then
+            if A.MightyBash:IsReady(unit) and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then
                 return A.MightyBash:Show(icon)                  
             end 
             
@@ -356,7 +356,7 @@ local function SelfDefensives()
     
 	-- Iron Bark
     local Ironbark = A.GetToggle(2, "Ironbark")
-    if     Ironbark >= 0 and A.Ironbark:IsReady(unit, nil, nil, true) and A.IsUnitFriendly(unit) and
+    if     Ironbark >= 0 and A.Ironbark:IsReady(unit) and A.IsUnitFriendly(unit) and
     (
         (     -- Auto 
             Ironbark >= 100 and 
@@ -448,7 +448,7 @@ end
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")
     
-    if useCC and A.MightyBash:IsReady(unit, nil, nil, true) and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.MightyBash:IsReady(unit) and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
         return A.MightyBash              
     end             
     
@@ -718,7 +718,7 @@ A[3] = function(icon, isMulti)
     local isMoving                 = Player:IsMoving()
     --local true = Unit(unit):IsCastingRemains(A.SoothingMist.ID) > 0
     local inRange                 = false
-    Efflorescence()
+    --Efflorescence()
 	--/ run Action.SendNotification("TESSSSSSSSSSSSSSST", 8921, 2)
 	
 	
@@ -734,21 +734,21 @@ A[3] = function(icon, isMulti)
         end             
         
         -- Interrupts
-        local Interrupt = Interrupts(unit, true)
+        local Interrupt = Interrupts(unit)
         if Interrupt then 
             return Interrupt:Show(icon)
         end         
 			
         -- PvP MightyBash (Enemy Healer)
-        if A.IsInPvP and A.MightyBash:IsReady(nil, nil, nil, true) then 
+        if A.IsInPvP then 
             local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(25)
-            if EnemyHealerUnitID ~= "none" and A.MightyBash:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 0) and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() then
+            if EnemyHealerUnitID ~= "none" and A.MightyBash:IsReady(EnemyHealerUnitID) and A.MightyBash:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun") and Unit(EnemyHealerUnitID):InCC() <= A.GetCurrentGCD() + A.GetPing() then
                 return A.MightyBash:Show(icon)     
             end 
         end 
         
         -- Bursting 
-        if A.BurstIsON(unit) and inRange and A.AbsentImun(nil, unit, Temp.TotalAndPhys) then 
+        if A.BurstIsON(unit) and inRange then 
             
             if Unit(unit):HealthPercent() <= A.GetToggle(2, "RacialBurstDamaging") then 
                 if A.BloodFury:AutoRacial(unit, nil, nil, true) then 
@@ -770,12 +770,12 @@ A[3] = function(icon, isMulti)
         end
         
         -- Trinkets 
-        if inRange and A.AbsentImun(nil, unit, Temp.TotalAndMag) and Unit(unit):HealthPercent() <= A.GetToggle(2, "TrinketBurstDamaging") then 
-            if A.Trinket1:IsReady(unit, nil, nil, true) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+        if inRange and Unit(unit):HealthPercent() <= A.GetToggle(2, "TrinketBurstDamaging") then 
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket1:Show(icon)
             end 
             
-            if A.Trinket2:IsReady(unit, nil, nil, true) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end     
         end     
@@ -783,60 +783,60 @@ A[3] = function(icon, isMulti)
 		-- Balance Affinity rotation
         if A.BalanceAffinity:IsSpellLearned() and IsEnoughHPS(unit) and not IsSaveManaPhase() then 
 		    -- MoonkinForm
-			if A.MoonkinForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) == 0 then
+			if A.MoonkinForm:IsReady(unit) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) == 0 then
 			    return A.MoonkinForm:Show(icon)
 			end			
 			-- Starsurge
-			if A.Starsurge:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) and Player:AstralPower() >= 40 then
+			if A.Starsurge:IsReady(unit) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) > 0 and Player:AstralPower() >= 40 then
 			    return A.Starsurge:Show(icon)
 			end
 			-- LunarStrike
-   			if A.LunarStrike:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) then
+   			if A.LunarStrike:IsReady(unit) and Unit("player"):HasBuffs(A.MoonkinForm.ID, true) > 0 then
 			    return A.LunarStrike:Show(icon)
 			end
         end
 		
 			-- Prowl
-			--if A.Prowl:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
+			--if A.Prowl:IsReady(unit) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
 			--    return A.Prowl:Show(icon)
 			--end	
 		
 		-- Feral Affinity rotation
         if A.FeralAffinity:IsSpellLearned() and A.IsUnitEnemy("target") then 
 		    -- CatForm
-			--if A.CatForm:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
-			--    return A.CatForm:Show(icon)
-			--end
+			if A.CatForm:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
+			    return A.CatForm:Show(icon)
+			end
 			-- Swipe aoe
-   			if A.Swipe:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
+   			if A.Swipe:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
 			    return A.Swipe:Show(icon)
 			end			
 		    -- Rake
-			if A.Rake:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true) and Player:EnergyPredicted() >= 35 and Player:ComboPoints() < 5 then
+			if A.Rake:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 and Player:EnergyPredicted() >= 35 and Player:ComboPoints() < 5 then
 			    return A.Rake:Show(icon)
 			end			
 			-- Rip
-			if A.Rip:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
+			if A.Rip:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) > 0  and Player:EnergyPredicted() >= 20 and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) <= 2 then
 			    return A.Rip:Show(icon)
 			end
 			-- FerociousBite
-   			if A.FerociousBite:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(5, 5) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
+   			if A.FerociousBite:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) > 0  and Player:EnergyPredicted() >= 25 and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(5, 5) < 2 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID) > 2 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
 			    return A.FerociousBite:Show(icon)
 			end
 
 		    -- Shred
-			if A.Shred:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.CatForm.ID, true)  and Player:EnergyPredicted() >= 40 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
+			if A.Shred:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) > 0  and Player:EnergyPredicted() >= 40 and Unit(unit):HasDeBuffs(A.Rip.ID) > 2 then
 			    return A.Shred:Show(icon)
 			end
         end 
 		
 		-- Sunfire
-        if A.Sunfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
+        if A.Sunfire:IsReady(unit) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
             return A.Sunfire:Show(icon)
         end 
 		
         -- Moonfire
-        if A.Moonfire:IsReady(unit, nil, nil, true) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
+        if A.Moonfire:IsReady(unit) and not IsSaveManaPhase()  and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
             return A.Moonfire:Show(icon)
         end 
 		
@@ -882,15 +882,15 @@ A[3] = function(icon, isMulti)
             -- Notification					
            -- Action.SendNotification("Pre Rejuvenations before fight " .. RejuvenationCount "/" .. (currentMembers / 3), A.Rejuvenation.ID) 		
 			-- Prowl
-			--if A.Prowl:IsReady(unit, nil, nil, true) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
+			--if A.Prowl:IsReady(unit) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
 			--    return A.Prowl:Show(icon)
 			--end	
             -- Mass Rez
-			if A.Revitalize:IsReady(unit, true, nil, true) and Unit(unit):InGroup() and Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 100 and not isMoving and IsSchoolFree() then 
+			if A.Revitalize:IsReady(unit) and Unit(unit):InGroup() and Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 100 and not isMoving and IsSchoolFree() then 
                 return A.Revitalize:Show(icon)
             end 
             -- Rez
-            if A.Revive:IsReady(unit, nil, nil, true) and Unit(unit):IsDead() and Unit(unit):IsPlayer() and not isMoving and IsSchoolFree() then 
+            if A.Revive:IsReady(unit) and Unit(unit):IsDead() and Unit(unit):IsPlayer() and not isMoving and IsSchoolFree() then 
                 return A.Revive:Show(icon)
             end 
             -- Efflorescence out of combat
@@ -934,8 +934,8 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Interrupts (@targettarget)
-        if unit == "target" and A.IsUnitEnemy("target") then 
-            local Interrupt = Interrupts("target", true)
+        if unit == "targettarget" and A.IsUnitEnemy("targettarget") then 
+            local Interrupt = Interrupts(unit)
             if Interrupt then
                 -- Notification					
                 Action.SendNotification("Detected potential interrupt on :" .. UnitName(unit), A.MightyBash.ID)			
@@ -1068,7 +1068,7 @@ A[3] = function(icon, isMulti)
             
             -- Racial 
             local RacialBurstHealing = A.GetToggle(2, "RacialBurstHealing")            
-            if  Unit(unit):InRange() and A.AbsentImun(nil, unit) and 
+            if  Unit(unit):InRange() and 
             (
                 -- Auto
                 (RacialBurstHealing >= 100 and not IsEnoughHPS(unit) and (Unit(unit):TimeToDieX(45) < 5 or (A.IsInPvP and Unit(unit):UseBurst()))) or 
@@ -1097,7 +1097,7 @@ A[3] = function(icon, isMulti)
 			local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60
 		    local SuperEmergency = Unit(unit):TimeToDieX(20) < 2 and Unit(unit):HealthPercent() <= 50
 			
-            if not isMulti and A.GetToggle(2, "AoE") then 
+            if (isMulti or A.GetToggle(2, "AoE")) then 
                 if CanTranquility() then 
                     if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
@@ -1134,12 +1134,12 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Trinkets         
-        if A.AbsentImun(nil, unit) and Unit(unit):HealthPercent() <= A.GetToggle(2, "TrinketBurstHealing") and Unit(unit):InRange() then 
-            if A.Trinket1:IsReady(unit, nil, nil, true) and A.Trinket1:GetItemCategory() ~= "DPS" then 
+        if Unit(unit):HealthPercent() <= A.GetToggle(2, "TrinketBurstHealing") and Unit(unit):InRange() then 
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DPS" then 
                 return A.Trinket1:Show(icon)
             end 
             
-            if A.Trinket2:IsReady(unit, nil, nil, true) and A.Trinket2:GetItemCategory() ~= "DPS" then 
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DPS" then 
                 return A.Trinket2:Show(icon)
             end     
         end     
@@ -1216,7 +1216,8 @@ A[3] = function(icon, isMulti)
         end 		
 		
         -- Innervate Bomb combo
-        if true and Emergency and A.Innervate:IsReady("player") and IsSchoolFree() then 
+        if Emergency and A.Innervate:IsReady("player") then 
+		    local currentMembers = TeamCache.Friendly.Size
             -- Innervate
 			if Unit("player"):HasBuffs(A.Innervate.ID, true) == 0 then
 			    -- Notification
@@ -1224,19 +1225,23 @@ A[3] = function(icon, isMulti)
                 return A.Innervate:Show(icon)
             end	
             -- Refresh Efflorescence
-			if Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 and Efflorescence() <= 2 then
+			if Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 and Efflorescence() <= 5 then
                 return A.Efflorescence:Show(icon)
             end			
 			-- Maximize Rejuvenation on group
-			if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) and Unit(unit):GetRange() <= 40 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then 
+			if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) 
+			and Unit(unit):GetRange() <= 40 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 
+			-- Get optimal rejuvenations refresh
+			and ResfreshRejuvenation(unit)
+			then 
                 return A.Rejuvenation:Show(icon)
             end 
             -- Then Apply Wild Growth            
-            if CanWildGrowth(unit) and HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then
+            if CanWildGrowth(unit) and not ResfreshRejuvenation(unit) and HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then
                 return A.WildGrowth:Show(icon)
             end
             -- and use Flourish for burst			
-            if Unit("player"):GetSpellLastCast(A.WildGrowth.ID, true) <= 5 and Unit("player"):HasBuffs(A.Innervate.ID, true) > 0 then
+            if A.LastPlayerCastName == A.WildGrowth:Info() then
                 return A.Flourish:Show(icon)
             end	
         end 
@@ -1259,6 +1264,8 @@ A[3] = function(icon, isMulti)
             if     LifebloomWorkMode == "Always" or 
             (
                 (LifebloomWorkMode == "Auto" or LifebloomWorkMode == "Tanking Units")
+				and 
+                (Unit(unit):IsTank() or Unit(unit):IsTanking("targettarget"))
             ) or 
             (
                 (LifebloomWorkMode == "Auto" or LifebloomWorkMode == "Mostly Inc. Damage") and 
@@ -1300,7 +1307,7 @@ A[3] = function(icon, isMulti)
         end 		
 
 		-- PvP Overgrowth (Enemy Healer)
-		local Emergency = (Unit(unit):TimeToDieX(20) < 5 and Unit(unit):HealthPercent() <= 35)
+		local Emergency = (Unit(unit):TimeToDieX(30) < 5 and Unit(unit):HealthPercent() <= 45)
         if A.IsInPvP and Unit(unit):GetRange() <= 40 and A.Overgrowth:IsReady(unit) and A.Overgrowth:PredictHeal("Overgrowth", unit) then		    
 			if Emergency and A.Ironbark:IsReady(unit) and A.IsUnitFriendly(unit) then 
                 return A.Ironbark:Show(icon) 
@@ -1358,7 +1365,7 @@ A[3] = function(icon, isMulti)
         -- Misc 
         local Mana = A.GetToggle(2, "ManaPotion") 
         if Unit("player"):CombatTime() > 0 and Mana > 0 and Unit("player"):PowerPercent() <= Mana then 
-            if A.PotionofReconstitution:IsReady("player", true, nil, true) and not isMoving and Player:IsStayingTime() > 1.5 then 
+            if A.PotionofReconstitution:IsReady("player") and not isMoving and Player:IsStayingTime() > 1.5 then 
                 if A.MemoryofLucidDreams:AutoHeartOfAzerothP("player", true) then 
                     return A.MemoryofLucidDreams:Show(icon)
                 end 
@@ -1366,7 +1373,7 @@ A[3] = function(icon, isMulti)
                 return A.PotionofReconstitution:Show(icon)                
             end 
             
-            if A.CoastalManaPotion:IsReady("player", true, nil, true) then 
+            if A.CoastalManaPotion:IsReady("player") then 
                 return A.CoastalManaPotion:Show(icon)
             end 
         end 
@@ -1476,7 +1483,7 @@ local function ArenaRotation(unit)
         -- Note: "arena1" is just identification of meta 6
         if unit == "arena1" and (Unit("playrr"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then                 
             -- PvP Cyclone
-            if A.Cyclone:IsReady(unit, nil, nil, true) and not Unit(unit):InLOS() and Unit(unit):GetDR("disorient") > 25 then
+            if A.Cyclone:IsReady(unit) and not Unit(unit):InLOS() and Unit(unit):GetDR("disorient") > 25 then
                 return A.Cyclone
             end  
         end 
@@ -1491,7 +1498,7 @@ end
 local function PartyRotation(unit)
     --local castRemain = Unit("player"):IsCastingRemains(A.SoothingMist.ID) > 0
     -- NaturesCure   -- and not Unit(unit):InLOS()
-    if A.NaturesCure:IsReady(unit, nil, nil, true) and IsSchoolFree() and A.AuraIsValid(unit, "UseDispel", "Dispel")  then                         
+    if A.NaturesCure:IsReady(unit) and IsSchoolFree() and A.AuraIsValid(unit, "UseDispel", "Dispel")  then                         
         return A.NaturesCure
     end 
     -- Dash
