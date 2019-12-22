@@ -69,13 +69,8 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
 	Riposte                                = Action.Create({ Type = "Spell", ID = 199754       }),
 	CloakofShadow                          = Action.Create({ Type = "Spell", ID = 31224     }),
 	Evade                                  = Action.Create({ Type = "Spell", ID = 5277     }),
-    -- Utility
-    Blind                                  = Action.Create({ Type = "Spell", ID = 2094     }),
-    Kick                                   = Action.Create({ Type = "Spell", ID = 1766     }),
-    Sprint                                 = Action.Create({ Type = "Spell", ID = 2983       }),
-    CheapShot                              = Action.Create({ Type = "Spell", ID = 1833       }),
+    -- Utilities
 	ShadowStep                             = Action.Create({ Type = "Spell", ID = 36554       }),
-	-- Utility  
     Kick                                   = Action.Create({ Type = "Spell", ID = 1766       }),
     Blind                                  = Action.Create({ Type = "Spell", ID = 2094       }),
     CheapShot                              = Action.Create({ Type = "Spell", ID = 1833       }),
@@ -959,10 +954,6 @@ A[3] = function(icon, isMulti)
             if A.MarkedforDeath:IsReady(unit) and (not Player:IsStealthed() and Player:ComboPointsDeficit() >= CPMaxSpend() - 1) then
                 return A.MarkedforDeath:Show(icon)
             end
-            -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
-            if A.BladeFlurry:IsReady("player") and (MultiUnits:GetByRange(8, 5, 10) >= A.GetToggle(2, "BladeFlurryTargets") and (Unit("player"):HasBuffs(A.BladeFlurry.ID, true) <= A.GetCurrentGCD() + A.GetGCD() + A.GetPing() or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0)) then
-                return A.BladeFlurry:Show(icon)
-            end
             -- ghostly_strike,if=variable.blade_flurry_sync&combo_points.deficit>=1+buff.broadside.up
             if A.GhostlyStrike:IsReady(unit) and (Player:ComboPointsDeficit() >= 1 + num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
                 return A.GhostlyStrike:Show(icon)
@@ -1090,35 +1081,46 @@ A[3] = function(icon, isMulti)
                 return A.Stealth:Show(icon)
             end
 			
-           --[[ -- variable,name=rtb_reroll,value=rtb_buffs<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up)
-            local VarRtbReroll = num(RtB_Buffs() < 2) and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) > 0 or Unit("player"):HasBuffs(A.GrandMeleeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) == 0)
-            -- variable,name=rtb_reroll,op=set,if=azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled,value=rtb_buffs<2&(buff.loaded_dice.up|buff.ruthless_precision.remains<=cooldown.between_the_eyes.remains)
-            if (bool(A.Deadshot:GetAzeriteRank()) or bool(A.AceUpYourSleeve:GetAzeriteRank())) then
-                local VarRtbReroll = num(RtB_Buffs() < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) > 0 or Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) <= A.BetweentheEyes:GetCooldown()))
+		    -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end	
+			
+	        -- Sprint if out of range 
+            if A.Sprint:IsReady("player") and isMovingFor > A.GetToggle(2, "SprintTime") and A.GetToggle(2, "UseSprint") then
+                return A.Sprint:Show(icon)
             end
-            -- variable,name=rtb_reroll,op=set,if=azerite.snake_eyes.rank>=2,value=rtb_buffs<2
-            if (A.SnakeEyes:GetAzeriteRank() >= 2) then
-                local VarRtbReroll = num(RtB_Buffs() < 2)
-            end
-            -- variable,name=rtb_reroll,op=reset,if=azerite.snake_eyes.rank>=2&buff.snake_eyes.stack>=2-buff.broadside.up
-            if (A.SnakeEyes:GetAzeriteRank() >= 2 and Unit("player"):HasBuffsStacks(A.SnakeEyesBuff.ID, true) >= 2 - num(Unit("player"):HasBuffs(A.Broadside.ID, true) > 0)) then
-                local VarRtbReroll = 0
-            end
-            -- variable,name=rtb_reroll,op=set,if=buff.blade_flurry.up,value=rtb_buffs-buff.skull_and_crossbones.up<2&(buff.loaded_dice.up|!buff.grand_melee.up&!buff.ruthless_precision.up&!buff.broadside.up)
-            if (Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) then
-                local VarRtbReroll = num(RtB_Buffs() - num(Unit("player"):HasBuffs(A.SkullandCrossbones.ID, true)) < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) > 0 or Unit("player"):HasBuffs(A.GrandMeleeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) == 0 and Unit("player"):HasBuffs(A.Broadside.ID, true) == 0))
-            end]]--
-            
+			            
 			-- call_action_list,name=stealth,if=stealthed.all
             if (Player:IsStealthed() or Unit("player"):HasBuffs(A.VanishBuff.ID, true) > 0) and CanCast and Stealth(unit) then
                 return true
             end
 			
-		    -- Interrupt
-            local Interrupt = Interrupts(unit)
-            if Interrupt then 
-                return Interrupt:Show(icon)
-            end
+			-- AoE
+			if (A.GetToggle(2, "AoE") or isMulti) then 
+                -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
+                if A.BladeFlurry:IsReady("player") and 
+			        (
+				        MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange"), 5, 5) >= A.GetToggle(2, "BladeFlurryTargets") 
+				    	and 
+				    	(Unit("player"):HasBuffs(A.BladeFlurry.ID, true) <= A.GetCurrentGCD() + A.GetGCD() + A.GetPing() or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0)
+			    	) 
+			    then
+                    return A.BladeFlurry:Show(icon)
+                end
+			
+                -- blood_of_the_enemy,if=big_aoe
+                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(2, "BotEAoEBurst") and Action.GetToggle(1, "HeartOfAzeroth") and 
+     	            (
+			    	    MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange"), 5, 5) >= A.GetToggle(2, "BladeFlurryTargets") 
+			    		and 
+			    		(Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0)
+			    	)           
+			    then
+                    return A.BloodoftheEnemy:Show(icon)
+                end	
+			end
 			
             -- call_action_list,name=cds
             if Cds(unit) and CanCast then

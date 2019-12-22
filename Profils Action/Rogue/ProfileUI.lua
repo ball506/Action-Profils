@@ -73,6 +73,12 @@ A.Data.ProfileUI = {
                 }, 
                 
             },  
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [2] 2nd Row
                 {
                     E = "Checkbox", 
@@ -108,36 +114,32 @@ A.Data.ProfileUI = {
                 }, 
                 {
                     E = "Checkbox", 
-                    DB = "PrecombatAR",
-                    DBV = false,
-                    L = { 
-                        enUS = "Show Precombat Adrenaline Rush", 
-                        ruRU = "Показать предкомбат адреналина", 
-                        frFR = "Montrer Pousée d'Adrenaline en Precombat",
-                    }, 
-                    TT = { 
-                        enUS = "Display Adrenaline Rush when outside of combat with a valid target.", 
-                        ruRU = "Показывать выброс адреналина, когда вне боя с действительной целью.", 
-                        frFR = "Affichez la poussée d'adrénaline en dehors du combat avec une cible valide.",
-                    }, 
-                    M = {},
-                }, 
-                {
-                    E = "Checkbox", 
                     DB = "SoloMode",
                     DBV = false,
                     L = { 
-                        enUS = "Activate Solo Mode", 
-                        ruRU = "Активировать Solo Mode", 
-                        frFR = "Activer le mode solo",
+                        enUS = "Enable Solo Mode", 
+                        ruRU = "Enable Solo Mode",  
+                        frFR = "Enable Solo Mode", 
                     }, 
                     TT = { 
-                        enUS = "Activate Solo Mode to prioritize survivability over DPS.", 
-                        ruRU = "Активируйте Solo Mode для определения приоритета выживаемости над DPS", 
-                        frFR = "Activez le mode solo pour donner la priorité aux capacités de survie par rapport à DPS.",
+                        enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
+                        ruRU = "Активируйте Solo Mode и установите приоритет выживаемости над остальными.\nПолезно для персонажей низкого уровня или во время фазы прокачки.", 
+                        frFR = "Activez le mode solo et priorisez la survie par rapport au reste.\nUtile pour les caractères de bas niveau ou pendant la phase de leveling.", 
                     }, 
                     M = {},
                 }, 						
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]                 
+                E = "Header",
+                L = {
+                    ANY = " -- AoE Settings -- ",
+                },                
             },
             { -- [3] 3rd Row 
                 {
@@ -148,13 +150,93 @@ A.Data.ProfileUI = {
                     DBV = 3, -- Set healthpercentage @70% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(13877) .. " Targets number",
+                        ANY = A.GetSpellInfo(13877) .. " targets",
                     }, 
                     TT = { 
                         enUS = "How many targets should we have in range before using " .. A.GetSpellInfo(13877), 
-                        ruRU = "How many targets should we have in range before using " .. A.GetSpellInfo(13877),
-                        frFR = "How many targets should we have in range before using " .. A.GetSpellInfo(13877),
+                        ruRU = "Сколько целей мы должны иметь в радиусе действия перед использованием " .. A.GetSpellInfo(13877),
+                        frFR = "Combien de cibles devons-nous avoir à portée avant d'utiliser " .. A.GetSpellInfo(13877),
                     },
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "BladeFlurryRange",
+                    DBV = 20, -- Set healthpercentage @70% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(13877) .. " range",
+                    }, 
+                    TT = { 
+                        enUS = "Define the range within you want to detect multiple enemies " .. A.GetSpellInfo(13877), 
+                        ruRU = "Определите диапазон, в котором вы хотите обнаружить несколько врагов " .. A.GetSpellInfo(13877),
+                        frFR = "Définissez la portée à l'intérieur de laquelle vous souhaitez détecter plusieurs ennemis " .. A.GetSpellInfo(13877),
+                    },
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "BotEAoEBurst",
+                    DBV = false,
+                    L = { 
+                        enUS = "Use " .. A.GetSpellInfo(298277) .. " in AoE", 
+                        ruRU = "использование " .. A.GetSpellInfo(298277) .. " в AoE", 
+                        frFR = "Utiliser " .. A.GetSpellInfo(298277) .. " en AoE", 
+                    }, 
+                    TT = { 
+                        enUS = "Use " .. A.GetSpellInfo(298277) .. " to get maximum burst in AoE situations." , 
+                        ruRU = "использование " .. A.GetSpellInfo(298277) .. " чтобы получить максимальный взрыв в AoE ситуациях." ,
+                        frFR = "Utiliser " .. A.GetSpellInfo(298277) .. " pour obtenir un burst maximal dans les situations AoE." ,
+                    }, 
+                    M = {},
+                }, 
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]                 
+                E = "Header",
+                L = {
+                    ANY = " -- Miscellaneous -- ",
+                },                
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseSprint",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(2983), 
+                        ruRU = "Авто" .. A.GetSpellInfo(2983), 
+                        frFR = "Auto" .. A.GetSpellInfo(2983), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(2983), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(2983), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(2983), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "SprintTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(2983) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(2983) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(2983) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(2983) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
                     M = {},
                 },
             },
@@ -842,6 +924,39 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
                         ruRU = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
+                    }, 
+                    M = {},
+                },	
+                {
+                    E = "Checkbox", 
+                    DB = "UseSprint",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(2983), 
+                        ruRU = "Авто" .. A.GetSpellInfo(2983), 
+                        frFR = "Auto" .. A.GetSpellInfo(2983), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(2983), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(2983), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(2983), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "SprintTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(2983) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(2983) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(2983) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(2983) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
                     }, 
                     M = {},
                 },				
