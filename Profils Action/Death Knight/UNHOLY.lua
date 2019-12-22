@@ -69,6 +69,14 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     IceboundFortitude                      = Action.Create({ Type = "Spell", ID = 48792 }),
     AntiMagicShell                         = Action.Create({ Type = "Spell", ID = 48707 }),
     DeathPact                              = Action.Create({ Type = "Spell", ID = 48743 }),	-- Talent
+	-- Utilities
+	WraithWalk                             = Action.Create({ Type = "Spell", ID = 212552     }), 
+	MindFreeze                             = Action.Create({ Type = "Spell", ID = 47528     }),
+	Asphyxiate                             = Action.Create({ Type = "Spell", ID = 108194     }),
+	DeathsAdvance                          = Action.Create({ Type = "Spell", ID = 48265     }), -- 30% Speed & immune to 100% normal speed
+	DeathGrip                              = Action.Create({ Type = "Spell", ID = 49576     }),
+    ChainsofIce                            = Action.Create({ Type = "Spell", ID = 45524     }), -- 70% snare, 8sec
+    RaiseAlly                              = Action.Create({ Type = "Spell", ID = 61999     }),	 -- Battle rez
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -82,6 +90,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
@@ -276,6 +285,41 @@ local function SelfDefensives(unit)
     then 
         return A.IceboundFortitude
     end  
+	
+	    -- HealingPotion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end 
 		
     -- Emergency AntiMagicShell
         local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellHP")
@@ -288,7 +332,7 @@ local function SelfDefensives(unit)
                     Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
                     Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
                     -- TTD Magic
-                    Unit("player"):TimeToDieMagicX(35) < 5 or 
+                    Unit("player"):TimeToDieMagicX(50) < 5 or 
 					
                     (
                         A.IsInPvP and 
@@ -353,33 +397,29 @@ SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
+		
+    -- MindFreeze
+    if useKick and A.MindFreeze:IsReady(unit) then 
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	    return A.MindFreeze
+       	end 
+   	end 
 	
-	-- Sigil of Chains (Snare)
-	if useCC and A.SigilofChains:IsReady("player") and A.SigilofChains:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):GetRange() > 5 then 
-        return A.SigilofChains              
-    end 
+    -- DeathGrip
+    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and A.GetToggle(2, "DeathGripInterrupt") then 
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	    return A.DeathGrip
+       	end 
+   	end 
 	
-	-- Sigil of Misery (Disorient)
-	if useCC and A.SigilofMisery:IsReady("player") and EnemiesCasting > 1 and A.SigilofMisery:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.SigilofMisery              
-    end 
-	
-	-- Sigil of Silence (Silence)
-	if useKick and (not A.Mind:IsReady(unit) or EnemiesCasting > 1) and A.SigilofSilence:IsReady("player") and Unit(unit):CanInterrupt(true, nil, 25, 70) and A.SigilofSilence:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.SigilofSilence              
-    end 
-	
-    -- Chaos Nova    
-    if useCC and A.ChaosNova:IsReady(unit) and EnemiesCasting > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.ChaosNova              
-    end 
-	
-	-- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.Disrupt
-    end 	
-	    
+   	-- Asphyxiate
+   	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
+ 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+   	        return A.Asphyxiate
+   	    end 
+   	end 
+		    
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
     end 
@@ -653,104 +693,149 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-            -- auto_attack
+            
+			-- auto_attack
+			-- Chains of Ice
+			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseChainsofIce") and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
+			    return A.ChainsofIce:Show(icon) 
+			end
+			
+			-- Death Grip
+			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseDeathGrip") and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) > 0 and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 then
+			    return A.DeathGrip:Show(icon) 
+			end
+			
+			-- Wraith Walk if out of range 
+            if A.WraithWalk:IsReady("player") and isMovingFor > A.GetToggle(2, "WraithWalkTime") and A.GetToggle(2, "UseWraithWalk") then
+                return A.WraithWalk:Show(icon)
+            end
+			
+			-- Deaths Advance if out of range 
+            if A.DeathsAdvance:IsReady("player") and isMovingFor > A.GetToggle(2, "DeathsAdvanceTime") and A.GetToggle(2, "UseDeathsAdvance") then
+                return A.DeathsAdvance:Show(icon)
+            end
+			
             -- variable,name=pooling_for_gargoyle,value=cooldown.summon_gargoyle.remains<5&talent.summon_gargoyle.enabled
             if (true) then
                 VarPoolingForGargoyle = num(A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned())
             end
+			
             -- arcane_torrent,if=runic_power.deficit>65&(pet.gargoyle.active|!talent.summon_gargoyle.enabled)&rune.deficit>=5
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) and Player:Rune() <= 1) then
                 return A.ArcaneTorrent:Show(icon)
             end
+			
             -- blood_fury,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) then
                 return A.BloodFury:Show(icon)
             end
+			
             -- berserking,if=buff.unholy_frenzy.up|pet.gargoyle.active|(talent.army_of_the_damned.enabled&pet.apoc_ghoul.active)
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) > 0 or Pet:IsActive(A.Gargoyle.ID) or (A.ArmyoftheDamned:IsSpellLearned() and Pet:IsActive(A.ApocGhoul.ID))) then
                 return A.Berserking:Show(icon)
             end
+			
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
             -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.major&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.major)
             if A.AzsharasFontofPower:IsReady(unit) and ((bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and not Azerite:EssenceHasMajor(A.VisionofPerfection.ID))) then
                 return A.AzsharasFontofPower:Show(icon)
             end
+			
             -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.major&talent.unholy_frenzy.enabled)
             if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) or Azerite:EssenceHasMajor(A.VisionofPerfection.ID) and A.UnholyFrenzy:IsSpellLearned())) then
                 return A.AzsharasFontofPower:Show(icon)
             end
+			
             -- use_item,name=azsharas_font_of_power,if=Unit(unit):TimeToDie()<cooldown.apocalypse.remains+34
             if A.AzsharasFontofPower:IsReady(unit) and (Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown() + 34) then
                 return A.AzsharasFontofPower:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack<1
             if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) < 1) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=pet.guardian_of_azeroth.active&pet.apoc_ghoul.active
             if A.AshvanesRazorCoral:IsReady(unit) and (GuardianofAzerothIsActive and Pet:IsActive(A.ApocGhoul.ID)) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=cooldown.apocalypse.ready&(essence.condensed_lifeforce.major&Unit(unit):TimeToDie()<cooldown.condensed_lifeforce.remains+20|!essence.condensed_lifeforce.major)
             if A.AshvanesRazorCoral:IsReady(unit) and (A.Apocalypse:GetCooldown() == 0 and (bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and Unit(unit):TimeToDie() < A.GuardianofAzeroth:GetCooldown() + 20 or not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)))) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=Unit(unit):TimeToDie()<cooldown.apocalypse.remains+20
             if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown() + 20) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
+			
             -- use_item,name=vision_of_demise,if=(cooldown.apocalypse.ready&debuff.festering_wound.stack>=4&essence.vision_of_perfection.enabled)|buff.unholy_frenzy.up|pet.gargoyle.active
             if A.VisionofDemise:IsReady(unit) and ((A.Apocalypse:GetCooldown() == 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) >= 4 and bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID))) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) > 0 or Pet:IsActive(A.Gargoyle.ID)) then
                 return A.VisionofDemise:Show(icon)
             end
+			
             -- use_item,name=ramping_amplitude_gigavolt_engine,if=cooldown.apocalypse.remains<2|talent.army_of_the_damned.enabled|raid_event.adds.in<5
             if A.RampingAmplitudeGigavoltEngine:IsReady(unit) and (A.Apocalypse:GetCooldown() < 2 or A.ArmyoftheDamned:IsSpellLearned()) then
                 return A.RampingAmplitudeGigavoltEngine:Show(icon)
             end
+			
             -- use_item,name=bygone_bee_almanac,if=cooldown.summon_gargoyle.remains>60|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
             if A.BygoneBeeAlmanac:IsReady(unit) and (A.SummonGargoyle:GetCooldown() > 60 or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 return A.BygoneBeeAlmanac:Show(icon)
             end
+			
             -- use_item,name=jes_howler,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
             if A.JesHowler:IsReady(unit) and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 return A.JesHowler:Show(icon)
             end
+			
             -- use_item,name=galecallers_beak,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled&time>20|!equipped.ramping_amplitude_gigavolt_engine
             if A.GalecallersBeak:IsReady(unit) and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned() and Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists()) then
                 return A.GalecallersBeak:Show(icon)
             end
+			
             -- use_item,name=grongs_primal_rage,if=rune<=3&(time>20|!equipped.ramping_amplitude_gigavolt_engine)
             if A.GrongsPrimalRage:IsReady(unit) and (Player:Rune() <= 3 and (Unit("player"):CombatTime() > 20 or not A.RampingAmplitudeGigavoltEngine:IsExists())) then
                 return A.GrongsPrimalRage:Show(icon)
             end
+			
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (A.ArmyoftheDead:GetCooldown() == 0 or Pet:IsActive(A.Gargoyle.ID) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) > 0) then
                 return A.PotionofUnbridledFury:Show(icon)
             end
+			
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) and Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD() then
                 return A.Outbreak:Show(icon) 
             end
+			
             -- use DeathStrike on low HP in Solo Mode
             if DeathStrikeHeal and A.DeathStrike:IsReady(unit) then
                 return A.DeathStrike:Show(icon) 
-            end			
+            end	
+			
             -- call_action_list,name=essences
             if Essences(unit) then
                 return true
             end
+			
             -- call_action_list,name=cooldowns
             if Cooldowns(unit) and A.BurstIsON(unit) then
                 return true
             end
+			
             -- run_action_list,name=aoe,if=active_enemies>=2
             if (isMulti or A.GetToggle(2, "AoE")) and Aoe(unit) and (MultiUnits:GetByRangeInCombat(15, 5, 10) >= 2) then
                return true
             end
+			
             -- call_action_list,name=generic
             if Generic(unit) then
                 return true
             end
+			
         end
     end
 

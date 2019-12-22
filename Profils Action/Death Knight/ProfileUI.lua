@@ -168,7 +168,141 @@ A.Data.ProfileUI = {
                 {
                     E = "LayoutSpace",                                                                         
                 },
-            }, 
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseWraithWalk",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(212552), 
+                        ruRU = "Авто" .. A.GetSpellInfo(212552), 
+                        frFR = "Auto" .. A.GetSpellInfo(212552), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(212552), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(212552), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(212552), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "WraithWalkTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(212552) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(212552) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(212552) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(212552) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathsAdvance",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(48265), 
+                        ruRU = "Авто " .. A.GetSpellInfo(48265), 
+                        frFR = "Auto " .. A.GetSpellInfo(48265), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(48265), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(48265), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(48265), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "DeathsAdvanceTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48265) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(48265) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(48265) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(48265) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathGrip",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(49576), 
+                        ruRU = "Авто " .. A.GetSpellInfo(49576), 
+                        frFR = "Auto " .. A.GetSpellInfo(49576), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " if enemy try to move out.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " если враг попытается выйти.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " si l'ennemi essaie de partir.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "DeathGripInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49576) .. " interrupt", 
+                        ruRU = A.GetSpellInfo(49576) .. " прерывание", 
+                        frFR = A.GetSpellInfo(49576) .. " interrupt", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseChainsofIce",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(45524), 
+                        ruRU = "Авто " .. A.GetSpellInfo(45524), 
+                        frFR = "Auto " .. A.GetSpellInfo(45524), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(45524), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(45524), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(45524), 
+                    }, 
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
@@ -291,40 +425,7 @@ A.Data.ProfileUI = {
                         frFR = "Activez le mode solo et priorisez la survie par rapport au reste.\nUtile pour les caractères de bas niveau ou pendant la phase de leveling.", 
                     }, 
                     M = {},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "UseWraithWalk",
-                    DBV = true,
-                    L = { 
-                        enUS = "Auto" .. A.GetSpellInfo(212552), 
-                        ruRU = "Авто" .. A.GetSpellInfo(212552), 
-                        frFR = "Auto" .. A.GetSpellInfo(212552), 
-                    }, 
-                    TT = { 
-                        enUS = "Automatically use " .. A.GetSpellInfo(212552), 
-                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(212552), 
-                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(212552), 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 7,                            
-                    DB = "WraithWalkTime",
-                    DBV = 3, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(212552) .. " if moving for",
-                    }, 
-                    TT = { 
-                        enUS = "If " .. A.GetSpellInfo(212552) .. " is talented and ready, will use it if moving for set value.", 
-                        ruRU = "Если " .. A.GetSpellInfo(212552) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
-                        frFR = "Si " .. A.GetSpellInfo(212552) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
-                    }, 
-                    M = {},
-                },				
+                },                	
             },
             { -- [4] 4th Row
 
@@ -366,11 +467,178 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DeathPactHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48743) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48707) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
             { -- [4] 4th Row
+
                 {
                     E = "LayoutSpace",                                                                         
                 },
-            }, 
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseWraithWalk",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(212552), 
+                        ruRU = "Авто" .. A.GetSpellInfo(212552), 
+                        frFR = "Auto" .. A.GetSpellInfo(212552), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(212552), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(212552), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(212552), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "WraithWalkTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(212552) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(212552) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(212552) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(212552) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathsAdvance",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(48265), 
+                        ruRU = "Авто " .. A.GetSpellInfo(48265), 
+                        frFR = "Auto " .. A.GetSpellInfo(48265), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(48265), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(48265), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(48265), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "DeathsAdvanceTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48265) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(48265) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(48265) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(48265) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathGrip",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(49576), 
+                        ruRU = "Авто " .. A.GetSpellInfo(49576), 
+                        frFR = "Auto " .. A.GetSpellInfo(49576), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " if enemy try to move out.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " если враг попытается выйти.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " si l'ennemi essaie de partir.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "DeathGripInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49576) .. " interrupt", 
+                        ruRU = A.GetSpellInfo(49576) .. " прерывание", 
+                        frFR = A.GetSpellInfo(49576) .. " interrupt", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseChainsofIce",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(45524), 
+                        ruRU = "Авто " .. A.GetSpellInfo(45524), 
+                        frFR = "Auto " .. A.GetSpellInfo(45524), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(45524), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(45524), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(45524), 
+                    }, 
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
