@@ -563,7 +563,9 @@ A[3] = function(icon, isMulti)
                 return Thrash:Show(icon)
             end		
 			-- Moonfire
-            if A.Moonfire:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 40 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0 then
+            if A.Moonfire:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 40 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0 
+			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
+			then
                 return A.Moonfire:Show(icon) 
             end			
         end
