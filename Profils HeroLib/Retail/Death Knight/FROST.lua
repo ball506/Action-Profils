@@ -17,7 +17,7 @@ local UnitCooldown = Action.UnitCooldown
 local ActionUnit = Action.Unit 
 --local Pet = LibStub("PetLibrary")
 --local Azerite = LibStub("AzeriteTraits")
-local TR                                     = Action.TasteRotation
+local TR = Action.TasteRotation
 
 Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
   -- Racial

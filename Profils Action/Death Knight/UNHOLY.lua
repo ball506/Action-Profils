@@ -12,7 +12,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
-
+local TR                                     = Action.TasteRotation
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -166,7 +166,7 @@ Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template tab
 		duration = 30,
 	},
 	[26125] = {
-		name = "Risen Ally",
+		name = "RisenAlly",
 		duration = 9999,
 	},
 })
@@ -217,7 +217,7 @@ local function GuardianofAzerothIsActive()
 end	
 
 local function DeathStrikeHeal()
-  return (Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercent() < Action.GetToggle(2, "UseDeathStrikeHP")) and true or false;
+    return (Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercent() < Action.GetToggle(2, "UseDeathStrikeHP")) and true or false;
 end
 
 local function EvaluateCycleFesteringStrike42(unit)
