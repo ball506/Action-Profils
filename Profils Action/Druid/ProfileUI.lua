@@ -18,7 +18,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.4 (21.12.2019)",
+    DateTime = "v2.0.5 (22.12.2019)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -407,7 +407,13 @@ A.Data.ProfileUI = {
                         ANY = " -- Rotation Settings -- ",
                     },
                 },
-            },	
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
             {
     			{
                     E = "Checkbox", 
@@ -601,6 +607,18 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "Minimum rage required before using Bristling Fur", 
                         ruRU = "Minimum rage required before using Bristling Fur", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
                     }, 
                     M = {},
                 },

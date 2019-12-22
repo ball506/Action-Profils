@@ -279,12 +279,13 @@ local function SelfDefensives()
                 FrenziedRegeneration >= 100 and 
                 (
                     -- HP lose per sec >= 5
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 5 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.05 or 
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
                     -- TTD 
                     Unit("player"):TimeToDieX(25) < 5 or 
 					-- Custom logic with current HPS and DMG
-					Unit("player"):HealthPercent() <= 85 and Unit("player"):GetHEAL() < Unit("player"):GetDMG() or
+					Unit("player"):HealthPercent() <= 85 or
+					Unit("player"):GetHEAL() * 2 < Unit("player"):GetDMG() or
                     (
                         A.IsInPvP and 
                         (
@@ -351,8 +352,8 @@ local function SelfDefensives()
             SurvivalInstincts >= 100 and 
             (
                 -- HP lose per sec >= 15
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
                 -- TTD 
                 Unit("player"):TimeToDieX(25) < 5 or 
 				-- Custom logic with current HPS and DMG
@@ -666,7 +667,7 @@ A[3] = function(icon, isMulti)
             end
 			
 	    	-- Auto Multidot
-		    if Unit(unit):TimeToDie() > 10 and isSafestThreatRotation 
+		    if Unit(unit):TimeToDie() > 10  
 		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
 		       and (
         	    	   MissingMoonfire >= 1 and MissingMoonfire <= 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true) > 0 
@@ -692,17 +693,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- maul,if=rage.deficit<10&active_enemies<4
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and (Player:RageDeficit() < 10 and MultiUnits:GetByRange(40, 5, 10) < 4) then
+            if A.Maul:IsReady(unit) and (Player:RageDeficit() < 10 and MultiUnits:GetByRange(40, 5, 10) < 4) then
                 return A.Maul:Show(icon)
             end
 			
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true) == 0) then
+            if A.Maul:IsReady(unit) and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true) == 0) then
                 return A.Maul:Show(icon)
             end
 			
             -- maul
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and Player:Rage() > 90 and A.GetToggle(2, "OffensiveRage") then
+            if A.Maul:IsReady(unit) and Player:Rage() > 90 and A.GetToggle(2, "OffensiveRage") then
                 return A.Maul:Show(icon)
             end
 			
