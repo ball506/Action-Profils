@@ -78,12 +78,22 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     RimeBuff                               = Action.Create({ Type = "Spell", ID = 59052     }), 
     SeethingRageBuff                       = Action.Create({ Type = "Spell", ID = 297126 }),  
     BreathofSindragosaBuff                 = Action.Create({ Type = "Spell", ID = 155166 }),
+	-- Defensives
+    IceboundFortitude                      = Action.Create({ Type = "Spell", ID = 48792 }),
+    AntiMagicShell                         = Action.Create({ Type = "Spell", ID = 48707 }),
+    DeathPact                              = Action.Create({ Type = "Spell", ID = 48743 }),	-- Talent
     -- Debuffs
     RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568     }),
     FrostFeverDebuff                       = Action.Create({ Type = "Spell", ID = 55095     }),
     RazoriceDebuff                         = Action.Create({ Type = "Spell", ID = 51714     }), 
 	-- Utilities
 	WraithWalk                             = Action.Create({ Type = "Spell", ID = 212552     }), 
+	MindFreeze                             = Action.Create({ Type = "Spell", ID = 47528     }),
+	Asphyxiate                             = Action.Create({ Type = "Spell", ID = 108194     }),
+	DeathsAdvance                          = Action.Create({ Type = "Spell", ID = 48265     }), -- 30% Speed & immune to 100% normal speed
+	DeathGrip                              = Action.Create({ Type = "Spell", ID = 49576     }),
+    ChainsofIce                            = Action.Create({ Type = "Spell", ID = 45524     }), -- 70% snare, 8sec
+    RaiseAlly                              = Action.Create({ Type = "Spell", ID = 61999     }),	 -- Battle rez
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -99,6 +109,7 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
     GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
@@ -196,6 +207,203 @@ A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
 end)
 
 
+-- SelfDefensives
+local function SelfDefensives(unit)
+    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
+		
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+
+    -- Icebound Fortitude
+    local IceboundFortitude = Action.GetToggle(2, "IceboundFortitudeHP")
+    if     IceboundFortitude >= 0 and A.IceboundFortitude:IsReady("player") and 
+    (
+        (   -- Auto 
+            IceboundFortitude >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or
+				-- Player stunned
+                LoC:Get("STUN") > 0	or			
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            IceboundFortitude < 100 and 
+            Unit("player"):HealthPercent() <= IceboundFortitude
+        )
+    ) 
+    then 
+        return A.IceboundFortitude
+    end  
+		
+    -- Emergency AntiMagicShell
+        local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellHP")
+        if     AntiMagicShell >= 0 and A.AntiMagicShell:IsReady("player") and 
+        (
+            (   -- Auto 
+                AntiMagicShell >= 100 and 
+                (
+                    -- HP lose per sec >= 10
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                    -- TTD Magic
+                    Unit("player"):TimeToDieMagicX(50) < 5 or 
+					
+                    (
+                        A.IsInPvP and 
+                        (
+                            Unit("player"):UseDeff() or 
+                            (
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                AntiMagicShell < 100 and 
+                Unit("player"):HealthPercent() <= AntiMagicShell
+            )
+        ) 
+        then 
+            return A.AntiMagicShell
+        end  		
+
+        -- Emergency Death Pact
+        local DeathPact = Action.GetToggle(2, "DeathPactHP")
+        if     DeathPact >= 0 and A.DeathPact:IsReady("player") and A.DeathPact:IsSpellLearned() and 
+        (
+            (   -- Auto 
+                DeathPact >= 100 and 
+                (
+                    -- HP lose per sec >= 30
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 30 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.30 or 
+                    -- TTD 
+                    Unit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            Unit("player"):UseDeff() or 
+                            (
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) and 
+                Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            ) or 
+            (    -- Custom
+                DeathPact < 100 and 
+                Unit("player"):HealthPercent() <= DeathPact
+            )
+        ) 
+        then 
+            return A.DeathPact
+        end  
+
+	    -- HealingPotion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end 		
+
+end 
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
+		
+    -- MindFreeze
+    if useKick and A.MindFreeze:IsReady(unit) then 
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	    return A.MindFreeze
+       	end 
+   	end 
+	
+    -- DeathGrip
+    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and A.GetToggle(2, "DeathGripInterrupt") then 
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	    return A.DeathGrip
+       	end 
+   	end 
+	
+   	-- Asphyxiate
+   	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
+ 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+   	        return A.Asphyxiate
+   	    end 
+   	end 
+		    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function num(val)
     if val then return 1 else return 0 end
@@ -308,7 +516,7 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-
+    local DeathStrikeHeal = DeathStrikeHeal()
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -825,51 +1033,90 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-            -- auto_attack
+           
+		    -- auto_attack
+			
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end			
+			
+			-- Chains of Ice
+			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseChainsofIce") and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
+			    return A.ChainsofIce:Show(icon) 
+			end
+			
+			-- Death Grip
+			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseDeathGrip") and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) > 0 and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 then
+			    return A.DeathGrip:Show(icon) 
+			end
+			
 			-- Wraith Walk if out of range 
             if A.WraithWalk:IsReady("player") and isMovingFor > A.GetToggle(2, "WraithWalkTime") and A.GetToggle(2, "UseWraithWalk") then
                 return A.WraithWalk:Show(icon)
             end
-            -- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
+			
+			-- Deaths Advance if out of range 
+            if A.DeathsAdvance:IsReady("player") and isMovingFor > A.GetToggle(2, "DeathsAdvanceTime") and A.GetToggle(2, "UseDeathsAdvance") then
+                return A.DeathsAdvance:Show(icon)
+            end
+            
+            -- use DeathStrike on low HP in Solo Mode
+            if DeathStrikeHeal and A.DeathStrike:IsReady(unit) then
+                return A.DeathStrike:Show(icon) 
+            end	
+			
+			-- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
             if A.HowlingBlast:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) == 0 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.HowlingBlast:Show(icon)
             end
-            -- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
+            
+			-- glacial_advance,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&spell_targets.glacial_advance>=2&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
             if A.GlacialAdvance:IsReady(unit) and (Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) <= A.GetGCD() and Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) > 0 and MultiUnits:GetByRange(30, 5, 10) >= 2 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.GlacialAdvance:Show(icon)
             end
-            -- frost_strike,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
+            
+			-- frost_strike,if=buff.icy_talons.remains<=gcd&buff.icy_talons.up&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
             if A.FrostStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) <= A.GetGCD() and Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) > 0 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.FrostStrike:Show(icon)
             end
-            -- call_action_list,name=essences
-            if (true) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            
+			-- call_action_list,name=essences
+            if Essences(unit) then
+                return true
             end
-            -- call_action_list,name=cooldowns
-            if (true) then
-                local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
+            
+			-- call_action_list,name=cooldowns
+            if Cooldowns(unit) then
+                return true
             end
-            -- run_action_list,name=bos_pooling,if=talent.breath_of_sindragosa.enabled&((cooldown.breath_of_sindragosa.remains=0&cooldown.pillar_of_frost.remains<10)|(cooldown.breath_of_sindragosa.remains<20&Unit(unit):TimeToDie()<35))
+            
+			-- run_action_list,name=bos_pooling,if=talent.breath_of_sindragosa.enabled&((cooldown.breath_of_sindragosa.remains=0&cooldown.pillar_of_frost.remains<10)|(cooldown.breath_of_sindragosa.remains<20&Unit(unit):TimeToDie()<35))
             if (A.BreathofSindragosa:IsSpellLearned() and ((A.BreathofSindragosa:GetCooldown() == 0 and A.PillarofFrost:GetCooldown() < 10) or (A.BreathofSindragosa:GetCooldown() < 20 and Unit(unit):TimeToDie() < 35))) then
                 return BosPooling(unit);
             end
-            -- run_action_list,name=bos_ticking,if=buff.breath_of_sindragosa.up
+            
+			-- run_action_list,name=bos_ticking,if=buff.breath_of_sindragosa.up
             if (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0) then
                 return BosTicking(unit);
             end
-            -- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled
+            
+			-- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled
             if (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.Obliteration:IsSpellLearned()) then
                 return Obliteration(unit);
             end
-            -- run_action_list,name=aoe,if=active_enemies>=2
+            
+			-- run_action_list,name=aoe,if=active_enemies>=2
             if (MultiUnits:GetByRange(10, 5, 10) >= 2) then
                 return Aoe(unit);
             end
-            -- call_action_list,name=standard
-            if (true) then
-                local ShouldReturn = Standard(unit); if ShouldReturn then return ShouldReturn; end
+            
+			-- call_action_list,name=standard
+            if Standard(unit) then
+                return true
             end
+			
         end
     end
 
