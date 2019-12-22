@@ -682,7 +682,7 @@ A[3] = function(icon, isMulti)
             end
 			
 		    -- StampedingRoar if out of range 
-            if A.StampedingRoar:IsReady("player") and isMovingFor > 3 then
+            if A.StampedingRoar:IsReady("player") and isMovingFor > A.GetToggle(2, "StampedingRoarTime") and A.GetToggle(2, "UseStampedingRoar") then
                 return A.StampedingRoar:Show(icon)
             end
 			

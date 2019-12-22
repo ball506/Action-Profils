@@ -460,6 +460,57 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			}, 
+            { -- [2] 2nd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "SoloMode",
+                    DBV = false,
+                    L = { 
+                        enUS = "Enable Solo Mode", 
+                        ruRU = "Enable Solo Mode",  
+                        frFR = "Enable Solo Mode", 
+                    }, 
+                    TT = { 
+                        enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
+                        ruRU = "Активируйте Solo Mode и установите приоритет выживаемости над остальными.\nПолезно для персонажей низкого уровня или во время фазы прокачки.", 
+                        frFR = "Activez le mode solo et priorisez la survie par rapport au reste.\nUtile pour les caractères de bas niveau ou pendant la phase de leveling.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UseStampedingRoar",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(77761), 
+                        ruRU = "Авто" .. A.GetSpellInfo(77761), 
+                        frFR = "Auto" .. A.GetSpellInfo(77761), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(77761), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(77761), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(77761), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "StampedingRoarTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(77761) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(77761) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(77761) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(77761) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },				
+            },
             { -- [4] 4th Row
 
                 {
