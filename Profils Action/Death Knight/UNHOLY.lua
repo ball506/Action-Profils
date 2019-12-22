@@ -167,7 +167,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
 -- To create essences use next code:
 Action:CreateEssencesFor(ACTION_CONST_DEATHKNIGHT_UNHOLY)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_UNHOLY], { __index = Action })
-
+--[[
 -- API - Pet Tracker 
 Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template table is the same with what has this library already built-in, just for example
 	[152396] = {
@@ -179,7 +179,7 @@ Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template tab
 		duration = 9999,
 	},
 })
-
+]]--
 ------------------------------------------
 ---------------- VARIABLES ---------------
 ------------------------------------------
@@ -221,9 +221,9 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function GuardianofAzerothIsActive() 
-    return Pet:GetRemainDuration(152396) > 0 and true or false
-end	
+--local function GuardianofAzerothIsActive() 
+--    return Pet:GetRemainDuration(152396) > 0 and true or false
+--end	
 
 local function DeathStrikeHeal()
     return (Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercent() < Action.GetToggle(2, "UseDeathStrikeHP")) and true or false;
@@ -445,11 +445,13 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
+	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit("player"):CombatTime() > 0
+    local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-    local GuardianofAzerothIsActive = GuardianofAzerothIsActive()
+    --local GuardianofAzerothIsActive = GuardianofAzerothIsActive()
     local DeathStrikeHeal = DeathStrikeHeal()
 	
     ------------------------------------------------------
@@ -757,9 +759,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=pet.guardian_of_azeroth.active&pet.apoc_ghoul.active
-            if A.AshvanesRazorCoral:IsReady(unit) and (GuardianofAzerothIsActive and Pet:IsActive(A.ApocGhoul.ID)) then
-                return A.AshvanesRazorCoral:Show(icon)
-            end
+          --  if A.AshvanesRazorCoral:IsReady(unit) and (GuardianofAzerothIsActive and Pet:IsActive(A.ApocGhoul.ID)) then
+          --      return A.AshvanesRazorCoral:Show(icon)
+          --  end
 			
             -- use_item,name=ashvanes_razor_coral,if=cooldown.apocalypse.ready&(essence.condensed_lifeforce.major&Unit(unit):TimeToDie()<cooldown.condensed_lifeforce.remains+20|!essence.condensed_lifeforce.major)
             if A.AshvanesRazorCoral:IsReady(unit) and (A.Apocalypse:GetCooldown() == 0 and (bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and Unit(unit):TimeToDie() < A.GuardianofAzeroth:GetCooldown() + 20 or not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)))) then
