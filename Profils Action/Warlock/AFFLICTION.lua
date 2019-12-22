@@ -646,8 +646,8 @@ A[3] = function(icon, isMulti)
     local AppliedCorruption = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 146739) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
  	local AppliedAgony = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, 980) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     --print(AppliedVampiricTouch)
-    --CorruptionToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 146739, 5)
-    --AgonyToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 980, 5)
+    local CorruptionToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, 146739, 6, 5)
+    local AgonyToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, 980, 6, 5)
     --SiphonLifeToRefresh = MultiUnits:GetByRangeDoTsToRefresh(40, 5, 980, 5)
 	--print(VampiricTouchToRefresh)
 
@@ -737,7 +737,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- seed_of_corruption,if=spell_targets.seed_of_corruption_aoe>=3&!equipped.169314
-        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetActiveEnemies() >= 3 and not A.AzsharasFontofPower:IsExists()) then
+        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetByRange(MultiDotDistance, 5, 5) > 2 and not A.AzsharasFontofPower:IsExists()) then
             	return A.SeedofCorruption:Show(icon)
         	end
 			
@@ -757,17 +757,17 @@ A[3] = function(icon, isMulti)
         local function Pandemic(unit)
 		
             -- actions.mouseover+=/Agony
-            if     Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= 5.4 + A.GetGCD() + A.GetPing() and A.Agony:IsReady(unit, true) and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
+            if     Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= 5.4 + A.GetGCD() + A.GetPing() and A.Agony:IsReady(unit) and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
                 return A.Agony:Show(icon)
             end 
             
             -- actions.mouseover+=/Corruption
-            if     Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= 4.2 + A.GetGCD() + A.GetPing() and A.Corruption:IsReady(unit, true) and A.Corruption:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Corruption.ID then 
+            if     Unit(unit):HasDeBuffs(A.Corruption.ID, true) <= 4.2 + A.GetGCD() + A.GetPing() and CorruptionToRefresh <= 2 and A.Corruption:IsReady(unit) and A.Corruption:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Corruption.ID then 
                 return A.Corruption:Show(icon)
             end 
 			
             -- actions.mouseover+=/SiphonLife
-            if     Unit(unit):HasDeBuffs(A.SiphonLife.ID, true) <= 4.5 + A.GetGCD() + A.GetPing() and A.SiphonLife:IsReady(unit, true) and A.SiphonLife:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.SiphonLife.ID then 
+            if     Unit(unit):HasDeBuffs(A.SiphonLife.ID, true) <= 4.5 + A.GetGCD() + A.GetPing() and A.SiphonLife:IsReady(unit) and A.SiphonLife:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.SiphonLife.ID then 
                 return A.SiphonLife:Show(icon)
             end 
 			
@@ -802,7 +802,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- corruption,if=buff.movement.up&!prev_gcd.1.corruption&!talent.absolute_corruption.enabled
-            if A.Corruption:IsReady(unit) and not ShouldStop and isMoving and not Unit("player"):GetSpellLastCast(A.Corruption.ID, true) and not A.AbsoluteCorruption:IsSpellLearned() and not Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) then
+            if A.Corruption:IsReady(unit) and CorruptionToRefresh <= 2 and not ShouldStop and isMoving and not Unit("player"):GetSpellLastCast(A.Corruption.ID, true) and not A.AbsoluteCorruption:IsSpellLearned() and not Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) then
                 return A.Corruption:Show(icon)
             end
 			
@@ -886,6 +886,19 @@ A[3] = function(icon, isMulti)
     
         local function Spenders(unit)
 		
+            -- seed_of_corruption,if=variable.use_seed&soul_shard=5
+            if A.SeedofCorruption:IsReady(unit) and not isMoving and (isMulti or A.GetToggle(2, "AoE")) 
+			and (
+			    Pet:GetMultiUnitsBySpell({54049, 3716, 6360}) > 2
+				or
+				MultiUnits:GetByRange(MultiDotDistance, 5, 5) > 2
+				) 
+				and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 
+				and (AppliedCorruption < Pet:GetMultiUnitsBySpell({54049, 3716, 6360}) or AppliedCorruption < MultiUnits:GetByRange(MultiDotDistance, 5, 5) or CorruptionToRefresh > 0)
+			then 
+                return A.SeedofCorruption:Show(icon)
+            end	
+		
             -- unstable_affliction,if=cooldown.summon_darkglare.remains<=soul_shard*(execute_time+azerite.dreadful_calling.rank)&(!talent.deathbolt.enabled|cooldown.deathbolt.remains<=soul_shard*execute_time)&(talent.sow_the_seeds.enabled|dot.phantom_singularity.remains|dot.vile_taint.remains)
             if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and not isMoving  and not ShouldStop and A.SummonDarkglare:GetCooldown() <= Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime() and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() <= Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime()) and (A.SowtheSeeds:IsSpellLearned() or Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true)) then
                 return A.UnstableAffliction:Show(icon)
@@ -968,11 +981,17 @@ A[3] = function(icon, isMulti)
             --    return A:Show(icon, ACTION_CONST_STOPCAST) -- A.StopCast:Show(icon)
 			--end
 
-			-- Auto Multidot
-			if Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 0 and Action.GetToggle(2, "AutoDot") and CanMultidot
-		    and (MissingAgony >= 1 or MissingCorruption >= 1) and 
-		   (Unit("player"):HasBuffs(A.DarkSoulMisery.ID, true) == 0 ) then
-			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
+		    -- Auto Multidot
+	    	if Unit(unit):TimeToDie() >= 10  
+		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
+		       and (
+            		   ((MissingAgony > 0 and MissingAgony < 5) or (AgonyToRefresh > 0 and AgonyToRefresh < 5)) 
+					   and 
+					   Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 5 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 
+			        ) 
+		       and MultiUnits:GetByRange(MultiDotDistance, 5, 10) > 1 and MultiUnits:GetByRange(MultiDotDistance, 5, 10) <= 5
+		    then
+		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end	
 							
             -- variable,name=use_seed,value=talent.sow_the_seeds.enabled&spell_targets.seed_of_corruption_aoe>=3+raid_event.invulnerable.up|talent.siphon_life.enabled&spell_targets.seed_of_corruption>=5+raid_event.invulnerable.up|spell_targets.seed_of_corruption>=8+raid_event.invulnerable.up
@@ -1190,7 +1209,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- corruption,line_cd=30,if=time>30&cooldown.summon_darkglare.remains<=15&equipped.169314&!talent.absolute_corruption.enabled&(talent.siphon_life.enabled|spell_targets.seed_of_corruption_aoe>1&spell_targets.seed_of_corruption_aoe<=3)
-            if A.Corruption:IsReady(unit) and not ShouldStop and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.AzsharasFontofPower:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() <= 3)) then
+            if A.Corruption:IsReady(unit) and CorruptionToRefresh <= 2 and not ShouldStop and (Unit("player"):CombatTime() > 30 and A.SummonDarkglare:GetCooldown() <= 15 and A.AzsharasFontofPower:IsExists() and not A.AbsoluteCorruption:IsSpellLearned() and (A.SiphonLife:IsSpellLearned() or MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() <= 3)) then
                 return A.Corruption:Show(icon)
             end
 		
