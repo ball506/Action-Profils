@@ -1011,7 +1011,7 @@ A[3] = function(icon, isMulti)
 			or  
 			    Unit("player"):HasHeroism()
 			or
-			    Unit(unit):IsBoss() and CombatTime > 1
+			    Unit(unit):IsBoss() and combatTime > 1
 			) 
         then
 			return A.Vendetta:Show(icon)
