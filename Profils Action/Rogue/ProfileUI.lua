@@ -18,7 +18,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.6 (22.12.2019)",
+    DateTime = "v2.0.7 (23.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -940,24 +940,6 @@ A.Data.ProfileUI = {
                 },
             },			
             { -- [2] 2nd Row
-               {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "Never", value = "Never" },
-                        { text = "On Bosses", value = "On Bosses" },                    
-                        { text = "Always", value = "Always" },
-                    },
-                    DB = "UsePriorityRotation",
-                    DBV = "Never",
-                    L = { 
-                        ANY = "Use Priority Rotation",
-                    }, 
-                    TT = { 
-                        enUS = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
-                        ruRU = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
-                    }, 
-                    M = {},
-                },	
                 {
                     E = "Checkbox", 
                     DB = "UseSprint",

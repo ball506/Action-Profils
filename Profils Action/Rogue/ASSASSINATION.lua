@@ -738,19 +738,6 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 	
--- Check if the Priority Rotation variable should be set
-local function UsePriorityRotation()
-    if MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 then
-        return false
-    end
-    if Action.GetToggle(2, "UsePriorityRotation") == "Always" then
-        return true
-    end
-    if Action.GetToggle(2, "UsePriorityRotation") == "On Bosses" and Unit(unit):IsInBossList() then
-        return true
-    end
-    return false
-end
 
 -- Fake ss_buffed (wonky without Subterfuge but why would you, eh?)
 local function SSBuffed()
@@ -876,7 +863,6 @@ A[3] = function(icon, isMulti)
 	local RuptureThreshold = (4 + Player:ComboPoints() * 4) * 0.3;
     --local RuptureDMGThreshold = A.Envenom:Damage() * Action.GetToggle(2, "EnvenomDMGOffset"); -- Used to check if Rupture is worth to be casted since it's a finisher.
     --local GarroteDMGThreshold = A.Mutilate:Damage() * Action.GetToggle(2, "MutilateDMGOffset"); -- Used as TTD Not Valid fallback since it's a generator.
-    local PriorityRotation = UsePriorityRotation();
 	-- Multidots var
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
 	local MissingRupture = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.RuptureDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
