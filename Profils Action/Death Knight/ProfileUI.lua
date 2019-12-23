@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.0.3 (22.12.2019)",
+    DateTime = "v2.0.4 (23.12.2019)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -767,24 +767,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
             { -- [2] 2nd Row 
                 {
@@ -876,6 +859,70 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 				
             },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
+            {
+    			{
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Automatic Taunt", 
+                        frFR = "Automatic Taunt",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Growl whenever available.", 
+                        ruRU = "If activated, will use automatically use Growl whenever available.",  
+                        frFR = "If activated, will use automatically use Growl whenever available.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ThreatDamagerLimit",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = "Only 'Damager'\nThreat limit(agro,>= %)",
+						ruRU = "Только 'Урон'\nЛимит угрозы(агро,>= %)", 
+					}, 
+                    TT = { 
+                        enUS = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized", 
+                        ruRU = "OFF - Нет лимита\nЕсли процент угрозы (агро) больше или равен указанному,\nто будет выполняться 'безопасная' ротация\nПо мере возможности перестанут использоваться способности\nвызывающие слишком много угрозы пока\nуровень угрозы (агро) не нормализуется",  
+                        frFR = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized",
+					},    
+                    M = {},
+                },				
+    			{
+                    E = "Checkbox", 
+                    DB = "OffensiveRage",
+                    DBV = true,
+                    L = { 
+                        enUS = "Offensive Rage use", 
+                        ruRU = "Offensive Rage use",
+                        frFR = "Offensive Rage use",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will priorize dps over survivability.", 
+                        ruRU = "If activated, will priorize dps over survivability.",  
+                        frFR = "If activated, will priorize dps over survivability.",  
+                    }, 
+                    M = {},
+                },
+			},             
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7] 
                 {
                     E = "Header",
@@ -888,14 +935,234 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
-                    MAX = 5,                            
-                    DB = "UmbilicusEternus",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    MAX = 100,                            
+                    DB = "UseDeathStrikeHP",
+                    DBV = 60, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Set the duration you want to start to show the Umbilicus Eternus cancel. Set to 0 to disable it.",
+                        ANY = A.GetSpellInfo(49998) .. " (%)",
                     }, 
                     M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "IceboundFortitudeHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48792) .. " (%)",
+                    }, 
+                    M = {},
+                },
+
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DancingRuneWeaponHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(49028) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48707) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DeathPactHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48743) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "VampiricBloodHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(49028) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseWraithWalk",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(212552), 
+                        ruRU = "Авто" .. A.GetSpellInfo(212552), 
+                        frFR = "Auto" .. A.GetSpellInfo(212552), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(212552), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(212552), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(212552), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "WraithWalkTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(212552) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(212552) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(212552) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(212552) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathsAdvance",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(48265), 
+                        ruRU = "Авто " .. A.GetSpellInfo(48265), 
+                        frFR = "Auto " .. A.GetSpellInfo(48265), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(48265), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(48265), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(48265), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "DeathsAdvanceTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(48265) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(48265) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(48265) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(48265) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },			
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathGrip",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(49576), 
+                        ruRU = "Авто " .. A.GetSpellInfo(49576), 
+                        frFR = "Auto " .. A.GetSpellInfo(49576), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " if enemy try to move out.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " если враг попытается выйти.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " si l'ennemi essaie de partir.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "DeathGripInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49576) .. " interrupt", 
+                        ruRU = A.GetSpellInfo(49576) .. " прерывание", 
+                        frFR = A.GetSpellInfo(49576) .. " interrupt", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseChainsofIce",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(45524), 
+                        ruRU = "Авто " .. A.GetSpellInfo(45524), 
+                        frFR = "Auto " .. A.GetSpellInfo(45524), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(45524), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(45524), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(45524), 
+                    }, 
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
                 },
             }, 
             { -- [7]
