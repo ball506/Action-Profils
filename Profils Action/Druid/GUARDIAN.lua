@@ -15,6 +15,7 @@ local Unit                                   = Action.Unit
 local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
+local TR                                     = Action.TasteRotation
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -44,12 +45,7 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     BearForm                               = Action.Create({ Type = "Spell", ID = 5487 }),
     CatForm                                = Action.Create({ Type = "Spell", ID = 768     }),
     HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
-    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     Barkskin                               = Action.Create({ Type = "Spell", ID = 22812 }),
     LunarBeam                              = Action.Create({ Type = "Spell", ID = 204066 }),
     BristlingFur                           = Action.Create({ Type = "Spell", ID = 155835 }),
@@ -655,7 +651,7 @@ A[3] = function(icon, isMulti)
                     local Growl_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if Growl_Nameplates then  
                         for Growl_UnitID in pairs(Growl_Nameplates) do             
-                            if not UnitIsUnit("target", Growl_UnitID) and A.Growl:IsReady(Growl_UnitID, true, nil, nil, nil) and not Unit(Growl_UnitID):IsBoss() and Unit(Growl_UnitID):GetRange() <= 30 and not Unit(Growl_UnitID):InLOS() and Unit("player"):ThreatSituation(Growl_UnitID) ~= 3 then 
+                            if not Unit(Growl_UnitID):IsPlayer() and not UnitIsUnit("target", Growl_UnitID) and A.Growl:IsReady(Growl_UnitID, true, nil, nil, nil) and not Unit(Growl_UnitID):IsBoss() and Unit(Growl_UnitID):GetRange() <= 30 and not Unit(Growl_UnitID):InLOS() and Unit("player"):ThreatSituation(Growl_UnitID) ~= 3 then 
                                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
                             end         
                         end 
