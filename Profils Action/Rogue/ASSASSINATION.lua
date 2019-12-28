@@ -902,18 +902,19 @@ A[3] = function(icon, isMulti)
 
         local inMelee = A.Mutilate:IsInRange(unit)
 		
-		--print("Opener Step : " .. Temp.openerStep)
+		print("Opener Step : " .. Temp.openerStep)
 		-- Reset opener var
 		if Unit("player"):CombatTime() == 0 and A.LastPlayerCastID ~= A.Vanish.ID then 
 	        Temp.openerDone = false
 			Temp.openerStep = 0
 	    end
-		if MultiUnits:GetByRange(20) > 1 then
+		if MultiUnits:GetByRange(8) > 1 then
             Temp.openerDone = true
 		end
+		
         --When using Master Assassin and Toxic Blade :
         if not Temp.openerDone and A.MasterAssassin:IsSpellLearned() and A.ToxicBlade:IsSpellLearned() then	
-		
+		    Action.SendNotification("Master Assassin Opener step : " .. Temp.openerStep .. "/11", A.MasterAssassin.ID)
 		    -- Sap out of combat
 		    if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
 		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
@@ -987,13 +988,20 @@ A[3] = function(icon, isMulti)
 			end
 			
 			-- Cast Mutilate Icon Mutilate until 4+ CP.
-		    if Temp.openerStep == 4 and A.Mutilate:IsReady(unit)
+		    if Temp.openerStep == 4 and A.Mutilate:IsReady(unit) and Player:ComboPoints() < 4
 		    then
 			    return A.Mutilate:Show(icon)
 		    end
 			if Temp.openerStep == 4 and (A.LastPlayerCastID == A.Mutilate.ID or Player:ComboPoints() >= 4) then
 			    Temp.openerStep = 5
 			end
+
+            -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit)
+			and (A.Vendetta:GetCooldown() == 0 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) 
+			then
+                return A.GuardianofAzeroth:Show(icon)
+            end	
 			
 			-- Activate Vendetta 
 		    if Temp.openerStep == 5 and A.Vendetta:IsReady("player") and A.BurstIsON(unit)
@@ -1006,7 +1014,7 @@ A[3] = function(icon, isMulti)
 			
 			
 			-- Cast Toxic Blade
-		    if Temp.openerStep == 6 and A.ToxicBlade:IsReady(unit) 
+		    if Temp.openerStep == 6 and Player:EnergyPredicted() > 90 and A.ToxicBlade:IsReady(unit) and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 or A.Vendetta:GetCooldown() > 0 or not A.BurstIsON(unit))
 		    then
 			    return A.ToxicBlade:Show(icon)
 		    end
@@ -1022,16 +1030,9 @@ A[3] = function(icon, isMulti)
 			then
                 return A.BloodoftheEnemy:Show(icon)
             end
-			
-            -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit)
-			and (A.Vendetta:GetCooldown() < 3 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) 
-			then
-                return A.GuardianofAzeroth:Show(icon)
-            end	
-			
+						
             -- Activate Vanish 
-		    if Temp.openerStep == 7 and A.Vanish:IsReady("player") 
+		    if Temp.openerStep == 7 and A.Vanish:IsReady("player") and Player:ComboPoints() >= 3
 		    then
 			    return A.Vanish:Show(icon)
 		    end
@@ -1040,7 +1041,7 @@ A[3] = function(icon, isMulti)
 			end
 			
             -- Cast Envenom 
-		    if Temp.openerStep == 8 and A.Envenom:IsReady(unit) 
+		    if Temp.openerStep == 8 and A.Envenom:IsReady(unit) and Player:ComboPoints() > 0
 		    then
 			    return A.Envenom:Show(icon)
 		    end
@@ -1243,7 +1244,7 @@ A[3] = function(icon, isMulti)
 	    end
 	
 		-- Out of combat / Precombat classic opener
-        if not inCombat and ((not A.Subterfuge:IsSpellLearned() and not A.MasterAssassin:IsSpellLearned()) or MultiUnits:GetByRange(20) > 1) then			    			
+        if not inCombat and ((not A.Subterfuge:IsSpellLearned() and not A.MasterAssassin:IsSpellLearned()) or MultiUnits:GetByRange(8) > 1) then			    			
 
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") 
@@ -1381,11 +1382,12 @@ A[3] = function(icon, isMulti)
 		    then
 		    	return A.Garrote:Show(icon)
 		    end	
-		
-
-		
+				
 		    -- Envenom
-		    if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 then
+		    if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 
+			and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 
+			and ((A.ToxicBlade:IsSpellLearned() and A.ToxicBlade:GetCooldown() > 3) or not A.ToxicBlade:IsSpellLearned()) 
+			then
 		    	return A.Envenom:Show(icon)
 		    end
 		
@@ -1394,7 +1396,7 @@ A[3] = function(icon, isMulti)
 		    (
 		        Unit(unit):HasDeBuffs(A.Rupture.ID, true) == 0
 		    	or 
-		    	Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 6
+		    	(Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 6 or (A.ToxicBlade:IsSpellLearned() and Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 9 and A.ToxicBlade:GetCooldown() > 0 and A.ToxicBlade:GetCooldown() < 3) or not A.ToxicBlade:IsSpellLearned()) 
 		    ) 
 	    	then
 		    	return A.Rupture:Show(icon)
@@ -1479,27 +1481,24 @@ A[3] = function(icon, isMulti)
             -- Toxic Blade special pool energy
 	    	local TimeToMaxEnergy = Player:EnergyTimeToMax()
 		
-            if CanCast and A.ToxicBlade:IsSpellLearned() 		     
+            if CanCast and A.ToxicBlade:IsSpellLearned() and Player:ComboPoints() >= 3  		     
 	    	then
-	    	    if A.ToxicBlade:GetCooldown() <= 3 and Player:EnergyPredicted() < 90 then
+	    	    if A.ToxicBlade:GetCooldown() <= 5 and Player:EnergyPredicted() < 90 then
+				    -- Notification					
+                    Action.SendNotification("Pooling energy for Toxic Blade", A.ToxicBlade.ID)
                     return A.PoolResource:Show(icon)
 		    	else
 					if A.ToxicBlade:IsReady(unit)  then
 					    if Player:EnergyPredicted() < 90  then
+						    -- Notification					
+                            Action.SendNotification("Pooling energy for Toxic Blade", A.ToxicBlade.ID)
 						    return A.PoolResource:Show(icon)
 						else
-						    if Player:ComboPoints() < 4 then
-                            -- Mutilate
-	                            if A.Mutilate:IsReady(unit) and Player:ComboPoints() < 4 then
-		    	                    return A.Mutilate:Show(icon)
-	    	                    end	
-							else
-		    	                return A.ToxicBlade:Show(icon)
-							end
+		    	            return A.ToxicBlade:Show(icon)
 						end
 				    end
 					
-		    	    if A.Envenom:IsReadyByPassCastGCD(unit, nil, nil, true) and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0 then
+		    	    if A.Envenom:IsReadyByPassCastGCD(unit, nil, nil, true) and Player:ComboPoints() >= 3 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0 then
 		    		    return A.Envenom:Show(icon)
 		    		end
 		    	end
