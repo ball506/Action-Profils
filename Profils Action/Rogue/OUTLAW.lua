@@ -794,10 +794,15 @@ A[3] = function(icon, isMulti)
         -- variable,name=bte_condition,value=buff.ruthless_precision.up|(azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled)&buff.roll_the_bones.up
         local VarBteCondition = ((Unit("player"):HasBuffs(A.RuthlessPrecision.ID, true) > 0 or (A.Deadshot:GetAzeriteRank() > 0 or A.AceUpYourSleeve:GetAzeriteRank() > 0) and RtB_Buffs > 0) and true) or false
         -- variable,name=blade_flurry_sync,value=spell_targets.blade_flurry<2&raid_event.adds.in>20|buff.blade_flurry.up
-        local VarBladeFlurrySync = (MultiUnits:GetByRange(8, 5, 10) >= 2 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
+        local VarBladeFlurrySync = (MultiUnits:GetByRange(8) >= 2 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0) and true or false      
 		--print(VarBladeFlurrySync)
 		-- Trinkets vars
         local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
+		
+		--DEBUG
+		--print("Get by spell : " .. MultiUnits:GetBySpell(A.Deadshot))
+		--print("Get by range : " .. MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange")))
+		--print("Get by range combat : " .. MultiUnits:GetByRangeInCombat(A.GetToggle(2, "BladeFlurryRange")))
 		
 		--Precombat
         local function Precombat(unit)
@@ -860,6 +865,10 @@ A[3] = function(icon, isMulti)
 			then
                 return A.CyclotronicBlast:Show(icon)
             end
+			-- BladeFlurry
+            if A.BladeFlurry:IsReadyByPassCastGCD("player", true, nil, nil) and CanCast and (MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange")) > 1 or MultiUnits:GetBySpell(A.Deadshot) > 1) then
+                return A.BladeFlurry:Show(icon)
+            end
             -- ambush
             if A.Ambush:IsReady(unit) 
 			and (Pull > 0 and Pull < 1 or not A.GetToggle(1, "DBM"))
@@ -891,11 +900,11 @@ A[3] = function(icon, isMulti)
             -- focused_azerite_beam,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60&!buff.adrenaline_rush.up
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) 
 			and Action.GetToggle(1, "HeartOfAzeroth") 
-			and ((MultiUnits:GetByRange(8, 5, 10) >= 2 or Unit(unit):IsBoss()) and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0) then
+			and ((MultiUnits:GetByRange(8) >= 2 or Unit(unit):IsBoss()) and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8, 5, 10) >= 2) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8) >= 2) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
@@ -1069,28 +1078,31 @@ A[3] = function(icon, isMulti)
         end
                 
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and Precombat(unit) then 
             return true
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-            -- MfD Sniping
-            MfDSniping(A.MarkedforDeath)
+        if inCombat and Unit(unit):IsExists() then
+            
+			-- MfD Sniping
+			if CanCast then
+                MfDSniping(A.MarkedforDeath)
+			end
 			
     		-- stealth
-            if A.Stealth:IsReady(unit) and not Player:IsStealthed() and Unit("player"):HasBuffs(A.VanishBuff.ID, true) == 0 then
+            if A.Stealth:IsReady(unit) and CanCast and not Player:IsStealthed() and Unit("player"):HasBuffs(A.VanishBuff.ID, true) == 0 then
                 return A.Stealth:Show(icon)
             end
 			
 		    -- Interrupt
             local Interrupt = Interrupts(unit)
-            if Interrupt then 
+            if Interrupt and CanCast then 
                 return Interrupt:Show(icon)
             end	
 			
 	        -- Sprint if out of range 
-            if A.Sprint:IsReady("player") and isMovingFor > A.GetToggle(2, "SprintTime") and A.GetToggle(2, "UseSprint") then
+            if A.Sprint:IsReady("player") and CanCast and isMovingFor > A.GetToggle(2, "SprintTime") and A.GetToggle(2, "UseSprint") then
                 return A.Sprint:Show(icon)
             end
 			            
@@ -1100,13 +1112,16 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- AoE
-			if (A.GetToggle(2, "AoE") or isMulti) then 
+			if (A.GetToggle(2, "AoE") or isMulti) and CanCast then 
                 -- blade_flurry,if=spell_targets>=2&!buff.blade_flurry.up&(!raid_event.adds.exists|raid_event.adds.remains>8|raid_event.adds.in>(2-cooldown.blade_flurry.charges_fractional)*25)
-                if A.BladeFlurry:IsReady("player") and 
+                if A.BladeFlurry:IsReadyByPassCastGCD("player", true, nil, nil) and 
 			        (
-				        MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange"), 5, 5) >= A.GetToggle(2, "BladeFlurryTargets") 
-				    	and 
-				    	(Unit("player"):HasBuffs(A.BladeFlurry.ID, true) <= A.GetCurrentGCD() + A.GetGCD() + A.GetPing() or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0)
+					    (
+						    MultiUnits:GetBySpell(A.Deadshot) > A.GetToggle(2, "BladeFlurryTargets")
+						    or
+				            MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange")) >= A.GetToggle(2, "BladeFlurryTargets") 
+						)
+				    	and ((Unit("player"):HasBuffs(A.BladeFlurry.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER)) or Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0)
 			    	) 
 			    then
                     return A.BladeFlurry:Show(icon)
@@ -1115,7 +1130,7 @@ A[3] = function(icon, isMulti)
                 -- blood_of_the_enemy,if=big_aoe
                 if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(2, "BotEAoEBurst") and Action.GetToggle(1, "HeartOfAzeroth") and 
      	            (
-			    	    MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange"), 5, 5) >= A.GetToggle(2, "BladeFlurryTargets") 
+			    	    MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange")) >= A.GetToggle(2, "BladeFlurryTargets") 
 			    		and 
 			    		(Unit("player"):HasBuffs(A.BladeFlurry.ID, true) > 0)
 			    	)           
