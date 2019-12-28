@@ -998,7 +998,7 @@ A[3] = function(icon, isMulti)
 
             -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit)
-			and (A.Vendetta:GetCooldown() == 0 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) 
+			and (A.Vendetta:IsReady("player") or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0) 
 			then
                 return A.GuardianofAzeroth:Show(icon)
             end	
