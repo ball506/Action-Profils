@@ -302,7 +302,7 @@ local function UpdateIsInMeleeRange()
         return;
     end
 			
-    local IsInMeleeRange = Unit(unit):GetRange() <= 5
+    local IsInMeleeRange = Unit("target"):GetRange() <= 5
     local IsInAoERange = IsInMeleeRange or MultiUnits:GetByRange(8, 5, 10) > 0;
 end
 
