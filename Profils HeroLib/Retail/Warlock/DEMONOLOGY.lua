@@ -389,10 +389,11 @@ local PetsData = {
 --------------------------
 -- Update the GuardiansTable
 function UpdatePetTable()
-    for key, petTable in pairs(HL.GuardiansTable.Pets) do
+    --for key, petTable in pairs(HL.GuardiansTable.Pets) do
+	for _, data in pairs(PetTrackerData[petID].GUIDs) do 
         if petTable then
             -- Remove expired pets
-            if HL.GetTime() >= petTable.despawnTime then
+            if TMW.time >= petTable.despawnTime then
                 if petTable.name == "Wild Imp" then
                     HL.GuardiansTable.ImpCount = HL.GuardiansTable.ImpCount - 1
                 end
@@ -418,8 +419,8 @@ function UpdatePetTable()
             HL.GuardiansTable.Pets[key] = nil
         end
         -- Update Durations
-        if HL.GetTime() <= petTable.despawnTime then
-            petTable.Duration = petTable.despawnTime - HL.GetTime()
+        if TMW.time <= petTable.despawnTime then
+            petTable.Duration = petTable.despawnTime - TMW.time
             if petTable.name == "Felguard" then
                 HL.GuardiansTable.FelguardDuration = petTable.Duration
             elseif petTable.name == "Dreadstalker" then
@@ -431,7 +432,7 @@ function UpdatePetTable()
             elseif petTable.name == "Wild Imp" then
                 HL.GuardiansTable.WildImpDuration = petTable.Duration
                 if petTable.WildImpFrozenEnd ~= 0 then
-                    local ImpTime =  math.floor(petTable.WildImpFrozenEnd - HL.GetTime() + 0.5)
+                    local ImpTime =  math.floor(petTable.WildImpFrozenEnd - TMW.time + 0.5)
                     if ImpTime < 1 then 
                         petTable.WildImpFrozenEnd = 0 
                     end
@@ -442,10 +443,10 @@ function UpdatePetTable()
                 if PetsData[UnitPetID] and PetsData[UnitPetID].name == "Demonic Tyrant" then
                     for key, petTable in pairs(HL.GuardiansTable.Pets) do
                         if petTable then
-                            petTable.spawnTime = HL.GetTime() + petTable.Duration + 15 - PetDurations[petTable.name]
+                            petTable.spawnTime = TMW.time + petTable.Duration + 15 - PetDurations[petTable.name]
                             petTable.despawnTime = petTable.spawnTime + PetDurations[petTable.name]
                             if petTable.name == "Wild Imp" then
-                                petTable.WildImpFrozenEnd = HL.GetTime() + 15
+                                petTable.WildImpFrozenEnd = TMW.time + 15
                             end
                         end
                     end
@@ -472,11 +473,11 @@ HL:RegisterForSelfCombatEvent(
         local petTable = {
             ID = UnitPetGUID,
             name = summonedPet.name,
-            spawnTime = HL.GetTime(),
+            spawnTime = TMW.time,
             ImpCasts = 5,
             Duration = summonedPet.duration,
             WildImpFrozenEnd = 0,
-            despawnTime = HL.GetTime() + tonumber(summonedPet.duration)
+            despawnTime = TMW.time + tonumber(summonedPet.duration)
         }
         
 		table.insert(HL.GuardiansTable.Pets,petTable)
@@ -500,7 +501,7 @@ HL:RegisterForSelfCombatEvent(
         
         -- Update when next Wild Imp will spawn from Inner Demons talent
         if UnitPetID == 143622 then
-            HL.GuardiansTable.InnerDemonsNextCast = HL.GetTime() + 12
+            HL.GuardiansTable.InnerDemonsNextCast = TMW.time + 12
         end
 
         -- Updates how many Wild Imps have yet to spawn from HoG cast
@@ -571,7 +572,7 @@ local function ImpsSpawnedDuring(miliseconds)
   local ImpSpawned = 0
   local SpellCastTime = ( miliseconds / 1000 ) * Player:SpellHaste()
 
-  if HL.GetTime() <= HL.GuardiansTable.InnerDemonsNextCast and (HL.GetTime() + SpellCastTime) >= HL.GuardiansTable.InnerDemonsNextCast then
+  if TMW.time <= HL.GuardiansTable.InnerDemonsNextCast and (TMW.time + SpellCastTime) >= HL.GuardiansTable.InnerDemonsNextCast then
         ImpSpawned = ImpSpawned + 1
   end
 
