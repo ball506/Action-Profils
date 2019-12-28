@@ -660,7 +660,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam,if=!death_and_decay.ticking
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
@@ -670,17 +670,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- purifying_blast,if=!death_and_decay.ticking
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- worldvein_resonance,if=!death_and_decay.ticking
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
                 return A.WorldveinResonance:Show(icon)
             end
 			
             -- ripple_in_space,if=!death_and_decay.ticking
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
                 return A.RippleInSpace:Show(icon)
             end
         end
