@@ -39,7 +39,6 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     -- Generics
     BearFormBuff                           = Action.Create({ Type = "Spell", ID = 5487 }),
     BearForm                               = Action.Create({ Type = "Spell", ID = 5487 }),
-    CatForm                                = Action.Create({ Type = "Spell", ID = 768     }),
     HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
@@ -55,7 +54,10 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102558 }),
     ThrashBearDebuff                       = Action.Create({ Type = "Spell", ID = 192090 }),
     Maul                                   = Action.Create({ Type = "Spell", ID = 6807 }),
+    ConflictandStrife                      = Action.Create({ Type = "Spell", ID =  }),
+    SharpenedClawsBuff                     = Action.Create({ Type = "Spell", ID =  }),
     Ironfur                                = Action.Create({ Type = "Spell", ID = 192081 }),
+    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081 }),
     LayeredMane                            = Action.Create({ Type = "Spell", ID = 279552 }),
     Pulverize                              = Action.Create({ Type = "Spell", ID = 80313 }),
     Moonfire                               = Action.Create({ Type = "Spell", ID = 8921 }),
@@ -64,30 +66,7 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
     SwipeBear                              = Action.Create({ Type = "Spell", ID = 213771 }),
     Mangle                                 = Action.Create({ Type = "Spell", ID = 33917 }),
-    BalanceAffinity                       = Action.Create({ Type = "Spell", ID = 197488     }),
-    WildChargeTalent                      = Action.Create({ Type = "Spell", ID = 102401     }),
-    WildChargeBear                        = Action.Create({ Type = "Spell", ID = 16979     }),
-    SurvivalInstincts                     = Action.Create({ Type = "Spell", ID = 61336     }),
-    SkullBash                             = Action.Create({ Type = "Spell", ID = 106839     }),
-	-- Utilities
-	Typhoon                               = Action.Create({ Type = "Spell", ID = 132469   }),
-	MightyBash                            = Action.Create({ Type = "Spell", ID = 5211   }),
-	IncapacitatingRoar                    = Action.Create({ Type = "Spell", ID = 99  }),
-	Soothe                                = Action.Create({ Type = "Spell", ID = 2908   }),
-	Growl                                 = Action.Create({ Type = "Spell", ID = 6795   }),
-	StampedingRoar                        = Action.Create({ Type = "Spell", ID = 77761   }),
-    -- Defensive
-	SurvivalInstincts                     = Action.Create({ Type = "Spell", ID = 61336   }),
-	FrenziedRegeneration                  = Action.Create({ Type = "Spell", ID = 22842   }),
-    -- Buffs
-    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081 }),
-    PulverizeBuff                         = Action.Create({ Type = "Spell", ID = 158792     }),
-    IncarnationBuff                       = Action.Create({ Type = "Spell", ID = 102558     }),
-    GalacticGuardianBuff                  = Action.Create({ Type = "Spell", ID = 213708     }),
-    SharpenedClawsBuff                    = Action.Create({ Type = "Spell", ID = 279943     }),
-	-- Debuffs 
-    ThrashBearDebuff                      = Action.Create({ Type = "Spell", ID = 192090     }),
-    MoonfireDebuff                        = Action.Create({ Type = "Spell", ID = 164812     }),
+    GalacticGuardianBuff                   = Action.Create({ Type = "Spell", ID = 213708 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -102,8 +81,6 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
-	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -133,7 +110,6 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
     ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
-    ConflictandStrife                    = Action.Create({ Type = "Spell", ID = 304017, Hidden = true     }),
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
@@ -174,6 +150,10 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
 Action:CreateEssencesFor(ACTION_CONST_DRUID_GUARDIAN)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_DRUID_GUARDIAN], { __index = Action })
 
+
+
+
+
 local function num(val)
     if val then return 1 else return 0 end
 end
@@ -204,299 +184,33 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function GetStance()
-    -- @return number (1 - Bear, 2 - Cat, 3 - Travel)
-    return Player:GetStance()
-end 
-
 local function Swipe()
-  if Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 then
-    return A.SwipeCat
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
+    return A.SwipeCat;
   else
-    return A.SwipeBear
+    return A.SwipeBear;
   end
 end
 
 local function Thrash()
-  if Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 then
-    return A.ThrashCat
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
+    return A.ThrashCat;
   else
-    return A.ThrashBear
+    return A.ThrashBear;
   end
 end
 
--- SelfDefensives
-local function SelfDefensives()
-    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
-		
-    if Unit("player"):CombatTime() == 0 then 
-        return 
-    end 
-
-		
-    -- Emergency Ironfur
-        local Ironfur = Action.GetToggle(2, "IronfurHP")
-        if     Ironfur >= 0 and A.Ironfur:IsReady("player") and
-        (
-            (   -- Auto 
-                Ironfur >= 100 and 
-                (
-                    -- HP lose per sec >= 2
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 2 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.02 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                Ironfur < 100 and 
-                Unit("player"):HealthPercent() <= Ironfur
-            )
-        ) 
-        then 
-            return A.Ironfur
-        end  		
-
-        -- Emergency FrenziedRegeneration
-        local FrenziedRegeneration = Action.GetToggle(2, "FrenziedRegenerationHP")
-        if     FrenziedRegeneration >= 0 and A.FrenziedRegeneration:IsReady("player") and Unit("player"):HasBuffs(A.FrenziedRegeneration.ID, true) == 0 and
-        (
-            (   -- Auto 
-                FrenziedRegeneration >= 100 and 
-                (
-                    -- HP lose per sec >= 5
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 5 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.05 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-					-- Custom logic with current HPS and DMG
-					Unit("player"):HealthPercent() <= 85 and Unit("player"):GetHEAL() < Unit("player"):GetDMG() or
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                FrenziedRegeneration < 100 and 
-                Unit("player"):HealthPercent() <= FrenziedRegeneration
-            )
-        ) 
-        then 
-            return A.FrenziedRegeneration
-        end  		
-		
-        -- Emergency Barkskin
-        local Barkskin = Action.GetToggle(2, "BarkskinHP")
-        if     Barkskin >= 0 and A.Barkskin:IsReady("player") and 
-        (
-            (   -- Auto 
-                Barkskin >= 100 and 
-                (
-                    -- HP lose per sec >= 10
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-					-- Custom logic with current HPS and DMG
-					Unit("player"):HealthPercent() <= 65 or
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                Barkskin < 100 and 
-                Unit("player"):HealthPercent() <= Barkskin
-            )
-        ) 
-    then 
-        return A.Barkskin
-    end  
-	
-    -- Survival Instincts
-    local SurvivalInstincts = Action.GetToggle(2, "SurvivalInstinctsHP")
-    if     SurvivalInstincts >= 0 and A.SurvivalInstincts:IsReady("player") and Unit("player"):HasBuffs(A.SurvivalInstincts.ID, true) == 0 and
-    (
-        (   -- Auto 
-            SurvivalInstincts >= 100 and 
-            (
-                -- HP lose per sec >= 15
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
-                -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
-				-- Custom logic with current HPS and DMG
-				Unit("player"):HealthPercent() <= 45 or
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit("player"):UseDeff() or 
-                        (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
-                        )
-                    )
-                )
-            ) 
-        ) or 
-        (    -- Custom
-            SurvivalInstincts < 100 and 
-            Unit("player"):HealthPercent() <= SurvivalInstincts
-        )
-    ) 
-    then 
-        return A.SurvivalInstincts
-    end
-	
-		    -- HealingPotion
-    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
-    (
-        (     -- Auto 
-            AbyssalHealingPotion >= 100 and 
-            (
-                -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
-                -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit("player"):UseDeff() or 
-                        (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
-                        )
-                    )
-                )
-            ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
-        ) or 
-        (    -- Custom
-            AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
-        )
-    ) 
-    then 
-        return A.AbyssalHealingPotion
-    end 
-	
-end 
-SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
-		
-    -- SkullBash
-    if useKick and A.SkullBash:IsReady(unit) then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.SkullBash
-       	end 
-   	end 
-	
-   	 -- MightyBash
-   	if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-   	        return A.MightyBash
-   	    end 
-   	end 
-
- 	 -- IncapacitatingRoar
-   	if useCC and EnemiesCasting >= 3 and (not A.MightyBash:IsSpellLearned() or not A.MightyBash:IsReady(unit)) and A.IncapacitatingRoar:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-   	        return A.IncapacitatingRoar
-   	    end 
-  	end 		
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
--- Multidot Handler UI --
-local function HandleMultidots()
-    local choice = Action.GetToggle(2, "AutoDotSelection")
-       
-    if choice == "In Raid" then
-		if IsInRaid() then
-    		return true
-		else
-		    return false
-		end
-    elseif choice == "In Dungeon" then 
-		if IsInGroup() then
-    		return true
-		else
-		    return false
-		end
-	elseif choice == "In PvP" then 	
-		if A.IsInPvP then 
-    		return true
-		else
-		    return false
-		end		
-    elseif choice == "Everywhere" then 
-        return true
-    else
-		return false
-    end
-	--print(choice)
-end
 
 local function EvaluateCyclePulverize107(unit)
-    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == 3
+    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == dot.thrash_bear.max_stacks
 end
 
 local function EvaluateCycleMoonfire118(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRange(40, 5, 10) < 2
+    return Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
 local function EvaluateCycleMoonfire167(unit)
-    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRange(40, 5, 10) < 2
+    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 2
 end
 
 --- ======= ACTION LISTS =======
@@ -506,33 +220,17 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit("player"):CombatTime() > 0
-    local combatTime = Unit("player"):CombatTime()
-    local inStance = GetStance()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-    local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
-	local IsTanking = Unit("player"):IsTanking("target", 8) or Unit("player"):IsTankingAoE(8)
-	local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
-	local Thrash = Thrash()
-	local Swipe = Swipe()
-	local targetThreatSituation, targetThreatPercent = Unit("player"):ThreatSituation()
-	local threatDamagerLimit = (A.Role == "DAMAGER" and A.GetToggle(2, "ThreatDamagerLimit")) or -1
-    local isSafestThreatRotation = not A.IsInPvP and A.Zone ~= "none" and A.TeamCache.Friendly.Size > 1 and threatDamagerLimit ~= -1 and targetThreatPercent >= threatDamagerLimit
-	-- Multidots var
-	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
-	local MissingMoonfire = MultiUnits:GetByRangeMissedDoTs(20, 5, A.Moonfire.ID)	
-	local CanMultidot = HandleMultidots()
-	
+
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, Cooldowns
-        
-		--Precombat
+        --Precombat
         local function Precombat(unit)
             -- flask
             -- food
@@ -543,32 +241,24 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bear_form
-            if A.BearForm:IsReady(unit) and inStance ~= 1 then
+            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true) then
                 return A.BearForm:Show(icon)
             end
             -- potion
-            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") 
-			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
-			then
-                return A.SuperiorSteelskinPotion:Show(icon)
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                A.BattlePotionofAgility:Show(icon)
             end
-            -- thrash,if=(buff.incarnation.down&active_enemies>1)|(buff.incarnation.up&active_enemies>4)
-            if Thrash:IsReady("player") and MultiUnits:GetByRange(8, 5, 10) > 1 
-			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
-			then
-                return Thrash:Show(icon)
-            end		
-			-- Moonfire
-            if A.Moonfire:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 40 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0 then
-                return A.Moonfire:Show(icon) 
-            end			
         end
         
         --Cooldowns
         local function Cooldowns(unit)
             -- potion
-            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") and (ActiveMitigationNeeded or HPLoosePerSecond > 15) then
-                return A.SuperiorSteelskinPotion:Show(icon)
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                A.BattlePotionofAgility:Show(icon)
+            end
+            -- heart_essence
+            if A.HeartEssence:IsReady(unit) then
+                return A.HeartEssence:Show(icon)
             end
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
@@ -594,21 +284,25 @@ A[3] = function(icon, isMulti)
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            -- barkskin,if=buff.bear_form.up
+            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+                return A.Barkskin:Show(icon)
+            end
             -- lunar_beam,if=buff.bear_form.up
             if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.LunarBeam:Show(icon)
             end
             -- bristling_fur,if=buff.bear_form.up
-            if A.BristlingFur:IsReady(unit) and Unit("player"):HasBuffs(A.BearFormBuff.ID, true) and Player:Rage() < Action.GetToggle(2, "BristlingFurRage") then
+            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.BristlingFur:Show(icon)
             end
             -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
-            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(30, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Incarnation:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
             if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
-                return A.AshvanesRazorCoral:Show(icon)
+                A.AshvanesRazorCoral:Show(icon)
             end
             -- use_items
         end
@@ -622,139 +316,71 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_attack
-
-
-		    -- Soothe
-		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
-            -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-            if A.Soothe:IsReady(unit) and Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") then
-                return A.Soothe:Show(icon)
-            end	
-        
-
-			
-			-- Interrupt
-            local Interrupt = Interrupts(unit)
-            if Interrupt then 
-                return Interrupt:Show(icon)
-            end	
-			
-			
-		    -- Taunt 
-            if A.GetToggle(2, "AutoTaunt") 
-			and combatTime > 0     
-			then 
-			     -- if not fully aggroed or we are not current target then use taunt
-			    if A.Growl:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
-                    return A.Growl:Show(icon)
-				-- else if all good on current target, switch to another one we know we dont currently tank
-                else
-                    local Growl_Nameplates = MultiUnits:GetActiveUnitPlates()
-                    if Growl_Nameplates then  
-                        for Growl_UnitID in pairs(Growl_Nameplates) do             
-                            if not UnitIsUnit("target", Growl_UnitID) and A.Growl:IsReady(Growl_UnitID, true, nil, nil, nil) and not Unit(Growl_UnitID):IsBoss() and Unit(Growl_UnitID):GetRange() <= 30 and not Unit(Growl_UnitID):InLOS() and Unit("player"):ThreatSituation(Growl_UnitID) ~= 3 then 
-                                return A:Show(icon, ACTION_CONST_AUTOTARGET)
-                            end         
-                        end 
-                    end
-				end
-            end 
-			
-			-- Moonfire
-            if A.Moonfire:IsReady(unit) and (Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) > 0 or (MultiUnits:GetByRange(30, 5, 10) >= 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0)) then
-                return A.Moonfire:Show(icon) 
-            end
-			
-	    	-- Auto Multidot
-		    if Unit(unit):TimeToDie() > 10 and isSafestThreatRotation 
-		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
-		       and (
-        	    	   MissingMoonfire >= 1 and MissingMoonfire <= 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true) > 0 
-			        ) 
-		       and MultiUnits:GetByRangeInCombat(20, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(20, 5, 10) <= 8
-		    then
-		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
-		    end	
-
             -- call_action_list,name=cooldowns
-            if Cooldowns(unit) then
-                return true
+            if (true) then
+                local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
-			
-		    -- StampedingRoar if out of range 
-            if A.StampedingRoar:IsReady("player") and isMovingFor > 3 then
-                return A.StampedingRoar:Show(icon)
-            end	
-			
-		    -- Charge if out of range
-            if A.WildChargeTalent:IsSpellLearned() and A.WildChargeBear:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 then
-                return A.WildChargeBear:Show(icon)
-            end	
-			
             -- maul,if=rage.deficit<10&active_enemies<4
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and (Player:RageDeficit() < 10 and MultiUnits:GetByRange(40, 5, 10) < 4) then
+            if A.Maul:IsReady(unit) and (Player:RageDeficit() < 10 and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4) then
                 return A.Maul:Show(icon)
             end
-			
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true) == 0) then
+            if A.Maul:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.ConflictandStrife.ID)) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
                 return A.Maul:Show(icon)
             end
-			
-            -- maul
-            if A.Maul:IsReady(unit) and isSafestThreatRotation and Player:Rage() > 90 and A.GetToggle(2, "OffensiveRage") then
-                return A.Maul:Show(icon)
-            end
-			
             -- ironfur,if=cost=0|(rage>cost&azerite.layered_mane.enabled&active_enemies>2)
-            if A.Ironfur:IsReady("player") and (A.Ironfur:GetSpellPowerCostCache() == 0 or (Player:Rage() > A.Ironfur:GetSpellPowerCostCache() and bool(A.LayeredMane:GetAzeriteRank()) and MultiUnits:GetByRange(40, 5, 10) > 2)) then
+            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() == 0 or (Player:Rage() > A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank()) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2)) then
                 return A.Ironfur:Show(icon)
             end
-			
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Pulverize, 8, "min", EvaluateCyclePulverize107) then
+                if Action.Utils.CastTargetIf(A.Pulverize, 40, "min", EvaluateCyclePulverize107) then
                     return A.Pulverize:Show(icon) 
                 end
             end
-
+            -- moonfire,target_if=dot.moonfire.refreshable&active_enemies<2
+            if A.Moonfire:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire118) then
+                    return A.Moonfire:Show(icon) 
+                end
+            end
             -- thrash,if=(buff.incarnation.down&active_enemies>1)|(buff.incarnation.up&active_enemies>4)
-            if Thrash:IsReady("player") and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8, 5, 10) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4)) then
+            if Thrash():IsReady(unit) and ((bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4)) then
                 return Thrash:Show(icon)
             end
-			
             -- swipe,if=buff.incarnation.down&active_enemies>4
-            if Swipe:IsReady("player") and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8, 5, 10) >= 4) then
+            if Swipe():IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) > 4) then
                 return Swipe:Show(icon)
             end
-			
             -- mangle,if=dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true) > 0) then
+            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
-			
+            -- moonfire,target_if=buff.galactic_guardian.up&active_enemies<2
+            if A.Moonfire:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire167) then
+                    return A.Moonfire:Show(icon) 
+                end
+            end
             -- thrash
-            if Thrash:IsReady("player") then
+            if Thrash():IsReady(unit) then
                 return Thrash:Show(icon)
             end
-			
+            -- maul
+            if A.Maul:IsReady(unit) then
+                return A.Maul:Show(icon)
+            end
             -- swipe
-            if Swipe:IsReady("player") then
+            if Swipe():IsReady(unit) then
                 return Swipe:Show(icon)
             end
-			
         end
     end
 
     -- End on EnemyRotation()
-	
-    -- bear_form
-    if A.BearForm:IsReady(unit) and inStance ~= 1 then
-        return A.BearForm:Show(icon)
-    end
-	
-	-- Defensives
-    local SelfDefensive = SelfDefensives()
+
+    -- Defensive
+    --local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
