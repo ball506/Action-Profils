@@ -1382,7 +1382,13 @@ A[3] = function(icon, isMulti)
 		    then
 		    	return A.Garrote:Show(icon)
 		    end	
-				
+			
+            -- actions.dot+=/crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
+            if A.GetToggle(2, "AoE") and A.CrimsonTempest:IsReady(unit) and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(10) >= 2
+            and Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < 2 + num(MultiUnits:GetByRange(10) >= 5) then
+                return A.CrimsonTempest:Show(icon)
+            end	
+			
 		    -- Envenom
 		    if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 
 			and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 
@@ -1402,7 +1408,7 @@ A[3] = function(icon, isMulti)
 		    	return A.Rupture:Show(icon)
 		    end
 		
-				
+		
             -- Vanish Burst Phase
 	    
 	    	-- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
