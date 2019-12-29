@@ -469,7 +469,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- raise_dead
-            if A.RaiseDead:IsReady("player") and not Pet:IsActive(26125) then
+            if A.RaiseDead:IsReady("player") and not Pet:IsActive() then
                 return A.RaiseDead:Show(icon)
             end
 			
@@ -889,7 +889,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
     
 	-- raise_dead
-    if A.RaiseDead:IsReady("player") and not Pet:IsActive(26125) then
+    if A.RaiseDead:IsReady("player") and not Pet:IsActive() then
         return A.RaiseDead:Show(icon)
     end
 	
