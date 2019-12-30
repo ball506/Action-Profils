@@ -18,7 +18,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.9 (28.12.2019)",
+    DateTime = "v2.1.0 (30.12.2019)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -923,7 +923,9 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                },                 
+
+                },  
+				
             },
             { -- [4] 4th Row
 
@@ -970,6 +972,22 @@ A.Data.ProfileUI = {
                         enUS = "If " .. A.GetSpellInfo(2983) .. " is talented and ready, will use it if moving for set value.", 
                         ruRU = "Если " .. A.GetSpellInfo(2983) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
                         frFR = "Si " .. A.GetSpellInfo(2983) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },	
+                {
+                    E = "Checkbox", 
+                    DB = "AutoTricks",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto Tricks", 
+                        ruRU = "Auto Tricks", 
+                        frFR = "Auto Tricks",
+                    }, 
+                    TT = { 
+                        enUS = "Will auto use tricks of the trade on current tank in our instance.", 
+                        ruRU = "Will auto use tricks of the trade on current tank in our instance.", 
+                        frFR = "Will auto use tricks of the trade on current tank in our instance.", 
                     }, 
                     M = {},
                 },				
