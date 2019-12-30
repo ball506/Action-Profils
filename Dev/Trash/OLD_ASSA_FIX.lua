@@ -867,6 +867,7 @@ A[3] = function(icon, isMulti)
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
 	local MissingRupture = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.RuptureDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
 	local MissingGarrote = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.GarroteDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	local MissingCrimsonTempest = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.CrimsonTempest.ID)
 	local ActivesRupture = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.RuptureDebuff.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
 	local ActivesGarrote = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.GarroteDebuff.ID) 
     local CanMultidot = HandleMultidots()	
@@ -1049,7 +1050,7 @@ A[3] = function(icon, isMulti)
 		end	
 		
 		-- Envenom
-		if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 4 then
+		if A.Envenom:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 3 and (Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) > 0 or not A.CrimsonTempest:IsSpellLearned()) then
 			return A.Envenom:Show(icon)
 		end
 		
@@ -1058,13 +1059,20 @@ A[3] = function(icon, isMulti)
 		(
 		    Unit(unit):HasDeBuffs(A.Rupture.ID, true) == 0
 			or 
-			Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 6
+			Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 5
 		) 
 		then
 			return A.Rupture:Show(icon)
 		end
 		
-				
+        -- actions.dot+=/crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
+        if (isMulti or A.GetToggle(2, "AoE")) and A.CrimsonTempest:IsReadyByPassCastGCD(unit, true, nil, nil)
+		and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(10) >= 2 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 3
+        and (Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < 3 or MissingCrimsonTempest > 0)
+		then
+            return A.CrimsonTempest:Show(icon)
+        end	
+		
         -- Vanish Burst Phase
 	    
 		-- vanish,if=talent.exsanguinate.enabled&(talent.nightstalker.enabled|talent.subterfuge.enabled&variable.single_target)&combo_points>=cp_max_spend&cooldown.exsanguinate.remains<1&(!talent.subterfuge.enabled|!azerite.shrouded_suffocation.enabled|dot.garrote.pmultiplier<=1)
@@ -1343,13 +1351,7 @@ A[3] = function(icon, isMulti)
 				return A.Mutilate:Show(icon)
 			end
 		end
-		
-        -- actions.dot+=/crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
-        if (isMulti or A.GetToggle(2, "AoE")) and A.CrimsonTempest:IsReady(unit) and Player:ComboPoints() >= 4 and MultiUnits:GetByRange(10) >= 2
-        and Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < 2 + num(MultiUnits:GetByRange(10) >= 5) then
-            return A.CrimsonTempest:Show(icon)
-        end	
-		
+				
 		-- AoE Fan of Knives to spread poisons
 		if (isMulti or A.GetToggle(2, "AoE")) and CanCast and Player:ComboPoints() < 5 and MultiUnits:GetByRange(8, 2) >= 2 and A.FanofKnives:IsReady("player") then
 			return A.FanofKnives:Show(icon)
