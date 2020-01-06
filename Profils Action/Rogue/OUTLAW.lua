@@ -780,7 +780,7 @@ A[3] = function(icon, isMulti)
 		-- [4] spellName (@string)
 		-- [5] notInterruptable (@boolean, false is able to be interrupted)
 		-- [6] isChannel (@boolean)
-	if percentLeft > 0 and spellName == A.FocusedAzeriteBeam:Info() then 
+	if percentLeft > 0.01 and spellName == A.FocusedAzeriteBeam:Info() then 
 	    CanCast = false
 	else
 	    CanCast = true
@@ -812,20 +812,6 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- food
             -- snapshot_stats
-		    -- Sap out of combat
-		    if A.IsInPvP and A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
-		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
-			        -- Notification					
-                    Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
-			        return A.Sap:Show(icon)
-			    else 
-			        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
-    			        -- Notification					
-                        Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
-			            return A.Sap:Show(icon)
-				    end
-			    end
-		    end	
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") 
 			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1, "DBM"))
@@ -1046,23 +1032,23 @@ A[3] = function(icon, isMulti)
         --Finish
         local function Finish(unit)
             -- between_the_eyes,if=variable.bte_condition
-            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and (VarBteCondition) and not RtB_Reroll then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and CanCast and (VarBteCondition) and not RtB_Reroll then
                 return A.BetweentheEyes:Show(icon)
             end
             -- slice_and_dice,if=buff.slice_and_dice.remains<target.time_to_die&buff.slice_and_dice.remains<(1+combo_points)*1.8
-            if A.SliceandDice:IsReady("player") and (Unit("player"):HasBuffs(A.SliceandDice.ID, true) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDice.ID, true) < (1 + Player:ComboPoints()) * 1.8) then
+            if A.SliceandDice:IsReady("player") and CanCast and (Unit("player"):HasBuffs(A.SliceandDice.ID, true) < Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.SliceandDice.ID, true) < (1 + Player:ComboPoints()) * 1.8) then
                 return A.SliceandDice:Show(icon)
             end
             -- roll_the_bones,if=buff.roll_the_bones.remains<=3|variable.rtb_reroll
-            if A.RolltheBones:IsReady("player") and RtB_Reroll then
+            if A.RolltheBones:IsReady("player") and CanCast and RtB_Reroll then
                 return A.RolltheBones:Show(icon)
             end
             -- between_the_eyes,if=azerite.ace_up_your_sleeve.enabled|azerite.deadshot.enabled
-            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and not RtB_Reroll and (A.AceUpYourSleeve:GetAzeriteRank() > 0 or A.Deadshot:GetAzeriteRank() > 0) then
+            if A.BetweentheEyes:IsReadyByPassCastGCD(unit, nil, nil, true) and CanCast and not RtB_Reroll and (A.AceUpYourSleeve:GetAzeriteRank() > 0 or A.Deadshot:GetAzeriteRank() > 0) then
                 return A.BetweentheEyes:Show(icon)
             end
             -- dispatch
-            if A.Dispatch:IsReadyByPassCastGCD(unit, nil, nil, true) and not RtB_Reroll then
+            if A.Dispatch:IsReadyByPassCastGCD(unit, nil, nil, true) and CanCast and not RtB_Reroll then
                 return A.Dispatch:Show(icon)
             end
         end
@@ -1079,9 +1065,24 @@ A[3] = function(icon, isMulti)
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then 
             return true
         end
+		
+	    -- Sap out of combat
+	    if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+	        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
+	            -- Notification					
+                Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
+		        return A.Sap:Show(icon)
+		    else 
+		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
+   			        -- Notification					
+                    Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
+		            return A.Sap:Show(icon)
+			    end
+		    end
+	    end	
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
             -- MfD Sniping
            --MfDSniping(A.MarkedforDeath)
 			
@@ -1137,7 +1138,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- run_action_list,name=finish,if=combo_points>=cp_max_spend-(buff.broadside.up+buff.opportunity.up)*(talent.quick_draw.enabled&(!talent.marked_for_death.enabled|cooldown.marked_for_death.remains>1))*(azerite.ace_up_your_sleeve.rank<2|!cooldown.between_the_eyes.up|!buff.roll_the_bones.up)
-            if Finish(unit) and CanCast  and 
+            if Finish(unit) and 
 			(
     			(
 				    A.QuickDraw:IsSpellLearned() and Player:ComboPoints() >= CPMaxSpend() -
