@@ -507,7 +507,7 @@ A[3] = function(icon, isMulti)
         local function Aoe(unit)
 		
             -- death_and_decay,if=cooldown.apocalypse.remains
-            if A.DeathandDecay:IsReady("player") then
+            if A.DeathandDecay:IsReadyByPassCastGCDP("player", true, true, nil) then
                 return A.DeathandDecay:Show(icon)
             end
 			
@@ -517,12 +517,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- epidemic,if=death_and_decay.ticking&rune<2&!variable.pooling_for_gargoyle
-            if A.Epidemic:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and Player:Rune() < 2 and not bool(VarPoolingForGargoyle)) then
+            if A.Epidemic:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and Player:Rune() < 2 and not VarPoolingForGargoyle) then
                 return A.Epidemic:Show(icon)
             end
 			
             -- death_coil,if=death_and_decay.ticking&rune<2&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and Player:Rune() < 2 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and Player:Rune() < 2 and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
 			
@@ -537,7 +537,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- epidemic,if=!variable.pooling_for_gargoyle
-            if A.Epidemic:IsReady(unit) and (not bool(VarPoolingForGargoyle)) then
+            if A.Epidemic:IsReady(unit) and (not VarPoolingForGargoyle) then
                 return A.Epidemic:Show(icon)
             end
 			
@@ -557,12 +557,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_coil,if=buff.sudden_doom.react&!variable.pooling_for_gargoyle|pet.gargoyle.active
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) > 0 and not bool(VarPoolingForGargoyle) or Pet:IsActive(27829)) then
+            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) > 0 and not VarPoolingForGargoyle or Pet:IsActive(27829)) then
                 return A.DeathCoil:Show(icon)
             end
 			
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not VarPoolingForGargoyle then
                 return A.DeathCoil:Show(icon)
             end
 			
@@ -580,7 +580,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
 			
@@ -590,7 +590,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_coil,if=!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
         end
@@ -604,7 +604,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- apocalypse,if=debuff.festering_wound.stack>=4
-            if A.Apocalypse:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) >= 4) and A.BurstIsON(unit) then
+            if A.Apocalypse:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) >= 4) then
                 return A.Apocalypse:Show(icon)
             end
 			
@@ -614,7 +614,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_gargoyle,if=runic_power.deficit<14
-            if A.SummonGargoyle:IsReady(unit) and (Player:RunicPowerDeficit() < 14) and A.BurstIsON(unit) then
+            if A.SummonGargoyle:IsReady("player") and Player:RunicPowerDeficit() < 14 and A.BurstIsON(unit) then
                 return A.SummonGargoyle:Show(icon)
             end
 			
@@ -648,17 +648,17 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
 		
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and MultiUnits:GetByRange(30, 5, 10) > 1) or (A.Defile:GetCooldown() > 0 and MultiUnits:GetByRange(8, 5, 10) > 1) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and MultiUnits:GetByRange(30, 5, 10) > 1) or (A.Defile:GetCooldown() > 0 and MultiUnits:GetByRange(8, 5, 10) > 1) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.Apocalypse:GetCooldown() < 6 and A.ArmyoftheDead:GetCooldown() > A.GuardianofAzeroth:GetCooldown()) or A.ArmyoftheDead:GetCooldown() < 2) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.Apocalypse:GetCooldown() < 6 and A.ArmyoftheDead:GetCooldown() > A.GuardianofAzeroth:GetCooldown()) or A.ArmyoftheDead:GetCooldown() < 2) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -668,7 +668,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam,if=!death_and_decay.ticking
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) == 0) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
@@ -697,17 +697,17 @@ A[3] = function(icon, isMulti)
         local function Generic(unit)
 		
             -- death_coil,if=buff.sudden_doom.react&!variable.pooling_for_gargoyle|pet.gargoyle.active
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) > 0 and not bool(VarPoolingForGargoyle) or Pet:IsActive(27829)) then
+            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) > 0 and not VarPoolingForGargoyle or Pet:IsActive(27829)) then
                 return A.DeathCoil:Show(icon)
             end
 			
             -- death_coil,if=runic_power.deficit<14&(cooldown.apocalypse.remains>5|debuff.festering_wound.stack>4)&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
 			
             -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
-            if A.DeathandDecay:IsReady("player") and (A.Pestilence:IsSpellLearned() and A.Apocalypse:GetCooldown() > 0) then
+            if A.DeathandDecay:IsReadyByPassCastGCDP("player", true, true, nil) and (A.Pestilence:IsSpellLearned() and A.Apocalypse:GetCooldown() > 0) then
                 return A.DeathandDecay:Show(icon)
             end
 			
@@ -728,7 +728,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
 			
@@ -738,7 +738,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_coil,if=!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (not bool(VarPoolingForGargoyle)) then
+            if A.DeathCoil:IsReady(unit) and (not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
         end
@@ -752,8 +752,8 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
             -- variable,name=pooling_for_gargoyle,value=cooldown.summon_gargoyle.remains<5&talent.summon_gargoyle.enabled
-			local VarPoolingForGargoyle = num(A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned())
-			
+			local VarPoolingForGargoyle = A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned()
+			print(VarPoolingForGargoyle)
 			-- auto_attack
 			-- Chains of Ice
 			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseChainsofIce") and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
