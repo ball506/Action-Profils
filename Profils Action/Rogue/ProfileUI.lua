@@ -18,7 +18,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.1.0 (30.12.2019)",
+    DateTime = "v2.1.1 (06.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  

@@ -902,7 +902,7 @@ A[3] = function(icon, isMulti)
 		-- [4] spellName (@string)
 		-- [5] notInterruptable (@boolean, false is able to be interrupted)
 		-- [6] isChannel (@boolean)
-	if percentLeft > 0 and spellName == A.FocusedAzeriteBeam:Info() then 
+	if percentLeft > 0.01 and spellName == A.FocusedAzeriteBeam:Info() then 
 	    CanCast = false
 	else
 	    CanCast = true
@@ -923,7 +923,7 @@ A[3] = function(icon, isMulti)
         if not inCombat then			    			
 		
 		    -- Sap out of combat
-		    if A.IsInPvP and A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+		    if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
 		        if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
 			        -- Notification					
                     Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
@@ -1060,7 +1060,7 @@ A[3] = function(icon, isMulti)
 		
 		-- Auto Multidot
 		if Unit(unit):TimeToDie() > 10  
-		   and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
+		   and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and not A.IsInPvP and CanMultidot
 		   and (
         		   MissingRupture >= 1 and ActivesRupture <= 4 and Unit(unit):HasDeBuffs(A.Rupture.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 0 
 		           or
@@ -1444,8 +1444,8 @@ local function PartyRotation(unit)
    -- end
 	
 	-- TricksoftheTrade
-    if A.TricksoftheTrade:IsReady(unit) and A.GetToggle(2, "AutoTricks") and not Unit(unit):InLOS()  then
-        return A.TricksoftheTrade:Show(icon)
+    if A.TricksoftheTrade:IsReady(unit, nil, nil, nil) and A.GetToggle(2, "AutoTricks") and not Unit(unit):InLOS()  then
+        return A.TricksoftheTrade
     end	
 
 end
@@ -1461,33 +1461,28 @@ local function ArenaRotation(icon, unit)
 		
 		-- Blind on Enemy Healer
         if A.Blind:IsReady(EnemyHealerUnitID) and Unit(EnemyHealerUnitID):GetRange() <= 15 and not Unit(EnemyHealerUnitID):InLOS() and Unit(EnemyHealerUnitID):IsControlAble("disorient", 25) and Unit(unit):HealthPercent() <= 30 then
-            return A.Blind:Show(icon)
+            return A.Blind
         end 
 		
         -- Shadowstep into KidneyShot or Interrupt
         if A.ShadowStep:IsReady(EnemyHealerUnitID) and Unit(EnemyHealerUnitID):GetRange() <= 25 and Unit(unit):HealthPercent() <= 30 and not Unit(EnemyHealerUnitID):InLOS() and Unit(EnemyHealerUnitID):InCC() < 1 then
-            return A.ShadowStep:Show(icon)              
+            return A.ShadowStep              
         end
 		
 		-- Kidney Shot on enemies with burst damage buff
         if A.KidneyShot:IsReady(unit) and inMelee and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
-            return A.KidneyShot:Show(icon)
-        end          
-
-        -- Disarm
-        if A.DisarmIsReady(unit) and not Unit(unit):InLOS() then
-            return A.Disarm:Show(icon)
-        end 
+            return A.KidneyShot
+        end  
+        
+        -- PvP Disarm OUTLAW
+        --if A.DisarmIsReady(unit, false, nil) and not Unit(unit):InLOS() then
+        --    return A.Disarm
+        --end  
+		
     end 
 end 
 
-A[6] = function(icon)    
-    if StopCast and Unit("player"):IsCastingRemains(A.SoothingMist.ID) > 0 then 
-        return A:Show(icon, ACTION_CONST_STOPCAST)
-    end 
-    
-    StopCast = false 
-    
+A[6] = function(icon)        
     local Arena = ArenaRotation("arena1")
     if Arena then 
         return Arena:Show(icon)
