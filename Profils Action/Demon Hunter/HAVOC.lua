@@ -129,6 +129,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
     RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
     ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+    PoolResource                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
@@ -543,10 +544,14 @@ A[3] = function(icon, isMulti)
 		-- [4] spellName (@string)
 		-- [5] notInterruptable (@boolean, false is able to be interrupted)
 		-- [6] isChannel (@boolean)
-	if percentLeft > 0 and spellID == A.EyeBeam.ID and isChannel then 
+	if percentLeft > 0.01 and spellID == A.EyeBeam.ID and isChannel then 
 	    CanCast = false
 	else
 	    CanCast = true
+	end
+	
+	if not CanCast then
+	    return A.PoolResource:Show(icon)
 	end
 	--print(CanCast)
     ------------------------------------------------------
