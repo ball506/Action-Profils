@@ -10,7 +10,7 @@ local Player								= Action.Player
 local MultiUnits							= Action.MultiUnits
 local UnitCooldown							= Action.UnitCooldown
 local Unit									= Action.Unit 
-
+local TR                                     = Action.TasteRotation
 local setmetatable							= setmetatable
 
 Action[ACTION_CONST_WARRIOR_FURY] = {
@@ -290,7 +290,7 @@ A[3] = function(icon, isMulti)
 	local inAoE					= A.GetToggle(2, "AoE")
 	local inHoldAoE			 	= A.GetToggle(2, "holdAoE")
 	local minHoldAoE			= A.GetToggle(2, "holdAoENum")
-    --local Trinket1IsAllowed, Trinket2IsAllowed = TrinketIsAllowed()
+    --local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 			
 	local function EnemyRotation(unitID)
 		-- Variables
@@ -420,6 +420,10 @@ A[3] = function(icon, isMulti)
 			return A.Siegebreaker:Show(icon)
         end 
 		
+		-- execute,if=buff.enrage.up
+        if A.Execute:IsReady(unitID) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
+		    return A.Execute:Show(icon)
+        end
 		
 		if A.GetToggle(2, "RampageLogic") == "Simcraft Logic" then
 			--rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
@@ -433,11 +437,6 @@ A[3] = function(icon, isMulti)
 				return A.Rampage:Show(icon)
 			end
 		end	
-		
-		-- execute,if=buff.enrage.up
-        if A.Execute:IsReady(unitID) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
-		    return A.Execute:Show(icon)
-        end
 		
 		--execute
 		if A.Execute:IsReady(unitID) and A.Execute:AbsentImun(unitID, Temp.TotalAndPhys) then
