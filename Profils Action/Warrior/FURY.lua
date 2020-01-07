@@ -420,11 +420,6 @@ A[3] = function(icon, isMulti)
 			return A.Siegebreaker:Show(icon)
         end 
 		
-		-- execute,if=buff.enrage.up
-        if A.Execute:IsReady(unitID) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
-		    return A.Execute:Show(icon)
-        end
-		
 		if A.GetToggle(2, "RampageLogic") == "Simcraft Logic" then
 			--rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
 			if A.Rampage:IsReady(unitID) and A.Rampage:AbsentImun(unitID, Temp.TotalAndPhys) and ((Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 0 or  Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0) or 
@@ -437,6 +432,11 @@ A[3] = function(icon, isMulti)
 				return A.Rampage:Show(icon)
 			end
 		end	
+		
+		-- execute,if=buff.enrage.up
+        if A.Execute:IsReady(unitID) and Unit("player"):HasBuffs(A.SuddenDeathBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.EnrageBuff.ID, true) > 0 then
+		    return A.Execute:Show(icon)
+        end
 		
 		--execute
 		if A.Execute:IsReady(unitID) and A.Execute:AbsentImun(unitID, Temp.TotalAndPhys) then
