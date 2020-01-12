@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.4 (22.12.2019)",
+    DateTime = "v2.0.5 (12.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -70,22 +70,6 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
                 }, 
                 
             },  
@@ -551,24 +535,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
             { -- [2] 2nd Row 
 				-- Splash Data
@@ -912,63 +879,303 @@ A.Data.ProfileUI = {
                     M = {},
                 },                 
             }, 
-            { -- [2] 2nd Row
-				-- Splash Data
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "USE COMBAT LOGS", value = "USE COMBAT LOGS" }, 
-                        { text = "USE SPLASH DATA", value = "USE SPLASH DATA" },                   
-                        { text = "USE NAMEPLATES", value = "USE NAMEPLATES" },
-                    },
-                    DB = "AoeDetectionMode",
-                    DBV = "USE COMBAT LOGS",
-                    L = { 
-                        ANY = "AoE Detection Mode",
-                    }, 
-                    TT = { 
-                        enUS = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                        ruRU = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                    }, 
-                    M = {},
-                },				
-            },
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 10,                            
-                    DB = "Implosion",
-                    DBV = 5, -- Set number of imps default @ 5. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Number of Imps to use " .. A.GetSpellInfo(196277),
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "UnendingResolve",
-                    DBV = 30, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(104773) .. " (%)",
-                    }, 
-                    TT = { 
-                        enUS = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).", 
-                        ruRU = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).", 
-                        frFR = "Set the HP threshold before re-rolling for the leech buff (working only if Solo Mode is enabled).",
-                    }, 
-                    M = {},
-                },
-            },
             { -- [4] 4th Row
                 {
                     E = "LayoutSpace",                                                                         
                 },
             }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Rotation -- ",
+                    },
+                },
+            },
+            { -- [1] 1st Row                           
+                {
+                    E = "Checkbox", 
+                    DB = "PredictShards",
+                    DBV = true,
+                    L = { 
+                        enUS = "Soul Shards prediction", 
+                        ruRU = "Soul Shards prediction", 
+                        frFR = "Soul Shards prediction", 
+                    }, 
+                    TT = { 
+                        enUS = "Rotation will predict future shards depending on current casted spell.", 
+                        ruRU = "Rotation will predict future shards depending on current casted spell.",  
+                        frFR = "Rotation will predict future shards depending on current casted spell.", 
+                    }, 
+                    M = {},
+                },
+                
+            }, 
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(196277) .. " settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ImplosionEnemies",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196277) .. " Enemies",
+                    }, 
+                    TT = { 
+                        enUS = "Set the number of enemies to use " .. A.GetSpellInfo(196277), 
+                        ruRU = "Set the number of enemies to use " .. A.GetSpellInfo(196277), 
+                        frFR = "Set the number of enemies to use " .. A.GetSpellInfo(196277), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "ImplosionRange",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196277) .. " Range",
+                    }, 
+                    TT = { 
+                        enUS = "Set the range to use " .. A.GetSpellInfo(196277), 
+                        ruRU = "Set the range to use " .. A.GetSpellInfo(196277), 
+                        frFR = "Set the range to use " .. A.GetSpellInfo(196277), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ImplosionImp",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196277) .. " Imps",
+                    }, 
+                    TT = { 
+                        enUS = "Set the number of imps to use " .. A.GetSpellInfo(196277), 
+                        ruRU = "Set the number of imps to use " .. A.GetSpellInfo(196277), 
+                        frFR = "Set the number of imps to use " .. A.GetSpellInfo(196277), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Range By Pet", value = "RangeByPet" },
+                        { text = "Range By Nameplate", value = "RangeByNameplate" },                    
+                        { text = "Range By CLEU", value = "RangeByCLEU" },
+                    },
+                    DB = "ImplosionMode",
+                    DBV = "RangeByCLEU",
+                    L = { 
+                        ANY = A.GetSpellInfo(196277) .. " Mode",
+                    }, 
+                    TT = { 
+                        enUS = "Set the " .. A.GetSpellInfo(196277) .. " mode you want to use. \nRange By Pet: Get number of enemies in pet range. \nRange By Nameplate: Get number of enemies with nameplates. \nRange By CLEU: Get number of enemies with combat events logs.", 
+                        ruRU = "Set the " .. A.GetSpellInfo(196277) .. " mode you want to use. \nRange By Pet: Get number of enemies in pet range. \nRange By Nameplate: Get number of enemies with nameplates. \nRange By CLEU: Get number of enemies with combat events logs.", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] Multidots settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Multidots settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Enable auto Multidots", 
+                        ruRU = "Использовать auto Multidots", 
+                        frFR = "Activer le Multidots auto", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Автоматически многоточечные юниты.\nУбедитесь, что вы находитесь перед именной табличкой врагов, на которую должен нацелиться бот. \nУбедитесь, что вы правильно связали клавишу TargetEnemy в игре и в GG.",
+                        frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
+                    }, 
+                    M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 15, 
+					MAX 	= 40,							
+					DB 		= "MultiDotDistance",
+					DBV 	= 25,
+					ONLYOFF = true,
+					L 		= { 
+                        ANY = "Multidots Range",
+                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                    }, 
+					M 		= {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AutoDotSelection",
+                    DBV = "In Raid", 
+                    L = { 
+                        ANY = "Multidots where",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+                    }, 
+                    M = {},
+                },				
+			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },			
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "UnendingResolve",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(104773) .. " HP (%)",
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+			},
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+		
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",

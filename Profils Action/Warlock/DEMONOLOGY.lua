@@ -58,6 +58,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     DemonicPowerBuff                       = Action.Create({ Type = "Spell", ID = 265273 }),
     DemonicCalling                         = Action.Create({ Type = "Spell", ID = 205145 }),
     GrimoireFelguard                       = Action.Create({ Type = "Spell", ID = 111898 }),
+	GrimoireFelguardTexture                = Action.Create({ Type = "Spell", ID = 108503 }), -- Hacky spellID to avoid icon conflict with summon felguard
     SummonDemonicTyrant                    = Action.Create({ Type = "Spell", ID = 265187 }),
     DemonicCallingBuff                     = Action.Create({ Type = "Spell", ID = 205146 }),
     DemonicCoreBuff                        = Action.Create({ Type = "Spell", ID = 264173 }),
@@ -80,6 +81,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     ShadowsBiteBuff                        = Action.Create({ Type = "Spell", ID = 272945 }),
 	-- Utilities
     SpellLock                              = Action.Create({ Type = "Spell", ID = 19647}),
+    PetKick                                = Action.Create({ Type = "Spell", ID = 119914, Color = "RED", Desc = "RED" }), 
     -- Defensive
     UnendingResolve                        = Action.Create({ Type = "Spell", ID = 104773     }),
 	-- Felguard
@@ -105,6 +107,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -174,6 +178,34 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
 Action:CreateEssencesFor(ACTION_CONST_WARLOCK_DEMONOLOGY)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_WARLOCK_DEMONOLOGY], { __index = Action })
 
+-- Initialize Tracker 
+Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { -- this template table is the same with what has this library already built-in, just for example
+	[98035] = {
+		name = "Dreadstalker",
+		duration = 12.25,
+	},
+	[55659] = {
+		name = "Wild Imp",
+		duration = 20,
+	},
+	[143622] = {
+		name = "Wild Imp",
+		duration = 20,
+	},
+	[17252] = {
+		name = "Felguard",
+		duration = 28,
+	},
+	[135002] = {
+		name = "Demonic Tyrant",
+		duration = 15,
+	},
+    [135816] = {
+        name = "Vilefiend",
+        duration = 15,
+    },
+})
+
 local function num(val)
     if val then return 1 else return 0 end
 end
@@ -218,31 +250,19 @@ local function FutureShard()
     else
         if spellID == A.NetherPortal.ID then
             return Shard - 1
-        elseif spellID == A.UnstableAffliction.ID 
-                or spellID == A.SeedOfCorruption.ID then
-            return Shard - 1
-        elseif spellID == A.SummonDoomGuard.ID 
-                or spellID == A.SummonDoomGuardSuppremacy.ID 
-                or spellID == A.SummonInfernal.ID
-                or spellID == A.SummonInfernalSuppremacy.ID 
-                or spellID == A.GrimoireFelhunter.ID 
-                or spellID == A.SummonFelhunter.ID then
-            return Shard - 1
-        elseif spellID == A.CallDreadStalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0 then
+        elseif spellID == A.CallDreadstalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0 then
             return Shard - 2
         elseif spellID == A.BilescourgeBombers.ID then
             return Shard - 2
         elseif spellID == A.SummonVilefiend.ID then
             return Shard - 1
-        elseif spellID == A.SummonFelguard.ID then
-            return Shard - 1
         elseif spellID == A.GrimoireFelguard.ID then
             return Shard - 1
-        elseif spellID == A.CallDreadStalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0 then
+        elseif spellID == A.CallDreadstalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0 then
             return Shard - 1
         elseif spellID == A.SummonDemonicTyrant.ID and A.BalefulInvocation:GetAzeriteRank() > 0 then
             return 5
-        elseif spellID == A.HandOfGuldan.ID then
+        elseif spellID == A.HandofGuldan.ID then
             if Shard > 3 then
                 return Shard - 3
             else
@@ -293,34 +313,6 @@ TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, Pet
 	print(PetTrackerData.myVar)
 end)
 ]]--
--- Initialize Tracker 
-Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { 
-	[98035] = {
-		name = "Dreadstalker",
-		duration = 12.25,
-	},
-	[55659] = {
-		name = "Wild Imp",
-		duration = 20,
-	},
-	[143622] = {
-		name = "Wild Imp",
-		duration = 20,
-	},
-	[17252] = {
-		name = "Felguard",
-		duration = 28,
-	},
-	[135002] = {
-		name = "Demonic Tyrant",
-		duration = 15,
-	},
-    [135816] = {
-        name = "Vilefiend",
-        duration = 15
-    },
-})
-
 
 
 -- Function to check for imp count
@@ -358,12 +350,6 @@ local function DemonicTyrantIsActive()
     return DemonicTyrantTime() > 0 and true or false
 end 
 
--- SummonDemonicTyrant checker
-local function MegaTyrant()
-    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
-	
-    return (WildImpsCount + ImpsSpawnedDuring(2000) >= 6 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
-end
 
 -- Hack to record timestamp of passive imp spawn 
 local function LastPassiveImpTimeStamp()
@@ -377,6 +363,7 @@ local function NextPassiveImpSpawn()
     return (LastPassiveImpTimeStamp() + 12) or 0 
 end
 
+--[[
 -- PetTrackerData
 local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
 PetTrackerData.ImpTotalEnergy = 0
@@ -392,19 +379,9 @@ local function ImpTotalEnergy()
 	
 	return 0
 end 
-
+]]--
 
 --print(PetTrackerData.myVar)
-
-local _, event, _, sourceGuid, _, _, _, _, _, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
-if (event == "SPELL_CAST_SUCCESS") and sourceGuid == pGUID and spellID == 105174 then
-    ImpsSpawnedFromHoG = ImpsSpawnedFromHoG + (Player:SoulShardsP() >= 3 and 3 or Player:SoulShardsP())
-    Env.LastPlayerCastID 	= spellID
-	A.LastPlayerCastName	= spellName
-	A.LastPlayerCastID		= spellID
-    TMW:Fire("TMW_CNDT_LASTCAST_UPDATED")
-end
-
 
 -- On Successful HoG cast add how many Imps will spawn
 local ImpsSpawnedFromHoG = 0 
@@ -424,8 +401,8 @@ local function ImpsSpawnedDuring(miliseconds)
     local ImpSpawned = 0
     -- Used for Wild Imps spawn prediction
     local InnerDemonsNextCast = 0
-    local ImpCastsRemaing = 0,
-    local ImpTotalEnergy = 0, 
+    local ImpCastsRemaing = 0
+    local ImpTotalEnergy = 0 
     local SpellCastTime = ( miliseconds / 1000 ) * Player:SpellHaste()
     local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
 	
@@ -440,6 +417,13 @@ local function ImpsSpawnedDuring(miliseconds)
     ImpSpawned = ImpSpawned + ImpsSpawnedFromHoG
 
     return ImpSpawned
+end
+
+-- SummonDemonicTyrant checker
+local function MegaTyrant()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+	
+    return (WildImpsCount() + ImpsSpawnedDuring(2000) >= 6 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
 end
 
 local function SelfDefensives()
@@ -534,7 +518,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.PetKick
     end 
     
@@ -630,12 +614,19 @@ A[3] = function(icon, isMulti)
     local AppliedDoom = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.Doom.ID)
     local DoomToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, A.Doom.ID, 6, 5)
 	
+
+	--print("WildImpsCount: " .. WildImpsCount)
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
         local Precombat, BuildAShard, Implosion, NetherPortal, NetherPortalActive, NetherPortalBuilding, Opener
         
+	-- DEBUG PRINT PETS	
+	print("WildImpsCount: " .. WildImpsCount)
+	print("Pet:GetCount(55659): " .. Pet:GetCount(55659))
+	print("DreadStalkersTime: " .. DreadStalkersTime)
+		
 		--Precombat
         local function Precombat(unit)
             -- flask
@@ -643,7 +634,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
 			
             -- summon_pet
-            if A.SummonPet:IsReady(unit) then
+            if A.SummonPet:IsReady(unit) and not Pet:IsActive() then
                 return A.SummonPet:Show(icon)
             end
             -- snapshot_stats
@@ -693,7 +684,7 @@ A[3] = function(icon, isMulti)
 				ImplosionMode == "RangeByNameplate" and
 				(					    
 				    WildImpsCount >= ImplosionImp and MultiUnits:GetByRangeInCombat(ImplosionRange) >= ImplosionEnemies
-				(
+				)
 				or
 				-- Range by active enemies CLEU
 				ImplosionMode == "RangeByCLEU" and
@@ -707,7 +698,7 @@ A[3] = function(icon, isMulti)
 			
             -- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
             if A.GrimoireFelguard:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() < 13) then
-                return A.GrimoireFelguard:Show(icon)
+                return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- call_dreadstalkers,if=(cooldown.summon_demonic_tyrant.remains<9&buff.demonic_calling.remains)|(cooldown.summon_demonic_tyrant.remains<11&!buff.demonic_calling.remains)|cooldown.summon_demonic_tyrant.remains>14
@@ -837,7 +828,7 @@ A[3] = function(icon, isMulti)
 			
             -- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
             if A.GrimoireFelguard:IsReady(unit) and A.SummonDemonicTyrant:GetCooldown() < 13 then
-                return A.GrimoireFelguard:Show(icon)
+                return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- summon_vilefiend,if=cooldown.summon_demonic_tyrant.remains>40|cooldown.summon_demonic_tyrant.remains<12
@@ -1021,7 +1012,7 @@ A[3] = function(icon, isMulti)
 			
             -- grimoire_felguard,if=soul_shard=5
             if A.GrimoireFelguard:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) then
-                return A.GrimoireFelguard:Show(icon)
+                return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- call_dreadstalkers,if=soul_shard=5
@@ -1075,7 +1066,7 @@ A[3] = function(icon, isMulti)
         end
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" and Precombat(unit) then
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and Precombat(unit) then
             return true
         end
 
@@ -1128,7 +1119,7 @@ A[3] = function(icon, isMulti)
             -- fireblood,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and 
 			    (
-				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5) 
+				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5 
 					or
 					(Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15)
 				)
@@ -1171,7 +1162,7 @@ A[3] = function(icon, isMulti)
 					or 
 					not A.DemonicConsumption:IsSpellLearned() 
 					or 
-					A.SummonDemonicTyrant:GetCooldown() >= 15 - 5) 
+					A.SummonDemonicTyrant:GetCooldown() >= 15 - 5 
 					or 
 					(Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15)
 				)
@@ -1296,7 +1287,7 @@ A[3] = function(icon, isMulti)
 			
             -- grimoire_felguard,if=(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15|cooldown.summon_demonic_tyrant.remains<13)
             if A.GrimoireFelguard:IsReady(unit) and ((Unit(unit):TimeToDie() > 120 or Unit(unit):TimeToDie() < A.SummonDemonicTyrant:GetCooldown() + 15 or A.SummonDemonicTyrant:GetCooldown() < 13)) then
-                return A.GrimoireFelguard:Show(icon)
+                return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- summon_vilefiend,if=cooldown.summon_demonic_tyrant.remains>40|cooldown.summon_demonic_tyrant.remains<12
