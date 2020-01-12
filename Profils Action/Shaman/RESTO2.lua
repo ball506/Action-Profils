@@ -100,6 +100,8 @@ Action[ACTION_CONST_SHAMAN_RESTORATION] = {
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
     SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -172,7 +174,6 @@ local A = setmetatable(Action[ACTION_CONST_SHAMAN_RESTORATION], { __index = Acti
 
 
 local player                                = "player"
-local SoothingMistStopCast
 local Temp                                  = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
     TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
@@ -227,7 +228,7 @@ A[2] = function(icon)
     if unit then         
         local total, sleft, _, _, _, notKickAble = Unit(unit):CastTime()
         if sleft > 0 then                                     
-            if A.WindShearAntiFake:IsReady(unit, nil, nil, isSoothingMistCasting) and A.WindShearAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then
+            if A.WindShearAntiFake:IsReady(unit) and A.WindShearAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then
                 return A.WindShearAntiFake:Show(icon)                  
             end 
             
@@ -336,389 +337,261 @@ local function SelfDefensives()
         return 
     end 
     
-    if CanSpiritWalkersGrace("CATCH", true) then 
+    if CanSpiritWalkersGrace("CATCH") then 
         return A.SpiritWalkersGrace
     end 
     
-    local HealingElixir = GetToggle(2, "HealingElixir")
-    if     HealingElixir >= 0 and A.HealingElixir:IsReady(player, nil, nil, true) and IsSchoolFree() and
+    -- EarthShieldHP
+    local EarthShield = A.GetToggle(2, "EarthShieldHP")
+    if     EarthShield >= 0 and A.EarthShield:IsReady("player") and  
     (
         (     -- Auto 
-            HealingElixir >= 85 and 
+            EarthShield >= 100 and 
             (
-                Unit(player):HealthPercent() <= 50 or
-                (                        
-                    Unit(player):HealthPercent() < 70 and 
-                    A.HealingElixir:GetSpellChargesFrac() > 1.1
-                )
-            )
-        ) or 
-        (    -- Custom
-            HealingElixir < 85 and 
-            Unit(player):HealthPercent() <= HealingElixir
-        )
-    ) 
-    then 
-        return A.HealingElixir
-    end 
-    
-    local DampenHarm = GetToggle(2, "DampenHarm")
-    if     DampenHarm >= 0 and A.DampenHarm:IsReady(player, nil, nil, true) and
-    (
-        (     -- Auto 
-            DampenHarm >= 100 and 
-            (
-                -- HP lose per sec >= 20
-                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
-                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.25 or 
-                -- TTD 
-                Unit(player):TimeToDieX(25) < 3 or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit(player):UseDeff() or 
-                        (
-                            Unit(player, 5):HasFlags() and 
-                            Unit(player):GetRealTimeDMG() > 0 and 
-                            Unit(player):IsFocused() 
-                        )
-                    )
-                )
-            ) and 
-            Unit(player):HasBuffs("DeffBuffs", true) == 0
-        ) or 
-        (    -- Custom
-            DampenHarm < 100 and 
-            Unit(player):HealthPercent() <= DampenHarm
-        )
-    ) 
-    then 
-        return A.DampenHarm
-    end 
-    
-    local DiffuseMagic = GetToggle(2, "DiffuseMagic")
-    if     DiffuseMagic >= 0 and A.DiffuseMagic:IsReady(player, nil, nil, true) and
-    (
-        (     -- Auto 
-            DiffuseMagic >= 100 and 
-            Unit(player):TimeToDieMagicX(35) < 4 and 
-            -- Magic Damage still appear
-            Unit(player):GetRealTimeDMG(4) > 0 and 
-            Unit(player):HasBuffs("DeffBuffsMagic") == 0
-        ) or 
-        (    -- Custom
-            DiffuseMagic < 100 and 
-            Unit(player):HealthPercent() <= DiffuseMagic
-        )
-    ) 
-    then 
-        return A.DiffuseMagic
-    end 
-    
-    local FortifyingBrew = GetToggle(2, "FortifyingBrew")
-    if     FortifyingBrew >= 0 and A.FortifyingBrew:IsReady(player, nil, nil, true) and 
-    (
-        (     -- Auto 
-            FortifyingBrew >= 100 and 
-            (
-                (
-                    not A.IsInPvP and 
-                    Unit(player):HealthPercent() < 40 and 
-                    Unit(player):TimeToDieX(20) < 6 
-                ) or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit(player):UseDeff() or 
-                        (
-                            Unit(player, 5):HasFlags() and 
-                            Unit(player):GetRealTimeDMG() > 0 and 
-                            Unit(player):IsFocused(nil, true)                                 
-                        )
-                    )
-                )
-            ) and 
-            Unit(player):HasBuffs("DeffBuffs", true) == 0
-        ) or 
-        (    -- Custom
-            FortifyingBrew < 100 and 
-            Unit(player):HealthPercent() <= FortifyingBrew
-        )
-    ) 
-    then 
-        return A.FortifyingBrew
-    end 
-    
-    -- Stoneform on deffensive
-    local Stoneform = GetToggle(2, "Stoneform")
-    if     Stoneform >= 0 and A.Stoneform:IsRacialReadyP(player, nil, nil, true) and 
-    (
-        (     -- Auto 
-            Stoneform >= 100 and 
-            (
-                (
-                    not A.IsInPvP and                         
-                    Unit(player):TimeToDieX(65) < 3 
-                ) or 
-                (
-                    A.IsInPvP and 
-                    (
-                        Unit(player):UseDeff() or 
-                        (
-                            Unit(player, 5):HasFlags() and 
-                            Unit(player):GetRealTimeDMG() > 0 and 
-                            Unit(player):IsFocused(nil, true)                                 
-                        )
-                    )
-                )
+                Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 3 
+                or A.IsInPvP and Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 2
             ) 
         ) or 
         (    -- Custom
-            Stoneform < 100 and 
-            Unit(player):HealthPercent() <= Stoneform
+            EarthShield < 100 and 
+            Unit("player"):HasBuffs(A.EarthShield.ID, true) <= 5 and 
+            Unit("player"):HealthPercent() <= EarthShield
         )
     ) 
     then 
-        return A.Stoneform
-    end     
+        return A.EarthShield
+    end
     
+    -- HealingSurgeHP
+    local HealingSurge = A.GetToggle(2, "HealingSurgeHP")
+    if     HealingSurge >= 0 and A.HealingSurge:IsReady("player") and 
+    (
+        (     -- Auto 
+            HealingSurge >= 100 and 
+            (
+                -- HP lose per sec >= 40
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 40 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.40 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            HealingSurge < 100 and 
+            Unit("player"):HealthPercent() <= HealingSurge
+        )
+    ) 
+    then 
+        return A.HealingSurge
+    end
+    
+    -- Abyssal Healing Potion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 25
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end  
+    
+    -- AstralShift
+    local AstralShift = A.GetToggle(2, "AstralShiftHP")
+    if     AstralShift >= 0 and A.AstralShift:IsReady("player") and 
+    (
+        (     -- Auto 
+            AstralShift >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AstralShift < 100 and 
+            Unit("player"):HealthPercent() <= AstralShift
+        )
+    ) 
+    then 
+        return A.AstralShift
+    end   
+	
     -- Stoneform on self dispel (only PvE)
-    if A.Stoneform:AutoRacial(player, true, nil, true) and not A.IsInPvP and AuraIsValid(player, "UseDispel", "Dispel") then 
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
         return A.Stoneform
     end 
 end 
 
-local function Interrupts(unit, isSoothingMistCasting)
+local function Interrupts(unit)
     local useKick, useCC, useRacial = InterruptIsValid(unit, "TargetMouseover")
     
-    if useCC and A.Paralysis:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Paralysis:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
-        return A.Paralysis              
-    end             
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useKick and A.WindShear:IsReady(unit) and A.WindShear:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
+        return A.WindShear              
+    end   
+	
+    if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+        return A.Hex              
+    end  
+	
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
     end 
     
-    if useRacial and A.Haymaker:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
         return A.Haymaker
     end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
         return A.WarStomp
     end 
     
-    if useRacial and A.BullRush:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+    if useRacial and A.BullRush:AutoRacial(unit) then 
         return A.BullRush
     end      
-    
-    if useCC and A.LegSweep:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and Unit(unit):IsCastingRemains() > GetCurrentGCD() + 0.1 and A.LegSweep:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
-        return A.LegSweep     
-    end 
+	
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
-local function CanRevival(isSoothingMistCasting)
-    if A.Revival:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local RevivalHP = GetToggle(2, "Revival")
-        local RevivalUnits = GetToggle(2, "RevivalUnits") 
+local function CanHealingTideTotem()
+    if A.HealingTideTotem:IsReady("player", true, nil, nil) and IsSchoolFree() then 
+        local HealingTideTotemHP = GetToggle(2, "HealingTideTotemHP")
+        local HealingTideTotemUnits = GetToggle(2, "HealingTideTotemUnits") 
         
         -- Auto Counter
-        if RevivalUnits > 40 then 
-            RevivalUnits = HealingEngineGetMinimumUnits(1)
+        if HealingTideTotemUnits > 40 then 
+            HealingTideTotemUnits = HealingEngineGetMinimumUnits(1)
             -- Reduce size in raid by 20%
-            if RevivalUnits > 5 then 
-                RevivalUnits = RevivalUnits - (#HealingEngineMembersALL * 0.2)
+            if HealingTideTotemUnits > 5 then 
+                HealingTideTotemUnits = HealingTideTotemUnits - (#HealingEngineMembersALL * 0.2)
             end 
             -- If user typed counter higher than max available members 
-        elseif RevivalUnits >= TeamCacheFriendly.Size then 
-            RevivalUnits = TeamCacheFriendly.Size
+        elseif HealingTideTotemUnits >= TeamCacheFriendly.Size then 
+            HealingTideTotemUnits = TeamCacheFriendly.Size
         end 
         
-        if RevivalUnits < 3 and not A.IsInPvP then 
+        if HealingTideTotemUnits < 3 and not A.IsInPvP then 
             return false 
         end 
         
         local counter = 0 
         for i = 1, #HealingEngineMembersALL do 
             -- Auto HP 
-            if RevivalHP >= 100 and A.Revival:PredictHeal("Revival", HealingEngineMembersALL[i].Unit, 400) then 
+            if HealingTideTotemHP >= 100 and A.HealingTideTotem:PredictHeal("HealingTideTotem", HealingEngineMembersALL[i].Unit, 400) then 
                 counter = counter + 1
             end 
             
             -- Custom HP 
-            if RevivalHP < 100 and HealingEngineMembersALL[i].HP <= RevivalHP then 
+            if HealingTideTotemHP < 100 and HealingEngineMembersALL[i].HP <= HealingTideTotemHP then 
                 counter = counter + 1
             end 
             
-            if counter >= RevivalUnits then 
+            if counter >= HealingTideTotemUnits then 
                 return true 
             end 
         end 
     end 
     return false 
 end 
-CanRevival = A.MakeFunctionCachedStatic(CanRevival)
+CanHealingTideTotem = A.MakeFunctionCachedStatic(CanHealingTideTotem)
 
-local function CanInvokeChiJitheRedCrane(isSoothingMistCasting)
-    if A.InvokeChiJitheRedCrane:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local InvokeChiJitheRedCraneHP = GetToggle(2, "InvokeChiJitheRedCrane")
-        local InvokeChiJitheRedCraneUnits = GetToggle(2, "InvokeChiJitheRedCraneUnits") 
+local function CanHealingStreamTotem()
+    if A.HealingStreamTotem:IsReady(unit, true, nil, nil) and IsSchoolFree() then 
+        local HealingStreamTotemHP = GetToggle(2, "HealingStreamTotemHP")
+        local HealingStreamTotemUnits = GetToggle(2, "HealingStreamTotemUnits") 
         
         -- Auto Counter
-        if InvokeChiJitheRedCraneUnits > 40 then 
-            InvokeChiJitheRedCraneUnits = HealingEngineGetMinimumUnits(1)
+        if HealingStreamTotemUnits > 40 then 
+            HealingStreamTotemUnits = HealingEngineGetMinimumUnits(1)
             -- Reduce size in raid by 35%
-            if InvokeChiJitheRedCraneUnits > 5 then 
-                InvokeChiJitheRedCraneUnits = InvokeChiJitheRedCraneUnits - (#HealingEngineMembersALL * 0.35)
+            if HealingStreamTotemUnits > 5 then 
+                HealingStreamTotemUnits = HealingStreamTotemUnits - (#HealingEngineMembersALL * 0.35)
             end 
             -- If user typed counter higher than max available members 
-        elseif InvokeChiJitheRedCraneUnits >= TeamCacheFriendly.Size then 
-            InvokeChiJitheRedCraneUnits = TeamCacheFriendly.Size
+        elseif HealingStreamTotemUnits >= TeamCacheFriendly.Size then 
+            HealingStreamTotemUnits = TeamCacheFriendly.Size
         end 
         
-        if InvokeChiJitheRedCraneUnits < 3 and not A.IsInPvP then 
+        if HealingStreamTotemUnits < 3 and not A.IsInPvP then 
             return false 
         end 
         
         local counter = 0 
         for i = 1, #HealingEngineMembersALL do 
             -- Auto HP 
-            if InvokeChiJitheRedCraneHP >= 100 and A.InvokeChiJitheRedCrane:PredictHeal("InvokeChiJitheRedCrane", HealingEngineMembersALL[i].Unit, 1500) then 
+            if HealingStreamTotemHP >= 100 and A.HealingStreamTotem:PredictHeal("HealingStreamTotem", HealingEngineMembersALL[i].Unit, 1500) then 
                 counter = counter + 1
             end 
             
             -- Custom HP 
-            if InvokeChiJitheRedCraneHP < 100 and HealingEngineMembersALL[i].HP <= InvokeChiJitheRedCraneHP then 
+            if HealingStreamTotemHP < 100 and HealingEngineMembersALL[i].HP <= HealingStreamTotemHP then 
                 counter = counter + 1
             end 
             
-            if counter >= InvokeChiJitheRedCraneUnits then 
+            if counter >= HealingStreamTotemUnits then 
                 return true 
             end 
         end 
     end 
     return false 
 end 
-CanInvokeChiJitheRedCrane = A.MakeFunctionCachedStatic(CanInvokeChiJitheRedCrane)
+CanHealingStreamTotem = A.MakeFunctionCachedStatic(CanHealingStreamTotem)
 
-local function CanEssenceFont(isSoothingMistCasting)
-    if A.EssenceFont:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local EssenceFontHP = GetToggle(2, "EssenceFont")
-        local EssenceFontUnits = GetToggle(2, "EssenceFontUnits") 
-        
-        -- Auto Counter
-        if EssenceFontUnits > 6 then 
-            EssenceFontUnits = HealingEngineGetMinimumUnits(IsSaveManaPhase() and 0 or 1, 6)
-        end
-        
-        if EssenceFontUnits < 3 and not A.IsInPvP then 
-            return false 
-        end 
-        
-        local counter = 0 
-        for i = 1, #HealingEngineMembersALL do 
-            if Unit(HealingEngineMembersALL[i].Unit):GetRange() <= 30 then 
-                -- Auto HP 
-                if EssenceFontHP >= 100 and A.EssenceFont:PredictHeal("EssenceFont", HealingEngineMembersALL[i].Unit) then 
-                    counter = counter + 1
-                end 
-                
-                -- Custom HP 
-                if EssenceFontHP < 100 and HealingEngineMembersALL[i].HP <= EssenceFontHP then 
-                    counter = counter + 1
-                end 
-                
-                if counter >= EssenceFontUnits then 
-                    return true 
-                end 
-            end 
-        end 
-    end 
-    return false 
-end 
-CanEssenceFont = A.MakeFunctionCachedStatic(CanEssenceFont)
-
-local function CanRefreshingJadeWind(isSoothingMistCasting)
-    if A.RefreshingJadeWind:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local RefreshingJadeWindUnits = HealingEngineGetMinimumUnits(2, 4)
-        
-        if RefreshingJadeWindUnits < 2 and not A.IsInPvP then 
-            return false 
-        end 
-        
-        local counter = 0 
-        for i = 1, #HealingEngineMembersALL do 
-            if Unit(HealingEngineMembersALL[i].Unit):GetRange() <= 10 then 
-                if A.RefreshingJadeWind:PredictHeal("RefreshingJadeWind", HealingEngineMembersALL[i].Unit) then 
-                    counter = counter + 1
-                end 
-                
-                if counter >= RefreshingJadeWindUnits then 
-                    return true 
-                end 
-            end 
-        end 
-    end 
-    return false 
-end
-CanRefreshingJadeWind = A.MakeFunctionCachedStatic(CanRefreshingJadeWind)
-
-local function CanChiWave(isSoothingMistCasting)
-    if A.ChiWave:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local ChiWaveUnits = HealingEngineGetMinimumUnits(2, 4)
-        
-        if ChiWaveUnits < 2 and not A.IsInPvP then 
-            return false 
-        end 
-        
-        local counter = 0 
-        for i = 1, #HealingEngineMembersALL do 
-            if Unit(HealingEngineMembersALL[i].Unit):GetRange() <= 25 then 
-                if A.ChiWave:PredictHeal("ChiWave", HealingEngineMembersALL[i].Unit) then 
-                    counter = counter + 1
-                end 
-                
-                if counter >= ChiWaveUnits then 
-                    return true 
-                end 
-            end 
-        end 
-    end 
-    return false 
-end 
-CanChiWave = A.MakeFunctionCachedStatic(CanChiWave)
-
-local function CanChiBurst(isSoothingMistCasting)
-    if not Player:IsMoving() and A.ChiBurst:IsReady(unit, true, nil, isSoothingMistCasting) and IsSchoolFree() then 
-        local ChiBurstUnits = HealingEngineGetMinimumUnits(2, 4)
-        
-        if ChiBurstUnits < 2 and not A.IsInPvP then 
-            return false 
-        end 
-        
-        local counter = 0 
-        for i = 1, #HealingEngineMembersALL do 
-            if Unit(HealingEngineMembersALL[i].Unit):GetRange() <= 40 then 
-                if A.ChiBurst:PredictHeal("ChiBurst", HealingEngineMembersALL[i].Unit) then 
-                    counter = counter + 1
-                end 
-                
-                if counter >= ChiBurstUnits then 
-                    return true 
-                end 
-            end 
-        end 
-    end 
-    return false 
-end 
-CanChiBurst = A.MakeFunctionCachedStatic(CanChiBurst)
 
 local StopCast = false 
+
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
-    if not SoothingMistStopCast then 
-        SoothingMistStopCast = GetToggle(2, "SoothingMistStopCast")
-    end 
     
     local unit                     = player
     local isMoving                 = Player:IsMoving()
@@ -726,53 +599,44 @@ A[3] = function(icon, isMulti)
     local inMelee                 = false
     
     local function DamageRotation(unit)
-        inMelee = A.TigerPalm:IsInRange(unit)
         
         -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+        if A.ArcaneTorrent:AutoRacial(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end             
         
         -- Interrupts
-        local Interrupt = Interrupts(unit, isSoothingMistCasting)
+        local Interrupt = Interrupts(unit)
         if Interrupt then 
             return Interrupt:Show(icon)
         end         
-        
-        -- PvP CrownControl 
-        if A.GrappleWeaponIsReady(unit, false, isSoothingMistCasting) then 
-            return A.GrappleWeapon:Show(icon)
-        end 
-        
+                
         -- PvP CrownControl (Enemy Healer)
         if A.IsInPvP then 
-            local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))
+            local EnemyHealerUnitID = EnemyTeam("HEALER"):GetUnitID(40)
             
-            if EnemyHealerUnitID ~= "none" and A.LegSweep:IsReady(EnemyHealerUnitID, true, nil, isSoothingMistCasting) and A.LegSweep:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("stun", 0) and Unit(EnemyHealerUnitID):InCC() <= GetCurrentGCD() then
-                return A.LegSweep:Show(icon)     
+            if EnemyHealerUnitID ~= "none" and A.Hex:IsReady(EnemyHealerUnitID, true, nil, nil) and A.Hex:AbsentImun(EnemyHealerUnitID, Temp.TotalAndPhysAndCCAndStun, true) and Unit(EnemyHealerUnitID):IsControlAble("incapacitate", 0) and Unit(EnemyHealerUnitID):InCC() <= GetCurrentGCD() then
+                return A.Hex:Show(icon)     
             end 
         end 
         
         -- Bursting 
-        if BurstIsON(unit) and inMelee and A.AbsentImun(nil, unit, Temp.TotalAndPhys) then 
-            if A.WayoftheCrane:IsReady(unit, true, nil, isSoothingMistCasting) then 
-                return A.WayoftheCrane:Show(icon)
-            end 
+        if BurstIsON(unit) and A.AbsentImun(nil, unit, Temp.TotalAndPhys) then 
             
             if Unit(unit):HealthPercent() <= GetToggle(2, "RacialBurstDamaging") then 
-                if A.BloodFury:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.BloodFury:AutoRacial(unit) then 
                     return A.BloodFury:Show(icon)
                 end 
                 
-                if A.Fireblood:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.Fireblood:AutoRacial(unit) then 
                     return A.Fireblood:Show(icon)
                 end 
                 
-                if A.AncestralCall:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.AncestralCall:AutoRacial(unit) then 
                     return A.AncestralCall:Show(icon)
                 end 
                 
-                if A.Berserking:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.Berserking:AutoRacial(unit) then 
                     return A.Berserking:Show(icon)
                 end 
             end 
@@ -780,59 +644,35 @@ A[3] = function(icon, isMulti)
         
         -- Trinkets 
         if inMelee and A.AbsentImun(nil, unit, Temp.TotalAndPhys) and Unit(unit):HealthPercent() <= GetToggle(2, "TrinketBurstDamaging") then 
-            if A.Trinket1:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket1:Show(icon)
             end 
             
-            if A.Trinket2:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end     
         end     
         
-        -- Rotation 
-        if A.RisingSunKick:IsReady(unit, nil, nil, isSoothingMistCasting) and A.RisingSunKick:AbsentImun(unit, Temp.TotalAndPhys) then 
-            if A.RisingMist:IsSpellLearned() and A.ThunderFocusTea:IsReady(player, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
-                return A.ThunderFocusTea:Show(icon)
-            end 
-            return A.RisingSunKick:Show(icon)
+        -- Damage Rotation 
+		
+        if A.LavaBurst:IsReady(unit) and A.LavaBurst:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffs(A.FlameShock.ID, true) > 0 and Unit("player"):HasBuffs(A.LavaSurge.ID, true) > 0 then 
+            return A.LavaBurst:Show(icon)
         end 
-        
-        if A.BlackoutKick:IsReady(unit, nil, nil, isSoothingMistCasting) and A.BlackoutKick:AbsentImun(unit, Temp.TotalAndPhys) and Unit(player):HasBuffsStacks(A.TeachingsoftheMonastery.ID, true) >= 3 then 
-            return A.BlackoutKick:Show(icon)
+ 
+        if A.FlameShock:IsReady(unit) and A.FlameShock:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffs(A.FlameShock.ID, true) == 0 then 
+            return A.FlameShock:Show(icon)
         end 
-        
-        if A.SpiritoftheCrane:IsSpellLearned() and A.TigerPalm:IsReady(unit, nil, nil, isSoothingMistCasting) and A.TigerPalm:AbsentImun(unit, Temp.TotalAndPhys) and Unit(player):HasBuffsStacks(A.TeachingsoftheMonastery.ID, true) < 3 then 
-            return A.TigerPalm:Show(icon)
-        end 
-        
-        if     not isMoving and Unit(player):CombatTime() > 2 and (isMulti or GetToggle(2, "AoE")) and A.ChiBurst:IsReady(unit, true, nil, isSoothingMistCasting) and A.ChiBurst:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Unit(unit):GetRange() <= 40 and 
-        (
-            not A.IsInPvP or 
-            not EnemyTeam("HEALER"):IsBreakAble(40)                
-        )
-        then 
-            return A.ChiBurst:Show(icon)
-        end 
-        
-        if     (isMulti or GetToggle(2, "AoE")) and A.ChiWave:IsReady(unit, true, nil, isSoothingMistCasting) and A.ChiWave:AbsentImun(unit) and IsSchoolFree() and Unit(unit):GetRange() <= 25 and MultiUnits:GetByRange(25, 3) >= 3 and
-        (
-            not A.IsInPvP or 
-            not EnemyTeam("HEALER"):IsBreakAble(25)                
-        )
-        then 
-            return A.ChiWave:Show(icon)
-        end 
-        
-        if A.RisingMist:IsSpellLearned() and A.TigerPalm:IsReady(unit, nil, nil, isSoothingMistCasting) and A.TigerPalm:AbsentImun(unit, Temp.TotalAndPhys) then 
-            return A.TigerPalm:Show(icon)
+
+        if A.LightningBolt:IsReady(unit) and A.LightningBolt:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffs(A.FlameShock.ID, true) > 0 then 
+            return A.LightningBolt:Show(icon)
         end 
         
         -- Azerite Essence 
-        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit) then 
             return A.ConcentratedFlame:Show(icon)
         end 
         
-        if     (isMulti or GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
+        if     (isMulti or GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzerothP(unit) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
         (
             not A.IsInPvP or 
             not EnemyTeam("HEALER"):IsBreakAble(25)    
@@ -840,55 +680,28 @@ A[3] = function(icon, isMulti)
         then 
             return A.RippleinSpace:Show(icon)
         end 
-        
-        -- Continue Rotation 
-        if (isMulti or GetToggle(2, "AoE")) and A.ArcanePulse:AutoRacial(unit, true, nil, isSoothingMistCasting) then 
-            return A.ArcanePulse:Show(icon)
-        end 
-        
-        if     (isMulti or GetToggle(2, "AoE")) and A.SpinningCraneKick:IsReady(unit, true, nil, isSoothingMistCasting) and A.SpinningCraneKick:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(8, 3) >= 3 and 
-        (
-            not A.IsInPvP or 
-            not EnemyTeam("HEALER"):IsBreakAble(8)                
-        )
-        then 
-            return A.SpinningCraneKick:Show(icon)
-        end 
-        
-        if A.TigerPalm:IsReady(unit, nil, nil, isSoothingMistCasting) and A.TigerPalm:AbsentImun(unit, Temp.TotalAndPhys) then 
-            return A.TigerPalm:Show(icon)
-        end 
-        
-        if not isMoving and (not inMelee or (A.IsInPvP and Unit(unit):HasBuffs("DamagePhysImun") > 0)) and A.CracklingJadeLightning:IsReady(unit, nil, nil, isSoothingMistCasting) and A.CracklingJadeLightning:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() then 
-            return A.CracklingJadeLightning:Show(icon)
-        end             
+                    
     end 
     
     local function HealingRotation(unit)
-        local isAffectedBySoothingMist = Unit(unit):HasBuffs(A.SoothingMist.ID, true) > 0 and isSoothingMistCasting
-        
-        -- Stopcasting 
-        if GetToggle(1, "StopCast") and isSoothingMistCasting and ((SoothingMistStopCast[1] and not isAffectedBySoothingMist) or (SoothingMistStopCast[2] and isAffectedBySoothingMist and Unit(unit):HealthPercent() >= 100 and IsEnoughHPS(unit))) then 
-            StopCast = true
-            return A:Show(icon, ACTION_CONST_STOPCAST)            
-        end         
         
         -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+        if A.ArcaneTorrent:AutoRacial(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end     
         
         -- Out of combat / Precombat
         if Unit(player):CombatTime() == 0 then 
-            if A.Reawaken:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(unit):InGroup() and Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 100 and not isMoving and IsSchoolFree() then 
-                return A.Reawaken:Show(icon)
+		    -- Rez
+            if A.AncestralSpirit:IsReady(unit, true, nil, nil) and Unit(unit):InGroup() and Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 100 and not isMoving and IsSchoolFree() then 
+                return A.AncestralSpirit:Show(icon)
+            end 
+            -- Mass rez
+            if A.AncestralVision:IsReady(unit) and Unit(unit):IsDead() and Unit(unit):IsPlayer() and not isMoving and IsSchoolFree() then 
+                return A.AncestralVision:Show(icon)
             end 
             
-            if A.Resuscitate:IsReady(unit, nil, nil, isSoothingMistCasting) and Unit(unit):IsDead() and Unit(unit):IsPlayer() and not isMoving and IsSchoolFree() then 
-                return A.Resuscitate:Show(icon)
-            end 
-            
-            if A.SummonJadeSerpentStatue:IsReady(unit, true, nil, isSoothingMistCasting) and JadeSerpentStatue.GetRange() > 40 and Player:IsStayingTime() > 2.5 and IsSchoolFree() then 
+            if A.SummonJadeSerpentStatue:IsReady(unit, true, nil, nil) and JadeSerpentStatue.GetRange() > 40 and Player:IsStayingTime() > 2.5 and IsSchoolFree() then 
                 return A.SummonJadeSerpentStatue:Show(icon)
             end 
             
@@ -949,7 +762,7 @@ A[3] = function(icon, isMulti)
         
         -- Interrupts (@targettarget)
         if unit == "target" and IsUnitEnemy("targettarget") then 
-            local Interrupt = Interrupts("targettarget", isSoothingMistCasting)
+            local Interrupt = Interrupts("targettarget")
             if Interrupt then 
                 return Interrupt:Show(icon)
             end 
@@ -960,7 +773,7 @@ A[3] = function(icon, isMulti)
             -- Multi (for [4])
             if isMulti then 
                 if CanRevival(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzerothP(unit) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -968,7 +781,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 if CanInvokeChiJitheRedCrane(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzerothP(unit) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -976,13 +789,13 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 -- Azerite Essence
-                if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+                if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit) then 
                     return A.LifeBindersInvocation:Show(icon)
                 end             
             end 
             
             -- Single 
-            if A.LifeCocoon:IsReady(unit, nil, nil, isSoothingMistCasting) and A.LifeCocoon:AbsentImun(unit) and IsSchoolFree() then 
+            if A.LifeCocoon:IsReady(unit) and A.LifeCocoon:AbsentImun(unit) and IsSchoolFree() then 
                 local LifeCocoon = GetToggle(2, "LifeCocoon")
                 
                 -- Auto 
@@ -1001,7 +814,7 @@ A[3] = function(icon, isMulti)
             end                         
             
             -- Azerite Essence
-            if A.Standstill:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+            if A.Standstill:AutoHeartOfAzeroth(unit) then 
                 return A.Standstill:Show(icon)
             end 
             
@@ -1015,19 +828,19 @@ A[3] = function(icon, isMulti)
                 (RacialBurstHealing < 100 and Unit(unit):HealthPercent() <= RacialBurstHealing)
             )
             then 
-                if A.BloodFury:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.BloodFury:AutoRacial(unit) then 
                     return A.BloodFury:Show(icon)
                 end 
                 
-                if A.Fireblood:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.Fireblood:AutoRacial(unit) then 
                     return A.Fireblood:Show(icon)
                 end 
                 
-                if A.AncestralCall:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.AncestralCall:AutoRacial(unit) then 
                     return A.AncestralCall:Show(icon)
                 end 
                 
-                if A.Berserking:AutoRacial(unit, nil, nil, isSoothingMistCasting) then 
+                if A.Berserking:AutoRacial(unit) then 
                     return A.Berserking:Show(icon)
                 end             
             end 
@@ -1035,7 +848,7 @@ A[3] = function(icon, isMulti)
             -- AoE
             if not isMulti and GetToggle(2, "AoE") then 
                 if CanRevival(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzerothP(unit) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1043,7 +856,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 if CanInvokeChiJitheRedCrane(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzerothP(unit) and not IsEnoughHPS(unit) and Unit(player):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1051,7 +864,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 -- Azerite Essence
-                if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+                if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit) then 
                     return A.LifeBindersInvocation:Show(icon)
                 end                                 
             end 
@@ -1072,27 +885,27 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Racial 
-        if A.GiftofNaaru:AutoRacial(unit, nil, nil, isSoothingMistCasting) and Unit(unit):HealthPercent() <= GetToggle(2, "RacialBurstHealing") then 
+        if A.GiftofNaaru:AutoRacial(unit) and Unit(unit):HealthPercent() <= GetToggle(2, "RacialBurstHealing") then 
             return A.GiftofNaaru:Show(icon)
         end 
         
         -- Trinkets         
         if A.AbsentImun(nil, unit) and Unit(unit):HealthPercent() <= GetToggle(2, "TrinketBurstHealing") and Unit(unit):InRange() then 
-            if A.Trinket1:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Trinket1:GetItemCategory() ~= "DPS" then 
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DPS" then 
                 return A.Trinket1:Show(icon)
             end 
             
-            if A.Trinket2:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Trinket2:GetItemCategory() ~= "DPS" then 
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DPS" then 
                 return A.Trinket2:Show(icon)
             end     
         end     
         
         -- Rotation         
-        if A.Detox:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "Dispel") and Unit(unit):TimeToDie() > 5 then 
+        if A.Detox:IsReady(unit) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "Dispel") and Unit(unit):TimeToDie() > 5 then 
             return A.Detox:Show(icon)
         end 
         
-        if A.TigersLust:IsReady(unit, nil, nil, isSoothingMistCasting) and A.TigersLust:AbsentImun(unit) and IsSchoolFree() and Unit(unit):TimeToDie() > 6 then 
+        if A.TigersLust:IsReady(unit) and A.TigersLust:AbsentImun(unit) and IsSchoolFree() and Unit(unit):TimeToDie() > 6 then 
             if Unit(unit):HasDeBuffs("Rooted") > 1.5 then 
                 return A.TigersLust:Show(icon)
             end 
@@ -1103,12 +916,12 @@ A[3] = function(icon, isMulti)
             end 
         end 
         
-        if A.Detox:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "MagicMovement") and Unit(unit):TimeToDie() > 12 then 
+        if A.Detox:IsReady(unit) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "MagicMovement") and Unit(unit):TimeToDie() > 12 then 
             return A.Detox:Show(icon)
         end 
         
         if (isMulti or GetToggle(2, "AoE")) then 
-            if A.VitalityConduit:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+            if A.VitalityConduit:AutoHeartOfAzeroth(unit) then 
                 return A.VitalityConduit:Show(icon)
             end
             
@@ -1117,7 +930,7 @@ A[3] = function(icon, isMulti)
                     return A.ZenFocusTea:Show(icon)
                 end 
                 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and (not IsEnoughHPS(unit) or HealingEngineGetIncomingDMGAVG() > HealingEngineGetIncomingHPSAVG() + 10) then 
+                if A.OverchargeMana:AutoHeartOfAzerothP(unit) and (not IsEnoughHPS(unit) or HealingEngineGetIncomingDMGAVG() > HealingEngineGetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
@@ -1152,8 +965,8 @@ A[3] = function(icon, isMulti)
             end
         end 
         
-        if isSoothingMistCasting and not isMoving and Emergency and A.EnvelopingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.EnvelopingMist:AbsentImun(unit) and IsSchoolFree() and Unit(player):IsCastingRemains(A.EnvelopingMist.ID) == 0 and Unit(unit):HasBuffs(A.EnvelopingMist.ID, true) == 0 and A.EnvelopingMist:PredictHeal("EnvelopingMist", unit) then 
-            if A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if isSoothingMistCasting and not isMoving and Emergency and A.EnvelopingMist:IsReady(unit) and A.EnvelopingMist:AbsentImun(unit) and IsSchoolFree() and Unit(player):IsCastingRemains(A.EnvelopingMist.ID) == 0 and Unit(unit):HasBuffs(A.EnvelopingMist.ID, true) == 0 and A.EnvelopingMist:PredictHeal("EnvelopingMist", unit) then 
+            if A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
@@ -1162,15 +975,15 @@ A[3] = function(icon, isMulti)
             return A.EnvelopingMist:Show(icon)
         end 
         
-        if isSoothingMistCasting and not isMoving and Emergency and A.SurgingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.SurgingMist:AbsentImun(unit) and IsSchoolFree() and A.SurgingMist:PredictHeal("SurgingMist", unit) then 
+        if isSoothingMistCasting and not isMoving and Emergency and A.SurgingMist:IsReady(unit) and A.SurgingMist:AbsentImun(unit) and IsSchoolFree() and A.SurgingMist:PredictHeal("SurgingMist", unit) then 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
                 return A.ZenFocusTea:Show(icon)
             end             
             return A.SurgingMist:Show(icon)
         end 
         
-        if isSoothingMistCasting and not isMoving and Emergency and A.Vivify:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Vivify:AbsentImun(unit) and IsSchoolFree() and A.Vivify:PredictHeal("Vivify", unit) then 
-            if IsSaveManaPhase() and A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if isSoothingMistCasting and not isMoving and Emergency and A.Vivify:IsReady(unit) and A.Vivify:AbsentImun(unit) and IsSchoolFree() and A.Vivify:PredictHeal("Vivify", unit) then 
+            if IsSaveManaPhase() and A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
@@ -1180,8 +993,8 @@ A[3] = function(icon, isMulti)
         end     
         
         -- Continue Rotation         
-        if A.RenewingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() and (isMulti or A.RenewingMist:PredictHeal("RenewingMist", unit)) then 
-            if A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if A.RenewingMist:IsReady(unit) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() and (isMulti or A.RenewingMist:PredictHeal("RenewingMist", unit)) then 
+            if A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end     
             
@@ -1204,7 +1017,7 @@ A[3] = function(icon, isMulti)
         if unit == "target" and IsUnitEnemy("targettarget") then
             inMelee = A.TigerPalm:IsInRange("targettarget")
             
-            if not isMulti and A.RisingMist:IsSpellLearned() and A.RenewingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() then 
+            if not isMulti and A.RisingMist:IsSpellLearned() and A.RenewingMist:IsReady(unit) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() then 
                 if A.ThunderFocusTea:IsReady(player, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                     return A.ThunderFocusTea:Show(icon)
                 end     
@@ -1233,11 +1046,11 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Azerite Essences 
-        if Unit(player):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and Unit(player):PowerPercent() < 85 and (not A.ManaTea:IsSpellLearned() or Unit(player):HasBuffs(A.ManaTea.ID, true) == 0) then 
+        if Unit(player):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit) and Unit(player):PowerPercent() < 85 and (not A.ManaTea:IsSpellLearned() or Unit(player):HasBuffs(A.ManaTea.ID, true) == 0) then 
             return A.MemoryofLucidDreams:Show(icon)
         end         
         
-        if Unit(player):CombatTime() > 0 and A.WorldveinResonance:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and Player:IsStayingTime() > 2 then 
+        if Unit(player):CombatTime() > 0 and A.WorldveinResonance:AutoHeartOfAzeroth(unit) and Player:IsStayingTime() > 2 then 
             return A.WorldveinResonance:Show(icon)
         end        
         
@@ -1258,11 +1071,11 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Azerite Essences 
-        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit) then 
             return A.ConcentratedFlame:Show(icon)
         end 
         
-        if A.Refreshment:AutoHeartOfAzeroth(unit, isSoothingMistCasting) then 
+        if A.Refreshment:AutoHeartOfAzeroth(unit) then 
             return A.Refreshment:Show(icon)
         end 
         
@@ -1309,8 +1122,8 @@ A[3] = function(icon, isMulti)
             end
         end 
         
-        if not isMoving and A.EnvelopingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.EnvelopingMist:AbsentImun(unit) and IsSchoolFree() and Unit(player):IsCastingRemains(A.EnvelopingMist.ID) == 0 and Unit(unit):HasBuffs(A.EnvelopingMist.ID, true) == 0 and A.EnvelopingMist:PredictHeal("EnvelopingMist", unit, 300) then 
-            if A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if not isMoving and A.EnvelopingMist:IsReady(unit) and A.EnvelopingMist:AbsentImun(unit) and IsSchoolFree() and Unit(player):IsCastingRemains(A.EnvelopingMist.ID) == 0 and Unit(unit):HasBuffs(A.EnvelopingMist.ID, true) == 0 and A.EnvelopingMist:PredictHeal("EnvelopingMist", unit, 300) then 
+            if A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
@@ -1319,15 +1132,15 @@ A[3] = function(icon, isMulti)
             return A.EnvelopingMist:Show(icon)
         end 
         
-        if not isMoving and A.SurgingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.SurgingMist:AbsentImun(unit) and IsSchoolFree() and A.SurgingMist:PredictHeal("SurgingMist", unit) then 
+        if not isMoving and A.SurgingMist:IsReady(unit) and A.SurgingMist:AbsentImun(unit) and IsSchoolFree() and A.SurgingMist:PredictHeal("SurgingMist", unit) then 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
                 return A.ZenFocusTea:Show(icon)
             end             
             return A.SurgingMist:Show(icon)
         end 
         
-        if not isMoving and A.Vivify:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Vivify:AbsentImun(unit) and IsSchoolFree() and A.Vivify:PredictHeal("Vivify", unit) then 
-            if IsSaveManaPhase() and A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if not isMoving and A.Vivify:IsReady(unit) and A.Vivify:AbsentImun(unit) and IsSchoolFree() and A.Vivify:PredictHeal("Vivify", unit) then 
+            if IsSaveManaPhase() and A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end 
             if CanZenFocusTea(nil, isSoothingMistCasting) then 
@@ -1345,8 +1158,8 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Totally nothing to do 
-        if not isMulti and A.RenewingMist:IsReady(unit, nil, nil, isSoothingMistCasting) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() then 
-            if Unit(player):CombatTime() > 0 and A.ThunderFocusTea:IsReady(unit, true, nil, isSoothingMistCasting) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
+        if not isMulti and A.RenewingMist:IsReady(unit) and A.RenewingMist:AbsentImun(unit) and IsSchoolFree() and Unit(unit):HasBuffs(A.RenewingMist.ID, true) <= GetCurrentGCD() then 
+            if Unit(player):CombatTime() > 0 and A.ThunderFocusTea:IsReady(unit, true, nil, nil) and Unit(player):HasBuffs(A.ThunderFocusTea.ID, true) == 0 then
                 return A.ThunderFocusTea:Show(icon)
             end 
             return A.RenewingMist:Show(icon)            
@@ -1488,7 +1301,7 @@ local function PartyRotation(unit)
     local isSoothingMistCasting = Unit(player):IsCastingRemains(A.SoothingMist.ID) > 0
     
     -- Tiger Lust
-    if A.TigersLust:IsReady(unit, nil, nil, isSoothingMistCasting) and A.TigersLust:AbsentImun(unit) and IsSchoolFree() and not Unit(player, 5):HasFlags() and (Unit(unit):IsMelee() or Unit(unit):IsFocused(nil, true) or Unit(unit):HasBuffs("DamageBuffs") > 0) and not Unit(unit):InLOS() then 
+    if A.TigersLust:IsReady(unit) and A.TigersLust:AbsentImun(unit) and IsSchoolFree() and not Unit(player, 5):HasFlags() and (Unit(unit):IsMelee() or Unit(unit):IsFocused(nil, true) or Unit(unit):HasBuffs("DamageBuffs") > 0) and not Unit(unit):InLOS() then 
         if Unit(unit):HasDeBuffs("Rooted") > GetGCD() then 
             return A.TigersLust
         end 
@@ -1500,7 +1313,7 @@ local function PartyRotation(unit)
     end 
     
     -- Detox 
-    if A.Detox:IsReady(unit, nil, nil, isSoothingMistCasting) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "Dispel") and not Unit(unit):InLOS() then                         
+    if A.Detox:IsReady(unit) and A.Detox:AbsentImun(unit) and IsSchoolFree() and AuraIsValid(unit, "UseDispel", "Dispel") and not Unit(unit):InLOS() then                         
         return A.Detox
     end     
 end 
