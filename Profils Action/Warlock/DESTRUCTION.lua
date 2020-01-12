@@ -272,7 +272,7 @@ A[3] = function(icon, isMulti)
             -- snapshot_stats
             -- potion
             if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofIntellect:Show(icon)
+                return A.BattlePotionofIntellect:Show(icon)
             end
             -- soul_fire
             if A.SoulFire:IsReady(unit) then
@@ -300,16 +300,28 @@ A[3] = function(icon, isMulti)
                     return A.Immolate:Show(icon) 
                 end
             end
+			
             -- call_action_list,name=cds
             if A.BurstIsON(unit) then
                 local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
             end
+			
             -- havoc,cycle_targets=1,if=!(target=self.target)&active_enemies<4
-            if A.Havoc:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Havoc, 40, "min", EvaluateCycleHavoc71) then
-                    return A.Havoc:Show(icon) 
-                end
+            if A.Havoc:IsReady(unit) and (Unit(unit):GetUnitID() ~= A.LastTargetUnitID) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4 and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) == 0
+			then
+
+                return A.Havoc:Show(icon) 
+
             end
+			
+		    -- ReTarget after Havoc is applied
+		    if (A.Zone == arena or A.Zone == "pvp") and A:GetTimeSinceJoinInstance() >= 30 and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) > 0 			
+			then 
+		    	if A.LastTarget and not A.LastTargetIsExists then 
+			     	return A:Show(icon, A.LastTargetTexture)
+			    end  
+		    end 
+			
             -- chaos_bolt,if=talent.grimoire_of_supremacy.enabled&pet.infernal.active&(havoc_active|talent.cataclysm.enabled|talent.inferno.enabled&active_enemies<4)
             if A.ChaosBolt:IsReady(unit) and (A.GrimoireofSupremacy:IsSpellLearned() and bool(pet.infernal.active) and (bool(havoc_active) or A.Cataclysm:IsSpellLearned() or A.Inferno:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 4)) then
                 return A.ChaosBolt:Show(icon)
