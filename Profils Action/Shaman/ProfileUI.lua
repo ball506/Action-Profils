@@ -59,24 +59,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
             { -- [4] 4th Row
                 {
@@ -226,22 +209,6 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
                 },                 
             },  
             { -- [4] 4th Row
@@ -698,10 +665,697 @@ A.Data.ProfileUI = {
                 },
             },
         },
+        [ACTION_CONST_SHAMAN_RESTORATION] = {
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- General -- ",
+                    },
+                },
+            },		
+            { -- [1] 1st Row
+		
+                {
+                    E = "Checkbox", 
+                    DB = "mouseover",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use @mouseover", 
+                        ruRU = "Использовать @mouseover", 
+                        frFR = "Utiliser les fonctions @mouseover",
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
+                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
+                        frFR = "Activera les actions via @mouseover\n Exemple: Ressusciter, Soigner",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use AoE", 
+                        ruRU = "Использовать AoE", 
+                        frFR = "Utiliser l'AoE",
+                    }, 
+                    TT = { 
+                        enUS = "Enable multiunits actions", 
+                        ruRU = "Включает действия для нескольких целей", 
+                        frFR = "Activer les actions multi-unités",
+                    }, 
+                    M = {
+					    Custom = "/run Action.AoEToggleMode()",
+						-- It does call func CraftMacro(L[CL], macro above, 1) -- 1 means perCharacter tab in MacroUI, if nil then will be used allCharacters tab in MacroUI
+						Value = value or nil, 
+						-- Very Very Optional, no idea why it will be need however.. 
+						TabN = '@number' or nil,								
+						Print = '@string' or nil,
+					},
+                },                 
+            },  
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [5] 5th Row     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "On", value = 1 },
+                        { text = "Off", value = 2 },
+                    },
+                    MULT = false,
+                    DB = "HealingRModes",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(73920) .. " modes",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(73920) .. " options.", 
+                        ruRU = "Customize your " .. A.GetSpellInfo(73920) .. " options.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "On", value = 1 },
+                        { text = "Off", value = 2 },
+                    },
+                    MULT = false,
+                    DB = "GhostWolfModes",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(2645) .. " modes",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(2645) .. " options.", 
+                        ruRU = "Customize your " .. A.GetSpellInfo(2645) .. " options.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "On", value = 1 },
+                        { text = "Off", value = 2 },
+                    },
+                    MULT = false,
+                    DB = "DPSModes",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                    }, 
+                    L = { 
+                        ANY = " DPS modes",
+                    }, 
+                    TT = { 
+                        enUS = "Enable or Disable damage rotation.", 
+                        ruRU = "Enable or Disable damage rotation.",
+                    }, 
+                    M = {},
+                },
+            },
+
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Healing Engine -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "HealingRain",
+                    DBV = 80, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Healing Rain",
+                    }, 
+                    TT = { 
+                        enUS = "Health Percent to Cast At",
+                        ruRU = "Health Percent to Cast At",
+                        frFR = "Health Percent to Cast At",
+                    },	
+                    M = {},
+                },
+				-- Healing Rain
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 40,                            
+                    DB = "HealingRainTargets",
+                    DBV = 2, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Healing Rain Targets",
+                    }, 
+                    TT = { 
+                        enUS = "Minimum Healing Rain Targets",
+                        ruRU = "Minimum Healing Rain Targets",
+                        frFR = "Minimum Healing Rain Targets",
+                    },	
+                    M = {},
+                },		
+                {
+                    E = "Checkbox", 
+                    DB = "HealingRainonMelee",
+                    DBV = true,
+                    L = { 
+                        enUS = "Healing Rain on Melee", 
+                        ruRU = "Healing Rain on Melee", 
+                        frFR = "Healing Rain on Melee",  
+                    }, 
+                    TT = { 
+                        enUS = "Cast on Melee only", 
+                        ruRU = "Cast on Melee only",
+                        frFR = "Cast on Melee only",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "HealingRainonCD",
+                    DBV = true,
+                    L = { 
+                        enUS = "Healing Rain on CD", 
+                        ruRU = "Healing Rain on CD", 
+                        frFR = "Healing Rain on CD", 
+                    }, 
+                    TT = { 
+                        enUS = "Requires Healing Rain on Melee to be checked to work", 
+                        ruRU = "Requires Healing Rain on Melee to be checked to work", 
+                        frFR = "Requires Healing Rain on Melee to be checked to work", 
+                    }, 
+                    M = {},
+                },
+
+				
+		    },
+
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Miscellaneous -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "OOCHealing",
+                    DBV = true,
+                    L = { 
+                        enUS = "OOC Healing", 
+                        ruRU = "OOC Healing", 
+                        frFR = "OOC Healing", 
+                    }, 
+                    TT = { 
+                        enUS = "|cff15FF00Enables|cffFFFFFF/|cffD60000Disables |cffFFFFFFout of combat healing|cffFFBB00.", 
+                        ruRU = "|cff15FF00Enables|cffFFFFFF/|cffD60000Disables |cffFFFFFFout of combat healing|cffFFBB00.",
+                        frFR = "|cff15FF00Enables|cffFFFFFF/|cffD60000Disables |cffFFFFFFout of combat healing|cffFFBB00.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AutoGhostWolf",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto Ghost Wolf", 
+                        ruRU = "Auto Ghost Wolf", 
+                        frFR = "Auto Ghost Wolf", 
+                    }, 
+                    TT = { 
+                        enUS = "|cff0070deCheck this to automatically control GW transformation based on toggle bar setting.", 
+                        ruRU = "|cff0070deCheck this to automatically control GW transformation based on toggle bar setting.",
+                        frFR = "|cff0070deCheck this to automatically control GW transformation based on toggle bar setting.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseCapacitorTotem",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Capacitor Totem", 
+                        ruRU = "Use Capacitor Totem", 
+                        frFR = "Use Capacitor Totem", 
+                    }, 
+                    TT = { 
+                        enUS = "Will force use of Capacitor Totem if Wind Shear is not ready.", 
+                        ruRU = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                        frFR = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "WaterWalking",
+                    DBV = true,
+                    L = { 
+                        enUS = "Water Walking", 
+                        ruRU = "Water Walking", 
+                        frFR = "Water Walking", 
+                    }, 
+                    TT = { 
+                        enUS = "Will force use of Water Walking if ready.", 
+                        ruRU = "Will force use of Water Walking if ready.", 
+                        frFR = "Will force use of Water Walking if ready.", 
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "Bursting",
+                    DBV = 2, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Bursting",
+                    }, 
+                    TT = { 
+                        enUS = "|cffFFFFFFWhen Bursting stacks are above this amount, CDs/AoE Healing will be triggered.",
+                        ruRU = "|cffFFFFFFWhen Bursting stacks are above this amount, CDs/AoE Healing will be triggered.",
+                        frFR = "|cffFFFFFFWhen Bursting stacks are above this amount, CDs/AoE Healing will be triggered.",
+                    },	
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DPSThreshold",
+                    DBV = 50, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "DPSThreshold",
+                    }, 
+                    TT = { 
+                        enUS = "|cffFFFFFFMinimum Health to stop DPS. Default: 50",  
+                        ruRU = "|cffFFFFFFMinimum Health to stop DPS. Default: 50", 
+                        frFR = "|cffFFFFFFMinimum Health to stop DPS. Default: 50", 
+                    },	
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "CriticalHP",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Critical HP",
+                    }, 
+                    TT = { 
+                        enUS = "|cffFFFFFFWill stop casting a DPS Spell if party member drops below value. Default: 30", 
+                        ruRU = "|cffFFFFFFWill stop casting a DPS Spell if party member drops below value. Default: 30",  
+                        frFR = "|cffFFFFFFWill stop casting a DPS Spell if party member drops below value. Default: 30", 
+                    },	
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ManaPot",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Mana Pot",
+                    }, 
+                    TT = { 
+                        enUS = "|cffFFFFFFWill use mana pot if mana below this value. Default: 30", 
+                        ruRU = "|cffFFFFFFWill use mana pot if mana below this value. Default: 30",  
+                        frFR = "|cffFFFFFFWill use mana pot if mana below this value. Default: 30", 
+                    },	
+                    M = {},
+                },
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },			
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AstralShiftHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(108271) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EarthShieldHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(974) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "HealingSurgeHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(8004) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseEarthElemental",
+                    DBV = true,
+                    L = { 
+                        enUS = "Defensive Earth Elemental", 
+                        ruRU = "Defensive Earth Elemental", 
+                        frFR = "Defensive Earth Elemental", 
+                    }, 
+                    TT = { 
+                        enUS = "Will use Earth Elemental defensively depending on your settings.", 
+                        ruRU = "Will use Earth Elemental defensively depending on your settings.", 
+                        frFR = "Will use Earth Elemental defensively depending on your settings.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EarthElementalHP",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Health",
+                    },
+                    TT = { 
+                        enUS = "Current player health percentage to use Earth Elemental.", 
+                        ruRU = "Current player health percentage to use Earth Elemental.", 
+                        frFR = "Current player health percentage to use Earth Elemental.",
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "EarthElementalEnemies",
+                    DBV = 3, 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Enemies",
+                    }, 
+                    TT = { 
+                        enUS = "Number of enemies around to use Earth Elemental.", 
+                        ruRU = "Number of enemies around to use Earth Elemental.", 
+                        frFR = "Number of enemies around to use Earth Elemental.",
+                    },
+                    M = {},
+                },
+			},
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Ancestral Guidance -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AncestralGuidanceSelection",
+                    DBV = "In Dungeon", 
+                    L = { 
+                        ANY = "Ancestral Guidance usage",
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically Ancestral Guidance units.", 
+                        ruRU = "Choose where you want to automatically Ancestral Guidance units.",
+                    }, 
+                    M = {},
+                },	
+			},	
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AncestralGuidanceHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Defensive Logic",
+                    },
+                    TT = { 
+                        enUS = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                        ruRU = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                        frFR = "Auto : Will dynamically take in account your current group size, current group damage and healing per second to determine when to use assist healing.\nNOT Auto : the value set with slider will be the current percent damage per second on your group.", 
+                    },					
+                    M = {},
+                },
+			},
+
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- PvP -- ",
+                    },
+                },
+            },
+            { -- [5] 5th Row     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "ON MELEE BURST", value = "ON MELEE BURST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "FearPvP",
+                    DBV = "ON MELEE BURST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(51514),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "FearPvPUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(51514) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },
+        },
     },
     -- MSG Actions UI
     [7] = {
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = { 
+            -- MSG Action Pet Dispell
+            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
+                return     A.DispellMagic:IsReady(unit, true) and 
+                        (
+                            ( 
+                                not Unit(thisunit):IsEnemy() and 
+                                (
+                                    (
+                                        not InPvP() and 
+                                        Env.Dispel(unit)
+                                    ) or 
+                                    (
+                                        InPvP() and 
+                                        EnemyTeam():PlayersInRange(1, 5)
+                                    ) 
+                                )
+                            ) or 
+                            ( 
+                                Unit(thisunit):IsEnemy() and 
+                                Unit(thisunit):GetRange() <= 5 and 
+                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
+                            )                
+                        ) 
+            ]] },
+            -- MSG Action Pet Kick
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+            -- MSG Action Fear
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+        },
+        [ACTION_CONST_SHAMAN_RESTORATION] = { 
             -- MSG Action Pet Dispell
             ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
                 return     A.DispellMagic:IsReady(unit, true) and 
