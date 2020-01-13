@@ -74,6 +74,7 @@ Action[ACTION_CONST_SHAMAN_ELEMENTAL] = {
     ResonanceTotemBuff                     = Action.Create({ Type = "Spell", ID = 202192 }),
     TectonicThunder                        = Action.Create({ Type = "Spell", ID = 286949 }),
     TectonicThunderBuff                    = Action.Create({ Type = "Spell", ID = 286949 }),
+	UnlimitedPower                         = Action.Create({ Type = "Spell", ID = 260895}),
     WindShear                              = Action.Create({ Type = "Spell", ID = 57994 }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
@@ -1045,6 +1046,10 @@ A[3] = function(icon, isMulti)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
             end
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+                return A.ReapingFlames:Show(icon)
+            end
             -- blood_of_the_enemy
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
@@ -1070,7 +1075,9 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+			and ((A.UnlimitedPower:IsSpellLearned() or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 or A.Ascendance:IsSpellLearned() and ((A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120) and A.StormElemental:GetCooldown() > 15 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and A.Icefury:GetCooldown() == 0)) or A.Ascendance:GetCooldown() > 0)
+			then
                 return A.RippleinSpace:Show(icon)
             end
             -- worldvein_resonance
