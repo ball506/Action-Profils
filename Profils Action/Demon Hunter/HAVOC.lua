@@ -618,6 +618,10 @@ A[3] = function(icon, isMulti)
 			    ) then
                 return A.ConcentratedFlame:Show(icon)
             end
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and CanCast then
+                return A.ReapingFlames:Show(icon)
+            end
             -- blood_of_the_enemy,if=buff.metamorphosis.up|target.time_to_die<=10
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
                 return A.BloodoftheEnemy:Show(icon)
