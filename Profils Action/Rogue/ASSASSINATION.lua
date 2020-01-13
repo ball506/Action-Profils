@@ -893,7 +893,6 @@ A[3] = function(icon, isMulti)
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	
 	-- FocusedAzeriteBeam protection channel
-
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
 		-- @return:
 		-- [1] Currect Casting Left Time (seconds) (@number)
@@ -1265,7 +1264,6 @@ A[3] = function(icon, isMulti)
 			
             -- worldvein_resonance,if=buff.lifeblood.stack<3
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) 
 			then
                 return A.WorldveinResonance:Show(icon)
             end
@@ -1276,6 +1274,11 @@ A[3] = function(icon, isMulti)
 			then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+			
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+                return A.ReapingFlames:Show(icon)
+            end	
 			
 			-- Cooldowns --
                         
