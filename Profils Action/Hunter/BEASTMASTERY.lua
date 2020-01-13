@@ -589,6 +589,10 @@ A[3] = function(icon, isMulti)
 			then
                 return A.BattlePotionOfAgility:Show(icon)
             end
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+                return A.ReapingFlames:Show(icon)
+            end	
             -- worldvein_resonance,if=buff.lifeblood.stack<4
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) 
 			then
