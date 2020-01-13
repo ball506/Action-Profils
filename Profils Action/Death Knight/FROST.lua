@@ -920,6 +920,11 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+                return A.ReapingFlames:Show(icon)
+            end	
+			
             -- chill_streak,if=buff.pillar_of_frost.remains<5&buff.pillar_of_frost.up|Unit(unit):TimeToDie()<5
             if A.ChillStreak:IsReady(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 or Unit(unit):TimeToDie() < 5) then
                 return A.ChillStreak:Show(icon)
