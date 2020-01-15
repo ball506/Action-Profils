@@ -41,6 +41,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -380,19 +381,60 @@ local function GetGUID(unitID)
 end 
 
 
+-- Demono imp locals
+TR.GuardiansTable = {
+    ImpCastsRemaing = 0,
+    ImpTotalEnergy = 0,      
+};
 
-
---[[TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
+TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
 	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID)
-	-- If we want to modify data we can 
-	PetTrackerData.ImpCastsRemaing = 5
-	PetTrackerData.ImpEnergyStart = 100
-	PetTrackerData.CurrentImpEnergy = 0
-	--print(PetTrackerData.CurrentImpEnergy)
-end)]]--
--- Decrement ImpCasts and Implosion Listener
-local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()	
+
+	PetData.impcasts = 5
+	TR.GuardiansTable.ImpCastsRemaing = 5
+
+end)
+
+
+-- Return total cast remaining for each of our current active imps
+-- Also used to calculate Imp energy which is also more accurate than just imp count	
+local function TotalImpCastsRemaing()
+    local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
+    --local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
+    local SourceGUID,_,_,_,UnitPetGUID,_,_,_,SpellID = select(4, ...);
+	local total = 0
+	
+	-- Decrement ImpCasts and Implosion Listener
+    
+    -- Check for imp bolt casts
+    if SpellID == 104318 then
+    	for _, v in pairs(PetTrackerData) do
+	    	if v.name == "Wild Imp" then
+			    for _, data in pairs(v.GUIDs) do 					
+				    local castremains = data.impcasts
+					if castremains > 0 then 
+					   	castremains = castremains - 1
+						TR.GuardiansTable.ImpCastsRemaing = TR.GuardiansTable.ImpCastsRemaing - 1
+					else
+					    castremains = 0 						
+					end 						
+			    end 
+			end
+			break 
+		end 
+		TR.GuardiansTable.ImpTotalEnergy = TR.GuardiansTable.ImpCastsRemaing * 20
+	end 
+		
+	if castremains > 0 then 
+		return castremains 
+	end 
+
+	
+	return total 
+end 
+
+
 
 -- Check for imp bolt casts
 if spellID == 104318 then
@@ -710,7 +752,7 @@ A[3] = function(icon, isMulti)
         local function BuildAShard(unit)
 		
             -- memory_of_lucid_dreams,if=soul_shard<2
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (FutureShard < 2) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (FutureShard < 2) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
@@ -817,22 +859,22 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&spell_targets.implosion<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetActiveEnemies() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetActiveEnemies() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
@@ -961,7 +1003,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth,if=!cooldown.nether_portal.remains&soul_shard>=5
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.NetherPortal:GetCooldown() == 0 and Player:SoulShardsP() >= 5) then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.NetherPortal:GetCooldown() == 0 and Player:SoulShardsP() >= 5) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -1037,7 +1079,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -1182,9 +1224,14 @@ A[3] = function(icon, isMulti)
 			then
                 return A.Fireblood:Show(icon)
             end
+
+            -- bag_of_tricks
+            if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.BagofTricks:Show(icon)
+            end
 			
             -- blood_of_the_enemy,if=pet.demonic_tyrant.active&pet.demonic_tyrant.remains<=15-gcd*3&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    RealTyrantIsActive and DemonicTyrantTime <= 15 - A.GetGCD() * 3 
 					and 
@@ -1199,7 +1246,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- worldvein_resonance,if=buff.lifeblood.stack<3&(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 
 					and 
@@ -1212,7 +1259,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ripple_in_space,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) 
 					or 
@@ -1337,7 +1384,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth,if=cooldown.summon_demonic_tyrant.remains<=15|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonDemonicTyrant:GetCooldown() <= 15 or (Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 30)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SummonDemonicTyrant:GetCooldown() <= 15 or (Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 30)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -1365,7 +1412,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0) then
                 return A.TheUnboundForce:Show(icon)
             end
 			
@@ -1461,22 +1508,22 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam,if=!pet.demonic_tyrant.active
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not RealTyrantIsActive) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not RealTyrantIsActive) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&!pet.demonic_tyrant.active
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 
 					and 
