@@ -34,6 +34,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -870,45 +871,45 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.blade_flurry.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit("player"):HasBuffs(A.BladeFlurry.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- blood_of_the_enemy,if=variable.blade_flurry_sync&cooldown.between_the_eyes.up&variable.bte_condition
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BetweentheEyes:GetCooldown() == 0 then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BetweentheEyes:GetCooldown() == 0 then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- focused_azerite_beam,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60&!buff.adrenaline_rush.up
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) 
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) 
 			and Action.GetToggle(1, "HeartOfAzeroth") 
 			and ((MultiUnits:GetByRange(8, 5, 10) >= 2 or Unit(unit):IsBoss()) and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             -- purifying_blast,if=spell_targets.blade_flurry>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8, 5, 10) >= 2) then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8, 5, 10) >= 2) then
                 return A.PurifyingBlast:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<45
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 45) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 45) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or Unit(unit):TimeToDieX(20) > 30) then
                 return A.ReapingFlames:Show(icon)
             end
         end
@@ -1066,7 +1067,7 @@ A[3] = function(icon, isMulti)
         end
                 
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and Precombat(unit) then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and Precombat(unit) then 
             return true
         end
 		
@@ -1125,7 +1126,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- blood_of_the_enemy,if=big_aoe
-                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(2, "BotEAoEBurst") and Action.GetToggle(1, "HeartOfAzeroth") and 
+                if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(2, "BotEAoEBurst") and Action.GetToggle(1, "HeartOfAzeroth") and 
      	            (
 			    	    MultiUnits:GetByRange(A.GetToggle(2, "BladeFlurryRange"), 5, 5) >= A.GetToggle(2, "BladeFlurryTargets") 
 			    		and 
@@ -1171,6 +1172,11 @@ A[3] = function(icon, isMulti)
             if A.ArcaneTorrent:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
                 return A.ArcaneTorrent:Show(icon)
             end
+			
+            -- bag_of_tricks
+            if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.BagofTricks:Show(icon)
+            end	
 			
             -- arcane_pulse
             if A.ArcanePulse:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") then
