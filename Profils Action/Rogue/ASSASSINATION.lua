@@ -35,6 +35,7 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     GiftofNaaru                          = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                           = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                            = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                    = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -1027,7 +1028,7 @@ A[3] = function(icon, isMulti)
 		end	
 		
 		-- Blood of the Enemy
-        if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and CanCast and A.BurstIsON(unit) and 
+        if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and CanCast and A.BurstIsON(unit) and 
 		    (
 			    (A.IsInPvP and Unit(unit):HealthPercent() <= 75) or not A.IsInPvP
 			) and 
@@ -1037,7 +1038,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-        if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") 
+        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") 
 		and (Player:EnergyTimeToMaxPredicted() > 1 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0
 		and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetCooldown() < A.GetGCD())) 
 		then
@@ -1220,7 +1221,7 @@ A[3] = function(icon, isMulti)
 			-- call_action_list,name=essences                        
 		
             -- blood_of_the_enemy,if=debuff.vendetta.up&(!talent.toxic_blade.enabled|debuff.toxic_blade.up&combo_points.deficit<=1|debuff.vendetta.remains<=10)|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 and (not A.ToxicBlade:IsSpellLearned() or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) > 0
 			and Player:ComboPointsDeficit() <= 1 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) <= 10) or Unit(unit):TimeToDie() <= 10) 
 			then
@@ -1228,14 +1229,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth,if=cooldown.vendetta.remains<3|debuff.vendetta.up|target.time_to_die<30
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (A.Vendetta:GetCooldown() < 3 or Unit(unit):HasDeBuffs(A.Vendetta.ID, true) > 0 or Unit(unit):TimeToDie() < 30) 
 			then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
             -- guardian_of_azeroth,if=floor((target.time_to_die-30)%cooldown)>floor((target.time_to_die-30-cooldown.vendetta.remains)%cooldown)
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (math.floor((Unit(unit):TimeToDie() - 30) / A.GuardianofAzeroth:GetCooldown()) > math.floor((Unit(unit):TimeToDie() - 30 - A.Vendetta:GetCooldown()) / A.GuardianofAzeroth:GetCooldown())) 
 			then
                 return A.GuardianofAzeroth:Show(icon)
@@ -1243,42 +1244,42 @@ A[3] = function(icon, isMulti)
 			
 			
             -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (MultiUnits:GetByRange(8, 5, 10) >= 2 or Unit(unit):IsBoss()) 
 			then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) 
 			then
                 return A.TheUnboundForce:Show(icon)
             end
 			
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			then
                 return A.RippleInSpace:Show(icon)
             end
 			
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			then
                 return A.WorldveinResonance:Show(icon)
             end
 			
             -- memory_of_lucid_dreams,if=energy<50&!cooldown.vendetta.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			and (Player:EnergyPredicted() < 50 and not A.Vendetta:GetCooldown() == 0) 
 			then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
-			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or Unit(unit):TimeToDieX(20) > 30) then
                 return A.ReapingFlames:Show(icon)
-            end	
+            end
 			
 			-- Cooldowns --
                         
@@ -1288,7 +1289,12 @@ A[3] = function(icon, isMulti)
                 if A.BloodFury:AutoRacial(unit) then 
                     return A.BloodFury:Show(icon)
                 end 
-                                
+				
+                -- bag_of_tricks
+                if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                    return A.BagofTricks:Show(icon)
+                end    
+			
                 if A.Fireblood:AutoRacial(unit) then 
                     return A.Fireblood:Show(icon)
                 end 
@@ -1373,7 +1379,7 @@ A[3] = function(icon, isMulti)
 		end
 		
 	    -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-        if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
+        if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 		and (MultiUnits:GetByRange(10) >= 2) 
 		then
             return A.FocusedAzeriteBeam:Show(icon)
