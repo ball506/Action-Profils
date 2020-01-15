@@ -28,6 +28,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     GiftofNaaru								= Action.Create({ Type = "Spell", ID = 59544}),
     Shadowmeld								= Action.Create({ Type = "Spell", ID = 58984}), -- usable in Action Core 
     Stoneform								= Action.Create({ Type = "Spell", ID = 20594}), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken						= Action.Create({ Type = "Spell", ID = 7744}), -- not usable in APL but user can Queue it    
     EscapeArtist							= Action.Create({ Type = "Spell", ID = 20589}), -- not usable in APL but user can Queue it
     EveryManforHimself						= Action.Create({ Type = "Spell", ID = 59752}), -- not usable in APL but user can Queue it
@@ -323,9 +324,9 @@ A[3] = function(icon, isMulti)
             -- Simcraft 
             -- Cooldowns --						
 			--blood_of_the_enemy,if=buff.recklessness.up
-			if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then                             
+			if inHoldAoE and MultiUnits:GetByRange(8, minHoldAoE) >= minHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzeroth(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then                             
                 return A.BloodoftheEnemy:Show(icon)                                                 
-            elseif not inHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then 
+            elseif not inHoldAoE and inMelee and A.BloodoftheEnemy:AutoHeartOfAzeroth(unitID) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) > 4 and A.Siegebreaker:GetCooldown() > 6) then 
 				return A.BloodoftheEnemy:Show(icon)   
 			end 
 
@@ -335,12 +336,12 @@ A[3] = function(icon, isMulti)
 			end 
 			
 			--ripple_in_space,if=!buff.recklessness.up&!buff.siegebreaker.up
-			if A.RippleinSpace:AutoHeartOfAzerothP(unitID) and Unit(unitID):GetRange() <= 25 and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 and	Unit(unitID):HasDeBuffs(A.SiegebreakerDebuff.ID) <= 0 then 
+			if A.RippleinSpace:AutoHeartOfAzeroth(unitID) and Unit(unitID):GetRange() <= 25 and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 and	Unit(unitID):HasDeBuffs(A.SiegebreakerDebuff.ID) <= 0 then 
 				return A.RippleinSpace:Show(icon)
 			end 
 			
 			--guardian_of_azeroth,if=!buff.recklessness.up
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 then 
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unitID) and Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true) <= 0 then 
                 return A.GuardianofAzeroth:Show(icon)
             end 
 			

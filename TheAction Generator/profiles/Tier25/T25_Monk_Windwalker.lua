@@ -61,11 +61,12 @@ Action[ACTION_CONST_MONK_WINDWALKER] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     StormEarthandFire                      = Action.Create({ Type = "Spell", ID = 137639 }),
     WorldveinResonanceBuff                 = Action.Create({ Type = "Spell", ID =  }),
     TouchofDeathDebuff                     = Action.Create({ Type = "Spell", ID =  }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     StormEarthandFireBuff                  = Action.Create({ Type = "Spell", ID = 137639 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
@@ -198,82 +199,82 @@ local function IsSchoolFree()
 end 
 
 
-local function EvaluateTargetIfFilterRisingSunKick33(unit)
+local function EvaluateTargetIfFilterRisingSunKick37(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfRisingSunKick46(unit)
+local function EvaluateTargetIfRisingSunKick50(unit)
   return (A.WhirlingDragonPunch:IsSpellLearned() and A.WhirlingDragonPunch:GetCooldown() < 5) and A.FistsofFury:GetCooldown() > 3
 end
 
 
-local function EvaluateTargetIfFilterTigerPalm76(unit)
+local function EvaluateTargetIfFilterTigerPalm80(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfTigerPalm85(unit)
+local function EvaluateTargetIfTigerPalm89(unit)
   return Player:ChiMax() - Player:Chi() >= 2 and (not A.HitCombo:IsSpellLearned() or not bool(combo_break))
 end
 
 
-local function EvaluateTargetIfFilterBlackoutKick97(unit)
+local function EvaluateTargetIfFilterBlackoutKick101(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfBlackoutKick110(unit)
+local function EvaluateTargetIfBlackoutKick114(unit)
   return bool(combo_strike) and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
 end
 
 
-local function EvaluateTargetIfFilterRisingSunKick257(unit)
+local function EvaluateTargetIfFilterRisingSunKick259(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfRisingSunKick272(unit)
+local function EvaluateTargetIfRisingSunKick274(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or Unit("player"):GetSpellLastCast(A.SpinningCraneKick)
 end
 
 
-local function EvaluateTargetIfFilterBlackoutKick328(unit)
+local function EvaluateTargetIfFilterBlackoutKick330(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfFilterRisingSunKick343(unit)
+local function EvaluateTargetIfFilterRisingSunKick345(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfRisingSunKick350(unit)
+local function EvaluateTargetIfRisingSunKick352(unit)
   return Player:Chi() >= 5
 end
 
 
-local function EvaluateTargetIfFilterRisingSunKick356(unit)
+local function EvaluateTargetIfFilterRisingSunKick358(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfFilterBlackoutKick389(unit)
+local function EvaluateTargetIfFilterBlackoutKick391(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfBlackoutKick402(unit)
+local function EvaluateTargetIfBlackoutKick404(unit)
   return bool(combo_strike) and (A.RisingSunKick:GetCooldown() > 3 or Player:Chi() >= 3) and (A.FistsofFury:GetCooldown() > 4 or Player:Chi() >= 4 or (Player:Chi() == 2 and Unit("player"):GetSpellLastCast(A.TigerPalm)))
 end
 
 
-local function EvaluateTargetIfFilterTigerPalm418(unit)
+local function EvaluateTargetIfFilterTigerPalm420(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfTigerPalm425(unit)
+local function EvaluateTargetIfTigerPalm427(unit)
   return bool(combo_strike) and Player:ChiMax() - Player:Chi() >= 2
 end
 
 
-local function EvaluateTargetIfFilterTigerPalm485(unit)
+local function EvaluateTargetIfFilterTigerPalm487(unit)
   return Unit(unit):HasDeBuffs(A.MarkoftheCraneDebuff.ID, true)
 end
 
-local function EvaluateTargetIfTigerPalm500(unit)
+local function EvaluateTargetIfTigerPalm502(unit)
   return not bool(combo_break) and (Player:EnergyTimeToMaxPredicted() < 1 or (A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2) or (Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) and Player:ChiMax() - Player:Chi() >= 2 and not bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true))
 end
 
@@ -305,9 +306,9 @@ A[3] = function(icon, isMulti)
             if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 A.ProlongedPower:Show(icon)
             end
-            -- variable,name=coral_double_tod_on_use,op=set,value=equipped.ashvanes_razor_coral&(equipped.cyclotronic_blast|equipped.lustrous_golden_plumage)
+            -- variable,name=coral_double_tod_on_use,op=set,value=equipped.ashvanes_razor_coral&(equipped.cyclotronic_blast|equipped.lustrous_golden_plumage|equipped.gladiators_badge|equipped.gladiators_medallion)
             if (true) then
-                VarCoralDoubleTodOnUse = num(A.AshvanesRazorCoral:IsExists() and (A.CyclotronicBlast:IsExists() or A.LustrousGoldenPlumage:IsExists()))
+                VarCoralDoubleTodOnUse = num(A.AshvanesRazorCoral:IsExists() and (A.CyclotronicBlast:IsExists() or A.LustrousGoldenPlumage:IsExists() or A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists()))
             end
             -- chi_burst,if=(!talent.serenity.enabled|!talent.fist_of_the_white_tiger.enabled)
             if A.ChiBurst:IsReady(unit) and ((not A.Serenity:IsSpellLearned() or not A.FistoftheWhiteTiger:IsSpellLearned())) then
@@ -331,7 +332,7 @@ A[3] = function(icon, isMulti)
         local function Aoe(unit)
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=(talent.whirling_dragon_punch.enabled&cooldown.whirling_dragon_punch.remains<5)&cooldown.fists_of_fury.remains>3
             if A.RisingSunKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick33, EvaluateTargetIfRisingSunKick46) then 
+                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick37, EvaluateTargetIfRisingSunKick50) then 
                     return A.RisingSunKick:Show(icon) 
                 end
             end
@@ -369,7 +370,7 @@ A[3] = function(icon, isMulti)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=chi.max-chi>=2&(!talent.hit_combo.enabled|!combo_break)
             if A.TigerPalm:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm76, EvaluateTargetIfTigerPalm85) then 
+                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm80, EvaluateTargetIfTigerPalm89) then 
                     return A.TigerPalm:Show(icon) 
                 end
             end
@@ -383,7 +384,7 @@ A[3] = function(icon, isMulti)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&(buff.bok_proc.up|(talent.hit_combo.enabled&prev_gcd.1.tiger_palm&chi<4))
             if A.BlackoutKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick97, EvaluateTargetIfBlackoutKick110) then 
+                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick101, EvaluateTargetIfBlackoutKick114) then 
                     return A.BlackoutKick:Show(icon) 
                 end
             end
@@ -415,13 +416,9 @@ A[3] = function(icon, isMulti)
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
             end
-            -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
-                return A.Fireblood:Show(icon)
-            end
-            -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
-                return A.AncestralCall:Show(icon)
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
             -- call_action_list,name=tod
             if (true) then
@@ -460,8 +457,8 @@ A[3] = function(icon, isMulti)
             if A.AshvanesRazorCoral:IsReady(unit) and (bool(VarCoralDoubleTodOnUse) and A.TouchofDeath:GetCooldown() >= 23 and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) > 13 or Unit(unit):TimeToDie() - A.TouchofDeath:GetCooldown() < 40 and A.TouchofDeath:GetCooldown() < 23 or Unit(unit):TimeToDie() < 25)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
-            -- use_item,name=ashvanes_razor_coral,if=!variable.coral_double_tod_on_use&(debuff.razor_coral_debuff.down|(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&(dot.touch_of_death.remains|cooldown.touch_of_death.remains+9>target.time_to_die&buff.storm_earth_and_fire.up|target.time_to_die<25))
-            if A.AshvanesRazorCoral:IsReady(unit) and (not bool(VarCoralDoubleTodOnUse) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (not A.DribblingInkpod:IsExists() or Unit(unit):TimeToDieX(30) < 8) and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or Unit(unit):TimeToDie() < 25))) then
+            -- use_item,name=ashvanes_razor_coral,if=!variable.coral_double_tod_on_use&(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&(debuff.razor_coral_debuff.down|dot.touch_of_death.remains|(cooldown.touch_of_death.remains+9>target.time_to_die&buff.storm_earth_and_fire.up)|target.time_to_die<21)
+            if A.AshvanesRazorCoral:IsReady(unit) and (not bool(VarCoralDoubleTodOnUse) and (not A.DribblingInkpod:IsExists() or Unit(unit):TimeToDieX(30) < 8) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or (A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) or Unit(unit):TimeToDie() < 21)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force
@@ -498,7 +495,7 @@ A[3] = function(icon, isMulti)
         local function Serenity(unit)
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=active_enemies<3|prev_gcd.1.spinning_crane_kick
             if A.RisingSunKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick257, EvaluateTargetIfRisingSunKick272) then 
+                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick259, EvaluateTargetIfRisingSunKick274) then 
                     return A.RisingSunKick:Show(icon) 
                 end
             end
@@ -520,7 +517,7 @@ A[3] = function(icon, isMulti)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains
             if A.BlackoutKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick328) then 
+                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick330) then 
                     return A.BlackoutKick:Show(icon) 
                 end
             end
@@ -538,13 +535,13 @@ A[3] = function(icon, isMulti)
             end
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains,if=chi>=5
             if A.RisingSunKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick343, EvaluateTargetIfRisingSunKick350) then 
+                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick345, EvaluateTargetIfRisingSunKick352) then 
                     return A.RisingSunKick:Show(icon) 
                 end
             end
             -- rising_sun_kick,target_if=min:debuff.mark_of_the_crane.remains
             if A.RisingSunKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick356) then 
+                if Action.Utils.CastTargetIf(A.RisingSunKick, 40, "min", EvaluateTargetIfFilterRisingSunKick358) then 
                     return A.RisingSunKick:Show(icon) 
                 end
             end
@@ -570,7 +567,7 @@ A[3] = function(icon, isMulti)
             end
             -- blackout_kick,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&(cooldown.rising_sun_kick.remains>3|chi>=3)&(cooldown.fists_of_fury.remains>4|chi>=4|(chi=2&prev_gcd.1.tiger_palm))
             if A.BlackoutKick:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick389, EvaluateTargetIfBlackoutKick402) then 
+                if Action.Utils.CastTargetIf(A.BlackoutKick, 40, "min", EvaluateTargetIfFilterBlackoutKick391, EvaluateTargetIfBlackoutKick404) then 
                     return A.BlackoutKick:Show(icon) 
                 end
             end
@@ -584,7 +581,7 @@ A[3] = function(icon, isMulti)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=combo_strike&chi.max-chi>=2
             if A.TigerPalm:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm418, EvaluateTargetIfTigerPalm425) then 
+                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm420, EvaluateTargetIfTigerPalm427) then 
                     return A.TigerPalm:Show(icon) 
                 end
             end
@@ -645,7 +642,7 @@ A[3] = function(icon, isMulti)
             end
             -- tiger_palm,target_if=min:debuff.mark_of_the_crane.remains,if=!combo_break&(energy.time_to_max<1|(talent.serenity.enabled&cooldown.serenity.remains<2)|(energy.time_to_max<4&cooldown.fists_of_fury.remains<1.5))&chi.max-chi>=2&!dot.touch_of_death.remains
             if A.TigerPalm:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm485, EvaluateTargetIfTigerPalm500) then 
+                if Action.Utils.CastTargetIf(A.TigerPalm, 40, "min", EvaluateTargetIfFilterTigerPalm487, EvaluateTargetIfTigerPalm502) then 
                     return A.TigerPalm:Show(icon) 
                 end
             end

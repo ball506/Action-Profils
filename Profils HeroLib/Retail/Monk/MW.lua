@@ -866,7 +866,7 @@ A[3] = function(icon, isMulti)
             return A.ConcentratedFlame:Show(icon)
         end 
         
-        if     (isMulti or A.GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
+        if     (isMulti or A.GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
         (
             not A.IsInPvP or 
             not EnemyTeam("HEALER"):IsBreakAble(25)    
@@ -994,7 +994,7 @@ A[3] = function(icon, isMulti)
             -- Multi (for [4])
             if isMulti then 
                 if CanRevival(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1002,7 +1002,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 if CanInvokeChiJitheRedCrane(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1069,7 +1069,7 @@ A[3] = function(icon, isMulti)
             -- AoE
             if not isMulti and A.GetToggle(2, "AoE") then 
                 if CanRevival(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1077,7 +1077,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 if CanInvokeChiJitheRedCrane(isSoothingMistCasting) then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -1151,7 +1151,7 @@ A[3] = function(icon, isMulti)
                     return A.ZenFocusTea:Show(icon)
                 end 
                 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
@@ -1267,7 +1267,7 @@ A[3] = function(icon, isMulti)
         end 
         
         -- Azerite Essences 
-        if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, isSoothingMistCasting) and Unit("player"):PowerPercent() < 85 and (not A.ManaTea:IsSpellLearned() or Unit("player"):HasBuffs(A.ManaTea.ID, true) == 0) then 
+        if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, isSoothingMistCasting) and Unit("player"):PowerPercent() < 85 and (not A.ManaTea:IsSpellLearned() or Unit("player"):HasBuffs(A.ManaTea.ID, true) == 0) then 
             return A.MemoryofLucidDreams:Show(icon)
         end         
         
@@ -1279,7 +1279,7 @@ A[3] = function(icon, isMulti)
         local Mana = A.GetToggle(2, "ManaPotion") 
         if Unit("player"):CombatTime() > 0 and Mana > 0 and Unit("player"):PowerPercent() <= Mana then 
             if A.PotionofReconstitution:IsReady("player", true, nil, isSoothingMistCasting) and not isMoving and Player:IsStayingTime() > 1.5 then 
-                if A.MemoryofLucidDreams:AutoHeartOfAzerothP("player", isSoothingMistCasting) then 
+                if A.MemoryofLucidDreams:AutoHeartOfAzeroth("player", isSoothingMistCasting) then 
                     return A.MemoryofLucidDreams:Show(icon)
                 end 
                 

@@ -64,7 +64,8 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 })
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -392,6 +393,10 @@ A[3] = function(icon, isMulti)
             -- ancestral_call,if=buff.recklessness.up
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
+            end
+            -- bag_of_tricks,if=buff.recklessness.up
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
+                return A.BagofTricks:Show(icon)
             end
             -- run_action_list,name=single_target
             if (true) then

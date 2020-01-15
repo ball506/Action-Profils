@@ -721,7 +721,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- Azerite Essence
-            if     A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Unit(unit):GetRange() <= 25 and 
+            if     A.RippleinSpace:AutoHeartOfAzeroth(unit, true) and Unit(unit):GetRange() <= 25 and 
             (
                 not A.IsInPvP or 
                 not EnemyTeam("HEALER"):IsBreakAble(25) 
@@ -923,7 +923,7 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end 
             
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit) and Player:Energy() < 40 and Unit(player):HasBuffs(Temp.SerenityBuffs, true) > 0 then 
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit) and Player:Energy() < 40 and Unit(player):HasBuffs(Temp.SerenityBuffs, true) > 0 then 
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
@@ -941,7 +941,7 @@ A[3] = function(icon, isMulti)
             return A.ConcentratedFlame:Show(icon)
         end 
         
-        if A.RippleinSpace:AutoHeartOfAzerothP(unit) and Unit(unit):GetRange() <= 25 then 
+        if A.RippleinSpace:AutoHeartOfAzeroth(unit) and Unit(unit):GetRange() <= 25 then 
             return A.RippleinSpace:Show(icon)
         end 
         

@@ -62,6 +62,7 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     Flamestrike                            = Action.Create({ Type = "Spell", ID = 2120 }),
     FlamePatch                             = Action.Create({ Type = "Spell", ID = 205037 }),
     PyroclasmBuff                          = Action.Create({ Type = "Spell", ID = 269651 }),
@@ -361,6 +362,10 @@ A[3] = function(icon, isMulti)
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
+            end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
             -- flamestrike,if=((talent.flame_patch.enabled&active_enemies>2)|active_enemies>6)&buff.hot_streak.react&!azerite.blaster_master.enabled
             if A.Flamestrike:IsReady(unit) and (((A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 6) and bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not bool(A.BlasterMaster:GetAzeriteRank())) then
