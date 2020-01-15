@@ -33,6 +33,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -66,6 +67,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
     Outbreak                               = Action.Create({ Type = "Spell", ID = 77575 }),
     VirulentPlagueDebuff                   = Action.Create({ Type = "Spell", ID = 191587 }),
+    Icecap                                 = Action.Create({ Type = "Spell", ID = 207126 }),
 	-- Defensives
     IceboundFortitude                      = Action.Create({ Type = "Spell", ID = 48792 }),
     AntiMagicShell                         = Action.Create({ Type = "Spell", ID = 48707 }),
@@ -571,7 +573,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- festering_strike,if=talent.bursting_sores.enabled&spell_targets.bursting_sores>=2&debuff.festering_wound.stack<=1
-            if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRange(8, 5, 10) >= 2 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) <= 1) then
+            if A.FesteringStrike:IsReady(unit) and (A.BurstingSores:IsSpellLearned() and MultiUnits:GetByRange(8) >= 2 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) <= 1) then
                 return A.FesteringStrike:Show(icon)
             end
 			
@@ -648,7 +650,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unholy_frenzy,if=active_enemies>=2&((cooldown.death_and_decay.remains<=gcd&!talent.defile.enabled)|(cooldown.defile.remains<=gcd&talent.defile.enabled))
-            if A.UnholyFrenzy:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRange(8, 5, 10) >= 2 and ((A.DeathandDecay:GetCooldown() <= A.GetGCD() and not A.Defile:IsSpellLearned()) or (A.Defile:GetCooldown() <= A.GetGCD() and A.Defile:IsSpellLearned()))) then
+            if A.UnholyFrenzy:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRange(8) >= 2 and ((A.DeathandDecay:GetCooldown() <= A.GetGCD() and not A.Defile:IsSpellLearned()) or (A.Defile:GetCooldown() <= A.GetGCD() and A.Defile:IsSpellLearned()))) then
                 return A.UnholyFrenzy:Show(icon)
             end
 			
@@ -672,52 +674,52 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
 		
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) then
                 return A.ReapingFlames:Show(icon)
             end
 			
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and MultiUnits:GetByRange(30, 5, 10) > 1) or (A.Defile:GetCooldown() > 0 and MultiUnits:GetByRange(8, 5, 10) > 1) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and MultiUnits:GetByRange(30) > 1) or (A.Defile:GetCooldown() > 0 and MultiUnits:GetByRange(8) > 1) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Apocalypse:GetCooldown() < 6) then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Apocalypse:GetCooldown() < 6) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
                 return A.TheUnboundForce:Show(icon)
             end
 			
             -- focused_azerite_beam,if=!death_and_decay.ticking
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
             -- purifying_blast,if=!death_and_decay.ticking
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- worldvein_resonance,if=!death_and_decay.ticking
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
 			
             -- ripple_in_space,if=!death_and_decay.ticking
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
         end
@@ -811,6 +813,11 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneTorrent:Show(icon)
             end
 			
+            -- bag_of_tricks
+            if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.BagofTricks:Show(icon)
+            end		
+			
             -- blood_fury,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled
             if A.BloodFury:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Pet:IsActive(27829) or not A.SummonGargoyle:IsSpellLearned()) then
                 return A.BloodFury:Show(icon)
@@ -821,19 +828,44 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
 			
+	        -- lights_judgment,if=(buff.unholy_strength.up&buff.festermight.remains<=5)|active_enemies>=2&(buff.unholy_strength.up|buff.festermight.remains<=5)
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and ((Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and Unit("player"):HasBuffs(A.FestermightBuff.ID, true) <= 5) or MultiUnits:GetByRange(20) >= 2 and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) <= 5)) then
+                return A.LightsJudgment:Show(icon)
+            end
+			
+            -- ancestral_call,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((bool(Pet:IsActive(A.Gargoyle.ID)) and A.SummonGargoyle:IsSpellLearned()) or bool(Pet:IsActive(A.ApocGhoul.ID))) then
+                return A.AncestralCall:Show(icon)
+            end
+			
+            -- arcane_pulse,if=active_enemies>=2|(rune.deficit>=5&runic_power.deficit>=60)
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and (MultiUnits:GetByRange(20) >= 2 or (Player:RuneDeficit() >= 5 and Player:RunicPowerDeficit() >= 60)) then
+                return A.ArcanePulse:Show(icon)
+            end
+			
+            -- fireblood,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((Pet:IsActive(27829) and A.SummonGargoyle:IsSpellLearned()) or Pet:IsActive(24207)) then
+                return A.Fireblood:Show(icon)
+            end
+			
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
-            -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.major&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.major)
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast and ((bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and not Azerite:EssenceHasMajor(A.VisionofPerfection.ID))) then
+            -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
+            if A.AzsharasFontofPower:IsReady(unit) and ((bool(A.VisionofPerfection:IsSpellLearned()) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(A.VisionofPerfection:IsSpellLearned()))) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
-            -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.major&talent.unholy_frenzy.enabled)
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) or Azerite:EssenceHasMajor(A.VisionofPerfection.ID) and A.UnholyFrenzy:IsSpellLearned())) then
+	        -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
+            if A.AzsharasFontofPower:IsReady(unit) and ((bool(A.VisionofPerfection:IsSpellLearned()) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(A.VisionofPerfection:IsSpellLearned()))) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
-            -- use_item,name=azsharas_font_of_power,if=Unit(unit):TimeToDie()<cooldown.apocalypse.remains+34
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast and (Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown() + 34) then
+            -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled)
+            if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned())) then
+                return A.AzsharasFontofPower:Show(icon)
+            end
+			
+            -- use_item,name=azsharas_font_of_power,if=target.1.time_to_die<cooldown.apocalypse.remains+34
+            if A.AzsharasFontofPower:IsReady(unit) and (target.1.time_to_die < A.Apocalypse:GetCooldown() + 34) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
