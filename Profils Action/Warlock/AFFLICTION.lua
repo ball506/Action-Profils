@@ -31,6 +31,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     GiftofNaaru                          = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                           = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                            = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                          = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                    = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -1267,7 +1268,11 @@ A[3] = function(icon, isMulti)
             if A.Berserking:AutoRacial(unit) and not ShouldStop and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
-		
+            -- bag_of_tricks
+            if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.BagofTricks:Show(icon)
+            end		
+			
             -- call_action_list,name=spenders
             if (true) and not ShouldStop then
                 if Spenders(unit) then 
