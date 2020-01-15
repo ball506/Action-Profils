@@ -63,6 +63,12 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
+    FestermightBuff                        = Action.Create({ Type = "Spell", ID =  }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     Outbreak                               = Action.Create({ Type = "Spell", ID = 77575 }),
     VirulentPlagueDebuff                   = Action.Create({ Type = "Spell", ID = 191587 })
     -- Trinkets
@@ -199,7 +205,7 @@ local function EvaluateCycleSoulReaper167(unit)
     return Unit(unit):TimeToDie() < 8 and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleOutbreak401(unit)
+local function EvaluateCycleOutbreak433(unit)
     return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD()
 end
 
@@ -465,13 +471,29 @@ A[3] = function(icon, isMulti)
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) or bool(Pet:IsActive(A.Gargoyle.ID)) or (A.ArmyoftheDamned:IsSpellLearned() and bool(Pet:IsActive(A.ApocGhoul.ID)))) then
                 return A.Berserking:Show(icon)
             end
+            -- lights_judgment,if=(buff.unholy_strength.up&buff.festermight.remains<=5)|active_enemies>=2&(buff.unholy_strength.up|buff.festermight.remains<=5)
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and ((Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and Unit("player"):HasBuffs(A.FestermightBuff.ID, true) <= 5) or MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) <= 5)) then
+                return A.LightsJudgment:Show(icon)
+            end
+            -- ancestral_call,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((bool(Pet:IsActive(A.Gargoyle.ID)) and A.SummonGargoyle:IsSpellLearned()) or bool(Pet:IsActive(A.ApocGhoul.ID))) then
+                return A.AncestralCall:Show(icon)
+            end
+            -- arcane_pulse,if=active_enemies>=2|(rune.deficit>=5&runic_power.deficit>=60)
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or (Player:RuneDeficit() >= 5 and Player:RunicPowerDeficit() >= 60)) then
+                return A.ArcanePulse:Show(icon)
+            end
+            -- fireblood,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((bool(Pet:IsActive(A.Gargoyle.ID)) and A.SummonGargoyle:IsSpellLearned()) or bool(Pet:IsActive(A.ApocGhoul.ID))) then
+                return A.Fireblood:Show(icon)
+            end
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
-            -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.major&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.major)
-            if A.AzsharasFontofPower:IsReady(unit) and ((bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)))) then
+            -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
+            if A.AzsharasFontofPower:IsReady(unit) and ((bool(A.VisionofPerfection:IsSpellLearned()) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(A.VisionofPerfection:IsSpellLearned()))) then
                 A.AzsharasFontofPower:Show(icon)
             end
-            -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.major&talent.unholy_frenzy.enabled)
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) and A.UnholyFrenzy:IsSpellLearned())) then
+            -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled)
+            if A.AzsharasFontofPower:IsReady(unit) and (A.Apocalypse:GetCooldown() < 14 and (bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned())) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=target.1.time_to_die<cooldown.apocalypse.remains+34
@@ -524,7 +546,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak401) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak433) then
                     return A.Outbreak:Show(icon) 
                 end
             end

@@ -49,6 +49,7 @@ Action[ACTION_CONST_MONK_BREWMASTER] = {
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     InvokeNiuzaotheBlackOx                 = Action.Create({ Type = "Spell", ID = 132578 }),
     IronskinBrew                           = Action.Create({ Type = "Spell", ID = 115308 }),
     BlackoutComboBuff                      = Action.Create({ Type = "Spell", ID = 228563 }),
@@ -272,6 +273,10 @@ A[3] = function(icon, isMulti)
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
+            end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
             -- invoke_niuzao_the_black_ox,if=target.time_to_die>25
             if A.InvokeNiuzaotheBlackOx:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):TimeToDie() > 25) then

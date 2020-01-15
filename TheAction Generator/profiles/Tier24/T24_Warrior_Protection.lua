@@ -59,6 +59,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     IgnorePain                             = Action.Create({ Type = "Spell", ID = 190456 }),
     TheCrucibleofFlame                     = Action.Create({ Type = "Spell", ID =  }),
     LastStand                              = Action.Create({ Type = "Spell", ID =  })
@@ -180,7 +181,7 @@ local function IsSchoolFree()
 end 
 
 
-local function EvaluateCycleAshvanesRazorCoral82(unit)
+local function EvaluateCycleAshvanesRazorCoral84(unit)
     return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
 end
 
@@ -210,6 +211,10 @@ A[3] = function(icon, isMulti)
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
                 A.AzsharasFontofPower:Show(icon)
+            end
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
@@ -301,7 +306,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
             if A.AshvanesRazorCoral:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral82) then
+                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral84) then
                     return A.AshvanesRazorCoral:Show(icon) 
                 end
             end
@@ -372,6 +377,10 @@ A[3] = function(icon, isMulti)
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
+            end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
             -- potion,if=buff.avatar.up|target.time_to_die<25
             if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then

@@ -59,7 +59,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     DemonsBite                             = Action.Create({ Type = "Spell", ID = 162243 }),
     ThrowGlaive                            = Action.Create({ Type = "Spell", ID = 185123 }),
     VengefulRetreat                        = Action.Create({ Type = "Spell", ID = 198793 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Momentum                               = Action.Create({ Type = "Spell", ID = 206476 }),
     PreparedBuff                           = Action.Create({ Type = "Spell", ID = 203650 }),
     FelMastery                             = Action.Create({ Type = "Spell", ID = 192939 }),
@@ -442,13 +442,17 @@ A[3] = function(icon, isMulti)
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            -- worldvein_resonance,if=buff.metamorphosis.up
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=fury<40&buff.metamorphosis.up
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
+                return A.ReapingFlames:Show(icon)
             end
         end
         

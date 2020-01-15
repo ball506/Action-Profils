@@ -62,14 +62,17 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     Flamestrike                            = Action.Create({ Type = "Spell", ID = 2120 }),
     FlamePatch                             = Action.Create({ Type = "Spell", ID = 205037 }),
     PyroclasmBuff                          = Action.Create({ Type = "Spell", ID = 269651 }),
     PhoenixFlames                          = Action.Create({ Type = "Spell", ID = 257541 }),
     DragonsBreath                          = Action.Create({ Type = "Spell", ID = 31661 }),
     SearingTouch                           = Action.Create({ Type = "Spell", ID = 269644 }),
+    ManifestoofMadnessChapterOneBuff       = Action.Create({ Type = "Spell", ID =  }),
     AlexstraszasFury                       = Action.Create({ Type = "Spell", ID = 235870 }),
     Kindling                               = Action.Create({ Type = "Spell", ID = 155148 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -161,6 +164,7 @@ local VarDisableCombustion = 0;
 local VarCombustionRopCutoff = 0;
 local VarCombustionOnUse = 0;
 local VarFontDoubleOnUse = 0;
+local VarFontofPowerPrecombatChannel = 0;
 local VarOnUseCutoff = 0;
 local VarPhoenixPooling = 0;
 local VarFireBlastPooling = 0;
@@ -170,6 +174,7 @@ A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarCombustionRopCutoff = 0
   VarCombustionOnUse = 0
   VarFontDoubleOnUse = 0
+  VarFontofPowerPrecombatChannel = 0
   VarOnUseCutoff = 0
   VarPhoenixPooling = 0
   VarFireBlastPooling = 0
@@ -253,21 +258,25 @@ A[3] = function(icon, isMulti)
             if (true) then
                 VarCombustionRopCutoff = 60
             end
-            -- variable,name=combustion_on_use,op=set,value=equipped.gladiators_badge|equipped.gladiators_medallion|equipped.ignition_mages_fuse|equipped.tzanes_barkspines|equipped.azurethos_singed_plumage|equipped.ancient_knot_of_wisdom|equipped.shockbiters_fang|equipped.neural_synapse_enhancer|equipped.balefire_branch
+            -- variable,name=combustion_on_use,op=set,value=equipped.manifesto_of_madness|equipped.gladiators_badge|equipped.gladiators_medallion|equipped.ignition_mages_fuse|equipped.tzanes_barkspines|equipped.azurethos_singed_plumage|equipped.ancient_knot_of_wisdom|equipped.shockbiters_fang|equipped.neural_synapse_enhancer|equipped.balefire_branch
             if (true) then
-                VarCombustionOnUse = num(A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.IgnitionMagesFuse:IsExists() or A.TzanesBarkspines:IsExists() or A.AzurethosSingedPlumage:IsExists() or A.AncientKnotofWisdom:IsExists() or A.ShockbitersFang:IsExists() or A.NeuralSynapseEnhancer:IsExists() or A.BalefireBranch:IsExists())
+                VarCombustionOnUse = num(A.ManifestoofMadness:IsExists() or A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.IgnitionMagesFuse:IsExists() or A.TzanesBarkspines:IsExists() or A.AzurethosSingedPlumage:IsExists() or A.AncientKnotofWisdom:IsExists() or A.ShockbitersFang:IsExists() or A.NeuralSynapseEnhancer:IsExists() or A.BalefireBranch:IsExists())
             end
             -- variable,name=font_double_on_use,op=set,value=equipped.azsharas_font_of_power&variable.combustion_on_use
             if (true) then
                 VarFontDoubleOnUse = num(A.AzsharasFontofPower:IsExists() and bool(VarCombustionOnUse))
             end
-            -- variable,name=on_use_cutoff,op=set,value=20*variable.combustion_on_use&!variable.font_double_on_use+40*variable.font_double_on_use+25*equipped.azsharas_font_of_power&!variable.font_double_on_use
+            -- variable,name=font_of_power_precombat_channel,op=set,value=18,if=variable.font_double_on_use&variable.font_of_power_precombat_channel=0
+            if (bool(VarFontDoubleOnUse) and VarFontofPowerPrecombatChannel == 0) then
+                VarFontofPowerPrecombatChannel = 18
+            end
+            -- variable,name=on_use_cutoff,op=set,value=20*variable.combustion_on_use&!variable.font_double_on_use+40*variable.font_double_on_use+25*equipped.azsharas_font_of_power&!variable.font_double_on_use+8*equipped.manifesto_of_madness&!variable.font_double_on_use
             if (true) then
-                VarOnUseCutoff = num(bool(20 * VarCombustionOnUse) and bool(num(not bool(VarFontDoubleOnUse)) + 40 * VarFontDoubleOnUse + 25 * num(A.AzsharasFontofPower:IsExists())) and not bool(VarFontDoubleOnUse))
+                VarOnUseCutoff = num(bool(20 * VarCombustionOnUse) and bool(num(not bool(VarFontDoubleOnUse)) + 40 * VarFontDoubleOnUse + 25 * num(A.AzsharasFontofPower:IsExists())) and bool(num(not bool(VarFontDoubleOnUse)) + 8 * num(A.ManifestoofMadness:IsExists())) and not bool(VarFontDoubleOnUse))
             end
             -- snapshot_stats
-            -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            -- use_item,name=azsharas_font_of_power,if=!variable.disable_combustion
+            if A.AzsharasFontofPower:IsReady(unit) and (not bool(VarDisableCombustion)) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- mirror_image
@@ -302,6 +311,10 @@ A[3] = function(icon, isMulti)
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
+            -- living_bomb,if=active_enemies>1&buff.combustion.down
+            if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+                return A.LivingBomb:Show(icon)
+            end
             -- blood_of_the_enemy
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
@@ -318,8 +331,8 @@ A[3] = function(icon, isMulti)
             if A.RuneofPower:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
                 return A.RuneofPower:Show(icon)
             end
-            -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&essence.memory_of_lucid_dreams.major&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&action.rune_of_power.executing&action.rune_of_power.execute_remains<0.6|(cooldown.combustion.ready|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
-            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (A.Combustion:GetCooldown() == 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
+            -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&(essence.memory_of_lucid_dreams.major|!essence.memory_of_lucid_dreams.minor)&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&action.rune_of_power.executing&action.rune_of_power.execute_remains<0.6|(cooldown.combustion.ready|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
+            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or not bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID))) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (A.Combustion:GetCooldown() == 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
                 return A.FireBlast:Show(icon)
             end
             -- call_action_list,name=active_talents
@@ -349,6 +362,10 @@ A[3] = function(icon, isMulti)
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
+            end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
             -- flamestrike,if=((talent.flame_patch.enabled&active_enemies>2)|active_enemies>6)&buff.hot_streak.react&!azerite.blaster_master.enabled
             if A.Flamestrike:IsReady(unit) and (((A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 6) and bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not bool(A.BlasterMaster:GetAzeriteRank())) then
@@ -398,6 +415,14 @@ A[3] = function(icon, isMulti)
             if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:ChargesP() == 0 and A.FireBlast:RechargeP() > A.GetGCD()) then
                 A.HyperthreadWristwraps:Show(icon)
             end
+            -- use_item,name=manifesto_of_madness
+            if A.ManifestoofMadness:IsReady(unit) then
+                A.ManifestoofMadness:Show(icon)
+            end
+            -- cancel_buff,use_off_gcd=1,name=manifesto_of_madness_chapter_one,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
+            if (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+                -- if HR.CancelA.ManifestoofMadnessChapterOneBuff.ID, true then return ""; end
+            end
             -- use_item,use_off_gcd=1,name=azurethos_singed_plumage,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
             if A.AzurethosSingedPlumage:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 A.AzurethosSingedPlumage:Show(icon)
@@ -443,6 +468,10 @@ A[3] = function(icon, isMulti)
                 local ShouldReturn = ItemsCombustion(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- use_items
+            -- use_item,name=manifesto_of_madness,if=!equipped.azsharas_font_of_power&cooldown.combustion.remains<8
+            if A.ManifestoofMadness:IsReady(unit) and (not A.AzsharasFontofPower:IsExists() and A.Combustion:GetCooldown() < 8) then
+                A.ManifestoofMadness:Show(icon)
+            end
             -- use_item,name=azsharas_font_of_power,if=cooldown.combustion.remains<=5+15*variable.font_double_on_use&!variable.disable_combustion
             if A.AzsharasFontofPower:IsReady(unit) and (A.Combustion:GetCooldown() <= 5 + 15 * VarFontDoubleOnUse and not bool(VarDisableCombustion)) then
                 A.AzsharasFontofPower:Show(icon)
@@ -458,6 +487,10 @@ A[3] = function(icon, isMulti)
             -- use_item,name=shiver_venom_relic,if=cooldown.combustion.remains>variable.on_use_cutoff|variable.disable_combustion
             if A.ShiverVenomRelic:IsReady(unit) and (A.Combustion:GetCooldown() > VarOnUseCutoff or bool(VarDisableCombustion)) then
                 A.ShiverVenomRelic:Show(icon)
+            end
+            -- use_item,name=forbidden_obsidian_claw,if=cooldown.combustion.remains>variable.on_use_cutoff|variable.disable_combustion
+            if A.ForbiddenObsidianClaw:IsReady(unit) and (A.Combustion:GetCooldown() > VarOnUseCutoff or bool(VarDisableCombustion)) then
+                A.ForbiddenObsidianClaw:Show(icon)
             end
             -- use_item,effect_name=harmonic_dematerializer
             if A.HarmonicDematerializer:IsReady(unit) then
@@ -611,8 +644,8 @@ A[3] = function(icon, isMulti)
             if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
                 return A.Scorch:Show(icon)
             end
-            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(talent.flame_patch.enabled&active_enemies>2|active_enemies>9)&((cooldown.combustion.remains>0|variable.disable_combustion)&!firestarter.active)&buff.hot_streak.down&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)
-            if A.FireBlast:IsReady(unit) and ((A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 9) and ((A.Combustion:GetCooldown() > 0 or bool(VarDisableCombustion)) and not bool(S.Firestarter:ActiveStatus())) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (not bool(A.BlasterMaster:GetAzeriteRank()) or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5)) then
+            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!variable.fire_blast_pooling&(talent.flame_patch.enabled&active_enemies>2|active_enemies>9)&((cooldown.combustion.remains>0|variable.disable_combustion)&!firestarter.active)&buff.hot_streak.down&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)
+            if A.FireBlast:IsReady(unit) and (not bool(VarFireBlastPooling) and (A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2 or MultiUnits:GetByRangeInCombat(40, 5, 10) > 9) and ((A.Combustion:GetCooldown() > 0 or bool(VarDisableCombustion)) and not bool(S.Firestarter:ActiveStatus())) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (not bool(A.BlasterMaster:GetAzeriteRank()) or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5)) then
                 return A.FireBlast:Show(icon)
             end
             -- flamestrike,if=talent.flame_patch.enabled&active_enemies>2|active_enemies>9
@@ -645,13 +678,17 @@ end
             if A.MirrorImage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
                 return A.MirrorImage:Show(icon)
             end
-            -- guardian_of_azeroth,if=cooldown.combustion.remains<10|target.time_to_die<cooldown.combustion.remains
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Combustion:GetCooldown() < 10 or Unit(unit):TimeToDie() < A.Combustion:GetCooldown()) then
+            -- guardian_of_azeroth,if=(cooldown.combustion.remains<10|target.time_to_die<cooldown.combustion.remains)&!variable.disable_combustion
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.Combustion:GetCooldown() < 10 or Unit(unit):TimeToDie() < A.Combustion:GetCooldown()) and not bool(VarDisableCombustion)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- concentrated_flame
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
+            end
+            -- reaping_flames
+            if A.ReapingFlames:IsReady(unit) then
+                return A.ReapingFlames:Show(icon)
             end
             -- focused_azerite_beam
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then

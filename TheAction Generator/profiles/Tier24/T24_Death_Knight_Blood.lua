@@ -58,6 +58,11 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     DancingRuneWeapon                      = Action.Create({ Type = "Spell", ID = 49028 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     Tombstone                              = Action.Create({ Type = "Spell", ID = 219809 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -302,6 +307,22 @@ A[3] = function(icon, isMulti)
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
+            end
+            -- arcane_pulse,if=active_enemies>=2|rune<1&runic_power.deficit>60
+            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or Player:Rune() < 1 and Player:RunicPowerDeficit() > 60) then
+                return A.ArcanePulse:Show(icon)
+            end
+            -- lights_judgment,if=buff.unholy_strength.up
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true)) then
+                return A.LightsJudgment:Show(icon)
+            end
+            -- ancestral_call
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.AncestralCall:Show(icon)
+            end
+            -- fireblood
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.Fireblood:Show(icon)
             end
             -- use_items,if=cooldown.dancing_rune_weapon.remains>90
             -- use_item,name=razdunks_big_red_button

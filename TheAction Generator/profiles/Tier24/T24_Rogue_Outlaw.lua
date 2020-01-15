@@ -62,7 +62,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     BetweentheEyes                         = Action.Create({ Type = "Spell", ID = 199804 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     RolltheBonesBuff                       = Action.Create({ Type = "Spell", ID =  }),
     AceUpYourSleeve                        = Action.Create({ Type = "Spell", ID =  }),
     Deadshot                               = Action.Create({ Type = "Spell", ID = 272936 }),
@@ -633,13 +633,17 @@ A[3] = function(icon, isMulti)
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<45
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 45) then
                 return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
+                return A.ReapingFlames:Show(icon)
             end
         end
         

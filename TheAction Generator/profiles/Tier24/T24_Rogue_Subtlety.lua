@@ -61,7 +61,7 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Eviscerate                             = Action.Create({ Type = "Spell", ID = 196819 }),
     Nightblade                             = Action.Create({ Type = "Spell", ID = 195452 }),
     DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687 }),
@@ -226,11 +226,11 @@ local function EvaluateTargetIfMarkedForDeath86(unit)
 end
 
 
-local function EvaluateCycleNightblade244(unit)
+local function EvaluateCycleNightblade246(unit)
   return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (bool(A.NightsVengeance:GetAzeriteRank()) or not bool(A.ReplicatingShadows:GetAzeriteRank()) or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
 end
 
-local function EvaluateCycleShadowstrike381(unit)
+local function EvaluateCycleShadowstrike383(unit)
   return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
 end
 
@@ -409,13 +409,17 @@ A[3] = function(icon, isMulti)
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            -- worldvein_resonance,if=cooldown.symbols_of_death.remains<5|target.time_to_die<18
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.SymbolsofDeath:GetCooldown() < 5 or Unit(unit):TimeToDie() < 18) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<40&buff.symbols_of_death.up
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
+                return A.ReapingFlames:Show(icon)
             end
         end
         
@@ -436,7 +440,7 @@ A[3] = function(icon, isMulti)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
             if A.Nightblade:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade244) then
+                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade246) then
                     return A.Nightblade:Show(icon) 
                 end
             end
@@ -515,7 +519,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
             if A.Shadowstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike381) then
+                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike383) then
                     return A.Shadowstrike:Show(icon) 
                 end
             end

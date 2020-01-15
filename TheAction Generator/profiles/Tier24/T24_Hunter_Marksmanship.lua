@@ -52,7 +52,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    SparkofInspiration                     = Action.Create({ Type = "Spell", ID =  }),
     PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
     UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
     PreciseShotsBuff                       = Action.Create({ Type = "Spell", ID = 260242 }),
@@ -284,8 +284,8 @@ A[3] = function(icon, isMulti)
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<4&!buff.trueshot.up
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4 and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
+            -- worldvein_resonance,if=(trinket.azsharas_font_of_power.cooldown.remains>20|!equipped.azsharas_font_of_power)&(cooldown.trueshot.remains_guess<5|essence.spark_of_inspiration.enabled&cooldown.trueshot.remains_guess>45)|target.time_to_die<20
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((trinket.azsharas_font_of_power.cooldown.remains > 20 or not A.AzsharasFontofPower:IsExists()) and (cooldown.trueshot.remains_guess < 5 or bool(A.SparkofInspiration:IsSpellLearned()) and cooldown.trueshot.remains_guess > 45) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- guardian_of_azeroth,if=(ca_execute|target.time_to_die>cooldown.guardian_of_azeroth.duration+duration)&(buff.trueshot.up|cooldown.trueshot.remains<16)|target.time_to_die<31

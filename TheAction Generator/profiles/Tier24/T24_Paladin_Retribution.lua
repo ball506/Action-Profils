@@ -62,6 +62,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     HammerofWrath                          = Action.Create({ Type = "Spell", ID = 24275 }),
     Consecration                           = Action.Create({ Type = "Spell", ID = 205228 }),
     CrusaderStrike                         = Action.Create({ Type = "Spell", ID = 35395 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Rebuke                                 = Action.Create({ Type = "Spell", ID = 96231 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -264,8 +265,8 @@ A[3] = function(icon, isMulti)
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Player:HolyPower() >= 3 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and Unit("player"):CombatTime() < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
                 return A.GuardianofAzeroth:Show(icon)
             end
-            -- worldvein_resonance,if=cooldown.avenging_wrath.remains<gcd&holy_power>=3|cooldown.crusade.remains<gcd&holy_power>=4|cooldown.avenging_wrath.remains>=45|cooldown.crusade.remains>=45
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 3 or A.Crusade:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
+            -- worldvein_resonance,if=cooldown.avenging_wrath.remains<gcd&holy_power>=3|talent.crusade.enabled&cooldown.crusade.remains<gcd&holy_power>=4|cooldown.avenging_wrath.remains>=45|cooldown.crusade.remains>=45
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.AvengingWrath:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 3 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < A.GetGCD() and Player:HolyPower() >= 4 or A.AvengingWrath:GetCooldown() >= 45 or A.Crusade:GetCooldown() >= 45) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
@@ -328,8 +329,8 @@ A[3] = function(icon, isMulti)
             if (true) then
                 VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true))))
             end
-            -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|buff.inquisition.down&holy_power>=3
-            if (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) and Player:HolyPower() >= 3) then
+            -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|talent.inquisition.enabled&buff.inquisition.down&holy_power>=3
+            if (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.Inquisition:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) and Player:HolyPower() >= 3) then
                 local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
@@ -367,6 +368,10 @@ A[3] = function(icon, isMulti)
             -- concentrated_flame
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ConcentratedFlame:Show(icon)
+            end
+            -- reaping_flames
+            if A.ReapingFlames:IsReady(unit) then
+                return A.ReapingFlames:Show(icon)
             end
             -- crusader_strike,if=holy_power<=4
             if A.CrusaderStrike:IsReady(unit) and (Player:HolyPower() <= 4) then

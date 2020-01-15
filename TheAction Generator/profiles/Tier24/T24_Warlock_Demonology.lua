@@ -68,7 +68,6 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
     DreadstalkersBuff                      = Action.Create({ Type = "Spell", ID =  }),
     BalefulInvocation                      = Action.Create({ Type = "Spell", ID = 287059 }),
     ShadowsBite                            = Action.Create({ Type = "Spell", ID = 272944 }),
@@ -541,8 +540,8 @@ end
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and Unit("player"):HasBuffs(A.BloodoftheEnemyBuff.ID, true) <= 15 - A.GetGCD() * 3 and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3&(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 and (bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15)) then
+            -- worldvein_resonance,if=(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(Pet:IsActive(A.DemonicTyrant.ID)) and (not bool(Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= A.SummonDemonicTyrant:BaseDuration() - 5) or Unit(unit):TimeToDie() <= 15)) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15

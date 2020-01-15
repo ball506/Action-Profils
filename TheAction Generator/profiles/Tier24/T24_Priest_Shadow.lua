@@ -49,7 +49,7 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     VampiricTouch                          = Action.Create({ Type = "Spell", ID = 34914 }),
     VoidformBuff                           = Action.Create({ Type = "Spell", ID = 194249 }),
     ChorusofInsanityBuff                   = Action.Create({ Type = "Spell", ID = 278661 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     ChorusofInsanity                       = Action.Create({ Type = "Spell", ID = 278661 }),
     VoidEruption                           = Action.Create({ Type = "Spell", ID = 228260 }),
     DarkAscension                          = Action.Create({ Type = "Spell", ID = 280711 }),
@@ -209,27 +209,27 @@ local function ExecuteRange ()
 	return 20;
 end
 
-local function EvaluateCycleShadowWordDeath135(unit)
+local function EvaluateCycleShadowWordDeath133(unit)
     return Unit(unit):TimeToDie() < 3 or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true))
 end
 
-local function EvaluateCycleMindBlast154(unit)
+local function EvaluateCycleMindBlast152(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) < VarMindBlastTargets
 end
 
-local function EvaluateCycleShadowWordPain165(unit)
+local function EvaluateCycleShadowWordPain163(unit)
     return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) and Unit(unit):TimeToDie() > ((num(true) - 1.2 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarSwpTraitRanksCheck * (1 - 0.012 * A.SearingDialogue:GetAzeriteRank() * MultiUnits:GetByRangeInCombat(40, 5, 10)))) and (not A.Misery:IsSpellLearned())
 end
 
-local function EvaluateCycleVampiricTouch184(unit)
+local function EvaluateCycleVampiricTouch182(unit)
     return (Unit(unit):HasDeBuffsRefreshable(A.VampiricTouchDebuff.ID, true)) and (Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtTraitRanksCheck * (1 + 0.10 * A.SearingDialogue:GetAzeriteRank() * MultiUnits:GetByRangeInCombat(40, 5, 10))))
 end
 
-local function EvaluateCycleVampiricTouch201(unit)
+local function EvaluateCycleVampiricTouch199(unit)
     return (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true)) and ((A.Misery:IsSpellLearned() and Unit(unit):TimeToDie() > ((1.0 + 2.0 * MultiUnits:GetByRangeInCombat(40, 5, 10)) * VarVtMisTraitRanksCheck * (VarVtMisSdCheck * MultiUnits:GetByRangeInCombat(40, 5, 10)))))
 end
 
-local function EvaluateCycleMindSear220(unit)
+local function EvaluateCycleMindSear218(unit)
     return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1
 end
 
@@ -320,10 +320,6 @@ A[3] = function(icon, isMulti)
             if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
-            -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.TheUnboundForce:Show(icon)
-            end
             -- concentrated_flame,line_cd=6,if=time<=10|(buff.chorus_of_insanity.stack>=15&buff.voidform.up)|full_recharge_time<gcd|target.time_to_die<5
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):CombatTime() <= 10 or (Unit("player"):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and Unit("player"):HasBuffs(A.VoidformBuff.ID, true)) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
@@ -332,8 +328,12 @@ A[3] = function(icon, isMulti)
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            -- reaping_flames
+            if A.ReapingFlames:IsReady(unit) then
+                return A.ReapingFlames:Show(icon)
+            end
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- call_action_list,name=crit_cds,if=(buff.voidform.up&buff.chorus_of_insanity.stack>20)|azerite.chorus_of_insanity.rank=0
@@ -371,7 +371,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_death,target_if=target.time_to_die<3|buff.voidform.down
             if A.ShadowWordDeath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, "min", EvaluateCycleShadowWordDeath135) then
+                if Action.Utils.CastTargetIf(A.ShadowWordDeath, 40, "min", EvaluateCycleShadowWordDeath133) then
                     return A.ShadowWordDeath:Show(icon) 
                 end
             end
@@ -389,7 +389,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_blast,target_if=spell_targets.mind_sear<variable.mind_blast_targets
             if A.MindBlast:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindBlast, 40, "min", EvaluateCycleMindBlast154) then
+                if Action.Utils.CastTargetIf(A.MindBlast, 40, "min", EvaluateCycleMindBlast152) then
                     return A.MindBlast:Show(icon) 
                 end
             end
@@ -399,19 +399,19 @@ A[3] = function(icon, isMulti)
             end
             -- shadow_word_pain,target_if=refreshable&target.time_to_die>((-1.2+3.3*spell_targets.mind_sear)*variable.swp_trait_ranks_check*(1-0.012*azerite.searing_dialogue.rank*spell_targets.mind_sear)),if=!talent.misery.enabled
             if A.ShadowWordPain:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, "min", EvaluateCycleShadowWordPain165) then
+                if Action.Utils.CastTargetIf(A.ShadowWordPain, 40, "min", EvaluateCycleShadowWordPain163) then
                     return A.ShadowWordPain:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check*(1+0.10*azerite.searing_dialogue.rank*spell_targets.mind_sear))
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch184) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch182) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
             -- vampiric_touch,target_if=dot.shadow_word_pain.refreshable,if=(talent.misery.enabled&target.time_to_die>((1.0+2.0*spell_targets.mind_sear)*variable.vt_mis_trait_ranks_check*(variable.vt_mis_sd_check*spell_targets.mind_sear)))
             if A.VampiricTouch:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch201) then
+                if Action.Utils.CastTargetIf(A.VampiricTouch, 40, "min", EvaluateCycleVampiricTouch199) then
                     return A.VampiricTouch:Show(icon) 
                 end
             end
@@ -421,7 +421,7 @@ A[3] = function(icon, isMulti)
             end
             -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
             if A.MindSear:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MindSear, 40, "min", EvaluateCycleMindSear220) then
+                if Action.Utils.CastTargetIf(A.MindSear, 40, "min", EvaluateCycleMindSear218) then
                     return A.MindSear:Show(icon) 
                 end
             end
@@ -444,6 +444,10 @@ A[3] = function(icon, isMulti)
             -- use_item,effect_name=cyclotronic_blast
             if A.CyclotronicBlast:IsReady(unit) then
                 A.CyclotronicBlast:Show(icon)
+            end
+            -- the_unbound_force
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.TheUnboundForce:Show(icon)
             end
         end
         

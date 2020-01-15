@@ -73,7 +73,7 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     Rupture                                = Action.Create({ Type = "Spell", ID = 1943 }),
     CrimsonTempest                         = Action.Create({ Type = "Spell", ID = 121411 }),
     CrimsonTempestBuff                     = Action.Create({ Type = "Spell", ID = 121411 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     SubterfugeBuff                         = Action.Create({ Type = "Spell", ID = 108208 }),
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
@@ -963,13 +963,17 @@ A[3] = function(icon, isMulti)
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleInSpace:Show(icon)
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
             -- memory_of_lucid_dreams,if=energy<50&!cooldown.vendetta.up
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 50 and not A.Vendetta:GetCooldown() == 0) then
                 return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
+            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
+                return A.ReapingFlames:Show(icon)
             end
         end
         

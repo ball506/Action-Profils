@@ -64,14 +64,16 @@ Action[ACTION_CONST_MAGE_FROST] = {
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     BlinkAny                               = Action.Create({ Type = "Spell", ID =  }),
     IceFloes                               = Action.Create({ Type = "Spell", ID = 108839 }),
     IceFloesBuff                           = Action.Create({ Type = "Spell", ID = 108839 }),
     WintersChillDebuff                     = Action.Create({ Type = "Spell", ID = 228358 }),
     SplittingIce                           = Action.Create({ Type = "Spell", ID = 56377 }),
-    IncantersFlow                          = Action.Create({ Type = "Spell", ID =  }),
     GlacialSpikeBuff                       = Action.Create({ Type = "Spell", ID = 199844 }),
+    IncantersFlow                          = Action.Create({ Type = "Spell", ID =  }),
     FreezingRain                           = Action.Create({ Type = "Spell", ID = 240555 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -361,6 +363,10 @@ A[3] = function(icon, isMulti)
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
+            end
         end
         
         --Essences
@@ -388,6 +394,10 @@ A[3] = function(icon, isMulti)
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 return A.ConcentratedFlame:Show(icon)
+            end
+            -- reaping_flames,if=buff.rune_of_power.down
+            if A.ReapingFlames:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
+                return A.ReapingFlames:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
@@ -444,6 +454,10 @@ A[3] = function(icon, isMulti)
             -- ebonbolt,if=buff.icicles.stack=5&!buff.brain_freeze.react
             if A.Ebonbolt:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and not bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true))) then
                 return A.Ebonbolt:Show(icon)
+            end
+            -- ice_lance,if=buff.brain_freeze.react&(buff.fingers_of_frost.react|prev_gcd.1.flurry)&(buff.icicles.max_stack-buff.icicles.stack)*action.frostbolt.execute_time+action.glacial_spike.cast_time+action.glacial_spike.travel_time<incanters_flow_time_to.5.any
+            if A.IceLance:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) and (bool(Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Flurry)) and (buff.icicles.max_stack - Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.5.any) then
+                return A.IceLance:Show(icon)
             end
             -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down
             if A.GlacialSpike:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Ebonbolt) or A.IncantersFlow:IsSpellLearned() and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() > incanters_flow_time_to.5.up and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.4.down) then

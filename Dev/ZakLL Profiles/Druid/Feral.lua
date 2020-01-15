@@ -425,7 +425,7 @@ A[3] = function(icon)
 				return A.Berserking:Show(icon)
 			end 
 			
-			if A.BloodoftheEnemy:AutoHeartOfAzerothP(unitID) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and not inStealth and canCast then
+			if A.BloodoftheEnemy:AutoHeartOfAzeroth(unitID) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and not inStealth and canCast then
 				return A.BloodoftheEnemy:Show(icon)   
 			end
 			
@@ -433,7 +433,7 @@ A[3] = function(icon)
 				return A.FeralFrenzy:Show(icon) 
 			end
 			
-			if A.GuardianofAzeroth:AutoHeartOfAzerothP(unitID) and canCast and Unit(unitID):HasDeBuffs(A.RipDebuff.ID) > 0 and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and canCast then 
+			if A.GuardianofAzeroth:AutoHeartOfAzeroth(unitID) and canCast and Unit(unitID):HasDeBuffs(A.RipDebuff.ID) > 0 and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and canCast then 
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -478,7 +478,7 @@ A[3] = function(icon)
 		end
 		
 		-- Essences
-		if A.ConcentratedFlame:AutoHeartOfAzerothP(unitID) and (Unit(unitID):HasDeBuffs(A.ConcentratedFlameDebuff.ID) == 0) and	(Unit(unitID):HasDeBuffs(A.ThrashCatDebuff.ID) > 0 and isWildFleshRending or not isWildFleshRending) 
+		if A.ConcentratedFlame:AutoHeartOfAzeroth(unitID) and (Unit(unitID):HasDeBuffs(A.ConcentratedFlameDebuff.ID) == 0) and	(Unit(unitID):HasDeBuffs(A.ThrashCatDebuff.ID) > 0 and isWildFleshRending or not isWildFleshRending) 
 		and Unit(unitID):HasDeBuffs(A.RipDebuff.ID) > 0 and Unit(unitID):HasDeBuffs(A.RakeDebuff.ID, true, true) > 0 and canCast then 
             return A.ConcentratedFlame:Show(icon)
         end 

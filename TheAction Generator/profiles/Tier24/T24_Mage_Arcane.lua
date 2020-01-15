@@ -60,10 +60,12 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     PresenceofMind                         = Action.Create({ Type = "Spell", ID = 205025 }),
     PresenceofMindBuff                     = Action.Create({ Type = "Spell", ID = 205025 }),
     BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
     BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
     ArcaneOrb                              = Action.Create({ Type = "Spell", ID = 153626 }),
     Resonance                              = Action.Create({ Type = "Spell", ID = 205028 }),
     ArcaneBarrage                          = Action.Create({ Type = "Spell", ID = 44425 }),
@@ -74,6 +76,7 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     ArcanePummeling                        = Action.Create({ Type = "Spell", ID = 270669 }),
     Supernova                              = Action.Create({ Type = "Spell", ID = 157980 }),
     BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     BlinkAny                               = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -164,12 +167,14 @@ local A = setmetatable(Action[ACTION_CONST_MAGE_ARCANE], { __index = Action })
 ------------------------------------------
 local VarConserveMana = 0;
 local VarFontDoubleOnUse = 0;
+local VarFontofPowerPrecombatChannel = 0;
 local VarTotalBurns = 0;
 local VarAverageBurnLength = 0;
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarConserveMana = 0
   VarFontDoubleOnUse = 0
+  VarFontofPowerPrecombatChannel = 0
   VarTotalBurns = 0
   VarAverageBurnLength = 0
 end)
@@ -290,6 +295,10 @@ A[3] = function(icon, isMulti)
             if (true) then
                 VarFontDoubleOnUse = num(A.AzsharasFontofPower:IsExists() and (A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.IgnitionMagesFuse:IsExists() or A.TzanesBarkspines:IsExists() or A.AzurethosSingedPlumage:IsExists() or A.AncientKnotofWisdom:IsExists() or A.ShockbitersFang:IsExists() or A.NeuralSynapseEnhancer:IsExists() or A.BalefireBranch:IsExists()))
             end
+            -- variable,name=font_of_power_precombat_channel,op=set,value=12,if=variable.font_double_on_use&variable.font_of_power_precombat_channel=0
+            if (bool(VarFontDoubleOnUse) and VarFontofPowerPrecombatChannel == 0) then
+                VarFontofPowerPrecombatChannel = 12
+            end
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
@@ -368,12 +377,16 @@ A[3] = function(icon, isMulti)
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
+            end
             -- presence_of_mind,if=(talent.rune_of_power.enabled&buff.rune_of_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time)|buff.arcane_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time
             if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
                 return A.PresenceofMind:Show(icon)
             end
-            -- potion,if=buff.arcane_power.up&(buff.berserking.up|buff.blood_fury.up|!(race.troll|race.orc))
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc")))) then
+            -- potion,if=buff.arcane_power.up&((!essence.condensed_lifeforce.major|essence.condensed_lifeforce.rank<2)&(buff.berserking.up|buff.blood_fury.up|!(race.troll|race.orc))|buff.guardian_of_azeroth.up)|target.time_to_die<cooldown.arcane_power.remains
+            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and ((not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or A.CondensedLifeforce:GetRank() < 2) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc"))) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true)) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 A.BattlePotionofIntellect:Show(icon)
             end
             -- arcane_orb,if=buff.arcane_charge.stack=0|(active_enemies<3|(active_enemies<2&talent.resonance.enabled))
@@ -479,6 +492,10 @@ A[3] = function(icon, isMulti)
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down&buff.arcane_power.down&(!burn_phase|time_to_die<cooldown.arcane_power.remains)&mana.time_to_max>=execute_time
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ConcentratedFlame:GetSpellCastTime()) then
                 return A.ConcentratedFlame:Show(icon)
+            end
+            -- reaping_flames,if=buff.rune_of_power.down&buff.arcane_power.down&(!burn_phase|time_to_die<cooldown.arcane_power.remains)&mana.time_to_max>=execute_time
+            if A.ReapingFlames:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ReapingFlames:GetSpellCastTime()) then
+                return A.ReapingFlames:Show(icon)
             end
             -- focused_azerite_beam,if=buff.rune_of_power.down&buff.arcane_power.down
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
