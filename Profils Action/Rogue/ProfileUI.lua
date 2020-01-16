@@ -284,6 +284,9 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+
+            },
+            { -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -296,8 +299,6 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },
-			{
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -310,6 +311,8 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+			},
+			{
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -1271,6 +1274,8 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+			},
+            { -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -1283,8 +1288,6 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },
-			{
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -1297,6 +1300,8 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+            },
+			{
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
