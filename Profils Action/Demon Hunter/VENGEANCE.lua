@@ -394,14 +394,17 @@ A[3] = function(icon, isMulti)
             if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
+			
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
             if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
+			
             -- worldvein_resonance,if=buff.lifeblood.stack<3
             if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
+			
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
@@ -412,6 +415,7 @@ A[3] = function(icon, isMulti)
             if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.CyclotronicBlast:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
             if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HealthPercent() < 31) then
                 return A.AshvanesRazorCoral:Show(icon)
@@ -567,6 +571,11 @@ A[3] = function(icon, isMulti)
             if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
                 return A.ConsumeMagic:Show(icon)
             end	
+			
+			-- VigilantProtector
+            if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.VigilantProtector:Show(icon)
+            end
 
 		    -- Taunt 
             if A.GetToggle(2, "AutoTaunt") 
