@@ -31,6 +31,7 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
     GiftofNaaru                               = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                                = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                                 = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                               = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                         = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
     EscapeArtist                              = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                        = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -845,7 +846,7 @@ A[3] = function(icon, isMulti)
             return A.ConcentratedFlame:Show(icon)
         end 
         
-        if     (isMulti or A.GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
+        if     (isMulti or A.GetToggle(2, "AoE")) and A.RippleinSpace:AutoHeartOfAzeroth(unit, true) and A.RippleinSpace:AbsentImun(unit, Temp.TotalAndMag) and MultiUnits:GetByRange(25, 3) >= 3 and 
         (
             not A.IsInPvP or 
             not EnemyTeam("HEALER"):IsBreakAble(25)    
@@ -960,7 +961,7 @@ A[3] = function(icon, isMulti)
 			-- Multi (for [4])
             if isMulti then 
                 if CanTranquility() and Emergency then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     
@@ -968,7 +969,7 @@ A[3] = function(icon, isMulti)
                 end 
                 -- Flourish burst
                 if CanFlourish() and Emergency then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     -- Notification					
@@ -995,7 +996,7 @@ A[3] = function(icon, isMulti)
             
             -- Single 
             if SuperEmergency and A.IncarnationTreeofLife:IsReady("player") and IsSchoolFree() and Unit("player"):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) == 0  then 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 -- Notification					
@@ -1005,7 +1006,7 @@ A[3] = function(icon, isMulti)
 			
 			-- Tranquility
             if CanTranquility() and Emergency then 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                     return A.OverchargeMana:Show(icon)
                 end 
                     
@@ -1014,7 +1015,7 @@ A[3] = function(icon, isMulti)
 			
             -- Flourish burst
             if CanFlourish() and Emergency then 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 -- Notification					
@@ -1099,7 +1100,7 @@ A[3] = function(icon, isMulti)
 			
             if (isMulti or A.GetToggle(2, "AoE")) then 
                 if CanTranquility() then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     -- Notification					
@@ -1108,7 +1109,7 @@ A[3] = function(icon, isMulti)
                 end 
                 
                 if CanFlourish() and Emergency  then 
-                    if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
+                    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and not IsEnoughHPS(unit) and Unit("player"):PowerPercent() > 20 then 
                         return A.OverchargeMana:Show(icon)
                     end 
                     -- Notification					
@@ -1164,7 +1165,7 @@ A[3] = function(icon, isMulti)
                 return A.VitalityConduit:Show(icon)
             end
             if CanWildGrowth(unit) and (not IsSaveManaPhase() or A.IsInPvP) and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
@@ -1181,7 +1182,7 @@ A[3] = function(icon, isMulti)
                 return A.VitalityConduit:Show(icon)
             end
             if CanWildGrowth(unit) and not IsSaveManaPhase() and A.WildGrowth:PredictHeal("Wild Growth", unit) then                 
-                if A.OverchargeMana:AutoHeartOfAzerothP(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
+                if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) and (not IsEnoughHPS(unit) or HealingEngine.GetIncomingDMGAVG() > HealingEngine.GetIncomingHPSAVG() + 10) then 
                     return A.OverchargeMana:Show(icon)
                 end 
                 
@@ -1354,19 +1355,27 @@ A[3] = function(icon, isMulti)
 		end		
         
         -- Azerite Essences 
-        if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Unit("player"):PowerPercent() < 85 then 
+        if Unit("player"):CombatTime() > 0 and A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Unit("player"):PowerPercent() < 85 then 
             return A.MemoryofLucidDreams:Show(icon)
         end         
         
         if Unit("player"):CombatTime() > 0 and A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Player:IsStayingTime() > 2 then 
             return A.WorldveinResonance:Show(icon)
+        end  
+
+        if Unit("player"):CombatTime() > 0 and A.SpiritofPreservation:AutoHeartOfAzeroth(unit, true) then 
+            return A.SpiritofPreservation:Show(icon)
+        end  
+
+        if Unit("player"):CombatTime() > 0 and A.GuardianShell:AutoHeartOfAzeroth(unit, true) then 
+            return A.GuardianShell:Show(icon)
         end  		
         
         -- Misc 
         local Mana = A.GetToggle(2, "ManaPotion") 
         if Unit("player"):CombatTime() > 0 and Mana > 0 and Unit("player"):PowerPercent() <= Mana then 
             if A.PotionofReconstitution:IsReady("player") and not isMoving and Player:IsStayingTime() > 1.5 then 
-                if A.MemoryofLucidDreams:AutoHeartOfAzerothP("player", true) then 
+                if A.MemoryofLucidDreams:AutoHeartOfAzeroth("player", true) then 
                     return A.MemoryofLucidDreams:Show(icon)
                 end 
                 
