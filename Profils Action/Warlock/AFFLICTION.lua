@@ -1045,7 +1045,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- dark_soul,if=target.time_to_die<20+gcd|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up|talent.sow_the_seeds.enabled&cooldown.summon_darkglare.remains>=cooldown.summon_darkglare.duration-10
-                if A.DarkSoulMisery:IsReady("player") and A.BurstIsON(unit) and (Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetActiveEnemies() > 1 or A.SowtheSeeds:IsSpellLearned() and A.SummonDarkglare:GetCooldown() >= 20 - 10) then
+                if A.DarkSoulMisery:IsReady("player") and A.DarkSoulMisery:IsSpellLearned() and A.BurstIsON(unit) and (Unit(unit):TimeToDie() < 20 + A.GetGCD() or MultiUnits:GetActiveEnemies() > 1 or A.SowtheSeeds:IsSpellLearned() and A.SummonDarkglare:GetCooldown() >= 20 - 10) then
                     return A.DarkSoulMisery:Show(icon)
                 end
 				
@@ -1255,7 +1255,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- dark_soul,if=cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled&(dot.phantom_singularity.remains|dot.vile_taint.remains|!talent.phantom_singularity.enabled&!talent.vile_taint.enabled)|target.time_to_die<20+gcd|spell_targets.seed_of_corruption_aoe>1+raid_event.invulnerable.up
-            if A.DarkSoulMisery:IsReady("player") and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or not A.PhantomSingularity:IsSpellLearned()) or Unit(unit):TimeToDie() < 20 + A.GetGCD() then
+            if A.DarkSoulMisery:IsReady("player") and A.DarkSoulMisery:IsSpellLearned() and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or not A.PhantomSingularity:IsSpellLearned()) then
                 return A.DarkSoulMisery:Show(icon)
             end
 		
