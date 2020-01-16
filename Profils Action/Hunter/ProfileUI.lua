@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.2 (11.12.2019)",
+    DateTime = "v2.0.3 (16.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
