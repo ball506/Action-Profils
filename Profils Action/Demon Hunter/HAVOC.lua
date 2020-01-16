@@ -693,7 +693,7 @@ A[3] = function(icon, isMulti)
 			       -- Unit("player"):HasBuffs("DamageBuffs") > 0
 					--or
 					Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 0
-			    )z
+			    )
 			then 
                 return A.Nemesis:Show(icon) 
             end
@@ -921,11 +921,11 @@ A[3] = function(icon, isMulti)
 			
 			-- Tol Dagor : Deadeye	
             -- Use Blade Dance 100% chance dodge just before end of cast...			
-            if A.BladeDance:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing()) then
+            if A.BladeDance:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing() + 1) then
                 return A.BladeDance:Show(icon)
             end
 			-- Use Death Sweep 100% chance dodge just before end of cast...
-            if A.DeathSweep:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing()) then
+            if A.DeathSweep:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing() + 1) then
                 return A.DeathSweep:Show(icon)
             end		
 			
