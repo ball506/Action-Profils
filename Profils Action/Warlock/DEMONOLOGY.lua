@@ -391,78 +391,63 @@ TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, Pet
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
 	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID)
 
+    -- Add 5 cast to PetData table for each summoned Imp
 	PetData.impcasts = 5
+	-- Also add 5 to local TR.GuardianTable
 	TR.GuardiansTable.ImpCastsRemaing = 5
 
 end)
 
 
--- Return total cast remaining for each of our current active imps
+-- Return total energy remaining for each of our current active imps depending on cast counter
 -- Also used to calculate Imp energy which is also more accurate than just imp count	
-local function TotalImpCastsRemaing()
+local function CalculateImpEnergy()
     local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
-    --local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()
-    local SourceGUID,_,_,_,UnitPetGUID,_,_,_,SpellID = select(4, ...);
-	local total = 0
-	
-	-- Decrement ImpCasts and Implosion Listener
-    
+    local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()
+    --local SourceGUID,_,_,_,UnitPetGUID,_,_,_,SpellID = select(4, ...);
+	local total = TR.GuardiansTable.ImpTotalEnergy
+	local impcastremaing = TR.GuardiansTable.ImpCastsRemaing
+	    
     -- Check for imp bolt casts
-    if SpellID == 104318 then
+    if (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 then
     	for _, v in pairs(PetTrackerData) do
 	    	if v.name == "Wild Imp" then
 			    for _, data in pairs(v.GUIDs) do 					
 				    local castremains = data.impcasts
 					if castremains > 0 then 
+					    -- Decrement cast by 1 from table
 					   	castremains = castremains - 1
-						TR.GuardiansTable.ImpCastsRemaing = TR.GuardiansTable.ImpCastsRemaing - 1
+						-- Also decrement in local TR.GuardianTable
+						impcastremaing = impcastremaing - 1
 					else
-					    castremains = 0 						
+					    castremains = 0 	
+                        impcastremaing = 0					
 					end 						
 			    end 
 			end
 			break 
 		end 
-		TR.GuardiansTable.ImpTotalEnergy = TR.GuardiansTable.ImpCastsRemaing * 20
+		total = impcastremaing * 20
 	end 
-		
-	if castremains > 0 then 
-		return castremains 
-	end 
-
 	
-	return total 
-end 
-
-
-
--- Check for imp bolt casts
-if spellID == 104318 then
-    local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
-    for _, v in pairs(PetTrackerData) do
-        if SourceGUID == v.ID then
-            if true then
-                PetTrackerData.ImpCastsRemaing = PetTrackerData.ImpCastsRemaing - 1
-				PetTrackerData.CurrentImpEnergy = PetTrackerData.ImpCastsRemaing * 20
-				--print(PetTrackerData.CurrentImpEnergy)
+    -- Clear the imp table upon Implosion cast or Demonic Tyrant cast if Demonic Consumption is talented
+    if SourceGUID == GetGUID("player") and (SpellID == 196277 or (SpellID == 265187 and A.IsSpellLearned(267215))) then
+        local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
+	    -- Remove every Wild Imp from table
+		for _, v in pairs(PetTrackerData) do
+            if v.name == "Wild Imp" then
+    		    v.count = v.count - 1
+			    v.GUIDs[DestGUID] = nil	
             end
         end
-    end    
-end	
-                      
--- Clear the imp table upon Implosion cast or Demonic Tyrant cast if Demonic Consumption is talented
-if SourceGUID == GetGUID("player") and (spellID == 196277 or (spellID == 265187 and A.IsSpellLearned(267215))) then
-    local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
-	for _, v in pairs(PetTrackerData) do
-        if v.name == "Wild Imp" then
-    		v.count = v.count - 1
-			v.GUIDs[DestGUID] = nil	
-        end
+		-- Also reset TR.GuardiansTable data
+        impcastremaing = 0
+        total = 0
     end
-	PetTrackerData.count = 0
-    PetTrackerData.ImpCastsRemaing = 0
-    PetTrackerData.CurrentImpEnergy = 0
-end
+			
+	return total
+end 
+
 --print(PetTrackerData.CurrentImpEnergy) 
 --[[TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_REMOVED", function(callbackEvent, PetID, PetGUID)
 	print("Removed " .. PetID .. ", GUID: " .. PetGUID)
