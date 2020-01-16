@@ -682,6 +682,11 @@ A[3] = function(icon, isMulti)
             if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) then
                 return A.ReapingFlames:Show(icon)
             end
+
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth("player", true) then
+                return A.MomentofGlory:Show(icon)
+            end				
 			
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
             if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and MultiUnits:GetByRange(30) > 1) or (A.Defile:GetCooldown() > 0 and MultiUnits:GetByRange(8) > 1) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
