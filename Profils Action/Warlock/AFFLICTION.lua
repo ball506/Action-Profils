@@ -1258,7 +1258,22 @@ A[3] = function(icon, isMulti)
             if A.DarkSoulMisery:IsReady("player") and A.DarkSoulMisery:IsSpellLearned() and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or not A.PhantomSingularity:IsSpellLearned()) then
                 return A.DarkSoulMisery:Show(icon)
             end
-		
+			
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReapingFlames:Show(icon)
+            end
+			
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
+            end	
+			
             -- guardian_of_azeroth,if=cooldown.summon_darkglare.remains<15+soul_shard*azerite.dreadful_calling.enabled|(azerite.dreadful_calling.rank|essence.vision_of_perfection.rank)&time>30&target.time_to_die>=210)&(dot.phantom_singularity.remains|dot.vile_taint.remains|!talent.phantom_singularity.enabled&!talent.vile_taint.enabled)|target.time_to_die<30+gcd
             if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() < 15 + Player:SoulShardsP() * num(A.DreadfulCalling:GetAzeriteRank() >= 1) or ((A.DreadfulCalling:GetAzeriteRank() >= 1 or A.VisionofPerfectionMinor:IsSpellLearned()) and Unit("player"):CombatTime() > 30 and Unit(unit):TimeToDie() >= 210) and (Unit(unit):HasDeBuffs(A.PhantomSingularityDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VileTaint.ID, true) or not A.PhantomSingularity:IsSpellLearned() and not A.VileTaint:IsSpellLearned()) then
                 return A.GuardianofAzeroth:Show(icon)
@@ -1268,6 +1283,7 @@ A[3] = function(icon, isMulti)
             if A.Berserking:AutoRacial(unit) and not ShouldStop and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
+			
             -- bag_of_tricks
             if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BagofTricks:Show(icon)
