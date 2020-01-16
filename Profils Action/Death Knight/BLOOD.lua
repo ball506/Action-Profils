@@ -665,6 +665,11 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end	
+			
+			-- VigilantProtector
+            if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.VigilantProtector:Show(icon)
+            end
 						
 		    -- Taunt 
             if A.GetToggle(2, "AutoTaunt") 
