@@ -968,9 +968,19 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) then
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ReapingFlames:Show(icon)
-            end	
+            end
+			
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
+            end		
 			
             -- chill_streak,if=buff.pillar_of_frost.remains<5&buff.pillar_of_frost.up|Unit(unit):TimeToDie()<5
             if A.ChillStreak:IsReady(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 or Unit(unit):TimeToDie() < 5) then

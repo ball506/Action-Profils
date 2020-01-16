@@ -679,13 +679,18 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) then
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ReapingFlames:Show(icon)
             end
-
+			
 			-- moment_of_glory
-            if A.MomentofGlory:AutoHeartOfAzeroth("player", true) then
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
             end				
 			
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
@@ -870,7 +875,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=target.1.time_to_die<cooldown.apocalypse.remains+34
-            if A.AzsharasFontofPower:IsReady(unit) and (target.1.time_to_die < A.Apocalypse:GetCooldown() + 34) then
+            if A.AzsharasFontofPower:IsReady(unit) and (Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown() + 34) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
