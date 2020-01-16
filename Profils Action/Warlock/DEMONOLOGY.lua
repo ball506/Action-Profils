@@ -842,6 +842,21 @@ A[3] = function(icon, isMulti)
             if A.BilescourgeBombers:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() > 9) then
                 return A.BilescourgeBombers:Show(icon)
             end
+
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReapingFlames:Show(icon)
+            end
+			
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
+            end	
 			
             -- focused_azerite_beam
             if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
