@@ -486,17 +486,17 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Fel Eruption
-	if (useCC or useKick) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+	if (useCC) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
         return A.FelEruption              
     end 
 	
     -- Chaos Nova    
-    if (useCC or useKick) and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
+    if (useCC) and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
         return A.ChaosNova              
     end 
     
 	-- Imprison    
-    if (useCC or useKick) and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if (useCC) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.Imprison              
     end 
 	

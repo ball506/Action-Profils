@@ -95,6 +95,22 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
                 {
+                    E = "Checkbox", 
+                    DB = "ImprisonAsInterrupt",
+                    DBV = false,
+                    L = { 
+                        enUS = "Imprison Interrupt", 
+                        ruRU = "Imprison Interrupt", 
+                        frFR = "Imprison Interrupt",  
+                    }, 
+                    TT = { 
+                        enUS = "Use your Imprison as interrupt if you don't have your Disrupt ready.", 
+                        ruRU = "Use your Imprison as interrupt if you don't have your Disrupt ready.",  
+                        frFR = "Use your Imprison as interrupt if you don't have your Disrupt ready.", 
+                    }, 
+                    M = {},
+                }, 				
+                {
                     E = "Dropdown",                                                         
                     OT = {
                         { text = "Burst Only", value = 1 },
