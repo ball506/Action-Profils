@@ -37,6 +37,7 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
@@ -539,7 +540,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bear_form
@@ -553,7 +554,7 @@ A[3] = function(icon, isMulti)
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
             -- thrash,if=(buff.incarnation.down&active_enemies>1)|(buff.incarnation.up&active_enemies>4)
-            if Thrash:IsReady("player") and MultiUnits:GetByRange(8, 5, 10) > 1 
+            if Thrash:IsReady("player") and MultiUnits:GetByRange(8) > 1 
 			and (Pull > 0 and Pull <= 2 or not A.GetToggle(1 ,"DBM"))
 			then
                 return Thrash:Show(icon)
@@ -572,42 +573,52 @@ A[3] = function(icon, isMulti)
             if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") and (ActiveMitigationNeeded or HPLoosePerSecond > 15) then
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
+						
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
+			
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
+			
             -- arcane_torrent
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
+			
             -- lights_judgment
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
             end
+			
             -- fireblood
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
+			
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+			
             -- lunar_beam,if=buff.bear_form.up
             if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.LunarBeam:Show(icon)
             end
+			
             -- bristling_fur,if=buff.bear_form.up
             if A.BristlingFur:IsReady(unit) and Unit("player"):HasBuffs(A.BearFormBuff.ID, true) and Player:Rage() < Action.GetToggle(2, "BristlingFurRage") then
                 return A.BristlingFur:Show(icon)
             end
+			
             -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
-            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(30, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRange(30) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Incarnation:Show(icon)
             end
+			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
             if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
                 return A.AshvanesRazorCoral:Show(icon)
@@ -623,8 +634,6 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-                    -- auto_attack
-
 
 		    -- Soothe
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
@@ -638,7 +647,12 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end	
-						
+			
+			-- VigilantProtector
+            if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.VigilantProtector:Show(icon)
+            end
+								
 		    -- Taunt 
             if A.GetToggle(2, "AutoTaunt") 
 			and combatTime > 0     
@@ -660,7 +674,7 @@ A[3] = function(icon, isMulti)
             end 
 			
 			-- Moonfire
-            if A.Moonfire:IsReady(unit) and (Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) > 0 or (MultiUnits:GetByRange(30, 5, 10) >= 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0)) then
+            if A.Moonfire:IsReady(unit) and (Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) > 0 or (MultiUnits:GetByRange(30) >= 2 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) == 0)) then
                 return A.Moonfire:Show(icon) 
             end
 			
@@ -670,7 +684,7 @@ A[3] = function(icon, isMulti)
 		       and (
         	    	   MissingMoonfire >= 1 and MissingMoonfire <= 8 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true) > 0 
 			        ) 
-		       and MultiUnits:GetByRangeInCombat(20, 5, 10) > 1 and MultiUnits:GetByRangeInCombat(20, 5, 10) <= 8
+		       and MultiUnits:GetByRange(20) > 1 and MultiUnits:GetByRange(20) <= 8
 		    then
 		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end	
@@ -718,12 +732,12 @@ A[3] = function(icon, isMulti)
             end
 
             -- thrash,if=(buff.incarnation.down&active_enemies>1)|(buff.incarnation.up&active_enemies>4)
-            if Thrash:IsReady("player") and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8, 5, 10) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4)) then
+            if Thrash:IsReady("player") and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8) > 1) or (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) > 0 and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4)) then
                 return Thrash:Show(icon)
             end
 			
             -- swipe,if=buff.incarnation.down&active_enemies>4
-            if Swipe:IsReady("player") and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8, 5, 10) >= 4) then
+            if Swipe:IsReady("player") and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) == 0 and MultiUnits:GetByRange(8) >= 4) then
                 return Swipe:Show(icon)
             end
 			
