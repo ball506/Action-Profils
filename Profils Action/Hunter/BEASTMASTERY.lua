@@ -563,11 +563,13 @@ A[3] = function(icon, isMulti)
 			then
                 return A.AncestralCall:Show(icon)
             end
+			
             -- fireblood,if=cooldown.bestial_wrath.remains>30
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) 
 			then
                 return A.Fireblood:Show(icon)
             end
+			
             -- berserking,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<13
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) 
 			and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):TimeToDie() > 10 
@@ -575,44 +577,63 @@ A[3] = function(icon, isMulti)
 			then
                 return A.Berserking:Show(icon)
             end
+			
             -- blood_fury,if=buff.aspect_of_the_wild.up&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<35|!talent.killer_instinct.enabled))|target.time_to_die<16
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):TimeToDie() > 15 or (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) 
 			then
                 return A.BloodFury:Show(icon)
             end
+			
             -- lights_judgment,if=pet.cat.buff.frenzy.up&pet.cat.buff.frenzy.remains>gcd.max|!pet.cat.buff.frenzy.up
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) and Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true) > A.GetGCD() or not Unit("pet"):HasBuffs(A.FrenzyBuff.ID, true)) 
 			then
                 return A.LightsJudgment:Show(icon)
             end
+			
             -- bag_of_tricks
             if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BagofTricks:Show(icon)
             end
+			
             -- potion,if=buff.bestial_wrath.up&buff.aspect_of_the_wild.up&(target.health.pct<35|!talent.killer_instinct.enabled)|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
             if A.BattlePotionOfAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) and (Unit(unit):HealthPercent() < 35 or not A.KillerInstinct:IsSpellLearned()) or ((Unit(unit):HasBuffs(A.PotionofUnbridledFury.ID, true) or Unit(unit):HasBuffs(A.UnbridledFury.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) 
 			then
                 return A.BattlePotionOfAgility:Show(icon)
             end
+			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) then
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ReapingFlames:Show(icon)
+            end
+			
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
             end	
+			
             -- worldvein_resonance,if=buff.lifeblood.stack<4
             if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 4) 
 			then
                 return A.WorldveinResonance:Show(icon)
             end
+			
             -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
             if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			then
                 return A.GuardianofAzeroth:Show(icon)
             end
+			
             -- ripple_in_space
             if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			then
                 return A.RippleInSpace:Show(icon)
             end
+			
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") 
 			then
