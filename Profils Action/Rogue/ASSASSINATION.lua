@@ -1280,6 +1280,21 @@ A[3] = function(icon, isMulti)
             if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or Unit(unit):TimeToDieX(20) > 30) then
                 return A.ReapingFlames:Show(icon)
             end
+
+			-- reaping_flames
+          --  if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+          --      return A.ReapingFlames:Show(icon)
+          --  end
+			
+			-- moment_of_glory
+            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MomentofGlory:Show(icon)
+            end
+
+			-- ReplicaofKnowledge
+            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ReplicaofKnowledge:Show(icon)
+            end	
 			
 			-- Cooldowns --
                         
