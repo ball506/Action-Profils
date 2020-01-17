@@ -693,9 +693,14 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- shadow_bolt,if=!talent.haunt.enabled&spell_targets.seed_of_corruption_aoe<3
-        	if A.ShadowBolt:IsReady(unit) and not ShouldStop and Pull > 0.1 and Pull <= A.ShadowBolt:GetSpellCastTime() and not isMoving and (not A.Haunt:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 3) then
+        	if A.ShadowBolt:IsReady(unit) and not A.DrainSoul:IsSpellLearned() and not ShouldStop and Pull > 0.1 and Pull <= A.ShadowBolt:GetSpellCastTime() and not isMoving and (not A.Haunt:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 3) then
             	return A.ShadowBolt:Show(icon)
         	end
+			
+            -- actions.mouseover+=/Agony
+            if  A.Agony:IsReady(unit) and Pull > 0.1 and Pull <= 0.5 and A.DrainSoul:IsSpellLearned() and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
+                return A.Agony:Show(icon)
+            end 
 			
 		end
 	
@@ -728,9 +733,14 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- shadow_bolt,if=!talent.haunt.enabled&spell_targets.seed_of_corruption_aoe<3&!equipped.169314
-        	if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and (not A.Haunt:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 3 and not A.AzsharasFontofPower:IsExists()) then
+        	if A.ShadowBolt:IsReady(unit) and not A.DrainSoul:IsSpellLearned() and not isMoving and not ShouldStop and (not A.Haunt:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 3 and not A.AzsharasFontofPower:IsExists()) then
             	return A.ShadowBolt:Show(icon)
         	end
+			
+            -- actions.mouseover+=/Agony
+            if  A.Agony:IsReady(unit) and A.DrainSoul:IsSpellLearned() and A.Agony:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() <= 40 and A.LastPlayerCastID ~= A.Agony.ID then 
+                return A.Agony:Show(icon)
+            end 
 			
     	end	
     
@@ -843,12 +853,12 @@ A[3] = function(icon, isMulti)
             end
 						
             -- shadow_bolt,cycle_targets=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains&!action.shadow_bolt.in_flight
-            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateCycleShadowBolt524) then
+            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) == 0 and not A.ShadowBolt:IsSpellInFlight() then
                 return A.ShadowBolt:Show(icon)
             end
 			
             -- shadow_bolt,target_if=min:debuff.shadow_embrace.remains,if=talent.shadow_embrace.enabled&variable.maintain_se
-            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt540, EvaluateTargetIfShadowBolt551) then
+            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) > 0 and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) then
                 return A.ShadowBolt:Show(icon)
             end
 			
@@ -930,7 +940,7 @@ A[3] = function(icon, isMulti)
             
 			-- Burst incoming notification
 			local TimeToBurst = A.SummonDarkglare:GetCooldown() 
-			if A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() <= 10 and Unit("player"):CombatTime() > 30 then
+			if A.BurstIsON(unit) and A.Player:SoulShardsP() >= 3 and A.SummonDarkglare:GetCooldown() <= 10 and Unit("player"):CombatTime() > 30 then
 			    Action.SendNotification("Preparing burst : " .. TimeToBurst .. " sec", A.SummonDarkglare.ID)
 				--return
 			end
@@ -940,7 +950,7 @@ A[3] = function(icon, isMulti)
             local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = A.Unit("player"):IsCasting()
 			
 			-- Allow stop cast to improve Contagion uptime
-			if spellID == A.ShadowBolt.ID and Player:SoulShardsP() > 0 then
+			if (spellID == A.ShadowBolt.ID or spellID == A.DrainSoul.ID) and Player:SoulShardsP() > 0 then
 			    if contagion <= A.UnstableAffliction:GetSpellCastTime() + A.GetPing() + A.GetGCD() then
 				    if (A.SummonDarkglare:GetCooldown() > time_to_shard * 6) or not A.BurstIsON(unit) then
 					    Action.SendNotification("Stopping cast to maintain UA", A.UnstableAffliction.ID)
@@ -1190,22 +1200,22 @@ A[3] = function(icon, isMulti)
             end
 		
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,cancel_if=ticks_remain<5,if=talent.shadow_embrace.enabled&variable.maintain_se&debuff.shadow_embrace.remains&debuff.shadow_embrace.remains<=gcd*2
-            if A.DrainSoul:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul787, EvaluateTargetIfDrainSoul802) then
+            if A.DrainSoul:IsReady(unit) and not isMoving and not ShouldStop and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) > 0 and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff, true) > 0 and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.GetGCD() * 2 then
                 return A.DrainSoul:Show(icon)
             end
 		
             -- shadow_bolt,target_if=min:debuff.shadow_embrace.remains,if=talent.shadow_embrace.enabled&variable.maintain_se&debuff.shadow_embrace.remains&debuff.shadow_embrace.remains<=execute_time*2+travel_time&!action.shadow_bolt.in_flight
-            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateTargetIfFilterShadowBolt808, EvaluateTargetIfShadowBolt835) then
+            if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) > 0 and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff, true) > 0 and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.ShadowBolt:GetSpellCastTime() * 2 and not A.ShadowBolt:IsSpellInFlight() then
                 return A.ShadowBolt:Show(icon)
             end
 		
             -- phantom_singularity,target_if=max:target.time_to_die,if=time>35&target.time_to_die>16*spell_haste&(!essence.vision_of_perfection.minor&!azerite.dreadful_calling.rank|cooldown.summon_darkglare.remains>45+soul_shard*azerite.dreadful_calling.rank|cooldown.summon_darkglare.remains<15*spell_haste+soul_shard*azerite.dreadful_calling.rank)
-            if A.PhantomSingularity:IsReady(unit) and (A.SummonDarkglare:GetCooldown() >= 45 or A.SummonDarkglare:IsReady(unit)) and not ShouldStop and Action.Utils.CastTargetIf(A.PhantomSingularity, 40, "min", EvaluateTargetIfFilterPhantomSingularity841, EvaluateTargetIfPhantomSingularity850) then
+            if A.PhantomSingularity:IsReady(unit) and (A.SummonDarkglare:GetCooldown() > 45 or A.SummonDarkglare:IsReady(unit)) and not ShouldStop and Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Player:SpellHaste() and (not A.VisionofPerfectionMinor:IsSpellLearned() and not A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() > 45 + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() < 15 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank()) then
                 return A.PhantomSingularity:Show(icon)
             end
 				
             -- unstable_affliction,target_if=min:contagion,if=!variable.use_seed&soul_shard=5
-            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.UnstableAffliction, 40, "min", EvaluateTargetIfFilterUnstableAffliction865, EvaluateTargetIfUnstableAffliction870) then
+            if A.UnstableAffliction:IsReady(unit, nil, nil, PredictSpells) and not isMoving and not ShouldStop and not bool(VarUseSeed) and Player:SoulShardsP() == 5 and contagion <= A.UnstableAffliction:GetSpellCastTime() + A.GetGCD() + A.GetPing() then
                 return A.UnstableAffliction:Show(icon)
             end
 		
@@ -1220,7 +1230,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- use_item,name=azsharas_font_of_power,if=time<=3
-            if A.AzsharasFontofPower:IsExists() and not isMoving and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 3) then
+            if A.AzsharasFontofPower:IsExists() and not isMoving and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 5) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 		
