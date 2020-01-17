@@ -56,13 +56,16 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     Rebuke                               = Action.Create({ Type = "Spell", ID = 96231     }),
     HammerofJustice                      = Action.Create({ Type = "Spell", ID = 198054     }),
     Repentance                           = Action.Create({ Type = "Spell", ID = 20066     }), 
-    Cavalier                             = Action.Create({ Type = "Spell", ID = 190784     }),  
+    Cavalier                             = Action.Create({ Type = "Spell", ID = 190784     }),
+    BlessingofProtectionYellow           = Action.Create({ Type = "Spell", ID = 1022, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
     BlessingofProtection                 = Action.Create({ Type = "Spell", ID = 1022     }), 
     WordofGlory                          = Action.Create({ Type = "Spell", ID = 210191     }),
     BlessingofFreedom                    = Action.Create({ Type = "Spell", ID = 1044     }),
+    BlessingofFreedomYellow              = Action.Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
     -- PvP
     HammerofReckoning                    = Action.Create({ Type = "Spell", ID = 247675     }),
     BlessingofSanctuary                  = Action.Create({ Type = "Spell", ID = 210256     }),
+    BlessingofSanctuaryYellow              = Action.Create({ Type = "Spell", ID = 210256, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
     -- Buffs
     DivinePurposeBuff                    = Action.Create({ Type = "Spell", ID = 223819, Hidden = true     }),
     EmpyreanPowerBuff                    = Action.Create({ Type = "Spell", ID = 286393, Hidden = true     }),
@@ -205,6 +208,157 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+-- [1] CC AntiFake Rotation
+--[[local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0) and 
+    Unit(unit):IsControlAble("stun", 0) and 
+    A.LegSweepGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if     A.LegSweepGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target") and                     
+            (
+                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0))) or 
+                (not A.IsInPvP and MultiUnits:GetByRange(5 + (A.TigerTailSweep:IsSpellLearned() and 2 or 0), 1) >= 1)
+            )
+        )
+    )
+    then 
+        return A.LegSweepGreen:Show(icon)         
+    end                                                                     
+end]]--
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.Rebuke:IsReady(unit, nil, nil, true) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMag, true) then
+                return A.Rebuke:Show(icon)                                                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
+
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+	
+    -- DivineShield
+    local DivineShield = A.GetToggle(2, "DivineShieldHP")
+    if     DivineShield >= 0 and A.DivineShield:IsReady("player") and 
+    (
+        (     -- Auto 
+            DivineShield >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            DivineShield < 100 and 
+            Unit("player"):HealthPercent() <= DivineShield
+        )
+    ) 
+    then 
+	    -- Notification					
+        Action.SendNotification("[DEF] Divine Shield", A.DivineShield.ID)
+        return A.DivineShield
+    end
+	
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	    -- Notification					
+        Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
+        return A.Rebuke
+    end 
+    
+    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	    -- Notification					
+        Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
+        return A.HammerofJustice              
+    end          
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -251,7 +405,7 @@ A[3] = function(icon, isMulti)
             -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and 
 			(
-			    (A.GuardianofAzeroth:GetCooldown() > 90 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID))) 
+			    (A.GuardianofAzeroth:GetCooldown() > 90 or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) 
 				and 
 				(
 				    Unit("player"):HasHeroism() 
@@ -389,7 +543,7 @@ A[3] = function(icon, isMulti)
                 return true
             end
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
-            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRange(40) > 1) or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
+            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRange(40) > 1) or MultiUnits:GetByRange(5) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
                 return A.WakeofAshes:Show(icon)
             end
             -- blade_of_justice,if=holy_power<=2|(holy_power=3&(cooldown.hammer_of_wrath.remains>gcd*2|variable.HoW))
@@ -409,11 +563,11 @@ A[3] = function(icon, isMulti)
                 return A.Consecration:Show(icon)
             end
             -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up
-            if (A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0) then
-                local ShouldReturn = Finishers(unit); if ShouldReturn then return ShouldReturn; end
+            if Finishers(unit) and (A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 or Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0) then
+                return true
             end
             -- crusader_strike,if=cooldown.crusader_strike.charges_fractional>=1.75&(holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2&cooldown.consecration.remains>gcd*2)
-            if A.CrusaderStrike:IsReady(unit) and (A.CrusaderStrike:ChargesFractionalP() >= 1.75 and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2)) then
+            if A.CrusaderStrike:IsReady(unit) and (A.CrusaderStrike:GetSpellChargesFrac() >= 1.75 and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2)) then
                 return A.CrusaderStrike:Show(icon)
             end
             -- call_action_list,name=finishers
@@ -464,7 +618,7 @@ A[3] = function(icon, isMulti)
       		if useCC and A.HammerofJustice:IsReady(unit) then 
 	  			if Unit(unit):CanInterrupt(true, nil, 25, 70) then
      		        return A.HammerofJustice:Show(icon)
-     	 	   end 
+     	 	    end 
      		end 
 			
             -- call_action_list,name=cooldowns
@@ -483,7 +637,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -524,27 +678,45 @@ end
             return true 
         end 
     end 
-end 
+end ]]--
+
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
         if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
             -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
+            if A.HammerofJustice:IsReady() and A.HammerofJustice:IsSpellLearned() and EnemyTeam():IsCastingBreakAble(0.25) then 
+                return A.HammerofJustice:Show(icon)
             end 
         end
     end 
 end 
-local function PartyRotation(unit)
-    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
-        return false 
-    end
 
-  	-- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
+local function PartyRotation(unit)
+   -- if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+   --     return false 
+   -- end
+
+  	-- BlessingofFreedomYellow
+    if A.BlessingofFreedomYellow:IsCastable() and Unit(unit):HasDeBuffs("Rooted") > 0 and not Unit(unit):InLOS() then
+        return A.BlessingofFreedomYellow:Show(icon)
     end
+	
+  	-- BlessingofProtectionYellow
+    if A.BlessingofProtectionYellow:IsCastable() and not Unit(unit):InLOS() and 	
+	    Unit(unit):HasBuffs("DeffBuffs") == 0 
+	    or  
+	   -- HP lose per sec >= 20
+        Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 
+		or 
+        Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 
+		or 
+        -- TTD 
+        Unit("player"):TimeToDieX(10) < 3 
+	then
+        return A.BlessingofProtectionYellow:Show(icon)
+    end
+	
 end 
 
 A[6] = function(icon)
@@ -565,5 +737,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 
