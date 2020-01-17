@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.0.8 (16.01.2020)",
+    DateTime = "v2.0.9 (17.01.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -936,8 +936,8 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "UseDeathStrikeHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DB = "DeathStrikeHP",
+                    DBV = 80, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(49998) .. " (%)",
