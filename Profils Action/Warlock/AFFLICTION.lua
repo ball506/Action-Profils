@@ -527,26 +527,6 @@ local function EvaluateCycleCorruption300(unit)
     return MultiUnits:GetActiveEnemies() < 3 + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= 4) and Unit(unit):TimeToDie() > 10
 end
 
-local function EvaluateCycleDrainSoul479(unit)
-    return Unit(unit):TimeToDie() <= A.GetGCD()
-end
-
-local function EvaluateTargetIfFilterDrainSoul485(unit)
-    return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
-end
-
-local function EvaluateTargetIfDrainSoul498(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) == 0
-end
-
-local function EvaluateTargetIfFilterDrainSoul504(unit)
-    return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
-end
-
-local function EvaluateTargetIfDrainSoul515(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
-end
-
 local function EvaluateCycleShadowBolt524(unit)
     return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) == 0 and not A.ShadowBolt:IsSpellInFlight()
 end
@@ -738,7 +718,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- seed_of_corruption,if=spell_targets.seed_of_corruption_aoe>=3&!equipped.169314
-        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetByRange(MultiDotDistance, 5, 5) > 2 and not A.AzsharasFontofPower:IsExists()) then
+        	if A.SeedofCorruption:IsReady(unit) and (not isMoving) and not ShouldStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 and (MultiUnits:GetByRange(MultiDotDistance) > 2 and not A.AzsharasFontofPower:IsExists()) then
             	return A.SeedofCorruption:Show(icon)
         	end
 			
@@ -848,25 +828,20 @@ A[3] = function(icon, isMulti)
             end
 			
             -- drain_soul,interrupt_global=1,chain=1,interrupt=1,cycle_targets=1,if=target.time_to_die<=gcd
-            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateCycleDrainSoul479) then
+            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Unit(unit):TimeToDie() <= A.GetGCD() then
                 return A.DrainSoul:Show(icon)
             end
 			
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,chain=1,interrupt_if=ticks_remain<5,interrupt_global=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains
-            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul485, EvaluateTargetIfDrainSoul498) then
+            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) > 0 and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) == 0 then
                 return A.DrainSoul:Show(icon)
             end
 			
             -- drain_soul,target_if=min:debuff.shadow_embrace.remains,chain=1,interrupt_if=ticks_remain<5,interrupt_global=1,if=talent.shadow_embrace.enabled&variable.maintain_se
-            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateTargetIfFilterDrainSoul504, EvaluateTargetIfDrainSoul515) then
+            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) > 0 and A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) then
                 return A.DrainSoul:Show(icon)
             end
-			
-            -- drain_soul,interrupt_global=1,chain=1,interrupt=1
-            if A.DrainSoul:IsReady(unit) and (not isMoving) and not ShouldStop then
-                return A.DrainSoul:Show(icon)
-            end
-			
+						
             -- shadow_bolt,cycle_targets=1,if=talent.shadow_embrace.enabled&variable.maintain_se&!debuff.shadow_embrace.remains&!action.shadow_bolt.in_flight
             if A.ShadowBolt:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.ShadowBolt, 40, "min", EvaluateCycleShadowBolt524) then
                 return A.ShadowBolt:Show(icon)
@@ -892,10 +867,10 @@ A[3] = function(icon, isMulti)
 			and (
 			    Pet:GetMultiUnitsBySpell({54049, 3716, 6360}) > 2
 				or
-				MultiUnits:GetByRange(MultiDotDistance, 5, 5) > 2
+				MultiUnits:GetByRange(MultiDotDistance) > 2
 				) 
 				and Unit(unit):HasDeBuffs(A.SeedofCorruptionDebuff.ID, true) == 0 
-				and (AppliedCorruption < Pet:GetMultiUnitsBySpell({54049, 3716, 6360}) or AppliedCorruption < MultiUnits:GetByRange(MultiDotDistance, 5, 5) or CorruptionToRefresh > 0)
+				and (AppliedCorruption < Pet:GetMultiUnitsBySpell({54049, 3716, 6360}) or AppliedCorruption < MultiUnits:GetByRange(MultiDotDistance) or CorruptionToRefresh > 0)
 			then 
                 return A.SeedofCorruption:Show(icon)
             end	
@@ -955,7 +930,7 @@ A[3] = function(icon, isMulti)
             
 			-- Burst incoming notification
 			local TimeToBurst = A.SummonDarkglare:GetCooldown() 
-			if A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() <= time_to_shard * (5 - Player:SoulShardsP()) and Unit("player"):CombatTime() > 30 then
+			if A.BurstIsON(unit) and A.SummonDarkglare:GetCooldown() <= 10 and Unit("player"):CombatTime() > 30 then
 			    Action.SendNotification("Preparing burst : " .. TimeToBurst .. " sec", A.SummonDarkglare.ID)
 				--return
 			end
@@ -990,7 +965,7 @@ A[3] = function(icon, isMulti)
 					   and 
 					   Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 5 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 
 			        ) 
-		       and MultiUnits:GetByRange(MultiDotDistance, 5, 10) > 1 and MultiUnits:GetByRange(MultiDotDistance, 5, 10) <= 5
+		       and MultiUnits:GetByRange(MultiDotDistance) > 1 and MultiUnits:GetByRange(MultiDotDistance) <= 5
 		    then
 		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end	
@@ -1106,9 +1081,9 @@ A[3] = function(icon, isMulti)
    	        end  	   	
      		
             -- drain_soul,interrupt_global=1,chain=1,cycle_targets=1,if=target.time_to_die<=gcd&soul_shard<5
-            if A.DrainSoul:IsReady(unit) and not isMoving and not ShouldStop and Action.Utils.CastTargetIf(A.DrainSoul, 40, "min", EvaluateCycleDrainSoul711) then
-                return A.DrainSoul:Show(icon)
-            end
+           -- if A.DrainSoul:IsReady(unit) and not isMoving and not ShouldStop and Unit(unit):TimeToDie() <= A.GetGCD() and Player:SoulShardsP() < 5 then
+           --     return A.DrainSoul:Show(icon)
+           -- end
 		
             -- haunt,if=spell_targets.seed_of_corruption_aoe<=2+raid_event.invulnerable.up
             if A.Haunt:IsReady(unit, nil, nil, PredictSpells) and not isMoving and A.Haunt:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and not ShouldStop and (MultiUnits:GetActiveEnemies() <= 2) then
@@ -1385,7 +1360,7 @@ end
 -- No specialization trinket actions 
 
 -- Passive 
-local function FreezingTrapUsedByEnemy()
+--[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and 
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit("player"):GetDR("incapacitate") >= 50 
@@ -1395,19 +1370,36 @@ local function FreezingTrapUsedByEnemy()
             return true 
         end 
     end 
-end 
+end]]-- 
 
 local function ArenaRotation(icon, unit)
-    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then             
-        -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then                  
-		
-            -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
-            end 
-			
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then   
+        local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")    
+    
+	    -- Pet Kick
+        if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+            return A.PetKick:Show(icon)
         end 
+   
+        -- Shadow Fury   
+        if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetByRange(10) >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+            return A.Shadowfury:Show(icon)              
+        end 
+		
+	    -- Fear
+	    if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 0) then 
+            return A.Fear:Show(icon)              
+        end	
+		
+        -- Reflect Casting BreakAble CC
+        if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
+            return A.NetherWard:Show(icon)
+        end 
+	
+        -- Note: "arena1" is just identification of meta 6
+      --  if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then                  
+		--    return	
+        --end 
                         
     end 
 end 
