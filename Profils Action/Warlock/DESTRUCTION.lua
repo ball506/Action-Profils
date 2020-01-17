@@ -527,7 +527,7 @@ A[3] = function(icon, isMulti)
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=buff.backdraft.down&!buff.memory_of_lucid_dreams.up&(soul_shard>=2.8|charges_fractional>1.9&soul_shard>=1.3)
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Player:SoulShardsP >= 2.8 or A.Conflagrate:ChargesFractionalP() > 1.9 and Player:SoulShardsP >= 1.3)) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Player:SoulShardsP >= 2.8 or A.Conflagrate:GetSpellChargesFrac() > 1.9 and Player:SoulShardsP >= 1.3)) then
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=pet.infernal.remains<5
