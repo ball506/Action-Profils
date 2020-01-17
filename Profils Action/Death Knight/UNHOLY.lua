@@ -34,6 +34,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
     Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
     BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
