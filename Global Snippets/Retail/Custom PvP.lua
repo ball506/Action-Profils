@@ -7,20 +7,11 @@ local CNDT = TMW.CNDT
 local Env = CNDT.Env
 local Action = Action
 local MultiUnits = Action.MultiUnits
-local HL = HeroLib;
-local Cache = HeroCache;
-local Unit = HL.Unit;
-local Player = Unit.Player;
-local Pet = Unit.Pet;
-local Target = Unit.Target;
-local Arena = Unit.Arena;
-local Spell = HL.Spell;
-local Item = HL.Item;
 local next, pairs, type, print  = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib = LibStub("PetLibrary")
-local ActionUnit = Action.Unit 
+local Unit = Action.Unit 
 
 ---------------------------------------------------
 -------------------- CONSTANTS --------------------
@@ -58,11 +49,11 @@ function Action.ShouldReflect(unit)
 		    unit = "target"
 		end
 		-- Current Cast SpellID
-		local currentCast = ActionUnit(unit):IsCasting()
+		local currentCast = Unit(unit):IsCasting()
 		-- [1] Total Casting Time (@number)
 		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
 		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
-		local castingTime, castingLeftSec, castingDonePer  = ActionUnit(unit):CastTime()
+		local castingTime, castingLeftSec, castingDonePer  = Unit(unit):CastTime()
 		
 		-- Current casted spell is in list
         if currentCast == GetSpellInfo(pvpReflect[p]) then
