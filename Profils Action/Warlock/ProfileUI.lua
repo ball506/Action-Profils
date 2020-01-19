@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.7 (18.01.2020)",
+    DateTime = "v2.0.8 (19.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -335,8 +335,7 @@ A.Data.ProfileUI = {
                 {
                     E = "LayoutSpace",                                                                         
                 },
-            },
-			
+            },			
             { -- [7] 
                 {
                     E = "Header",
@@ -537,26 +536,43 @@ A.Data.ProfileUI = {
 					},
                 },                 
             },  
-            { -- [2] 2nd Row 
-				-- Splash Data
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Miscellaneous -- ",
+                    },
+                },
+            },
+            { -- [4] 4th Row
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "USE COMBAT LOGS", value = "USE COMBAT LOGS" }, 
-                        { text = "USE SPLASH DATA", value = "USE SPLASH DATA" },                   
-                        { text = "USE NAMEPLATES", value = "USE NAMEPLATES" },
+                        { text = A.GetSpellInfo(688), value = "IMP" },
+                        { text = A.GetSpellInfo(697), value = "VOIDWALKER" },                    
+                        { text = A.GetSpellInfo(691), value = "FELHUNTER" },
+                        { text = A.GetSpellInfo(712), value = "SUCCUBUS" },
                     },
-                    DB = "AoeDetectionMode",
-                    DBV = "USE COMBAT LOGS",
+                    DB = "PetChoice",
+                    DBV = "IMP",
                     L = { 
-                        ANY = "AoE Detection Mode",
+                        enUS = "Pet selection", 
+                        ruRU = "Выбор питомца", 
+                        frFR = "Sélection du familier",
                     }, 
                     TT = { 
-                        enUS = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                        ruRU = "Select the AoE Detection mode you feel better with\nUSE COMBAT LOGS - Will count AoE enemies you are in combat with using combat logs.\nUSE SPLASH DATA - Only count AoE enemies that are already hit by AoE abilities.\nUSE NAMEPLATES - Will count AoE enemies using visible nameplates.\nDefault: USE COMBAT LOGS", 
-                    }, 
+                        enUS = "Choose the pet to summon", 
+                        ruRU = "Выберите питомца для призыва", 
+                        frFR = "Choisir le familier à invoquer",
+					},
                     M = {},
-                },	
+                },
             },
             { -- [4] 4th Row
 
@@ -578,14 +594,28 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "UnendingResolve",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(104773) .. " Leech HP (%)",
+                        ANY = A.GetSpellInfo(104773) .. " HP (%)",
                     }, 
                     M = {},
                 },
             },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {
