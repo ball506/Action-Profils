@@ -900,22 +900,6 @@ A.Data.ProfileUI = {
 					},    
                     M = {},
                 },				
-    			{
-                    E = "Checkbox", 
-                    DB = "OffensiveRage",
-                    DBV = true,
-                    L = { 
-                        enUS = "Offensive Rage use", 
-                        ruRU = "Offensive Rage use",
-                        frFR = "Offensive Rage use",
-                    }, 
-                    TT = { 
-                        enUS = "If activated, will priorize dps over survivability.", 
-                        ruRU = "If activated, will priorize dps over survivability.",  
-                        frFR = "If activated, will priorize dps over survivability.",  
-                    }, 
-                    M = {},
-                },
 			},             
             { -- [4] 4th Row
 

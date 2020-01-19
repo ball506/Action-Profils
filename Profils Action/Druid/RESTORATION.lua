@@ -15,6 +15,7 @@ local Unit                                    = Action.Unit
 
 local setmetatable                            = setmetatable
 local TR                                     = Action.TasteRotation
+local pairs                                  = pairs
 
 Action[ACTION_CONST_DRUID_RESTORATION] = {
     -- Racial

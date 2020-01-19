@@ -15,6 +15,7 @@ local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
 local TR                                     = Action.TasteRotation
+local pairs                                  = pairs
 
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Racial

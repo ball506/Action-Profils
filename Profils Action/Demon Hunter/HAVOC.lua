@@ -13,6 +13,7 @@ local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
 local TR                                     = Action.TasteRotation
+local pairs                                  = pairs
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -764,7 +765,7 @@ A[3] = function(icon, isMulti)
                 return A.DeathSweep:Show(icon)
             end
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and A.BladeDance:GetCooldown() <= A.GetGCD() and not Unit(unit):IsTotem() and HandleEyeBeam()  then
                 return A.EyeBeam:Show(icon)
             end
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
