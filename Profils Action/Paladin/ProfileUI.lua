@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v1.20 (06.10.2019)",
+    DateTime = "v2.0.1 (19.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -59,42 +59,72 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
-            { -- [2] 2nd Row 
+            { -- [4] 4th Row
+
                 {
-                    E = "Checkbox", 
-                    DB = "ShieldofVengeance",
-                    DBV = true,
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Rotation -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "Bubble",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
                     L = { 
-                        enUS = "Use Shield of Vengeance", 
-                        ruRU = "Use Shield of Vengeance", 
-                        frFR = "Use Shield of Vengeance",
-                    }, 
-                    TT = { 
-                        enUS = "Enable this to show Shield of Vengeance in your DPS rotation.", 
-                        ruRU = "Enable this to show Shield of Vengeance in your DPS rotation.", 
-                        frFR = "Enable this to show Shield of Vengeance in your DPS rotation.",
+                        ANY = A.GetSpellInfo(642) .. " (%)",
                     }, 
                     M = {},
-                }, 				
+                },
+            },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+                    }, 
+                    M = {},
+                },            
+            }, 			
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
             },
             { -- [4] 4th Row
 
@@ -115,13 +145,19 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "Bubble",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "DivineShieldHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(642) .. " (%)",
                     }, 
                     M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
                 },
             },
             { -- [7]
@@ -140,10 +176,10 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "ImprisonPvP",
+                    DB = "HammerofJusticePvP",
                     DBV = "ON MELEE BURST",
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(217832),
+                        ANY = "PvP " .. A.GetSpellInfo(853),
                     }, 
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
@@ -160,7 +196,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "ImprisonPvPUnits",
+                    DB = "HammerofJusticePvPUnits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -168,7 +204,7 @@ A.Data.ProfileUI = {
                         [4] = true,
                     }, 
                     L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(217832) .. " units",
+                        ANY = "PvP " .. A.GetSpellInfo(853) .. " units",
                     }, 
                     TT = { 
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
@@ -227,25 +263,45 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
+                },                 
+            }, 
+            { -- [4] 4th Row
+
                 {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
                     L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
+                        ANY = "Party Units",
                     }, 
                     TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
                     }, 
                     M = {},
-                }, 
-                
-            },  
+                },            
+            }, 			
             { -- [4] 4th Row
 
                 {
@@ -265,11 +321,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "EyeofTyrHP",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "ArdentDefenderHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(209202) .. " (%)",
+                        ANY = A.GetSpellInfo(31850) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -277,11 +333,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "HandoftheProtectorHP",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(213652) .. " (%)",
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -292,7 +348,7 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "LightoftheProtectorHP",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(184092) .. " (%)",
@@ -303,11 +359,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "ShieldoftheRighteousHP",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DB = "GuardianofAncientKingsHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(53600) .. " (%)",
+                        ANY = A.GetSpellInfo(86659) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -327,6 +383,40 @@ A.Data.ProfileUI = {
                         ruRU = "Enable this setting if you want the addon to suggest Shield of the Righteous as an offensive ability.", 
                         frFR = "Enable this setting if you want the addon to suggest Shield of the Righteous as an offensive ability.",
                     }, 
+                    M = {},
+                },
+    			{
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Automatic Taunt", 
+                        frFR = "Automatic Taunt",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Growl whenever available.", 
+                        ruRU = "If activated, will use automatically use Growl whenever available.",  
+                        frFR = "If activated, will use automatically use Growl whenever available.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ThreatDamagerLimit",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = "Only 'Damager'\nThreat limit(agro,>= %)",
+						ruRU = "Только 'Урон'\nЛимит угрозы(агро,>= %)", 
+					}, 
+                    TT = { 
+                        enUS = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized", 
+                        ruRU = "OFF - Нет лимита\nЕсли процент угрозы (агро) больше или равен указанному,\nто будет выполняться 'безопасная' ротация\nПо мере возможности перестанут использоваться способности\nвызывающие слишком много угрозы пока\nуровень угрозы (агро) не нормализуется",  
+                        frFR = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized",
+					},    
                     M = {},
                 },
             },
