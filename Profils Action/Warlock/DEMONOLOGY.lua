@@ -401,15 +401,17 @@ local ImpTotalEnergy = 0
 TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
     -- Add 5 cast to PetData table for each summoned Imp
-	PetData.impcasts = 5
-	PetData.petenergy = 100
+	--PetData.impcasts = 5
+	--PetData.petenergy = 100
 	--PetTrackerData[55659].impcasts = 5
 	-- Also add 5 to local TR.GuardianTable
 	--TR.GuardiansTable.ImpCastsRemaing = 5
-	if PetID == 55659 then
-	    PetTrackerData[PetID].GUIDs[PetGUID].impcasts = 5
-	    PetTrackerData[PetID].GUIDs[PetGUID].petenergy = 100
-	end
+	--if PetID == 55659 then
+	    PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].impcasts = 5
+		PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].petenergy = 100
+	    --PetTrackerData[PetID].GUIDs[PetGUID].impcasts = 5
+	    --PetTrackerData[PetID].GUIDs[PetGUID].petenergy = 100
+	--end
 	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID .. "and he got " .. PetData.impcasts .. " casts lefts")
 
 end)
@@ -467,21 +469,21 @@ local function GetWildImpInfos(petID)
 	-- Protect against nil
     if not petID then 
 	    petID = 55659 
-	end
-	
+	end			
+			
 	-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
-	if SourceGUID and SourceGUID == UnitGUID("player") and (Event == "SPELL_CAST_SUCCESS") and 
-	(   -- Implosion
-	    SpellID == 196277 
-		or 
-		-- Summon Demonic Tyrant with Demonic Consumption
-		(SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
-	) 
+	if SourceGUID and SourceGUID == UnitGUID("player") and PetTrackerData[55659] and (Event == "SPELL_CAST_SUCCESS") and 
+	   (   -- Implosion
+	        SpellID == 196277 
+	       	or 
+	       	-- Summon Demonic Tyrant with Demonic Consumption
+	       	(SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
+	   ) 
 	then 
-  	    --PetTrackerData[55659].count	= 0		
-		PetTrackerData[55659] = nil 
-		--print("Player just casted Implosion. New Imp count is " .. PetTrackerData[55659].count)		
-	end	
+  	    --PetTrackerData[petID].count	= 0		
+		PetTrackerData[55659] = nil
+	    --print("Player just casted Implosion. New Imp count is " .. PetTrackerData[55659].count)		
+	end   
 	
     -- Identify 55659 Wild Imp ID
 	if petID and PetTrackerData[petID] and petID == 55659 then 
@@ -490,16 +492,18 @@ local function GetWildImpInfos(petID)
 			ImpCount = PetTrackerData[petID].count
 			
 			-- If current Imp GUID got casts > 0
-			if SourceGUID and (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 and casts > 0 then
+			if SourceGUID and SourceGUID ~= Pet.MainGUID and PetTrackerGUID[SourceGUID] and PetTrackerData[PetTrackerGUID[SourceGUID]]
+			and (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 and casts > 0 
+			then
                 --currentImpCasts = PetTrackerData[petID].GUIDs[SourceGUID].impcasts			
 				-- Decrement cast by 1 in current Imp GUID
-				PetTrackerData[55659].GUIDs[SourceGUID].impcasts = PetTrackerData[55659].GUIDs[SourceGUID].impcasts - 1
+				PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts - 1
 				--data.impcasts = data.impcasts - 1
 				-- Decrement energy by 20 in current Imp GUID
-				PetTrackerData[55659].GUIDs[SourceGUID].petenergy = PetTrackerData[55659].GUIDs[SourceGUID].petenergy - 20	
+				PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy - 20	
 				--data.petenergy = data.petenergy - 20
 				-- Update PetTrackerData.count for all petID 55659
-				ImpCount = ImpCount + 1				
+				--ImpCount = ImpCount + 1				 
 			else
 			    -- else if no cast left for current Imp GUID reset every values
 			    if casts == 0 then
@@ -512,7 +516,7 @@ local function GetWildImpInfos(petID)
 			end 
 			
 			-- For every Imp we got in table, get casts lefts.
-			if PetTrackerData[55659].count > 0 then
+			if PetTrackerData[petID].count > 0 then
 	   	  	    for _, data2 in pairs(PetTrackerData[petID].GUIDs) do 
 				    -- Calculate Total Wild Imp cast lefts 
 				    TotalCastsRemains = TotalCastsRemains + data2.impcasts
@@ -796,7 +800,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demonbolt
-            if A.Demonbolt:IsReady(unit) then
+            if A.Demonbolt:IsReady(unit) and A.LastPlayerCastName ~= A.Demonbolt:Info() then
                 return A.Demonbolt:Show(icon)
             end
         end
@@ -810,12 +814,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-            if A.SoulStrike:IsReady(unit) and Player:SoulShardsP() < 5 then
+            if A.SoulStrike:IsReady(unit) and (Player:SoulShardsP() <= 4 or (FutureShard <= 4 and PredictShards)) then
                 return A.SoulStrike:Show(icon)
             end
 			
             -- shadow_bolt
-            if A.ShadowBolt:IsReady(unit) then
+            if A.ShadowBolt:IsReady(unit) and (Player:SoulShardsP() <= 4 or (FutureShard <= 4 and PredictShards)) then
                 return A.ShadowBolt:Show(icon)
             end
         end
@@ -823,6 +827,16 @@ A[3] = function(icon, isMulti)
         --Implosion
         local function Implosion(unit)
 		
+	        -- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
+            if A.GrimoireFelguard:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() < 13) then
+                return A.GrimoireFelguardTexture:Show(icon)
+            end
+			
+            -- bilescourge_bombers
+            if A.BilescourgeBombers:IsReady("player") then
+                return A.BilescourgeBombers:Show(icon)
+            end		
+			
             -- implosion,if=(buff.wild_imps.stack>=6&(soul_shard<3|prev_gcd.1.call_dreadstalkers|buff.wild_imps.stack>=9|prev_gcd.1.bilescourge_bombers|(!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan))&!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&buff.demonic_power.down)|(time_to_die<3&buff.wild_imps.stack>0)|(prev_gcd.2.call_dreadstalkers&buff.wild_imps.stack>2&!talent.demonic_calling.enabled)
             if A.Implosion:IsReady(unit) and
 			    -- Range by pet
@@ -847,11 +861,6 @@ A[3] = function(icon, isMulti)
                 return A.Implosion:Show(icon)
             end
 			
-            -- grimoire_felguard,if=cooldown.summon_demonic_tyrant.remains<13|!equipped.132369
-            if A.GrimoireFelguard:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() < 13) then
-                return A.GrimoireFelguardTexture:Show(icon)
-            end
-			
             -- call_dreadstalkers,if=(cooldown.summon_demonic_tyrant.remains<9&buff.demonic_calling.remains)|(cooldown.summon_demonic_tyrant.remains<11&!buff.demonic_calling.remains)|cooldown.summon_demonic_tyrant.remains>14
             if A.CallDreadstalkers:IsReady(unit) and 
 			    (
@@ -860,6 +869,8 @@ A[3] = function(icon, isMulti)
 					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
 					or
 					A.SummonDemonicTyrant:GetCooldown() > 14
+					or
+					not A.BurstIsON(unit)
 				)
 			then
                 return A.CallDreadstalkers:Show(icon)
@@ -907,7 +918,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bilescourge_bombers,if=cooldown.summon_demonic_tyrant.remains>9
-            if A.BilescourgeBombers:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() > 9) then
+            if A.BilescourgeBombers:IsReady("player") and (A.SummonDemonicTyrant:GetCooldown() > 9 or not A.BurstIsON(unit)) then
                 return A.BilescourgeBombers:Show(icon)
             end
 
@@ -988,7 +999,7 @@ A[3] = function(icon, isMulti)
         local function NetherPortalActive(unit)
 		
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady(unit) then
+            if A.BilescourgeBombers:IsReady("player") then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
@@ -1041,12 +1052,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<5&soul_shard=0
-            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
+            if A.SummonDemonicTyrant:IsReady("player") and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<action.summon_demonic_tyrant.cast_time+0.5
-            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
+            if A.SummonDemonicTyrant:IsReady("player") and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
@@ -1132,12 +1143,12 @@ A[3] = function(icon, isMulti)
         local function Opener(unit)
 		
             -- hand_of_guldan,line_cd=30,if=azerite.explosive_potential.enabled
-            if A.HandofGuldan:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0) and not A.LastPlayerCastName == A.HandofGuldan:Info() then
+            if A.HandofGuldan:IsReady(unit) and A.LastPlayerCastName ~= A.HandofGuldan:Info() and Unit("player"):CombatTime() < 2 and Player:SoulShardsP() >= 3 and A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0 then
                 return A.HandofGuldan:Show(icon)
             end
 			
             -- implosion,if=azerite.explosive_potential.enabled&buff.wild_imps.stack>2&buff.explosive_potential.down
-            if A.Implosion:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0 and WildImpsCount > 2 and Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true)) then
+            if A.Implosion:IsReady(unit) and Unit("player"):CombatTime() < 6 and (A.ExplosivePotential:GetAzeriteRank() > 0 and (WildImpsCount > 2 or A.HandofGuldan:GetSpellTimeSinceLastCast() > 1.5) and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0) then
                 return A.Implosion:Show(icon)
             end
 			
@@ -1152,51 +1163,51 @@ A[3] = function(icon, isMulti)
             end
 			
             -- hand_of_guldan,if=prev_gcd.1.hand_of_guldan&soul_shard>0&prev_gcd.2.soul_strike
-            if A.HandofGuldan:IsReady(unit) and (A.LastPlayerCastName == A.HandofGuldan:Info() and (Player:SoulShardsP() > 0 or (FutureShard > 0 and PredictShards))) then
-                return A.HandofGuldan:Show(icon)
+            if A.HandofGuldan:IsReady(unit) and Unit("player"):CombatTime() > 5 and (A.LastPlayerCastName == A.HandofGuldan:Info() and (A.SoulStrike:GetSpellTimeSinceLastCast() > 1 and A.SoulStrike:GetCooldown() >= 7 or not A.SoulStrike:IsSpellLearned())) then
+                return A.HandofGuldan:Show(icon)	
             end
 			
             -- demonic_strength,if=prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&(buff.wild_imps.stack>1&action.hand_of_guldan.in_flight)
-            if A.DemonicStrength:IsReady(unit) and (A.LastPlayerCastName == A.HandofGuldan:Info() and (WildImpsCount > 1 and A.HandofGuldan:IsSpellInFlight())) then
+            if A.DemonicStrength:IsReady(unit) and (A.LastPlayerCastName == A.HandofGuldan:Info() and (WildImpsCount > 1 and A.HandofGuldan:IsSpellInFlight())) and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) > 0 then
                 return A.DemonicStrength:Show(icon)
             end
 			
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady(unit) then
+            if A.BilescourgeBombers:IsReady("player") then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
             -- soul_strike,line_cd=30,if=!buff.bloodlust.remains|time>5&prev_gcd.1.hand_of_guldan
-            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism() or Unit("player"):CombatTime() > 5 and A.LastPlayerCastName == A.HandofGuldan:Info()) then
+            if A.SoulStrike:IsReady(unit) and Player:SoulShardsP() < 5 and (not Unit("player"):HasHeroism() or Unit("player"):CombatTime() > 3 and A.LastPlayerCastName == A.HandofGuldan:Info()) then
                 return A.SoulStrike:Show(icon)
             end
 			
             -- summon_vilefiend,if=soul_shard=5
-            if A.SummonVilefiend:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) then
+            if A.SummonVilefiend:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
                 return A.SummonVilefiend:Show(icon)
             end
 			
             -- grimoire_felguard,if=soul_shard=5
-            if A.GrimoireFelguard:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) then
+            if A.GrimoireFelguard:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
                 return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- call_dreadstalkers,if=soul_shard=5
-            if A.CallDreadstalkers:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) then
+            if A.CallDreadstalkers:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
                 return A.CallDreadstalkers:Show(icon)
             end
 			
             -- hand_of_guldan,if=soul_shard=5
-            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) then
+            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
                 return A.HandofGuldan:Show(icon)
             end
 			
             -- hand_of_guldan,if=soul_shard>=3&prev_gcd.2.hand_of_guldan&time>5&(prev_gcd.1.soul_strike|!talent.soul_strike.enabled&prev_gcd.1.shadow_bolt)
-            if A.HandofGuldan:IsReady(unit) and 
+            if A.HandofGuldan:IsReady(unit) and Unit("player"):CombatTime() > 3 and 
 			    (
 				    (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))
 					and 
-					A.LastPlayerCastName == A.HandofGuldan:Info() 
+					A.HandofGuldan:GetSpellTimeSinceLastCast() < 3 and A.HandofGuldan:GetSpellTimeSinceLastCast() > 0
 					and 
 					Unit("player"):CombatTime() > 5 
 					and 
@@ -1207,13 +1218,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
-            if A.SummonDemonicTyrant:IsReady(unit) and 
+            if A.SummonDemonicTyrant:IsReady("player") and 
 			(
-			    A.LastPlayerCastName == A.DemonicStrength:Info() 
+			    A.LastPlayerCastName == A.DemonicStrength:Info() and (Player:SoulShardsP() <= 1 or (FutureShard <= 1 and PredictShards)) 
 				or 
-				A.LastPlayerCastName == A.HandofGuldan:Info() and WildImpsCount > 5 
+				A.LastPlayerCastName == A.HandofGuldan:Info() and WildImpsCount >= 3 
 				or 
-				not A.DemonicStrength:IsSpellLearned() and WildImpsCount + ImpsSpawnedDuring(2000) / Player:SpellHaste() >= 6
+				not A.DemonicStrength:IsSpellLearned() and WildImpsCount / Player:SpellHaste() >= 6
 			) 
 			then
                 return A.SummonDemonicTyrant:Show(icon)
@@ -1402,7 +1413,7 @@ A[3] = function(icon, isMulti)
 					and 
 					Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true) 
 					and 
-					WildImpsCount + ImpsSpawnedDuring(2000) < 3 
+					WildImpsCount < 3 
 					and 
 					not A.LastPlayerCastName == A.HandofGuldan:Info()
 				) 
@@ -1418,7 +1429,7 @@ A[3] = function(icon, isMulti)
             -- implosion,if=azerite.explosive_potential.rank&buff.wild_imps.stack>2&buff.explosive_potential.remains<action.shadow_bolt.execute_time&(!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>12)
             if A.Implosion:IsReady(unit) and 
 			    (
-				    A.ExplosivePotential:GetAzeriteRank() > 0 and WildImpsCount > 2 and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) < A.ShadowBolt:GetSpellCastTime() 
+				    A.ExplosivePotential:GetAzeriteRank() > 0 and WildImpsCount > 2 and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) < A.GetGCD() + 0.5
 					and 
 					(not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() > 12)
 				) 
@@ -1432,7 +1443,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled
-            if A.BilescourgeBombers:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):CombatTime() < 10 and MultiUnits:GetActiveEnemies() < 2 and Unit("player"):HasBuffs(A.DreadstalkersBuff.ID, true) > 0 and A.NetherPortal:IsSpellLearned()) then
+            if A.BilescourgeBombers:IsReady("player") and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):CombatTime() < 10 and MultiUnits:GetActiveEnemies() < 2 and Unit("player"):HasBuffs(A.DreadstalkersBuff.ID, true) > 0 and A.NetherPortal:IsSpellLearned()) then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
@@ -1485,7 +1496,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady(unit) then
+            if A.BilescourgeBombers:IsReady("player") then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
@@ -1499,11 +1510,11 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-            if A.SummonDemonicTyrant:IsReady(unit) and 
+            if A.SummonDemonicTyrant:IsReady("player") and 
 			    (
 				    (Player:SoulShardsP() < 3 or (FutureShard < 3 and PredictShards)) 
 					and 
-					(not A.DemonicConsumption:IsSpellLearned() or WildImpsCount + ImpsSpawnedDuring(2000) / Player:SpellHaste() >= 6) 
+					(not A.DemonicConsumption:IsSpellLearned() or WildImpsCount / Player:SpellHaste() >= 6) 
 					or
                     MegaTyrant					
 					or
