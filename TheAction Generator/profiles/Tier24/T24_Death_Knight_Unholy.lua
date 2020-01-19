@@ -58,17 +58,19 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     MagusoftheDead                         = Action.Create({ Type = "Spell", ID = 288417 }),
     SoulReaper                             = Action.Create({ Type = "Spell", ID = 130736 }),
     UnholyBlight                           = Action.Create({ Type = "Spell", ID = 115989 }),
+    ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
+    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Pestilence                             = Action.Create({ Type = "Spell", ID = 277234 }),
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
-    ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
     FestermightBuff                        = Action.Create({ Type = "Spell", ID =  }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     Outbreak                               = Action.Create({ Type = "Spell", ID = 77575 }),
     VirulentPlagueDebuff                   = Action.Create({ Type = "Spell", ID = 191587 })
     -- Trinkets
@@ -205,7 +207,7 @@ local function EvaluateCycleSoulReaper167(unit)
     return Unit(unit):TimeToDie() < 8 and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleOutbreak433(unit)
+local function EvaluateCycleOutbreak465(unit)
     return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD()
 end
 
@@ -396,13 +398,21 @@ A[3] = function(icon, isMulti)
             if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(death_and_decay.ticking)) then
                 return A.PurifyingBlast:Show(icon)
             end
-            -- worldvein_resonance,if=!death_and_decay.ticking
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(death_and_decay.ticking)) then
+            -- worldvein_resonance,if=talent.army_of_the_damned.enabled&essence.vision_of_perfection.minor&buff.unholy_strength.up|essence.vision_of_perfection.minor&pet.apoc_ghoul.active|talent.army_of_the_damned.enabled&pet.apoc_ghoul.active&cooldown.army_of_the_dead.remains>60|talent.army_of_the_damned.enabled&pet.army_ghoul.active
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.ArmyoftheDamned:IsSpellLearned() and bool(Azerite:EssenceHasMinor(A.VisionofPerfection.ID)) and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or bool(Azerite:EssenceHasMinor(A.VisionofPerfection.ID)) and bool(Pet:IsActive(A.ApocGhoul.ID)) or A.ArmyoftheDamned:IsSpellLearned() and bool(Pet:IsActive(A.ApocGhoul.ID)) and A.ArmyoftheDead:GetCooldown() > 60 or A.ArmyoftheDamned:IsSpellLearned() and bool(pet.army_ghoul.active)) then
+                return A.WorldveinResonance:Show(icon)
+            end
+            -- worldvein_resonance,if=!death_and_decay.ticking&buff.unholy_strength.up&!essence.vision_of_perfection.minor&!talent.army_of_the_damned.enabled|target.time_to_die<cooldown.apocalypse.remains
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(death_and_decay.ticking) and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and not bool(Azerite:EssenceHasMinor(A.VisionofPerfection.ID)) and not A.ArmyoftheDamned:IsSpellLearned() or Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown()) then
                 return A.WorldveinResonance:Show(icon)
             end
             -- ripple_in_space,if=!death_and_decay.ticking
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not bool(death_and_decay.ticking)) then
                 return A.RippleInSpace:Show(icon)
+            end
+            -- reaping_flames
+            if A.ReapingFlames:IsReady(unit) then
+                return A.ReapingFlames:Show(icon)
             end
         end
         
@@ -487,6 +497,10 @@ A[3] = function(icon, isMulti)
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((bool(Pet:IsActive(A.Gargoyle.ID)) and A.SummonGargoyle:IsSpellLearned()) or bool(Pet:IsActive(A.ApocGhoul.ID))) then
                 return A.Fireblood:Show(icon)
             end
+            -- bag_of_tricks,if=buff.unholy_strength.up|buff.festermight.remains<gcd
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) < A.GetGCD()) then
+                return A.BagofTricks:Show(icon)
+            end
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
             -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
             if A.AzsharasFontofPower:IsReady(unit) and ((bool(A.VisionofPerfection:IsSpellLearned()) and not A.UnholyFrenzy:IsSpellLearned()) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(A.VisionofPerfection:IsSpellLearned()))) then
@@ -546,7 +560,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak433) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak465) then
                     return A.Outbreak:Show(icon) 
                 end
             end

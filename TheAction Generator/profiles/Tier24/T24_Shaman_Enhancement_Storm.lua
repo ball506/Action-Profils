@@ -68,6 +68,7 @@ Action[ACTION_CONST_SHAMAN_ENHANCEMENT] = {
     Sundering                              = Action.Create({ Type = "Spell", ID = 197214 }),
     Thundercharge                          = Action.Create({ Type = "Spell", ID =  }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     ForcefulWinds                          = Action.Create({ Type = "Spell", ID = 262647 }),
     Flametongue                            = Action.Create({ Type = "Spell", ID = 193796 }),
     SearingAssault                         = Action.Create({ Type = "Spell", ID = 192087 }),
@@ -255,16 +256,16 @@ local function EvaluateCycleStormstrike127(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and bool(VarFurycheckSs)
 end
 
-local function EvaluateTargetIfFilterLavaLash283(unit)
+local function EvaluateTargetIfFilterLavaLash285(unit)
   return Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfLavaLash298(unit)
+local function EvaluateTargetIfLavaLash300(unit)
   return A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and bool(VarFurycheckLl) and bool(VarClpoolLl)
 end
 
 
-local function EvaluateCycleStormstrike309(unit)
+local function EvaluateCycleStormstrike311(unit)
   return MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and bool(VarFurycheckSs)
 end
 
@@ -444,6 +445,10 @@ A[3] = function(icon, isMulti)
             if A.ReapingFlames:IsReady(unit) then
                 return A.ReapingFlames:Show(icon)
             end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
+            end
             -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
             if A.CrashLightning:IsReady(unit) and (A.ForcefulWinds:IsSpellLearned() and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and bool(VarFurycheckCl)) then
                 return A.CrashLightning:Show(icon)
@@ -494,7 +499,7 @@ A[3] = function(icon, isMulti)
         local function FreezerburnCore(unit)
             -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
             if A.LavaLash:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.LavaLash, 40, "max", EvaluateTargetIfFilterLavaLash283, EvaluateTargetIfLavaLash298) then 
+                if Action.Utils.CastTargetIf(A.LavaLash, 40, "max", EvaluateTargetIfFilterLavaLash285, EvaluateTargetIfLavaLash300) then 
                     return A.LavaLash:Show(icon) 
                 end
             end
@@ -504,7 +509,7 @@ A[3] = function(icon, isMulti)
             end
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike309) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike311) then
                     return A.Stormstrike:Show(icon) 
                 end
             end

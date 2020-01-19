@@ -62,6 +62,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
   BlessingofProtection                 = Action.Create({ Type = "Spell", ID = 1022     }), 
   WordofGlory                          = Action.Create({ Type = "Spell", ID = 210191     }),
   BlessingofFreedom                    = Action.Create({ Type = "Spell", ID = 1044     }),
+  HammerofJustice
   -- PvP
   HammerofReckoning                    = Action.Create({ Type = "Spell", ID = 247675     }),
   BlessingofSanctuary                  = Action.Create({ Type = "Spell", ID = 210256     }),

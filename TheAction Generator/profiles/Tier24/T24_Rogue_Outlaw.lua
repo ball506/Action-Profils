@@ -77,7 +77,8 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     QuickDraw                              = Action.Create({ Type = "Spell", ID = 196938 }),
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 })
+    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -750,6 +751,10 @@ A[3] = function(icon, isMulti)
             -- lights_judgment
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
+            end
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
             end
         end
     end

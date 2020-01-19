@@ -457,8 +457,8 @@ A[3] = function(icon, isMulti)
             if A.AshvanesRazorCoral:IsReady(unit) and (bool(VarCoralDoubleTodOnUse) and A.TouchofDeath:GetCooldown() >= 23 and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) > 13 or Unit(unit):TimeToDie() - A.TouchofDeath:GetCooldown() < 40 and A.TouchofDeath:GetCooldown() < 23 or Unit(unit):TimeToDie() < 25)) then
                 A.AshvanesRazorCoral:Show(icon)
             end
-            -- use_item,name=ashvanes_razor_coral,if=!variable.coral_double_tod_on_use&(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&(debuff.razor_coral_debuff.down|dot.touch_of_death.remains|(cooldown.touch_of_death.remains+9>target.time_to_die&buff.storm_earth_and_fire.up)|target.time_to_die<21)
-            if A.AshvanesRazorCoral:IsReady(unit) and (not bool(VarCoralDoubleTodOnUse) and (not A.DribblingInkpod:IsExists() or Unit(unit):TimeToDieX(30) < 8) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or (A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) or Unit(unit):TimeToDie() < 21)) then
+            -- use_item,name=ashvanes_razor_coral,if=!variable.coral_double_tod_on_use&(debuff.razor_coral_debuff.down|(!equipped.dribbling_inkpod|target.time_to_pct_30.remains<8)&(dot.touch_of_death.remains|cooldown.touch_of_death.remains+9>target.time_to_die&buff.storm_earth_and_fire.up|target.time_to_die<25))
+            if A.AshvanesRazorCoral:IsReady(unit) and (not bool(VarCoralDoubleTodOnUse) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (not A.DribblingInkpod:IsExists() or Unit(unit):TimeToDieX(30) < 8) and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() and Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) or Unit(unit):TimeToDie() < 25))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- the_unbound_force

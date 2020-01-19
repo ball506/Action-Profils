@@ -54,13 +54,13 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     RuleofThreesBuff                       = Action.Create({ Type = "Spell", ID = 264774 }),
     Overpowered                            = Action.Create({ Type = "Spell", ID = 155147 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
     ArcanePower                            = Action.Create({ Type = "Spell", ID = 12042 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     PresenceofMind                         = Action.Create({ Type = "Spell", ID = 205025 }),
     PresenceofMindBuff                     = Action.Create({ Type = "Spell", ID = 205025 }),
     BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
@@ -352,6 +352,10 @@ A[3] = function(icon, isMulti)
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
+            -- bag_of_tricks,if=buff.arcane_power.down
+            if A.BagofTricks:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+                return A.BagofTricks:Show(icon)
+            end
             -- rune_of_power,if=!buff.arcane_power.up&(mana.pct>=50|cooldown.arcane_power.remains=0)&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
             if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Player:ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
                 return A.RuneofPower:Show(icon)
@@ -376,10 +380,6 @@ A[3] = function(icon, isMulti)
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
-            end
-            -- bag_of_tricks
-            if A.BagofTricks:IsReady(unit) then
-                return A.BagofTricks:Show(icon)
             end
             -- presence_of_mind,if=(talent.rune_of_power.enabled&buff.rune_of_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time)|buff.arcane_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time
             if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
