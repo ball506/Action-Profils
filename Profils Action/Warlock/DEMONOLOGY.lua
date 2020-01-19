@@ -23,6 +23,7 @@ local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitG
 local Listener = Action.Listener
 local GetToggle = Action.GetToggle
 local SetToggle = Action.SetToggle
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999

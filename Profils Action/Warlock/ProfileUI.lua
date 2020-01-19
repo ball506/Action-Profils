@@ -335,7 +335,7 @@ A.Data.ProfileUI = {
                 {
                     E = "LayoutSpace",                                                                         
                 },
-            },			
+            },		
             { -- [7] 
                 {
                     E = "Header",
@@ -535,7 +535,52 @@ A.Data.ProfileUI = {
 						Print = '@string' or nil,
 					},
                 },                 
-            },  
+            }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- AoE Settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "AutoHavoc",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto Havoc",
+                        ruRU = "Auto Havoc",
+                        frFR = "Auto Havoc",
+                    }, 
+                    TT = { 
+                        enUS = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
+                        ruRU = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
+                        frFR = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 8,                            
+                    DB = "RainofFireUnits",
+                    DBV = 4, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(5740) .. " units",
+                    }, 
+                    M = {},
+                },
+
+			},			
             { -- [4] 4th Row
 
                 {
@@ -680,7 +725,44 @@ A.Data.ProfileUI = {
                     }, 					
                     M = {},
                 },				
-            },	
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию", 
+                    }, 
+                    M = {},
+                },            
+            }, 
             { -- [4] 4th Row
 
                 {
