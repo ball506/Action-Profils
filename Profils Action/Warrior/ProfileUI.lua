@@ -188,6 +188,7 @@ A.Data.ProfileUI                                     = {
                     }, 
                     TT = { 
                         enUS = "Enable/Disable relative party passive rotation", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
                 },            

@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.8 (19.01.2020)",
+    DateTime = "v2.0.9 (20.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -150,6 +150,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
                         ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
                 },            
@@ -193,11 +194,14 @@ A.Data.ProfileUI = {
 					DBV 	= 25,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY = "Multidots Range",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
 					TT		= { 
                         enUS = "Choose the range where you want to automatically multidots units.", 
-                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
                     }, 
 					M 		= {},
                 },
@@ -213,11 +217,14 @@ A.Data.ProfileUI = {
                     DB = "AutoDotSelection",
                     DBV = "In Raid", 
                     L = { 
-                        ANY = "Multidots where",
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
                         ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
                     }, 
                     M = {},
                 },				
@@ -410,7 +417,8 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },  
                     M = {},
                 },
                 {
@@ -453,8 +461,9 @@ A.Data.ProfileUI = {
                         ANY = "PvP " .. A.GetSpellInfo(212295),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
-                        ruRU = "@ arena1-3, @target, @mouseover, @targettarget \nDANGEROUS CAST - Только если цель или юнит арены разыгрывает заклинание, которое считается опасным. (CC или Большой урон). \nON COOLDOWN - означает, что будет использоваться всегда во всех приведениях. \ NOFF - Вырезать из вращения, но все еще разрешать работу через системы Очереди и MSG \ nЕсли вы хотите полностью выключить его, то вы должны включить SetBlocker в ' Вкладка Действия", 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -759,6 +768,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "Enable/Disable relative party passive rotation", 
                         ruRU = "Включить/Выключить относительно группы пассивную ротацию", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
                 },            
@@ -902,6 +912,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -1146,12 +1157,15 @@ A.Data.ProfileUI = {
 					DBV 	= 25,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY = "Multidots Range",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
 					TT		= { 
                         enUS = "Choose the range where you want to automatically multidots units.", 
-                        ruRU = "Choose the range where you want to automatically multidots units.", 
-                    }, 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
+                    },
 					M 		= {},
                 },
                 {
@@ -1166,12 +1180,15 @@ A.Data.ProfileUI = {
                     DB = "AutoDotSelection",
                     DBV = "In Raid", 
                     L = { 
-                        ANY = "Multidots where",
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
                         ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
-                    }, 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
+                    },  
                     M = {},
                 },				
 			},
@@ -1312,6 +1329,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },

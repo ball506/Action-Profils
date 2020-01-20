@@ -87,13 +87,13 @@ A.Data.ProfileUI = {
                     DBV = true,
                     L = { 
                         enUS = "Stealth Reminder (OOC)", 
-                        ruRU = "Stealth Reminder (OOC)", 
-                        frFR = "Stealth Reminder (OOC)",
+                        ruRU = "Стелс-напоминание (OOC)", 
+                        frFR = "Rappel du camouflage (OOC)",
                     }, 
                     TT = { 
                         enUS = "Show Stealth Reminder when out of combat.", 
-                        ruRU = "Show Stealth Reminder when out of combat.", 
-                        frFR = "Show Stealth Reminder when out of combat.",
+                        ruRU = "Показать скрытное напоминание, когда вне боя.", 
+                        frFR = "Afficher un rappel pour activer le camouflage hors combat.",
                     }, 
                     M = {},
                 }, 
@@ -103,13 +103,13 @@ A.Data.ProfileUI = {
                     DBV = false,
                     L = { 
                         enUS = "Use Vanish for DPS", 
-                        ruRU = "Use Vanish for DPS", 
-                        frFR = "Use Vanish for DPS",
+                        ruRU = "Используйте Vanish для DPS", 
+                        frFR = "Utiliser Vanish pour DPS",
                     }, 
                     TT = { 
-                        enUS = "Suggest Vanish -> Ambush for DPS.Disable to save Vanish for utility purposes.", 
-                        ruRU = "Suggest Vanish -> Ambush for DPS.Disable to save Vanish for utility purposes.", 
-                        frFR = "Suggest Vanish -> Ambush for DPS.Disable to save Vanish for utility purposes.",
+                        enUS = "Suggest Vanish -> Ambush for DPS. Disable to save Vanish for utility purposes.", 
+                        ruRU = "Предложить Vanish -> Засада для ДПС. Отключить сохранение Vanish для служебных целей.", 
+                        frFR = "Suggérer Disparition -> Embuscade pour DPS. Désactiver pour garder Disparition à des fins utilitaires / survie.",
                     }, 
                     M = {},
                 }, 
@@ -119,8 +119,8 @@ A.Data.ProfileUI = {
                     DBV = false,
                     L = { 
                         enUS = "Enable Solo Mode", 
-                        ruRU = "Enable Solo Mode",  
-                        frFR = "Enable Solo Mode", 
+                        ruRU = "Включить Solo Mode",  
+                        frFR = "Activez le mode solo", 
                     }, 
                     TT = { 
                         enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
@@ -235,7 +235,9 @@ A.Data.ProfileUI = {
                     DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(2983) .. " if moving for",
+                        enUS = A.GetSpellInfo(2983) .. " if moving for",
+                        ruRU = A.GetSpellInfo(2983) .. " если переехать",
+                        frFR = A.GetSpellInfo(2983) .. " si vous bougez pendant",
                     }, 
                     TT = { 
                         enUS = "If " .. A.GetSpellInfo(2983) .. " is talented and ready, will use it if moving for set value.", 
@@ -488,7 +490,9 @@ A.Data.ProfileUI = {
                         ANY = "PvP " .. A.GetSpellInfo(2094),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Blind\nMore custom config you can find in group by open /tmw", 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -509,6 +513,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -587,24 +592,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             },  
             { -- [2] 2nd Row
                {
@@ -622,6 +610,22 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "Use remaining Shadow Dance charges when the target is about to die.", 
                         ruRU = "Use remaining Shadow Dance charges when the target is about to die.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "StealthOOC",
+                    DBV = true,
+                    L = { 
+                        enUS = "Stealth Reminder (OOC)", 
+                        ruRU = "Стелс-напоминание (OOC)", 
+                        frFR = "Rappel du camouflage (OOC)",
+                    }, 
+                    TT = { 
+                        enUS = "Show Stealth Reminder when out of combat.", 
+                        ruRU = "Показать скрытное напоминание, когда вне боя.", 
+                        frFR = "Afficher un rappel pour activer le camouflage hors combat.",
                     }, 
                     M = {},
                 },
@@ -654,11 +658,14 @@ A.Data.ProfileUI = {
                     DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Eviscerate DMG Offset",
+                        enUS = "Eviscerate DMG Offset.", 
+                        ruRU = "Потрошение DMG Offset.", 
+                        frFR = "Evisceration DMG Offset.", 
                     },
                     TT = { 
                         enUS = "Set the Eviscerate DMG Offset.", 
-                        ruRU = "Set the Eviscerate DMG Offset.", 
+                        ruRU = "Установите Потрошение DMG Offset.", 
+                        frFR = "Définissez le DMG Offset pour Evisceration.", 
                     }, 					
                     M = {},
                 },
@@ -675,7 +682,8 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "Set the Shadow Dance Eco Charge threshold.", 
-                        ruRU = "Set the Shadow Dance Eco Charge threshold.", 
+                        ruRU = "Установите порог экологического заряда танца теней.", 
+                        frFR = "Définir le seuil de charge économique Shadow Dance",
                     }, 
                     M = {},
                 },			
@@ -683,34 +691,18 @@ A.Data.ProfileUI = {
 			{
                 {
                     E = "Checkbox", 
-                    DB = "STMfDAsDPSCD",
-                    DBV = false,
-                    L = { 
-                        enUS = "ST Marked for Death as DPS CD", 
-                        ruRU = "ST Marked for Death as DPS CD", 
-                        frFR = "ST Marked for Death as DPS CD",
-                    }, 
-                    TT = { 
-                        enUS = "Enable if you want to put Single Target Marked for Death shown as Off GCD (top icons) instead of Suggested.", 
-                        ruRU = "Enable if you want to put Single Target Marked for Death shown as Off GCD (top icons) instead of Suggested.", 
-                        frFR = "Enable if you want to put Single Target Marked for Death shown as Off GCD (top icons) instead of Suggested.",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
                     DB = "Vanish",
                     DBV = true,
                     L = { 
-                        enUS = "Stealth Combo - Vanish", 
-                        ruRU = "Stealth Combo - Vanish", 
-                        frFR = "Stealth Combo - Vanish",
+                        enUS = "Use Vanish for DPS", 
+                        ruRU = "Используйте Vanish для DPS", 
+                        frFR = "Utiliser Vanish pour DPS",
                     }, 
                     TT = { 
-                        enUS = "Allow suggesting Vanish stealth ability combos (recommended)", 
-                        ruRU = "Allow suggesting Vanish stealth ability combos (recommended)", 
-                        frFR = "Allow suggesting Vanish stealth ability combos (recommended)",
-                    }, 
+                        enUS = "Suggest Vanish -> Ambush for DPS. Disable to save Vanish for utility purposes.", 
+                        ruRU = "Предложить Vanish -> Засада для ДПС. Отключить сохранение Vanish для служебных целей.", 
+                        frFR = "Suggérer Disparition -> Embuscade pour DPS. Désactiver pour garder Disparition à des fins utilitaires / survie.",
+                    },  
                     M = {},
                 },
                 {
@@ -760,23 +752,7 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-            { -- [3] 3rd Row 
-                {
-                    E = "Checkbox", 
-                    DB = "StealthOOC",
-                    DBV = true,
-                    L = { 
-                        enUS = "Stealth Reminder (OOC)", 
-                        ruRU = "Stealth Reminder (OOC)", 
-                        frFR = "Stealth Reminder (OOC)",
-                    }, 
-                    TT = { 
-                        enUS = "Show Stealth Reminder when out of combat.", 
-                        ruRU = "Show Stealth Reminder when out of combat.", 
-                        frFR = "Show Stealth Reminder when out of combat.",
-                    }, 
-                    M = {},
-                }, 
+            { -- [3] 3rd Row  
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -846,6 +822,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -969,8 +946,10 @@ A.Data.ProfileUI = {
                     DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(2983) .. " if moving for",
-                    }, 
+                        enUS = A.GetSpellInfo(2983) .. " if moving for",
+                        ruRU = A.GetSpellInfo(2983) .. " если переехать",
+                        frFR = A.GetSpellInfo(2983) .. " si vous bougez pendant",
+                    },
                     TT = { 
                         enUS = "If " .. A.GetSpellInfo(2983) .. " is talented and ready, will use it if moving for set value.", 
                         ruRU = "Если " .. A.GetSpellInfo(2983) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
@@ -1040,13 +1019,13 @@ A.Data.ProfileUI = {
                     DBV = true,
                     L = { 
                         enUS = "Stealth Reminder (OOC)", 
-                        ruRU = "Stealth Reminder (OOC)", 
-                        frFR = "Stealth Reminder (OOC)",
+                        ruRU = "Стелс-напоминание (OOC)", 
+                        frFR = "Rappel du camouflage (OOC)",
                     }, 
                     TT = { 
                         enUS = "Show Stealth Reminder when out of combat.", 
-                        ruRU = "Show Stealth Reminder when out of combat.", 
-                        frFR = "Show Stealth Reminder when out of combat.",
+                        ruRU = "Показать скрытное напоминание, когда вне боя.", 
+                        frFR = "Afficher un rappel pour activer le camouflage hors combat.",
                     }, 
                     M = {},
                 }, 				
@@ -1206,12 +1185,15 @@ A.Data.ProfileUI = {
 					DBV 	= 5,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY = "Multidots Range",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
 					TT		= { 
                         enUS = "Choose the range where you want to automatically multidots units.", 
-                        ruRU = "Choose the range where you want to automatically multidots units.", 
-                    }, 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
+                    },
 					M 		= {},
                 },
                 {
@@ -1226,11 +1208,14 @@ A.Data.ProfileUI = {
                     DB = "AutoDotSelection",
                     DBV = "In Raid", 
                     L = { 
-                        ANY = "Multidots where",
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
                         ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
                     }, 
                     M = {},
                 },				
@@ -1476,6 +1461,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },

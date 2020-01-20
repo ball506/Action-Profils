@@ -172,7 +172,7 @@ A.Data.ProfileUI = {
                 {
                     E 		= "Header",
 					L		= { 
-                        ANY = " -- Deffensives -- ",
+                        ANY = " -- Defensives -- ",
                     },
                 },
             },
@@ -265,17 +265,21 @@ A.Data.ProfileUI = {
                 },
             },
 			{
-				{
-					E 		= "Checkbox", 
-					DB 		= "MultiDot",
-					DBV 	= true,
-					L 		= { 
-                        ANY	= "Auto Multi DoT",
+                {
+                    E = "Checkbox", 
+                    DB = "MultiDot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Enable auto Multidots", 
+                        ruRU = "Использовать auto Multidots", 
+                        frFR = "Activer le Multidots auto", 
                     }, 
-                    TT 		= { 
-                        ANY = "Auto swap target for apply Sunfire / Moonfire.",
+                    TT = { 
+                        enUS = "Automatically multidots units.\nMake sure to stay front of the enemies nameplate you want the bot to target.\nMake sure you correctly keybinded the TargetEnemy key in both game and GG.",
+                        ruRU = "Автоматически многоточечные юниты.\nУбедитесь, что вы находитесь перед именной табличкой врагов, на которую должен нацелиться бот. \nУбедитесь, что вы правильно связали клавишу TargetEnemy в игре и в GG.",
+                        frFR = "Multidot automatique des unités.\nAssurez-vous de rester en face du nameplate de l'ennemi que le bot doit cibler. \nAssurez-vous que la touche TargetEnemy a été correctement indexée dans le jeu et dans GG.",
                     }, 
-					M 		= {},
+                    M = {},
                 },
 				{
                     E 		= "Slider", 													
@@ -285,11 +289,15 @@ A.Data.ProfileUI = {
 					DBV 	= 25,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY	= "Multi DoT Search Distance",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
-                    TT 		= { 
-                        ANY = "Max Ranged for check if enemy have DoT.",
-                    }, 
+					TT		= { 
+                        enUS = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
+                    },
 					M 		= {},
                 },
 			},
@@ -297,7 +305,7 @@ A.Data.ProfileUI = {
                 {
                     E 		= "Header",
 					L		= { 
-                        ANY = " -- Deffensives -- ",
+                        ANY = " -- Defensives -- ",
                     },
                 },
             },
@@ -421,13 +429,13 @@ A.Data.ProfileUI = {
                     DBV = true,
                     L = { 
                         enUS = "Automatic Taunt", 
-                        ruRU = "Automatic Taunt", 
-                        frFR = "Automatic Taunt",
+                        ruRU = "Автоматическая Насмешка", 
+                        frFR = "Raillerie automatique",
                     }, 
                     TT = { 
                         enUS = "If activated, will use automatically use Growl whenever available.", 
-                        ruRU = "If activated, will use automatically use Growl whenever available.",  
-                        frFR = "If activated, will use automatically use Growl whenever available.", 
+                        ruRU = "Если активирован, будет автоматически использовать Growl при любой возможности.",  
+                        frFR = "S'il est activé, utilisera automatiquement Growl dès qu'il sera disponible.", 
                     }, 
                     M = {},
                 },
@@ -441,11 +449,12 @@ A.Data.ProfileUI = {
                     L = { 
                         enUS = "Only 'Damager'\nThreat limit(agro,>= %)",
 						ruRU = "Только 'Урон'\nЛимит угрозы(агро,>= %)", 
+						frFR = "Seulement 'DPS'\nLimite de menace(аggrо,>= %)", 
 					}, 
                     TT = { 
                         enUS = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized", 
                         ruRU = "OFF - Нет лимита\nЕсли процент угрозы (агро) больше или равен указанному,\nто будет выполняться 'безопасная' ротация\nПо мере возможности перестанут использоваться способности\nвызывающие слишком много угрозы пока\nуровень угрозы (агро) не нормализуется",  
-                        frFR = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized",
+                        frFR = "OFF - Aucune limite\nSi le pourcentage de la menace (agro) est supérieur ou égal à celui spécifié, alors la rotation\n'safe' sera effectuée. Dans la mesure du possible, les \nabilités causant trop de menaces seront arrêtées jusqu'à ce que le\n niveau de menace (agro) soit normalisé",
 					},    
                     M = {},
                 },				
@@ -473,8 +482,8 @@ A.Data.ProfileUI = {
                     DBV = false,
                     L = { 
                         enUS = "Enable Solo Mode", 
-                        ruRU = "Enable Solo Mode",  
-                        frFR = "Enable Solo Mode", 
+                        ruRU = "Включить Solo Mode",  
+                        frFR = "Activez le mode solo", 
                     }, 
                     TT = { 
                         enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
@@ -656,11 +665,14 @@ A.Data.ProfileUI = {
 					DBV 	= 5,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY = "Multidots Range",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
 					TT		= { 
                         enUS = "Choose the range where you want to automatically multidots units.", 
-                        ruRU = "Choose the range where you want to automatically multidots units.", 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
                     }, 
 					M 		= {},
                 },
@@ -676,11 +688,14 @@ A.Data.ProfileUI = {
                     DB = "AutoDotSelection",
                     DBV = "In Raid", 
                     L = { 
-                        ANY = "Multidots where",
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
                         ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
                     }, 
                     M = {},
                 },				
@@ -720,7 +735,8 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },
                     M = {},
                 },
                 {
@@ -1220,7 +1236,8 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },
                     M = {},
                 },
                 {
@@ -1265,7 +1282,8 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },
                     M = {},
                 },
                 {

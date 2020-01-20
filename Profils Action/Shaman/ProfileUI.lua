@@ -122,7 +122,7 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "HexPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(51514),
@@ -130,6 +130,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -142,7 +143,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "HexPvPUnits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -298,12 +299,15 @@ A.Data.ProfileUI = {
 					DBV 	= 25,
 					ONLYOFF = true,
 					L 		= { 
-                        ANY = "Multidots Range",
+                        enUS = "Multidots Range", 
+                        ruRU = "Сфера Multidots", 
+                        frFR = "Portée du Multidots", 
                     }, 
 					TT		= { 
                         enUS = "Choose the range where you want to automatically multidots units.", 
-                        ruRU = "Choose the range where you want to automatically multidots units.", 
-                    }, 
+                        ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
+                    },
 					M 		= {},
                 },
                 {
@@ -318,11 +322,14 @@ A.Data.ProfileUI = {
                     DB = "AutoDotSelection",
                     DBV = "In Raid", 
                     L = { 
-                        ANY = "Multidots where",
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
                     }, 
                     TT = { 
                         enUS = "Choose where you want to automatically multidots units.", 
                         ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
                     }, 
                     M = {},
                 },				
@@ -627,7 +634,7 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "HexPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(51514),
@@ -635,6 +642,7 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
                     }, 
                     M = {},
                 },
@@ -647,7 +655,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "HexPvPUnits",
                     DBV = {
                         [1] = true, 
                         [2] = true,
@@ -1276,7 +1284,7 @@ A.Data.ProfileUI = {
                         { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "FearPvP",
+                    DB = "HexPvP",
                     DBV = "ON MELEE BURST",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(51514),
@@ -1284,7 +1292,8 @@ A.Data.ProfileUI = {
                     TT = { 
                         enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
                         ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
-                    }, 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },  
                     M = {},
                 },
                 {
@@ -1296,7 +1305,7 @@ A.Data.ProfileUI = {
                         { text = "primary", value = 4 },
                     },
                     MULT = true,
-                    DB = "FearPvPUnits",
+                    DB = "HexPvPUnits",
                     DBV = {
                         [1] = true, 
                         [2] = true,

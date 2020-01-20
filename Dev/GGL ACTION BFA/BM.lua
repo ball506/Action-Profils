@@ -222,7 +222,7 @@ local function ShouldPurify()
 end 
 
 local IronskinDuration = 7
-local function SelfDeffensives()
+local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
         return 
     end 
@@ -599,7 +599,7 @@ A[3] = function(icon)
         return 
     end 
     
-    local Deffensive = SelfDeffensives()
+    local Deffensive = SelfDefensives()
     if Deffensive then 
         return Deffensive:Show(icon)
     end 
