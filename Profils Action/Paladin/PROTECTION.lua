@@ -464,78 +464,7 @@ local function SelfDefensives(unit)
     ) 
     then 
         return A.AbyssalHealingPotion
-    end 
-		
-    -- Emergency AntiMagicShell
-        local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellHP")
-        if     AntiMagicShell >= 0 and A.AntiMagicShell:IsReady("player") and 
-        (
-            (   -- Auto 
-                AntiMagicShell >= 100 and 
-                (
-                    -- HP lose per sec >= 10
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
-                    -- TTD Magic
-                    Unit("player"):TimeToDieMagicX(40) < 5 or 
-					
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) and 
-                Unit("player"):HasBuffs("DeffBuffs", true) == 0
-            ) or 
-            (    -- Custom
-                AntiMagicShell < 100 and 
-                Unit("player"):HealthPercent() <= AntiMagicShell
-            )
-        ) 
-        then 
-            return A.AntiMagicShell
-        end  		
-
-        -- Emergency Death Pact
-        local DeathPact = Action.GetToggle(2, "DeathPactHP")
-        if     DeathPact >= 0 and A.DeathPact:IsReady("player") and A.DeathPact:IsSpellLearned() and 
-        (
-            (   -- Auto 
-                DeathPact >= 100 and 
-                (
-                    -- HP lose per sec >= 30
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 30 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.30 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(10) < 5 or 
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) and 
-                Unit("player"):HasBuffs("DeffBuffs", true) == 0
-            ) or 
-            (    -- Custom
-                DeathPact < 100 and 
-                Unit("player"):HealthPercent() <= DeathPact
-            )
-        ) 
-        then 
-            return A.DeathPact
-        end  		
+    end 			
 
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
