@@ -1,5 +1,7 @@
-local TMW                                             = TMW 
+--------------------
+-- Taste TMW Action ProfileUI
 
+local TMW                                             = TMW
 local A                                             = Action
 local UnitCooldown                                    = A.UnitCooldown
 local Unit                                            = A.Unit 
@@ -11,12 +13,14 @@ local EnemyTeam                                        = A.EnemyTeam
 local FriendlyTeam                                    = A.FriendlyTeam
 local TeamCache                                        = A.TeamCache
 local InstanceInfo                                    = A.InstanceInfo
-
 local select                                        = select
+local HL                                            = HeroLib 
+local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4 (07.11.2019)",
+    DateTime = "v2.0.1 (20.10.2019)",
+	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
             { -- [1]                            
@@ -43,49 +47,7 @@ A.Data.ProfileUI                                     = {
                         enUS = "Enable multiunits actions", 
                     }, 
                     M = {},
-                },  
-				{
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "Simcraft Logic", value = "Simcraft Logic" },
-                        { text = "High Priority Logic", value = "High Priority Logic"},                    
-                    },
-                    DB = "RampageLogic",
-                    DBV = "Simcraft Logic",
-                    L = { 
-                        ANY = A.GetSpellInfo(184367) .. " Logic",
-                    }, 
-                    TT = { 
-                        enUS = "Simcraft Logic - Respect the Simcraft logic. \n HIGH PRIORITY LOGIC - Always use Rampage whenever available.", 
-                    }, 
-                    M = {},
-                },			
-            }, 
-			 { -- [2]
-                {
-                    E = "Checkbox", 
-                    DB = "holdAoE",
-                    DBV = false,
-                    L = { 
-                        enUS = "Hold Dragon Roar / BoTE to AoE", 
-                    }, 
-                    TT = { 
-                        enUS = "Enable to hold Dragon Roar / Blood of the Enemy to use only in multiunits.", 
-                    }, 
-                    M = {},
-                },
-				{
-                    E = "Slider",                                                     
-                    MIN = 2, 
-                    MAX = 10,                            
-                    DB = "holdAoENum",
-                    DBV = 2,
-                    ONOFF = false,
-                    L = { 
-                        ANY = "Min. Units to Hold AoE Logic.",
-                    }, 
-                    M = {},
-                },			
+                },                    
             }, 
             { -- [2]
                 {
@@ -101,7 +63,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "VictoryRush",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(34428) .. " (%)",
@@ -113,7 +75,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "ImpendingVictory",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(202168) .. " (%)",
@@ -188,7 +150,6 @@ A.Data.ProfileUI                                     = {
                     }, 
                     TT = { 
                         enUS = "Enable/Disable relative party passive rotation", 
-						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
                 },            
@@ -265,7 +226,52 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
-            },     
+            },
+            { -- [11] Spell Reflect
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "DANGEROUS CAST", value = "DANGEROUS CAST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "ReflectPvP",
+                    DBV = "DANGEROUS CAST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(216890),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "ReflectPvPunits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(216890) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },	
+            },				
         }, 
 
 		[ACTION_CONST_WARRIOR_ARMS] = {
@@ -309,7 +315,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "VictoryRush",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(34428) .. " (%)",
@@ -321,7 +327,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "ImpendingVictory",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(202168) .. " (%)",
@@ -335,7 +341,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "RallyingCry",
-                    DBV = 30, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(97462) .. " (%)",
@@ -347,7 +353,7 @@ A.Data.ProfileUI                                     = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "DiebytheSword",
-                    DBV = 50, -- Set healthpercentage @30% life. 
+                    DBV = 100, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(118038) .. " (%)",
@@ -427,18 +433,6 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
-				{
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "RallyingCryPvP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "PvP " .. A.GetSpellInfo(97462) .. " (%)",
-                    }, 
-                    M = {},
-                },
             }, 
             { -- [10]
                 {
@@ -484,21 +478,439 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
-            },     
-        }, 
+            },
+            { -- [11] Spell Reflect
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "DANGEROUS CAST", value = "DANGEROUS CAST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "ReflectPvP",
+                    DBV = "DANGEROUS CAST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(216890),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nDANGEROUS CAST - Only if target or arena unit is casting a spell considered as dangerous. (CC or Big damage).\nON COOLDOWN - means will use always on all casts.\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "ReflectPvPunits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(216890) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },			
+        },
+        [ACTION_CONST_WARRIOR_PROTECTION] = {        
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- General -- ",
+                    },
+                },
+            },			
+            { -- [1] 1st Row                           
+                {
+                    E = "Checkbox", 
+                    DB = "mouseover",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use @mouseover", 
+                        ruRU = "Использовать @mouseover", 
+                        frFR = "Utiliser les fonctions @mouseover",
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
+                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
+                        frFR = "Activera les actions via @mouseover\n Exemple: Ressusciter, Soigner",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use AoE", 
+                        ruRU = "Использовать AoE", 
+                        frFR = "Utiliser l'AoE"
+                    }, 
+                    TT = { 
+                        enUS = "Enable multiunits actions", 
+                        ruRU = "Включает действия для нескольких целей", 
+                        frFR = "Activer les actions multi-unités",
+                    }, 
+                    M = {},
+                }, 
+            }, 
+            { -- [1] 1st Row                           
+                {
+                    E = "Checkbox", 
+                    DB = "AvatarOnCD",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Avatar on cooldown", 
+                        ruRU = "Use Avatar on cooldown", 
+                        frFR = "Use Avatar on cooldown", 
+                    }, 
+                    TT = { 
+                        enUS = "Use Avatar on cooldown", 
+                        ruRU = "Use Avatar on cooldown", 
+                        frFR = "Use Avatar on cooldown", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "DSOnCD",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Demoralizing Shout on cooldown", 
+                        ruRU = "Use Demoralizing Shout on cooldown",  
+                        frFR = "Use Demoralizing Shout on cooldown", 
+                    }, 
+                    TT = { 
+                        enUS = "Use Demoralizing Shout on cooldown", 
+                        ruRU = "Use Demoralizing Shout on cooldown",  
+                        frFR = "Use Demoralizing Shout on cooldown", 
+                    }, 
+                    M = {},
+                }, 
+            }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },
+            { -- [1] 1st Row  	
+                {
+                    E = "Checkbox", 
+                    DB = "LastStandIgnoreBigDeff",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\nSkip if " .. A.GetSpellInfo(871) .. " used",
+                        ruRU = A.GetSpellInfo(12975) .. "\nSkip if " .. A.GetSpellInfo(871) .. " used",  
+                        frFR = A.GetSpellInfo(12975) .. "\nSkip if " .. A.GetSpellInfo(871) .. " used", 
+                    }, 
+                    M = {},
+                }, 		    
+                {
+                    E = "Checkbox", 
+                    DB = "ShieldWallCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(12975) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(12975) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                }, 					
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "LastStandTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(12975) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(12975) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "LastStandHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(12975) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(12975) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            { -- [1] 1st Row  			    
+                {
+                    E = "Checkbox", 
+                    DB = "ShieldWallCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(871) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(871) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(871) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                }, 					
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "ShieldWallTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(871) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(871) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(871) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "ShieldWallHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(871) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(871) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(871) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseLastStandToFillShieldBlockDownTime",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Last Stand to fill Shield Block down time", 
+                        ruRU = "Use Last Stand to fill Shield Block down time", 
+                        frFR = "Use Last Stand to fill Shield Block down time",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this if you want to fill Shield Block down time with Last Stand.", 
+                        ruRU = "Enable this if you want to fill Shield Block down time with Last Stand.", 
+                        frFR = "Enable this if you want to fill Shield Block down time with Last Stand.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UseShieldBlockDefensively",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Shield Block purely defensively", 
+                        ruRU = "Use Shield Block purely defensively", 
+                        frFR = "Use Shield Block purely defensively",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this if you only want to use Shield Block in a defensive manner.", 
+                        ruRU = "Enable this if you only want to use Shield Block in a defensive manner.", 
+                        frFR = "Enable this if you only want to use Shield Block in a defensive manner.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UseRageDefensively",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Rage defensively", 
+                        ruRU = "Use Rage defensively", 
+                        frFR = "Use Rage defensively",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to prioritize defensive use of Rage.", 
+                        ruRU = "Enable this to prioritize defensive use of Rage.", 
+                        frFR = "Enable this to prioritize defensive use of Rage.",
+                    }, 
+                    M = {},
+                }, 
+            },
+            { -- [4] 4th Row
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- PvP -- ",
+                    },
+                },
+            },
+            { -- [5] 5th Row     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "ON MELEE BURST", value = "ON MELEE BURST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "FearPvP",
+                    DBV = "ON MELEE BURST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(5782),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "FearPvPUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(5782) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },
+        },		
     },
     [7] = {
-        [ACTION_CONST_WARRIOR_ARMS] = {
+        [ACTION_CONST_WARRIOR_FURY] = {
             ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
-                return  A.StormBolt:IsReadyM(thisunit, true) and  
-						(
+                return  (
                             IsInPvP and 
                             EnemyTeam():PlayersInRange(1, 20)
                         )                                                             
             ]] },
             ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
-                return     DisarmPvPIsReady(thisunit, true)
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
+            ]] },
+            ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return     A.Pummel:IsReadyM(thisunit) and                         
+                        A.Pummel:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 and 
+            ]] },
+        },
+        [ACTION_CONST_WARRIOR_ARMS] = {
+            ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return  (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 20)
+                        )                                                             
+            ]] },
+            ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
+            ]] },
+            ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return     A.Pummel:IsReadyM(thisunit) and                         
+                        A.Pummel:AbsentImun(thisunit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and 
+                        Unit(thisunit):IsCastingRemains() > 0 and 
+            ]] },
+        },
+        [ACTION_CONST_WARRIOR_PROTECTION] = {
+            ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
+                local A = Action[ACTION_CONST_WARRIOR_ARMS]
+                return  (
+                            IsInPvP and 
+                            EnemyTeam():PlayersInRange(1, 20)
+                        )                                                             
+            ]] },
+            ["disarm"] = { Enabled = true, Key = "Disarm", LUAVER = 5, LUA = [[
+                return     DisarmIsReady(thisunit, true)
+            ]] },
+            ["reflect"] = { Enabled = true, Key = "Reflect", LUAVER = 5, LUA = [[
+                return     ReflectIsReady(thisunit, true)
             ]] },
             ["kick"] = { Enabled = true, Key = "Pummel", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
@@ -513,6 +925,8 @@ A.Data.ProfileUI                                     = {
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
+
+-- Disarm
 function A.DisarmIsReady(unit, isMsg, skipShouldStop)
     if A[A.PlayerSpec].Disarm then 
         local unitID = A.GetToggle(2, "DisarmPvPunits")
@@ -547,6 +961,37 @@ function A.DisarmIsReady(unit, isMsg, skipShouldStop)
     end 
 end 
 
+-- Spell Reflection 
+function A.ReflectIsReady(unit, isMsg, skipShouldStop)
+    if A[A.PlayerSpec].SpellReflection then 
+        local unitID = A.GetToggle(2, "ReflectPvPunits")
+        return     (
+            (unit == "arena1" and unitID[1]) or 
+            (unit == "arena2" and unitID[2]) or
+            (unit == "arena3" and unitID[3]) or
+            (not unit:match("arena") and unitID[4]) 
+        ) and 
+        A.IsInPvP and
+        Unit(unit):IsEnemy() and  
+        (
+            (
+                not isMsg and 
+                A.GetToggle(2, "ReflectPvP") ~= "OFF" and 
+                A[A.PlayerSpec].SpellReflection:IsReady(unit, nil, nil, skipShouldStop) and
+                (
+                    A.GetToggle(2, "ReflectPvP") == "ON COOLDOWN" or 
+                    (A.GetToggle(2, "ReflectPvP") == "DANGEROUS CAST" and Action.ShouldReflect(unit))
+                )
+            ) or 
+            (
+                isMsg and 
+                A[A.PlayerSpec].SpellReflection:IsReadyM(unit)                     
+            )
+        ) and 
+        Unit(unit):IsPlayer()
+    end 
+end 
+
 function A.Main_CastBars(unit, list)
     if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
         return false 
@@ -571,4 +1016,3 @@ function A.Second_CastBars(unit)
         end 
     end 
 end 
-
