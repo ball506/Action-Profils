@@ -698,7 +698,8 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- rain_of_fire,if=pet.infernal.active&(buff.crashing_chaos.down|!talent.grimoire_of_supremacy.enabled)&(!cooldown.havoc.ready|active_enemies>3)
-            if A.RainofFire:IsReady("player") and Action.GetToggle(2, "AoE") and  
+            if A.RainofFire:IsReady("player") and Action.GetToggle(2, "AoE") 
+			and MultiUnits:GetActiveEnemies() > RainofFireUnits and  
 			    (
 				    InfernalIsActive and (Unit("player"):HasBuffs(A.CrashingChaosBuff.ID, true) == 0 or not A.GrimoireofSupremacy:IsSpellLearned()) 
 					and 
@@ -827,7 +828,12 @@ A[3] = function(icon, isMulti)
         --GosupInfernal
         local function GosupInfernal(unit)
             -- rain_of_fire,if=soul_shard=5&!buff.backdraft.up&buff.memory_of_lucid_dreams.up&buff.grimoire_of_supremacy.stack<=10
-            if A.RainofFire:IsReady("player") and Action.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() > RainofFireUnits and (Player:SoulShardsP() == 5 and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff.ID, true) <= 10) then
+            if A.RainofFire:IsReady("player") and Action.GetToggle(2, "AoE") 
+			and MultiUnits:GetActiveEnemies() > RainofFireUnits and 
+			(
+			    Player:SoulShardsP() == 5 and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.GrimoireofSupremacyBuff.ID, true) <= 10
+			)
+			then
                 return A.RainofFire:Show(icon)
             end
             -- chaos_bolt,if=buff.backdraft.up
