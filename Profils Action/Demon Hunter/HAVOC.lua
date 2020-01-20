@@ -292,7 +292,7 @@ end
 local function AntiFakeStun(unit) 
     return 
     Action.IsUnitEnemy(unit) and  
-    Unit(unit):GetRange() <= 5 and 
+    Unit(unit):GetRange() <= 7 and 
     Unit(unit):IsControlAble("stun", 0) and 
     A.ChaosNovaGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
