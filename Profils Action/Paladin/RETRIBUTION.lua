@@ -74,7 +74,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     DivinePurposeBuff                    = Action.Create({ Type = "Spell", ID = 223819, Hidden = true     }),
     EmpyreanPowerBuff                    = Action.Create({ Type = "Spell", ID = 286393, Hidden = true     }),
     AvengingWrathBuff                    = Action.Create({ Type = "Spell", ID = 31884, Hidden = true     }),
-    AvengingWrathCritBuff                = Action.Create({ Type = "Spell", ID = 294027, Hidden = true     }),
+    AvengingWrathAutocritBuff            = Action.Create({ Type = "Spell", ID = 294027, Hidden = true     }),
     InquisitionBuff                      = Action.Create({ Type = "Spell", ID = 84963, Hidden = true     }),  
     CrusadeBuff                          = Action.Create({ Type = "Spell", ID = 231895, Hidden = true     }), 
     SeethingRageBuff                     = Action.Create({ Type = "Spell", ID = 297126, Hidden = true     }), 
