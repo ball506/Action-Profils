@@ -1000,7 +1000,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- concentrated_flame,if=!buff.pillar_of_frost.up&!buff.breath_of_sindragosa.up&dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
