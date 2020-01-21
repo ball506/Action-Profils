@@ -541,8 +541,23 @@ A[3] = function(icon, isMulti)
                 return A.ExecutionSentence:Show(icon)
             end
 			
+			-- divine_storm,if=spell_targets.divine_storm>2
+            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and MultiUnits:GetByRange(8) > 2
+			then
+                return A.DivineStorm:Show(icon)
+            end	
+			
             -- divine_storm,if=variable.ds_castable&variable.wings_pool&((!talent.execution_sentence.enabled|(spell_targets.divine_storm>=2|cooldown.execution_sentence.remains>gcd*2))|(cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10))
-            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and (VarDsCastable and VarWingsPool and ((not A.ExecutionSentence:IsSpellLearned() or (MultiUnits:GetByRange(8) >= 2 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) or (A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10))) then
+            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and 
+			(
+			    VarDsCastable and VarWingsPool and  
+				(
+				    (not A.ExecutionSentence:IsSpellLearned() or (MultiUnits:GetByRange(8) >= 2 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
+					or 
+					(A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)
+				)
+			)
+			then
                 return A.DivineStorm:Show(icon)
             end
 			

@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.0.1 (19.01.2020)",
+    DateTime = "v2.0.2 (21.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
