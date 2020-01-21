@@ -775,13 +775,13 @@ A[3] = function(icon, isMulti)
 	--print("Pet:GetCount(55659): " .. Pet:GetWildImpCount(55659))
 	--print("Pet:GetCount(Wild Imp): " .. Pet:GetWildImpCount("Wild Imp"))
 	--print("DreadStalkersTime: " .. DreadStalkersTime)
-	if WildImpsCount ~= nil then
-	    print("WildImpsCount " .. WildImpsCount)
+	--if WildImpsCount ~= nil then
+	--    print("WildImpsCount " .. WildImpsCount)
 
-	end	 
-	if WildImpTotalEnergy ~= nil then
-	    print("WildImpTotalEnergy " .. WildImpTotalEnergy)
-	end	
+	--end	 
+	--if WildImpTotalEnergy ~= nil then
+	--    print("WildImpTotalEnergy " .. WildImpTotalEnergy)
+	--end	
 	
 		--Precombat
         local function Precombat(unit)
