@@ -1067,7 +1067,7 @@ A[3] = function(icon, isMulti)
 				   A.Subterfuge:IsSpellLearned() and A.IronWire:IsSpellLearned() and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and A.GetToggle(2, "IWSubterfuge")
 				   and MissingGarrote >= 1 and Unit(unit):HasDeBuffs(A.Garrote.ID, true) > 0
 			    ) 
-		   and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 ) and MultiUnits:GetByRange(5, 5, 10) > 1 and MultiUnits:GetByRange(5, 5, 10) < 6
+		   and (Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 ) and MultiUnits:GetByRange(5) > 1 and MultiUnits:GetByRange(5) < 6
 		then
 		   return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		end	
