@@ -929,7 +929,7 @@ A[3] = function(icon, isMulti)
 		if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
 			
 			-- Demon Armor PvP
-			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and not Unit("player"):HasBuffs(A.DemonArmor.ID, true) then 
+			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and Unit("player"):HasBuffs(A.DemonArmor.ID, true) == 0 then 
 	            return A.DemonArmor:Show(icon)
             end 
 			
@@ -972,11 +972,11 @@ A[3] = function(icon, isMulti)
 	    	if Unit(unit):TimeToDie() >= 10  
 		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
 		       and (
-            		   ((MissingAgony > 0 and MissingAgony < 5) or (AgonyToRefresh > 0 and AgonyToRefresh < 5)) 
+            		   ((MissingAgony > 0 and MissingAgony < 5) or (AgonyToRefresh > 0 and AgonyToRefresh < 5) or (Unit(unit):IsDummy() and MultiUnits:GetByRange(40) > 1)) 
 					   and 
 					   Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 5 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 5 
 			        ) 
-		       and MultiUnits:GetByRange(MultiDotDistance) > 1 and MultiUnits:GetByRange(MultiDotDistance) <= 5
+		       and MultiUnits:GetByRange(MultiDotDistance) > 1 and MultiUnits:GetByRange(MultiDotDistance) <= 7
 		    then
 		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
 		    end	
