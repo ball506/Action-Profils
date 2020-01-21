@@ -329,6 +329,8 @@ A[3] = function(icon, isMulti)
     UpdateSoulFragments()
     UpdateIsInMeleeRange()
     local SoulFragments = Unit("player"):HasBuffsStacks(A.SoulFragments.ID, true)
+    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
+	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -596,7 +598,21 @@ A[3] = function(icon, isMulti)
                     end
 				end
             end 
-						
+					
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast then	    
+           	    if A.BurstIsON(unit) then 
+      	       	    return A.Trinket1:Show(icon)
+   	            end 		
+	        end
+		
+		    -- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast then	    
+       	        if A.BurstIsON(unit) then 
+      	       	    return A.Trinket2:Show(icon)
+   	            end 	
+	        end
+					
             -- call_action_list,name=brand,if=talent.charred_flesh.enabled
             if (A.CharredFlesh:IsSpellLearned()) and Brand(unit) then
                 return true
