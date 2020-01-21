@@ -893,8 +893,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        if not inCombat and Precombat(unit) and Unit(unit):IsExists() and Action.GetToggle(1, "DBM") and unit ~= "mouseover" then 
+            return true
         end
 
         -- In Combat
@@ -905,7 +905,7 @@ A[3] = function(icon, isMulti)
 		
 			-- Interrupt
             local Interrupt = Interrupts(unit)
-            if Interrupt then 
+            if Interrupt and CanCast then 
                 return Interrupt:Show(icon)
             end  
 		
@@ -976,19 +976,19 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=cooldown,if=gcd.remains=0
-            if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) and Cooldown(unit) then
+            if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) and Cooldown(unit) and CanCast then
                 return true
             end
 			
 	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast then	    
            	    if A.BurstIsON(unit) then 
       	       	    return A.Trinket1:Show(icon)
    	            end 		
 	        end
 		
 		    -- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast then	    
        	        if A.BurstIsON(unit) then 
       	       	    return A.Trinket2:Show(icon)
    	            end 	
@@ -1000,16 +1000,16 @@ A[3] = function(icon, isMulti)
 
             -- call_action_list,name=dark_slash,if=talent.dark_slash.enabled&(variable.waiting_for_dark_slash|debuff.dark_slash.up)
             if (A.DarkSlash:IsSpellLearned() and (VarWaitingForDarkSlash or Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true) > 0)) then
-			    if DarkSlash(unit) then 
+			    if DarkSlash(unit) and CanCast then 
 				    return true
                 end
             end
             -- run_action_list,name=demonic,if=talent.demonic.enabled
-            if (A.Demonic:IsSpellLearned()) and Demonic(unit) then
+            if (A.Demonic:IsSpellLearned()) and Demonic(unit) and CanCast then
                 return true 
             end
             -- run_action_list,name=normal
-            if Normal(unit) then
+            if Normal(unit) and CanCast then
                 return true
             end
         end
@@ -1019,7 +1019,7 @@ A[3] = function(icon, isMulti)
 
     -- Defensive
     local SelfDefensive = SelfDefensives()
-    if SelfDefensive then 
+    if SelfDefensive and CanCast then 
         return SelfDefensive:Show(icon)
     end 
 
