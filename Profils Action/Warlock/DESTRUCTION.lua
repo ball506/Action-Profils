@@ -262,7 +262,7 @@ local function InfernalTime()
 end 
 
 local function InfernalIsActive()
-    return InfernalTime() > 0 and true or false
+    return InfernalTime() > 5.25 and true or false -- 5.25 because Vision of Perfection procs and Infernal with same NPC ID
 end
 
 local function SelfDefensives()
@@ -423,6 +423,18 @@ A[2] = function(icon)
     end                                                                                 
 end
 
+local function IsSaveManaPhase()
+    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") and Unit("player"):HasBuffs(A.Innervate.ID) == 0 then 
+        for i = 1, MAX_BOSS_FRAMES do 
+            if Unit("boss" .. i):IsExists() and not Unit("boss" .. i):IsDead() and Unit("player"):PowerPercent() < Unit("boss" .. i):HealthPercent() then 
+                return true 
+            end 
+        end 
+    end 
+    return Unit("player"):PowerPercent() < 20 
+end 
+IsSaveManaPhase = A.MakeFunctionCachedStatic(IsSaveManaPhase)
+
 
 
 local Havoc_Nameplates = MultiUnits:GetActiveUnitPlates()
@@ -560,7 +572,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- incinerate,if=!talent.soul_fire.enabled
-            if A.Incinerate:IsReady(unit) and (not A.SoulFire:IsSpellLearned()) then
+            if A.Incinerate:IsReady(unit) and Player:SoulShardsP() < 5 and (not A.SoulFire:IsSpellLearned()) then
                 return A.Incinerate:Show(icon)
             end
 			
@@ -569,7 +581,7 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- immolate,if=talent.grimoire_of_supremacy.enabled&remains<8&cooldown.summon_infernal.remains<4.5
-            if A.Immolate:IsReady(unit) and (A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 8 and A.SummonInfernal:GetCooldown() < 4.5) then
+            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.GrimoireofSupremacy:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 8 and A.SummonInfernal:GetCooldown() < 4.5) then
                 return A.Immolate:Show(icon)
             end
 			
@@ -746,7 +758,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=remains<5&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
@@ -756,60 +768,56 @@ A[3] = function(icon, isMulti)
             end
 			
 		    -- Auto Havoc 
+			-- Crappy auto switch target until i find a way to fix Retarget
+			
 			-- if Havoc available then use it on main target
-			if A.Havoc:IsReady(unit) and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetActiveEnemies() > 1 then 		
+			if A.Havoc:IsReady(unit) and Player:SoulShards() > 3.6 and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetActiveEnemies() > 1 then 		
 			    return A.Havoc:Show(icon)
             end
+			
 			-- then switch to another target
 			if Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) > 0 and Action.GetToggle(2, "AutoHavoc") then
 			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
 			end 
-					
-    --[[        if combatTime > 0     
-			then 
-			     -- if Havoc available then use it on main target
-			    if A.Havoc:IsReady(unit) and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) == 0 and Unit(unit):GetRange() <= 40 then 
-                    return A.Havoc:Show(icon)
-				-- else if all good on current target, switch to another one we know we dont currently tank
-                else
-			     	return A:Show(icon, ACTION_CONST_AUTOTARGET)
-				end 
-			end
-			]]--
-         --[[   -- havoc,cycle_targets=1,if=!(target=self.target)&active_enemies<4
-            if A.Havoc:GetCooldown() == 0 and MultiUnits:GetActiveEnemies() > 1 and MultiUnits:GetActiveEnemies() < 4 then
-                local PotentialHavoc_Nameplates = MultiUnits:GetActiveUnitPlates()
-				if not A.LastTargetIsExists
-                if PotentialHavoc_Nameplates then  
-                    for PotentialHavoc_UnitID in pairs(PotentialHavoc_Nameplates) do             
-                        if Unit(PotentialHavoc_UnitID):GetRange() <= 40 and not Unit(PotentialHavoc_UnitID):InLOS() and Unit(PotentialHavoc_UnitID):TimeToDie() > 10 then 
-                            if A.Havoc:IsReady(PotentialHavoc_UnitID, true, nil, nil, nil) then
-				    	        return A:Show(icon, ACTION_CONST_AUTOTARGET)
-							else
-							    return
+			
+	--[[		
+			-- if Havoc available then use it on main target
+			if A.Havoc:IsReady(unit) and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetByRange(40) > 1 then 
+                local currentUnitID = Unit(unit):GetUnitID()
+                -- if boss frames				
+				for i = 1, MAX_BOSS_FRAMES do 
+                    if Unit("boss" .. i):IsExists() and not Unit("boss" .. i):InLOS() and not Unit("boss" .. i):IsDead() and Unit("boss" .. i):HasDeBuffs(A.HavocDebuff.ID, true) > 0 then
+				        if A.LastTarget and not A.LastTargetIsExists and Unit("boss" .. i):GetUnitID() ~= A.LastTargetUnitID then
+				            return A:Show(icon, A.LastTargetTexture)
+				        else
+						    if Unit("boss" .. i):HasDeBuffs(A.HavocDebuff.ID, true) == 0 then
+							    return A.Havoc:Show(icon)
 							end
-                        end         
+				        return A:Show(icon, ACTION_CONST_AUTOTARGET)
+			            end
+                    end   
+			    end  
+				-- normal behavior
+                local PotentialHavoc_Nameplates = MultiUnits:GetActiveUnitPlates()				
+                if PotentialHavoc_Nameplates then  
+                    for PotentialHavoc_UnitID in pairs(PotentialHavoc_Nameplates) do  
+                        if Unit(PotentialHavoc_UnitID):IsExists() and not Unit(PotentialHavoc_UnitID):InLOS() and not Unit(PotentialHavoc_UnitID):IsDead() and Unit(PotentialHavoc_UnitID):HasDeBuffs(A.HavocDebuff.ID, true) > 0 then
+				            if A.LastTarget and not A.LastTargetIsExists and Unit(PotentialHavoc_UnitID):GetUnitID() ~= A.LastTargetUnitID then
+				                return A:Show(icon, A.LastTargetTexture)
+				            else
+						        if Unit(PotentialHavoc_UnitID):HasDeBuffs(A.HavocDebuff.ID, true) == 0 then
+							        return A.Havoc:Show(icon)
+							    end
+				            return A:Show(icon, ACTION_CONST_AUTOTARGET)
+			                end
+                        end  					        
                     end 
                 end
 			end
-
-			
-			and (Unit(unit):GetUnitID() ~= A.LastTargetUnitID) and MultiUnits:GetActiveEnemies() < 4 and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) == 0
-			then
-                return A.Havoc:Show(icon) 
-
-            end
-			
-		    -- ReTarget after Havoc is applied
-		    if A:GetTimeSinceJoinInstance() >= 30 and Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) > 0 			
-			then 
-		    	if A.LastTarget and not A.LastTargetIsExists then 
-			     	return A:Show(icon, A.LastTargetTexture)
-			    end  
-		    end ]]--
-			
+			]]--
+				
             -- chaos_bolt,if=talent.grimoire_of_supremacy.enabled&pet.infernal.active&(havoc_active|talent.cataclysm.enabled|talent.inferno.enabled&active_enemies<4)
-            if A.ChaosBolt:IsReady(unit) and (A.GrimoireofSupremacy:IsSpellLearned() and InfernalIsActive and (EnemyHasHavoc or A.Cataclysm:IsSpellLearned() or A.Inferno:IsSpellLearned() and MultiUnits:GetActiveEnemies() < 4)) then
+            if A.ChaosBolt:IsReady(unit) and not VarPoolSoulShards and (A.GrimoireofSupremacy:IsSpellLearned() and InfernalIsActive and (EnemyHasHavoc or A.Cataclysm:IsSpellLearned() or A.Inferno:IsSpellLearned() and MultiUnits:GetActiveEnemies() <= 4)) then
                 return A.ChaosBolt:Show(icon)
             end
             -- rain_of_fire
@@ -851,7 +859,7 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
             -- incinerate
-            if A.Incinerate:IsReady(unit) then
+            if A.Incinerate:IsReady(unit) and Player:SoulShardsP() < 5 then
                 return A.Incinerate:Show(icon)
             end
         end
@@ -908,7 +916,7 @@ A[3] = function(icon, isMulti)
                 return A.Shadowburn:Show(icon)
             end
             -- incinerate
-            if A.Incinerate:IsReady(unit) then
+            if A.Incinerate:IsReady(unit) and Player:SoulShardsP() < 5 then
                 return A.Incinerate:Show(icon)
             end
         end
@@ -920,11 +928,11 @@ A[3] = function(icon, isMulti)
                 return A.Conflagrate:Show(icon)
             end
             -- immolate,if=talent.internal_combustion.enabled&remains<duration*0.5|!talent.internal_combustion.enabled&refreshable
-            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5 or not A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true)) then
-                return A.Immolate:Show(icon)
-            end
+          --  if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5 or not A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true)) then
+          --      return A.Immolate:Show(icon)
+          --  end
             -- chaos_bolt,if=cast_time<havoc_remains
-            if A.ChaosBolt:IsReady(unit) and EnemyHasHavoc then
+            if A.ChaosBolt:IsReady(unit) and A.ChaosBolt:GetSpellCastTime() < HavocRemains then
                 return A.ChaosBolt:Show(icon)
             end
             -- soul_fire
@@ -936,7 +944,7 @@ A[3] = function(icon, isMulti)
                 return A.Shadowburn:Show(icon)
             end
             -- incinerate,if=cast_time<havoc_remains
-            if A.Incinerate:IsReady(unit) and EnemyHasHavoc then
+            if A.Incinerate:IsReady(unit) and A.Incinerate:GetSpellCastTime() < HavocRemains then
                 return A.Incinerate:Show(icon)
             end
         end
@@ -950,7 +958,7 @@ A[3] = function(icon, isMulti)
         if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then
 		
 			-- Demon Armor PvP
-			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and not Unit("player"):HasBuffs(A.DemonArmor.ID, true) then 
+			if A.IsInPvP and A.DemonArmor:IsReady("player") and A.DemonArmor:IsSpellLearned() and Unit("player"):HasBuffs(A.DemonArmor.ID, true) == 0 then 
 	            return A.DemonArmor:Show(icon)
             end 
 			
@@ -961,7 +969,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=havoc,if=havoc_active&active_enemies<5-talent.inferno.enabled+(talent.inferno.enabled&talent.internal_combustion.enabled)
-            if Havoc(unit) and (EnemyHasHavoc and MultiUnits:GetActiveEnemies() < 5 - num(A.Inferno:IsSpellLearned()) + num((A.Inferno:IsSpellLearned() and A.InternalCombustion:IsSpellLearned()))) then
+            if Havoc(unit) and EnemyHasHavoc then
                 return true
             end
 			
@@ -976,12 +984,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
             -- immolate,if=talent.internal_combustion.enabled&action.chaos_bolt.in_flight&remains<duration*0.5
-            if A.Immolate:IsReady(unit) and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5) then
+            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5) then
                 return A.Immolate:Show(icon)
             end
 			
@@ -1055,7 +1063,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chaos_bolt,if=(talent.grimoire_of_supremacy.enabled|azerite.crashing_chaos.enabled)&pet.infernal.active|buff.dark_soul_instability.up|buff.reckless_force.react&buff.reckless_force.remains>cast_time
-            if A.ChaosBolt:IsReady(unit) and ((A.GrimoireofSupremacy:IsSpellLearned() or A.CrashingChaos:GetAzeriteRank() > 0) and InfernalIsActive or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > A.ChaosBolt:GetSpellCastTime()) then
+            if A.ChaosBolt:IsReady(unit) and not VarPoolSoulShards and ((A.GrimoireofSupremacy:IsSpellLearned() or A.CrashingChaos:GetAzeriteRank() > 0) and InfernalIsActive or Unit("player"):HasBuffs(A.DarkSoulInstabilityBuff.ID, true) > 0 or Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > A.ChaosBolt:GetSpellCastTime()) then
                 return A.ChaosBolt:Show(icon)
             end
 			
@@ -1065,7 +1073,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chaos_bolt,if=!variable.pool_soul_shards&talent.eradication.enabled&(debuff.eradication.remains<cast_time|buff.backdraft.up)
-            if A.ChaosBolt:IsReady(unit) and (not VarPoolSoulShards and A.Eradication:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.EradicationDebuff.ID, true) < A.ChaosBolt:GetSpellCastTime() or Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) > 0)) then
+            if A.ChaosBolt:IsReady(unit) and not VarPoolSoulShards and A.Eradication:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.EradicationDebuff.ID, true) < A.ChaosBolt:GetSpellCastTime() or Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) > 0) then
                 return A.ChaosBolt:Show(icon)
             end
 			
@@ -1080,7 +1088,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- incinerate
-            if A.Incinerate:IsReady(unit) then
+            if A.Incinerate:IsReady(unit) and Player:SoulShardsP() < 5 then
                 return A.Incinerate:Show(icon)
             end
 			
