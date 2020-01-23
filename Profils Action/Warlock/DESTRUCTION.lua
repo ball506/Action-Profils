@@ -13,6 +13,7 @@ local Pet                                    = LibStub("PetLibrary")
 local Azerite                                = LibStub("AzeriteTraits")
 local setmetatable                           = setmetatable
 local pairs                                  = pairs
+local TR                                     = Action.TasteRotation
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
