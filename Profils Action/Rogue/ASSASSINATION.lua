@@ -1406,7 +1406,7 @@ A[3] = function(icon, isMulti)
 		end	
 		
 		-- Mutilate
-		if A.Mutilate:IsReady(unit) and CanCast and Player:ComboPoints() < 5 and MultiUnits:GetByRange(8) <= 2 then
+		if A.Mutilate:IsReady(unit) and CanCast and Player:ComboPoints() < 5 then
 			return A.Mutilate:Show(icon)
 		end				
 
