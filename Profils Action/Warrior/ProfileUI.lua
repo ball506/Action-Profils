@@ -1,6 +1,5 @@
 --------------------
 -- Taste TMW Action ProfileUI
-
 local TMW                                             = TMW
 local A                                             = Action
 local UnitCooldown                                    = A.UnitCooldown
@@ -14,12 +13,10 @@ local FriendlyTeam                                    = A.FriendlyTeam
 local TeamCache                                        = A.TeamCache
 local InstanceInfo                                    = A.InstanceInfo
 local select                                        = select
-local HL                                            = HeroLib 
-local HeroUnit                                      = HL.Unit
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v2.0.1 (20.10.2019)",
+    DateTime = "v2.0.2 (23.01.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -601,6 +598,18 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
             }, 
             { -- [4] 4th Row
 

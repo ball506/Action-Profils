@@ -78,26 +78,25 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
 	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
 	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
-    -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    -- Trinkets  
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    DribblingInkpod                        = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
     AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
     GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    RazdunksBigRedButton                   = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }),
+    MerekthasFang                          = Action.Create({ Type = "Trinket", ID = 158367, QueueForbidden = true }),
+    KnotofAncientFuryAlliance              = Action.Create({ Type = "Trinket", ID = 161413, QueueForbidden = true }),
+    KnotofAncientFuryHorde                 = Action.Create({ Type = "Trinket", ID = 166795, QueueForbidden = true }),
+    FirstMatesSpyglass                     = Action.Create({ Type = "Trinket", ID = 158163, QueueForbidden = true }),
+    GrongsPrimalRage                       = Action.Create({ Type = "Trinket", ID = 165574, QueueForbidden = true }),
+    LurkersInsidiousGift                   = Action.Create({ Type = "Trinket", ID = 167866, QueueForbidden = true }),
+    NotoriousGladiatorsBadge               = Action.Create({ Type = "Trinket", ID = 167380, QueueForbidden = true }),
+    NotoriousGladiatorsMedallion           = Action.Create({ Type = "Trinket", ID = 167377, QueueForbidden = true }),
+    SinisterGladiatorsBadge                = Action.Create({ Type = "Trinket", ID = 165058, QueueForbidden = true }),
+    SinisterGladiatorsMedallion            = Action.Create({ Type = "Trinket", ID = 165055, QueueForbidden = true }),
+    VialofAnimatedBlood                    = Action.Create({ Type = "Trinket", ID = 159625, QueueForbidden = true }),
+    JesHowler                              = Action.Create({ Type = "Trinket", ID = 159627, QueueForbidden = true }),
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
     GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
@@ -354,7 +353,7 @@ local function SelfDefensives(unit)
             )                
         then
             -- ShieldBlock
-            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and myRage >= A.ShieldBlock:GetSpellPowerCostCache() and (inStance == 2 or A.TacticalMastery:GetTalentRank() * 5 >= A.ShieldBlock:GetSpellPowerCostCache()) then  
+            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() then  
                 A.ShieldBlock:Show(icon)        -- #4
             end 
                 
@@ -534,17 +533,18 @@ A[3] = function(icon, isMulti)
             if A.ShieldSlam:IsReady(unit) then
                 return A.ShieldSlam:Show(icon)
             end
+			
         end
         
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRange(5) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0) then
                 return A.ThunderClap:Show(icon)
             end
 			
             -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true)) then
+            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) > 0) then
                 return A.ShieldSlam:Show(icon)
             end
 			
@@ -570,7 +570,7 @@ A[3] = function(icon, isMulti)
 			
             -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
             if A.AshvanesRazorCoral:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral84) then
+                if Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 then
                     return A.AshvanesRazorCoral:Show(icon) 
                 end
             end
@@ -596,7 +596,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) or A.ShieldSlam:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) or A.ShieldSlam:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
 			
@@ -689,20 +689,15 @@ A[3] = function(icon, isMulti)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 then
                 return A.ConcentratedFlame:Show(icon)
             end
-			
-            -- last_stand,if=cooldown.anima_of_death.remains<=2
-            if A.LastStand:IsReady(unit) and (A.AnimaofDeath:GetCooldown() <= 2) then
-                return A.LastStand:Show(icon)
-            end
-			
+						
             -- avatar
             if A.Avatar:IsReady(unit) and A.BurstIsON(unit) then
                 return A.Avatar:Show(icon)
             end
 			
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 3) then
-                return Aoe(unit);
+            if Aoe(unit) and (MultiUnits:GetByRange(8) >= 3) then
+                return true
             end
 			
             -- call_action_list,name=st
