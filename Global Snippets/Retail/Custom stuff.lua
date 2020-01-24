@@ -16,6 +16,12 @@ local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
 local EventFrame                            = CreateFrame("Frame", "Taste_EventFrame", UIParent)
 local UnitIsUnit                            = UnitIsUnit
+-- Lua
+local error = error
+local setmetatable = setmetatable
+local stringformat = string.format
+local tableinsert = table.insert
+-- File Locals
 local Events = {} -- All Events
 local CombatEvents = {} -- Combat Log Unfiltered
 local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
