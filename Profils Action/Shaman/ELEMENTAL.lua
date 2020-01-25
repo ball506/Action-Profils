@@ -158,59 +158,22 @@ end
 ------------ ELEMENTAL PREAPL ------------
 ------------------------------------------
 
--- Pet functions
-local PetType = {
-    [77942] = {"Primal Storm Elemental", 30},
-};
-
-Action.ElementalGuardiansTable = {
-    --{PetType,petID,dateEvent,UnitPetGUID,CastsLeft}
-    Pets = {
+-- API - Tracker
+-- Initialize Tracker 
+Pet:InitializeTrackerFor(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
+    [77942] = {
+        name = "Primal Storm Elemental",
+        duration = 30,
     },
-    PetList={
-        [77942]="Primal Storm Elemental",
-    }
-};
+})
 
-Action:RegisterForSelfCombatEvent( 
-    function (...)
-        local dateEvent,_,_,_,_,_,_,UnitPetGUID = select(1,...)
-        local t={} ; i = 1
-        
-        for str in string.gmatch(UnitPetGUID, "([^-]+)") do
-            t[i] = str
-            i = i + 1
-        end
-        
-        local PetType = Action.ElementalGuardiansTable.PetList[tonumber(t[6])]
-        if PetType then
-            table.insert(Action.ElementalGuardiansTable.Pets,{PetType,tonumber(t[6]),TMW.time,UnitPetGUID,5})
-        end
-    end
-    , "SPELL_SUMMON"
-);
-
--- Summoned pet duration
-local function PetDuration(PetType)
-    if not PetType then 
-        return 0 
-    end
-    local PetsInfo = {
-        [77942] = {"Primal Storm Elemental", 30},
-    }
-    local maxduration = 0
-    for key, Value in pairs(Action.ElementalGuardiansTable.Pets) do
-        if Action.ElementalGuardiansTable.Pets[key][1] == PetType then
-            if (PetsInfo[Action.ElementalGuardiansTable.Pets[key][2]][2] - (TMW.time - Action.ElementalGuardiansTable.Pets[key][3])) > maxduration then
-                maxduration = Action.OffsetRemains((PetsInfo[Action.ElementalGuardiansTable.Pets[key][2]][2] - (TMW.time - Action.ElementalGuardiansTable.Pets[key][3])), "Auto" );
-            end
-        end
-    end
-    return maxduration
-end
+-- Function to check for Infernal duration
+local function PrimalStormElementalTime()
+    return Pet:GetRemainDuration(77942) or 0
+end 
 
 local function StormElementalIsActive()
-    if PetDuration("Primal Storm Elemental") > 0.1 then
+    if PrimalStormElementalTime() > 0 then
         return true
     else
         return false
@@ -650,7 +613,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chain_lightning,if=spell_targets.chain_lightning>2
-            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40) > 1) and
+            if A.ChainLightning:IsReady(unit) and Action.GetToggle(1, "AoE") and (MultiUnits:GetByRange(40) > 1 or A.GetToggle(2, "ForceAoE")) and
             ((Pull > 0.1 and Pull <= A.ChainLightning:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.ChainLightning:Show(icon)
             end 
@@ -662,7 +625,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lava_burst,if=!talent.elemental_blast.enabled&spell_targets.chain_lightning<3
-            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned()) and
+            if A.LavaBurst:IsReady(unit) and (not A.ElementalBlast:IsSpellLearned()) and not A.GetToggle(2, "ForceAoE") and
             ((Pull > 0.1 and Pull <= A.LavaBurst:GetSpellCastTime()) or not Action.GetToggle(1, "DBM")) then
                 return A.LavaBurst:Show(icon)
             end
