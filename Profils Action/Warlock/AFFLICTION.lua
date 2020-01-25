@@ -1403,7 +1403,7 @@ local function ArenaRotation(icon, unit)
         end	
 		
         -- Reflect Casting BreakAble CC
-        if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
+        if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
             return A.NetherWard:Show(icon)
         end 
 	

@@ -920,6 +920,9 @@ A[3] = function(icon, isMulti)
             -- Specials Dungeon behavior
 	        local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(unit):IsCastingRemains()
 			
+			-- 2sec before DeadEye is ready
+			if Unit("boss"):GetUnitID() == 127503 and UnitCooldown:GetCooldown("boss", 256039) > UnitCooldown:GetMaxDuration("boss", 256039) - 2 then
+			    --Pool for BladeDance
 			-- Tol Dagor : Deadeye	
             -- Use Blade Dance 100% chance dodge just before end of cast...			
             if A.BladeDance:IsReady(unit) and spellID == 256039 and secondsLeft <= (A.GetCurrentGCD() + A.GetGCD() + A.GetPing() + 1) then
