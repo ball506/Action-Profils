@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.5 (24.01.2020)",
+    DateTime = "v2.0.6 (25.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -79,6 +79,175 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                    }, 
+                    M = {},
+                },            
+            }, 			
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Miscellaneous -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseGhostWolf",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(2645), 
+                        ruRU = "Авто" .. A.GetSpellInfo(2645), 
+                        frFR = "Auto" .. A.GetSpellInfo(2645), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(2645), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(2645), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(2645), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "GhostWolfTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(2645) .. " if moving for",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(2645) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(2645) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(2645) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseCapacitorTotem",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Capacitor Totem", 
+                        ruRU = "Use Capacitor Totem", 
+                        frFR = "Use Capacitor Totem", 
+                    }, 
+                    TT = { 
+                        enUS = "Will force use of Capacitor Totem if Wind Shear is not ready.", 
+                        ruRU = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                        frFR = "Will force use of Capacitor Totem if Wind Shear is not ready.",
+                    }, 
+                    M = {},
+                },
+			},
+
             { -- [7] 
                 {
                     E = "Header",
@@ -93,19 +262,50 @@ A.Data.ProfileUI = {
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "AstralShiftHP",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(108271) .. " (%)",
                     }, 
                     M = {},
                 },
-            },
-            { -- [4] 4th Row
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "EarthShieldHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(974) .. " (%)",
+                    }, 
+                    M = {},
                 },
-            }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "HealingSurgeHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(8004) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
@@ -414,6 +614,22 @@ A.Data.ProfileUI = {
                 },
             },
 			{
+                {
+                    E = "Checkbox", 
+                    DB = "ForceAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Force AoE opener", 
+                        ruRU = "Force AoE opener", 
+                        frFR = "Force AoE opener", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, opener will use Chain Lightning instead of Lava Burst.\nUsefull if you got issue with AoE detection on opener.", 
+                        ruRU = "If activated, opener will use Chain Lightning instead of Lava Burst.\nUsefull if you got issue with AoE detection on opener.",
+                        frFR = "If activated, opener will use Chain Lightning instead of Lava Burst.\nUsefull if you got issue with AoE detection on opener.",
+                    }, 
+                    M = {},
+                },
                 {
                     E = "Checkbox", 
                     DB = "UseGhostWolf",
