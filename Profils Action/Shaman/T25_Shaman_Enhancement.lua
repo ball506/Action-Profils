@@ -622,7 +622,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- berserking,if=variable.cooldown_sync
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and not Unit("player"):HasHeroism() and A.BurstIsON(unit) and (bool(VarCooldownSync)) then
                 return A.Berserking:Show(icon)
             end
 			
