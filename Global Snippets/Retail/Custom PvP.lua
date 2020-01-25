@@ -12,25 +12,25 @@ local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetS
 local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
 local PetLib = LibStub("PetLibrary")
 local Unit = Action.Unit 
-
+local huge                                  = math.huge
 ---------------------------------------------------
 -------------------- CONSTANTS --------------------
 ---------------------------------------------------
 
 --- Reflect Spells List
-local pvpReflect = {
-    161372, -- Poly
-    190319, -- Combustion
-    161372, -- Polymorph
-    203286, -- Greater Pyroblast
-    199786, --  Glacial Spike
-    257537, -- Ebonbolt
-    210714, -- Icefury
-    191634, -- Stormkeeper
-    116858, -- Chaos Bolt
-	118, -- Poly
-}
 
+local pvpReflect = { 
+    [161372] = true, -- Poly
+    [190319] = true, -- Combustion
+    [161372] = true, -- Polymorph
+    [203286] = true, -- Greater Pyroblast
+    [199786] = true, -- Glacial Spike
+    [257537] = true, -- Ebonbolt
+    [210714] = true, -- Icefury
+    [191634] = true, -- Stormkeeper
+    [116858] = true, -- Chaos Bolt
+	[118] = true, -- Poly
+}
 ---------------------------------------------------
 -------------------- FUNCTIONS --------------------
 ---------------------------------------------------
@@ -42,58 +42,31 @@ local randomReflect = math.random(90, 100)
 -- Parameter "unit" is mandatory
 -- @ return Boolean
 function Action.ShouldReflect(unit)	
+
 	local GoodToReflect = false
-	for p = 1, #pvpReflect do
-	    -- Protect if nil parameter 
-		if not unit or unit == nil then 
-		    unit = "target"
-		end
+	-- Protect if nil parameter 
+	if not unit or unit == nil then 
+		unit = "target"
+	end
+
+    for i = 1, huge do 
 		-- Current Cast SpellID
-		local currentCast = Unit(unit):IsCasting()
+		local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(unit):IsCasting()
 		-- [1] Total Casting Time (@number)
 		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
 		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
 		local castingTime, castingLeftSec, castingDonePer  = Unit(unit):CastTime()
 		
-		-- Current casted spell is in list
-        if currentCast == GetSpellInfo(pvpReflect[p]) then
-		    if  castingDonePer >= randomReflect then
+        if not spellID then 
+            break 
+        elseif pvpReflect[spellID] then 
+            if  castingDonePer >= randomReflect then
                 GoodToReflect = true
             else
 		        GoodToReflect = false
 			end
-        end
-    end
-    return GoodToReflect
-end
-
--- Enemy Gladiator Medallion tracker
--- Parameter "unit" is mandatory
--- @ return [1] Boolean (Is Gladiator Medallion up for unit)
--- @ return [2] Number (Remaining cooldown time)
-function Action.UpdateGladiatorTrinket(unit)
-
-	C_PvP.RequestCrowdControlSpell(unit)
+        end 
+    end 
 	
-	local spellID, startTime, duration = C_PvP.GetArenaCrowdControlInfo(unit)
-	local EnemyTrinketIsReady = true
-	local RemainingCD = 0
-	
-	if spellID == ACTION_CONST_SPELLID_GLADIATORS_MEDALLION then 
-	    if duration < 0 then 
-	        EnemyTrinketIsReady = true
-	    else
-	        EnemyTrinketIsReady = false
-			RemainingCD = duration
-	    end	
-	elseif spellID == ACTION_CONST_SPELLID_HONOR_MEDALLION then
-	    if duration < 0 then 
-	        EnemyTrinketIsReady = true
-	    else
-	        EnemyTrinketIsReady = false
-			RemainingCD = duration
-	    end	
-	end
-	
-	return EnemyTrinketIsReady, RemainingCD 
-end
+	return GoodToReflect
+end 
