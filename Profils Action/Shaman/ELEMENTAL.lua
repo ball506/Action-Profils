@@ -646,12 +646,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady(unit) and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) or (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0) then 
+            if A.Ascendance:IsReady("player") and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) or (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0) then 
                 return A.Ascendance:Show(icon)
             end
             
             -- ascendance,if=talent.ascendance.enabled&(talent.storm_elemental.enabled&cooldown.storm_elemental.remains<120&cooldown.storm_elemental.remains>15|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            --if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 and A.StormElemental:GetCooldown() > 15 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0)) then
+            --if A.Ascendance:IsReady("player") and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 and A.StormElemental:GetCooldown() > 15 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0)) then
             -- return A.Ascendance:Show(icon)
             --end
             
@@ -732,10 +732,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady(unit) and not ShouldStop and A.BurstIsON(unit) and (A.Ascendance:IsSpellLearned() 
+            if A.Ascendance:IsReady("player") and not ShouldStop and A.BurstIsON(unit) and A.Ascendance:IsSpellLearned() and 
+			( 
                 and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 
-                and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and (not A.Icefury:IsSpellLearned() 
-                    or Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and A.Icefury:GetCooldown() > 0)) 
+                and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and 
+				(not A.Icefury:IsSpellLearned() or Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and A.Icefury:GetCooldown() > 0)
+			) 
             then
                 return A.Ascendance:Show(icon)
             end
@@ -759,9 +761,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lightning_bolt,if=buff.stormkeeper.up&spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack)<26&(buff.master_of_the_elements.up&!talent.surge_of_power.enabled|buff.surge_of_power.up)
-            if A.LightningBolt:IsReady(unit) and not ShouldStop and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and FutureMaelstromPower() <= 90 then
-                return A.LightningBolt:Show(icon)
-            end
+            --if A.LightningBolt:IsReady(unit) and not ShouldStop and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and FutureMaelstromPower() <= 90 then
+            --    return A.LightningBolt:Show(icon)
+            --end
 			
             -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&buff.icefury.remains<1.1*gcd*buff.icefury.stack
             if A.FrostShock:IsReady(unit) and not ShouldStop and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < 1.8 * A.GetGCD() * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true)) then
@@ -804,9 +806,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lightning_bolt,if=buff.surge_of_power.up
-            if A.LightningBolt:IsReady(unit) and not isMoving and not ShouldStop and (Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0) and FutureMaelstromPower() <= 90 then
-                return A.LightningBolt:Show(icon)
-            end
+          --  if A.LightningBolt:IsReady(unit) and not isMoving and not ShouldStop and (Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true) > 0) and FutureMaelstromPower() <= 90 then
+          --      return A.LightningBolt:Show(icon)
+          --  end
 			
             -- lava_burst,if=cooldown_react&!talent.master_of_the_elements.enabled
             if A.LavaBurst:IsReady(unit) and not isMoving and Player:Maelstrom() < 90 and A.LastPlayerCastName ~= A.LavaBurst:Info() and not A.LavaBurst:IsSpellInFlight() and not ShouldStop and (A.LavaBurst:GetCooldown() == 0 and not A.MasteroftheElements:IsSpellLearned()) then
@@ -827,6 +829,11 @@ A[3] = function(icon, isMulti)
             if A.LavaBurst:IsReady(unit) and not isMoving and Player:Maelstrom() < 90 and A.LastPlayerCastName ~= A.LavaBurst:Info() and not A.LavaBurst:IsSpellInFlight() and not ShouldStop and (A.LavaBurst:GetCooldown() == 0) and Unit("player"):HasBuffs(A.MasteroftheElementsBuff.ID, true) == 0 then
                 return A.LavaBurst:Show(icon)
             end
+
+            -- lightning_bolt,if=buff.stormkeeper.up&spell_targets.chain_lightning<2&(azerite.lava_shock.rank*buff.lava_shock.stack)<26&(buff.master_of_the_elements.up&!talent.surge_of_power.enabled|buff.surge_of_power.up)
+            if A.LightningBolt:IsReady(unit) and not ShouldStop and Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 and FutureMaelstromPower() <= 90 then
+                return A.LightningBolt:Show(icon)
+            end
 			
             -- flame_shock,target_if=refreshable&!buff.surge_of_power.up
             if A.FlameShock:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= 7) and Unit("player"):HasBuffs(A.SurgeofPowerBuff) == 0 then
@@ -837,6 +844,11 @@ A[3] = function(icon, isMulti)
             if A.TotemMastery:IsReady(unit) and not ShouldStop and (A.TotemMastery:IsSpellLearned() and (ResonanceTotemTime() < 6 or (ResonanceTotemTime() < (15 + A.Ascendance:GetCooldown()) and A.Ascendance:GetCooldown() < 15))) then
                 return A.TotemMastery:Show(icon)
             end
+			
+            -- Lavaburst while
+            if A.LavaBurst:IsReady(unit) and not isMoving and not ShouldStop and FutureMaelstromPower() <= 90 then
+                return A.LavaBurst:Show(icon)
+            end	
 			
             -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&(buff.icefury.remains<gcd*4*buff.icefury.stack|buff.stormkeeper.up|!talent.master_of_the_elements.enabled)
             if A.FrostShock:IsReady(unit) and not ShouldStop and (A.Icefury:IsSpellLearned() and Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) > 0 and (Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) < A.GetGCD() * 4 * Unit("player"):HasBuffsStacks(A.IcefuryBuff.ID, true) or Unit("player"):HasBuffs(A.StormkeeperBuff.ID, true) > 0 or not A.MasteroftheElements:IsSpellLearned())) then
@@ -939,7 +951,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- 11 Ascendance
-            if A.Ascendance:IsReady(unit) and A.BurstIsON(unit) and A.Ascendance:IsSpellLearned() then
+            if A.Ascendance:IsReady("player") and A.BurstIsON(unit) and A.Ascendance:IsSpellLearned() then
                 return A.Ascendance:Show(icon)
             end   
 			
