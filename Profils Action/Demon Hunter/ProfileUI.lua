@@ -7,10 +7,11 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.1.2 (24.01.2020)",
+    DateTime = "v2.1.3 (26.01.2020)",
     -- Class settings
     [2] = {        
-        [ACTION_CONST_DEMONHUNTER_HAVOC] = {          
+        [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },		
             { -- [7]
                 {
                     E = "Header",
@@ -89,8 +90,8 @@ A.Data.ProfileUI = {
                     }, 
                     TT = { 
                         enUS = "Use Hearth of Azeroth only on bosses", 
-                        ruRU = "Use Hearth of Azeroth only on bosses", 
-                        frFR = "Use Hearth of Azeroth only on bosses", 
+                        ruRU = "Используйте очаг Азерота только на боссов", 
+                        frFR = "Utilisez le Coeur d'Azeroth uniquement sur les boss", 
                     }, 
                     M = {},
                 }, 
@@ -99,17 +100,33 @@ A.Data.ProfileUI = {
                     DB = "ImprisonAsInterrupt",
                     DBV = false,
                     L = { 
-                        enUS = "Imprison Interrupt", 
-                        ruRU = "Imprison Interrupt", 
-                        frFR = "Imprison Interrupt",  
+                        enUS = A.GetSpellInfo(217832) .. " Interrupt", 
+                        ruRU = A.GetSpellInfo(217832) .. " Прерывание",  
+                        frFR = A.GetSpellInfo(217832) .. " Interruption",  
                     }, 
                     TT = { 
                         enUS = "Use your Imprison as interrupt if you don't have your Disrupt ready.", 
-                        ruRU = "Use your Imprison as interrupt if you don't have your Disrupt ready.",  
-                        frFR = "Use your Imprison as interrupt if you don't have your Disrupt ready.", 
+                        ruRU = "Используйте свою тюрьму в качестве прерывания, если у вас нет готовности к прерыванию.",  
+                        frFR = "Utilisez votre Emprisonnement comme interruption si vous n'avez pas votre Disruption prêt.", 
                     }, 
                     M = {},
-                }, 				
+                }, 	
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(198013) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 				
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -125,14 +142,240 @@ A.Data.ProfileUI = {
                         [3] = true,
                     }, 
                     L = { 
-                        ANY = A.GetSpellInfo(198013) .. " settings",
+                        ANY = A.GetSpellInfo(198013) .. " behavior",
                     }, 
                     TT = { 
-                        enUS = "Customize your Eye Beam options. Multiple checks possible.", 
-                        ruRU = "Customize your Eye Beam options. Multiple checks possible.", 
+                        enUS = "Customize your " .. A.GetSpellInfo(198013) .. " options. Multiple checks possible.", 
+                        ruRU = "Настройте свои параметры " .. A.GetSpellInfo(198013) .. ". Возможно несколько проверок.", 
+                        frFR = "Personnalisez vos options " .. A.GetSpellInfo(198013) .. ". Plusieurs contrôles possibles..",  
                     }, 
                     M = {},
-                },			
+                },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 3, 
+                    MAX = 50,                            
+                    DB = "EyeBeamTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(198013) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(198013) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(198013) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(198013) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(188499) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "BladeDancePool",
+                    DBV = true,
+                    L = { 
+                        enUS = "Blade Dance Pool", 
+                        ruRU = "Blade Dance Pool", 
+                        frFR = "Blade Dance Pool", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
+                        ruRU = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.",  
+                        frFR = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 8,      
+                    Precision = 1, 					
+                    DB = "BladeDancePoolSeconds",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(188499) .. " pool secs",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499), 
+                        ruRU = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499),
+                        frFR = "Définissez le temps minimum pour que le bot arrête d'utiliser " .. A.GetSpellInfo(188499), 
+                    }, 					
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(196718) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDarkness",
+                    DBV = false,
+                    L = { 
+                        ANY = "Auto " .. A.GetSpellInfo(196718),
+                    },
+                    TT = { 
+                        enUS = "If activated, will auto use " .. A.GetSpellInfo(196718) .. " depending on currents settings.\nFor high end raiding, it is recommanded to keep Darkness when your Raid Leader call it.",
+                        ruRU = "Если активирован, будет автоматически использовать " .. A.GetSpellInfo(196718) .. " в зависимости от настроек токов.\nДля рейдового сегмента рекомендуется держать Тьму, когда ваш Рейдовый Лидер называет это.",
+                        frFR = "Si activé, utilisera automatiquement " .. A.GetSpellInfo(196718) .. " en fonction des paramètres de courant.\nPour les raids de haut niveau, il est recommandé de garder Ténèbres lorsque votre chef de raid l'appelle.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "DarknessMode",
+                    DBV = "In Dungeon", 
+                    L = { 
+                        enUS = A.GetSpellInfo(196718) .. " where", 
+                        ruRU = A.GetSpellInfo(196718) .. " где", 
+                        frFR = A.GetSpellInfo(196718) .. " où", 
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically use " .. A.GetSpellInfo(196718),
+                        ruRU = "Выберите, где вы хотите использовать автоматически " .. A.GetSpellInfo(196718),
+						frFR = "Choisissez où vous souhaitez utiliser automatiquement " .. A.GetSpellInfo(196718),
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "DarknessUnits",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "Define the number of party/raid members that have to be injured to use " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите количество членов партии/рейда, которые должны быть ранены, чтобы использовать " .. A.GetSpellInfo(196718),  
+                        frFR = "Définir le nombre de membres du groupe/raid qui doivent être blessés pour utiliser " .. A.GetSpellInfo(196718), 
+					},
+                    M = {},
+                },
+            }, -- [4] 4th Row
+            {
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "DarknessUnitsTTD",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " TTD",
+                    }, 
+                    TT = { 
+                        enUS = "Define the minimum Time To Die for party/raid members before using " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите минимальное время жизни для членов партии или рейда перед использованием " .. A.GetSpellInfo(196718), 
+                        frFR = "Définissez le temps minimum pour mourir pour les membres du groupe/raid avant d'utiliser " .. A.GetSpellInfo(196718),
+					},
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "DarknessUnitsHP",
+                    DBV = 60, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " HP",
+                    }, 
+                    TT = { 
+                        enUS = "Define the minimum health percent for party/raid members before using " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите минимальный процент здоровья для участников группы или рейда перед использованием " .. A.GetSpellInfo(196718), 
+                        frFR = "Définissez le pourcentage de santé minimum pour les membres du groupe / raid avant d'utiliser " .. A.GetSpellInfo(196718),
+					},
+                    M = {},
+                },
+
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]  Azerite Beam settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(295258) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 				
+		
+                {
+                    E = "Slider",                                                     
+                    MIN = 3, 
+                    MAX = 50,                            
+                    DB = "FocusedAzeriteBeamTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(295258) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(295258) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "FocusedAzeriteBeamUnits",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(295258) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(295258) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                }, 				
             },
             { -- [4] 4th Row
 
@@ -149,18 +392,6 @@ A.Data.ProfileUI = {
                 },
             },
             { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "Darkness",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(196718) .. " (%)",
-                    }, 
-                    M = {},
-                },
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -185,33 +416,78 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },
+            }, 
             { -- [4] 4th Row
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "Main Icon", value = "MAINICON" },
-                        { text = "Suggested", value = "SUGGESTED" },                    
-                        { text = "Cooldown", value = "COOLDOWN" },
-                    },
-                    DB = "FelRushDisplay",
-                    DBV = "SUGGESTED",
-                    L = { 
-                        enUS = "Fel Rush Display Style", 
-                        ruRU = "Стиль отображения Скверны", 
-                        frFR = "Style d'affichage de Ruée Fulgurante",
-                    }, 
-                    TT = { 
-                        enUS = "Define which icon display style to use for Fel Rush.", 
-                        ruRU = "Определите, какой стиль отображения значков использовать для Рывок Скверны", 
-                        frFR = "Définit le style d'affichage des icônes à utiliser pour Ruée Fulgurante.",
-					},
-                    M = {},
-                },
+
                 {
                     E = "LayoutSpace",                                                                         
                 },
-            }, 
+            },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [7]
                 {
                     E = "Header",
