@@ -734,7 +734,7 @@ A[3] = function(icon, isMulti)
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
             if A.Ascendance:IsReady("player") and not ShouldStop and A.BurstIsON(unit) and A.Ascendance:IsSpellLearned() and 
 			( 
-                and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 
+                (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 
                 and (A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) and 
 				(not A.Icefury:IsSpellLearned() or Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) == 0 and A.Icefury:GetCooldown() > 0)
 			) 
