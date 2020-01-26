@@ -674,6 +674,10 @@ A[3] = function(icon, isMulti)
             if A.WindShear:IsReady(unit) and Action.GetToggle.InterruptEnabled then
                 return A.WindShear:Show(icon)
             end
+            -- flame_shock,if=!ticking&spell_targets.chainlightning<4&(cooldown.storm_elemental.remains<cooldown.storm_elemental.duration-30|buff.wind_gust.stack<14)
+            if A.FlameShock:IsReady(unit) and (not Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) and MultiUnits:GetByRangeInCombat(5, 5, 10) < 4 and (A.StormElemental:GetCooldown() < A.StormElemental:BaseDuration() - 30 or Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)) then
+                return A.FlameShock:Show(icon)
+            end
             -- totem_mastery,if=talent.totem_mastery.enabled&buff.resonance_totem.remains<2
             if A.TotemMastery:IsReady(unit) and (A.TotemMastery:IsSpellLearned() and Unit("player"):HasBuffs(A.ResonanceTotemBuff.ID, true) < 2) then
                 return A.TotemMastery:Show(icon)

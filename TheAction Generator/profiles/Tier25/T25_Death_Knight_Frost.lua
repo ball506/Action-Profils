@@ -251,19 +251,19 @@ local function EvaluateCycleObliterate284(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
 end
 
-local function EvaluateCycleObliterate710(unit)
+local function EvaluateCycleObliterate722(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 3
 end
 
-local function EvaluateCycleObliterate743(unit)
+local function EvaluateCycleObliterate755(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and bool(Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true)) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Unit("player"):GetSpellLastCast(A.FrostStrike) or Unit("player"):GetSpellLastCast(A.HowlingBlast) or Unit("player"):GetSpellLastCast(A.GlacialAdvance)))
 end
 
-local function EvaluateCycleFrostStrike784(unit)
+local function EvaluateCycleFrostStrike796(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
 end
 
-local function EvaluateCycleObliterate807(unit)
+local function EvaluateCycleObliterate819(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned()
 end
 
@@ -298,9 +298,9 @@ A[3] = function(icon, isMulti)
             if A.AzsharasFontofPower:IsReady(unit) then
                 A.AzsharasFontofPower:Show(icon)
             end
-            -- variable,name=other_on_use_equipped,value=(equipped.notorious_gladiators_badge|equipped.sinister_gladiators_badge|equipped.sinister_gladiators_medallion|equipped.vial_of_animated_blood|equipped.first_mates_spyglass|equipped.jes_howler|equipped.notorious_gladiators_medallion|equipped.ashvanes_razor_coral)
+            -- variable,name=other_on_use_equipped,value=(equipped.notorious_gladiators_badge|equipped.corrupted_gladiators_badge|equipped.corrupted_gladiators_medallion|equipped.vial_of_animated_blood|equipped.first_mates_spyglass|equipped.jes_howler|equipped.notorious_gladiators_medallion|equipped.ashvanes_razor_coral)
             if (true) then
-                VarOtherOnUseEquipped = num((A.NotoriousGladiatorsBadge:IsExists() or A.SinisterGladiatorsBadge:IsExists() or A.SinisterGladiatorsMedallion:IsExists() or A.VialofAnimatedBlood:IsExists() or A.FirstMatesSpyglass:IsExists() or A.JesHowler:IsExists() or A.NotoriousGladiatorsMedallion:IsExists() or A.AshvanesRazorCoral:IsExists()))
+                VarOtherOnUseEquipped = num((A.NotoriousGladiatorsBadge:IsExists() or A.CorruptedGladiatorsBadge:IsExists() or A.CorruptedGladiatorsMedallion:IsExists() or A.VialofAnimatedBlood:IsExists() or A.FirstMatesSpyglass:IsExists() or A.JesHowler:IsExists() or A.NotoriousGladiatorsMedallion:IsExists() or A.AshvanesRazorCoral:IsExists()))
             end
         end
         
@@ -621,8 +621,8 @@ A[3] = function(icon, isMulti)
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) <= 8 and Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
-            -- bag_of_tricks,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<5&talent.cold_heart.enabled|!talent.cold_heart.enabled&buff.pillar_of_frost.remains<3)|buff.seething_rage.up
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 5 and A.ColdHeart:IsSpellLearned() or not A.ColdHeart:IsSpellLearned() and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 3) or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true)) then
+            -- bag_of_tricks,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<5&talent.cold_heart.enabled|!talent.cold_heart.enabled&buff.pillar_of_frost.remains<3)&active_enemies=1|buff.seething_rage.up&active_enemies=1
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 5 and A.ColdHeart:IsSpellLearned() or not A.ColdHeart:IsSpellLearned() and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 3) and MultiUnits:GetByRangeInCombat(10, 5, 10) == 1 or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) and MultiUnits:GetByRangeInCombat(10, 5, 10) == 1) then
                 return A.BagofTricks:Show(icon)
             end
             -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains|talent.icecap.enabled
@@ -719,7 +719,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled&!buff.rime.up&spell_targets.howling_blast>=3
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate710) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate722) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -733,7 +733,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance))
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate743) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate755) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -751,7 +751,7 @@ A[3] = function(icon, isMulti)
             end
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike784) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike796) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -765,7 +765,7 @@ A[3] = function(icon, isMulti)
             end
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate807) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate819) then
                     return A.Obliterate:Show(icon) 
                 end
             end

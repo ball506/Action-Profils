@@ -432,7 +432,7 @@ A[3] = function(icon, isMulti)
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 12) then
                 return A.BloodoftheEnemy:Show(icon)
             end
-            -- use_items,if=equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains<=20|!equipped.cyclotronic_blast
+            -- use_items,if=equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>=20|!equipped.cyclotronic_blast
             -- ancestral_call,if=dot.touch_of_death.remains|target.time_to_die<16
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 16) then
                 return A.AncestralCall:Show(icon)

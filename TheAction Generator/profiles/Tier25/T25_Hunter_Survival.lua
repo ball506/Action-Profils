@@ -712,10 +712,6 @@ local function APL()
             if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1) or Unit(unit):TimeToDie() < 18 and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true)) then
                 return A.WildfireBomb:Show(icon)
             end
-            -- mongoose_bite,if=buff.mongoose_fury.stack>5&!cooldown.coordinated_assault.remains
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) > 5 and not bool(A.CoordinatedAssault:GetCooldown())) then
-                return A.MongooseBite:Show(icon)
-            end
             -- serpent_sting,if=buff.vipers_venom.up&dot.serpent_sting.remains<4*gcd|dot.serpent_sting.refreshable&!buff.coordinated_assault.up
             if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 4 * A.GetGCD() or Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.SerpentSting:Show(icon)

@@ -18,7 +18,7 @@ local setmetatable                           = setmetatable
 -- luacheck: max_line_length 9999
 
 -- Spells
-Action[ACTION_CONST_PALADIN_PROTECTION] = {
+Action[ACTION_CONST_DRUID_GUARDIAN] = {
     -- Racial
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
@@ -37,27 +37,39 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
-    ConsecrationBuff                       = Action.Create({ Type = "Spell", ID = 188370 }),
-    Consecration                           = Action.Create({ Type = "Spell", ID = 26573 }),
+    BearFormBuff                           = Action.Create({ Type = "Spell", ID = 5487 }),
+    BearForm                               = Action.Create({ Type = "Spell", ID = 5487 }),
+    Maul                                   = Action.Create({ Type = "Spell", ID = 6807 }),
+    Ironfur                                = Action.Create({ Type = "Spell", ID = 192081 }),
+    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081 }),
+    Pulverize                              = Action.Create({ Type = "Spell", ID = 80313 }),
+    ThrashBearDebuff                       = Action.Create({ Type = "Spell", ID = 192090 }),
+    Moonfire                               = Action.Create({ Type = "Spell", ID = 8921 }),
+    MoonfireDebuff                         = Action.Create({ Type = "Spell", ID = 164812 }),
+    Mangle                                 = Action.Create({ Type = "Spell", ID = 33917 }),
+    GalacticGuardianBuff                   = Action.Create({ Type = "Spell", ID = 213708 }),
+    ThrashCat                              = Action.Create({ Type = "Spell", ID = 106830 }),
+    ThrashBear                             = Action.Create({ Type = "Spell", ID = 77758 }),
+    SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
+    SwipeBear                              = Action.Create({ Type = "Spell", ID = 213771 }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    AvengingWrathBuff                      = Action.Create({ Type = "Spell", ID = 31884 }),
-    Seraphim                               = Action.Create({ Type = "Spell", ID = 152262 }),
-    ShieldoftheRighteous                   = Action.Create({ Type = "Spell", ID = 53600 }),
-    AvengingWrath                          = Action.Create({ Type = "Spell", ID = 31884 }),
-    SeraphimBuff                           = Action.Create({ Type = "Spell", ID = 152262 }),
-    BastionofLight                         = Action.Create({ Type = "Spell", ID = 204035 }),
-    Judgment                               = Action.Create({ Type = "Spell", ID = 20271 }),
-    AvengersShield                         = Action.Create({ Type = "Spell", ID = 31935 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
-    AvengersValorBuff                      = Action.Create({ Type = "Spell", ID =  }),
-    CrusadersJudgment                      = Action.Create({ Type = "Spell", ID =  }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
+    Barkskin                               = Action.Create({ Type = "Spell", ID = 22812 }),
+    LunarBeam                              = Action.Create({ Type = "Spell", ID = 204066 }),
+    BristlingFur                           = Action.Create({ Type = "Spell", ID = 155835 }),
+    Incarnation                            = Action.Create({ Type = "Spell", ID = 102558 }),
+    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102558 }),
     TheCrucibleofFlame                     = Action.Create({ Type = "Spell", ID =  }),
     AnimaofDeath                           = Action.Create({ Type = "Spell", ID =  }),
-    BlessedHammer                          = Action.Create({ Type = "Spell", ID = 204019 }),
-    HammeroftheRighteous                   = Action.Create({ Type = "Spell", ID = 53595 }),
-    HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
-    AnimaofLifeandDeath                    = Action.Create({ Type = "Spell", ID =  })
+    AnimaofLifeandDeath                    = Action.Create({ Type = "Spell", ID =  }),
+    ConflictandStrife                      = Action.Create({ Type = "Spell", ID =  }),
+    SharpenedClawsBuff                     = Action.Create({ Type = "Spell", ID =  }),
+    LayeredMane                            = Action.Create({ Type = "Spell", ID = 279552 })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -138,8 +150,8 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
 };
 
 -- To create essences use next code:
-Action:CreateEssencesFor(ACTION_CONST_PALADIN_PROTECTION)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
-local A = setmetatable(Action[ACTION_CONST_PALADIN_PROTECTION], { __index = Action })
+Action:CreateEssencesFor(ACTION_CONST_DRUID_GUARDIAN)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
+local A = setmetatable(Action[ACTION_CONST_DRUID_GUARDIAN], { __index = Action })
 
 
 
@@ -175,6 +187,34 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+local function Swipe()
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
+    return A.SwipeCat;
+  else
+    return A.SwipeBear;
+  end
+end
+
+local function Thrash()
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
+    return A.ThrashCat;
+  else
+    return A.ThrashBear;
+  end
+end
+
+
+local function EvaluateCyclePulverize26(unit)
+    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == dot.thrash_bear.max_stacks
+end
+
+local function EvaluateCycleMoonfire37(unit)
+    return not Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true)
+end
+
+local function EvaluateCycleMoonfire50(unit)
+    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)
+end
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -192,77 +232,183 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Cooldowns
+        local Precombat, Cleave, Cooldowns, Essences, Multi
         --Precombat
         local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
             -- snapshot_stats
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+            -- bear_form
+            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true) then
+                return A.BearForm:Show(icon)
+            end
             -- potion
-            if A.BattlePotionofStamina:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofStamina:Show(icon)
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                A.BattlePotionofAgility:Show(icon)
             end
-            -- consecration
-            if A.Consecration:IsReady(unit) and Unit("player"):HasBuffsDown(A.ConsecrationBuff.ID, true) then
-                return A.Consecration:Show(icon)
+        end
+        
+        --Cleave
+        local function Cleave(unit)
+            -- maul,if=rage.deficit<=10
+            if A.Maul:IsReady(unit) and (Player:RageDeficit() <= 10) then
+                return A.Maul:Show(icon)
             end
-            -- lights_judgment
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
-                return A.LightsJudgment:Show(icon)
+            -- ironfur,if=cost<=0
+            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() <= 0) then
+                return A.Ironfur:Show(icon)
+            end
+            -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
+            if A.Pulverize:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Pulverize, 40, "min", EvaluateCyclePulverize26) then
+                    return A.Pulverize:Show(icon) 
+                end
+            end
+            -- moonfire,target_if=!dot.moonfire.ticking
+            if A.Moonfire:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire37) then
+                    return A.Moonfire:Show(icon) 
+                end
+            end
+            -- mangle,if=dot.thrash_bear.ticking
+            if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+                return A.Mangle:Show(icon)
+            end
+            -- moonfire,target_if=buff.galactic_guardian.up&active_enemies=1|dot.moonfire.refreshable
+            if A.Moonfire:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire50) then
+                    return A.Moonfire:Show(icon) 
+                end
+            end
+            -- maul
+            if A.Maul:IsReady(unit) then
+                return A.Maul:Show(icon)
+            end
+            -- thrash
+            if Thrash():IsReady(unit) then
+                return Thrash:Show(icon)
+            end
+            -- swipe
+            if Swipe():IsReady(unit) then
+                return Swipe:Show(icon)
             end
         end
         
         --Cooldowns
         local function Cooldowns(unit)
-            -- fireblood,if=buff.avenging_wrath.up
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
+            -- potion
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                A.BattlePotionofAgility:Show(icon)
+            end
+            -- blood_fury
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.BloodFury:Show(icon)
+            end
+            -- berserking
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.Berserking:Show(icon)
+            end
+            -- arcane_torrent
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.ArcaneTorrent:Show(icon)
+            end
+            -- lights_judgment
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
+                return A.LightsJudgment:Show(icon)
+            end
+            -- fireblood
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
-            -- use_item,name=azsharas_font_of_power,if=cooldown.seraphim.remains<=10|!talent.seraphim.enabled
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Seraphim:GetCooldown() <= 10 or not A.Seraphim:IsSpellLearned()) then
-                A.AzsharasFontofPower:Show(icon)
+            -- ancestral_call
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+                return A.AncestralCall:Show(icon)
             end
-            -- use_item,name=ashvanes_razor_coral,if=(debuff.razor_coral_debuff.stack>7&buff.avenging_wrath.up)|debuff.razor_coral_debuff.stack=0
-            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) or Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0) then
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
+            end
+            -- barkskin,if=buff.bear_form.up
+            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+                return A.Barkskin:Show(icon)
+            end
+            -- lunar_beam,if=buff.bear_form.up
+            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+                return A.LunarBeam:Show(icon)
+            end
+            -- bristling_fur,if=buff.bear_form.up
+            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+                return A.BristlingFur:Show(icon)
+            end
+            -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
+            if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+                return A.Incarnation:Show(icon)
+            end
+            -- use_item,name=ashvanes_razor_coral,if=((equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>25&debuff.razor_coral_debuff.down)|debuff.razor_coral_debuff.down|(debuff.razor_coral_debuff.up&debuff.conductive_ink_debuff.up&target.time_to_pct_30<=2)|(debuff.razor_coral_debuff.up&time_to_die<=20))
+            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() > 25 and bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):TimeToDieX(30) <= 2) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):TimeToDie() <= 20))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
-            -- seraphim,if=cooldown.shield_of_the_righteous.charges_fractional>=2
-            if A.Seraphim:IsReady(unit) and (A.ShieldoftheRighteous:ChargesFractionalP() >= 2) then
-                return A.Seraphim:Show(icon)
+            -- use_item,effect_name=cyclotronic_blast
+            if A.CyclotronicBlast:IsReady(unit) then
+                A.CyclotronicBlast:Show(icon)
             end
-            -- avenging_wrath,if=buff.seraphim.up|cooldown.seraphim.remains<2|!talent.seraphim.enabled
-            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() < 2 or not A.Seraphim:IsSpellLearned()) then
-                return A.AvengingWrath:Show(icon)
+            -- use_items
+        end
+        
+        --Essences
+        local function Essences(unit)
+            -- concentrated_flame,if=essence.the_crucible_of_flame.major&((!dot.concentrated_flame_burn.ticking&!action.concentrated_flame_missile.in_flight)^time_to_die<=7)
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID)) and ({}^time_to_die <= 7)) then
+                return A.ConcentratedFlame:Show(icon)
             end
-            -- memory_of_lucid_dreams,if=!talent.seraphim.enabled|cooldown.seraphim.remains<=gcd|buff.seraphim.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not A.Seraphim:IsSpellLearned() or A.Seraphim:GetCooldown() <= A.GetGCD() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
+            -- anima_of_death,if=essence.anima_of_life_and_death.major
+            if A.AnimaofDeath:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID))) then
+                return A.AnimaofDeath:Show(icon)
+            end
+            -- memory_of_lucid_dreams,if=essence.memory_of_lucid_dreams.major
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID))) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            -- bastion_of_light,if=cooldown.shield_of_the_righteous.charges_fractional<=0.5
-            if A.BastionofLight:IsReady(unit) and (A.ShieldoftheRighteous:ChargesFractionalP() <= 0.5) then
-                return A.BastionofLight:Show(icon)
+            -- worldvein_resonance,if=essence.worldvein_resonance.major
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.WorldveinResonance.ID))) then
+                return A.WorldveinResonance:Show(icon)
             end
-            -- potion,if=buff.avenging_wrath.up
-            if A.BattlePotionofStamina:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true)) then
-                A.BattlePotionofStamina:Show(icon)
+            -- ripple_in_space,if=essence.ripple_in_space.major
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.RippleInSpace.ID))) then
+                return A.RippleInSpace:Show(icon)
             end
-            -- use_items,if=buff.seraphim.up|!talent.seraphim.enabled
-            -- use_item,name=grongs_primal_rage,if=cooldown.judgment.full_recharge_time>4&cooldown.avengers_shield.remains>4&(buff.seraphim.up|cooldown.seraphim.remains+4+gcd>expected_combat_length-time)&consecration.up
-            if A.GrongsPrimalRage:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 and A.AvengersShield:GetCooldown() > 4 and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or A.Seraphim:GetCooldown() + 4 + A.GetGCD() > expected_combat_length - Unit("player"):CombatTime()) and bool(consecration.up)) then
-                A.GrongsPrimalRage:Show(icon)
+        end
+        
+        --Multi
+        local function Multi(unit)
+            -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
+            if A.Maul:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.ConflictandStrife.ID)) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
+                return A.Maul:Show(icon)
             end
-            -- use_item,name=pocketsized_computation_device,if=cooldown.judgment.full_recharge_time>4*spell_haste&cooldown.avengers_shield.remains>4*spell_haste&(!equipped.grongs_primal_rage|!trinket.grongs_primal_rage.cooldown.up)&consecration.up
-            if A.PocketsizedComputationDevice:IsReady(unit) and (A.Judgment:FullRechargeTimeP() > 4 * Player:SpellHaste() and A.AvengersShield:GetCooldown() > 4 * Player:SpellHaste() and (not A.GrongsPrimalRage:IsExists() or not bool(trinket.grongs_primal_rage.cooldown.up)) and bool(consecration.up)) then
-                A.PocketsizedComputationDevice:Show(icon)
+            -- ironfur,if=(rage>=cost&azerite.layered_mane.enabled)|rage.deficit<10
+            if A.Ironfur:IsReady(unit) and ((Player:Rage() >= A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank())) or Player:RageDeficit() < 10) then
+                return A.Ironfur:Show(icon)
             end
-            -- use_item,name=merekthas_fang,if=!buff.avenging_wrath.up&(buff.seraphim.up|!talent.seraphim.enabled)
-            if A.MerekthasFang:IsReady(unit) and (not Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) or not A.Seraphim:IsSpellLearned())) then
-                A.MerekthasFang:Show(icon)
+            -- thrash,if=(buff.incarnation.up&active_enemies>=4)|cooldown.thrash_bear.up
+            if Thrash():IsReady(unit) and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) or A.ThrashBear:GetCooldown() == 0) then
+                return Thrash:Show(icon)
             end
-            -- use_item,name=razdunks_big_red_button
-            if A.RazdunksBigRedButton:IsReady(unit) then
-                A.RazdunksBigRedButton:Show(icon)
+            -- mangle,if=buff.incarnation.up&active_enemies=3&dot.thrash_bear.ticking
+            if A.Mangle:IsReady(unit) and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+                return A.Mangle:Show(icon)
+            end
+            -- moonfire,if=dot.moonfire.refreshable&active_enemies<=4
+            if A.Moonfire:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4) then
+                return A.Moonfire:Show(icon)
+            end
+            -- swipe,if=buff.incarnation.down
+            if Swipe():IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true))) then
+                return Swipe:Show(icon)
             end
         end
         
@@ -279,69 +425,17 @@ A[3] = function(icon, isMulti)
             if (true) then
                 local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
-            -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
-                return A.WorldveinResonance:Show(icon)
+            -- call_action_list,name=essences
+            if (true) then
+                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
             end
-            -- shield_of_the_righteous,if=(buff.avengers_valor.up&cooldown.shield_of_the_righteous.charges_fractional>=2.5)&(cooldown.seraphim.remains>gcd|!talent.seraphim.enabled)
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true) and A.ShieldoftheRighteous:ChargesFractionalP() >= 2.5) and (A.Seraphim:GetCooldown() > A.GetGCD() or not A.Seraphim:IsSpellLearned())) then
-                return A.ShieldoftheRighteous:Show(icon)
+            -- call_action_list,name=cleave,if=active_enemies<=2
+            if (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2) then
+                local ShouldReturn = Cleave(unit); if ShouldReturn then return ShouldReturn; end
             end
-            -- shield_of_the_righteous,if=(buff.avenging_wrath.up&!talent.seraphim.enabled)|buff.seraphim.up&buff.avengers_valor.up
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and not A.Seraphim:IsSpellLearned()) or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) and Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true)) then
-                return A.ShieldoftheRighteous:Show(icon)
-            end
-            -- shield_of_the_righteous,if=(buff.avenging_wrath.up&buff.avenging_wrath.remains<4&!talent.seraphim.enabled)|(buff.seraphim.remains<4&buff.seraphim.up)
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) and Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) < 4 and not A.Seraphim:IsSpellLearned()) or (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) < 4 and Unit("player"):HasBuffs(A.SeraphimBuff.ID, true))) then
-                return A.ShieldoftheRighteous:Show(icon)
-            end
-            -- lights_judgment,if=buff.seraphim.up&buff.seraphim.remains<3
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) and Unit("player"):HasBuffs(A.SeraphimBuff.ID, true) < 3) then
-                return A.LightsJudgment:Show(icon)
-            end
-            -- consecration,if=!consecration.up
-            if A.Consecration:IsReady(unit) and (not bool(consecration.up)) then
-                return A.Consecration:Show(icon)
-            end
-            -- judgment,if=(cooldown.judgment.remains<gcd&cooldown.judgment.charges_fractional>1&cooldown_react)|!talent.crusaders_judgment.enabled
-            if A.Judgment:IsReady(unit) and ((A.Judgment:GetCooldown() < A.GetGCD() and A.Judgment:ChargesFractionalP() > 1 and A.Judgment:GetCooldown() == 0) or not A.CrusadersJudgment:IsSpellLearned()) then
-                return A.Judgment:Show(icon)
-            end
-            -- avengers_shield,if=cooldown_react
-            if A.AvengersShield:IsReady(unit) and (A.AvengersShield:GetCooldown() == 0) then
-                return A.AvengersShield:Show(icon)
-            end
-            -- judgment,if=cooldown_react|!talent.crusaders_judgment.enabled
-            if A.Judgment:IsReady(unit) and (A.Judgment:GetCooldown() == 0 or not A.CrusadersJudgment:IsSpellLearned()) then
-                return A.Judgment:Show(icon)
-            end
-            -- concentrated_flame,if=(!talent.seraphim.enabled|buff.seraphim.up)&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) and num(not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true))) > 0 or A.TheCrucibleofFlame:GetRank() < 3) then
-                return A.ConcentratedFlame:Show(icon)
-            end
-            -- lights_judgment,if=!talent.seraphim.enabled|buff.seraphim.up
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (not A.Seraphim:IsSpellLearned() or Unit("player"):HasBuffs(A.SeraphimBuff.ID, true)) then
-                return A.LightsJudgment:Show(icon)
-            end
-            -- anima_of_death
-            if A.AnimaofDeath:IsReady(unit) then
-                return A.AnimaofDeath:Show(icon)
-            end
-            -- blessed_hammer,strikes=3
-            if A.BlessedHammer:IsReady(unit) then
-                return A.BlessedHammer:Show(icon)
-            end
-            -- hammer_of_the_righteous
-            if A.HammeroftheRighteous:IsReady(unit) then
-                return A.HammeroftheRighteous:Show(icon)
-            end
-            -- consecration
-            if A.Consecration:IsReady(unit) then
-                return A.Consecration:Show(icon)
-            end
-            -- heart_essence,if=!(essence.the_crucible_of_flame.major|essence.worldvein_resonance.major|essence.anima_of_life_and_death.major|essence.memory_of_lucid_dreams.major)
-            if A.HeartEssence:IsReady(unit) and (not (bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID)) or bool(Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) or bool(Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID)) or bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)))) then
-                return A.HeartEssence:Show(icon)
+            -- call_action_list,name=multi,if=active_enemies>=3
+            if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
+                local ShouldReturn = Multi(unit); if ShouldReturn then return ShouldReturn; end
             end
         end
     end

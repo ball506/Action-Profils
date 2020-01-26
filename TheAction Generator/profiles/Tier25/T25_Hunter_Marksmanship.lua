@@ -54,7 +54,8 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
-    SparkofInspiration                     = Action.Create({ Type = "Spell", ID =  }),
+    VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
+    WorldveinResonanceBuff                 = Action.Create({ Type = "Spell", ID =  }),
     PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
     UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
     PreciseShotsBuff                       = Action.Create({ Type = "Spell", ID = 260242 }),
@@ -76,6 +77,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     SurgingShots                           = Action.Create({ Type = "Spell", ID = 287707 }),
     Streamline                             = Action.Create({ Type = "Spell", ID = 260367 }),
     Multishot                              = Action.Create({ Type = "Spell", ID = 257620 }),
+    CallingtheShots                        = Action.Create({ Type = "Spell", ID = 260404 }),
     GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -226,6 +228,10 @@ A[3] = function(icon, isMulti)
             if A.DoubleTap:IsReady(unit) then
                 return A.DoubleTap:Show(icon)
             end
+            -- use_item,name=azsharas_font_of_power
+            if A.AzsharasFontofPower:IsReady(unit) then
+                A.AzsharasFontofPower:Show(icon)
+            end
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
@@ -237,10 +243,6 @@ A[3] = function(icon, isMulti)
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
-            end
-            -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
-                A.AzsharasFontofPower:Show(icon)
             end
             -- trueshot,precast_time=1.5,if=active_enemies>2
             if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
@@ -294,12 +296,12 @@ A[3] = function(icon, isMulti)
             if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
                 return A.ReapingFlames:Show(icon)
             end
-            -- worldvein_resonance,if=(trinket.azsharas_font_of_power.cooldown.remains>20|!equipped.azsharas_font_of_power)&(cooldown.trueshot.remains_guess<5|essence.spark_of_inspiration.enabled&cooldown.trueshot.remains_guess>45)|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((trinket.azsharas_font_of_power.cooldown.remains > 20 or not A.AzsharasFontofPower:IsExists()) and (cooldown.trueshot.remains_guess < 5 or bool(A.SparkofInspiration:IsSpellLearned()) and cooldown.trueshot.remains_guess > 45) or Unit(unit):TimeToDie() < 20) then
+            -- worldvein_resonance,if=(trinket.azsharas_font_of_power.cooldown.remains>20|!equipped.azsharas_font_of_power|target.time_to_die<trinket.azsharas_font_of_power.cooldown.duration+34&target.health.pct>20)&(cooldown.trueshot.remains_guess<3|(essence.vision_of_perfection.minor&target.time_to_die>cooldown+buff.worldvein_resonance.duration))|target.time_to_die<20
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((trinket.azsharas_font_of_power.cooldown.remains > 20 or not A.AzsharasFontofPower:IsExists() or Unit(unit):TimeToDie() < trinket.azsharas_font_of_power.cooldown.duration + 34 and Unit(unit):HealthPercent() > 20) and (cooldown.trueshot.remains_guess < 3 or (bool(Azerite:EssenceHasMinor(A.VisionofPerfection.ID)) and Unit(unit):TimeToDie() > cooldown + A.WorldveinResonanceBuff.ID, true:BaseDuration())) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
-            -- guardian_of_azeroth,if=(ca_execute|target.time_to_die>cooldown.guardian_of_azeroth.duration+duration)&(buff.trueshot.up|cooldown.trueshot.remains<16)|target.time_to_die<31
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(ca_execute) or Unit(unit):TimeToDie() > A.GuardianofAzeroth:BaseDuration() + duration) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or A.Trueshot:GetCooldown() < 16) or Unit(unit):TimeToDie() < 31) then
+            -- guardian_of_azeroth,if=(ca_execute|target.time_to_die>cooldown+30)&(buff.trueshot.up|cooldown.trueshot.remains<16)|target.time_to_die<31
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(ca_execute) or Unit(unit):TimeToDie() > cooldown + 30) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or A.Trueshot:GetCooldown() < 16) or Unit(unit):TimeToDie() < 31) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- ripple_in_space,if=cooldown.trueshot.remains<7
@@ -310,12 +312,12 @@ A[3] = function(icon, isMulti)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&ca_execute|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and bool(ca_execute) or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
+            -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&target.health.pct<20|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
+            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
                 A.BattlePotionofAgility:Show(icon)
             end
-            -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+duration|target.health.pct<20|!talent.careful_aim.enabled)|target.time_to_die<15
-            if A.Trueshot:IsReady(unit) and (Player:Focus() > 60 and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) and bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) or Unit(unit):TimeToDie() < 15) then
+            -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+buff.trueshot.duration|(target.health.pct<20|!talent.careful_aim.enabled)&(!equipped.azsharas_font_of_power|trinket.azsharas_font_of_power.cooldown.remains>15))|target.time_to_die<15
+            if A.Trueshot:IsReady(unit) and (Player:Focus() > 60 and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) and bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) and (not A.AzsharasFontofPower:IsExists() or trinket.azsharas_font_of_power.cooldown.remains > 15)) or Unit(unit):TimeToDie() < 15) then
                 return A.Trueshot:Show(icon)
             end
         end
@@ -465,15 +467,27 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_shot
-            -- use_item,name=azsharas_font_of_power,if=cooldown.trueshot.remains<18|target.time_to_die<40
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Trueshot:GetCooldown() < 18 or Unit(unit):TimeToDie() < 40) then
+            -- use_item,name=lurkers_insidious_gift,if=cooldown.trueshot.remains_guess<15|target.time_to_die<30
+            if A.LurkersInsidiousGift:IsReady(unit) and (cooldown.trueshot.remains_guess < 15 or Unit(unit):TimeToDie() < 30) then
+                A.LurkersInsidiousGift:Show(icon)
+            end
+            -- use_item,name=azsharas_font_of_power,if=(target.time_to_die>cooldown+34|target.health.pct<20|target.time_to_pct_20<15)&cooldown.trueshot.remains_guess<15|target.time_to_die<35
+            if A.AzsharasFontofPower:IsReady(unit) and ((Unit(unit):TimeToDie() > cooldown + 34 or Unit(unit):HealthPercent() < 20 or target.time_to_pct_20 < 15) and cooldown.trueshot.remains_guess < 15 or Unit(unit):TimeToDie() < 35) then
                 A.AzsharasFontofPower:Show(icon)
             end
-            -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major.rank3&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and bool(ca_execute)) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
+            -- use_item,name=lustrous_golden_plumage,if=cooldown.trueshot.remains_guess<5|target.time_to_die<20
+            if A.LustrousGoldenPlumage:IsReady(unit) and (cooldown.trueshot.remains_guess < 5 or Unit(unit):TimeToDie() < 20) then
+                A.LustrousGoldenPlumage:Show(icon)
+            end
+            -- use_item,name=galecallers_boon,if=buff.trueshot.up|!talent.calling_the_shots.enabled|target.time_to_die<10
+            if A.GalecallersBoon:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or not A.CallingtheShots:IsSpellLearned() or Unit(unit):TimeToDie() < 10) then
+                A.GalecallersBoon:Show(icon)
+            end
+            -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major&target.health.pct<20)|debuff.razor_coral_debuff.down|target.time_to_die<20
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and Unit(unit):HealthPercent() < 20) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
-            -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major.rank3|debuff.blood_of_the_enemy.up|target.time_to_die<5
+            -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up|target.time_to_die<5
             if A.PocketsizedComputationDevice:IsReady(unit) and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) or Unit(unit):TimeToDie() < 5) then
                 A.PocketsizedComputationDevice:Show(icon)
             end

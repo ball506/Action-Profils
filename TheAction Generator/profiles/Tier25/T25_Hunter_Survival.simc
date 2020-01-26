@@ -11,7 +11,7 @@ azerite_essences=27:3/4:3/5:3/35:3
 # Default consumables
 potion=unbridled_fury
 flask=greater_flask_of_the_currents
-food=mechdowels_big_mech
+food=baked_port_tato
 augmentation=battle_scarred
 
 # This default action priority list is automatically created based on your character.
@@ -135,7 +135,6 @@ actions.st+=/mongoose_bite,if=buff.coordinated_assault.up&(buff.coordinated_assa
 actions.st+=/kill_command,target_if=min:bloodseeker.remains,if=focus+cast_regen<focus.max
 actions.st+=/steel_trap,if=focus+cast_regen<focus.max
 actions.st+=/wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up|!dot.wildfire_bomb.ticking&buff.mongoose_fury.stack<1)|time_to_die<18&!dot.wildfire_bomb.ticking
-actions.st+=/mongoose_bite,if=buff.mongoose_fury.stack>5&!cooldown.coordinated_assault.remains
 actions.st+=/serpent_sting,if=buff.vipers_venom.up&dot.serpent_sting.remains<4*gcd|dot.serpent_sting.refreshable&!buff.coordinated_assault.up
 actions.st+=/a_murder_of_crows,if=!buff.coordinated_assault.up
 actions.st+=/coordinated_assault,if=!buff.coordinated_assault.up
@@ -178,7 +177,7 @@ finger1=ring_of_collective_consciousness,id=174530,bonus_id=4824/1517/6554,encha
 finger2=ring_of_cosmic_potential,id=174533,bonus_id=4824/1517/6573,enchant=accord_of_haste
 trinket1=ashvanes_razor_coral,id=169311,bonus_id=4800/1517
 trinket2=azsharas_font_of_power,id=169314,bonus_id=4800/1517
-main_hand=qwor_nlyeth,id=174106,bonus_id=4824/1517/6448,enchant_id=quick_navigation
+main_hand=qwor_nlyeth,id=174106,bonus_id=4824/1517/6448,enchant=quick_navigation
 
 # Gear Summary
 # gear_ilvl=476.87

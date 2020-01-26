@@ -207,7 +207,7 @@ local function EvaluateCycleSoulReaper167(unit)
     return Unit(unit):TimeToDie() < 8 and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleOutbreak465(unit)
+local function EvaluateCycleOutbreak477(unit)
     return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD()
 end
 
@@ -497,8 +497,8 @@ A[3] = function(icon, isMulti)
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((bool(Pet:IsActive(A.Gargoyle.ID)) and A.SummonGargoyle:IsSpellLearned()) or bool(Pet:IsActive(A.ApocGhoul.ID))) then
                 return A.Fireblood:Show(icon)
             end
-            -- bag_of_tricks,if=buff.unholy_strength.up|buff.festermight.remains<gcd
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) < A.GetGCD()) then
+            -- bag_of_tricks,if=buff.unholy_strength.up&active_enemies=1|buff.festermight.remains<gcd&active_enemies=1
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1) then
                 return A.BagofTricks:Show(icon)
             end
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
@@ -560,7 +560,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak465) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak477) then
                     return A.Outbreak:Show(icon) 
                 end
             end
