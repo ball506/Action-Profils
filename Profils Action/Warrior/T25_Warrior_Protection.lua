@@ -68,6 +68,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     Pummel                                 = Action.Create({ Type = "Spell", ID = 6552     }),
 	PummelGreen	                           = Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true}), 
     IntimidatingShout                      = Action.Create({ Type = "Spell", ID = 5246     }),
+	Shockwave                              = Action.Create({ Type = "Spell", ID = 46968    }),
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368     }),
 	StormBolt                              = Action.Create({ Type = "Spell", ID = 107570}),
  	StormBoltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
@@ -199,7 +200,7 @@ end
 
 local function isCurrentlyTanking()
     -- is player currently tanking any enemies within 16 yard radius
-    local IsTanking = Player:IsTankingAoE(16) or Player:IsTanking(Target);
+    local IsTanking = Unit("player"):IsTankingAoE(16) or Unit("player"):IsTanking("target", 16);
     return IsTanking;
 end
 
@@ -411,11 +412,17 @@ local function Interrupts(unit)
         return A.Pummel
     end 
     
-    if useCC and A.Stormbolt:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.Stormbolt:IsReady(unit) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
 	    -- Notification					
-        Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
-        return A.HammerofJustice              
-    end          
+        Action.SendNotification("Stormbolt interrupting...", A.Stormbolt.ID)
+        return A.Stormbolt              
+    end  
+
+    if useCC and A.Shockwave:IsReady("player") and MultiUnits:GetByRange(8) > 2 and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	    -- Notification					
+        Action.SendNotification("Shockwave interrupting...", A.Shockwave.ID)
+        return A.Shockwave              
+    end 	
 	    
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
@@ -447,10 +454,15 @@ A[3] = function(icon, isMulti)
     --------------------
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
+	local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-
+    local offensiveRage = offensiveRage()
+	local offensiveShieldBlock = offensiveShieldBlock()
+	local shouldCastIp = shouldCastIp()
+	local isCurrentlyTanking = isCurrentlyTanking()
+	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -486,6 +498,12 @@ A[3] = function(icon, isMulti)
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.PotionofUnbridledFury:Show(icon)
             end
+			
+            -- devastate
+            if A.Devastate:IsReady(unit) then
+                return A.Devastate:Show(icon)
+            end
+			
         end
         
         --Aoe
@@ -500,7 +518,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady(unit) and A.BoomingVoice:IsSpellLearned() then
+            if A.DemoralizingShout:IsReady("player") and A.BoomingVoice:IsSpellLearned() then
                 return A.DemoralizingShout:Show(icon)
             end
 			
@@ -514,18 +532,14 @@ A[3] = function(icon, isMulti)
                 return A.DragonRoar:Show(icon)
             end
 			
-            -- revenge
-            if A.Revenge:IsReady(unit) then
-                return A.Revenge:Show(icon)
-            end
 			
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) or A.ThunderClap:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ThunderClap:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
 			
             -- ravager
-            if A.Ravager:IsReady(unit) then
+            if A.Ravager:IsReady("player") then
                 return A.Ravager:Show(icon)
             end
 			
@@ -554,7 +568,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
+            if A.DemoralizingShout:IsReady("player") and (A.BoomingVoice:IsSpellLearned()) then
                 return A.DemoralizingShout:Show(icon)
             end
 			
@@ -589,19 +603,14 @@ A[3] = function(icon, isMulti)
             if A.ThunderClap:IsReady(unit) then
                 return A.ThunderClap:Show(icon)
             end
-			
-            -- revenge
-            if A.Revenge:IsReady(unit) then
-                return A.Revenge:Show(icon)
-            end
-			
+						
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) or A.ShieldSlam:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ShieldSlam:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
 			
             -- ravager
-            if A.Ravager:IsReady(unit) then
+            if A.Ravager:IsReady("player") then
                 return A.Ravager:Show(icon)
             end
 			
@@ -666,8 +675,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ignore_pain,if=rage.deficit<25+20*talent.booming_voice.enabled*cooldown.demoralizing_shout.ready
-            if A.IgnorePain:IsReady(unit) and (Player:RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) then
+            if A.IgnorePain:IsReady(unit) and (Player:RageDeficit() < 25 + 20 * num(A.BoomingVoice:IsSpellLearned()) * num(A.DemoralizingShout:GetCooldown() == 0)) and shouldCastIp and isCurrentlyTanking then
                 return A.IgnorePain:Show(icon)
+            end
+
+            -- Shockwave
+            if A.Shockwave:IsReady("player") and A.Shockwave:IsSpellLearned() then
+                return A.Shockwave:Show(icon)
             end
 			
             -- worldvein_resonance,if=cooldown.avatar.remains<=2
@@ -691,12 +705,17 @@ A[3] = function(icon, isMulti)
             end
 						
             -- avatar
-            if A.Avatar:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Avatar:IsReady(unit) and A.BurstIsON(unit) and combatTime > 3 then
                 return A.Avatar:Show(icon)
+            end
+
+            -- revenge
+            if A.Revenge:IsReady("player") and Player:Rage() > 60 and offensiveRage then
+                return A.Revenge:Show(icon)
             end
 			
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if Aoe(unit) and (MultiUnits:GetByRange(8) >= 3) then
+            if Aoe(unit) and MultiUnits:GetByRange(8) >= 3 and A.GetToggle(2, "AoE") then
                 return true
             end
 			

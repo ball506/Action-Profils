@@ -16,7 +16,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v2.0.2 (23.01.2020)",
+    DateTime = "v2.0.3 (26.01.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -522,7 +522,8 @@ A.Data.ProfileUI                                     = {
                 },
             },			
         },
-        [ACTION_CONST_WARRIOR_PROTECTION] = {        
+        [ACTION_CONST_WARRIOR_PROTECTION] = { 
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },		
             { -- [7]
                 {
                     E = "Header",
@@ -625,6 +626,12 @@ A.Data.ProfileUI                                     = {
                     },
                 },
             },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [1] 1st Row  	
                 {
                     E = "Checkbox", 
@@ -692,6 +699,12 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 }, 
             }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [1] 1st Row  			    
                 {
                     E = "Checkbox", 
