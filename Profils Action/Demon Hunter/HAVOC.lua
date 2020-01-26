@@ -412,9 +412,6 @@ local function CanDarkness()
 	    local DarknessUnits = A.GetToggle(2, "DarknessUnits")
 	    local DarknessUnitsHP = A.GetToggle(2, "DarknessUnitsHP")	
 	    local DarknessUnitsTTD = A.GetToggle(2, "DarknessUnitsTTD")
-		
-        local RevivalHP = A.GetToggle(2, "Revival")
-        local RevivalUnits = A.GetToggle(2, "RevivalUnits") 
         local totalMembers = HealingEngine.GetMembersAll()
 		
         -- Auto Counter
@@ -686,7 +683,7 @@ A[3] = function(icon, isMulti)
             -- snapshot_stats
 			
             -- immolation_aura
-            if A.ImmolationAura:IsReady(unit) and ((Pull > 0.1 and Pull <= 3) or not Action.GetToggle(1, "DBM")) then
+            if A.ImmolationAura:IsReady(unit) and Unit(unit):GetRange() > 6 and ((Pull > 0.1 and Pull <= 3) or not Action.GetToggle(1, "DBM")) then
                 return A.ImmolationAura:Show(icon)
             end	
 			
@@ -705,24 +702,25 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
 			
-            -- metamorphosis,if=!azerite.chaotic_transformation.enabled
-            --if A.Metamorphosis:IsReady("player") and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and (A.ChaoticTransformation:GetAzeriteRank() == 0) 
-			--and ((Pull > 0.1 and Pull <= 0.2) or not Action.GetToggle(1, "DBM")) 
-			--then
-            --    return A.Metamorphosis:Show(icon)
-            --end
-			
-			-- use_item,name=azsharas_font_of_power
-            if A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
-                return A.DemonsBite:Show(icon)
-            end
-			
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast then
+            if A.AzsharasFontofPower:IsReady(unit) and ((Pull > 0.1 and Pull <= 6) or not Action.GetToggle(1, "DBM")) then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Azshara trinket", A.AzsharasFontofPower.ID) 
                 return A.AzsharasFontofPower:Show(icon)
             end
+			
+            -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
+            if A.EyeBeam:IsReady(unit) and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 8 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+ 	            -- Notification					
+                Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
+				return A.EyeBeam:Show(icon)
+            end
+			
+			-- use_item,name=azsharas_font_of_power
+            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+                return A.DemonsBite:Show(icon)
+            end
+			
         end
 		
         --Essences
@@ -812,21 +810,26 @@ A[3] = function(icon, isMulti)
         local function Cooldown(unit)		
 					
             -- metamorphosis,if=!(talent.demonic.enabled|variable.pooling_for_meta|variable.waiting_for_nemesis)|target.time_to_die<25
-            if A.Metamorphosis:IsReady("player") and combatTime > 3 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and (not (A.Demonic:IsSpellLearned() or VarPoolingForMeta or VarWaitingForNemesis) or (Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 25)) then
+            if A.Metamorphosis:IsReady("player") and combatTime > 3 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and 
+			(
+			    not A.Demonic:IsSpellLearned() 
+				or
+				(Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 25)
+			)
+			then
  	            -- Notification					
                 Action.SendNotification("Burst: Metamorphosis", A.Metamorphosis.ID)                
 				return A.Metamorphosis:Show(icon)
             end	
 			
             -- metamorphosis,if=talent.demonic.enabled&(!azerite.chaotic_transformation.enabled|(cooldown.eye_beam.remains>20&(!variable.blade_dance|cooldown.blade_dance.remains>gcd.max)))
-            if A.Metamorphosis:IsReady("player") and combatTime > 3 and 
+            if A.Metamorphosis:IsReady("player") and  
 			    (
 				    A.Demonic:IsSpellLearned() and 
 					(
 					    A.ChaoticTransformation:GetAzeriteRank() == 0 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0
 						or
-						A.ChaoticTransformation:GetAzeriteRank() > 0 and A.EyeBeam:GetCooldown() > A.GetGCD() * 2 and A.BladeDance:GetCooldown() > A.GetGCD()
-						--(A.EyeBeam:GetCooldown() > 20 and (not VarBladeDance or A.BladeDance:GetCooldown() > A.GetGCD()))
+						A.ChaoticTransformation:GetAzeriteRank() > 0 and A.EyeBeam:GetCooldown() > 0 and A.LastPlayerCastName == A.DeathSweep:Info()
 					)
 				)
 			then
@@ -1164,6 +1167,11 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneTorrent:Show(icon)
             end	
 			
+            -- call_action_list,name=cooldown,if=gcd.remains=0          (A.GetCurrentGCD() == 0) and
+            if A.BurstIsON(unit) and Cooldown(unit) and CanCast then
+                return true
+            end		
+			
             -- bag_of_tricks
             if A.BagofTricks:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BagofTricks:Show(icon)
@@ -1183,12 +1191,7 @@ A[3] = function(icon, isMulti)
             if A.RainfromAbove:IsReady("player") and A.IsInPvP and Unit(unit):InLOS() and (Unit(unit):HealthPercent() <= 70 or Unit("player"):HealthPercent() <= 30 or Unit("player"):IsFocused()) then
 			    return A.RainfromAbove:Show(icon)
 			end
-			
-            -- call_action_list,name=cooldown,if=gcd.remains=0
-            if (A.GetCurrentGCD() == 0) and A.BurstIsON(unit) and Cooldown(unit) and CanCast then
-                return true
-            end
-			
+					
 	    	-- Non SIMC Custom Trinket1
 	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast then	    
            	    if A.BurstIsON(unit) then 
