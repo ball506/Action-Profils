@@ -94,6 +94,7 @@ Action[ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
 	HexGreen	   						   = Action.Create({ Type = "SpellSingleColor", ID = 51514, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
     Boulderfist                            = Action.Create({ Type = "Spell", ID = 246035 }),
     StrengthofEarth                        = Action.Create({ Type = "Spell", ID = 273461 }),
+	EarthElemental                         = Action.Create({ Type = "Spell", ID = 198103 }), -- Earth Elemental manual queue
     -- Utilities
     BloodLust                              = Action.Create({ Type = "Spell", ID = 2825     }),
     LightningLasso                         = Action.Create({ Type = "Spell", ID = 305483     }),
@@ -571,34 +572,46 @@ A[3] = function(icon, isMulti)
             -- flask
             -- food
             -- augmentation
-            -- snapshot_stats
-            -- potion
-            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                return A.PotionofUnbridledFury:Show(icon)
-            end
-			
+            -- snapshot_stats			
             -- totem_mastery
-            if A.TotemMastery:IsReady("player") and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 then
+            if A.TotemMastery:IsReady("player") and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 
+			and ((Pull > 0.1 and Pull <= 9) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.TotemMastery:Show(icon)
             end
 			
             -- lightning_shield
-            if A.LightningShield:IsReady(unit) and Unit("player"):HasBuffs(A.LightningShield.ID, true) == 0 then
+            if A.LightningShield:IsReady(unit) and Unit("player"):HasBuffs(A.LightningShield.ID, true) == 0 
+			and ((Pull > 0.1 and Pull <= 8) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.LightningShield:Show(icon)
             end
 			
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(unit) 
+			and ((Pull > 0.1 and Pull <= 6) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
+            -- potion
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") 
+			and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM"))
+			then
+                return A.PotionofUnbridledFury:Show(icon)
+            end			
+			
             -- Flametongue
-            if A.Flametongue:IsReady(unit) then
+            if A.Flametongue:IsReady(unit) 
+			and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.Flametongue:Show(icon)
             end
 			
             -- rockbiter
-            if A.Rockbiter:IsReady(unit) then
+            if A.Rockbiter:IsReady(unit) 
+			and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM"))
+			then
                 return A.Rockbiter:Show(icon)
             end
 			
@@ -672,17 +685,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(40) > 1) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- ascendance,if=cooldown.strike.remains>0
-            if A.Ascendance:IsReady(unit) then
+            if A.Ascendance:IsReady(unit) and A.Ascendance:IsSpellLearned() then
                 return A.Ascendance:Show(icon)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2)) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
 			
@@ -738,7 +751,7 @@ A[3] = function(icon, isMulti)
         --Filler
         local function Filler(unit)
             -- sundering,if=raid_event.adds.in>40
-            if A.Sundering:IsReady(unit) then
+            if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 6 then
                 return A.Sundering:Show(icon)
             end
 			
@@ -929,7 +942,7 @@ A[3] = function(icon, isMulti)
                 return A.TotemMastery:Show(icon)
             end
             -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRange(8) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.BloodoftheEnemy:GetCooldown() > 40)))) then
+            if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(6) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.BloodoftheEnemy:GetCooldown() > 40)))) then
                 return A.Sundering:Show(icon)
             end
             -- focused_azerite_beam,if=active_enemies>1
@@ -1113,11 +1126,11 @@ A[3] = function(icon, isMulti)
             end
      
 			-- Trinkets
-            if A.Trinket1:IsReady(unit) and A.BurstIsON(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+            if A.Trinket1:IsReady(unit) and Unit(unit):GetRange() < 6 and A.BurstIsON(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket1:Show(icon)
             end 
                                
-            if A.Trinket2:IsReady(unit) and A.BurstIsON(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+            if A.Trinket2:IsReady(unit) and Unit(unit):GetRange() < 6 and A.BurstIsON(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end 
 				
