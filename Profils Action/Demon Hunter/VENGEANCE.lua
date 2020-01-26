@@ -600,19 +600,25 @@ A[3] = function(icon, isMulti)
                     end
 				end
             end 
-					
+			
 	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast then	    
-           	    if A.BurstIsON(unit) then 
-      	       	    return A.Trinket1:Show(icon)
-   	            end 		
+	        if A.Trinket1:IsReady("player") and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DPS" then	    
+      	       	return A.Trinket1:Show(icon)		
+	        end	
+			
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
+      	       	return A.Trinket1:Show(icon)		
 	        end
+
+	    	-- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady("player") and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DPS" then	    
+      	       	return A.Trinket2:Show(icon)		
+	        end	
 		
 		    -- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast then	    
-       	        if A.BurstIsON(unit) then 
-      	       	    return A.Trinket2:Show(icon)
-   	            end 	
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
+      	       	return A.Trinket2:Show(icon)	
 	        end
 					
             -- call_action_list,name=brand,if=talent.charred_flesh.enabled
