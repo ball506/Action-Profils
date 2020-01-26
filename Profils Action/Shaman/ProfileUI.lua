@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.6 (25.01.2020)",
+    DateTime = "v2.0.7 (26.01.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -230,6 +230,25 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "FeralLungeHP",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196884) .. " enemy HP",
+                    }, 
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(196884) .. " is talented and ready, will use it if enemy try to move out and got HP value <= this setting.", 
+                        ruRU = "Если " .. A.GetSpellInfo(196884) .. " талантлив и готов, будет использовать его, если враг попытается выйти и получить значение HP <= этот параметр.", 
+                        frFR = "Si " .. A.GetSpellInfo(196884) .. " est appris et prêt, l'utilisera si l'ennemi essaie de s'enfuir et a une valeur HP <= ce paramètre.", 
+                    }, 
+                    M = {},
+                },
                 {
                     E = "Checkbox", 
                     DB = "UseCapacitorTotem",
@@ -247,7 +266,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-
             { -- [7] 
                 {
                     E = "Header",

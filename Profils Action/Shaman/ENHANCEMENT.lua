@@ -1,243 +1,202 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
-
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local Action = Action
-local TeamCache = Action.TeamCache
-local EnemyTeam = Action.EnemyTeam
-local FriendlyTeam = Action.FriendlyTeam
---local HealingEngine = Action.HealingEngine
-local LoC = Action.LossOfControl
-local ActionPlayer = Action.Player 
-local MultiUnits = Action.MultiUnits
-local UnitCooldown = Action.UnitCooldown
-local ActionUnit = Action.Unit 
---local Pet = LibStub("PetLibrary")
---local Azerite = LibStub("AzeriteTraits")
+--- ====================== ACTION HEADER ============================ ---
+local Action                                 = Action
+local TeamCache                              = Action.TeamCache
+local EnemyTeam                              = Action.EnemyTeam
+local FriendlyTeam                           = Action.FriendlyTeam
+--local HealingEngine                        = Action.HealingEngine
+local LoC                                    = Action.LossOfControl
+local Player                                 = Action.Player
+local MultiUnits                             = Action.MultiUnits
+local UnitCooldown                           = Action.UnitCooldown
+local Unit                                   = Action.Unit
+local Pet                                    = LibStub("PetLibrary")
+local Azerite                                = LibStub("AzeriteTraits")
+local setmetatable                           = setmetatable
 local TR                                     = Action.TasteRotation
+local pairs                                  = pairs
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 
+-- Spells
 Action[ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
     -- Racial
-    ArcaneTorrent                         = Action.Create({ Type = "Spell", ID = 50613     }),
-    BloodFury                             = Action.Create({ Type = "Spell", ID = 20572      }),
-    Fireblood                             = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                         = Action.Create({ Type = "Spell", ID = 274738     }),
-    Berserking                            = Action.Create({ Type = "Spell", ID = 26297    }),
-    ArcanePulse                           = Action.Create({ Type = "Spell", ID = 260364    }),
-    QuakingPalm                           = Action.Create({ Type = "Spell", ID = 107079     }),
-    Haymaker                              = Action.Create({ Type = "Spell", ID = 287712     }), 
-    BullRush                              = Action.Create({ Type = "Spell", ID = 255654     }),    
-    WarStomp                              = Action.Create({ Type = "Spell", ID = 20549     }),
-    GiftofNaaru                           = Action.Create({ Type = "Spell", ID = 59544    }),
-    Shadowmeld                            = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
-    Stoneform                             = Action.Create({ Type = "Spell", ID = 20594    }), 
-    WilloftheForsaken                     = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it    
-    EscapeArtist                          = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-    EveryManforHimself                    = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
-    PetKick                               = Action.Create({ Type = "Spell", ID = 47482, Color = "RED", Desc = "RED" }),  
-    -- Generics Spells 
-    LightningShield                       = Action.Create({ Type = "Spell", ID = 192106     }),
-    CrashLightning                        = Action.Create({ Type = "Spell", ID = 187874     }),
-    Rockbiter                             = Action.Create({ Type = "Spell", ID = 193786     }),
-    Landslide                             = Action.Create({ Type = "Spell", ID = 197992     }),
-    Windstrike                            = Action.Create({ Type = "Spell", ID = 115356     }),
-    Berserking                            = Action.Create({ Type = "Spell", ID = 26297     }),
-    BloodFury                             = Action.Create({ Type = "Spell", ID = 20572     }),
-    Fireblood                             = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                         = Action.Create({ Type = "Spell", ID = 274738     }),
-    Ascendance                            = Action.Create({ Type = "Spell", ID = 114051     }),
-    FeralSpirit                           = Action.Create({ Type = "Spell", ID = 51533     }),
-    IcyEdgeBuff                           = Action.Create({ Type = "Spell", ID = 224126     }),
-    EarthenSpike                          = Action.Create({ Type = "Spell", ID = 188089     }),
-    Stormstrike                           = Action.Create({ Type = "Spell", ID = 17364     }),
-    LightningConduit                      = Action.Create({ Type = "Spell", ID = 275388     }),
-    LightningBolt                         = Action.Create({ Type = "Spell", ID = 187837     }),
-    Overcharge                            = Action.Create({ Type = "Spell", ID = 210727     }),
-    Sundering                             = Action.Create({ Type = "Spell", ID = 197214     }),
-    Thundercharge                         = Action.Create({ Type = "Spell", ID = 204366     }),
-    ForcefulWinds                         = Action.Create({ Type = "Spell", ID = 262647     }),
-    Flametongue                           = Action.Create({ Type = "Spell", ID = 193796     }),
-    SearingAssault                        = Action.Create({ Type = "Spell", ID = 192087     }),
-    LavaLash                              = Action.Create({ Type = "Spell", ID = 60103     }),
-    PrimalPrimer                          = Action.Create({ Type = "Spell", ID = 272992     }),
-    HotHand                               = Action.Create({ Type = "Spell", ID = 201900     }),
-    CrashingStorm                         = Action.Create({ Type = "Spell", ID = 192246     }),
-    Frostbrand                            = Action.Create({ Type = "Spell", ID = 196834     }),
-    Hailstorm                             = Action.Create({ Type = "Spell", ID = 210853     }),
-    FuryofAir                             = Action.Create({ Type = "Spell", ID = 197211     }),
-    TotemMastery                          = Action.Create({ Type = "Spell", ID = 262395     }),
-    NaturalHarmony                        = Action.Create({ Type = "Spell", ID = 278697     }),
-    WindShear                             = Action.Create({ Type = "Spell", ID = 57994     }),
-    Boulderfist                           = Action.Create({ Type = "Spell", ID = 246035     }),
-    StrengthofEarth                       = Action.Create({ Type = "Spell", ID = 273461     }),
-    ElementalSpirits                      = Action.Create({ Type = "Spell", ID = 262624     }),
-    RecklessForceCounter                  = Action.Create({ Type = "Spell", ID = 302917     }),
-    ConcentratedFlameBurn                 = Action.Create({ Type = "Spell", ID = 295368     }),
-	-- Utilities
-	CapacitorTotem                        = Action.Create({ Type = "Spell", ID = 192058     }),
-    Purge                                 = Action.Create({ Type = "Spell", ID = 370     }),
-    -- Defensive
-	AstralShift                           = Action.Create({ Type = "Spell", ID = 108271     }),	
-    -- Buffs
-    LifebloodBuff                         = Action.Create({ Type = "Spell", ID = 295137, Hidden = true}),
-    LifebloodBuff2                        = Action.Create({ Type = "Spell", ID = 305694, Hidden = true}),
-    RecklessForceBuff                     = Action.Create({ Type = "Spell", ID = 302932     }),
-    SeethingRageBuff                      = Action.Create({ Type = "Spell", ID = 297126     }),
-    NaturalHarmonyFrostBuff               = Action.Create({ Type = "Spell", ID = 279029     }),
-    NaturalHarmonyFireBuff                = Action.Create({ Type = "Spell", ID = 279028     }),
-    NaturalHarmonyNatureBuff              = Action.Create({ Type = "Spell", ID = 279033     }),
-    FuryofAirBuff                         = Action.Create({ Type = "Spell", ID = 197211     }),
-    FrostbrandBuff                        = Action.Create({ Type = "Spell", ID = 196834     }),
-    FlametongueBuff                       = Action.Create({ Type = "Spell", ID = 194084     }),
-    StrengthofEarthBuff                   = Action.Create({ Type = "Spell", ID = 273465     }),
-    HotHandBuff                           = Action.Create({ Type = "Spell", ID = 215785     }),
-    GatheringStormsBuff                   = Action.Create({ Type = "Spell", ID = 198300     }),
-    CracklingSurgeBuff                    = Action.Create({ Type = "Spell", ID = 224127     }),
-    MoltenWeaponBuff                      = Action.Create({ Type = "Spell", ID = 224125     }),
-    StormbringerBuff                      = Action.Create({ Type = "Spell", ID = 201845     }),
-    AscendanceBuff                        = Action.Create({ Type = "Spell", ID = 114051     }),
-    LandslideBuff                         = Action.Create({ Type = "Spell", ID = 202004     }),
-    CrashLightningBuff                    = Action.Create({ Type = "Spell", ID = 187874     }),
-	-- Debuffs 
-    RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568     }),
-    ConductiveInkDebuff                   = Action.Create({ Type = "Spell", ID = 302565     }),
-    PrimalPrimerDebuff                    = Action.Create({ Type = "Spell", ID = 273006     }),
-    SunderingDebuff                       = Action.Create({ Type = "Spell", ID = 197214     }),
-    LightningConduitDebuff                = Action.Create({ Type = "Spell", ID = 275391     }),
-    EarthenSpikeDebuff                    = Action.Create({ Type = "Spell", ID = 188089     }),
-    -- Misc
-    Channeling                            = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	
+    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    -- Generics
+    LightningShield                        = Action.Create({ Type = "Spell", ID = 192106 }),
+    CrashLightning                         = Action.Create({ Type = "Spell", ID = 187874 }),
+    CrashLightningBuff                     = Action.Create({ Type = "Spell", ID = 187874 }),
+    Rockbiter                              = Action.Create({ Type = "Spell", ID = 193786 }),
+    Landslide                              = Action.Create({ Type = "Spell", ID = 197992 }),
+    LandslideBuff                          = Action.Create({ Type = "Spell", ID = 202004 }),
+    Windstrike                             = Action.Create({ Type = "Spell", ID = 115356 }),
+    AscendanceBuff                         = Action.Create({ Type = "Spell", ID = 114051 }),
+    Ascendance                             = Action.Create({ Type = "Spell", ID = 114051 }),
+    FeralSpirit                            = Action.Create({ Type = "Spell", ID = 51533  }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
+    MoltenWeaponBuff                       = Action.Create({ Type = "Spell", ID = 224125 }),
+    CracklingSurgeBuff                     = Action.Create({ Type = "Spell", ID = 224127 }),
+    IcyEdgeBuff                            = Action.Create({ Type = "Spell", ID = 224126 }),
+    EarthenSpikeDebuff                     = Action.Create({ Type = "Spell", ID = 188089 }),
+    EarthenSpike                           = Action.Create({ Type = "Spell", ID = 188089 }),
+    Stormstrike                            = Action.Create({ Type = "Spell", ID = 17364  }),
+    LightningConduit                       = Action.Create({ Type = "Spell", ID = 275388 }),
+    LightningConduitDebuff                 = Action.Create({ Type = "Spell", ID = 275391 }),
+    StormbringerBuff                       = Action.Create({ Type = "Spell", ID = 201845 }),
+    GatheringStormsBuff                    = Action.Create({ Type = "Spell", ID = 198300 }),
+    LightningBolt                          = Action.Create({ Type = "Spell", ID = 187837 }),
+    Overcharge                             = Action.Create({ Type = "Spell", ID = 210727 }),
+    Sundering                              = Action.Create({ Type = "Spell", ID = 197214 }),
+    Thundercharge                          = Action.Create({ Type = "Spell", ID = 204366 }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411 }),
+    ForcefulWinds                          = Action.Create({ Type = "Spell", ID = 262647 }),
+    Flametongue                            = Action.Create({ Type = "Spell", ID = 193796 }),
+    SearingAssault                         = Action.Create({ Type = "Spell", ID = 192087 }),
+    LavaLash                               = Action.Create({ Type = "Spell", ID = 60103  }),
+    PrimalPrimer                           = Action.Create({ Type = "Spell", ID = 272992 }),
+    HotHand                                = Action.Create({ Type = "Spell", ID = 201900 }),
+    HotHandBuff                            = Action.Create({ Type = "Spell", ID = 215785 }),
+    StrengthofEarthBuff                    = Action.Create({ Type = "Spell", ID = 273465 }),
+    CrashingStorm                          = Action.Create({ Type = "Spell", ID = 192246 }),
+    Frostbrand                             = Action.Create({ Type = "Spell", ID = 196834 }),
+    Hailstorm                              = Action.Create({ Type = "Spell", ID = 210853 }),
+    FrostbrandBuff                         = Action.Create({ Type = "Spell", ID = 196834 }),
+    PrimalPrimerDebuff                     = Action.Create({ Type = "Spell", ID = 273006 }),
+    FlametongueBuff                        = Action.Create({ Type = "Spell", ID = 194084 }),
+    FuryofAir                              = Action.Create({ Type = "Spell", ID = 197211 }),
+    FuryofAirBuff                          = Action.Create({ Type = "Spell", ID = 197211 }),
+    TotemMastery                           = Action.Create({ Type = "Spell", ID = 262395 }),
+    ResonanceTotemBuff                     = Action.Create({ Type = "Spell", ID = 262419 }),
+    SunderingDebuff                        = Action.Create({ Type = "Spell", ID = 197214 }),
+    SeethingRageBuff                       = Action.Create({ Type = "Spell", ID = 297126 }),
+    NaturalHarmony                         = Action.Create({ Type = "Spell", ID = 278697 }),
+    NaturalHarmonyFrostBuff                = Action.Create({ Type = "Spell", ID = 279029 }),
+    NaturalHarmonyFireBuff                 = Action.Create({ Type = "Spell", ID = 279028 }),
+    NaturalHarmonyNatureBuff               = Action.Create({ Type = "Spell", ID = 279033 }),
+    WindShear                              = Action.Create({ Type = "Spell", ID = 57994 }),
+	WindShearGreen			    		   = Action.Create({ Type = "SpellSingleColor", ID = 57994, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true}),
+    Hex                                    = Action.Create({ Type = "Spell", ID = 51514 }),	
+	HexGreen	   						   = Action.Create({ Type = "SpellSingleColor", ID = 51514, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
+    Boulderfist                            = Action.Create({ Type = "Spell", ID = 246035 }),
+    StrengthofEarth                        = Action.Create({ Type = "Spell", ID = 273461 }),
+    -- Utilities
+    BloodLust                              = Action.Create({ Type = "Spell", ID = 2825     }),
+    LightningLasso                         = Action.Create({ Type = "Spell", ID = 305483     }),
+    CapacitorTotem                         = Action.Create({ Type = "Spell", ID = 192058     }),
+    GroundingTotem                         = Action.Create({ Type = "Spell", ID = 204336     }),
+    CounterStrikeTotem                     = Action.Create({ Type = "Spell", ID = 204331     }),
+    SkyfuryTotem                           = Action.Create({ Type = "Spell", ID = 204330     }),
+    FeralLunge                             = Action.Create({ Type = "Spell", ID = 196884     }),
+    Purge                                  = Action.Create({ Type = "Spell", ID = 370     }),
+    GhostWolf                              = Action.Create({ Type = "Spell", ID = 2645     }),
+    EarthShield                            = Action.Create({ Type = "Spell", ID = 974     }),
+    HealingSurge                           = Action.Create({ Type = "Spell", ID = 8004     }),
+    CleanseSpirit                          = Action.Create({ Type = "Spell", ID = 51886     }), -- PartyDispell
+    GhostWolfBuff                          = Action.Create({ Type = "Spell", ID = 2645, Hidden = true     }),
+    Shamanism                              = Action.Create({ Type = "Spell", ID = 193876, Hidden = true     }), 
+    AstralShift                            = Action.Create({ Type = "Spell", ID = 108271     }),  	
     -- Trinkets
-	
-    
-    TrinketTest                           = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                          = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                   = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice          = Action.Create({ Type = "Trinket", ID = 167555 }),
-    RotcrustedVoodooDoll                  = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                      = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                    = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                        = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                          = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-	AshvanesRazorCoral                    = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
-    PotionofUnbridledFury                 = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
-    PotionofFocusedResolve                = Action.Create({ Type = "Potion", ID = 168506, QueueForbidden = true }),
-    PotionTest                            = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    -- Trinkets
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    -- Misc
+    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
     -- Hidden Heart of Azeroth
-    VisionofPerfectionMinor               = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
-    VisionofPerfectionMinor2              = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
-    VisionofPerfectionMinor3              = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                 = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                       = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                        = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                      = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                   = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}),
-	CondensedLifeforce                    = Action.Create({ Type = "HeartOfAzeroth", ID = 295834, Hidden = true}),
-	CondensedLifeforce2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299354, Hidden = true}),
-	CondensedLifeforce3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299357, Hidden = true}),
-    -- Here come all the stuff needed by simcraft but not classic spells or items. 
-}
+    -- added all 3 ranks ids in case used by rotation
+    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
+    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
+    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
+    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
+    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
+    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
+    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
+    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
+    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
+    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
+    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
+    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
+    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
+    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
+    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
+    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
+    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
+    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
+    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
+    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
+    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
+    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
+    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
+    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
+    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
+    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
+    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+};
 
 -- To create essences use next code:
-Action:CreateEssencesFor(ACTION_CONST_SHAMAN_ENCHANCEMENT)        -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
-
--- This code making shorter access to both tables Action[PLAYERSPEC] and Action
--- However if you prefer long access it still can be used like Action[PLAYERSPEC].Guard:IsReady() and not ShouldStop, it doesn't make any conflict if you will skip shorter access
--- So with shorter access you can just do Action.Guard:IsReady() and not ShouldStop instead of Action[PLAYERSPEC].Guard:IsReady() and not ShouldStop
+Action:CreateEssencesFor(ACTION_CONST_SHAMAN_ENCHANCEMENT)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_SHAMAN_ENCHANCEMENT], { __index = Action })
 
--- Simcraft Imported
--- HeroLib
-local HL         = HeroLib
-local Cache      = HeroCache
-local Unit       = HL.Unit
-local Player     = Unit.Player
-local Target     = Unit.Target
-local Pet        = Unit.Pet
-local Spell      = HL.Spell
-local Item       = HL.Item
--- HeroRotation
-local HR         = HeroRotation
 
----------------------------
--- PORT TO ACTION 
-local S, I = A:HeroCreate()
-Action.HeroSetHookAllTable(S, {
-        [3] = "TellMeWhen_Group4_Icon3",
-        [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6", 
-})
-Action.HeroSetHookAllTable(I, {
-        [3] = "TellMeWhen_Group4_Icon3",
-        [4] = "TellMeWhen_Group4_Icon4",
-		[6] = "TellMeWhen_Group4_Icon6",
-})
--- Adding manually missed staff
---S.Brews                                 = Spell(115308)
---S.BlackoutCombo                         = Spell(196736)
---S.BlackoutComboBuff                     = Spell(228563)
-
-
--- Rotation Var
-local ShouldReturn; -- Used to get the return string
-
--- GUI Settings
-local Everyone = HR.Commons.Everyone;
-
-local function DetermineEssenceRanks()
-    S.BloodoftheEnemy = S.BloodoftheEnemy2:IsAvailable() and S.BloodoftheEnemy2 or S.BloodoftheEnemy
-    S.BloodoftheEnemy = S.BloodoftheEnemy3:IsAvailable() and S.BloodoftheEnemy3 or S.BloodoftheEnemy
-    S.MemoryofLucidDreams = S.MemoryofLucidDreams2:IsAvailable() and S.MemoryofLucidDreams2 or S.MemoryofLucidDreams
-    S.MemoryofLucidDreams = S.MemoryofLucidDreams3:IsAvailable() and S.MemoryofLucidDreams3 or S.MemoryofLucidDreams
-    S.PurifyingBlast = S.PurifyingBlast2:IsAvailable() and S.PurifyingBlast2 or S.PurifyingBlast
-    S.PurifyingBlast = S.PurifyingBlast3:IsAvailable() and S.PurifyingBlast3 or S.PurifyingBlast
-    S.RippleInSpace = S.RippleInSpace2:IsAvailable() and S.RippleInSpace2 or S.RippleInSpace
-    S.RippleInSpace = S.RippleInSpace3:IsAvailable() and S.RippleInSpace3 or S.RippleInSpace
-    S.ConcentratedFlame = S.ConcentratedFlame2:IsAvailable() and S.ConcentratedFlame2 or S.ConcentratedFlame
-    S.ConcentratedFlame = S.ConcentratedFlame3:IsAvailable() and S.ConcentratedFlame3 or S.ConcentratedFlame
-    S.TheUnboundForce = S.TheUnboundForce2:IsAvailable() and S.TheUnboundForce2 or S.TheUnboundForce
-    S.TheUnboundForce = S.TheUnboundForce3:IsAvailable() and S.TheUnboundForce3 or S.TheUnboundForce
-    S.WorldveinResonance = S.WorldveinResonance2:IsAvailable() and S.WorldveinResonance2 or S.WorldveinResonance
-    S.WorldveinResonance = S.WorldveinResonance3:IsAvailable() and S.WorldveinResonance3 or S.WorldveinResonance
-    S.FocusedAzeriteBeam = S.FocusedAzeriteBeam2:IsAvailable() and S.FocusedAzeriteBeam2 or S.FocusedAzeriteBeam
-    S.FocusedAzeriteBeam = S.FocusedAzeriteBeam3:IsAvailable() and S.FocusedAzeriteBeam3 or S.FocusedAzeriteBeam
-    S.VisionofPerfectionMinor = S.VisionofPerfectionMinor2:IsAvailable() and S.VisionofPerfectionMinor2 or S.VisionofPerfectionMinor
-    S.VisionofPerfectionMinor = S.VisionofPerfectionMinor3:IsAvailable() and S.VisionofPerfectionMinor3 or S.VisionofPerfectionMinor
-    S.GuardianofAzeroth = S.GuardianofAzeroth2:IsAvailable() and S.GuardianofAzeroth2 or S.GuardianofAzeroth
-    S.GuardianofAzeroth = S.GuardianofAzeroth3:IsAvailable() and S.GuardianofAzeroth3 or S.GuardianofAzeroth
-    S.CondensedLifeforce = S.CondensedLifeforce2:IsAvailable() and S.CondensedLifeforce2 or S.CondensedLifeforce
-    S.CondensedLifeforce = S.CondensedLifeforce3:IsAvailable() and S.CondensedLifeforce3 or S.CondensedLifeforce
-    S.LifebloodBuff = S.LifebloodBuff2:IsAvailable() and S.LifebloodBuff2 or S.LifebloodBuff
-end
-
--- Variables
+------------------------------------------
+---------------- VARIABLES ---------------
+------------------------------------------
 local VarFurycheckCl = 0;
 local VarCooldownSync = 0;
 local VarFurycheckEs = 0;
@@ -255,7 +214,7 @@ local VarOcpool = 0;
 local VarOcpoolFb = 0;
 local VarRockslideEnabled = 0;
 
-HL:RegisterForEvent(function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarFurycheckCl = 0
   VarCooldownSync = 0
   VarFurycheckEs = 0
@@ -272,572 +231,1042 @@ HL:RegisterForEvent(function()
   VarOcpool = 0
   VarOcpoolFb = 0
   VarRockslideEnabled = 0
-end, "PLAYER_REGEN_ENABLED")
+end)
 
-local EnemyRanges = {8, 5}
-local function UpdateRanges()
-  for _, i in ipairs(EnemyRanges) do
-    HL.GetEnemies(i);
-  end
-end
 
-local function ResonanceTotemTime()
-  for index=1,4 do
-    local _, totemName, startTime, duration = GetTotemInfo(index)
-    if totemName == S.TotemMastery:Name() then
-      return (floor(startTime + duration - GetTime() + 0.5)) or 0
-    end
-  end
-  return 0
-end
 
 local function num(val)
-  if val then return 1 else return 0 end
+    if val then return 1 else return 0 end
 end
 
 local function bool(val)
-  return val ~= 0
+    return val ~= 0
 end
 
-local function FeralSpiritRemains()
-  if S.FeralSpirit:CooldownRemainsP() == 0 then return 0; end
-  if S.ElementalSpirits:IsAvailable() then
-    return (S.FeralSpirit:CooldownRemainsP() - 74)
-  else
-    return (S.FeralSpirit:CooldownRemainsP() - 104)
-  end
-end
-
-local function SetVariables()
-  -- variable,name=cooldown_sync,value=(talent.ascendance.enabled&(buff.ascendance.up|cooldown.ascendance.remains>50))|(!talent.ascendance.enabled&(feral_spirit.remains>5|cooldown.feral_spirit.remains>50))
-  VarCooldownSync = num((S.Ascendance:IsAvailable() and (Player:BuffP(S.AscendanceBuff) or S.Ascendance:CooldownRemainsP() > 50)) or (not S.Ascendance:IsAvailable() and (FeralSpiritRemains() > 5 or S.FeralSpirit:CooldownRemainsP() > 50)))
-  -- variable,name=furyCheck_SS,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.stormstrike.cost))
-  VarFurycheckSs = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + S.Stormstrike:Cost())))
-  -- variable,name=furyCheck_LL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.lava_lash.cost))
-  VarFurycheckLl = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + S.LavaLash:Cost())))
-  -- variable,name=furyCheck_CL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.crash_lightning.cost))
-  VarFurycheckCl = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + S.CrashLightning:Cost())))
-  -- variable,name=furyCheck_FB,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.frostbrand.cost))
-  VarFurycheckFb = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + S.Frostbrand:Cost())))
-  -- variable,name=furyCheck_ES,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.earthen_spike.cost))
-  VarFurycheckEs = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + S.EarthenSpike:Cost())))
-  -- variable,name=furyCheck_LB,value=maelstrom>=(talent.fury_of_air.enabled*(6+40))
-  VarFurycheckLb = num(Player:Maelstrom() >= (num(S.FuryofAir:IsAvailable()) * (6 + 40)))
-  -- variable,name=OCPool,value=(active_enemies>1|(cooldown.lightning_bolt.remains>=2*gcd))
-  VarOcpool = num((Cache.EnemiesCount[8] > 1 or (S.LightningBolt:CooldownRemainsP() >= 2 * Player:GCD())))
-  -- variable,name=OCPool_SS,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.stormstrike.cost)))
-  VarOcpoolSs = num((bool(VarOcpool) or Player:Maelstrom() >= (num(S.Overcharge:IsAvailable()) * (40 + S.Stormstrike:Cost()))))
-  -- variable,name=OCPool_LL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.lava_lash.cost)))
-  VarOcpoolLl = num((bool(VarOcpool) or Player:Maelstrom() >= (num(S.Overcharge:IsAvailable()) * (40 + S.LavaLash:Cost()))))
-  -- variable,name=OCPool_CL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.crash_lightning.cost)))
-  VarOcpoolCl = num((bool(VarOcpool) or Player:Maelstrom() >= (num(S.Overcharge:IsAvailable()) * (40 + S.CrashLightning:Cost()))))
-  -- variable,name=OCPool_FB,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.frostbrand.cost)))
-  VarOcpoolFb = num((bool(VarOcpool) or Player:Maelstrom() >= (num(S.Overcharge:IsAvailable()) * (40 + S.Frostbrand:Cost()))))
-  -- variable,name=CLPool_LL,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.lava_lash.cost)
-  VarClpoolLl = num(Cache.EnemiesCount[8] == 1 or Player:Maelstrom() >= (S.CrashLightning:Cost() + S.LavaLash:Cost()))
-  -- variable,name=CLPool_SS,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.stormstrike.cost)
-  VarClpoolSs = num(Cache.EnemiesCount[8] == 1 or Player:Maelstrom() >= (S.CrashLightning:Cost() + S.Stormstrike:Cost()))
-  -- variable,name=freezerburn_enabled,value=(talent.hot_hand.enabled&talent.hailstorm.enabled&azerite.primal_primer.enabled)
-  VarFreezerburnEnabled = num((S.HotHand:IsAvailable() and S.Hailstorm:IsAvailable() and S.PrimalPrimer:AzeriteEnabled()))
-  -- variable,name=rockslide_enabled,value=(!variable.freezerburn_enabled&(talent.boulderfist.enabled&talent.landslide.enabled&azerite.strength_of_earth.enabled))
-  VarRockslideEnabled = num((not bool(VarFreezerburnEnabled) and (S.Boulderfist:IsAvailable() and S.Landslide:IsAvailable() and S.StrengthofEarth:AzeriteEnabled())))
-end
-
-local function EvaluateCycleStormstrike119(Target)
-  return Cache.EnemiesCount[8] > 1 and S.LightningConduit:AzeriteEnabled() and not Target:DebuffP(S.LightningConduitDebuff) and bool(VarFurycheckSs)
-end
-
-local function EvaluateTargetIfFilterLavaLash281(Target)
-  return Target:DebuffStackP(S.PrimalPrimerDebuff)
-end
-
-local function EvaluateTargetIfLavaLash296(Target)
-  return S.PrimalPrimer:AzeriteRank() >= 2 and Target:DebuffStackP(S.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl) and bool(VarClpoolLl)
-end
-
-local function EvaluateCycleStormstrike307(Target)
-  return Cache.EnemiesCount[8] > 1 and S.LightningConduit:AzeriteEnabled() and not Target:DebuffP(S.LightningConduitDebuff) and bool(VarFurycheckSs)
-end
-
--- Stuns
-local StunInterrupts = {
-  {S.Sundering, "Cast Sundering (Interrupt)", function () return true; end},
-  {S.CapacitorTotem, "Cast Capacitor Totem (Interrupt)", function () return true; end},
+------------------------------------------
+-------------- COMMON PREAPL -------------
+------------------------------------------
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
 
-local function Init()
-  HL.RegisterNucleusAbility(187874, 8, 6)               -- Bladestorm
-  HL.RegisterNucleusAbility(197214, 11, 6)              -- Sundering
-  HL.RegisterNucleusAbility(197211, 8, 6)               -- Fury of Air
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
+
+local function EvaluateCycleStormstrike127(unit)
+  return MultiUnits:GetByRange(10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and VarFurycheckSs
 end
-Init()
+
+local function EvaluateTargetIfFilterLavaLash285(unit)
+  return Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true)
+end
+
+local function EvaluateTargetIfLavaLash300(unit)
+  return A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl and VarClpoolLl
+end
+
+
+local function EvaluateCycleStormstrike311(unit)
+  return MultiUnits:GetByRange(10) > 1 and bool(A.LightningConduit:GetAzeriteRank()) and not Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) and VarFurycheckSs
+end
+
+
+-- API - Tracker
+-- Initialize Tracker 
+Pet:InitializeTrackerFor(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
+    [29264] = {
+        name = "Spirit Wolves",
+        duration = 15,
+    },
+})
+
+-- Function to check for Infernal duration
+local function SpiritWolvesTime()
+    return Pet:GetRemainDuration(29264) or 0
+end 
+
+local function ResonanceTotemTime()
+    for index = 1, 4 do
+        local _, totemName, startTime, duration = GetTotemInfo(index)
+        if totemName == A.TotemMastery:Info() then
+            return (floor(startTime + duration - TMW.time + 0.5)) or 0
+        end
+    end
+    return 0
+end
+
+-- [1] CC AntiFake Rotation
+local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 20 and 
+    Unit(unit):IsControlAble("incapacitate", 0) and 
+    A.HexGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if	A.HexGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target")
+        )
+    )
+    then 
+        return A.HexGreen:Show(icon)         
+    end                                                                     
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then 
+            -- Pummel		
+            if not notKickAble and A.WindShearGreen:IsReady(unit, nil, nil, true) and A.WindShearGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
+                return A.WindShearGreen:Show(icon)                                                  
+            end 
+                        
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.WindShear:IsReady(unit) and A.WindShear:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	    -- Notification					
+        Action.SendNotification("WindShear interrupting on Target ", A.WindShear.ID)
+        return A.WindShear
+    end 
+    
+    if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+	    -- Notification					
+        Action.SendNotification("Hex interrupting...", A.Hex.ID)
+        return A.Hex              
+    end          
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+local function SelfDefensives()
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end      
+    
+    -- EarthShieldHP
+    local EarthShield = Action.GetToggle(2, "EarthShieldHP")
+    if     EarthShield >= 0 and A.EarthShield:IsReady("player") and  
+    (
+        (     -- Auto 
+            EarthShield >= 100 and 
+            (
+                Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 3 
+                or A.IsInPvP and Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 2
+            ) 
+        ) or 
+        (    -- Custom
+            EarthShield < 100 and 
+            Unit("player"):HasBuffs(A.EarthShield.ID, true) <= 5 and 
+            Unit("player"):HealthPercent() <= EarthShield
+        )
+    ) 
+    then 
+        return A.EarthShield
+    end
+    
+    -- HealingSurgeHP
+    local HealingSurge = Action.GetToggle(2, "HealingSurgeHP")
+    if     HealingSurge >= 0 and A.HealingSurge:IsReady("player") and Player:Maelstrom() >= 20 and
+    (
+        (     -- Auto 
+            HealingSurge >= 100 and 
+            (
+                -- HP lose per sec >= 40
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 40 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.40 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            HealingSurge < 100 and 
+            Unit("player"):HealthPercent() <= HealingSurge
+        )
+    ) 
+    then 
+        return A.HealingSurge
+    end
+    
+    -- Abyssal Healing Potion
+    local AbyssalHealingPotion = Action.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 25
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end  
+    
+    -- AstralShift
+    local AstralShift = Action.GetToggle(2, "AstralShiftHP")
+    if     AstralShift >= 0 and A.AstralShift:IsReady("player") and 
+    (
+        (     -- Auto 
+            AstralShift >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AstralShift < 100 and 
+            Unit("player"):HealthPercent() <= AstralShift
+        )
+    ) 
+    then 
+        return A.AstralShift
+    end     
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 --- ======= ACTION LISTS =======
-local function APL(icon) 
-    
-	-- Action specifics remap
-	local ShouldStop = Action.ShouldStop()
-	local Pull = Action.BossMods_Pulling()
-	
-	-- Local functions remap
-    UpdateRanges()
-    Everyone.AoEToggleEnemiesUpdate()
-	DetermineEssenceRanks()
-	
-	
-	if Player:IsCasting() or Player:IsChanneling() then
-	    ShouldStop = true
-	else
-	    ShouldStop = false
-	end
-	
-    local function Precombat_DBM()
-        -- flask
-        -- food
-        -- augmentation
-        -- snapshot_stats
-        if Everyone.TargetIsValid() then
-            -- lightning_shield
-            if S.LightningShield:IsCastableP() and not ShouldStop and Player:BuffDownP(S.LightningShield) then
-                if HR.Cast(S.LightningShield) then return "lightning_shield 6"; end
-            end           
-            -- potion
-            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 2 then
-                if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
-            end
-            -- rockbiter,if=maelstrom<15&time<gcd
-            if S.Rockbiter:IsCastableP() and not ShouldStop and Pull > 0.1 and Pull <= 0.3 then
-                if HR.Cast(S.Rockbiter) then return "rockbiter 9"; end
-            end
-        end
-    end	    
-    local function Precombat()
-        -- flask
-        -- food
-        -- augmentation
-        -- snapshot_stats
-        if Everyone.TargetIsValid() then
-            -- potion
-            if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") then
-                if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 4"; end
-            end
-            -- lightning_shield
-            if S.LightningShield:IsCastableP() and not ShouldStop and Player:BuffDownP(S.LightningShield) then
-                if HR.Cast(S.LightningShield) then return "lightning_shield 6"; end
-            end
-            -- rockbiter,if=maelstrom<15&time<gcd
-            if S.Rockbiter:IsCastableP() and not ShouldStop then
-                if HR.Cast(S.Rockbiter) then return "rockbiter 9"; end
-            end
-        end
-    end
-    local function Asc()
-        -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Player:BuffDownP(S.CrashLightningBuff) and Cache.EnemiesCount[8] > 1 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 10"; end
-        end
-        -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
-        if S.Rockbiter:IsCastableP() and not ShouldStop and (S.Landslide:IsAvailable() and Player:BuffDownP(S.LandslideBuff) and S.Rockbiter:ChargesFractionalP() > 1.7) then
-            if HR.Cast(S.Rockbiter) then return "rockbiter 24"; end
-        end
-        -- windstrike
-        if S.Windstrike:IsReadyP() and not ShouldStop then
-            if HR.Cast(S.Windstrike) then return "windstrike 34"; end
-        end
-    end
-    local function Cds()
-        -- bloodlust,if=azerite.ancestral_resonance.enabled
-        -- berserking,if=variable.cooldown_sync
-        if S.Berserking:IsCastableP() and not ShouldStop and HR.CDsON() and (bool(VarCooldownSync)) then
-            if HR.Cast(S.Berserking, Action.GetToggle(2, "OffGCDasOffGCD")) then return "berserking 37"; end
-        end
-        -- use_item,name=azsharas_font_of_power
-        if I.AzsharasFontofPower:IsEquipReady() and TR.TrinketON() then
-            if HR.Cast(I.AzsharasFontofPower) then return "azsharas_font_of_power 41"; end
-        end
-        -- blood_fury,if=variable.cooldown_sync
-        if S.BloodFury:IsCastableP() and not ShouldStop and HR.CDsON() and (bool(VarCooldownSync)) then
-            if HR.Cast(S.BloodFury, Action.GetToggle(2, "OffGCDasOffGCD")) then return "blood_fury 43"; end
-        end
-        -- fireblood,if=variable.cooldown_sync
-        if S.Fireblood:IsCastableP() and not ShouldStop and HR.CDsON() and (bool(VarCooldownSync)) then
-            if HR.Cast(S.Fireblood, Action.GetToggle(2, "OffGCDasOffGCD")) then return "fireblood 47"; end
-        end
-        -- ancestral_call,if=variable.cooldown_sync
-        if S.AncestralCall:IsCastableP() and not ShouldStop and HR.CDsON() and (bool(VarCooldownSync)) then
-            if HR.Cast(S.AncestralCall, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ancestral_call 51"; end
-        end
-        -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&feral_spirit.remains>5|target.time_to_die<=60
-        if I.PotionofUnbridledFury:IsReady() and not ShouldStop and Action.GetToggle(1, "Potion") and (Player:BuffP(S.AscendanceBuff) or not S.Ascendance:IsAvailable() and FeralSpiritRemains() > 5 or Target:TimeToDie() <= 60) then
-            if HR.Cast(I.PotionofUnbridledFury) then return "potion_of_unbridled_fury 55"; end
-        end
-        -- guardian_of_azeroth
-        if S.GuardianofAzeroth:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth 61"; end
-        end
-        -- feral_spirit
-        if S.FeralSpirit:IsCastableP() and not ShouldStop and Action.GetToggle(2, "EnableFS") then
-            if HR.Cast(S.FeralSpirit, Action.GetToggle(2, "OffGCDasOffGCD")) then return "feral_spirit 65"; end
-        end
-        -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
-        if S.BloodoftheEnemy:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.BloodoftheEnemy) then return "blood_of_the_enemy 67"; end
-        end
-        -- ascendance,if=cooldown.strike.remains>0
-        -- Storm Strike???
-        if S.Ascendance:IsCastableP() and not ShouldStop and (S.Stormstrike:CooldownRemainsP() > 0) then
-            if HR.Cast(S.Ascendance, Action.GetToggle(2, "OffGCDasOffGCD")) then return "ascendance 69"; end
-        end
-        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
-        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Target:DebuffDownP(S.RazorCoralDebuff) or (Target:TimeToDie() < 20 and Target:DebuffStackP(S.RazorCoralDebuff) > 2)) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 73"; end
-        end
-        -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>2&debuff.conductive_ink_debuff.down&(buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)
-        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and (Target:DebuffStackP(S.RazorCoralDebuff) > 2 and Target:DebuffDownP(S.ConductiveInkDebuff) and (Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6)) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 79"; end
-        end
-        -- use_item,name=ashvanes_razor_coral,if=(debuff.conductive_ink_debuff.up|buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)&target.health.pct<31
-        if I.AshvanesRazorCoral:IsEquipReady() and TR.TrinketON() and ((Target:DebuffP(S.ConductiveInkDebuff) or Player:BuffRemainsP(S.AscendanceBuff) > 10 or Player:BuffRemainsP(S.MoltenWeaponBuff) > 10 or Player:BuffRemainsP(S.CracklingSurgeBuff) > 10 or Player:BuffRemainsP(S.IcyEdgeBuff) > 10 or Target:DebuffRemainsP(S.EarthenSpikeDebuff) > 6) and Target:HealthPercentage() < 31) then
-            if HR.Cast(I.AshvanesRazorCoral) then return "ashvanes_razor_coral 95"; end
-        end
-        -- use_items
-        -- earth_elemental
-    end
-    local function DefaultCore()
-        -- earthen_spike,if=variable.furyCheck_ES
-        if S.EarthenSpike:IsReadyP() and not ShouldStop and (bool(VarFurycheckEs)) then
-            if HR.Cast(S.EarthenSpike) then return "earthen_spike 111"; end
-        end
-        -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
-        if S.Stormstrike:IsReadyP() and EvaluateCycleStormstrike119(Target) and not ShouldStop then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 133" end
-        end
-        -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-        if S.Stormstrike:IsReadyP() and not ShouldStop and (Player:BuffP(S.StormbringerBuff) or (Cache.EnemiesCount[8] > 1 and Player:BuffP(S.GatheringStormsBuff) and bool(VarFurycheckSs))) then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 134"; end
-        end
-        -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Cache.EnemiesCount[8] >= 3 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 148"; end
-        end
-        -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
-        if S.LightningBolt:IsCastableP() and not ShouldStop and (S.Overcharge:IsAvailable() and Cache.EnemiesCount[8] == 1 and bool(VarFurycheckLb) and Player:Maelstrom() >= 40) then
-            if HR.Cast(S.LightningBolt) then return "lightning_bolt 160"; end
-        end
-        -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS
-        if S.Stormstrike:IsReadyP() and not ShouldStop and (bool(VarOcpoolSs) and bool(VarFurycheckSs)) then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 172"; end
-        end
-    end
-    local function Filler()
-        -- sundering,if=raid_event.adds.in>40
-        if S.Sundering:IsReadyP() and not ShouldStop then
-            if HR.Cast(S.Sundering, Action.GetToggle(2, "OffGCDasOffGCD")) then return "sundering 178"; end
-        end
-        -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
-        if S.FocusedAzeriteBeam:IsCastableP() and (Cache.EnemiesCount[8] >= 4 or ActionUnit("target"):IsBoss()) and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffDownP(S.AscendanceBuff) and Player:BuffDownP(S.MoltenWeaponBuff) and Player:BuffDownP(S.IcyEdgeBuff) and Player:BuffDownP(S.CracklingSurgeBuff) and not Target:DebuffP(S.EarthenSpikeDebuff)) then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 188"; end
-        end
-        -- purifying_blast,if=raid_event.adds.in>60
-        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.PurifyingBlast) then return "purifying_blast 200"; end
-        end
-        -- ripple_in_space,if=raid_event.adds.in>60
-        if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.RippleInSpace) then return "ripple_in_space 202"; end
-        end
-        -- thundercharge
-        if S.Thundercharge:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.Thundercharge) then return "thundercharge 204"; end
-        end
-        -- concentrated_flame
-        if S.ConcentratedFlame:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 206"; end
-        end
-        -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (S.ForcefulWinds:IsAvailable() and Cache.EnemiesCount[8] > 1 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 212"; end
-        end
-        -- flametongue,if=talent.searing_assault.enabled
-        if S.Flametongue:IsCastableP() and not ShouldStop and (S.SearingAssault:IsAvailable()) then
-            if HR.Cast(S.Flametongue) then return "flametongue 226"; end
-        end
-        -- lava_lash,if=!azerite.primal_primer.enabled&talent.hot_hand.enabled&buff.hot_hand.react
-        if S.LavaLash:IsReadyP() and not ShouldStop and (not S.PrimalPrimer:AzeriteEnabled() and S.HotHand:IsAvailable() and bool(Player:BuffStackP(S.HotHandBuff))) then
-            if HR.Cast(S.LavaLash) then return "lava_lash 230"; end
-        end
-        -- crash_lightning,if=active_enemies>1&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Cache.EnemiesCount[8] > 1 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 238"; end
-        end
-        -- rockbiter,if=maelstrom<70&!buff.strength_of_earth.up
-        if S.Rockbiter:IsCastableP() and not ShouldStop and (Player:Maelstrom() < 70 and Player:BuffDownP(S.StrengthofEarthBuff)) then
-            if HR.Cast(S.Rockbiter) then return "rockbiter 250"; end
-        end
-        -- crash_lightning,if=talent.crashing_storm.enabled&variable.OCPool_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (S.CrashingStorm:IsAvailable() and bool(VarOcpoolCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 254"; end
-        end
-        -- lava_lash,if=variable.OCPool_LL&variable.furyCheck_LL
-        if S.LavaLash:IsReadyP() and not ShouldStop and (bool(VarOcpoolLl) and bool(VarFurycheckLl)) then
-            if HR.Cast(S.LavaLash) then return "lava_lash 260"; end
-        end
-        -- memory_of_lucid_dreams
-        if S.MemoryofLucidDreams:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop then
-            if HR.Cast(S.MemoryofLucidDreams) then return "memory_of_lucid_dreams 63"; end
-        end
-        -- rockbiter
-        if S.Rockbiter:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.Rockbiter) then return "rockbiter 266"; end
-        end
-        -- frostbrand,if=talent.hailstorm.enabled&buff.frostbrand.remains<4.8+gcd&variable.furyCheck_FB
-        if S.Frostbrand:IsReadyP() and not ShouldStop and (S.Hailstorm:IsAvailable() and Player:BuffRemainsP(S.FrostbrandBuff) < 4.8 + Player:GCD() and bool(VarFurycheckFb)) then
-            if HR.Cast(S.Frostbrand) then return "frostbrand 268"; end
-        end
-        -- flametongue
-        if S.Flametongue:IsCastableP() and not ShouldStop then
-            if HR.Cast(S.Flametongue) then return "flametongue 276"; end
-        end
-        -- worldvein_resonance,if=buff.lifeblood.stack<4
-        if S.WorldveinResonance:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Player:BuffStackP(S.LifebloodBuff) < 4) then
-            if HR.Cast(S.WorldveinResonance) then return "worldvein_resonance 208"; end
-        end
-    end
-    local function FreezerburnCore()
-        -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
-        if S.LavaLash:IsReadyP() and EvaluateTargetIfFilterLavaLash281(Target) and EvaluateTargetIfLavaLash296(Target) and not ShouldStop then
-            if HR.Cast(S.LavaLash) then return "lava_lash 298" end
-        end
-        -- earthen_spike,if=variable.furyCheck_ES
-        if S.EarthenSpike:IsReadyP() and not ShouldStop and (bool(VarFurycheckEs)) then
-            if HR.Cast(S.EarthenSpike) then return "earthen_spike 299"; end
-        end
-        -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
-        if S.Stormstrike:IsReadyP() and EvaluateCycleStormstrike307(Target) and not ShouldStop then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 321" end
-        end
-        -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-        if S.Stormstrike:IsReadyP() and not ShouldStop and (Player:BuffP(S.StormbringerBuff) or (Cache.EnemiesCount[8] > 1 and Player:BuffP(S.GatheringStormsBuff) and bool(VarFurycheckSs))) then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 322"; end
-        end
-        -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Cache.EnemiesCount[8] >= 3 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 336"; end
-        end
-        -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
-        if S.LightningBolt:IsCastableP() and not ShouldStop and (S.Overcharge:IsAvailable() and Cache.EnemiesCount[8] == 1 and bool(VarFurycheckLb) and Player:Maelstrom() >= 40) then
-            if HR.Cast(S.LightningBolt) then return "lightning_bolt 348"; end
-        end
-        -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
-        if S.LavaLash:IsReadyP() and not ShouldStop and (S.PrimalPrimer:AzeriteRank() >= 2 and Target:DebuffStackP(S.PrimalPrimerDebuff) > 7 and bool(VarFurycheckLl) and bool(VarClpoolLl)) then
-            if HR.Cast(S.LavaLash) then return "lava_lash 360"; end
-        end
-        -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS&variable.CLPool_SS
-        if S.Stormstrike:IsReadyP() and not ShouldStop and (bool(VarOcpoolSs) and bool(VarFurycheckSs) and bool(VarClpoolSs)) then
-            if HR.Cast(S.Stormstrike) then return "stormstrike 370"; end
-        end
-        -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
-        if S.LavaLash:IsReadyP() and not ShouldStop and (Target:DebuffStackP(S.PrimalPrimerDebuff) == 10 and bool(VarFurycheckLl)) then
-            if HR.Cast(S.LavaLash) then return "lava_lash 378"; end
-        end
-    end
-    local function Maintenance()
-        -- flametongue,if=!buff.flametongue.up
-        if S.Flametongue:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.FlametongueBuff)) then
-            if HR.Cast(S.Flametongue) then return "flametongue 384"; end
-        end
-        -- frostbrand,if=talent.hailstorm.enabled&!buff.frostbrand.up&variable.furyCheck_FB
-        if S.Frostbrand:IsReadyP() and not ShouldStop and (S.Hailstorm:IsAvailable() and Player:BuffDownP(S.FrostbrandBuff) and bool(VarFurycheckFb)) then
-            if HR.Cast(S.Frostbrand) then return "frostbrand 388"; end
-        end
-    end
-    local function Priority()
-        -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Cache.EnemiesCount[8] >= (8 - (num(S.ForcefulWinds:IsAvailable()) * 3)) and bool(VarFreezerburnEnabled) and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 398"; end
-        end
-        -- the_unbound_force,if=buff.reckless_force.up|time<5
-        if S.TheUnboundForce:IsCastableP() and not ShouldStop and (Player:BuffP(S.RecklessForceBuff) or HL.CombatTime() < 5) then
-            if HR.Cast(S.TheUnboundForce) then return "the_unbound_force 414"; end
-        end
-        -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
-        if S.LavaLash:IsReadyP() and not ShouldStop and (S.PrimalPrimer:AzeriteRank() >= 2 and Target:DebuffStackP(S.PrimalPrimerDebuff) == 10 and Cache.EnemiesCount[8] == 1 and bool(VarFreezerburnEnabled) and bool(VarFurycheckLl)) then
-            if HR.Cast(S.LavaLash) then return "lava_lash 418"; end
-        end
-        -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-        if S.CrashLightning:IsReadyP() and not ShouldStop and (Player:BuffDownP(S.CrashLightningBuff) and Cache.EnemiesCount[8] > 1 and bool(VarFurycheckCl)) then
-            if HR.Cast(S.CrashLightning) then return "crash_lightning 434"; end
-        end
-        -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
-        if S.FuryofAir:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.FuryofAirBuff) and Player:Maelstrom() >= 20 and Cache.EnemiesCount[5] >= (1 + VarFreezerburnEnabled)) then
-            if HR.Cast(S.FuryofAir) then return "fury_of_air 448"; end
-        end
-        -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
-        if S.FuryofAir:IsCastableP() and not ShouldStop and (Player:BuffP(S.FuryofAirBuff) and true and Cache.EnemiesCount[5] < (1 + VarFreezerburnEnabled)) then
-            if HR.Cast(S.FuryofAir) then return "fury_of_air 454"; end
-        end
-        -- totem_mastery,if=buff.resonance_totem.remains<=2*gcd
-        if S.TotemMastery:IsCastableP() and not ShouldStop and (ResonanceTotemTime() <= 2 * Player:GCD()) then
-            if HR.Cast(S.TotemMastery) then return "totem_mastery 460"; end
-        end
-        -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-        if S.Sundering:IsReadyP() and not ShouldStop and (Cache.EnemiesCount[8] >= 3 and (not S.BloodoftheEnemy:IsAvailable() or (S.BloodoftheEnemy:IsAvailable() and (Player:BuffP(S.SeethingRageBuff) or S.BloodoftheEnemy:CooldownRemainsP() > 40)))) then
-            if HR.Cast(S.Sundering, Action.GetToggle(2, "OffGCDasOffGCD")) then return "sundering 464"; end
-        end
-        -- focused_azerite_beam,if=active_enemies>1
-        if S.FocusedAzeriteBeam:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Cache.EnemiesCount[8] > 1) then
-            if HR.Cast(S.FocusedAzeriteBeam) then return "focused_azerite_beam 478"; end
-        end
-        -- purifying_blast,if=active_enemies>1
-        if S.PurifyingBlast:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Cache.EnemiesCount[8] > 1) then
-            if HR.Cast(S.PurifyingBlast) then return "purifying_blast 486"; end
-        end
-        -- ripple_in_space,if=active_enemies>1
-        if S.RippleInSpace:IsCastableP() and Action.GetToggle(1, "HeartOfAzeroth") and not ShouldStop and (Cache.EnemiesCount[8] > 1) then
-            if HR.Cast(S.RippleInSpace) then return "ripple_in_space 494"; end
-        end
-        -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
-        if S.Rockbiter:IsCastableP() and not ShouldStop and (S.Landslide:IsAvailable() and Player:BuffDownP(S.LandslideBuff) and S.Rockbiter:ChargesFractionalP() > 1.7) then
-            if HR.Cast(S.Rockbiter) then return "rockbiter 502"; end
-        end
-        -- frostbrand,if=(azerite.natural_harmony.enabled&buff.natural_harmony_frost.remains<=2*gcd)&talent.hailstorm.enabled&variable.furyCheck_FB
-        if S.Frostbrand:IsReadyP() and not ShouldStop and ((S.NaturalHarmony:AzeriteEnabled() and Player:BuffRemainsP(S.NaturalHarmonyFrostBuff) <= 2 * Player:GCD()) and S.Hailstorm:IsAvailable() and bool(VarFurycheckFb)) then
-            if HR.Cast(S.Frostbrand) then return "frostbrand 512"; end
-        end
-        -- flametongue,if=(azerite.natural_harmony.enabled&buff.natural_harmony_fire.remains<=2*gcd)
-        if S.Flametongue:IsCastableP() and not ShouldStop and ((S.NaturalHarmony:AzeriteEnabled() and Player:BuffRemainsP(S.NaturalHarmonyFireBuff) <= 2 * Player:GCD())) then
-            if HR.Cast(S.Flametongue) then return "flametongue 522"; end
-        end
-        -- rockbiter,if=(azerite.natural_harmony.enabled&buff.natural_harmony_nature.remains<=2*gcd)&maelstrom<70
-        if S.Rockbiter:IsCastableP() and not ShouldStop and ((S.NaturalHarmony:AzeriteEnabled() and Player:BuffRemainsP(S.NaturalHarmonyNatureBuff) <= 2 * Player:GCD()) and Player:Maelstrom() < 70) then
-            if HR.Cast(S.Rockbiter) then return "rockbiter 528"; end
-        end
-    end
-    
-	-- call DBM precombat
-    if not Player:AffectingCombat() and Action.GetToggle(1, "DBM") and not Player:IsCasting() then
-        local ShouldReturn = Precombat_DBM(); 
-            if ShouldReturn then return ShouldReturn; 
-        end    
-    end
-	
-    -- call non DBM precombat
-    if not Player:AffectingCombat() and not Action.GetToggle(1, "DBM") and not Player:IsCasting() then        
-        local ShouldReturn = Precombat(); 
-            if ShouldReturn then return ShouldReturn; 
-        end    
-    end
-	
-	
-	-- Make use of all trinkets of the game
-	-- Dont forget to add check on SIMC recommanded trinkets to keep using them with APLs.
-	local function TrinketsRotation(icon)
-	    --print(Trinket1IsAllowed)	
-        -- print(Trinket2IsAllowed)
-		
-       	-- Trinkets
-       	if A.Trinket1:IsReady("target") and Trinket1IsAllowed and A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	return A.Trinket1:Show(icon)
-   	    end 
-              
-   		if A.Trinket2:IsReady("target") and Trinket2IsAllowed and A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-       	   	return A.Trinket2:Show(icon)
-   	    end  	   	
-     	
-   	end	
-	
-    --- In Combat
-    if Player:AffectingCombat() then	
-		
-		-- Interrupt Handler
- 	 	
-  		local unit = "target"
-   		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
-	    local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
-		
-     	 -- WindShear
-      	if useKick and S.WindShear:IsReady() and not ShouldStop then 
-	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-     	        if HR.Cast(S.WindShear, true) then return "WindShear 5"; end
-     	    end 
-     	end 
+-- [3] Single Rotation
+A[3] = function(icon, isMulti)
+    --------------------
+    --- ROTATION VAR ---
+    --------------------
+    local isMoving = A.Player:IsMoving()
+	local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit("player"):CombatTime() > 0
+    local ShouldStop = Action.ShouldStop()
+    local Pull = Action.BossMods_Pulling()
+    local unit = "player"
+    local SpiritWolvesTime = SpiritWolvesTime()
 
-     	-- CapacitorTotem
-      	if useCC and not S.WindShear:IsReady() and not ShouldStop and S.CapacitorTotem:IsReady() and not ShouldStop then 
-	  		if ActionUnit(unit):CanInterrupt(true, nil, 25, 70) then
-     	        if HR.Cast(S.CapacitorTotem, true) then return "CapacitorTotem 5"; end
-     	    end 
-     	end 		
-		-- Purge
-		-- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
-        -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if S.Purge:IsReady() and not ShouldStop and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
-            if HR.Cast(S.Purge) then return "" end
-        end	
-        -- Set Variables; Moved to function for cleanliness
-        if (true) then
-            SetVariables();
+	
+    ------------------------------------------------------
+    ---------------- ENEMY UNIT ROTATION -----------------
+    ------------------------------------------------------
+    local function EnemyRotation(unit)
+        local Precombat, Asc, Cds, DefaultCore, Filler, FreezerburnCore, Maintenance, Opener, Priority
+        
+		--Precombat
+        local function Precombat(unit)
+            -- flask
+            -- food
+            -- augmentation
+            -- snapshot_stats
+            -- potion
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofUnbridledFury:Show(icon)
+            end
+			
+            -- totem_mastery
+            if A.TotemMastery:IsReady("player") and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 then
+                return A.TotemMastery:Show(icon)
+            end
+			
+            -- lightning_shield
+            if A.LightningShield:IsReady(unit) and Unit("player"):HasBuffs(A.LightningShield.ID, true) == 0 then
+                return A.LightningShield:Show(icon)
+            end
+			
+            -- use_item,name=azsharas_font_of_power
+            if A.AzsharasFontofPower:IsReady(unit) then
+                return A.AzsharasFontofPower:Show(icon)
+            end
+			
+            -- Flametongue
+            if A.Flametongue:IsReady(unit) then
+                return A.Flametongue:Show(icon)
+            end
+			
+            -- rockbiter
+            if A.Rockbiter:IsReady(unit) then
+                return A.Rockbiter:Show(icon)
+            end
+			
         end
-        -- auto_attack
-        -- call_action_list,name=opener -- Moved to Precombat
-        -- call_action_list,name=asc,if=buff.ascendance.up
-        if (Player:BuffP(S.AscendanceBuff)) then
-            local ShouldReturn = Asc(); if ShouldReturn then return ShouldReturn; end
+        
+        --Asc
+        local function Asc(unit)
+            -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) == 0 and MultiUnits:GetByRange(5) > 1 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+			
+            -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
+            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and Unit("player"):HasBuffs(A.LandslideBuff.ID, true) == 0 and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
+                return A.Rockbiter:Show(icon)
+            end
+			
+            -- windstrike
+            if A.Windstrike:IsReady(unit) then
+                return A.Windstrike:Show(icon)
+            end
+			
         end
-        -- call_action_list,name=priority
-        if (true) then
-            local ShouldReturn = Priority(); if ShouldReturn then return ShouldReturn; end
+        
+        --Cds
+        local function Cds(unit)
+            -- bloodlust,if=azerite.ancestral_resonance.enabled
+            -- worldvein_resonance
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.WorldveinResonance:Show(icon)
+            end
+			
+            -- berserking,if=variable.cooldown_sync
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and not Unit("player"):HasHeroism() and A.BurstIsON(unit) and (VarCooldownSync) then
+                return A.Berserking:Show(icon)
+            end
+			
+            -- use_item,name=azsharas_font_of_power
+            if A.AzsharasFontofPower:IsReady(unit) then
+                return A.AzsharasFontofPower:Show(icon)
+            end
+			
+            -- blood_fury,if=variable.cooldown_sync
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (VarCooldownSync) then
+                return A.BloodFury:Show(icon)
+            end
+			
+            -- fireblood,if=variable.cooldown_sync
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (VarCooldownSync) then
+                return A.Fireblood:Show(icon)
+            end
+			
+            -- ancestral_call,if=variable.cooldown_sync
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (VarCooldownSync) then
+                return A.AncestralCall:Show(icon)
+            end
+			
+            -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&SpiritWolvesTime>5|target.time_to_die<=60
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0 or not A.Ascendance:IsSpellLearned() and SpiritWolvesTime > 5 or Unit(unit):TimeToDie() <= 60) then
+                return A.PotionofUnbridledFury:Show(icon)
+            end
+			
+            -- guardian_of_azeroth
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.GuardianofAzeroth:Show(icon)
+            end
+			
+            -- feral_spirit
+            if A.FeralSpirit:IsReady(unit) then
+                return A.FeralSpirit:Show(icon)
+            end
+			
+            -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(40) > 1) then
+                return A.BloodoftheEnemy:Show(icon)
+            end
+			
+            -- ascendance,if=cooldown.strike.remains>0
+            if A.Ascendance:IsReady(unit) then
+                return A.Ascendance:Show(icon)
+            end
+			
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
+            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2)) then
+                return A.AshvanesRazorCoral:Show(icon)
+            end
+			
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>2&debuff.conductive_ink_debuff.down&(buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2 and bool(Unit(unit):HasDeBuffsDown(A.ConductiveInkDebuff.ID, true)) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6)) then
+                return A.AshvanesRazorCoral:Show(icon)
+            end
+			
+            -- use_item,name=ashvanes_razor_coral,if=(debuff.conductive_ink_debuff.up|buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)&target.health.pct<31
+            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6) and Unit(unit):HealthPercent() < 31) then
+                return A.AshvanesRazorCoral:Show(icon)
+            end
+			
+            -- use_items
+            -- earth_elemental
         end
-        -- call_action_list,name=maintenance,if=active_enemies<3
-        if (Cache.EnemiesCount[8] < 3) then
-            local ShouldReturn = Maintenance(); if ShouldReturn then return ShouldReturn; end
+        
+        --DefaultCore
+        local function DefaultCore(unit)
+            -- earthen_spike,if=variable.furyCheck_ES
+            if A.EarthenSpike:IsReady(unit) and (VarFurycheckEs) then
+                return A.EarthenSpike:Show(icon)
+            end
+			
+            -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
+            if A.Stormstrike:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike127) then
+                    return A.Stormstrike:Show(icon) 
+                end
+            end
+			
+            -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
+            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (MultiUnits:GetByRange(5) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
+                return A.Stormstrike:Show(icon)
+            end
+            -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= 3 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+			
+            -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
+            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRange(40) == 1 and VarFurycheckLb and Player:Maelstrom() >= 40) then
+                return A.LightningBolt:Show(icon)
+            end
+			
+            -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS
+            if A.Stormstrike:IsReady(unit) and (VarOcpoolSs and VarFurycheckSs) then
+                return A.Stormstrike:Show(icon)
+            end
+			
         end
-        -- call_action_list,name=cds
-        if (HR.CDsON()) then
-            local ShouldReturn = Cds(); if ShouldReturn then return ShouldReturn; end
+        
+        --Filler
+        local function Filler(unit)
+            -- sundering,if=raid_event.adds.in>40
+            if A.Sundering:IsReady(unit) then
+                return A.Sundering:Show(icon)
+            end
+			
+            -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) == 0 and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
+                return A.FocusedAzeriteBeam:Show(icon)
+            end
+			
+            -- purifying_blast,if=raid_event.adds.in>60
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")  then
+                return A.PurifyingBlast:Show(icon)
+            end
+			
+            -- ripple_in_space,if=raid_event.adds.in>60
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.RippleInSpace:Show(icon)
+            end
+			
+            -- thundercharge
+            if A.Thundercharge:IsReady(unit) then
+                return A.Thundercharge:Show(icon)
+            end
+			
+            -- concentrated_flame
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.ConcentratedFlame:Show(icon)
+            end
+			
+            -- reaping_flames
+            if A.ReapingFlames:IsReady(unit) then
+                return A.ReapingFlames:Show(icon)
+            end
+			
+            -- bag_of_tricks
+            if A.BagofTricks:IsReady(unit) then
+                return A.BagofTricks:Show(icon)
+            end
+			
+            -- crash_lightning,if=talent.forceful_winds.enabled&active_enemies>1&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (A.ForcefulWinds:IsSpellLearned() and MultiUnits:GetByRange(5) > 1 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+			
+            -- flametongue,if=talent.searing_assault.enabled
+            if A.Flametongue:IsReady(unit) and A.SearingAssault:IsSpellLearned() then
+                return A.Flametongue:Show(icon)
+            end
+			
+            -- lava_lash,if=!azerite.primal_primer.enabled&talent.hot_hand.enabled&buff.hot_hand.react
+            if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() == 0 and A.HotHand:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.HotHandBuff.ID, true) > 0) then
+                return A.LavaLash:Show(icon)
+            end
+			
+            -- crash_lightning,if=active_enemies>1&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) > 1 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+			
+            -- rockbiter,if=maelstrom<70&!buff.strength_of_earth.up
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 70 and Unit("player"):HasBuffs(A.StrengthofEarthBuff.ID, true) == 0) then
+                return A.Rockbiter:Show(icon)
+            end
+			
+            -- crash_lightning,if=(talent.crashing_storm.enabled|talent.forceful_winds.enabled)&variable.OCPool_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and ((A.CrashingStorm:IsSpellLearned() or A.ForcefulWinds:IsSpellLearned()) and bool(VarOcpoolCl)) then
+                return A.CrashLightning:Show(icon)
+            end
+			
+            -- lava_lash,if=variable.OCPool_LL&variable.furyCheck_LL
+            if A.LavaLash:IsReady(unit) and (bool(VarOcpoolLl) and VarFurycheckLl) then
+                return A.LavaLash:Show(icon)
+            end
+			
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+			
+            -- rockbiter
+            if A.Rockbiter:IsReady(unit) then
+                return A.Rockbiter:Show(icon)
+            end
+			
+            -- frostbrand,if=talent.hailstorm.enabled&buff.frostbrand.remains<4.8+gcd&variable.furyCheck_FB
+            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true) < 4.8 + A.GetGCD() and VarFurycheckFb) then
+                return A.Frostbrand:Show(icon)
+            end
+			
+            -- flametongue
+            if A.Flametongue:IsReady(unit) then
+                return A.Flametongue:Show(icon)
+            end
+			
         end
-		-- Non SIMC Custom Trinket1
-	    if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:IsReady("target") and Trinket1IsAllowed then	    
-       	    if A.Trinket1:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	    return A.Trinket1:Show(icon)
-   	        end 		
-	    end
+        
+        --FreezerburnCore
+        local function FreezerburnCore(unit)
+            -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
+            if A.LavaLash:IsReady(unit) then
+                if Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 0 and A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl and VarClpoolLl then 
+                    return A.LavaLash:Show(icon) 
+                end
+            end
+            -- earthen_spike,if=variable.furyCheck_ES
+            if A.EarthenSpike:IsReady(unit) and (VarFurycheckEs) then
+                return A.EarthenSpike:Show(icon)
+            end
+            -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
+            if A.Stormstrike:IsReady(unit) then
+                if  MultiUnits:GetByRange(10) > 1 and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
+                    return A.Stormstrike:Show(icon) 
+                end
+            end
+            -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
+            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (MultiUnits:GetByRange(5) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
+                return A.Stormstrike:Show(icon)
+            end
+            -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= 3 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+            -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
+            if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRange(40) == 1 and VarFurycheckLb and Player:Maelstrom() >= 40) then
+                return A.LightningBolt:Show(icon)
+            end
+            -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
+            if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 7 and VarFurycheckLl and VarClpoolLl) then
+                return A.LavaLash:Show(icon)
+            end
+            -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS&variable.CLPool_SS
+            if A.Stormstrike:IsReady(unit) and (VarOcpoolSs and VarFurycheckSs and VarClpoolSs) then
+                return A.Stormstrike:Show(icon)
+            end
+            -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
+            if A.LavaLash:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl) then
+                return A.LavaLash:Show(icon)
+            end
+        end
+        
+        --Maintenance
+        local function Maintenance(unit)
+            -- flametongue,if=!buff.flametongue.up
+            if A.Flametongue:IsReady(unit) and (Unit("player"):HasBuffs(A.FlametongueBuff.ID, true) < 4.5) then
+                return A.Flametongue:Show(icon)
+            end
+            -- frostbrand,if=talent.hailstorm.enabled&!buff.frostbrand.up&variable.furyCheck_FB
+            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true) < 4.5 and VarFurycheckFb) then
+                return A.Frostbrand:Show(icon)
+            end
+        end
+        
+        --Opener
+        local function Opener(unit)
+            -- rockbiter,if=maelstrom<15&time<gcd
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime() < A.GetGCD()) then
+                return A.Rockbiter:Show(icon)
+            end
+        end
+        
+        --Priority
+        local function Priority(unit)
+            -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= (8 - (num(A.ForcefulWinds:IsSpellLearned()) * 3)) and bool(VarFreezerburnEnabled) and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+            -- the_unbound_force,if=buff.reckless_force.up|time<5
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):CombatTime() < 5) then
+                return A.TheUnboundForce:Show(icon)
+            end
+            -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
+            if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and MultiUnits:GetByRange(5) == 1 and bool(VarFreezerburnEnabled) and VarFurycheckLl) then
+                return A.LavaLash:Show(icon)
+            end
+            -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
+            if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) == 0 and MultiUnits:GetByRange(5) > 1 and VarFurycheckCl) then
+                return A.CrashLightning:Show(icon)
+            end
+            -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
+            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) == 0 and Player:Maelstrom() >= 20 and MultiUnits:GetByRange(8) >= (1 + VarFreezerburnEnabled)) then
+                return A.FuryofAir:Show(icon)
+            end
+            -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
+            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) > 0 and MultiUnits:GetByRange(8) < (1 + VarFreezerburnEnabled)) then
+                return A.FuryofAir:Show(icon)
+            end
+            -- totem_mastery,if=buff.resonance_totem.remains<=2*gcd
+            if A.TotemMastery:IsReady(unit) and (Unit("player"):HasBuffs(A.ResonanceTotemBuff.ID, true) <= 2 * A.GetGCD()) then
+                return A.TotemMastery:Show(icon)
+            end
+            -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
+            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRange(8) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.BloodoftheEnemy:GetCooldown() > 40)))) then
+                return A.Sundering:Show(icon)
+            end
+            -- focused_azerite_beam,if=active_enemies>1
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
+                return A.FocusedAzeriteBeam:Show(icon)
+            end
+            -- purifying_blast,if=active_enemies>1
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
+                return A.PurifyingBlast:Show(icon)
+            end
+            -- ripple_in_space,if=active_enemies>1
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
+                return A.RippleInSpace:Show(icon)
+            end
+            -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
+            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and Unit("player"):HasBuffs(A.LandslideBuff.ID, true) == 0 and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
+                return A.Rockbiter:Show(icon)
+            end
+            -- frostbrand,if=(azerite.natural_harmony.enabled&buff.natural_harmony_frost.remains<=2*gcd)&talent.hailstorm.enabled&variable.furyCheck_FB
+            if A.Frostbrand:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFrostBuff.ID, true) <= 2 * A.GetGCD()) and A.Hailstorm:IsSpellLearned() and VarFurycheckFb) then
+                return A.Frostbrand:Show(icon)
+            end
+            -- flametongue,if=(azerite.natural_harmony.enabled&buff.natural_harmony_fire.remains<=2*gcd)
+            if A.Flametongue:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFireBuff.ID, true) <= 2 * A.GetGCD())) then
+                return A.Flametongue:Show(icon)
+            end
+            -- rockbiter,if=(azerite.natural_harmony.enabled&buff.natural_harmony_nature.remains<=2*gcd)&maelstrom<70
+            if A.Rockbiter:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true) <= 2 * A.GetGCD()) and Player:Maelstrom() < 70) then
+                return A.Rockbiter:Show(icon)
+            end
+        end
+        
+        
+        -- call precombat
+        if not inCombat and Precombat(unit) and Unit(unit):IsExists() and unit ~= "mouseover" then 
+            return true
+        end
 		
-		-- Non SIMC Custom Trinket2
-	    if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:IsReady("target") and Trinket2IsAllowed then	    
-       	    if A.Trinket2:AbsentImun(unit, "DamageMagicImun")  then 
-      	   	    return A.Trinket2:Show(icon)
-   	        end 	
-	    end
-        -- call_action_list,name=freezerburn_core,if=variable.freezerburn_enabled
-        if (bool(VarFreezerburnEnabled)) then
-            local ShouldReturn = FreezerburnCore(); if ShouldReturn then return ShouldReturn; end
+        -- Ghost Wolf
+        if isMovingFor > Action.GetToggle(2, "GhostWolfTime") and Unit(unit):GetRange() > 8 and A.GhostWolf:IsReady("player") and Action.GetToggle(2, "UseGhostWolf") and Unit("player"):HasBuffs(A.GhostWolfBuff.ID, true) == 0 then
+            -- Notification                    
+            Action.SendNotification("Out of range: auto Ghost Wolf", A.GhostWolf.ID)
+            return A.GhostWolf:Show(icon)
         end
-        -- call_action_list,name=default_core,if=!variable.freezerburn_enabled
-        if (not bool(VarFreezerburnEnabled)) then
-            local ShouldReturn = DefaultCore(); if ShouldReturn then return ShouldReturn; end
+
+        -- In Combat
+        if inCombat and Unit(unit):IsExists() then
+
+            -- variable,name=cooldown_sync,value=(talent.ascendance.enabled&(buff.ascendance.up|cooldown.ascendance.remains>50))|(!talent.ascendance.enabled&(SpiritWolvesTime>5|cooldown.SpiritWolvesTime>50))
+            if (true) then
+                VarCooldownSync = (A.Ascendance:IsSpellLearned() and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0 or A.Ascendance:GetCooldown() > 50)) or (not A.Ascendance:IsSpellLearned() and (SpiritWolvesTime > 5 or A.FeralSpirit:GetCooldown() > 50))
+            end
+			
+            -- variable,name=furyCheck_SS,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.stormstrike.cost))
+            if (true) then
+                VarFurycheckSs = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Stormstrike:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=furyCheck_LL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.lava_lash.cost))
+            if (true) then
+                VarFurycheckLl = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.LavaLash:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=furyCheck_CL,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.crash_lightning.cost))
+            if (true) then
+                VarFurycheckCl = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.CrashLightning:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=furyCheck_FB,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.frostbrand.cost))
+            if (true) then
+                VarFurycheckFb = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Frostbrand:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=furyCheck_ES,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.earthen_spike.cost))
+            if (true) then
+                VarFurycheckEs = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.EarthenSpike:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=furyCheck_LB,value=maelstrom>=(talent.fury_of_air.enabled*(6+40))
+            if (true) then
+                VarFurycheckLb = Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + 40))
+            end
+			
+            -- variable,name=OCPool,value=(active_enemies>1|(cooldown.lightning_bolt.remains>=2*gcd))
+            if (true) then
+                VarOcpool = (MultiUnits:GetByRange(10) > 1 or (A.LightningBolt:GetCooldown() >= 2 * A.GetGCD()))
+            end
+			
+            -- variable,name=OCPool_SS,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.stormstrike.cost)))
+            if (true) then
+                VarOcpoolSs = (VarOcpool or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Stormstrike:GetSpellPowerCostCache())))
+            end
+			
+            -- variable,name=OCPool_LL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.lava_lash.cost)))
+            if (true) then
+                VarOcpoolLl = (VarOcpool or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.LavaLash:GetSpellPowerCostCache())))
+            end
+			
+            -- variable,name=OCPool_CL,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.crash_lightning.cost)))
+            if (true) then
+                VarOcpoolCl = (VarOcpool or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.CrashLightning:GetSpellPowerCostCache())))
+            end
+			
+            -- variable,name=OCPool_FB,value=(variable.OCPool|maelstrom>=(talent.overcharge.enabled*(40+action.frostbrand.cost)))
+            if (true) then
+                VarOcpoolFb = (VarOcpool or Player:Maelstrom() >= (num(A.Overcharge:IsSpellLearned()) * (40 + A.Frostbrand:GetSpellPowerCostCache())))
+            end
+			
+            -- variable,name=CLPool_LL,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.lava_lash.cost)
+            if (true) then
+                VarClpoolLl = (MultiUnits:GetByRange(10) == 1 or Player:Maelstrom() >= (A.CrashLightning:GetSpellPowerCostCache() + A.LavaLash:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=CLPool_SS,value=active_enemies=1|maelstrom>=(action.crash_lightning.cost+action.stormstrike.cost)
+            if (true) then
+                VarClpoolSs = (MultiUnits:GetByRange(10) == 1 or Player:Maelstrom() >= (A.CrashLightning:GetSpellPowerCostCache() + A.Stormstrike:GetSpellPowerCostCache()))
+            end
+			
+            -- variable,name=freezerburn_enabled,value=(talent.hot_hand.enabled&talent.hailstorm.enabled&azerite.primal_primer.enabled)
+            if (true) then
+                VarFreezerburnEnabled = num(A.HotHand:IsSpellLearned() and A.Hailstorm:IsSpellLearned() and A.PrimalPrimer:GetAzeriteRank() > 0)
+            end
+			
+            -- variable,name=rockslide_enabled,value=(!variable.freezerburn_enabled&(talent.boulderfist.enabled&talent.landslide.enabled&azerite.strength_of_earth.enabled))
+            if (true) then
+                VarRockslideEnabled = not bool(VarFreezerburnEnabled) and A.Boulderfist:IsSpellLearned() and A.Landslide:IsSpellLearned() and A.StrengthofEarth:GetAzeriteRank() > 0
+            end
+			
+            -- Interrupt Handler          
+            local unit = "target"
+            local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+            local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
+            
+            -- WindShear
+            if useKick and A.WindShear:IsReady(unit) then 
+                if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+                    return A.WindShear:Show(icon)
+                end 
+            end    
+			
+            -- CapacitorTotem
+            if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady("player") then 
+                if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+                    return A.CapacitorTotem:Show(icon)
+                end 
+            end   
+			
+            -- Purge
+            -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
+            -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
+            if A.Purge:IsReady(unit) and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") then
+                return A.Purge:Show(icon)
+            end 
+ 
+            -- Feral Lunge
+            if (Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 or Unit(unit):IsMovingOut()) and Unit(unit):HealthPercent() <= Action.GetToggle(2, "FeralLungeHP") and A.FeralLunge:IsReady(unit) and A.FeralLunge:IsSpellLearned() then
+                -- Notification                    
+                Action.SendNotification("Out of range: auto Feral Lunge", A.FeralLunge.ID)
+                return A.FeralLunge:Show(icon)
+            end
+			
+			-- Bloodlust Shamanism PvP
+            if A.BloodLust:IsReady("player") and A.BurstIsON(unit) and A.Shamanism:IsSpellLearned() and A.IsInPvP then 
+                return A.BloodLust:Show(icon)
+            end 
+			
+		    -- Skyfury Totem
+            if A.IsInPvP and A.SkyfuryTotem:IsReady("player") and Unit(unit):HealthPercent() <= 60 and A.BurstIsON(unit) and A.SkyfuryTotem:IsSpellLearned() then 
+                return A.SkyfuryTotem:Show(icon)
+            end
+			
+		    -- CounterStrikeTotem on enemy burst 
+            if A.IsInPvP and Unit("player"):IsFocused() and A.CounterStrikeTotem:IsReady("player") and A.BurstIsON(unit) and A.CounterStrikeTotem:IsSpellLearned() and
+			    (
+				    -- HP lose per sec >= 10
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 
+				)
+			then 
+                return A.CounterStrikeTotem:Show(icon)
+            end
+     
+			-- Trinkets
+            if A.Trinket1:IsReady(unit) and A.BurstIsON(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end 
+                               
+            if A.Trinket2:IsReady(unit) and A.BurstIsON(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end 
+				
+            -- 0 TotemMastery
+            if A.TotemMastery:IsReady(unit) and A.LastPlayerCastName ~= A.TotemMastery:Info() and ResonanceTotemTime() < 6 and A.TotemMastery:IsSpellLearned() then
+                return A.TotemMastery:Show(icon)
+            end
+			
+            -- auto_attack
+            -- call_action_list,name=opener
+            if Opener(unit) then
+                return true
+            end
+			
+            -- call_action_list,name=asc,if=buff.ascendance.up
+            if Asc(unit) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 0) then
+                return true
+            end
+			
+            -- call_action_list,name=priority
+            if Priority(unit) then
+                return true
+            end
+			
+            -- call_action_list,name=maintenance,if=active_enemies<3
+            if Maintenance(unit) and (MultiUnits:GetByRange(20) < 3) then
+                return true 
+            end
+			
+            -- call_action_list,name=cds
+            if Cds(unit) and A.BurstIsON(unit) then
+                return true
+            end
+			
+            -- call_action_list,name=freezerburn_core,if=variable.freezerburn_enabled
+            if FreezerburnCore(unit) and bool(VarFreezerburnEnabled) then
+                return true
+            end
+			
+            -- call_action_list,name=default_core,if=!variable.freezerburn_enabled
+            if DefaultCore(unit) and (not bool(VarFreezerburnEnabled)) then
+                return true
+            end
+			
+            -- call_action_list,name=maintenance,if=active_enemies>=3
+            if Maintenance(unit) and (MultiUnits:GetByRange(20) >= 3) then
+                return true
+            end
+			
+            -- call_action_list,name=filler
+            if Filler(unit) then
+                return true
+            end
+			
         end
-        -- call_action_list,name=maintenance,if=active_enemies>=3
-        if (Cache.EnemiesCount[8] >= 3) then
-            local ShouldReturn = Maintenance(); if ShouldReturn then return ShouldReturn; end
-        end
-        -- call_action_list,name=filler
-        if (true) then
-            local ShouldReturn = Filler(); if ShouldReturn then return ShouldReturn; end
-        end		
+    end
+
+    -- End on EnemyRotation()
+
+    -- Defensive
+    local SelfDefensive = SelfDefensives()
+    if SelfDefensive then 
+        return SelfDefensive:Show(icon)
+    end 
+
+    -- Mouseover
+    if A.IsUnitEnemy("mouseover") then
+        unit = "mouseover"
+        if EnemyRotation(unit) then 
+            return true 
+        end 
+    end 
+
+    -- Target  
+    if A.IsUnitEnemy("target") then 
+        unit = "target"
+        if EnemyRotation(unit) then 
+            return true
+        end 
+
     end
 end
 -- Finished
 
-
-
------------------------------------------
---                 ROTATION  
------------------------------------------
-
--- [3] is Single rotation (supports all actions)
-A[3] = function(icon)
-    if APL(icon) then 
-        return true 
-    end
+-- [4] AoE Rotation
+A[4] = function(icon)
+    return A[3](icon, true)
 end
+ -- [5] Trinket Rotation
+-- No specialization trinket actions 
+-- Passive 
+local function FreezingTrapUsedByEnemy()
+    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
+    UnitCooldown:IsSpellInFly("arena", 3355) and 
+    Unit("player"):GetDR("incapacitate") >= 50 
+    then 
+        local Caster = UnitCooldown:GetUnitID("arena", 3355)
+        if Caster and Unit(Caster):GetRange() <= 40 then 
+            return true 
+        end 
+    end 
+end 
+
+local function ArenaRotation(icon, unit)
+    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
+        -- Note: "arena1" is just identification of meta 6
+       -- if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+		
+    --    end
+		-- Grounding Totem Casting BreakAble CC
+        if A.GroundingTotem:IsReady() and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
+            return A.GroundingTotem:Show(icon)
+        end
+
+		-- CounterStrike Totem on Enemyburst
+        if A.CounterStrikeTotem:IsReady() and Unit("player"):IsFocused("DAMAGER") and Unit("player"):GetDMG() > 2 and A.CounterStrikeTotem:IsSpellLearned() then 
+            return A.CounterStrikeTotem:Show(icon)
+        end
+		
+    end 
+end 
+local function PartyRotation(unit)
+    if (unit == "party1" and not Action.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not Action.GetToggle(2, "PartyUnits")[2]) then 
+        return false 
+    end
+
+  	-- CleanseSpirit
+    if A.CleanseSpirit:IsCastable() and A.CleanseSpirit:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
+        return A.CleanseSpirit
+    end
+end 
+
+A[6] = function(icon)
+    return ArenaRotation(icon, "arena1")
+end
+
+A[7] = function(icon)
+    local Party = PartyRotation("party1") 
+    if Party then 
+        return Party:Show(icon)
+    end 
+    return ArenaRotation(icon, "arena2")
+end
+
+A[8] = function(icon)
+    local Party = PartyRotation("party2") 
+    if Party then 
+        return Party:Show(icon)
+    end     
+    return ArenaRotation(icon, "arena3")
+end
+
