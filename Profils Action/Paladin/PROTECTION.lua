@@ -642,6 +642,12 @@ A[3] = function(icon, isMulti)
                     end
 				end
             end
+			
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end	
             
 			-- auto_attack
             -- call_action_list,name=cooldowns
