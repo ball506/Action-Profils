@@ -355,7 +355,7 @@ local function SelfDefensives()
         then
             -- ShieldBlock
             if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() then  
-                A.ShieldBlock        -- #4
+                return A.ShieldBlock        -- #4
             end 
                 
             -- ShieldWall
