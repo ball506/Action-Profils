@@ -71,8 +71,8 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     IntimidatingShout                      = Action.Create({ Type = "Spell", ID = 5246     }),
 	Shockwave                              = Action.Create({ Type = "Spell", ID = 46968    }),
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368     }),
-	StormBolt                              = Action.Create({ Type = "Spell", ID = 107570}),
- 	StormBoltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
+	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570}),
+ 	StormboltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
@@ -237,10 +237,10 @@ local function AntiFakeStun(unit)
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 20 and 
     Unit(unit):IsControlAble("stun", 0) and 
-    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+    A.StormboltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
-    if	A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
+    if	A.StormboltGreen:IsReady(nil, nil, nil, true) and 
     (
         AntiFakeStun("mouseover") or 
         AntiFakeStun("target") or 
@@ -250,7 +250,7 @@ A[1] = function(icon)
         )
     )
     then 
-        return A.StormBoltGreen:Show(icon)         
+        return A.StormboltGreen:Show(icon)         
     end                                                                     
 end
 
@@ -271,9 +271,9 @@ A[2] = function(icon)
                 return A.PummelGreen:Show(icon)                                                  
             end 
             
-			-- StormBolt
-            if A.StormBolt:IsReady(unit, nil, nil, true) and A.StormBolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
-                return A.StormBolt:Show(icon)                  
+			-- Stormbolt
+            if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
+                return A.Stormbolt:Show(icon)                  
             end 
             
             -- Racials 
@@ -305,7 +305,7 @@ local function SelfDefensives()
     end 
 	
     -- ShieldBlock (any role, whenever have physical damage)
-    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):GetRealTimeDMG(3) > 0 then 
+    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
         return A.ShieldBlock
     end 
 	
@@ -355,7 +355,7 @@ local function SelfDefensives()
             )                
         then
             -- ShieldBlock
-            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() then  
+            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
                 return A.ShieldBlock        -- #4
             end 
                 
@@ -663,6 +663,15 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end	
+
+            -- Offensive Trinkets
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end 
+            
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end      
 			
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
@@ -764,6 +773,17 @@ A[3] = function(icon, isMulti)
     local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
+    end 
+	
+    -- Defensives trinkets
+    if Unit("player"):CombatTime() > 0 and (Unit("player"):HealthPercent() < 50 or Unit("player"):TimeToDie() < 5) then 
+        if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then 
+            return A.Trinket1:Show(icon)
+        end 
+        
+        if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then 
+            return A.Trinket2:Show(icon)
+        end
     end 
 
     -- Mouseover
