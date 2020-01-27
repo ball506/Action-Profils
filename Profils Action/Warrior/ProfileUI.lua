@@ -622,6 +622,63 @@ A.Data.ProfileUI                                     = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Auto Taunt -- ",
+                    },
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [3] 3rd Row 
+    			{
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Автоматическая Насмешка", 
+                        frFR = "Raillerie automatique",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Taunt whenever available.", 
+                        ruRU = "Если активирован, будет автоматически использовать Taunt при любой возможности.",  
+                        frFR = "S'il est activé, utilisera automatiquement Taunt dès qu'il sera disponible.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ThreatDamagerLimit",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = "Only 'Damager'\nThreat limit(agro,>= %)",
+						ruRU = "Только 'Урон'\nЛимит угрозы(агро,>= %)", 
+						frFR = "Seulement 'DPS'\nLimite de menace(аggrо,>= %)", 
+					}, 
+                    TT = { 
+                        enUS = "OFF - No limit\nIf the percentage of the threat (agro) is greater than\nor equal to the specified one, then the\n'safe' rotation will be performed. As far as possible, the\nabilities causing too many threats will be stopped until the\nthreat level (agro) is normalized", 
+                        ruRU = "OFF - Нет лимита\nЕсли процент угрозы (агро) больше или равен указанному,\nто будет выполняться 'безопасная' ротация\nПо мере возможности перестанут использоваться способности\nвызывающие слишком много угрозы пока\nуровень угрозы (агро) не нормализуется",  
+                        frFR = "OFF - Aucune limite\nSi le pourcentage de la menace (agro) est supérieur ou égal à celui spécifié, alors la rotation\n'safe' sera effectuée. Dans la mesure du possible, les \nabilités causant trop de menaces seront arrêtées jusqu'à ce que le\n niveau de menace (agro) soit normalisé",
+					},     
+                    M = {},
+                },
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- Defensives -- ",
                     },
                 },

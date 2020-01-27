@@ -65,6 +65,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
 	-- Utilities
     VictoryRush                            = Action.Create({ Type = "Spell", ID = 34428     }),
     ImpendingVictory                       = Action.Create({ Type = "Spell", ID = 202168     }),
+    Taunt                                  = Action.Create({ Type = "Spell", ID = 355     }),
     Pummel                                 = Action.Create({ Type = "Spell", ID = 6552     }),
 	PummelGreen	                           = Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true}), 
     IntimidatingShout                      = Action.Create({ Type = "Spell", ID = 5246     }),
@@ -518,7 +519,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and A.BoomingVoice:IsSpellLearned() then
+            if A.DemoralizingShout:IsReady("player") and MultiUnits:GetByRangeInCombat(10) > 1 and A.BoomingVoice:IsSpellLearned() then
                 return A.DemoralizingShout:Show(icon)
             end
 			
@@ -568,7 +569,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and (A.BoomingVoice:IsSpellLearned()) then
+            if A.DemoralizingShout:IsReady("player") and A.BoomingVoice:IsSpellLearned() and Unit(unit):GetRange() < 10 then
                 return A.DemoralizingShout:Show(icon)
             end
 			
@@ -632,6 +633,36 @@ A[3] = function(icon, isMulti)
           --  if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime() == 0) then
           --      return A.Intercept:Show(icon)
           --  end
+			-- VigilantProtector
+            if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.VigilantProtector:Show(icon)
+            end
+
+		    -- Taunt Taunt
+            if A.GetToggle(2, "AutoTaunt") 
+			and combatTime > 0     
+			then 
+			    -- if not fully aggroed or we are not current target then use taunt
+			    if A.Taunt:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+                    return A.Taunt:Show(icon)
+				-- else if all good on current target, switch to another one we know we dont currently tank
+                else
+                    local Taunt_Nameplates = MultiUnits:GetActiveUnitPlates()
+                    if Taunt_Nameplates then  
+                        for Taunt_UnitID in pairs(Taunt_Nameplates) do             
+                            if not UnitIsUnit("target", Taunt_UnitID) and A.Taunt:IsReady(Taunt_UnitID, true, nil, nil, nil) and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) ~= 3 then 
+                                return A:Show(icon, ACTION_CONST_AUTOTARGET)
+                            end         
+                        end 
+                    end
+				end
+            end
+			
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end	
 			
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
