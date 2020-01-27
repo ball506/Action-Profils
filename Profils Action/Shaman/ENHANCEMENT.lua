@@ -96,7 +96,7 @@ Action[ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
     StrengthofEarth                        = Action.Create({ Type = "Spell", ID = 273461 }),
 	EarthElemental                         = Action.Create({ Type = "Spell", ID = 198103 }), -- Earth Elemental manual queue
     -- Utilities
-    BloodLust                              = Action.Create({ Type = "Spell", ID = 2825     }),
+    BloodLust                              = Action.Create({ Type = "Spell", ID = 204361     }),
     LightningLasso                         = Action.Create({ Type = "Spell", ID = 305483     }),
     CapacitorTotem                         = Action.Create({ Type = "Spell", ID = 192058     }),
     GroundingTotem                         = Action.Create({ Type = "Spell", ID = 204336     }),
@@ -372,15 +372,26 @@ end
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
+	-- WindShear
     if useKick and A.WindShear:IsReady(unit) and A.WindShear:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	    -- Notification					
-        Action.SendNotification("WindShear interrupting on Target ", A.WindShear.ID)
+        Action.SendNotification("Wind Shear interrupting on Target", A.WindShear.ID)
         return A.WindShear
     end 
+	
+    -- CapacitorTotem
+    if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady("player") then 
+        if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+			-- Notification					
+            Action.SendNotification("Capacitor Totem interrupting", A.Hex.ID)
+            return A.CapacitorTotem
+        end 
+    end  
     
+    -- Hex	
     if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
 	    -- Notification					
-        Action.SendNotification("Hex interrupting...", A.Hex.ID)
+        Action.SendNotification("Hex interrupting", A.Hex.ID)
         return A.Hex              
     end          
 	    
@@ -722,7 +733,7 @@ A[3] = function(icon, isMulti)
 			
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Stormstrike, 40, "min", EvaluateCycleStormstrike127) then
+                if MultiUnits:GetByRange(10) > 1 and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
                     return A.Stormstrike:Show(icon) 
                 end
             end
@@ -731,6 +742,7 @@ A[3] = function(icon, isMulti)
             if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (MultiUnits:GetByRange(5) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
                 return A.Stormstrike:Show(icon)
             end
+			
             -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
             if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= 3 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
@@ -821,7 +833,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lava_lash,if=variable.OCPool_LL&variable.furyCheck_LL
-            if A.LavaLash:IsReady(unit) and (bool(VarOcpoolLl) and VarFurycheckLl) then
+            if A.LavaLash:IsReady(unit) and (VarOcpoolLl and VarFurycheckLl) then
                 return A.LavaLash:Show(icon)
             end
 			
@@ -855,124 +867,154 @@ A[3] = function(icon, isMulti)
                     return A.LavaLash:Show(icon) 
                 end
             end
+			
             -- earthen_spike,if=variable.furyCheck_ES
             if A.EarthenSpike:IsReady(unit) and (VarFurycheckEs) then
                 return A.EarthenSpike:Show(icon)
             end
+			
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
             if A.Stormstrike:IsReady(unit) then
                 if  MultiUnits:GetByRange(10) > 1 and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
                     return A.Stormstrike:Show(icon) 
                 end
             end
+			
             -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
             if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (MultiUnits:GetByRange(5) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
                 return A.Stormstrike:Show(icon)
             end
+			
             -- crash_lightning,if=active_enemies>=3&variable.furyCheck_CL
             if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= 3 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
             end
+			
             -- lightning_bolt,if=talent.overcharge.enabled&active_enemies=1&variable.furyCheck_LB&maelstrom>=40
             if A.LightningBolt:IsReady(unit) and (A.Overcharge:IsSpellLearned() and MultiUnits:GetByRange(40) == 1 and VarFurycheckLb and Player:Maelstrom() >= 40) then
                 return A.LightningBolt:Show(icon)
             end
+			
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
             if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 7 and VarFurycheckLl and VarClpoolLl) then
                 return A.LavaLash:Show(icon)
             end
+			
             -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS&variable.CLPool_SS
             if A.Stormstrike:IsReady(unit) and (VarOcpoolSs and VarFurycheckSs and VarClpoolSs) then
                 return A.Stormstrike:Show(icon)
             end
+			
             -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
             if A.LavaLash:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl) then
                 return A.LavaLash:Show(icon)
             end
+			
         end
         
         --Maintenance
         local function Maintenance(unit)
+		
             -- flametongue,if=!buff.flametongue.up
             if A.Flametongue:IsReady(unit) and (Unit("player"):HasBuffs(A.FlametongueBuff.ID, true) < 4.5) then
                 return A.Flametongue:Show(icon)
             end
+			
             -- frostbrand,if=talent.hailstorm.enabled&!buff.frostbrand.up&variable.furyCheck_FB
             if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true) < 4.5 and VarFurycheckFb) then
                 return A.Frostbrand:Show(icon)
             end
+			
         end
         
         --Opener
         local function Opener(unit)
+		
             -- rockbiter,if=maelstrom<15&time<gcd
             if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime() < A.GetGCD()) then
                 return A.Rockbiter:Show(icon)
             end
+			
         end
         
         --Priority
         local function Priority(unit)
+		
             -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
             if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) >= (8 - (num(A.ForcefulWinds:IsSpellLearned()) * 3)) and bool(VarFreezerburnEnabled) and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
             end
+			
             -- the_unbound_force,if=buff.reckless_force.up|time<5
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit("player"):CombatTime() < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
+			
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
             if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and MultiUnits:GetByRange(5) == 1 and bool(VarFreezerburnEnabled) and VarFurycheckLl) then
                 return A.LavaLash:Show(icon)
             end
+			
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
             if A.CrashLightning:IsReady("player") and Unit(unit):GetRange() < 6 and (Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) == 0 and MultiUnits:GetByRange(5) > 1 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
             end
+			
             -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
             if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) == 0 and Player:Maelstrom() >= 20 and MultiUnits:GetByRange(8) >= (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
+			
             -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
             if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) > 0 and MultiUnits:GetByRange(8) < (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
+			
             -- totem_mastery,if=buff.resonance_totem.remains<=2*gcd
             if A.TotemMastery:IsReady(unit) and (Unit("player"):HasBuffs(A.ResonanceTotemBuff.ID, true) <= 2 * A.GetGCD()) then
                 return A.TotemMastery:Show(icon)
             end
+			
             -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
             if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(6) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.BloodoftheEnemy:GetCooldown() > 40)))) then
                 return A.Sundering:Show(icon)
             end
+			
             -- focused_azerite_beam,if=active_enemies>1
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
+			
             -- purifying_blast,if=active_enemies>1
             if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
                 return A.PurifyingBlast:Show(icon)
             end
+			
             -- ripple_in_space,if=active_enemies>1
             if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(20) > 1) then
                 return A.RippleInSpace:Show(icon)
             end
+			
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
             if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and Unit("player"):HasBuffs(A.LandslideBuff.ID, true) == 0 and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
                 return A.Rockbiter:Show(icon)
             end
+			
             -- frostbrand,if=(azerite.natural_harmony.enabled&buff.natural_harmony_frost.remains<=2*gcd)&talent.hailstorm.enabled&variable.furyCheck_FB
             if A.Frostbrand:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFrostBuff.ID, true) <= 2 * A.GetGCD()) and A.Hailstorm:IsSpellLearned() and VarFurycheckFb) then
                 return A.Frostbrand:Show(icon)
             end
+			
             -- flametongue,if=(azerite.natural_harmony.enabled&buff.natural_harmony_fire.remains<=2*gcd)
             if A.Flametongue:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFireBuff.ID, true) <= 2 * A.GetGCD())) then
                 return A.Flametongue:Show(icon)
             end
+			
             -- rockbiter,if=(azerite.natural_harmony.enabled&buff.natural_harmony_nature.remains<=2*gcd)&maelstrom<70
             if A.Rockbiter:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true) <= 2 * A.GetGCD()) and Player:Maelstrom() < 70) then
                 return A.Rockbiter:Show(icon)
             end
+			
         end
         
         
@@ -1071,24 +1113,14 @@ A[3] = function(icon, isMulti)
                 VarRockslideEnabled = not bool(VarFreezerburnEnabled) and A.Boulderfist:IsSpellLearned() and A.Landslide:IsSpellLearned() and A.StrengthofEarth:GetAzeriteRank() > 0
             end
 			
-            -- Interrupt Handler          
-            local unit = "target"
-            local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+            -- Interrupt Handler             
             local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
             
-            -- WindShear
-            if useKick and A.WindShear:IsReady(unit) then 
-                if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-                    return A.WindShear:Show(icon)
-                end 
-            end    
-			
-            -- CapacitorTotem
-            if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady("player") then 
-                if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-                    return A.CapacitorTotem:Show(icon)
-                end 
-            end   
+			-- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end	
 			
             -- Purge
             -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
