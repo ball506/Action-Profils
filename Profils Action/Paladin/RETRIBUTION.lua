@@ -542,7 +542,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- divine_storm,if=spell_targets.divine_storm>2
-            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and MultiUnits:GetByRange(8) > 2
+            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and MultiUnits:GetByRange(10) > 1
 			then
                 return A.DivineStorm:Show(icon)
             end	
@@ -552,7 +552,7 @@ A[3] = function(icon, isMulti)
 			(
 			    VarDsCastable and VarWingsPool and  
 				(
-				    (not A.ExecutionSentence:IsSpellLearned() or (MultiUnits:GetByRange(8) >= 2 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
+				    (not A.ExecutionSentence:IsSpellLearned() or (MultiUnits:GetByRange(10) >= 2 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
 					or 
 					(A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)
 				)
@@ -574,7 +574,7 @@ A[3] = function(icon, isMulti)
             VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) == 0)))
 
             -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|talent.inquisition.enabled&buff.inquisition.down&holy_power>=3
-            if Finishers(unit) and (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.Inquisition:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true)) and Player:HolyPower() >= 3) then
+            if Finishers(unit) and (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.Inquisition:IsSpellLearned() and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 and Player:HolyPower() >= 3) then
                 return true
             end
 			
