@@ -1053,6 +1053,8 @@ A[3] = function(icon, isMulti)
 				Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) <= 5.4 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) == 0
 				or 
 				Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 
+				or
+				Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < A.GetGCD() + A.GetPing + 1
 			) 			
 		then
 			return A.Garrote:Show(icon)
@@ -1078,15 +1080,22 @@ A[3] = function(icon, isMulti)
 		end
 		
 		-- Rupture with refresh
-		if A.Rupture:IsReady(unit) and CanCast and Player:ComboPoints() >= 4 and 
+		if A.Rupture:IsReadyByPassCastGCD(unit, true, nil, nil) and CanCast and 
 		(
-		    Unit(unit):HasDeBuffs(A.Rupture.ID, true) == 0
+		    Unit(unit):HasDeBuffs(A.Rupture.ID, true) == 0 and Player:ComboPoints() >= 4
 			or 
-			Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 5
+			Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= 5 and Player:ComboPoints() >= 3
+			or
+			Unit(unit):HasDeBuffs(A.Rupture.ID, true) <= A.GetGCD() + A.GetPing() and Player:ComboPoints() > 0
 		) 
 		then
 			return A.Rupture:Show(icon)
 		end
+
+        -- toxic_blade,if=dot.rupture.ticking&(!equipped.azsharas_font_of_power|cooldown.vendetta.remains>10)
+        if A.ToxicBlade:IsReady(unit) and CanCast and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 then
+            return A.ToxicBlade:Show(icon)
+        end
 		
         -- actions.dot+=/crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
         if (isMulti or A.GetToggle(2, "AoE")) and CanCast and A.CrimsonTempest:IsReadyByPassCastGCD(unit, true, nil, nil)
@@ -1169,11 +1178,6 @@ A[3] = function(icon, isMulti)
 			) 
 		then
             return A.AshvanesRazorCoral:Show(icon)
-        end		
-		
-        -- toxic_blade,if=dot.rupture.ticking&(!equipped.azsharas_font_of_power|cooldown.vendetta.remains>10)
-        if A.ToxicBlade:IsReady(unit) and CanCast and (Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 0 and (not A.AzsharasFontofPower:IsExists() or A.Vendetta:GetCooldown() > 10)) then
-            return A.ToxicBlade:Show(icon)
         end		
 		
 		-- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
