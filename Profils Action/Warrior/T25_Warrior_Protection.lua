@@ -296,7 +296,7 @@ A[2] = function(icon)
 end
 
 -- SelfDefensives
-local function SelfDefensives(unit)
+local function SelfDefensives()
     local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
 		
     if Unit("player"):CombatTime() == 0 then 
@@ -305,7 +305,7 @@ local function SelfDefensives(unit)
 	
     -- ShieldBlock (any role, whenever have physical damage)
     if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):GetRealTimeDMG(3) > 0 then 
-        return A.ShieldBlock:Show(icon)
+        return A.ShieldBlock
     end 
 	
     -- LastStand
@@ -328,7 +328,7 @@ local function SelfDefensives(unit)
                 )
             )                
         then                
-            return A.LastStand:Show(icon)
+            return A.LastStand
         end 
     end
 		
@@ -355,11 +355,11 @@ local function SelfDefensives(unit)
         then
             -- ShieldBlock
             if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() then  
-                A.ShieldBlock:Show(icon)        -- #4
+                A.ShieldBlock        -- #4
             end 
                 
             -- ShieldWall
-            return A.ShieldWall:Show(icon)         -- #3                  
+            return A.ShieldWall         -- #3                  
              
         end 
     end 		 
