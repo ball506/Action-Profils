@@ -555,7 +555,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- scourge_strike,if=death_and_decay.ticking&cooldown.apocalypse.remains
-            if A.ScourgeStrike:IsReady(unit) and Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 then
+            if A.ScourgeStrike:IsReady(unit) and Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 then
                 return A.ScourgeStrike:Show(icon)
             end
 			
@@ -596,7 +596,7 @@ A[3] = function(icon, isMulti)
 			
             -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
             if A.ScourgeStrike:IsReady(unit) 
-			and (Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) > 0 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4)
+			and (Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4)
 			and (A.ArmyoftheDead:GetCooldown() > 5 or A.GetToggle(2, "DisableAotD")) 
 			then
                 return A.ScourgeStrike:Show(icon)
@@ -613,7 +613,15 @@ A[3] = function(icon, isMulti)
             end
 			
             -- festering_strike,if=((((debuff.festering_wound.stack<4&!buff.unholy_frenzy.up)|debuff.festering_wound.stack<3)&cooldown.apocalypse.remains<3)|debuff.festering_wound.stack<1)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.FesteringStrike:IsReady(unit) and (((((Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 4 and Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) == 0) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3) and A.Apocalypse:GetCooldown() < 3) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1) and (A.ArmyoftheDead:GetCooldown() > 5 or A.GetToggle(2, "DisableAotD"))) then
+            if A.FesteringStrike:IsReady(unit) and 
+			(
+			    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 4 and Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) == 0 
+				or 
+				Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3 and A.Apocalypse:GetCooldown() < 3 
+				or 
+				Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or A.GetToggle(2, "DisableAotD"))
+			)
+			then
                 return A.FesteringStrike:Show(icon)
             end
 			
@@ -957,7 +965,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- run_action_list,name=aoe,if=active_enemies>=2
-            if (isMulti or A.GetToggle(2, "AoE")) and Aoe(unit) and (MultiUnits:GetByRange(25, 5, 5) >= 2) and CanCast then
+            if (isMulti or A.GetToggle(2, "AoE")) and Aoe(unit) and (MultiUnits:GetByRange(25) >= 2) and CanCast then
                return true
             end
 			
