@@ -626,12 +626,6 @@ A.Data.ProfileUI                                     = {
                     },
                 },
             },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
             { -- [3] 3rd Row 
     			{
                     E = "Checkbox", 

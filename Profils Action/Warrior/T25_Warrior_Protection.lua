@@ -519,7 +519,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and MultiUnits:GetByRangeInCombat(10) > 1 and A.BoomingVoice:IsSpellLearned() then
+            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and MultiUnits:GetByRangeInCombat(10) > 1 and A.BoomingVoice:IsSpellLearned() then
                 return A.DemoralizingShout:Show(icon)
             end
 			
@@ -569,7 +569,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and A.BoomingVoice:IsSpellLearned() and Unit(unit):GetRange() < 10 then
+            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and A.BoomingVoice:IsSpellLearned() and Unit(unit):GetRange() < 10 then
                 return A.DemoralizingShout:Show(icon)
             end
 			
