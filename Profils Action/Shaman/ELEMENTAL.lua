@@ -646,7 +646,15 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ascendance,if=talent.ascendance.enabled&(time>=60|buff.bloodlust.up)&cooldown.lava_burst.remains>0&(cooldown.storm_elemental.remains<120|!talent.storm_elemental.enabled)&(!talent.icefury.enabled|!buff.icefury.up&!cooldown.icefury.up)
-            if A.Ascendance:IsReady("player") and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) and A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) or (not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0) then 
+            if A.Ascendance:IsReady("player") and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and 
+			(
+			    (Unit("player"):CombatTime() >= 60 or Unit("player"):HasHeroism()) 
+				and 
+				A.LavaBurst:GetCooldown() > 0 and (A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120 or not A.StormElemental:IsSpellLearned()) 
+				or 
+				(not A.Icefury:IsSpellLearned() or not Unit("player"):HasBuffs(A.IcefuryBuff.ID, true) and not A.Icefury:GetCooldown() == 0) 
+			)
+			then 
                 return A.Ascendance:Show(icon)
             end
             
