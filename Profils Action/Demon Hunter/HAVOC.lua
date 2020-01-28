@@ -710,7 +710,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 8 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 8 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
@@ -937,7 +937,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD()) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD()) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
@@ -1034,7 +1034,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)               
 				return A.EyeBeam:Show(icon)
@@ -1051,7 +1051,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
@@ -1068,7 +1068,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
@@ -1155,7 +1155,7 @@ A[3] = function(icon, isMulti)
 			end
 			
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam()  
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam()  
 			then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
