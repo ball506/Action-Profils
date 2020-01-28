@@ -86,6 +86,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
 	-- Utilities
     SpellLock                              = Action.Create({ Type = "Spell", ID = 19647}),
     PetKick                                = Action.Create({ Type = "Spell", ID = 119914, Color = "RED", Desc = "RED" }), 
+	Shadowfury                             = Action.Create({ Type = "Spell", ID = 30283      }),
     -- Defensive
     UnendingResolve                        = Action.Create({ Type = "Spell", ID = 104773     }),
 	-- Felguard
