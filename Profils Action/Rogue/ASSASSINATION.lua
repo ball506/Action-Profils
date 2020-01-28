@@ -1054,7 +1054,7 @@ A[3] = function(icon, isMulti)
 				or 
 				Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) == 0 
 				or
-				Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < A.GetGCD() + A.GetPing + 1
+				Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < A.GetGCD() + A.GetPing() + 1
 			) 			
 		then
 			return A.Garrote:Show(icon)
