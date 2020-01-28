@@ -305,7 +305,7 @@ local function SelfDefensives()
     end 
 	
     -- ShieldBlock (any role, whenever have physical damage)
-    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
+    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
         return A.ShieldBlock
     end 
 	
@@ -355,7 +355,7 @@ local function SelfDefensives()
             )                
         then
             -- ShieldBlock
-            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
+            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
                 return A.ShieldBlock        -- #4
             end 
                 
@@ -750,7 +750,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- revenge
-            if A.Revenge:IsReady("player") and Player:Rage() > 60 and offensiveRage then
+            if A.Revenge:IsReady("player") and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCostCache() == 0) then
                 return A.Revenge:Show(icon)
             end
 			
