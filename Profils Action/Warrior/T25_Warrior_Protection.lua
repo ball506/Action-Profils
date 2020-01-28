@@ -650,7 +650,7 @@ A[3] = function(icon, isMulti)
                     local Taunt_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if Taunt_Nameplates then  
                         for Taunt_UnitID in pairs(Taunt_Nameplates) do             
-                            if not UnitIsUnit("target", Taunt_UnitID) and A.Taunt:IsReady(Taunt_UnitID, true, nil, nil, nil) and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) ~= 3 then 
+                            if not UnitIsUnit("target", Taunt_UnitID) and Unit(Taunt_UnitID):CombatTime() > 0 and A.Taunt:IsReady(Taunt_UnitID, true, nil, nil, nil) and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) ~= 3 then 
                                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
                             end         
                         end 
