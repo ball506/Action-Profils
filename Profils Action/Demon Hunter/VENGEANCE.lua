@@ -430,6 +430,16 @@ A[3] = function(icon, isMulti)
         --Defensives
         local function Defensives(unit)
 			
+			-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then	    
+      	       	return A.Trinket1:Show(icon)		
+	        end	
+			
+	    	-- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then	    
+      	       	return A.Trinket2:Show(icon)		
+	        end	
+			
 			-- HealingPotion
             local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
             if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
@@ -600,21 +610,11 @@ A[3] = function(icon, isMulti)
                     end
 				end
             end 
-			
-	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady("player") and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DPS" then	    
-      	       	return A.Trinket1:Show(icon)		
-	        end	
-			
+						
 	    	-- Non SIMC Custom Trinket1
 	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed then	    
       	       	return A.Trinket1:Show(icon)		
 	        end
-
-	    	-- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady("player") and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DPS" then	    
-      	       	return A.Trinket2:Show(icon)		
-	        end	
 		
 		    -- Non SIMC Custom Trinket2
 	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed then	    
