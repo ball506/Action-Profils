@@ -822,7 +822,7 @@ end
 -- Bleed infos
 local function GetBleedInfos (GUID, SpellID)
     -- Core API is not used since we don't want cached informations
-    for i = 1, Action.MAXIMUM do
+    for i = 1, 40 do
         local auraInfo = {UnitAura(GUID, i, "HARMFUL|PLAYER")}
         if auraInfo[10] == SpellID then
             return auraInfo[5]
