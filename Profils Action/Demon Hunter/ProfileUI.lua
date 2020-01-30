@@ -1,0 +1,892 @@
+--------------------
+-- Taste TMW Action ProfileUI
+
+local TMW = TMW 
+local CNDT = TMW.CNDT 
+local Env = CNDT.Env
+local A = Action
+A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
+A.Data.ProfileUI = {      
+    DateTime = "v2.1.5 (29.01.2020)",
+    -- Class settings
+    [2] = {        
+        [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },		
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- General -- ",
+                    },
+                },
+            },			
+            { -- [1] 1st Row
+		
+                {
+                    E = "Checkbox", 
+                    DB = "mouseover",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use @mouseover", 
+                        ruRU = "Использовать @mouseover", 
+                        frFR = "Utiliser les fonctions @mouseover",
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
+                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
+                        frFR = "Activera les actions via @mouseover\n Exemple: Ressusciter, Soigner",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use AoE", 
+                        ruRU = "Использовать AoE", 
+                        frFR = "Utiliser l'AoE",
+                    }, 
+                    TT = { 
+                        enUS = "Enable multiunits actions", 
+                        ruRU = "Включает действия для нескольких целей", 
+                        frFR = "Activer les actions multi-unités",
+                    }, 
+                    M = {
+					    Custom = "/run Action.AoEToggleMode()",
+						-- It does call func CraftMacro(L[CL], macro above, 1) -- 1 means perCharacter tab in MacroUI, if nil then will be used allCharacters tab in MacroUI
+						Value = value or nil, 
+						-- Very Very Optional, no idea why it will be need however.. 
+						TabN = '@number' or nil,								
+						Print = '@string' or nil,
+					},
+                },                 
+            },  
+            { -- [2] 2nd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "UseMoves",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Fel Rush & Vengeful Retreat", 
+                        ruRU = "Используйте Fel Rush & Vengeful Retreat", 
+                        frFR = "Utiliser Ruée Fulgurante & Retraite Vengeresse",
+                    }, 
+                    TT = { 
+                        enUS = "Suggest when Fel Rush & Vengeful Retreat for mobility or for Momentum build.", 
+                        ruRU = "Предложите, когда Ослепительная Раш & Мстительное отступление для мобильности или для наращивания Momentum.", 
+                        frFR = "Suggère quand utiliser Ruée Fulgurante & Retraite Vengeresse pour la mobilité ou pour la build Momentum",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "HoABossOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "HoA Boss Only", 
+                        ruRU = "HoA Boss Only",
+                        frFR = "HoA Boss Only", 
+                    }, 
+                    TT = { 
+                        enUS = "Use Hearth of Azeroth only on bosses", 
+                        ruRU = "Используйте очаг Азерота только на боссов", 
+                        frFR = "Utilisez le Coeur d'Azeroth uniquement sur les boss", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "ImprisonAsInterrupt",
+                    DBV = false,
+                    L = { 
+                        enUS = A.GetSpellInfo(217832) .. " Interrupt", 
+                        ruRU = A.GetSpellInfo(217832) .. " Прерывание",  
+                        frFR = A.GetSpellInfo(217832) .. " Interruption",  
+                    }, 
+                    TT = { 
+                        enUS = "Use your Imprison as interrupt if you don't have your Disrupt ready.", 
+                        ruRU = "Используйте свою тюрьму в качестве прерывания, если у вас нет готовности к прерыванию.",  
+                        frFR = "Utilisez votre Emprisonnement comme interruption si vous n'avez pas votre Disruption prêt.", 
+                    }, 
+                    M = {},
+                }, 	
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(198013) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 				
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Burst Only", value = 1 },
+                        { text = "Aoe Only", value = 2 },
+                        { text = "Everytime", value = 3 },
+                    },
+                    MULT = true,
+                    DB = "EyeBeamMode",
+                    DBV = {
+                        [1] = false, 
+                        [2] = false,
+                        [3] = true,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(198013) .. " behavior",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(198013) .. " options. Multiple checks possible.", 
+                        ruRU = "Настройте свои параметры " .. A.GetSpellInfo(198013) .. ". Возможно несколько проверок.", 
+                        frFR = "Personnalisez vos options " .. A.GetSpellInfo(198013) .. ". Plusieurs contrôles possibles..",  
+                    }, 
+                    M = {},
+                },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 3, 
+                    MAX = 50,                            
+                    DB = "EyeBeamTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(198013) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(198013) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(198013) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(198013) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+			},
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(188499) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "BladeDancePool",
+                    DBV = true,
+                    L = { 
+                        enUS = "Blade Dance Pool", 
+                        ruRU = "Blade Dance Pool", 
+                        frFR = "Blade Dance Pool", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
+                        ruRU = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.",  
+                        frFR = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 8,      
+                    Precision = 1, 					
+                    DB = "BladeDancePoolSeconds",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(188499) .. " pool secs",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499), 
+                        ruRU = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499),
+                        frFR = "Définissez le temps minimum pour que le bot arrête d'utiliser " .. A.GetSpellInfo(188499), 
+                    }, 					
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(196718) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDarkness",
+                    DBV = false,
+                    L = { 
+                        ANY = "Auto " .. A.GetSpellInfo(196718),
+                    },
+                    TT = { 
+                        enUS = "If activated, will auto use " .. A.GetSpellInfo(196718) .. " depending on currents settings.\nFor high end raiding, it is recommanded to keep Darkness when your Raid Leader call it.",
+                        ruRU = "Если активирован, будет автоматически использовать " .. A.GetSpellInfo(196718) .. " в зависимости от настроек токов.\nДля рейдового сегмента рекомендуется держать Тьму, когда ваш Рейдовый Лидер называет это.",
+                        frFR = "Si activé, utilisera automatiquement " .. A.GetSpellInfo(196718) .. " en fonction des paramètres de courant.\nPour les raids de haut niveau, il est recommandé de garder Ténèbres lorsque votre chef de raid l'appelle.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "DarknessMode",
+                    DBV = "In Dungeon", 
+                    L = { 
+                        enUS = A.GetSpellInfo(196718) .. " where", 
+                        ruRU = A.GetSpellInfo(196718) .. " где", 
+                        frFR = A.GetSpellInfo(196718) .. " où", 
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically use " .. A.GetSpellInfo(196718),
+                        ruRU = "Выберите, где вы хотите использовать автоматически " .. A.GetSpellInfo(196718),
+						frFR = "Choisissez où vous souhaitez utiliser automatiquement " .. A.GetSpellInfo(196718),
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "DarknessUnits",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "Define the number of party/raid members that have to be injured to use " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите количество членов партии/рейда, которые должны быть ранены, чтобы использовать " .. A.GetSpellInfo(196718),  
+                        frFR = "Définir le nombre de membres du groupe/raid qui doivent être blessés pour utiliser " .. A.GetSpellInfo(196718), 
+					},
+                    M = {},
+                },
+            }, -- [4] 4th Row
+            {
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "DarknessUnitsTTD",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " TTD",
+                    }, 
+                    TT = { 
+                        enUS = "Define the minimum Time To Die for party/raid members before using " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите минимальное время жизни для членов партии или рейда перед использованием " .. A.GetSpellInfo(196718), 
+                        frFR = "Définissez le temps minimum pour mourir pour les membres du groupe/raid avant d'utiliser " .. A.GetSpellInfo(196718),
+					},
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "DarknessUnitsHP",
+                    DBV = 60, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(196718) .. " HP",
+                    }, 
+                    TT = { 
+                        enUS = "Define the minimum health percent for party/raid members before using " .. A.GetSpellInfo(196718), 
+                        ruRU = "Определите минимальный процент здоровья для участников группы или рейда перед использованием " .. A.GetSpellInfo(196718), 
+                        frFR = "Définissez le pourcentage de santé minimum pour les membres du groupe / raid avant d'utiliser " .. A.GetSpellInfo(196718),
+					},
+                    M = {},
+                },
+
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]  Azerite Beam settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(295258) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 				
+		
+                {
+                    E = "Slider",                                                     
+                    MIN = 3, 
+                    MAX = 50,                            
+                    DB = "FocusedAzeriteBeamTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(295258) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(295258) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "FocusedAzeriteBeamUnits",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(295258) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(295258) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                }, 				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "Blur",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(198589) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- PvP -- ",
+                    },
+                },
+            },
+            { -- [5] 5th Row     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "ON MELEE BURST", value = "ON MELEE BURST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "ImprisonPvP",
+                    DBV = "ON MELEE BURST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(217832),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },  
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "ImprisonPvPUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(217832) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },
+        },
+		-- Vengeance Specialisation
+        [ACTION_CONST_DEMONHUNTER_VENGEANCE] = {          
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- General -- ",
+                    },
+                },
+            },			
+            { -- [1] 1st Row
+		
+                {
+                    E = "Checkbox", 
+                    DB = "mouseover",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use @mouseover", 
+                        ruRU = "Использовать @mouseover", 
+                        frFR = "Utiliser les fonctions @mouseover",
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
+                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
+                        frFR = "Activera les actions via @mouseover\n Exemple: Ressusciter, Soigner",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use AoE", 
+                        ruRU = "Использовать AoE", 
+                        frFR = "Utiliser l'AoE",
+                    }, 
+                    TT = { 
+                        enUS = "Enable multiunits actions", 
+                        ruRU = "Включает действия для нескольких целей", 
+                        frFR = "Activer les actions multi-unités",
+                    }, 
+                    M = {
+					    Custom = "/run Action.AoEToggleMode()",
+						-- It does call func CraftMacro(L[CL], macro above, 1) -- 1 means perCharacter tab in MacroUI, if nil then will be used allCharacters tab in MacroUI
+						Value = value or nil, 
+						-- Very Very Optional, no idea why it will be need however.. 
+						TabN = '@number' or nil,								
+						Print = '@string' or nil,
+					},
+                },                 
+            },  
+            { -- [2] 2nd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "BrandForDamage",
+                    DBV = true,
+                    L = { 
+                        enUS = "Fiery Brand for DPS", 
+                        ruRU = "Fiery Brand for DPS", 
+                        frFR = "Fiery Brand for DPS",
+                    }, 
+                    TT = { 
+                        enUS = "Use Fiery Brand as a DPS ability when using the Charred Flesh talent.", 
+                        ruRU = "Use Fiery Brand as a DPS ability when using the Charred Flesh talent.", 
+                        frFR = "Use Fiery Brand as a DPS ability when using the Charred Flesh talent.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "ConserveInfernalStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = "Conserve Infernal Strike", 
+                        ruRU = "Conserve Infernal Strike", 
+                        frFR = "Conserve Infernal Strike",
+                    }, 
+                    TT = { 
+                        enUS = "Save at least 1 Infernal Strike charge for mobility.", 
+                        ruRU = "Save at least 1 Infernal Strike charge for mobility.", 
+                        frFR = "Save at least 1 Infernal Strike charge for mobility.",
+                    }, 
+                    M = {},
+                },	
+                {
+                    E = "Checkbox", 
+                    DB = "AutoTaunt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Taunt", 
+                        ruRU = "Автоматическая Насмешка", 
+                        frFR = "Raillerie automatique",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Torment whenever available.", 
+                        ruRU = "If activated, will use automatically use Torment whenever available.",  
+                        frFR = "If activated, will use automatically use Torment whenever available.", 
+                    }, 
+                    M = {},
+                },				
+            },
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "MetamorphosisHealthThreshold",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Metamorphosis Health Threshold",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "FieryBrandHealthThreshold",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Fiery Brand Health Threshold",
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DemonSpikesHealthThreshold",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Demon Spikes Health Threshold",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "Blur",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Blur Health Threshold",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- PvP -- ",
+                    },
+                },
+            },
+            { -- [5] 5th Row     
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "ON MELEE BURST", value = "ON MELEE BURST" },
+                        { text = "ON COOLDOWN", value = "ON COOLDOWN" },                    
+                        { text = "OFF", value = "OFF" },
+                    },
+                    DB = "ImprisonPvP",
+                    DBV = "ON MELEE BURST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(217832),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@arena1", value = 1 },
+                        { text = "@arena2", value = 2 },
+                        { text = "@arena3", value = 3 },
+                        { text = "primary", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "ImprisonPvPUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                        [3] = true,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(217832) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
+                        ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
+                    }, 
+                    M = {},
+                },
+            },
+        },
+    },
+    -- MSG Actions UI
+    [7] = {
+        [ACTION_CONST_DEMONHUNTER_HAVOC] = { 
+            -- MSG Action Pet Dispell
+            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
+                return     A.DispellMagic:IsReady(unit, true) and 
+                        (
+                            ( 
+                                not Unit(thisunit):IsEnemy() and 
+                                (
+                                    (
+                                        not InPvP() and 
+                                        Env.Dispel(unit)
+                                    ) or 
+                                    (
+                                        InPvP() and 
+                                        EnemyTeam():PlayersInRange(1, 5)
+                                    ) 
+                                )
+                            ) or 
+                            ( 
+                                Unit(thisunit):IsEnemy() and 
+                                Unit(thisunit):GetRange() <= 5 and 
+                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
+                            )                
+                        ) 
+            ]] },
+            -- MSG Action Pet Kick
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+            -- MSG Action Fear
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+        },
+        [ACTION_CONST_DEMONHUNTER_VENGEANCE] = { 
+            -- MSG Action Pet Dispell
+            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
+                return     A.DispellMagic:IsReady(unit, true) and 
+                        (
+                            ( 
+                                not Unit(thisunit):IsEnemy() and 
+                                (
+                                    (
+                                        not InPvP() and 
+                                        Env.Dispel(unit)
+                                    ) or 
+                                    (
+                                        InPvP() and 
+                                        EnemyTeam():PlayersInRange(1, 5)
+                                    ) 
+                                )
+                            ) or 
+                            ( 
+                                Unit(thisunit):IsEnemy() and 
+                                Unit(thisunit):GetRange() <= 5 and 
+                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
+                            )                
+                        ) 
+            ]] },
+            -- MSG Action Pet Kick
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+            -- MSG Action Fear
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+        },
+    },
+}
+
+-----------------------------------------
+--                   PvP  
+-----------------------------------------
+
+function A.Main_CastBars(unit, list)
+    if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
+        return false 
+    end 
+    
+    if A[A.PlayerSpec] and A[A.PlayerSpec].SpearHandStrike and A[A.PlayerSpec].SpearHandStrike:IsReadyP(unit, nil, true) and A[A.PlayerSpec].SpearHandStrike:AbsentImun(unit, {"KickImun", "TotalImun", "DamagePhysImun"}, true) and A.InterruptIsValid(unit, list) then 
+        return true         
+    end 
+end 
+
+function A.Second_CastBars(unit)
+    if not A.IsInitialized or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
+        return false 
+    end 
+    
+    local Toggle = A.GetToggle(2, "ParalysisPvP")    
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Paralysis and A[A.PlayerSpec].Paralysis:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Paralysis:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+        if Toggle == "BOTH" then 
+            return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
+        else
+            return select(2, A.InterruptIsValid(unit, Toggle, true))         
+        end 
+    end 
+end 
+
+
