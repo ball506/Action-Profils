@@ -601,7 +601,7 @@ A[3] = function(icon, isMulti)
     local function DamageRotation(unit)
         
         -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit) then 
+        if A.ArcaneTorrent:IsRacialReady(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end             
         
@@ -686,7 +686,7 @@ A[3] = function(icon, isMulti)
     local function HealingRotation(unit)
         
         -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit) then 
+        if A.ArcaneTorrent:IsRacialReady(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end     
         

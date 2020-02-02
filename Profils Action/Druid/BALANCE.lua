@@ -883,7 +883,7 @@ A[3] = function(icon, isMulti)
 	-- Friendly Rotation mouseover
 	local function FriendlyRotation(unit)
         -- Purge
-        if A.ArcaneTorrent:AutoRacial(unit) then 
+        if A.ArcaneTorrent:IsRacialReady(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end    
         
@@ -985,7 +985,7 @@ local function PartyRotation(unit)
     --end
 
     -- Purge
-    if A.ArcaneTorrent:AutoRacial(unit) then 
+    if A.ArcaneTorrent:IsRacialReady(unit) then 
         return A.ArcaneTorrent:Show(icon)
     end    
         

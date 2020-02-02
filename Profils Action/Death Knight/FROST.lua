@@ -635,7 +635,7 @@ A[3] = function(icon, isMulti)
                 return A.HornofWinter:Show(icon)
             end
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -761,7 +761,7 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
             -- arcane_torrent,if=runic_power.deficit>50
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 50) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
         end
@@ -1155,7 +1155,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
 

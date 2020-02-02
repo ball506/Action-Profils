@@ -58,6 +58,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     ImmolationAura                         = Action.Create({ Type = "Spell", ID = 258920 }),
     Felblade                               = Action.Create({ Type = "Spell", ID = 232893 }),
     FelRush                                = Action.Create({ Type = "Spell", ID = 195072 }),
+	Netherwalk                             = Action.Create({ Type = "Spell", ID = 196555 }),
     DemonBlades                            = Action.Create({ Type = "Spell", ID = 203555 }),
     DemonsBite                             = Action.Create({ Type = "Spell", ID = 162243 }),
     ThrowGlaive                            = Action.Create({ Type = "Spell", ID = 185123 }),
@@ -291,6 +292,29 @@ local function UseMoves()
   return Action.GetToggle(2, "UseMoves") --or S.FelRush:Charges() == 2  
 end
 
+-- GetByRange function by @ZakLL
+-- @return boolean  
+-- @parameters count, range are mandatory, others parameters optionals
+local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+	local c = 0 
+	for unitID in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unitID)) and (not isCheckCombat or Unit(unitID):CombatTime() > 0) then 
+			if InMelee(unitID) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unitID):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			
+			if c >= count then 
+				return true 
+			end 
+		end 
+	end
+end  
+
 -- ExpectedCombatLength
 local function ExpectedCombatLength()
     local BossTTD = 0
@@ -478,6 +502,43 @@ local function SelfDefensives()
 	    -- Notification					
         Action.SendNotification("Defensive Darkness", A.Darkness.ID)
         return A.Darkness
+    end
+
+    -- Netherwalk
+    local Netherwalk = A.GetToggle(2, "Netherwalk")
+    if     Netherwalk >= 0 and A.Netherwalk:IsReady("player") and 
+    (
+        (     -- Auto 
+            Netherwalk >= 100 and 
+            (
+                -- HP lose per sec >= 10
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            Netherwalk < 100 and 
+            Unit("player"):HealthPercent() <= Netherwalk
+        )
+    ) 
+    then 
+	    -- Notification					
+        Action.SendNotification("Defensive Netherwalk", A.Netherwalk.ID)
+        return A.Netherwalk
     end
 	
     -- Blur
@@ -914,7 +975,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- annihilation,if=debuff.dark_slash.up
-            if A.Annihilation:IsReady(unit) and CanCast and IsInMeleeRange() and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and IsInMeleeRange() and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
                 return A.Annihilation:Show(icon)
             end
 			
@@ -932,7 +993,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
                 return A.DeathSweep:Show(icon)
             end
 			
@@ -971,7 +1032,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- annihilation,if=!variable.pooling_for_blade_dance
-            if A.Annihilation:IsReady(unit) and CanCast and IsInMeleeRange() and (not VarPoolingForBladeDance) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and IsInMeleeRange() and (not VarPoolingForBladeDance) then
                 return A.Annihilation:Show(icon)
             end
 			
@@ -1024,7 +1085,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
                 return A.DeathSweep:Show(icon)
             end
 			
@@ -1058,7 +1119,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- annihilation,if=(talent.demon_blades.enabled|!variable.waiting_for_momentum|fury.deficit<30|buff.metamorphosis.remains<5)&!variable.pooling_for_blade_dance&!variable.waiting_for_dark_slash
-            if A.Annihilation:IsReady(unit) and CanCast and ((A.DemonBlades:IsSpellLearned()  or Player:Fury() >= 40 or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) < 5) and not VarPoolingForBladeDance and not VarWaitingForDarkSlash) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and ((A.DemonBlades:IsSpellLearned()  or Player:Fury() >= 40 or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) < 5) and not VarPoolingForBladeDance and not VarWaitingForDarkSlash) then
                 return A.Annihilation:Show(icon)
             end
 			
@@ -1114,6 +1175,19 @@ A[3] = function(icon, isMulti)
                 return Interrupt:Show(icon)
             end
 
+            -- Arcane Torrent dispell or if FuryDeficit >= 30
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and 
+			(
+			    --Action.AuraIsValid(unit, "UseDispel", "Dispel") 
+				--or 
+				combatTime > 10
+				and 
+				A.Metamorphosis:GetCooldown() > 120 or A.Metamorphosis:GetCooldown() > 240
+			)
+			then
+                return A.ArcaneTorrent:Show(icon)
+            end	
+
            -- if VarPoolingForBladeDance and Player:Fury() < 75 and A.EyeBeam:GetCooldown() <= 2 and A.BladeDance:GetCooldown() <= 2 then
               	-- Notification					
            --     Action.SendNotification("Pooling Fury for BladeDance", A.BladeDance.ID) 
@@ -1161,12 +1235,7 @@ A[3] = function(icon, isMulti)
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
             end
-			
-            -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and Unit("player"):CombatTime() > 4 and (Action.AuraIsValid(unit, "UseDispel", "Dispel") or Player:Fury() < 80) then
-                return A.ArcaneTorrent:Show(icon)
-            end	
-			
+						
             -- call_action_list,name=cooldown,if=gcd.remains=0          (A.GetCurrentGCD() == 0) and
             if A.BurstIsON(unit) and Cooldown(unit) and CanCast then
                 return true

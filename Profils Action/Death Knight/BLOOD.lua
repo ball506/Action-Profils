@@ -646,7 +646,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
 			

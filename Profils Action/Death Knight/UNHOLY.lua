@@ -829,7 +829,7 @@ A[3] = function(icon, isMulti)
             end			
 		
             -- arcane_torrent,if=runic_power.deficit>65&(pet.gargoyle.active|!talent.summon_gargoyle.enabled)&rune.deficit>=5
-            if A.ArcaneTorrent:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (Pet:IsActive(27829) or not A.SummonGargoyle:IsSpellLearned()) and Player:Rune() <= 1) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (Pet:IsActive(27829) or not A.SummonGargoyle:IsSpellLearned()) and Player:Rune() <= 1) then
                 return A.ArcaneTorrent:Show(icon)
             end
 			

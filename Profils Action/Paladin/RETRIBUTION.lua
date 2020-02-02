@@ -398,7 +398,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent,if=!talent.wake_of_ashes.enabled
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (not A.WakeofAshes:IsSpellLearned()) then
                 return A.ArcaneTorrent:Show(icon)
             end
 
@@ -634,7 +634,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:HolyPower() <= 4) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:HolyPower() <= 4) then
                 return A.ArcaneTorrent:Show(icon)
             end
 			

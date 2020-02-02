@@ -1193,7 +1193,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent,if=energy.deficit>=15+energy.regen
-            if A.ArcaneTorrent:AutoRacial(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and CanCast and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + Player:EnergyRegen()) then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
