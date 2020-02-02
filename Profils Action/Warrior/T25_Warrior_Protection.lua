@@ -65,6 +65,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
 	-- Utilities
     VictoryRush                            = Action.Create({ Type = "Spell", ID = 34428     }),
     ImpendingVictory                       = Action.Create({ Type = "Spell", ID = 202168     }),
+    HeroicThrow                            = Action.Create({ Type = "Spell", ID = 57755     }),
     Taunt                                  = Action.Create({ Type = "Spell", ID = 355     }),
     Pummel                                 = Action.Create({ Type = "Spell", ID = 6552     }),
 	PummelGreen	                           = Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true}), 
@@ -637,6 +638,7 @@ A[3] = function(icon, isMulti)
             if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.VigilantProtector:Show(icon)
             end
+			
 
 		    -- Taunt Taunt
             if A.GetToggle(2, "AutoTaunt") 
@@ -663,6 +665,16 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end	
+
+            -- VictoryRush
+            if Unit("player"):HealthPercent() < 80 and A.VictoryRush:IsReady(unit) and not ShouldStop then
+                return A.VictoryRush:Show(icon)
+            end
+		
+		    -- ImpendingVictory
+            if Unit("player"):HealthPercent() < 80 and A.ImpendingVictory:IsReady(unit) and not ShouldStop then
+                return A.ImpendingVictory:Show(icon)
+            end
 
             -- Offensive Trinkets
             if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
@@ -750,7 +762,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- revenge
-            if A.Revenge:IsReady("player") and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCostCache() == 0) then
+            if A.Revenge:IsReady("player") and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCost() == 0) then
                 return A.Revenge:Show(icon)
             end
 			
@@ -768,6 +780,11 @@ A[3] = function(icon, isMulti)
     end
 
     -- End on EnemyRotation()
+
+	-- HeroicThrow pull with option
+    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(1, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime == 0 and Unit(unit):IsExists() then
+        return A.HeroicThrow:Show(icon)
+    end
 
     -- Defensive
     local SelfDefensive = SelfDefensives()

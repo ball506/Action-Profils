@@ -643,6 +643,22 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
+    			{
+                    E = "Checkbox", 
+                    DB = "HeroicThrowPull",
+                    DBV = true,
+                    L = { 
+                        enUS = "Automatic Heroic Throw", 
+                        ruRU = "Automatic Heroic Throw",
+                        frFR = "Automatic Heroic Throw",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will use automatically use Heroic Throw whenever available.", 
+                        ruRU = "Если активирован, будет автоматически использовать Heroic Throw при любой возможности.",  
+                        frFR = "S'il est activé, utilisera automatiquement Heroic Throw dès qu'il sera disponible.", 
+                    }, 
+                    M = {},
+                },
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
