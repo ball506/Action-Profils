@@ -692,7 +692,17 @@ A[3] = function(icon, isMulti)
 	
 	-- Eyebeam protection channel
 	local CanCast = true
-	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
+	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+		-- @return:
+		-- [1] Total Casting Time (@number)
+		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
+		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
+		-- [4] spellID (@number)
+		-- [5] spellName (@string)
+		-- [6] notInterruptable (@boolean, false is able to be interrupted)
+		-- [7] isChannel (@boolean)
+		-- Nill-able: argSpellID
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
 		-- @return:
 		-- [1] Currect Casting Left Time (seconds) (@number)
 		-- [2] Current Casting Left Time (percent) (@number)
@@ -700,16 +710,17 @@ A[3] = function(icon, isMulti)
 		-- [4] spellName (@string)
 		-- [5] notInterruptable (@boolean, false is able to be interrupted)
 		-- [6] isChannel (@boolean)
-	if percentLeft > 0.01 and spellID == A.EyeBeam.ID and isChannel then 
-	    CanCast = false
-	else
-	    CanCast = true
+	if (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
+	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
+	        CanCast = false
+	    else
+	        CanCast = true
+		end
 	end
 	
 	if not CanCast then
 	    return A.PoolResource:Show(icon)
 	end
-	--print(CanCast)
 	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
