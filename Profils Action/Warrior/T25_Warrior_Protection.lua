@@ -375,27 +375,27 @@ local function SelfDefensives()
             RallyingCry >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit(unitID):GetDMG() * 100 / Unit(unitID):HealthMax() >= 20 or 
-                Unit(unitID):GetRealTimeDMG() >= Unit(unitID):HealthMax() * 0.20 or 
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit(unitID):TimeToDieX(25) < 5 or 
+                Unit("player"):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit(unitID):UseDeff() or 
+                        Unit("player"):UseDeff() or 
                         (
-                            Unit(unitID, 5):HasFlags() and 
-                            Unit(unitID):GetRealTimeDMG() > 0 and 
-                            Unit(unitID):IsFocused() 
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit(unitID):HasBuffs(unitID, true) == 0
+            Unit("player"):HasBuffs(unitID, true) == 0
         ) or 
         (    -- Custom
             RallyingCry < 100 and 
-            Unit(unitID):HealthPercent() <= RallyingCry
+            Unit(unit):HealthPercent() <= RallyingCry
         )
     ) 
     then 
@@ -818,7 +818,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
 	-- HeroicThrow pull with option
-    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(1, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
+    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
         return A.HeroicThrow:Show(icon)
     end
 
