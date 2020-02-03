@@ -782,7 +782,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
 	-- HeroicThrow pull with option
-    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(1, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime == 0 and Unit(unit):IsExists() then
+    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(1, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
         return A.HeroicThrow:Show(icon)
     end
 
