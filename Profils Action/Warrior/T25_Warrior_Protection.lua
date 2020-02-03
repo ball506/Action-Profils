@@ -369,16 +369,16 @@ local function SelfDefensives()
 
     -- RallyingCry 
 	local RallyingCry = A.GetToggle(2, "RallyingCryHP")
-    if	RallyingCry >= 0 and A.RallyingCry:IsReady(unitID) and 
+    if	RallyingCry >= 0 and A.RallyingCry:IsReady("player") and 
     (
         (     -- Auto 
             RallyingCry >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit("player"):TimeToDieX(20) < 5 or 
                 (
                     A.IsInPvP and 
                     (
@@ -391,7 +391,7 @@ local function SelfDefensives()
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs(unitID, true) == 0
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             RallyingCry < 100 and 
