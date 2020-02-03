@@ -1,19 +1,34 @@
 --- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
-local HealingEngine                          = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
-local setmetatable                           = setmetatable
-local TR                                     = Action.TasteRotation
-local pairs                                  = pairs
+local Action                                    = Action
+local TeamCache                                 = Action.TeamCache
+local EnemyTeam                                 = Action.EnemyTeam
+local FriendlyTeam                              = Action.FriendlyTeam
+local HealingEngine                             = Action.HealingEngine
+local LoC                                       = Action.LossOfControl
+local Player                                    = Action.Player
+local MultiUnits                                = Action.MultiUnits
+local UnitCooldown                              = Action.UnitCooldown
+local Unit                                      = Action.Unit
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Utils										= Action.Utils
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local Pet                                       = LibStub("PetLibrary")
+local Azerite                                   = LibStub("AzeriteTraits")
+local setmetatable                              = setmetatable
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -212,23 +227,26 @@ end
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------
-local Temp = {
-    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
-	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
-    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
-    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
-	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
-    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+local player									= "player"
+local PartyUnits
+local Temp										= {
+	TotalAndPhys								= {"TotalImun", "DamagePhysImun"},
+	TotalAndPhysKick							= {"TotalImun", "DamagePhysImun", "KickImun"},
+	TotalAndPhysAndCC							= {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+	TotalAndPhysAndStun							= {"TotalImun", "DamagePhysImun", "StunImun"},
+	TotalAndPhysAndCCAndStun					= {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+	TotalAndMag									= {"TotalImun", "DamageMagicImun"},
+	DisablePhys									= {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+	DisableMag									= {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+    
 }
 
-local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+local IsIndoors, UnitIsUnit = 
+IsIndoors, UnitIsUnit    
 
-local function IsSchoolFree()
-	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+local function InMelee(unitID)
+	-- @return boolean 
+	return A.ChaosStrike:IsInRange(unitID)
 end 
 
 local function IsInMeleeRange()
@@ -241,8 +259,12 @@ local function IsInMeleeRange()
     return A.ChaosStrike:IsInRange(unit)
 end
 
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
 local function IsMetaExtendedByDemonic()
-    if Unit("player"):HasBuffs(A.Metamorphosis.ID, true) == 0 then
+    if Unit(player):HasBuffs(A.Metamorphosis.ID, true) == 0 then
         return false
     elseif(A.EyeBeam:TimeSinceLastCast() < A.Metamorphosis:TimeSinceLastCast()) then
         return true
@@ -275,9 +297,9 @@ local function HandleEyeBeam()
 	elseif choice[2] then
 	    -- also checks CDs
 	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(8) >= 2 and A.GetToggle(2, "AoE")) or false
+		    return (A.BurstIsON(unit) and GetByRange(2, 8) and A.GetToggle(2, "AoE")) or false
 		else
-		    return (MultiUnits:GetByRange(8) > 2 and A.GetToggle(2, "AoE")) or false
+		    return (GetByRange(2, 8) and A.GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
@@ -347,7 +369,7 @@ A[1] = function(icon)
             not Action.IsUnitEnemy("target") and                     
             (
                 (Action.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
-                (not Action.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
+                (not Action.IsInPvP and GetByRange(1, 5))
             )
         )
     )
@@ -430,7 +452,7 @@ end
 
 -- Auto Darkness Handler
 local function CanDarkness()
-    if A.Darkness:IsReady("player") then 
+    if A.Darkness:IsReady(player) then 
         -- Darkness
         local AutoDarkness = A.GetToggle(2, "AutoDarkness")
 	    local DarknessUnits = A.GetToggle(2, "DarknessUnits")
@@ -486,7 +508,7 @@ end
 CanDarkness = A.MakeFunctionCachedStatic(CanDarkness)
 
 local function SelfDefensives()
-    if Unit("player"):CombatTime() == 0 then 
+    if Unit(player):CombatTime() == 0 then 
         return 
     end 
     
@@ -506,33 +528,33 @@ local function SelfDefensives()
 
     -- Netherwalk
     local Netherwalk = A.GetToggle(2, "Netherwalk")
-    if     Netherwalk >= 0 and A.Netherwalk:IsReady("player") and 
+    if     Netherwalk >= 0 and A.Netherwalk:IsReady(player) and 
     (
         (     -- Auto 
             Netherwalk >= 100 and 
             (
                 -- HP lose per sec >= 10
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
                             Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             Netherwalk < 100 and 
-            Unit("player"):HealthPercent() <= Netherwalk
+            Unit(player):HealthPercent() <= Netherwalk
         )
     ) 
     then 
@@ -543,33 +565,33 @@ local function SelfDefensives()
 	
     -- Blur
     local Blur = A.GetToggle(2, "Blur")
-    if     Blur >= 0 and A.Blur:IsReady("player") and 
+    if     Blur >= 0 and A.Blur:IsReady(player) and 
     (
         (     -- Auto 
             Blur >= 100 and 
             (
                 -- HP lose per sec >= 10
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
                             Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             Blur < 100 and 
-            Unit("player"):HealthPercent() <= Blur
+            Unit(player):HealthPercent() <= Blur
         )
     ) 
     then 
@@ -580,33 +602,33 @@ local function SelfDefensives()
 	
 	    -- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady(player) and 
     (
         (     -- Auto 
             AbyssalHealingPotion >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
                             Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+            Unit(player):HealthPercent() <= AbyssalHealingPotion
         )
     ) 
     then 
@@ -626,14 +648,14 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Fel Eruption
-	if (useCC) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and MultiUnits:GetByRangeInCombat(20, 5, 10) < 2 and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+	if (useCC) and not A.Disrupt:IsReady(unit) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and GetByRange(1, 20) and A.FelEruption:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
 	    -- Notification					
         Action.SendNotification("CC : Fel Eruption", A.FelEruption.ID)
 		return A.FelEruption              
     end 
 	
     -- Chaos Nova    
-    if (useCC) and A.ChaosNova:IsReady(unit) and MultiUnits:GetByRange(10, 5, 10) > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
+    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
 	    -- Notification					
         Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
 		return A.ChaosNova              
@@ -678,8 +700,8 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
-	local combatTime = Unit("player"):CombatTime()
+    local inCombat = Unit(player):CombatTime() > 0
+	local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
@@ -689,27 +711,12 @@ A[3] = function(icon, isMulti)
 	local HandleDarkness = HandleDarkness()
 	local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
 	local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
+	local Fury = Player:Fury()
 	
 	-- Eyebeam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
-		-- @return:
-		-- [1] Total Casting Time (@number)
-		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
-		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
-		-- [4] spellID (@number)
-		-- [5] spellName (@string)
-		-- [6] notInterruptable (@boolean, false is able to be interrupted)
-		-- [7] isChannel (@boolean)
-		-- Nill-able: argSpellID
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
-		-- @return:
-		-- [1] Currect Casting Left Time (seconds) (@number)
-		-- [2] Current Casting Left Time (percent) (@number)
-		-- [3] spellID (@number)
-		-- [4] spellName (@string)
-		-- [5] notInterruptable (@boolean, false is able to be interrupted)
-		-- [6] isChannel (@boolean)
 	if (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
 	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
 	        CanCast = false
@@ -730,19 +737,19 @@ A[3] = function(icon, isMulti)
         
         -- auto_attack
         -- variable,name=blade_dance,value=talent.first_blood.enabled|spell_targets.blade_dance1>=(3-talent.trail_of_ruin.enabled)
-        VarBladeDance = A.FirstBlood:IsSpellLearned() or MultiUnits:GetByRange(8) >= (3 - num(A.TrailofRuin:IsSpellLearned()))
+        VarBladeDance = A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned()))
         -- variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
         VarWaitingForNemesis = not (not A.Nemesis:IsSpellLearned() or A.Nemesis:GetCooldown() == 0 or A.Nemesis:GetCooldown() > Unit(unit):TimeToDie() or A.Nemesis:GetCooldown() > 60)           
         -- variable,name=pooling_for_meta,value=!talent.demonic.enabled&cooldown.metamorphosis.remains<6&fury.deficit>30&(!variable.waiting_for_nemesis|cooldown.nemesis.remains<10)            
-        VarPoolingForMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Player:Fury() < 90 and (not VarWaitingForNemesis or A.Nemesis:GetCooldown() < 10)            
+        VarPoolingForMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Fury < 90 and (not VarWaitingForNemesis or A.Nemesis:GetCooldown() < 10)            
         -- variable,name=pooling_for_blade_dance,value=variable.blade_dance&(fury<75-talent.first_blood.enabled*20)            
-        VarPoolingForBladeDance = VarBladeDance and (Player:Fury() < 75 - num(A.FirstBlood:IsSpellLearned()) * 20)           
+        VarPoolingForBladeDance = VarBladeDance and (Fury < 75 - num(A.FirstBlood:IsSpellLearned()) * 20)           
         -- variable,name=pooling_for_eye_beam,value=talent.demonic.enabled&!talent.blind_fury.enabled&cooldown.eye_beam.remains<(gcd.max*2)&fury.deficit>20
-        VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Player:Fury() < 80            
+        VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Fury < 80            
         -- variable,name=waiting_for_dark_slash,value=talent.dark_slash.enabled&!variable.pooling_for_blade_dance&!variable.pooling_for_meta&cooldown.dark_slash.up
         VarWaitingForDarkSlash = A.DarkSlash:IsSpellLearned() and not VarPoolingForBladeDance and not VarPoolingForMeta and A.DarkSlash:GetCooldown() == 0          
         -- variable,name=waiting_for_momentum,value=talent.momentum.enabled&!buff.momentum.up
-        VarWaitingForMomentum = A.Momentum:IsSpellLearned() and Unit("player"):HasBuffs(A.MomentumBuff.ID, true) == 0
+        VarWaitingForMomentum = A.Momentum:IsSpellLearned() and Unit(player):HasBuffs(A.MomentumBuff.ID, true) == 0
             
 		--print(VarBladeDance)
 
@@ -821,7 +828,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- blood_of_the_enemy,if=buff.metamorphosis.up|target.time_to_die<=10
-            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) or Unit(unit):TimeToDie() <= 10) then
  	            -- Notification					
                 Action.SendNotification("Burst : Blood of the Enemy", A.BloodoftheEnemy.ID)                
 				return A.BloodoftheEnemy:Show(icon)
@@ -830,9 +837,9 @@ A[3] = function(icon, isMulti)
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
             if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			(
-			    (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 0 and A.Metamorphosis:GetCooldown() == 0) 
+			    (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0 and A.Metamorphosis:GetCooldown() == 0) 
 				or 
-				Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 
+				Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 
 				or
 				A.Metamorphosis:GetCooldown() > ExpectedCombatLength
 			) 
@@ -844,7 +851,7 @@ A[3] = function(icon, isMulti)
 			
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
             if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") 
-			and (MultiUnits:GetByRange(20) >= FocusedAzeriteBeamUnits or Unit(unit):IsBoss()) 
+			and (GetByRange(FocusedAzeriteBeamUnits, 20) or Unit(unit):IsBoss()) 
 			and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
 			then
  	            -- Notification					
@@ -853,12 +860,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRange(8) >= 2 ) then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (GetByRange(2, 8) ) then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) or Unit(player):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
 			
@@ -868,12 +875,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
 			
             -- memory_of_lucid_dreams,if=fury<40&buff.metamorphosis.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Fury() < 40 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and (Fury < 40 and Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
         end
@@ -882,7 +889,7 @@ A[3] = function(icon, isMulti)
         local function Cooldown(unit)		
 					
             -- metamorphosis,if=!(talent.demonic.enabled|variable.pooling_for_meta|variable.waiting_for_nemesis)|target.time_to_die<25
-            if A.Metamorphosis:IsReady("player") and CanCast and combatTime > 3 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and 
+            if A.Metamorphosis:IsReady(player) and CanCast and combatTime > 3 and Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and 
 			(
 			    not A.Demonic:IsSpellLearned() 
 				or
@@ -895,11 +902,11 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- metamorphosis,if=talent.demonic.enabled&(!azerite.chaotic_transformation.enabled|(cooldown.eye_beam.remains>20&(!variable.blade_dance|cooldown.blade_dance.remains>gcd.max)))
-            if A.Metamorphosis:IsReady("player") and CanCast and   
+            if A.Metamorphosis:IsReady(player) and CanCast and   
 			    (
 				    A.Demonic:IsSpellLearned() and 
 					(
-					    A.ChaoticTransformation:GetAzeriteRank() == 0 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0
+					    A.ChaoticTransformation:GetAzeriteRank() == 0 and Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) == 0
 						or
 						A.ChaoticTransformation:GetAzeriteRank() > 0 and A.EyeBeam:GetCooldown() > 0 and A.LastPlayerCastName == A.DeathSweep:Info()
 					)
@@ -913,9 +920,9 @@ A[3] = function(icon, isMulti)
             -- nemesis,target_if=min:target.time_to_die,if=raid_event.adds.exists&debuff.nemesis.down&(active_enemies>desired_targets|raid_event.adds.in>60)
             if A.Nemesis:IsSpellLearned() and CanCast and A.Nemesis:IsReady(unit) 
 			and (
-			       -- Unit("player"):HasBuffs("DamageBuffs") > 0
+			       -- Unit(player):HasBuffs("DamageBuffs") > 0
 					--or
-					Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 0
+					Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0
 			    )
 			then
  	            -- Notification					
@@ -924,7 +931,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
-            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
+            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
  	            -- Notification					
                 Action.SendNotification("Burst: Potion of Unbridled Fury", A.PotionofUnbridledFury.ID)	
                 return A.PotionofUnbridledFury:Show(icon)
@@ -936,23 +943,23 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,effect_name=cyclotronic_blast,if=buff.metamorphosis.up&buff.memory_of_lucid_dreams.down&(!variable.blade_dance|!cooldown.blade_dance.ready)
-            if A.CyclotronicBlast:IsReady(unit) and CanCast and (Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not VarBladeDance or not A.BladeDance:GetCooldown() == 0)) then
+            if A.CyclotronicBlast:IsReady(unit) and CanCast and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) and bool(Unit(player):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and (not VarBladeDance or not A.BladeDance:GetCooldown() == 0)) then
                 return A.CyclotronicBlast:Show(icon)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and CanCast  
+            if A.AshvanesRazorCoral:IsReady(unit)  
 			and (
-			    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
+			    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 and CanCast
 				or 
 				    (
 				        (
 						    (
-							    Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 10 and Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 8 
+							    Unit(unit):HealthPercent() < 31 and CanCast and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 10 and Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 8 
 							)
 						    or 
 						    (
-						        Unit(unit):HealthPercent() < 31 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0
+						        Unit(unit):HealthPercent() < 31 and CanCast and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0
 						    )
 					    )
 					)
@@ -981,7 +988,7 @@ A[3] = function(icon, isMulti)
         --DarkSlash
         local function DarkSlash(unit)
             -- dark_slash,if=fury>=80&(!variable.blade_dance|!cooldown.blade_dance.ready)
-            if A.DarkSlash:IsReady(unit) and CanCast and (Player:Fury() >= 40 and (not VarBladeDance or not A.BladeDance:GetCooldown() == 0)) then
+            if A.DarkSlash:IsReady(unit) and CanCast and (Fury >= 40 and (not VarBladeDance or not A.BladeDance:GetCooldown() == 0)) then
                 return A.DarkSlash:Show(icon)
             end
 
@@ -1026,10 +1033,10 @@ A[3] = function(icon, isMulti)
             if A.FelBarrage:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and 
 			(
 			    (
-				    (A.EyeBeam:GetCooldown() > 0 or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
+				    (A.EyeBeam:GetCooldown() > 0 or Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
 				) 
 				or 
-				MultiUnits:GetByRange(40) > 1
+				GetByRange(1, 40) 
 			) 
 			then
                 return A.FelBarrage:Show(icon)
@@ -1048,7 +1055,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and CanCast and A.Felblade:IsSpellLearned() and (Player:Fury() < 60) then
+            if A.Felblade:IsReady(unit) and CanCast and A.Felblade:IsSpellLearned() and (Fury < 60) then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1086,10 +1093,10 @@ A[3] = function(icon, isMulti)
             if A.FelBarrage:IsReady(unit) and CanCast and 
 			(
 			    (
-				    (A.EyeBeam:GetCooldown() > 0 or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
+				    (A.EyeBeam:GetCooldown() > 0 or Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
 				) 
 				or 
-				MultiUnits:GetByRange(40) > 1
+				GetByRange(1, 40)
 			) 
 			then
                 return A.FelBarrage:Show(icon)
@@ -1118,7 +1125,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and Player:Fury() <= 80 then
+            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and Fury <= 80 then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1130,12 +1137,23 @@ A[3] = function(icon, isMulti)
             end
 			
             -- annihilation,if=(talent.demon_blades.enabled|!variable.waiting_for_momentum|fury.deficit<30|buff.metamorphosis.remains<5)&!variable.pooling_for_blade_dance&!variable.waiting_for_dark_slash
-            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and ((A.DemonBlades:IsSpellLearned()  or Player:Fury() >= 40 or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) < 5) and not VarPoolingForBladeDance and not VarWaitingForDarkSlash) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and 
+			(
+			    (
+				    A.DemonBlades:IsSpellLearned()  
+					or
+					Fury >= 40 
+					or
+					Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) < 5
+				)
+				and not VarPoolingForBladeDance and not VarWaitingForDarkSlash
+			) 
+			then
                 return A.Annihilation:Show(icon)
             end
 			
 			-- chaos_strike
-            if A.ChaosStrike:IsReady(unit) and CanCast and (Player:Fury() > 40) then
+            if A.ChaosStrike:IsReady(unit) and CanCast and (Fury > 40) then
                 return A.ChaosStrike:Show(icon)
             end
 			
@@ -1199,7 +1217,7 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneTorrent:Show(icon)
             end	
 
-           -- if VarPoolingForBladeDance and Player:Fury() < 75 and A.EyeBeam:GetCooldown() <= 2 and A.BladeDance:GetCooldown() <= 2 then
+           -- if VarPoolingForBladeDance and Fury < 75 and A.EyeBeam:GetCooldown() <= 2 and A.BladeDance:GetCooldown() <= 2 then
               	-- Notification					
            --     Action.SendNotification("Pooling Fury for BladeDance", A.BladeDance.ID) 
 			--	return true
@@ -1221,8 +1239,8 @@ A[3] = function(icon, isMulti)
 			
 			-- Fel Rush & VengefulRetreat special combo			
 			-- VengefulRetreat
-            if A.VengefulRetreat:IsReady("player") and A.Momentum:IsSpellLearned() and (A.Felblade:IsReady(unit) or A.Felblade:GetCooldown() < 2 or not A.Felblade:IsSpellLearned())
-			and Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true) and Unit("player"):CombatTime() > 3 
+            if A.VengefulRetreat:IsReady(player) and A.Momentum:IsSpellLearned() and (A.Felblade:IsReady(unit) or A.Felblade:GetCooldown() < 2 or not A.Felblade:IsSpellLearned())
+			and Unit(player):HasBuffsDown(A.PreparedBuff.ID, true) and Unit(player):CombatTime() > 3 
 			then				
                 return A.VengefulRetreat:Show(icon)
             end			
@@ -1263,12 +1281,12 @@ A[3] = function(icon, isMulti)
 			end
             
 			-- PvP Reverse Magic
-            if A.ReverseMagic:IsReady(unit) and A.IsInPvP and Unit("player"):HasDeBuffs("DamageDeBuffs") > 2 then
+            if A.ReverseMagic:IsReady(unit) and A.IsInPvP and Unit(player):HasDeBuffs("DamageDeBuffs") > 2 then
 			    return A.ReverseMagic:Show(icon)
 			end
 
 			-- PvP Rain from Above
-            if A.RainfromAbove:IsReady("player") and A.IsInPvP and Unit(unit):InLOS() and (Unit(unit):HealthPercent() <= 70 or Unit("player"):HealthPercent() <= 30 or Unit("player"):IsFocused()) then
+            if A.RainfromAbove:IsReady(player) and A.IsInPvP and Unit(unit):InLOS() and (Unit(unit):HealthPercent() <= 70 or Unit(player):HealthPercent() <= 30 or Unit(player):IsFocused()) then
 			    return A.RainfromAbove:Show(icon)
 			end
 					
@@ -1349,7 +1367,7 @@ end
 local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
+    Unit(player):GetDR("incapacitate") >= 50 
     then 
         local Caster = UnitCooldown:Getunit("arena", 3355)
         if Caster and Unit(Caster):GetRange() <= 40 then 
