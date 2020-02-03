@@ -85,7 +85,8 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
+    Detection                              = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -613,6 +614,10 @@ A[3] = function(icon, isMulti)
             -- bag_of_tricks
             if A.BagofTricks:IsReady(unit) then
                 return A.BagofTricks:Show(icon)
+            end
+            -- detection,if=equipped.echoing_void|equipped.echoing_void_oh
+            if A.Detection:IsReady(unit) and (A.EchoingVoid:IsExists() or A.EchoingVoidOh:IsExists()) then
+                return A.Detection:Show(icon)
             end
         end
     end
