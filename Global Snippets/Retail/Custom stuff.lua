@@ -56,12 +56,6 @@ local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentS
 print(currentSpec)
 
 -- Druid
-if currentClass == "DRUID" then
-    if currentSpec == 2 then 
-        A.Print("Loaded [ZakLL]Druid - Feral")
-    end
-end
-
 if currentClass == "WARRIOR" then
     Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Warrior"
 end
@@ -71,7 +65,7 @@ if currentClass == "WARLOCK" then
 end
 
 if currentClass == "ROGUE" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Rogue"
+    Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Rogue"
 end
 
 if currentClass == "SHAMAN" then
