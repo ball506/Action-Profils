@@ -726,7 +726,9 @@ A.Data.ProfileUI                                     = {
                         frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
                     },
                     M = {},
-                }, 					
+                },
+            },
+            {			
                 {
                     E         = "Slider",                                                     
                     MIN     = -1, 
@@ -766,6 +768,20 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 }, 
             }, 
+			{
+    			{
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "RallyingCryHP",
+                    DBV = 100, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(97462) .. " (%)",
+                    }, 
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {

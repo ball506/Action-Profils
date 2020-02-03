@@ -63,6 +63,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     LastStand                              = Action.Create({ Type = "Spell", ID = 12975     }),
 	ShieldWall                             = Action.Create({ Type = "Spell", ID = 871    }),
 	-- Utilities
+	RallyingCry					    	   = Action.Create({ Type = "Spell", ID = 97462    }),
     VictoryRush                            = Action.Create({ Type = "Spell", ID = 34428     }),
     ImpendingVictory                       = Action.Create({ Type = "Spell", ID = 202168     }),
     HeroicThrow                            = Action.Create({ Type = "Spell", ID = 57755     }),
@@ -364,7 +365,42 @@ local function SelfDefensives()
             return A.ShieldWall         -- #3                  
              
         end 
-    end 		 
+    end
+
+    -- RallyingCry 
+	local RallyingCry = A.GetToggle(2, "RallyingCryHP")
+    if	RallyingCry >= 0 and A.RallyingCry:IsReady(unitID) and 
+    (
+        (     -- Auto 
+            RallyingCry >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit(unitID):GetDMG() * 100 / Unit(unitID):HealthMax() >= 20 or 
+                Unit(unitID):GetRealTimeDMG() >= Unit(unitID):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit(unitID):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit(unitID):UseDeff() or 
+                        (
+                            Unit(unitID, 5):HasFlags() and 
+                            Unit(unitID):GetRealTimeDMG() > 0 and 
+                            Unit(unitID):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit(unitID):HasBuffs(unitID, true) == 0
+        ) or 
+        (    -- Custom
+            RallyingCry < 100 and 
+            Unit(unitID):HealthPercent() <= RallyingCry
+        )
+    ) 
+    then 
+        return A.RallyingCry
+    end  	
 	
 	-- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
