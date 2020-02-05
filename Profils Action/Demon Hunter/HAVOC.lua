@@ -196,22 +196,22 @@ local A = setmetatable(Action[ACTION_CONST_DEMONHUNTER_HAVOC], { __index = Actio
 ------------------------------------------
 ---------------- VARIABLES ---------------
 ------------------------------------------
-local VarPoolingForMeta = 0;
-local VarWaitingForNemesis = 0;
-local VarBladeDance = 0;
-local VarPoolingForBladeDance = 0;
-local VarPoolingForEyeBeam = 0;
-local VarWaitingForMomentum = 0;
-local VarWaitingForDarkSlash = 0;
+local VarPoolingForMeta = false
+local VarWaitingForNemesis = false
+local VarBladeDance = false
+local VarPoolingForBladeDance = false
+local VarPoolingForEyeBeam = false
+local VarWaitingForMomentum = false
+local VarWaitingForDarkSlash = false
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-  VarPoolingForMeta = 0
-  VarWaitingForNemesis = 0
-  VarBladeDance = 0
-  VarPoolingForBladeDance = 0
-  VarPoolingForEyeBeam = 0
-  VarWaitingForMomentum = 0
-  VarWaitingForDarkSlash = 0
+  VarPoolingForMeta = false
+  VarWaitingForNemesis = false
+  VarBladeDance = false
+  VarPoolingForBladeDance = false
+  VarPoolingForEyeBeam = false
+  VarWaitingForMomentum = false
+  VarWaitingForDarkSlash = false
 end)
 
 
@@ -716,15 +716,20 @@ A[3] = function(icon, isMulti)
 	-- Eyebeam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+	local _, castStartedTime, castEndTime = Unit(player):IsCasting()
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
+	-- Ensure all channel and cast are really safe
+	-- Double protection with check on current casts and also timestamp of the cast
 	if (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
 	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
-	        CanCast = false
-	    else
-	        CanCast = true
+		    if TMW.time < castEndTime then			
+			    CanCast = false
+	        else
+	            CanCast = true
+			end
 		end
 	end
-	
+	--print(CanCast)
 	if not CanCast then
 	    return A.PoolResource:Show(icon)
 	end
@@ -743,7 +748,7 @@ A[3] = function(icon, isMulti)
         -- variable,name=pooling_for_meta,value=!talent.demonic.enabled&cooldown.metamorphosis.remains<6&fury.deficit>30&(!variable.waiting_for_nemesis|cooldown.nemesis.remains<10)            
         VarPoolingForMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Fury < 90 and (not VarWaitingForNemesis or A.Nemesis:GetCooldown() < 10)            
         -- variable,name=pooling_for_blade_dance,value=variable.blade_dance&(fury<75-talent.first_blood.enabled*20)            
-        VarPoolingForBladeDance = VarBladeDance and (Fury < 75 - num(A.FirstBlood:IsSpellLearned()) * 20)           
+        VarPoolingForBladeDance = VarBladeDance and (Fury < 35 - (A.FirstBlood:IsSpellLearned() and 20 or 0))           
         -- variable,name=pooling_for_eye_beam,value=talent.demonic.enabled&!talent.blind_fury.enabled&cooldown.eye_beam.remains<(gcd.max*2)&fury.deficit>20
         VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Fury < 80            
         -- variable,name=waiting_for_dark_slash,value=talent.dark_slash.enabled&!variable.pooling_for_blade_dance&!variable.pooling_for_meta&cooldown.dark_slash.up
@@ -756,27 +761,23 @@ A[3] = function(icon, isMulti)
 		
 		--Precombat
         local function Precombat(unit)
-            -- flask
-            -- augmentation
-            -- food
-            -- snapshot_stats
 			
             -- immolation_aura
             if A.ImmolationAura:IsReady(unit) and Unit(unit):GetRange() > 6 and ((Pull > 0.1 and Pull <= 3) or not Action.GetToggle(1, "DBM")) then
                 return A.ImmolationAura:Show(icon)
             end	
 			
-            -- potion
+            -- BattlePotionofAgility
             if A.BattlePotionofAgility:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
                 return A.BattlePotionofAgility:Show(icon)
             end
 			
-            -- potion
+            -- PotionofFocusedResolve
             if A.PotionofFocusedResolve:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
                 return A.PotionofFocusedResolve:Show(icon)
             end
 			
-            -- potion
+            -- PotionofUnbridledFury
             if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
                 return A.PotionofUnbridledFury:Show(icon)
             end
@@ -948,9 +949,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(debuff.conductive_ink_debuff.up|buff.metamorphosis.remains>20)&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit)  
+            if A.AshvanesRazorCoral:IsReady(unit) and A.EyeBeam:GetCooldown() > 2 and CanCast 
 			and (
-			    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 and CanCast
+			    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 
 				or 
 				    (
 				        (
@@ -993,7 +994,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- annihilation,if=debuff.dark_slash.up
-            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and IsInMeleeRange() and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
                 return A.Annihilation:Show(icon)
             end
 			
@@ -1044,13 +1045,19 @@ A[3] = function(icon, isMulti)
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
             if A.BladeDance:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) 
-			and ((A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) or not A.GetToggle(2, "BladeDancePool"))
+			and 
+			(
+			    (A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) 
+				or
+				not A.GetToggle(2, "BladeDancePool")
+			)
 			then
                 return A.BladeDance:Show(icon)
             end
 
             -- annihilation,if=!variable.pooling_for_blade_dance
-            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and IsInMeleeRange() and (not VarPoolingForBladeDance) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and (not VarPoolingForBladeDance) 
+			then
                 return A.Annihilation:Show(icon)
             end
 			
@@ -1140,9 +1147,7 @@ A[3] = function(icon, isMulti)
             if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and 
 			(
 			    (
-				    A.DemonBlades:IsSpellLearned()  
-					or
-					Fury >= 40 
+				    A.DemonBlades:IsSpellLearned()   
 					or
 					Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) < 5
 				)
@@ -1317,7 +1322,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- run_action_list,name=demonic,if=talent.demonic.enabled
-            if (A.Demonic:IsSpellLearned()) and Demonic(unit) and CanCast then
+            if (A.Demonic:IsSpellLearned()) and Demonic(unit) then
                 return true 
             end
 			
