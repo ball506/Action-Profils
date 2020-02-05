@@ -7,6 +7,7 @@ local LoC									= Action.LossOfControl
 local Player								= Action.Player 
 local MultiUnits							= Action.MultiUnits
 local UnitCooldown							= Action.UnitCooldown
+local ActiveUnitPlates						= MultiUnits:GetActiveUnitPlates()
 local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
@@ -218,7 +219,6 @@ local HeroismBuff = {
 
 function Unit:HasHeroism()
     local unitID = self.UnitID
-	--print(unitID)
     -- @return boolean 
     local spellId 
     for i = 1, huge do 
@@ -270,6 +270,30 @@ function Unit:HasDeBuffsRefreshable(spell, byID)
 	end
 	
     return (self(unitID):HasDeBuffs(spell, ID) < 5 or self(unitID):HasDeBuffsDown(spell, ID) and true) or false
+end
+
+------------------------------------
+--- RubimRH Area Time To Die
+------------------------------------
+--@return current average AoE time to die 
+function Player:AreaTTD(range)
+    local ttdtotal = 0
+    local totalunits = 0
+	local r = range
+	
+	for _, unitID in pairs(ActiveUnitPlates) do 
+	    if Unit(unitID):GetRange() <= r then 
+            local ttd = Unit(unitID):TimeToDie()
+            totalunits = totalunits + 1
+            ttdtotal = ttd + ttdtotal
+		end
+    end
+	
+    if totalunits == 0 then
+        return 0
+    end
+
+    return ttdtotal / totalunits
 end
 
 -------------------------------------------------------------------------------
@@ -357,172 +381,6 @@ function Action:RegisterForSelfCombatEvent(Handler, ...)
             tableinsert(SelfCombatEvents[Event], Handler)
         end
     end
-end
-
--------------------------------------------------------------------------------
--- Tanks specifics functions
--------------------------------------------------------------------------------
-
--- To update for BFA
-local ActiveMitigationSpells = {
-    Buff = {
-        -- PR Legion
-        191941, -- Darkstrikes (VotW - 1st)
-        204151, -- Darkstrikes (VotW - 1st)
-        -- T20 ToS
-        239932 -- Felclaws (KJ)
-    },
-    Debuff = {},
-    Cast = {
-        -- PR Legion
-        197810, -- Wicked Slam (ARC - 3rd)
-        197418, -- Vengeful Shear (BRH - 2nd)
-        198079, -- Hateful Gaze (BRH - 3rd)
-        214003, -- Coup de Grace (BRH - Trash)
-        235751, -- Timber Smash (CotEN - 1st)
-        193668, -- Savage Blade (HoV - 4th)
-        227493, -- Mortal Strike (LOWR - 4th)
-        228852, -- Shared Suffering (LOWR - 4th)
-        193211, -- Dark Slash (MoS - 1st)
-        200732, -- Molten Crash (NL - 4th)
-        -- T20 ToS
-        241635, -- Hammer of Creation (Maiden)
-        241636, -- Hammer of Obliteration (Maiden)
-        236494, -- Desolate (Avatar)
-        239932, -- Felclaws (KJ)
-        -- T21 Antorus
-        254919, -- Forging Strike (Kin'garoth)
-        244899, -- Fiery Strike (Coven)
-        245458, -- Foe Breaker (Aggramar)
-        248499, -- Sweeping Scythe (Argus)
-        258039 -- Deadly Scythe (Argus)
-    },
-    Channel = {}
-}
-
--- Active Mitigation checks
--- Predict dangerous attacks and use defensives if needed
-function Player:ActiveMitigationNeeded()
-    -- Specials Dungeon behavior
-	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("target"):IsCastingRemains()
-		
-    if Unit("player"):IsTanking("target") then
-        if ActiveMitigationSpells.Cast[spellID] then
-            return true
-        end
-        for _, Buff in pairs(ActiveMitigationSpells.Buff) do
-            if Unit("target"):HasBuffs(Buff, true) > 0 then
-                return true
-            end
-        end
-    end
-    return false
-end
-
--------------------------------------------------------------------------------
--- Rogue Marked for death special functions
--------------------------------------------------------------------------------
--- Check if the unit is coded as blacklisted for Marked for Death (Rogue) or not.
--- Most of the time if the unit doesn't really die and isn't the last unit of an instance.
-
--- Not Facing Unit Blacklist
-A.UnitNotInFront = Player
-A.UnitNotInFrontTime = 0
-A.LastUnitCycled = Player
-A.LastUnitCycledTime = 0
-
-Action:RegisterForEvent(function(Event, MessageType, Message)
-    if MessageType == 50 and Message == SPELL_FAILED_UNIT_NOT_INFRONT then
-        A.UnitNotInFront = A.LastUnitCycled
-        A.UnitNotInFrontTime = A.LastUnitCycledTime
-    end
-end, "UI_ERROR_MESSAGE")
-
-local SpecialMfdBlacklistData = {
-  --- Legion
-  ----- Dungeons (7.0 Patch) -----
-  --- Halls of Valor
-  -- Hymdall leaves the fight at 10%.
-  [94960] = true,
-  -- Solsten and Olmyr doesn't "really" die
-  [102558] = true,
-  [97202] = true,
-  -- Fenryr leaves the fight at 60%. We take 50% as check value since it doesn't get immune at 60%.
-  [95674] = function(self) return self:HealthPercentage() > 50 and true or false end,
-
-  ----- Trial of Valor (T19 - 7.1 Patch) -----
-  --- Odyn
-  -- Hyrja & Hymdall leaves the fight at 25% during first stage and 85%/90% during second stage (HM/MM)
-  [114360] = true,
-  [114361] = true,
-
-  --- Warlord of Draenor (WoD)
-  ----- HellFire Citadel (T18 - 6.2 Patch) -----
-  --- Hellfire Assault
-  -- Mar'Tak doesn't die and leave fight at 50% (blocked at 1hp anyway).
-  [93023] = true,
-
-  ----- Dungeons (6.0 Patch) -----
-  --- Shadowmoon Burial Grounds
-  -- Carrion Worm : They doesn't die but leave the area at 10%.
-  [88769] = true,
-  [76057] = true
-}
-
--- Get the unit GUID.
-function Unit:GUID()
-    return UnitGUID(self.UnitID)
-end
-
--- Get the unit NPC ID.
-function Unit:NPCID(BypassCache)
-    if not BypassCache and self.UseCache and self.UnitNPCID then
-        return self.UnitNPCID
-    end
-
-    local GUID = self:GUID()
-    if GUID then
-        local UnitInfo = {}
-
-        if not UnitInfo.NPCID then
-            local type, _, _, _, _, npcid = strsplit('-', GUID)
-            if type == "Creature" or type == "Pet" or type == "Vehicle" then
-                UnitInfo.NPCID = tonumber(npcid)
-            else
-                UnitInfo.NPCID = -2
-            end
-        end
-        return UnitInfo.NPCID
-    end
-    return -1
-end
-
--- IsMfdBlacklisted function
-function Unit:IsMfdBlacklisted()
-    local npcid = self:NPCID()
-    if SpecialMfdBlacklistData[npcid] then
-        if type(SpecialMfdBlacklistData[npcid]) == "boolean" then
-            return true
-        else
-            return SpecialMfdBlacklistData[npcid](self)
-        end
-    end
-    return false
-end
-
--- Get if two unit are the same.
-function Unit:IsUnit(Other)
-    return UnitIsUnit(self.UnitID, Other.UnitID)
-end
-
--------------------------------------------------------------------------------
--- Facing blacklisted check
--------------------------------------------------------------------------------
-function Unit:IsFacingBlacklisted()
-    if self:IsUnit(A.UnitNotInFront) and TMW.time - A.UnitNotInFrontTime <= A.GetGCD() * A.GetToggle(2, "BlacklistNotFacingExpireMultiplier") then
-        return true
-    end
-    return false
 end
 
 -------------------------------------------------------------------------------
