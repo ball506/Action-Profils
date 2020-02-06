@@ -375,7 +375,7 @@ A[3] = function(icon, isMulti)
                 return A.FieryBrand:Show(icon)
             end
             -- immolation_aura,if=dot.fiery_brand.ticking
-            if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true) > 0) then
+            if A.ImmolationAura:IsReady("player") and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true) > 0) then
                 return A.ImmolationAura:Show(icon)
             end
             -- fel_devastation,if=dot.fiery_brand.ticking
@@ -534,7 +534,7 @@ A[3] = function(icon, isMulti)
                 return A.SoulCleave:Show(icon)
             end
             -- immolation_aura,if=pain<=90
-            if A.ImmolationAura:IsReady(unit) and (Player:Pain() <= 90) then
+            if A.ImmolationAura:IsReady("player") and Player:Pain() <= 90 then
                 return A.ImmolationAura:Show(icon)
             end
             -- felblade,if=pain<=70
