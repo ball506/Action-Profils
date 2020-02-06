@@ -1012,7 +1012,10 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) 
+			and CanCast 
+			and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 8 and (VarBladeDance) 
+			then
                 return A.DeathSweep:Show(icon)
             end
 			
@@ -1024,7 +1027,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance and A.Metamorphosis:GetCooldown() > 0) 
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance and A.Metamorphosis:GetCooldown() > 0) 
 			and ((A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) or not A.GetToggle(2, "BladeDancePool"))
 			then
                 return A.BladeDance:Show(icon)
@@ -1044,7 +1047,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) 
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) 
 			and 
 			(
 			    (A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) 
@@ -1127,7 +1130,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
                 return A.BladeDance:Show(icon)
             end
 			
