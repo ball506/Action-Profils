@@ -21,7 +21,7 @@ local error                                 = error
 local setmetatable                          = setmetatable
 local stringformat                          = string.format
 local tableinsert                           = table.insert
-
+local TR                                    = Action.TasteRotation
 
 -------------------------------------------------------------------------------
 -- Tanks specifics functions
