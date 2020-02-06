@@ -153,6 +153,7 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     SinisterGladiatorsMedallion            = Action.Create({ Type = "Trinket", ID = 165055, QueueForbidden = true }),
     VialofAnimatedBlood                    = Action.Create({ Type = "Trinket", ID = 159625, QueueForbidden = true }),
     -- Misc
+    PoolResource						   = Action.Create({ Type = "Spell", ID = 97238, Hidden = true}),
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
     StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
@@ -212,7 +213,7 @@ end)
 
 
 -- SelfDefensives
-local function SelfDefensives(unit)
+local function SelfDefensives()
     local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
 		
     if Unit("player"):CombatTime() == 0 then 
@@ -493,7 +494,7 @@ local function GuardianofAzerothRemains()
 end	
 
 local function DeathStrikeHeal()
-    return (Action.GetToggle(2, "SoloMode") and Unit("player"):HealthPercent() < Action.GetToggle(2, "UseDeathStrikeHP")) and true or false;
+    return Unit("player"):HealthPercent() < Action.GetToggle(2, "UseDeathStrikeHP")
 end
 
 local function EvaluateCycleFrostStrike42(unit)
@@ -570,6 +571,26 @@ A[3] = function(icon, isMulti)
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
     local DeathStrikeHeal = DeathStrikeHeal()
+	-- BreathofSindragosa protection channel
+	local CanCast = true
+	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit("player"):CastTime()
+	local _, castStartedTime, castEndTime = Unit("player"):IsCasting()
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit("player"):IsCastingRemains()
+	-- Ensure all channel and cast are really safe
+	-- Double protection with check on current casts and also timestamp of the cast
+	if (spellID == A.BreathofSindragosa.ID or spellID == A.FocusedAzeriteBeam.ID) then 
+	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
+		    if TMW.time < castEndTime then			
+			    CanCast = false
+	        else
+	            CanCast = true
+			end
+		end
+	end
+	--print(CanCast)
+	if not CanCast then
+	    return A.PoolResource:Show(icon)
+	end
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -693,7 +714,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent
-            if A.ArcaneTorrent:IsReadyByPassCastGCD(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
+            if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
@@ -830,7 +851,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent
-            if A.ArcaneTorrent:IsReadyByPassCastGCD(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
+            if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
@@ -966,8 +987,8 @@ A[3] = function(icon, isMulti)
             end		
 			
             -- breath_of_sindragosa,use_off_gcd=1,if=cooldown.empower_rune_weapon.remains&cooldown.pillar_of_frost.remains
-            if A.BreathofSindragosa:IsReadyByPassCastGCD(unit, nil, nil, true) 
-			and (A.EmpowerRuneWeapon:GetCooldown() > 0 and A.PillarofFrost:GetCooldown() > 0) and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID) > 0  and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID) < 4 
+            if A.BreathofSindragosa:IsReadyByPassCastGCD(unit) and A.BreathofSindragosa:IsSpellLearned() and Player:RunicPower() >= 70 and
+			(A.EmpowerRuneWeapon:GetCooldown() > 0 and A.PillarofFrost:GetCooldown() > 0) and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID) > 0  and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID) < 4 
 			then
                 return A.BreathofSindragosa:Show(icon)
             end
@@ -986,9 +1007,7 @@ A[3] = function(icon, isMulti)
             if A.EmpowerRuneWeapon:IsReady(unit) and (A.Icecap:IsSpellLearned() and Player:Rune() < 3) then
                 return A.EmpowerRuneWeapon:Show(icon)
             end
-			
-
-			
+						
             -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains
             if A.PillarofFrost:IsReady(unit) then
                 return A.PillarofFrost:Show(icon)
@@ -1196,7 +1215,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent
-            if A.ArcaneTorrent:IsReadyByPassCastGCD(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
+            if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
@@ -1230,7 +1249,7 @@ A[3] = function(icon, isMulti)
 			end
 			
 			-- Wraith Walk if out of range 
-            if A.WraithWalk:IsReady("player") and isMovingFor > A.GetToggle(2, "WraithWalkTime") and A.GetToggle(2, "UseWraithWalk") then
+            if A.WraithWalk:IsReady("player") and isMovingFor > A.GetToggle(2, "WraithWalkTime") and A.GetToggle(2, "UseWraithWalk") and not Unit("player"):IsCasting() then
                 return A.WraithWalk:Show(icon)
             end
 			
@@ -1279,23 +1298,23 @@ A[3] = function(icon, isMulti)
             end
             
 			-- run_action_list,name=bos_pooling,if=talent.breath_of_sindragosa.enabled&((cooldown.breath_of_sindragosa.remains=0&cooldown.pillar_of_frost.remains<10)|(cooldown.breath_of_sindragosa.remains<20&Unit(unit):TimeToDie()<35))
-            if (A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() < 5) then
-                return BosPooling(unit)
+            if BosPooling(unit) and (A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() < 5) then
+                return true
             end
             
 			-- run_action_list,name=bos_ticking,if=buff.breath_of_sindragosa.up
-            if (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0) then
-                return BosTicking(unit)
+            if BosTicking(unit) and (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0) then
+                return true
             end
             
 			-- run_action_list,name=obliteration,if=buff.pillar_of_frost.up&talent.obliteration.enabled
-            if (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.Obliteration:IsSpellLearned()) then
-                return Obliteration(unit)
+            if Obliteration(unit) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.Obliteration:IsSpellLearned()) then
+                return true
             end
             
 			-- run_action_list,name=aoe,if=active_enemies>=2
-            if GetByRange(2, 10) then
-                return Aoe(unit);
+            if GetByRange(2, 10) and Aoe(unit) then
+                return true
             end
             
 			-- call_action_list,name=standard
@@ -1309,7 +1328,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
