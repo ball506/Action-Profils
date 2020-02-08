@@ -191,10 +191,10 @@ local A = setmetatable(Action[ACTION_CONST_WARLOCK_DESTRUCTION], { __index = Act
 ------------------------------------------
 ---------------- VARIABLES ---------------
 ------------------------------------------
-local VarPoolSoulShards = 0;
+local VarPoolSoulShards = false
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-  VarPoolSoulShards = 0
+  VarPoolSoulShards = false
 end)
 
 local function num(val)
@@ -513,11 +513,7 @@ A[3] = function(icon, isMulti)
     local unit = "player"
     local InfernalIsActive = InfernalIsActive()
 	local InfernalTime = InfernalTime()
-	local RainofFireUnits = Action.GetToggle(2, "RainofFireUnits")
-    local VarPoolSoulShards = false
-	
-
-	
+	local RainofFireUnits = Action.GetToggle(2, "RainofFireUnits")	
 	
 	-- Pet Selection Menu
     local PetSpell = HandlePetChoice()    
@@ -772,7 +768,7 @@ A[3] = function(icon, isMulti)
 			-- Crappy auto switch target until i find a way to fix Retarget
 			
 			-- if Havoc available then use it on main target
-			if A.Havoc:IsReady(unit) and Player:SoulShards() > 3.6 and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetActiveEnemies() > 1 then 		
+			if A.Havoc:IsReady(unit) and A.GetToggle(2, "AoE") and Player:SoulShards() > 3.6 and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetActiveEnemies() > 1 then 		
 			    return A.Havoc:Show(icon)
             end
 			
@@ -840,7 +836,7 @@ A[3] = function(icon, isMulti)
           --      end
           --  end
             -- incinerate,if=talent.fire_and_brimstone.enabled&buff.backdraft.up&soul_shard<5-0.2*active_enemies
-            if A.Incinerate:IsReady(unit) and (A.FireandBrimstone:IsSpellLearned() and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) > 0 and Player:SoulShardsP() < 5 - 0.2 * MultiUnits:GetActiveEnemies()) then
+            if A.Incinerate:IsReady(unit) and (A.FireandBrimstone:IsSpellLearned() and Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) > 0 and Player:SoulShardsP() < 5 - 0.2 * MultiUnits:GetByRange(40)) then
                 return A.Incinerate:Show(icon)
             end
             -- soul_fire
@@ -980,7 +976,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=aoe,if=active_enemies>2
-            if Aoe(unit) and (MultiUnits:GetActiveEnemies() > 2) then
+            if Aoe(unit) and A.GetToggle(2, "AoE") and (MultiUnits:GetActiveEnemies() > 2) then
                 return true
             end
 			
@@ -990,7 +986,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,if=talent.internal_combustion.enabled&action.chaos_bolt.in_flight&remains<duration*0.5
-            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5) then
+            if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 6) then
                 return A.Immolate:Show(icon)
             end
 			
@@ -998,6 +994,11 @@ A[3] = function(icon, isMulti)
             if Cds(unit) and A.BurstIsON(unit) then
                 return true
             end
+			
+            -- chaos_boltbasic usage no cd, no aoe, no pooling
+            if A.ChaosBolt:IsReady(unit) and Player:SoulShardsP() >= 4 and not A.BurstIsON(unit) then
+                return A.ChaosBolt:Show(icon)
+            end		
 			
             -- focused_azerite_beam,if=!pet.infernal.active|!talent.grimoire_of_supremacy.enabled
             if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not InfernalIsActive or not A.GrimoireofSupremacy:IsSpellLearned()) then
@@ -1046,12 +1047,13 @@ A[3] = function(icon, isMulti)
            --     VarPoolSoulShards = num(MultiUnits:GetActiveEnemies() > 1 and A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15 and (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie()))
           --  end
 			 
-            VarPoolSoulShards =  MultiUnits:GetActiveEnemies() > 1 and A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15			
-                              and (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) 
-							  or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 
-							  and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie())
-			
-			--print(VarPoolSoulShards)
+            VarPoolSoulShards = A.BurstIsON(unit) and MultiUnits:GetByRange(40) > 1 and (A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15) and 
+			            ( 
+			                 (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) 
+							  or 
+							  A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie())
+			            )
+			print(VarPoolSoulShards)
             
 			-- conflagrate,if=buff.backdraft.down&soul_shard>=1.5-0.3*talent.flashover.enabled&!variable.pool_soul_shards
             if A.Conflagrate:IsReady(unit) and (Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) == 0 and Player:SoulShardsP() >= 1.5 - 0.3 * num(A.Flashover:IsSpellLearned()) and not VarPoolSoulShards) then
@@ -1079,7 +1081,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chaos_bolt,if=(soul_shard>=4.5-0.2*active_enemies)&(!talent.grimoire_of_supremacy.enabled|cooldown.summon_infernal.remains>7)
-            if A.ChaosBolt:IsReady(unit) and ((Player:SoulShardsP() >= 4.5 - 0.2 * MultiUnits:GetActiveEnemies()) and (not A.GrimoireofSupremacy:IsSpellLearned() or (A.SummonInfernal:GetCooldown() > 7 or not A.BurstIsON(unit)))) then
+            if A.ChaosBolt:IsReady(unit) and ((Player:SoulShardsP() >= 4.5 - 0.2 * MultiUnits:GetByRange(40)) and (not A.GrimoireofSupremacy:IsSpellLearned() or (A.SummonInfernal:GetCooldown() > 7))) then
                 return A.ChaosBolt:Show(icon)
             end
 			
