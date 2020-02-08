@@ -574,7 +574,12 @@ A[3] = function(icon, isMulti)
 	local BoSPoolTime = A.GetToggle(2, "BoSPoolTime")
 	local BoSMinPower = A.GetToggle(2, "BoSMinPower")
 	local BoSEnemies = A.GetToggle(2, "BoSEnemies")
+	local BoSLucidDream = A.GetToggle(2, "BoSLucidDream")
+	local BoSEnemiesRange = A.GetToggle(2, "BoSEnemiesRange")
+	local LucidDreamPower = A.GetToggle(2, "LucidDreamPower")
+	local LucidDreamUseAfter = A.GetToggle(2, "LucidDreamUseAfter")
 	local VarPoolForBoS = false
+	local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	-- BreathofSindragosa protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit("player"):CastTime()
@@ -717,12 +722,7 @@ A[3] = function(icon, isMulti)
             if A.HornofWinter:IsReady("player") and A.HornofWinter:IsSpellLearned() then
                 return A.HornofWinter:Show(icon)
             end
-			
-            -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
-            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 7 or (Player:RuneTimeToX(2) > A.GetGCD() and Player:RunicPower() < 50)) then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-			
+						
             -- arcane_torrent
             if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
                 return A.ArcaneTorrent:Show(icon)
@@ -860,6 +860,19 @@ A[3] = function(icon, isMulti)
                 return A.Obliterate:Show(icon)
             end
 			
+            -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+			(
+			    Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 
+				or 
+				(Player:RuneTimeToX(2) > A.GetGCD())
+				or 
+				A.BreathofSindragosa:TimeSinceLastCast() > LucidDreamUseAfter and A.BreathofSindragosa:TimeSinceLastCast() < 10 and Player:RunicPower() < LucidDreamPower
+			) 
+			then
+                return A.MemoryofLucidDreams:Show(icon)
+            end	
+			
             -- arcane_torrent
             if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit("player"):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
                 return A.ArcaneTorrent:Show(icon)
@@ -917,7 +930,7 @@ A[3] = function(icon, isMulti)
 			
             -- use_items,if=(cooldown.pillar_of_frost.ready|cooldown.pillar_of_frost.remains>20)&(!talent.breath_of_sindragosa.enabled|cooldown.empower_rune_weapon.remains>95)
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 then
                 return A.AshvanesRazorCoral:Show(icon)
             end
 			
@@ -927,7 +940,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=jes_howler,if=(equipped.lurkers_insidious_gift&buff.pillar_of_frost.remains)|(!equipped.lurkers_insidious_gift&buff.pillar_of_frost.remains<12&buff.pillar_of_frost.up)
-            if A.JesHowler:IsReady(unit) and ((A.LurkersInsidiousGift:IsExists() and bool(Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0)) or (not A.LurkersInsidiousGift:IsExists() and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 12 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0)) then
+            if A.JesHowler:IsReady(unit) and ((A.LurkersInsidiousGift:IsExists() and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0) or (not A.LurkersInsidiousGift:IsExists() and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 12 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0)) then
                 return A.JesHowler:Show(icon)
             end
 			
@@ -997,15 +1010,15 @@ A[3] = function(icon, isMulti)
             end		
 			
             -- breath_of_sindragosa,use_off_gcd=1,if=cooldown.empower_rune_weapon.remains&cooldown.pillar_of_frost.remains
-            if A.BreathofSindragosa:IsReadyByPassCastGCD("player") and A.BreathofSindragosa:IsSpellLearned() and GetByRange(BoSEnemies, 10) and
+            if A.BreathofSindragosa:IsReadyByPassCastGCD("player") and A.BreathofSindragosa:IsSpellLearned() and GetByRange(BoSEnemies, BoSEnemiesRange) and
 			(A.EmpowerRuneWeapon:GetCooldown() > 0 and A.PillarofFrost:GetCooldown() > 0) 
-			and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0  --and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 4 
+			--and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0  and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 4 
 			then
                 return A.BreathofSindragosa:Show(icon)
             end
 			
             -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&talent.obliteration.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.1.time_to_die<20
-            if A.EmpowerRuneWeapon:IsReadyByPassCastGCD("player") and (A.PillarofFrost:GetCooldown() == 0 and A.Obliteration:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and Player:RunicPowerDeficit() >= 10 or Unit(unit):TimeToDie() < 20) then
+            if A.EmpowerRuneWeapon:IsReadyByPassCastGCD("player") and (A.PillarofFrost:GetCooldown() == 0 and A.Obliteration:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and Player:RunicPower() > BoSMinPower or Unit(unit):TimeToDie() < 20) then
                 return A.EmpowerRuneWeapon:Show(icon)
             end
 			
@@ -1015,7 +1028,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- empower_rune_weapon,if=talent.icecap.enabled&rune<3
-            if A.EmpowerRuneWeapon:IsReadyByPassCastGCD("player") and (A.Icecap:IsSpellLearned() and Player:Rune() < 3) then
+            if A.EmpowerRuneWeapon:IsReadyByPassCastGCD("player") and Player:RunicPower() > BoSMinPower and (A.Icecap:IsSpellLearned() and Player:Rune() < 3) then
                 return A.EmpowerRuneWeapon:Show(icon)
             end
 						
@@ -1044,9 +1057,9 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
 			
             -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
-            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 or (Player:RuneTimeToX(2) > A.GetGCD() and Player:RunicPower() < 50)) then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
+            --if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 and Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 or (Player:RuneTimeToX(2) > A.GetGCD() and Player:RunicPower() < 50)) then
+           --     return A.MemoryofLucidDreams:Show(icon)
+           -- end
 			
             -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)
             if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 or A.Obliteration:IsSpellLearned() or A.Icecap:IsSpellLearned() and A.IcyCitadel:GetAzeriteRank() == 0) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) > 0 and A.Icecap:IsSpellLearned())) then
@@ -1292,7 +1305,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- pillar_of_frost,no burst mode on
-            if A.PillarofFrost:IsReady("player") and not A.BurstIsON(unit) and (A.EmpowerRuneWeapon:GetCooldown() > 0 or A.Icecap:IsSpellLearned()) then
+            if A.PillarofFrost:IsReady("player") and not A.BurstIsON(unit) then
                 return A.PillarofFrost:Show(icon)
             end	
 			
@@ -1310,7 +1323,15 @@ A[3] = function(icon, isMulti)
             if A.FrostStrike:IsReady(unit) and not VarPoolForBoS and (Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) <= A.GetGCD() and Unit("player"):HasBuffs(A.IcyTalonsBuff.ID, true) > 0 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
                 return A.FrostStrike:Show(icon)
             end
-            
+ 
+            -- Trinkets
+            if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end                                 
+            if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end 
+ 
 			-- call_action_list,name=cooldowns
             if Cooldowns(unit) and A.BurstIsON(unit) then
                 return true
