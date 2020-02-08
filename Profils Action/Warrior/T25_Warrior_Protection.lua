@@ -555,10 +555,6 @@ A[3] = function(icon, isMulti)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and MultiUnits:GetByRangeInCombat(10) > 1 and A.BoomingVoice:IsSpellLearned() then
-                return A.DemoralizingShout:Show(icon)
-            end
 			
             -- anima_of_death,if=buff.last_stand.up
             if A.AnimaofDeath:IsReady(unit) and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) > 0 then
@@ -568,8 +564,7 @@ A[3] = function(icon, isMulti)
             -- dragon_roar
             if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
                 return A.DragonRoar:Show(icon)
-            end
-			
+            end			
 			
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
             if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ThunderClap:GetCooldown() >= 4) then
@@ -603,11 +598,6 @@ A[3] = function(icon, isMulti)
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
             if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0)) then
                 return A.ThunderClap:Show(icon)
-            end
-			
-            -- demoralizing_shout,if=talent.booming_voice.enabled
-            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and A.BoomingVoice:IsSpellLearned() and Unit(unit):GetRange() < 10 then
-                return A.DemoralizingShout:Show(icon)
             end
 			
             -- anima_of_death,if=buff.last_stand.up
@@ -720,6 +710,24 @@ A[3] = function(icon, isMulti)
             if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end      
+
+            -- demoralizing_shout on cd
+            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 
+			then
+                return A.DemoralizingShout:Show(icon)
+            end
+
+            -- demoralizing_shout defensive smart
+            if A.DemoralizingShout:IsReady("player") and not Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 and 
+			(
+			    -- HP lose per sec >= 10
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 
+				or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 
+			)
+			then
+                return A.DemoralizingShout:Show(icon)
+            end
 			
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
