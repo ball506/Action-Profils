@@ -1053,7 +1053,7 @@ A[3] = function(icon, isMulti)
 							  or 
 							  A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie())
 			            )
-			print(VarPoolSoulShards)
+			--print(VarPoolSoulShards)
             
 			-- conflagrate,if=buff.backdraft.down&soul_shard>=1.5-0.3*talent.flashover.enabled&!variable.pool_soul_shards
             if A.Conflagrate:IsReady(unit) and (Unit("player"):HasBuffs(A.BackdraftBuff.ID, true) == 0 and Player:SoulShardsP() >= 1.5 - 0.3 * num(A.Flashover:IsSpellLearned()) and not VarPoolSoulShards) then
