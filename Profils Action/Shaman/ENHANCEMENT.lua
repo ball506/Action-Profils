@@ -1253,18 +1253,6 @@ A[4] = function(icon)
 end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
--- Passive 
-local function FreezingTrapUsedByEnemy()
-    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
-    UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
-    then 
-        local Caster = UnitCooldown:GetUnitID("arena", 3355)
-        if Caster and Unit(Caster):GetRange() <= 40 then 
-            return true 
-        end 
-    end 
-end 
 
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
@@ -1272,15 +1260,17 @@ local function ArenaRotation(icon, unit)
        -- if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
 		
     --    end
+	
+		-- CounterStrike Totem on Enemyburst
+        if A.CounterStrikeTotem:IsReady("player") and Unit("player"):IsFocused("DAMAGER") and Unit("player"):GetDMG() > 2 and A.CounterStrikeTotem:IsSpellLearned() then 
+            return A.CounterStrikeTotem:Show(icon)
+        end
+	
 		-- Grounding Totem Casting BreakAble CC
-        if A.GroundingTotem:IsReady() and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
+        if A.GroundingTotem:IsReady("player") and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
             return A.GroundingTotem:Show(icon)
         end
 
-		-- CounterStrike Totem on Enemyburst
-        if A.CounterStrikeTotem:IsReady() and Unit("player"):IsFocused("DAMAGER") and Unit("player"):GetDMG() > 2 and A.CounterStrikeTotem:IsSpellLearned() then 
-            return A.CounterStrikeTotem:Show(icon)
-        end
 		
     end 
 end 
