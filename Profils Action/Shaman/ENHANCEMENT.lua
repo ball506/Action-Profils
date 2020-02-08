@@ -1121,6 +1121,24 @@ A[3] = function(icon, isMulti)
             if Interrupt then 
                 return Interrupt:Show(icon)
             end	
+
+	    	-- CounterStrike Totem on Enemyburst
+            if A.CounterStrikeTotem:IsReady("player") and A.CounterStrikeTotem:IsSpellLearned() and --Unit("player"):IsFocused("DAMAGER") and 
+			(
+			    -- HP lose per sec >= 5
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 5 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.05 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(50) < 5 
+			)
+			then 
+                return A.CounterStrikeTotem:Show(icon)
+            end
+	
+		    -- Grounding Totem Casting BreakAble CC
+            if A.GroundingTotem:IsReady("player") and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) then 
+                return A.GroundingTotem:Show(icon)
+            end
 			
             -- Purge
             -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
@@ -1257,10 +1275,23 @@ end
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-       -- if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
 		
-    --    end
-	
+            -- Hex	
+            if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate") then 
+	            -- Notification					
+                Action.SendNotification("Hex on " .. unit, A.Hex.ID)
+                return A.Hex:Show(icon)              
+            end
+			
+	    end
+		
+		-- Interrupt
+        local Interrupt = Interrupts(unit)
+        if Interrupt then 
+            return Interrupt:Show(icon)
+        end	
+		
 		-- CounterStrike Totem on Enemyburst
         if A.CounterStrikeTotem:IsReady("player") and Unit("player"):IsFocused("DAMAGER") and Unit("player"):GetDMG() > 2 and A.CounterStrikeTotem:IsSpellLearned() then 
             return A.CounterStrikeTotem:Show(icon)
@@ -1270,8 +1301,7 @@ local function ArenaRotation(icon, unit)
         if A.GroundingTotem:IsReady("player") and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
             return A.GroundingTotem:Show(icon)
         end
-
-		
+        		
     end 
 end 
 local function PartyRotation(unit)
