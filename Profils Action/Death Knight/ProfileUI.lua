@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.1.5 (06.02.2020)",
+    DateTime = "v2.1.6 (08.02.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -181,6 +181,7 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
+
             { -- [7] 
                 {
                     E = "Header",
@@ -443,6 +444,60 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },                	
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(152279) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "BoSPoolTime",
+                    DBV = 5, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(152279) .. " pool time", 
+                        ruRU = A.GetSpellInfo(152279) .. " время бассейна", 
+                        frFR = A.GetSpellInfo(152279) .. " temps de pool", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BoSMinPower",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(152279) .. " pool power", 
+                        ruRU = A.GetSpellInfo(152279) .. " время мощность", 
+                        frFR = A.GetSpellInfo(152279) .. " pool puissance", 
+                    }, 
+                    M = {},
+                },				
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "BoSEnemies",
+                    DBV = 2, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(152279) .. " enemies", 
+                        ruRU = A.GetSpellInfo(152279) .. " враги", 
+                        frFR = A.GetSpellInfo(152279) .. " enemies", 
+                    }, 
+                    M = {},
+                },				
             },
             { -- [4] 4th Row
 
