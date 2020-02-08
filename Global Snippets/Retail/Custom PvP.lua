@@ -19,17 +19,17 @@ local huge                                  = math.huge
 
 --- Reflect Spells List
 
-local pvpReflect = { 
-    [161372] = true, -- Poly
-    [190319] = true, -- Combustion
-    [161372] = true, -- Polymorph
-    [203286] = true, -- Greater Pyroblast
-    [199786] = true, -- Glacial Spike
-    [257537] = true, -- Ebonbolt
-    [210714] = true, -- Icefury
-    [191634] = true, -- Stormkeeper
-    [116858] = true, -- Chaos Bolt
-	[118] = true, -- Poly
+local pvpReflect = {
+    161372, -- Poly
+    190319, -- Combustion
+    161372, -- Polymorph
+    203286, -- Greater Pyroblast
+    199786, --  Glacial Spike
+    257537, -- Ebonbolt
+    210714, -- Icefury
+    191634, -- Stormkeeper
+    116858, -- Chaos Bolt
+	118, -- Poly
 }
 ---------------------------------------------------
 -------------------- FUNCTIONS --------------------
@@ -49,17 +49,11 @@ function Action.ShouldReflect(unit)
 		unit = "target"
 	end
 
-    for i = 1, huge do 
-		-- Current Cast SpellID
-		local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(unit):IsCasting()
-		-- [1] Total Casting Time (@number)
-		-- [2] Currect Casting Left (X -> 0) Time (seconds) (@number)
-		-- [3] Current Casting Done (0 -> 100) Time (percent) (@number)
-		local castingTime, castingLeftSec, castingDonePer  = Unit(unit):CastTime()
-		
+    for i = 1, #pvpReflect do 
+		local castingTime, castingLeftSec, castingDonePer, spellID, spellName = Unit(unit):CastTime()
         if not spellID then 
             break 
-        elseif pvpReflect[spellID] then 
+        elseif pvpReflect[i] then 
             if  castingDonePer >= randomReflect then
                 GoodToReflect = true
             else
