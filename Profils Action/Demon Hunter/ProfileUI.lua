@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.1.8 (05.02.2020)",
+    DateTime = "v2.2.0 (09.02.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -187,7 +187,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "BladeDancePool",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Blade Dance Pool", 
                         ruRU = "Blade Dance Pool", 

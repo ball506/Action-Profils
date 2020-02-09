@@ -1084,6 +1084,15 @@ A[3] = function(icon, isMulti)
                 return A.Felblade:Show(icon)
             end
 			
+            -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
+            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and CanCast and Action.GetToggle(1, "HeartOfAzeroth") 
+			and (
+			        (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())
+			    ) 
+			then
+                return A.ConcentratedFlame:Show(icon)
+            end
+			
             -- throw_glaive,if=buff.out_of_range.up
             if A.ThrowGlaive:IsReady(unit) and CanCast and (Unit(unit):GetRange() > 15) and A.ThrowGlaive:GetSpellCharges() > 1 and not A.Momentum:IsSpellLearned() then
                 return A.ThrowGlaive:Show(icon)
