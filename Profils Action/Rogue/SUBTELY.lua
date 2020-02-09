@@ -36,56 +36,57 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
-    -- Generics
-    StealthBuff                            = Action.Create({ Type = "Spell", ID = 1784 }),
-    MarkedForDeath                         = Action.Create({ Type = "Spell", ID = 137619 }),
-    ShurikenStorm                          = Action.Create({ Type = "Spell", ID = 197835 }),
-    Gloomblade                             = Action.Create({ Type = "Spell", ID = 200758 }),
-    Perforate                              = Action.Create({ Type = "Spell", ID =  }),
-    Backstab                               = Action.Create({ Type = "Spell", ID = 53 }),
-    ShadowDance                            = Action.Create({ Type = "Spell", ID = 185313 }),
-    ShadowDanceBuff                        = Action.Create({ Type = "Spell", ID = 185313 }),
-    ShurikenTornadoBuff                    = Action.Create({ Type = "Spell", ID =  }),
-    SymbolsofDeath                         = Action.Create({ Type = "Spell", ID = 212283 }),
-    NightbladeDebuff                       = Action.Create({ Type = "Spell", ID = 195452 }),
-    ShurikenTornado                        = Action.Create({ Type = "Spell", ID =  }),
-    PoolResource                           = Action.Create({ Type = "Spell", ID = 9999000010 }),
-    ShadowBlades                           = Action.Create({ Type = "Spell", ID = 121471 }),
-    ShadowFocus                            = Action.Create({ Type = "Spell", ID = 108209 }),
-    NightsVengeance                        = Action.Create({ Type = "Spell", ID =  }),
-    NightsVengeanceBuff                    = Action.Create({ Type = "Spell", ID =  }),
-    SymbolsofDeathBuff                     = Action.Create({ Type = "Spell", ID = 212283 }),
-    Subterfuge                             = Action.Create({ Type = "Spell", ID = 108208 }),
-    ShadowBladesBuff                       = Action.Create({ Type = "Spell", ID = 121471 }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
-    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
-    Eviscerate                             = Action.Create({ Type = "Spell", ID = 196819 }),
-    Nightblade                             = Action.Create({ Type = "Spell", ID = 195452 }),
-    DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687 }),
-    ReplicatingShadows                     = Action.Create({ Type = "Spell", ID =  }),
-    SecretTechnique                        = Action.Create({ Type = "Spell", ID =  }),
-    Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
-    FindWeaknessDebuff                     = Action.Create({ Type = "Spell", ID =  }),
-    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
-    TheFirstDance                          = Action.Create({ Type = "Spell", ID =  }),
-    Nightstalker                           = Action.Create({ Type = "Spell", ID = 14062 }),
-    Shadowstrike                           = Action.Create({ Type = "Spell", ID = 185438 }),
-    FindWeakness                           = Action.Create({ Type = "Spell", ID =  }),
-    VanishBuff                             = Action.Create({ Type = "Spell", ID = 1856 }),
-    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
-    BladeIntheShadows                      = Action.Create({ Type = "Spell", ID =  }),
-    Weaponmaster                           = Action.Create({ Type = "Spell", ID =  }),
-    Inevitability                          = Action.Create({ Type = "Spell", ID =  }),
-    Vigor                                  = Action.Create({ Type = "Spell", ID = 14983 }),
-    MasterofShadows                        = Action.Create({ Type = "Spell", ID =  }),
-    Alacrity                               = Action.Create({ Type = "Spell", ID =  }),
-    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
-    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
+    -- Abilities
+    Backstab                              = Action.Create({ Type = "Spell", ID = 53     }),
+    Eviscerate                            = Action.Create({ Type = "Spell", ID = 196819     }),
+    Nightblade                            = Action.Create({ Type = "Spell", ID = 195452     }),
+    ShadowBlades                          = Action.Create({ Type = "Spell", ID = 121471     }),
+    ShadowDance                           = Action.Create({ Type = "Spell", ID = 185313     }),
+    Shadowstrike                          = Action.Create({ Type = "Spell", ID = 185438     }),
+    ShurikenStorm                         = Action.Create({ Type = "Spell", ID = 197835     }),
+    ShurikenToss                          = Action.Create({ Type = "Spell", ID = 114014     }),
+    Stealth                               = Action.Create({ Type = "Spell", ID = 1784     }),
+    Stealth2                              = Action.Create({ Type = "Spell", ID = 115191     }), -- w/ Subterfuge Talent
+    SymbolsofDeath                        = Action.Create({ Type = "Spell", ID = 212283     }),
+    Vanish                                = Action.Create({ Type = "Spell", ID = 1856     }),
+    -- Talents
+    Alacrity                              = Action.Create({ Type = "Spell", ID = 193539     }),
+    DarkShadow                            = Action.Create({ Type = "Spell", ID = 245687     }),
+    DeeperStratagem                       = Action.Create({ Type = "Spell", ID = 193531     }),
+    EnvelopingShadows                     = Action.Create({ Type = "Spell", ID = 238104     }),
+    FindWeakness                          = Action.Create({ Type = "Spell", ID = 91023     }),
+    Gloomblade                            = Action.Create({ Type = "Spell", ID = 200758     }),
+    MarkedforDeath                        = Action.Create({ Type = "Spell", ID = 137619     }),
+    MasterofShadows                       = Action.Create({ Type = "Spell", ID = 196976     }),
+    Nightstalker                          = Action.Create({ Type = "Spell", ID = 14062     }),
+    SecretTechnique                       = Action.Create({ Type = "Spell", ID = 280719     }),
+    ShadowFocus                           = Action.Create({ Type = "Spell", ID = 108209     }),
+    ShurikenTornado                       = Action.Create({ Type = "Spell", ID = 277925     }),
+    Subterfuge                            = Action.Create({ Type = "Spell", ID = 108208     }),
+    Vigor                                 = Action.Create({ Type = "Spell", ID = 14983     }),
+    Weaponmaster                          = Action.Create({ Type = "Spell", ID = 193537     }),
+	Dismantle                              = Action.Create({ Type = "Spell", ID = 207777     }), -- PvP Talent
+    -- Azerite Traits
+    BladeInTheShadows                     = Action.Create({ Type = "Spell", ID = 275896     }),
+    Inevitability                         = Action.Create({ Type = "Spell", ID = 278683     }),
+    NightsVengeancePower                  = Action.Create({ Type = "Spell", ID = 273418     }),
+    Perforate                             = Action.Create({ Type = "Spell", ID = 277673     }),
+    ReplicatingShadows                    = Action.Create({ Type = "Spell", ID = 286121     }),
+    TheFirstDance                         = Action.Create({ Type = "Spell", ID = 278681     }),
+    -- Defensive
+    CrimsonVial                           = Action.Create({ Type = "Spell", ID = 185311     }),
+    Feint                                 = Action.Create({ Type = "Spell", ID = 1966     }),
+    -- Misc
+    ConductiveInkDebuff                   = Action.Create({ Type = "Spell", ID = 302565     }),
+    VigorTrinketBuff                      = Action.Create({ Type = "Spell", ID = 287916     }),
+    RazorCoralDebuff                      = Action.Create({ Type = "Spell", ID = 303568     }),
+    TheDreadlordsDeceit                   = Action.Create({ Type = "Spell", ID = 228224     }),
+	-- Utility
+    Kick                                 = Action.Create({ Type = "Spell", ID = 1766       }),
+    Blind                                = Action.Create({ Type = "Spell", ID = 2094       }),
+    CheapShot                            = Action.Create({ Type = "Spell", ID = 1833       }),
+    KidneyShot                           = Action.Create({ Type = "Spell", ID = 408       }),
+    Sprint                               = Action.Create({ Type = "Spell", ID = 2983       }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -173,16 +174,16 @@ local A = setmetatable(Action[ACTION_CONST_ROGUE_SUBTLETY], { __index = Action }
 ------------------------------------------
 ---------------- VARIABLES ---------------
 ------------------------------------------
-local VarUsePriorityRotation = 0;
-local VarShdThreshold = 0;
-local VarShdComboPoints = 0;
-local VarStealthThreshold = 0;
+local VarUsePriorityRotation = false
+local VarShdThreshold = false
+local VarShdComboPoints = false
+local VarStealthThreshold = false
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-  VarUsePriorityRotation = 0
-  VarShdThreshold = 0
-  VarShdComboPoints = 0
-  VarStealthThreshold = 0
+  VarUsePriorityRotation = false
+  VarShdThreshold = false
+  VarShdComboPoints = false
+  VarStealthThreshold = false
 end)
 
 
@@ -259,7 +260,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- snapshot_stats
             -- stealth
-            if A.Stealth:IsReady(unit) and Unit("player"):HasBuffsDown(A.StealthBuff.ID, true) then
+            if A.Stealth:IsReady("player") and Unit("player"):HasBuffs(A.StealthBuff.ID, true) == 0 then
                 return A.Stealth:Show(icon)
             end
             -- marked_for_death,precombat_seconds=15
@@ -550,7 +551,7 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-                    -- stealth
+            -- stealth
             if A.Stealth:IsReady(unit) then
                 return A.Stealth:Show(icon)
             end
