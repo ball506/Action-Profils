@@ -373,7 +373,7 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- WindShear
-    if useKick and A.WindShear:IsReady(unit) and A.WindShear:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.WindShear:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	    -- Notification					
         Action.SendNotification("Wind Shear interrupting on Target", A.WindShear.ID)
         return A.WindShear
