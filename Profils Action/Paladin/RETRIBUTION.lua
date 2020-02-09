@@ -569,7 +569,7 @@ A[3] = function(icon, isMulti)
             -- variable,name=wings_pool,value=!equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*3|cooldown.crusade.remains>gcd*3)|equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*6|cooldown.crusade.remains>gcd*6)
             VarWingsPool = (not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) or (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6))
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
-            VarDsCastable = GetByRange(2, 10) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 10) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0
+            VarDsCastable = (GetByRange(2, 10) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 10) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
 
             -- inquisition,if=buff.avenging_wrath.down&(buff.inquisition.down|buff.inquisition.remains<8&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3)
             if A.Inquisition:IsReady(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3)) then
@@ -582,7 +582,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- divine_storm,if=spell_targets.divine_storm>2
-            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and GetByRange(1, 10)
+            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and GetByRange(2, 10)
 			then
                 return A.DivineStorm:Show(icon)
             end	
@@ -602,7 +602,22 @@ A[3] = function(icon, isMulti)
             end
 			
             -- templars_verdict,if=variable.wings_pool&(!talent.execution_sentence.enabled|cooldown.execution_sentence.remains>gcd*2|cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10)
-            if A.TemplarsVerdict:IsReady(unit) and (VarWingsPool and (not A.ExecutionSentence:IsSpellLearned() or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2 or A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)) then
+            if A.TemplarsVerdict:IsReady(unit) and 
+			(
+			    (VarWingsPool or not A.BurstIsON(unit)) and 
+				(
+				    not A.ExecutionSentence:IsSpellLearned() 
+					or 
+					A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2 
+					or 
+					A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 
+					or 
+					A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 
+					or 
+					Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10
+				)
+			) 
+			then
                 return A.TemplarsVerdict:Show(icon)
             end
 			
