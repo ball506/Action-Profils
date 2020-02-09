@@ -701,22 +701,7 @@ A[3] = function(icon, isMulti)
             if Unit("player"):HealthPercent() < 80 and A.ImpendingVictory:IsReady(unit) and not ShouldStop then
                 return A.ImpendingVictory:Show(icon)
             end
-
-            -- Offensive Trinkets
-            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-                return A.Trinket1:Show(icon)
-            end 
-            
-            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-                return A.Trinket2:Show(icon)
-            end      
-
-            -- demoralizing_shout on cd
-            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 
-			then
-                return A.DemoralizingShout:Show(icon)
-            end
-
+			
             -- demoralizing_shout defensive smart
             if A.DemoralizingShout:IsReady("player") and not Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 and 
 			(
@@ -727,7 +712,22 @@ A[3] = function(icon, isMulti)
 			)
 			then
                 return A.DemoralizingShout:Show(icon)
+            end			
+
+            -- demoralizing_shout on cd
+            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 
+			then
+                return A.DemoralizingShout:Show(icon)
             end
+
+            -- Offensive Trinkets
+            if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end 
+            
+            if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end 
 			
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
