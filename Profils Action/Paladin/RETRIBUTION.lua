@@ -58,6 +58,7 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     FistofJustice                        = Action.Create({ Type = "Spell", ID = 198054     }),
     Repentance                           = Action.Create({ Type = "Spell", ID = 20066     }), 
     Cavalier                             = Action.Create({ Type = "Spell", ID = 190784     }),
+	JusticarsVengeance                   = Action.Create({ Type = "Spell", ID = 215661    }),
     BlessingofProtectionYellow           = Action.Create({ Type = "Spell", ID = 1022, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
     BlessingofProtection                 = Action.Create({ Type = "Spell", ID = 1022     }), 
     WordofGlory                          = Action.Create({ Type = "Spell", ID = 210191     }),
@@ -66,6 +67,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     HammerofJustice                      = Action.Create({ Type = "Spell", ID = 853     }),
 	HammerofJusticeGreen                 = Action.Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
 	DivineShield                         = Action.Create({ Type = "Spell", ID = 642     }),
+	FlashofLight                         = Action.Create({ Type = "Spell", ID = 19750   }),
+    CleanseToxins                        = Action.Create({ Type = "Spell", ID = 213644   }),
     -- PvP
     HammerofReckoning                    = Action.Create({ Type = "Spell", ID = 247675     }),
     BlessingofSanctuary                  = Action.Create({ Type = "Spell", ID = 210256     }),
@@ -79,10 +82,12 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     CrusadeBuff                          = Action.Create({ Type = "Spell", ID = 231895, Hidden = true     }), 
     SeethingRageBuff                     = Action.Create({ Type = "Spell", ID = 297126, Hidden = true     }), 
     RecklessForceBuff                    = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),  
+    SelfLessHealerBuff                   = Action.Create({ Type = "Spell", ID = 114250, Hidden = true     }), 
     -- Debuffs
     JudgmentDebuff                       = Action.Create({ Type = "Spell", ID = 197277, Hidden = true     }),
     ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true     }),
     RazorCoralDebuff                     = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+	
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -170,14 +175,14 @@ local A = setmetatable(Action[ACTION_CONST_PALADIN_RETRIBUTION], { __index = Act
 ------------------------------------------
 ---------------- VARIABLES ---------------
 ------------------------------------------
-local VarWingsPool = 0;
-local VarDsCastable = 0;
-local VarHow = 0;
+local VarWingsPool = false
+local VarDsCastable = false
+local VarHow = false
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-  VarWingsPool = 0
-  VarDsCastable = 0
-  VarHow = 0
+  VarWingsPool = false
+  VarDsCastable = false
+  VarHow = false
 end)
 
 
@@ -212,6 +217,35 @@ local function IsHolySchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "HOLY") == 0
 end 
 
+local function InMelee(unitID)
+	-- @return boolean 
+	return A.Judgment:IsInRange(unitID)
+end 
+
+-- @return boolean  
+-- @parameters count, range are mandatory, others parameters optionals
+local ActiveUnitPlates = MultiUnits:GetActiveUnitPlates()
+local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+	local c = 0 
+	for unitID in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unitID)) and (not isCheckCombat or Unit(unitID):CombatTime() > 0) then 
+			if InMelee(unitID) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unitID):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			
+			if c >= count then 
+				return true 
+			end 
+		end 
+	end
+end  
+
+
 -- [1] CC AntiFake Rotation
 local function AntiFakeStun(unit) 
     return 
@@ -230,7 +264,7 @@ A[1] = function(icon)
             not A.IsUnitEnemy("target") and                     
             (
                 (A.IsInPvP and EnemyTeam():PlayersInRange(1, 10)) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(10, 1) >= 1)
+                (not A.IsInPvP and GetByRange(1, 10))
             )
         )
     )
@@ -371,11 +405,17 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
+	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit("player"):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
     local unit = "player"
-
+    local FlashofLightHP = Action.GetToggle(2, "FlashofLightHP")
+	local WordofGloryHP = Action.GetToggle(2, "WordofGloryHP")
+	local JusticarsVengeanceHP = Action.GetToggle(2, "JusticarsVengeanceHP")
+	local DivineShieldHP = Action.GetToggle(2, "DivineShieldHP")
+	local UseCavalier = Action.GetToggle(2, "UseCavalier")
+	local CavalierTime = Action.GetToggle(2, "CavalierTime")
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -430,7 +470,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and MultiUnits:GetByRange(5) >= 2 then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and GetByRange(2, 5) then
                 return A.LightsJudgment:Show(icon)
             end
 			
@@ -494,7 +534,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRange(40) > 1) or MultiUnits:GetByRange(8) >= 2) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (GetByRange(1, 40)) or GetByRange(2, 8)) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
@@ -504,7 +544,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- purifying_blast,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)
-            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRange(40) > 1) or MultiUnits:GetByRange(8) >= 2)) then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (GetByRange(1, 40)) or GetByRange(2, 8))) then
                 return A.PurifyingBlast:Show(icon)
             end
 			
@@ -527,22 +567,22 @@ A[3] = function(icon, isMulti)
         --Finishers
         local function Finishers(unit)
             -- variable,name=wings_pool,value=!equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*3|cooldown.crusade.remains>gcd*3)|equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*6|cooldown.crusade.remains>gcd*6)
-            VarWingsPool = (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) or (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6)
+            VarWingsPool = (not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) or (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6))
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
-            VarDsCastable = MultiUnits:GetByRange(8) >= 2 and not A.RighteousVerdict:IsSpellLearned() or MultiUnits:GetByRange(8) >= 3 and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffsDown(A.JudgmentDebuff.ID, true) and Unit("player"):HasBuffsDown(A.DivinePurposeBuff.ID, true) and Unit("player"):HasBuffsDown(A.AvengingWrathAutocritBuff.ID, true)
+            VarDsCastable = GetByRange(2, 10) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 10) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0
 
             -- inquisition,if=buff.avenging_wrath.down&(buff.inquisition.down|buff.inquisition.remains<8&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3)
-            if A.Inquisition:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvengingWrathBuff.ID, true) and (Unit("player"):HasBuffsDown(A.InquisitionBuff.ID, true) or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3)) then
+            if A.Inquisition:IsReady(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3)) then
                 return A.Inquisition:Show(icon)
             end
 			
             -- execution_sentence,if=spell_targets.divine_storm<=2&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>10|talent.crusade.enabled&buff.crusade.down&cooldown.crusade.remains>10|buff.crusade.stack>=7)
-            if A.ExecutionSentence:IsReady(unit) and (MultiUnits:GetByRange(8) <= 2 and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and Unit("player"):HasBuffsDown(A.CrusadeBuff.ID, true) and A.Crusade:GetCooldown() > 10 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) >= 7)) then
+            if A.ExecutionSentence:IsReady(unit) and (MultiUnits:GetByRange(8) <= 2 and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) == 0 and A.Crusade:GetCooldown() > 10 or Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) >= 7)) then
                 return A.ExecutionSentence:Show(icon)
             end
 			
 			-- divine_storm,if=spell_targets.divine_storm>2
-            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and MultiUnits:GetByRange(10) > 1
+            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and GetByRange(1, 10)
 			then
                 return A.DivineStorm:Show(icon)
             end	
@@ -552,7 +592,7 @@ A[3] = function(icon, isMulti)
 			(
 			    VarDsCastable and VarWingsPool and  
 				(
-				    (not A.ExecutionSentence:IsSpellLearned() or (MultiUnits:GetByRange(10) >= 2 or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
+				    (not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 10) or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
 					or 
 					(A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)
 				)
@@ -571,7 +611,7 @@ A[3] = function(icon, isMulti)
         --Generators
         local function Generators(unit)
             -- variable,name=HoW,value=(!talent.hammer_of_wrath.enabled|target.health.pct>=20&!(buff.avenging_wrath.up|buff.crusade.up))
-            VarHow = num((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) == 0)))
+            VarHow = (not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) == 0))
 
             -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|talent.inquisition.enabled&buff.inquisition.down&holy_power>=3
             if Finishers(unit) and (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.Inquisition:IsSpellLearned() and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 and Player:HolyPower() >= 3) then
@@ -579,7 +619,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
-            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRange(40) > 1) or MultiUnits:GetByRange(5) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
+            if A.WakeofAshes:IsReady(unit) and ((not (GetByRange(1, 40)) or GetByRange(2, 5)) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
                 return A.WakeofAshes:Show(icon)
             end
 			
@@ -634,7 +674,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_torrent,if=holy_power<=4
-            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:HolyPower() <= 4) then
+            if A.ArcaneTorrent:IsRacialReady(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and Player:HolyPower() <= 4 then
                 return A.ArcaneTorrent:Show(icon)
             end
 			
@@ -661,12 +701,64 @@ A[3] = function(icon, isMulti)
          		end 
       		end 
 			
-     		-- HammerofJustice
+     		-- Hammer of Justice
       		if useCC and A.HammerofJustice:IsReady(unit) then 
 	  			if Unit(unit):CanInterrupt(true, nil, 25, 70) then
      		        return A.HammerofJustice:Show(icon)
      	 	    end 
      		end 
+
+	        -- Cavalier if out of range 
+            if A.Cavalier:IsReady("player") and isMovingFor > CavalierTime and UseCavalier then
+                return A.Cavalier:Show(icon)
+            end	
+			
+			-- Flash of Light
+       		if A.FlashofLight:IsReady("player") and Unit("player"):HasBuffsStacks(A.SelfLessHealerBuff.ID, true) == 4 and 
+			Unit("player"):HealthPercent() <= FlashofLightHP and Unit("player"):IsStayingTime() >= 0.5 
+			then
+     		    return A.FlashofLight:Show(icon)
+   		    end
+
+            -- Justicars Vengeance
+    		if A.JusticarsVengeance:IsReady(unit) and Unit(unit):GetRange() <= 5 then
+  		        -- Regular
+  		        if Unit("player"):HealthPercent() <= JusticarsVengeanceHP and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Player:HolyPower() >= 5 then
+   		            return A.JusticarsVengeance:Show(icon)
+ 		        end
+  		        -- Divine Purpose
+  		        if Unit("player"):HealthPercent() <= JusticarsVengeanceHP - 5 and Unit("player"):HasBuffs(A.DivinePurposeBuff) > 0 then
+   		            return A.JusticarsVengeance:Show(icon)
+   		        end
+
+   		    end
+            
+			-- Word of Glory
+   		    if A.WordofGlory:IsReady("player") then
+  		        -- Regular
+    		    if Unit("player"):HealthPercent() <= WordofGloryHP and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Player:HolyPower() >= 3 then
+   		            return A.WordofGlory:Show(icon)
+   		        end
+    		    -- Divine Purpose
+    		    if Unit("player"):HealthPercent() <= WordofGloryHP - 5 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) > 0 then
+                    return A.WordofGlory:Show(icon)
+    		    end
+  		    end
+			
+   		    --Dispell
+	 		if A.CleanseToxins:IsReady("player") and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
+			then
+	 			return A.CleanseToxins:Show(icon)
+    		end
+
+            -- Trinkets
+            if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end  
+			
+            if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end 
 			
             -- call_action_list,name=cooldowns
             if A.BurstIsON(unit) and Cooldowns(unit) then
