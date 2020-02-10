@@ -513,3 +513,12 @@ if DogTag then
 		TMW:Fire("TMW_ACTION_NOTIFICATION")
 	end)
 end
+
+
+--------------------------------------
+-------------- MacroBlocker hook -----
+--------------------------------------
+hooksecurefunc(Action, "MacroBlocker", function(...) 
+print(...) 
+
+end)
