@@ -354,7 +354,7 @@ A[3] = function(icon, isMulti)
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) and (Pull > 0 and Pull <= 6 or not A.GetToggle(1 ,"DBM"))
+            if A.AzsharasFontofPower:IsReady("player") and (Pull > 0 and Pull <= 6 or not A.GetToggle(1 ,"DBM"))
 			then
                 return A.AzsharasFontofPower:Show(icon)
             end
