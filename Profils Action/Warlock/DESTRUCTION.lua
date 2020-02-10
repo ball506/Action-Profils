@@ -588,7 +588,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=cooldown.summon_infernal.up|cooldown.summon_infernal.remains<=4
-            if A.AzsharasFontofPower:IsReady(unit) and (A.SummonInfernal:GetCooldown() == 0 or A.SummonInfernal:GetCooldown() <= 4) then
+            if A.AzsharasFontofPower:IsReady("player") and (A.SummonInfernal:GetCooldown() == 0 or A.SummonInfernal:GetCooldown() <= 4) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			

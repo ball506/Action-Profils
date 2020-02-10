@@ -303,7 +303,7 @@ A[3] = function(icon, isMulti)
             end
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady("player") then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- mirror_image
@@ -574,7 +574,7 @@ A[3] = function(icon, isMulti)
                 return true
             end
             -- use_item,name=azsharas_font_of_power,if=buff.rune_of_power.down&buff.arcane_power.down&(cooldown.arcane_power.remains<=4+10*variable.font_double_on_use&cooldown.evocation.remains<=variable.average_burn_length+4+10*variable.font_double_on_use|time_to_die<cooldown.arcane_power.remains)
-            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) == 0 and (A.ArcanePower:GetCooldown() <= 4 + 10 * VarFontDoubleOnUse and A.Evocation:GetCooldown() <= VarAverageBurnLength + 4 + 10 * VarFontDoubleOnUse or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown())) then
+            if A.AzsharasFontofPower:IsReady("player") and (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) == 0 and (A.ArcanePower:GetCooldown() <= 4 + 10 * VarFontDoubleOnUse and A.Evocation:GetCooldown() <= VarAverageBurnLength + 4 + 10 * VarFontDoubleOnUse or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown())) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- call_action_list,name=burn,if=burn_phase|target.time_to_die<variable.average_burn_length

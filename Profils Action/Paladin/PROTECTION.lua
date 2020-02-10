@@ -563,7 +563,7 @@ A[3] = function(icon, isMulti)
                 return A.Fireblood:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=cooldown.seraphim.remains<=10|!talent.seraphim.enabled
-            if A.AzsharasFontofPower:IsReady(unit) and (A.Seraphim:GetCooldown() <= 10 or not A.Seraphim:IsSpellLearned()) then
+            if A.AzsharasFontofPower:IsReady("player") and (A.Seraphim:GetCooldown() <= 10 or not A.Seraphim:IsSpellLearned()) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=(debuff.razor_coral_debuff.stack>7&buff.avenging_wrath.up)|debuff.razor_coral_debuff.stack=0
