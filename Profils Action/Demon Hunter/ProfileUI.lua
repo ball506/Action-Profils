@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.2.0 (09.02.2020)",
+    DateTime = "v4.0.3 (15.02.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -112,12 +112,6 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 	
             },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
             { -- [7] 
                 {
                     E = "Header",
@@ -126,7 +120,23 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-            { -- [3] 3rd Row 				
+            { -- [3] 3rd Row 
+                {
+                    E = "Checkbox", 
+                    DB = "SyncBladeDanceDeathSweepWithEyeBeam",
+                    DBV = false,
+                    L = { 
+                        enUS = "BladeDance Sync EyeBeam", 
+                        ruRU = "BladeDance Sync EyeBeam", 
+                        frFR = "BladeDance Sync EyeBeam", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))", 
+                        ruRU = "If activated, will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))", 
+                        frFR = "If activated, will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))", 
+                    }, 
+                    M = {},
+                }, 			
                 {
                     E = "Dropdown",                                                         
                     OT = {
@@ -154,9 +164,9 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 3, 
-                    MAX = 50,                            
+                    MAX = 60,                            
                     DB = "EyeBeamTTD",
-                    DBV = 10, -- Set healthpercentage @30% life. 
+                    DBV = 7, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(198013) .. " TTD",
@@ -169,62 +179,116 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
             { -- [7] 
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- " .. A.GetSpellInfo(188499) .. " -- ",
+                        ANY = " -- " .. A.GetSpellInfo(300714) .. " -- ",
                     },
                 },
             },
 			{
                 {
                     E = "Checkbox", 
-                    DB = "BladeDancePool",
+                    DB = "UnbridledFuryAuto",
                     DBV = false,
                     L = { 
-                        enUS = "Blade Dance Pool", 
-                        ruRU = "Blade Dance Pool", 
-                        frFR = "Blade Dance Pool", 
+                        enUS = "Burst Potion", 
+                        ruRU = "Burst Potion",
+                        frFR = "Burst Potion",
                     }, 
                     TT = { 
-                        enUS = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
-                        ruRU = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.",  
-                        frFR = "If activated, will pool BladeDance to sync with EyeBeam when using Demonic build.", 
+                        enUS = "If activated, will auto re pots depending of the settings of this section", 
+                        ruRU = "If activated, will auto re pots depending of the settings of this section", 
+                        frFR = "If activated, will auto re pots depending of the settings of this section", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithExecute",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync execute phase", 
+                        ruRU = "Sync execute phase",
+                        frFR = "Sync execute phase",   
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        frFR = "If activated, will auto re pots as soon as Execute phase is detected.", 
                     }, 
                     M = {},
                 }, 
                 {
                     E = "Slider",                                                     
-                    MIN = 2, 
-                    MAX = 8,      
-                    Precision = 1, 					
-                    DB = "BladeDancePoolSeconds",
-                    DBV = 5, -- Set healthpercentage @30% life. 
+                    MIN = 5, 
+                    MAX = 40,      					
+                    DB = "UnbridledFuryTTD",
+                    DBV = 40, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(188499) .. " pool secs",
+                        ANY = A.GetSpellInfo(300714) .. " TTD",
                     },
                     TT = { 
-                        enUS = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499), 
-                        ruRU = "Set the minimum time in seconds you want the bot to stop using " .. A.GetSpellInfo(188499),
-                        frFR = "Définissez le temps minimum pour que le bot arrête d'utiliser " .. A.GetSpellInfo(188499), 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(300714) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(300714) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(300714) .. " \nNe s'applique pas aux boss.", 
                     }, 					
                     M = {},
                 },				
             },
-            { -- [4] 4th Row
-
+			{
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithSecondMeta",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync 2nd Meta", 
+                        ruRU = "Sync 2nd Meta", 
+                        frFR = "Sync 2nd Meta", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as you recast Metamorphosis.", 
+                        ruRU = "If activated, will auto re pots as soon as you recast Metamorphosis.", 
+                        frFR = "If activated, will auto re pots as soon as you recast Metamorphosis.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithBloodlust",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync Bloodlust", 
+                        ruRU = "Sync Bloodlust", 
+                        frFR = "Sync Bloodlust",  
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Bloodlust is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Bloodlust is detected.",
+                        frFR = "If activated, will auto re pots as soon as Bloodlust is detected.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,      					
+                    DB = "UnbridledFuryHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(300714) .. " HP",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".", 
+                        ruRU = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".",  
+                        frFR = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".", 
+                    }, 					
+                    M = {},
                 },
-            },
+			},	
             { -- [7] 
                 {
                     E = "Header",
@@ -326,12 +390,6 @@ A.Data.ProfileUI = {
                 },
 
             },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
             { -- [7]  Azerite Beam settings
                 {
                     E = "Header",
@@ -376,12 +434,6 @@ A.Data.ProfileUI = {
                     }, 					
                     M = {},
                 }, 				
-            },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
             },
             { -- [7] 
                 {
@@ -431,12 +483,33 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [4] 4th Row
-
+            { -- [7] 
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dummy DPS Test -- ",
+                    },
                 },
             },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "DummyTest",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "DPS Testing Time",
+                    },
+                    TT = { 
+                        enUS = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
+                        ruRU = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
+                        frFR = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [7]
                 {
                     E = "Header",
