@@ -384,14 +384,6 @@ function Action:RegisterForSelfCombatEvent(Handler, ...)
 end
 
 ------------------------------------
------------- VISUALS API -----------
-------------------------------------
-
-function TR.
-
-end
-
-------------------------------------
 -- DogTags
 ------------------------------------
 local DogTag = LibStub("LibDogTag-3.0", true)
@@ -415,7 +407,7 @@ function Action.SendNotification(message, spell, delay, incombat)
 	
 	-- If nil
 	if not message then
-	    ErrorMessage
+	    Action.NotificationMessage = ErrorMessage
 	end
 	
 	-- Delay
@@ -475,8 +467,82 @@ local function removeLastChar(text)
 	return text:sub(1, -2)
 end
 
+local tabFrame, strOnlyBuilder
+local function GetTableKeyIdentify(action)
+	-- Using to link key in DB
+	if not action.TableKeyIdentify then 
+		action.TableKeyIdentify = strOnlyBuilder(action.SubType, action.ID, action.Desc, action.Color)
+	end 
+	return action.TableKeyIdentify
+end
+
+
+
+local function GetActionSpellStatus()
+    local BlockedSpell = {
+    
+    }
+		
+    --for i = 1, #Action[Action.PlayerSpec] do
+	---    if TMWdb.profile.ActionDB[3][Action.PlayerSpec].disabledActions[i] then
+	--	    return    
+	--end 
+	local PlayerSpec = Action[Action.PlayerSpec]
+	local Error = "Error during initilization of Taste Status Frame"
+	
+	if PlayerSpec then
+	
+	    for k, v in pairs(PlayerSpec) do 
+			if type(v) == "table" and v.Type == "Spell" then 	
+                local currentSpell = Action[Action.PlayerSpec][k]	
+                print(v.ID)
+                print(Action[Action.PlayerSpec][k])				
+				if currentSpell then 
+			        --tableinsert(BlockedList, )
+			        BlockedSpell = v.ID .. " Blocked"				
+			    else
+			        BlockedSpell = v.ID .. " Unlocked"
+			    end
+			end 
+			--return BlockedSpell
+		end 
+    end
+	
+	
+--[[		for k, v in pairs(PlayerSpec) do
+		--Action[Action.PlayerSpec].WordofGlory
+		    local currentSpell = k
+	  	    if currentSpell:IsBlocked() then
+			    --tableinsert(BlockedList, )
+			    BlockedSpell = currentSpell .. " Blocked"
+				
+			else
+			    BlockedSpell = currentSpell .. " Unlocked"
+			end
+		end]]--
+		
+	
+--[[	
+    local tabFrame
+    local CL, L = "enUS"
+	local BlockedSpell = ""
+	local spec = Action.PlayerSpec .. CL	
+    local ScrollTable = tabFrame.tabs[3].childs[spec].ScrollTable
+    for i = 1, #data do 
+	    if Identify == GetTableKeyIdentify(ScrollTable.data[i]) then 
+	    	if self:IsBlocked() then 
+		    	BlockedSpell = " Blocked"
+		    else 
+		    	BlockedSpell = " Unblocked"
+		    end								 			
+	    end 
+    end
+	]]--
+	return BlockedSpell or Error
+end
+
 if DogTag then
-	-- Custom Notifications
+	-- Custom Icon
 	DogTag:AddTag("TMW", "ActionNotificationIcon", {
         code = function()
 			if Action.CurrentNotificationIcon and Action.NotificationIsValid then
@@ -506,6 +572,21 @@ if DogTag then
 		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
+    })	
+
+	-- Status Frame Blocked Spells
+	DogTag:AddTag("TMW", "ActionStatusBlocked", {
+        code = function()
+		    local GetActionSpellStatus = GetActionSpellStatus()
+            if GetActionSpellStatus then
+			    return GetActionSpellStatus
+			end
+        end,
+        ret = "string",
+        doc = "Displays Blocked Spells",
+		example = '[ActionStatusFrame] => "GetActionSpellStatus()"',
+        events = "TMW_ACTION_STATUS_BLOCKED",
+        category = "Action",
     })		
 	
 	-- The biggest problem of TellMeWhen what he using :setup on frames which use DogTag and it's bring an error
@@ -513,12 +594,3 @@ if DogTag then
 		TMW:Fire("TMW_ACTION_NOTIFICATION")
 	end)
 end
-
-
---------------------------------------
--------------- MacroBlocker hook -----
---------------------------------------
-hooksecurefunc(Action, "MacroBlocker", function(...) 
-print(...) 
-
-end)
