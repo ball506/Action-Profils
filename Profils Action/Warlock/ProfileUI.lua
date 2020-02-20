@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.1.2 (08.02.2020)",
+    DateTime = "v3.0.7 (20.02.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -543,19 +543,29 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                },                 
-            }, 
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
                 },
-            },
+                {
+                    E = "Checkbox", 
+                    DB = "UseFearAsInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Fear as interrupt", 
+                        ruRU = "Fear as interrupt",
+                        frFR = "Fear as interrupt",
+                    }, 
+                    TT = { 
+                        enUS = "Will use Fear as interrupt.", 
+                        ruRU = "Will use Fear as interrupt.", 
+                        frFR = "Will use Fear as interrupt.", 
+                    }, 
+                    M = {},
+                },				
+            }, 
             { -- [7]
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- AoE Settings -- ",
+                        ANY = " -- " .. A.GetSpellInfo(80240) .. " Settings -- ",
                     },
                 },
             },
@@ -565,15 +575,161 @@ A.Data.ProfileUI = {
                     DB = "AutoHavoc",
                     DBV = true,
                     L = { 
-                        enUS = "Auto Havoc",
-                        ruRU = "Auto Havoc",
-                        frFR = "Auto Havoc",
+                        enUS = "Auto " .. A.GetSpellInfo(80240),
+                        ruRU = "Авто " .. A.GetSpellInfo(80240),
+                        frFR = "Auto " .. A.GetSpellInfo(80240),
                     }, 
                     TT = { 
-                        enUS = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
-                        ruRU = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
-                        frFR = "Will auto use Havoc if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
+                        enUS = "Will auto use " .. A.GetSpellInfo(80240) .. " if multiple enemies are around.\nIMPORTANT: You need to keybind TargetEnemy AND face all your targets for this to work.",
+                        ruRU = "Будет ли автоматически использовать " .. A.GetSpellInfo(80240) .. " если вокруг несколько врагов. \n ВАЖНО: Вам нужно связать TargetEnemy с помощью клавиш и противостоять всем вашим целям, чтобы это сработало.",
+                        frFR = "Utilisera automatiquement " .. A.GetSpellInfo(80240) .. " si plusieurs ennemis sont présents. \nIMPORTANT: vous devez associer la touche TargetEnemy ET faire face à toutes vos cibles pour que cela fonctionne.",
                     }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "HavocTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(80240) .. " TTD",
+                        ruRU = A.GetSpellInfo(80240) .. " TTD",
+                        frFR = A.GetSpellInfo(80240) .. " TTD",
+                    }, 
+                    TT = { 
+                        enUS = A.GetSpellInfo(80240) .. " minimum time to die to use on unit.\nDefault value: 10.",
+                        ruRU = A.GetSpellInfo(80240) .. " минимальное время, чтобы умереть, чтобы использовать на юнит.\nЗначение по умолчанию: 10.",
+                        frFR = A.GetSpellInfo(80240) .. " temps minimum pour mourir avant d'utiliser sur l'unité.\nValeur par défaut: 10.",
+                    },
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "HavocRange",
+                    DBV = 35, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(80240) .. " range",
+                        ruRU = A.GetSpellInfo(80240) .. " сфера",
+                        frFR = A.GetSpellInfo(80240) .. " portée",
+                    }, 
+                    TT = { 
+                        enUS = "Maximum range for units counts to use " .. A.GetSpellInfo(80240) .. ".\nDefault value: 35.",
+                        ruRU = "Максимальный диапазон для использования единиц " .. A.GetSpellInfo(80240) .. ".\nЗначение по умолчанию: 35.",
+                        frFR = "Portée maximale pour le nombre d'unités avant d'utiliser " .. A.GetSpellInfo(80240) .. ".\nValeur par défaut: 35.",
+                    },
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "HavocUnits",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(80240) .. " max units",
+                        ruRU = A.GetSpellInfo(80240) .. " максимум единиц",
+                        frFR = A.GetSpellInfo(80240) .. " max unités",
+                    }, 
+                    TT = { 
+                        enUS = "Maximum units counts to use " .. A.GetSpellInfo(80240) .. ".\nDefault value: 4.",
+                        ruRU = "Максимальное количество единиц для использования " .. A.GetSpellInfo(80240) .. ".\nЗначение по умолчанию: 4.",
+                        frFR = "Nombre maximum d'unités pour utiliser " .. A.GetSpellInfo(80240) .. ".\nValeur par défaut: 4",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "HavocPoolShards",
+                    DBV = 3.8, -- Set healthpercentage @30% life. 
+					Precision = 1,
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(80240) .. " shards pool",
+                        ruRU = A.GetSpellInfo(80240) .. " осколки pool",
+                        frFR = A.GetSpellInfo(80240) .. " pool shards",
+                    }, 
+                    TT = { 
+                        enUS = "You can tweak here how many Soul Shards the rotation should try to keep before using " .. A.GetSpellInfo(80240) .. ".\nDefault value: 4",
+                        ruRU = "Здесь вы можете настроить количество осколков души, которые вращение должно пытаться сохранить перед использованием " .. A.GetSpellInfo(80240) .. ".\nЗначение по умолчанию: 4",
+                        frFR = "Vous pouvez modifier ici le nombre de fragments d'âme que la rotation doit essayer de conserver avant d'utiliser " .. A.GetSpellInfo(80240) .. ".\nValeur par défaut: 4",
+                    },  
+                    M = {},
+                },
+
+			},	
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(5740) .. " Settings -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "RainofFireForceUse",
+                    DBV = false,
+                    L = { 
+                        enUS = "Force " .. A.GetSpellInfo(5740) .. " and ignore Crashing Chaos", 
+                        ruRU = "Force " .. A.GetSpellInfo(5740) .. " and ignore Crashing Chaos", 
+                        frFR = "Force " .. A.GetSpellInfo(5740) .. " and ignore Crashing Chaos",  
+                    }, 
+                    TT = { 
+                        enUS = "Force Rain of Fire even if you got Crashing Chaos buff that power up Chaos Bolt.\nNote: If unchecked, rotation will use Chaos Bolt when Crashing Chaos is active.", 
+                        ruRU = "Force Rain of Fire even if you got Crashing Chaos buff that power up Chaos Bolt.\nNote: If unchecked, rotation will use Chaos Bolt when Crashing Chaos is active.", 
+                        frFR = "Force Rain of Fire even if you got Crashing Chaos buff that power up Chaos Bolt.\nNote: If unchecked, rotation will use Chaos Bolt when Crashing Chaos is active.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 10,                            
+                    DB = "IgnoreChaosBolt",
+                    DBV = -1, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = "Totaly ignore " .. A.GetSpellInfo(116858) .. " units",
+                        ruRU = "Totaly ignore " .. A.GetSpellInfo(116858) .. " units",
+                        frFR = "Totaly ignore " .. A.GetSpellInfo(116858) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "Totaly ignore " .. A.GetSpellInfo(116858) .. " if more than X units are detected in specified range setting.\nDefault value: Disabled",
+                        ruRU = "Totaly ignore " .. A.GetSpellInfo(116858) .. " if more than X units are detected in specified range setting.\nDefault value: Disabled",
+                        frFR = "Totaly ignore " .. A.GetSpellInfo(116858) .. " if more than X units are detected in specified range setting.\nDefault value: Disabled",
+                    },
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "RainofFireTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(5740) .. " AoE TTD",
+                        ruRU = A.GetSpellInfo(5740) .. " AoE TTD",
+                        frFR = A.GetSpellInfo(5740) .. " AoE TTD",
+                    }, 
+                    TT = { 
+                        enUS = A.GetSpellInfo(5740) .. " minimum time to die to use on unit.\nDefault value: 10.",
+                        ruRU = A.GetSpellInfo(5740) .. " минимальное время, чтобы умереть, чтобы использовать на юнит.\nЗначение по умолчанию: 10.",
+                        frFR = A.GetSpellInfo(5740) .. " temps minimum pour mourir avant d'utiliser sur l'unité.\nValeur par défaut: 10.",
+                    },
                     M = {},
                 },
                 {
@@ -584,50 +740,38 @@ A.Data.ProfileUI = {
                     DBV = 4, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(5740) .. " units",
+                        enUS = A.GetSpellInfo(5740) .. " min units",
+                        ruRU = A.GetSpellInfo(5740) .. " мин единиц",
+                        frFR = A.GetSpellInfo(5740) .. " min unités",
                     }, 
+                    TT = { 
+                        enUS = "Minimum units counts to use " .. A.GetSpellInfo(5740) .. ".\nDefault value: 4.",
+                        ruRU = "Минимальное количество единиц для использования " .. A.GetSpellInfo(5740) .. ".\nЗначение по умолчанию: 4.",
+                        frFR = "Nombre minimum d'unités pour utiliser " .. A.GetSpellInfo(5740) .. ".\nValeur par défaut: 4",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "RainofFireRange",
+                    DBV = 35, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(5740) .. " range",
+                        ruRU = A.GetSpellInfo(5740) .. " сфера",
+                        frFR = A.GetSpellInfo(5740) .. " portée",
+                    }, 
+                    TT = { 
+                        enUS = "Maximum range for units counts to use " .. A.GetSpellInfo(5740) .. ".\nDefault value: 35.",
+                        ruRU = "Максимальный диапазон для использования единиц " .. A.GetSpellInfo(5740) .. ".\nЗначение по умолчанию: 35.",
+                        frFR = "Portée maximale pour le nombre d'unités avant d'utiliser " .. A.GetSpellInfo(5740) .. ".\nValeur par défaut: 35.",
+                    },  
                     M = {},
                 },
 
 			},			
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Miscellaneous -- ",
-                    },
-                },
-            },
-            { -- [4] 4th Row
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = A.GetSpellInfo(688), value = "IMP" },
-                        { text = A.GetSpellInfo(697), value = "VOIDWALKER" },                    
-                        { text = A.GetSpellInfo(691), value = "FELHUNTER" },
-                        { text = A.GetSpellInfo(712), value = "SUCCUBUS" },
-                    },
-                    DB = "PetChoice",
-                    DBV = "IMP",
-                    L = { 
-                        enUS = "Pet selection", 
-                        ruRU = "Выбор питомца", 
-                        frFR = "Sélection du familier",
-                    }, 
-                    TT = { 
-                        enUS = "Choose the pet to summon", 
-                        ruRU = "Выберите питомца для призыва", 
-                        frFR = "Choisir le familier à invoquer",
-					},
-                    M = {},
-                },
-            },
             { -- [4] 4th Row
 
                 {
@@ -665,82 +809,25 @@ A.Data.ProfileUI = {
                     DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                        ANY = A.GetSpellInfo(301308) .. " HP (%)",
                     }, 
                     M = {},
                 },
 			},
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
-            { -- [7]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Overlay -- ",
-                    },
-                },
-            },
-            { -- [2] 2nd Row
-                {
-                    E = "Checkbox", 
-                    DB = "UseAnnouncer",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use Smart Announcer", 
-                        ruRU = "Use Smart Announcer",  
-                        frFR = "Use Smart Announcer", 
-                    }, 
-                    TT = { 
-                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
-                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
-                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
-                    DB = "AnnouncerInCombatOnly",
-                    DBV = true,
-                    L = { 
-                        enUS = "Only use in combat", 
-                        ruRU = "Only use in combat", 
-                        frFR = "Only use in combat",
-                    }, 
-                    TT = { 
-                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
-                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
-                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
-                    }, 
-                    M = {},
-                },
+            { -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 10,                            
-                    DB = "AnnouncerDelay",
-                    DBV = 2, -- 2sec
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "MortalCoilHP",
+                    DBV = 30, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Alerts delay (sec)",
-                    },
-                    TT = { 
-                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
-                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
-                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
-                    }, 					
+                        ANY = A.GetSpellInfo(6789) .. " HP(%)",
+                    }, 
                     M = {},
-                },				
-            },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
                 },
-            },			
+			},			
             { -- [6]
                 {
                     E = "Header",
@@ -773,12 +860,50 @@ A.Data.ProfileUI = {
                     M = {},
                 },            
             }, 
-            { -- [4] 4th Row
-
+            { -- [7] 
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dummy DPS Test -- ",
+                    },
                 },
-            },			
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 10,                            
+                    DB = "DummyTime",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "DPS Testing Time",
+                    },
+                    TT = { 
+                        enUS = "Set the desired time for test in minutes.\nWill show a notification icon when time is expired.\nMin: 1 / Max: 10.", 
+                        ruRU = "Установите желаемое время для теста в минутах.\nПо истечении времени будет отображаться значок уведомления.\nMin: 1 / Max: 10.",  
+                        frFR = "Définissez la durée souhaitée pour le test en minutes.\nAffiche une icône de notification lorsque le temps est écoulé.\nMin: 1 / Max: 10.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 15,                            
+                    DB = "DummyStopDelay",
+                    DBV = 10, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Stop Delay",
+                    },
+                    TT = { 
+                        enUS = "After the dummy test is concluded, how much time should we stop the rotation. (In seconds)\nThis value is mainly used as a protection when you are out of combat to avoid auto attack.\nDefault value : 10 seconds.", 
+                        ruRU = "После того, как фиктивный тест закончен, сколько времени мы должны остановить вращение. (В секундах)\nЭто значение в основном используется в качестве защиты, когда вы находитесь вне боя, чтобы избежать автоматической атаки.\nЗначение по умолчанию: 10 секунд.", 
+                        frFR = "Une fois le test fictif terminé, combien de temps devons-nous arrêter la rotation. (En secondes)\nCette valeur est principalement utilisée comme protection lorsque vous êtes hors de combat pour éviter l'attaque automatique.\nValeur par défaut: 10 secondes.", 
+                    }, 					
+                    M = {},
+                },
+			},			
             { -- [7] 
                 {
                     E = "Header",
