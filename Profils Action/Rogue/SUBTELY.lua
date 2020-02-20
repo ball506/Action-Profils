@@ -269,11 +269,11 @@ A[3] = function(icon, isMulti)
             end
             -- potion
             if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.ProlongedPower:Show(icon)
+                return A.ProlongedPower:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady("player") then
-                A.AzsharasFontofPower:Show(icon)
+                return A.AzsharasFontofPower:Show(icon)
             end
         end
         
