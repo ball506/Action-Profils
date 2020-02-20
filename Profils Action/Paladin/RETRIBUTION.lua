@@ -567,7 +567,11 @@ A[3] = function(icon, isMulti)
         --Finishers
         local function Finishers(unit)
             -- variable,name=wings_pool,value=!equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*3|cooldown.crusade.remains>gcd*3)|equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*6|cooldown.crusade.remains>gcd*6)
-            VarWingsPool = (not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) or (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6))
+            VarWingsPool =  (
+			                    not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) 
+								or 
+								(not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6)
+							)
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
             VarDsCastable = (GetByRange(2, 10) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 10) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
 
@@ -604,7 +608,7 @@ A[3] = function(icon, isMulti)
             -- templars_verdict,if=variable.wings_pool&(!talent.execution_sentence.enabled|cooldown.execution_sentence.remains>gcd*2|cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10)
             if A.TemplarsVerdict:IsReady(unit) and 
 			(
-			    (VarWingsPool or not A.BurstIsON(unit)) and 
+			    VarWingsPool and 
 				(
 				    not A.ExecutionSentence:IsSpellLearned() 
 					or 
@@ -629,12 +633,26 @@ A[3] = function(icon, isMulti)
             VarHow = (not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) == 0))
 
             -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|talent.inquisition.enabled&buff.inquisition.down&holy_power>=3
-            if Finishers(unit) and (Player:HolyPower() >= 5 or Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 or Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 or A.Inquisition:IsSpellLearned() and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 and Player:HolyPower() >= 3) then
+            if Finishers(unit) and 
+			(
+			    Player:HolyPower() >= 5 
+				or 
+				Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 
+				or 
+				Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) > 0 
+				or 
+				A.Inquisition:IsSpellLearned() and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 and Player:HolyPower() >= 3
+			)
+			then
                 return true
             end
 			
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
-            if A.WakeofAshes:IsReady(unit) and ((not (GetByRange(1, 40)) or GetByRange(2, 5)) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
+            if A.WakeofAshes:IsReady(unit) and 
+			(
+			    (not (GetByRange(1, 40)) or GetByRange(2, 5)) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)
+			)
+			then
                 return A.WakeofAshes:Show(icon)
             end
 			
