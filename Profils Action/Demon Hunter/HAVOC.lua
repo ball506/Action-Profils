@@ -742,13 +742,13 @@ A[3] = function(icon, isMulti)
         
         -- auto_attack
         -- variable,name=blade_dance,value=talent.first_blood.enabled|spell_targets.blade_dance1>=(3-talent.trail_of_ruin.enabled)
-        VarBladeDance = A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned()))
+        VarBladeDance = (A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned())))
         -- variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
         VarWaitingForNemesis = not (not A.Nemesis:IsSpellLearned() or A.Nemesis:GetCooldown() == 0 or A.Nemesis:GetCooldown() > Unit(unit):TimeToDie() or A.Nemesis:GetCooldown() > 60)           
         -- variable,name=pooling_for_meta,value=!talent.demonic.enabled&cooldown.metamorphosis.remains<6&fury.deficit>30&(!variable.waiting_for_nemesis|cooldown.nemesis.remains<10)            
         VarPoolingForMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and Fury < 90 and (not VarWaitingForNemesis or A.Nemesis:GetCooldown() < 10)            
         -- variable,name=pooling_for_blade_dance,value=variable.blade_dance&(fury<75-talent.first_blood.enabled*20)            
-        VarPoolingForBladeDance = VarBladeDance and (Fury < 35 - (A.FirstBlood:IsSpellLearned() and 20 or 0))           
+        VarPoolingForBladeDance = A.FirstBlood:IsSpellLearned() and Fury < 35           
         -- variable,name=pooling_for_eye_beam,value=talent.demonic.enabled&!talent.blind_fury.enabled&cooldown.eye_beam.remains<(gcd.max*2)&fury.deficit>20
         VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and Fury < 80            
         -- variable,name=waiting_for_dark_slash,value=talent.dark_slash.enabled&!variable.pooling_for_blade_dance&!variable.pooling_for_meta&cooldown.dark_slash.up
@@ -761,43 +761,53 @@ A[3] = function(icon, isMulti)
 		
 		--Precombat
         local function Precombat(unit)
-			
-            -- immolation_aura
-            if A.ImmolationAura:IsReady(unit) and Unit(unit):GetRange() > 6 and ((Pull > 0.1 and Pull <= 3) or not Action.GetToggle(1, "DBM")) then
-                return A.ImmolationAura:Show(icon)
-            end	
-			
-            -- BattlePotionofAgility
-            if A.BattlePotionofAgility:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
-                return A.BattlePotionofAgility:Show(icon)
-            end
-			
-            -- PotionofFocusedResolve
-            if A.PotionofFocusedResolve:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
-                return A.PotionofFocusedResolve:Show(icon)
-            end
-			
-            -- PotionofUnbridledFury
-            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
-                return A.PotionofUnbridledFury:Show(icon)
-            end
-			
+		
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) and ((Pull > 0.1 and Pull <= 6) or not Action.GetToggle(1, "DBM")) then
+            if A.AzsharasFontofPower:IsReady("player") and ((Pull > 0.1 and Pull <= 6) or not Action.GetToggle(1, "DBM")) then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Azshara trinket", A.AzsharasFontofPower.ID) 
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
+            -- immolation_aura
+            if A.ImmolationAura:IsReady(unit) and Unit(unit):GetRange() > 6 and ((Pull > 0.1 and Pull <= 4) or not Action.GetToggle(1, "DBM")) then
+	            -- Notification					
+                Action.SendNotification("Prepull: Immolation Aura", A.ImmolationAura.ID) 
+                return A.ImmolationAura:Show(icon)
+            end	
+			
+            -- Arcane Torrent dispell or if FuryDeficit >= 30
+            if A.ArcaneTorrent:IsRacialReady(unit) and A.BurstIsON(unit) and Action.GetToggle(1, "Racial") and ((Pull > 0.1 and Pull <= 3) or not Action.GetToggle(1, "DBM")) 
+			then
+	            -- Notification					
+                Action.SendNotification("Prepull: Arcane Torrent", A.ArcaneTorrent.ID) 
+                return A.ArcaneTorrent:Show(icon)
+            end	
+					
+            -- PotionofUnbridledFury
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and ((Pull > 0.1 and Pull <= 2) or not Action.GetToggle(1, "DBM")) then
+	            -- Notification					
+                Action.SendNotification("Using pre pot", A.PotionofUnbridledFury.ID) 
+                return A.PotionofUnbridledFury:Show(icon)
+            end	
+
+            -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and A.BurstIsON(unit) and Action.GetToggle(1, "Racial") and ((Pull > 0.1 and Pull <= 1.8) or not Action.GetToggle(1, "DBM"))
+			then
+	            -- Notification					
+                Action.SendNotification("Prepull: Guardian of Azeroth", A.GuardianofAzeroth.ID) 
+                return A.GuardianofAzeroth:Show(icon)
+            end			
+			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 8 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 8 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 0.5) or not Action.GetToggle(1, "DBM")) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
             end
 			
 			-- use_item,name=azsharas_font_of_power
-            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 0.5) or not Action.GetToggle(1, "DBM")) then
                 return A.DemonsBite:Show(icon)
             end
 			
@@ -814,7 +824,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.ReapingFlames:IsRacialReady(unit) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.ReapingFlames:Show(icon)
             end
 			
@@ -932,11 +942,11 @@ A[3] = function(icon, isMulti)
             end
 			
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
-            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
+         --   if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 or Unit(unit):TimeToDie() < 60) then
  	            -- Notification					
-                Action.SendNotification("Burst: Potion of Unbridled Fury", A.PotionofUnbridledFury.ID)	
-                return A.PotionofUnbridledFury:Show(icon)
-            end
+         --       Action.SendNotification("Burst: Potion of Unbridled Fury", A.PotionofUnbridledFury.ID)	
+         --       return A.PotionofUnbridledFury:Show(icon)
+         --   end
 			
             -- use_item,name=galecallers_boon,if=!talent.fel_barrage.enabled|cooldown.fel_barrage.ready
             if A.GalecallersBoon:IsReady(unit) and CanCast and (not A.FelBarrage:IsSpellLearned() or A.FelBarrage:GetCooldown() == 0) then
@@ -972,7 +982,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
+            if A.AzsharasFontofPower:IsReady("player") and CanCast and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Azshara trinket", A.AzsharasFontofPower.ID)               
 				return A.AzsharasFontofPower:Show(icon)
@@ -994,12 +1004,12 @@ A[3] = function(icon, isMulti)
             end
 
             -- annihilation,if=debuff.dark_slash.up
-            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and not VarPoolingForBladeDance and CanCast and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true) > 0) then
                 return A.Annihilation:Show(icon)
             end
 			
             -- chaos_strike,if=debuff.dark_slash.up
-            if A.ChaosStrike:IsReady(unit) and CanCast and IsInMeleeRange() and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true)) then
+            if A.ChaosStrike:IsReady(unit) and CanCast and not VarPoolingForBladeDance and (Unit(unit):HasDeBuffs(A.DarkSlashDebuff.ID, true) > 0) then
                 return A.ChaosStrike:Show(icon)
             end
         end
@@ -1012,22 +1022,24 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(unit) 
-			and CanCast 
-			and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 8 and (VarBladeDance) 
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast 
+			-- and Unit(unit):GetRange() <= 8 and (VarBladeDance)  
 			then
                 return A.DeathSweep:Show(icon)
             end
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= (A.GetGCD() + A.GetCurrentGCD()) and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and 
+			(Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and 
+			Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  
+			then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance and A.Metamorphosis:GetCooldown() > 0) 
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 8 and (VarBladeDance and A.Metamorphosis:GetCooldown() > 0) 
 			and ((A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) or not A.GetToggle(2, "BladeDancePool"))
 			then
                 return A.BladeDance:Show(icon)
@@ -1047,7 +1059,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) 
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 8 and (VarBladeDance) 
 			and 
 			(
 			    (A.GetToggle(2, "BladeDancePool") and A.EyeBeam:GetCooldown() > A.GetToggle(2, "BladeDancePoolSeconds")) 
@@ -1059,7 +1071,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- annihilation,if=!variable.pooling_for_blade_dance
-            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and (not VarPoolingForBladeDance) 
+            if A.Annihilation:IsReadyByPassCastGCD(unit) and CanCast and not VarPoolingForBladeDance 
 			then
                 return A.Annihilation:Show(icon)
             end
@@ -1070,12 +1082,27 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chaos_strike,if=!variable.pooling_for_blade_dance&!variable.pooling_for_eye_beam
-            if A.ChaosStrike:IsReady(unit) and CanCast and IsInMeleeRange() and (not VarPoolingForBladeDance and not VarPoolingForEyeBeam) then
+            if A.ChaosStrike:IsReady(unit) and CanCast and (not VarPoolingForBladeDance and not VarPoolingForEyeBeam) then
                 return A.ChaosStrike:Show(icon)
             end	
 			
             -- demons_bite
-            if A.DemonsBite:IsReady(unit) and CanCast and not A.DemonBlades:IsSpellLearned() then
+            if A.DemonsBite:IsReady(unit) and CanCast and not A.DemonBlades:IsSpellLearned() and 
+			(
+			    (
+				    A.DeathSweep:GetCooldown() > 0 and Player:Fury() < A.Annihilation:GetSpellPowerCost() 
+					or 
+					A.DeathSweep:GetCooldown() == 0 and Player:Fury() < A.DeathSweep:GetSpellPowerCost() 
+				)  
+				or 
+				Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and 
+				(
+				    A.BladeDance:GetCooldown() > 0 and Player:Fury() < A.ChaosStrike:GetSpellPowerCost() 
+					or 
+					A.BladeDance:GetCooldown() == 0 and Player:Fury() < A.BladeDance:GetSpellPowerCost() 
+				)
+			) 
+			then
                 return A.DemonsBite:Show(icon)
             end	
 			
@@ -1099,7 +1126,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and CanCast and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) then
+            if A.ThrowGlaive:IsReady(unit) and CanCast and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() > 1) then
                 return A.ThrowGlaive:Show(icon)
             end
 			
@@ -1139,7 +1166,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and (VarBladeDance) then
+            if A.BladeDance:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 8 and (VarBladeDance) then
                 return A.BladeDance:Show(icon)
             end
 			
@@ -1170,7 +1197,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- chaos_strike
-            if A.ChaosStrike:IsReady(unit) and CanCast and (Fury > 40) then
+            if A.ChaosStrike:IsReady(unit) and CanCast and not VarPoolingForBladeDance then
                 return A.ChaosStrike:Show(icon)
             end
 			
@@ -1182,7 +1209,22 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demons_bite
-            if A.DemonsBite:IsReady(unit) and CanCast and not A.DemonBlades:IsSpellLearned() then
+            if A.DemonsBite:IsReady(unit) and CanCast and not A.DemonBlades:IsSpellLearned() and 
+			(
+			    (
+				    A.DeathSweep:GetCooldown() > 0 and Player:Fury() < A.Annihilation:GetSpellPowerCost() 
+					or 
+					A.DeathSweep:GetCooldown() == 0 and Player:Fury() < A.DeathSweep:GetSpellPowerCost() 
+				)  
+				or 
+				Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) == 0 and 
+				(
+				    A.BladeDance:GetCooldown() > 0 and Player:Fury() < A.ChaosStrike:GetSpellPowerCost() 
+					or 
+					A.BladeDance:GetCooldown() == 0 and Player:Fury() < A.BladeDance:GetSpellPowerCost() 
+				)
+			) 
+			then
                 return A.DemonsBite:Show(icon)
             end
 			
@@ -1197,7 +1239,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- throw_glaive,if=talent.demon_blades.enabled
-            if A.ThrowGlaive:IsReady(unit) and CanCast and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() == 2) then
+            if A.ThrowGlaive:IsReady(unit) and CanCast and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() > 1) then
                 return A.ThrowGlaive:Show(icon)
             end
 			
@@ -1275,11 +1317,18 @@ A[3] = function(icon, isMulti)
 			end
 			
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam()  
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and A.BladeDance:GetCooldown() <= 2 and not Unit(unit):IsTotem() and HandleEyeBeam()  
 			then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
+            end
+
+            -- death_sweep,if=variable.blade_dance
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast 
+			-- and Unit(unit):GetRange() <= 8 and (VarBladeDance)  
+			then
+                return A.DeathSweep:Show(icon)
             end
 						
             -- call_action_list,name=cooldown,if=gcd.remains=0          (A.GetCurrentGCD() == 0) and

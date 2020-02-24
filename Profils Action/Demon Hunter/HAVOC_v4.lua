@@ -533,21 +533,21 @@ local function Interrupts(unit)
     end 
 	
     -- Chaos Nova    
-    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
+    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) and Unit(unit):IsControlAble("stun") then 
 	    -- Notification					
         Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
 		return A.ChaosNova              
     end 
     
 	-- Imprison    
-    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
 	    -- Notification					
         Action.SendNotification("CC : Imprison", A.Imprison.ID)        
 		return A.Imprison              
     end 
 	
 	-- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
 	    -- Notification					
         Action.SendNotification("Kick : Disrupt", A.Disrupt.ID)        
 		return A.Disrupt
@@ -603,15 +603,23 @@ A[3] = function(icon, isMulti)
     local unit = player
 	local HoABossOnly = A.GetToggle(2, "HoABossOnly")
 	local EyeBeamTTD = A.GetToggle(2, "EyeBeamTTD")
-	local ExpectedCombatLength = ExpectedCombatLength()
-	local HandleDarkness = HandleDarkness()
+    local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
 	local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
 	local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
+	local InterruptMin = A.GetToggle(2, "InterruptMin")
+	local InterruptMax = A.GetToggle(2, "InterruptMax")
+	local FelBladeRange = A.GetToggle(2, "FelBladeRange")
+	local FelBladeFury = A.GetToggle(2, "FelBladeFury")	
+	local FelBladeOutOfRange = A.GetToggle(2, "FelBladeOutOfRange")	
+	local ImprisonAsInterrupt = A.GetToggle(2, "ImprisonAsInterrupt")			
+	local ExpectedCombatLength = ExpectedCombatLength()
+	local HandleDarkness = HandleDarkness()
 	local Fury = Player:Fury()
 	local FuryDeficit = Player:FuryDeficit()
 	local UnbridledFuryAuto = A.GetToggle(2, "UnbridledFuryAuto")
 	local UnbridledFuryTTD = A.GetToggle(2, "UnbridledFuryTTD")
 	local UnbridledFuryWithSecondMeta = A.GetToggle(2, "UnbridledFuryWithSecondMeta")
+	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
 	local UseHeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local SyncBladeDanceDeathSweepWithEyeBeam = Action.GetToggle(2, "SyncBladeDanceDeathSweepWithEyeBeam")
     local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
@@ -640,18 +648,18 @@ A[3] = function(icon, isMulti)
 	------------------------------------
 	---------- DUMMY DPS TEST ----------
 	------------------------------------
-	local DummyTest = GetToggle(2, "DummyTest")
-	if DummyTest > 0 then
+	local DummyTime = GetToggle(2, "DummyTime")
+	if DummyTime > 0 then
     	local unit = "target"
 		local endtimer = 0
 		
-    	if Unit(unit):IsExists() then
-        	if Unit("player"):CombatTime() >= (DummyTest * 60) and Unit(unit):IsDummy() then
+    	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
+        	if Unit("player"):CombatTime() >= (DummyTime * 60) then
             	StopAttack()
 				endtimer = TMW.time
             	--ClearTarget() -- Protected ? 
 	       	    -- Notification					
-          	    Action.SendNotification(DummyTest .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
+          	    Action.SendNotification(DummyTime .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
          	    
 				if endtimer < TMW.time + 5 then
 				    profileStop = true
@@ -687,6 +695,11 @@ A[3] = function(icon, isMulti)
 		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
 			return A.ConsumeMagic:Show(icon)
 		end
+		
+        -- Imprison CrowdControl PvP
+        if A.ImprisonIsReady(unit) and not Unit(unit):InLOS() then
+            return A.ImprisonIsReady:Show(icon)
+        end  
 		
         -- Interrupts
         local Interrupt = Interrupts(unit)
@@ -879,7 +892,12 @@ A[3] = function(icon, isMulti)
 			
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
             if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
-			and (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 and UnbridledFuryWithSecondMeta) 
+			and 
+			(
+			    (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 and UnbridledFuryWithSecondMeta)
+				or
+				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
+			)
 			and Unit(unit):TimeToDie() > UnbridledFuryTTD
 			then
  	            -- Notification					
@@ -962,14 +980,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(player) and CanCast and VarBladeDance 
+            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance 
 			and ((A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) or not SyncBladeDanceDeathSweepWithEyeBeam)
 			then
                 return A.DeathSweep:Show(icon)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(player) and CanCast and CanCast and VarBladeDance 
+            if A.BladeDance:IsReady(player) and InMelee(unit) and CanCast and VarBladeDance 
 			and ((A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) or not SyncBladeDanceDeathSweepWithEyeBeam)
 			then
                 --(BladeDancePool and A.EyeBeam:GetCooldown() < A.BladeDance:GetCooldown() * BladeDancePoolSeconds)  
@@ -978,7 +996,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= 20 and 
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
 			(
 			    Unit(unit):TimeToDie() > EyeBeamTTD 
 				or 
@@ -1009,7 +1027,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and CanCast and A.Felblade:IsSpellLearned() and (Fury < 60) then
+            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() <= FelBladeRange and CanCast and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1024,7 +1042,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and CanCast and A.Felblade:IsSpellLearned() and Unit(unit):GetRange() > 15 and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and CanCast and Unit(unit):GetRange() > 10 and FelBladeOutOfRange and A.Felblade:IsSpellLearned() and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1056,7 +1074,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(unit) and CanCast and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 5 and VarBladeDance then
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
                 return A.DeathSweep:Show(icon)
             end
 			
@@ -1066,24 +1084,24 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam()  then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)               
 				return A.EyeBeam:Show(icon)
             end
 			
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and CanCast and Unit(unit):GetRange() <= 7 and VarBladeDance then
+            if A.BladeDance:IsReady(unit) and InMelee(unit) and CanCast and VarBladeDance then
                 return A.BladeDance:Show(icon)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and A.Felblade:IsSpellLearned() and Fury <= 60 then
+            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() <= FelBladeRange and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
                 return A.Felblade:Show(icon)
             end
 			
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
@@ -1111,7 +1129,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= 20 and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
 				return A.EyeBeam:Show(icon)
@@ -1123,7 +1141,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and CanCast and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() > 7 and FelBladeOutOfRange and CanCast and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1215,13 +1233,13 @@ local function ArenaRotation(icon, unit)
         -- Note: "arena1" is just identification of meta 6
         if unit == "arena1" then 
 			-- Disrupt
-   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
       		    return A.Disrupt
    			end 	
             -- Imprison Casting BreakAble CC
-            if A.Imprison:IsReady(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.Imprison:Show(icon)
-            end 
+            if A.ImprisonIsReady(unit) and not Unit(unit):InLOS() then
+                return A.ImprisonIsReady:Show(icon)
+            end   
 			-- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
             -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")

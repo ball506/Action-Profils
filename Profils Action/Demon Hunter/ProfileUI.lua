@@ -1,13 +1,30 @@
 --------------------
 -- Taste TMW Action ProfileUI
 
-local TMW = TMW 
-local CNDT = TMW.CNDT 
-local Env = CNDT.Env
-local A = Action
+local TMW											= TMW 
+local CNDT											= TMW.CNDT
+local Env											= CNDT.Env
+
+local A												= Action
+local GetToggle										= A.GetToggle
+local InterruptIsValid								= A.InterruptIsValid
+
+local UnitCooldown									= A.UnitCooldown
+local Unit											= A.Unit 
+local Player										= A.Player 
+local Pet											= A.Pet
+local LoC											= A.LossOfControl
+local MultiUnits									= A.MultiUnits
+local EnemyTeam										= A.EnemyTeam
+local FriendlyTeam									= A.FriendlyTeam
+local TeamCache										= A.TeamCache
+local InstanceInfo									= A.InstanceInfo
+
+local select, setmetatable							= select, setmetatable
+
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.3 (15.02.2020)",
+    DateTime = "v4.0.5 (17.02.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -21,7 +38,176 @@ A.Data.ProfileUI = {
                 },
             },			
             { -- [1] 1st Row
-		
+                {
+                    E = "ColorPicker", 
+					ZONE = 'Panel',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerPanel",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "ColorPicker", 
+					ZONE = 'Highlight',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerHighlight",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "ColorPicker", 
+					ZONE = 'Border',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerBorder",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "ColorPicker", 
+					ZONE = 'Window',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerMain",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "ColorPicker", 
+					ZONE = 'FontNormal',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerFontNormal",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "ColorPicker", 
+					ZONE = 'FontHeader',
+                    COLOR = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    DB = "colorpickerFontHeader",
+                    DBV = {
+                        R = 1, 
+                        G = 0,  
+					    B = 0.3,
+					    A = 0.7,
+				    },
+                    L = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    TT = { 
+                        enUS = "Colorpicker", 
+                        ruRU = "Colorpicker",
+                        frFR = "Colorpicker",
+                    }, 
+                    M = {},
+                },
+			},
+			{
                 {
                     E = "Checkbox", 
                     DB = "mouseover",
@@ -112,6 +298,67 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 	
             },
+			-- FelBlade
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(232893) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row
+                {
+                    E = "Checkbox", 
+                    DB = "FelBladeOutOfRange",
+                    DBV = false,
+                    L = { 
+                        enUS = "FelBlade Out Of Range", 
+                        ruRU = "FelBlade Out Of Range",
+                        frFR = "FelBlade Out Of Range", 
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will FelBlade Out Of Range depending on the maximum range you set in above settings.", 
+                        ruRU = "If activated, will FelBlade Out Of Range depending on the maximum range you set in above settings.", 
+                        frFR = "If activated, will FelBlade Out Of Range depending on the maximum range you set in above settings.", 
+                    }, 
+                    M = {},
+                }, 			
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 15,                            
+                    DB = "FelBladeRange",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(232893) .. " range",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".", 
+                        ruRU = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".", 
+                        frFR = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 120,                            
+                    DB = "FelBladeFury",
+                    DBV = 60, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(232893) .. " fury",
+                    },
+                    TT = { 
+                        enUS = "Set the amount of fury before using " .. A.GetSpellInfo(232893) .. ".", 
+                        ruRU = "Set the amount of fury before using " .. A.GetSpellInfo(232893) .. ".", 
+                        frFR = "Set the amount of fury before using " .. A.GetSpellInfo(232893) .. ".", 
+                    }, 					
+                    M = {},
+                },
+			},				
             { -- [7] 
                 {
                     E = "Header",
@@ -160,7 +407,9 @@ A.Data.ProfileUI = {
                         frFR = "Personnalisez vos options " .. A.GetSpellInfo(198013) .. ". Plusieurs contrôles possibles..",  
                     }, 
                     M = {},
-                },		
+                },	
+            },
+            {			
                 {
                     E = "Slider",                                                     
                     MIN = 3, 
@@ -175,6 +424,23 @@ A.Data.ProfileUI = {
                         enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(198013) .. " \nDoes not apply to Boss.", 
                         ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(198013) .. " \nНе применимо к боссу.", 
                         frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(198013) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "EyeBeamRange",
+                    DBV = 7, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(198013) .. " range",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum range for a unit before using " .. A.GetSpellInfo(198013) .. " \n", 
+                        ruRU = "Set the minimum range for a unit before using " .. A.GetSpellInfo(198013) .. " \n", 
+                        frFR = "Set the minimum range for a unit before using " .. A.GetSpellInfo(198013) .. " \n", 
                     }, 					
                     M = {},
                 },
@@ -494,18 +760,35 @@ A.Data.ProfileUI = {
             { -- [3] 3rd Row 					
                 {
                     E = "Slider",                                                     
-                    MIN = 1, 
+                    MIN = -1, 
                     MAX = 10,                            
-                    DB = "DummyTest",
+                    DB = "DummyTime",
                     DBV = 5, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = "DPS Testing Time",
                     },
                     TT = { 
-                        enUS = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
-                        ruRU = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
-                        frFR = "Set the desired time for test in minutes. Min: 1 / Max: 10.", 
+                        enUS = "Set the desired time for test in minutes.\nWill show a notification icon when time is expired.\nMin: 1 / Max: 10.", 
+                        ruRU = "Установите желаемое время для теста в минутах.\nПо истечении времени будет отображаться значок уведомления.\nMin: 1 / Max: 10.",  
+                        frFR = "Définissez la durée souhaitée pour le test en minutes.\nAffiche une icône de notification lorsque le temps est écoulé.\nMin: 1 / Max: 10.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 15,                            
+                    DB = "DummyStopDelay",
+                    DBV = 10, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Stop Delay",
+                    },
+                    TT = { 
+                        enUS = "After the dummy test is concluded, how much time should we stop the rotation. (In seconds)\nThis value is mainly used as a protection when you are out of combat to avoid auto attack.\nDefault value : 10 seconds.", 
+                        ruRU = "После того, как фиктивный тест закончен, сколько времени мы должны остановить вращение. (В секундах)\nЭто значение в основном используется в качестве защиты, когда вы находитесь вне боя, чтобы избежать автоматической атаки.\nЗначение по умолчанию: 10 секунд.", 
+                        frFR = "Une fois le test fictif terminé, combien de temps devons-nous arrêter la rotation. (En secondes)\nCette valeur est principalement utilisée comme protection lorsque vous êtes hors de combat pour éviter l'attaque automatique.\nValeur par défaut: 10 secondes.", 
                     }, 					
                     M = {},
                 },
@@ -569,6 +852,50 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },	
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {
@@ -950,6 +1277,39 @@ A.Data.ProfileUI = {
 -----------------------------------------
 --                   PvP  
 -----------------------------------------
+function A.ImprisonIsReady(unit, isMsg, skipShouldStop)
+    if A[A.PlayerSpec].Imprison then 
+        local unitID = A.GetToggle(2, "ImprisonPvPUnits")
+        return     (
+            (unit == "arena1" and unitID[1]) or 
+            (unit == "arena2" and unitID[2]) or
+            (unit == "arena3" and unitID[3]) or
+            (not unit:match("arena") and unitID[4]) 
+        ) and 
+        A.IsInPvP and
+        Unit(unit):IsEnemy() and  
+        (
+            (
+                not isMsg and 
+                A.GetToggle(2, "ImprisonPvP") ~= "OFF" and 
+                A[A.PlayerSpec].Imprison:IsReady(unit, nil, nil, skipShouldStop) and 
+                Unit(unit):GetRange() <= 20 and 
+                (
+                    A.GetToggle(2, "ImprisonPvP") == "ON COOLDOWN" or 
+                    Unit(unit):HasBuffs("DamageBuffs") > 3 
+                )
+            ) or 
+            (
+                isMsg and 
+                A[A.PlayerSpec].Imprison:IsReadyM(unit)                     
+            )
+        ) and 
+        Unit(unit):IsPlayer() and                     
+        A[A.PlayerSpec].Imprison:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
+        Unit(unit):IsControlAble("disarm", 0) and 
+        Unit(unit):HasDeBuffs("Disarmed") == 0
+    end 
+end 
 
 function A.Main_CastBars(unit, list)
     if not A.IsInitialized or A.IamHealer or (A.Zone ~= "arena" and A.Zone ~= "pvp") then 
