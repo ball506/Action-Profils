@@ -229,6 +229,32 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+local function InMelee(unit)
+	-- @return boolean 
+	return A.Ann:IsInRange(unit)
+end 
+
+local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InMelee(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			
+			if c >= count then 
+				return true 
+			end 
+		end 
+	end
+end 
+
 local function GuardianofAzerothIsActive() 
     return Pet:GetRemainDuration(152396) > 0 and true or false
 end	
