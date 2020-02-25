@@ -684,86 +684,6 @@ function Action:RegisterForSelfCombatEvent(Handler, ...)
     end
 end
 
-------------------------------------
--- DogTags
-------------------------------------
-local DogTag = LibStub("LibDogTag-3.0", true)
--- Taste's 
-TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
-
-------------------------------------
---------- NOTIFICATIONS API --------
-------------------------------------
--- Return a toast notification directly in game with status information from rotation. Useful for custom events announcer	
--- To Add : differents type of notifications and placements like : crowd controls, defensives, cooldowns, etc
--- @Parameters : Message and Spell are mandaroty settings. 
--- @optional Parameters : Delay and incombat can be nil 
--- Usage : /run Action.SendNotification("test", 22812, 2, false)	
-function Action.SendNotification(message, spell, delay, incombat)
-   	local DelaySetting = Action.GetToggle(2, "AnnouncerDelay")
-	local InCombatSetting = Action.GetToggle(2, "AnnouncerInCombatOnly")
-	local Enabled = Action.GetToggle(2, "UseAnnouncer")
-	local ErrorMessage = Action.Print("You didn't set any message for Notification.")
-	local combatTime = Unit("player"):CombatTime()
-	
-	-- If nil
-	if not message then
-	    Action.NotificationMessage = ErrorMessage
-	end
-	
-	-- Delay
-	if not delay then
-	    if DelaySetting then 
-		    delay = DelaySetting
-		else
-	        delay = 2
-		end
-	end
-	
-	-- Combat check
-	if not incombat then
-        if InCombatSetting then 
-            incombat = InCombatSetting
-		else		
-	        incombat = false
-		end
-	else
-	   incombat = true
-	end
-	
-	-- Variables
-	local timer = TMW.time
-	local endtimer = timer + delay	
-	local currentSpellTexture = GetSpellTexture(spell)
-	Action.NotificationMessage = ""
-	Action.NotificationIsValid = false
-    --Action.NotificationIsValidUntil = endtimer
-	Action.CurrentNotificationIcon = currentSpellTexture
-	-- Check if enabled
-	if Enabled then
-	    -- Option 1 : Combat only		
-	    if message and spell and incombat then 
-	        if (TMW.time <= endtimer) and combatTime > 1 then 
-	            Action.NotificationIsValid = true
-	            Action.NotificationMessage = message 				
-            else
-		        Action.NotificationIsValid = false
-		    end
-	    -- Option 2 : Everytime
-        elseif message and spell and not incombat then 	
-	        if TMW.time <= endtimer then 
-	            Action.NotificationIsValid = true
-	            Action.NotificationMessage = message            
-            else
-		        Action.NotificationIsValid = false
-	    	end
-	    end
-	end
-	TMW:Fire("TMW_ACTION_NOTIFICATION")	
-    return Action.NotificationMessage, Action.CurrentNotificationIcon, Action.NotificationIsValid
-	
-end			
-
 local function removeLastChar(text)
 	return text:sub(1, -2)
 end
@@ -843,6 +763,81 @@ local function GetActionSpellStatus()
 	]]--
 	return BlockedSpell or Error
 end
+
+------------------------------------
+-- DogTags
+------------------------------------
+local DogTag = LibStub("LibDogTag-3.0", true)
+-- Taste's 
+TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
+
+------------------------------------
+--------- NOTIFICATIONS API -------
+------------------------------------
+-- Return a tost notification directly in game with status information from rotation. Useful for custom events announcer    
+-- @Parameters : Message and Spell are mandaroty settings. 
+-- @optional Parameters : Delay and incombat can be nil 
+-- Usage : /run Action.SendNotification("test", 22812, 2, false)    
+function Action.SendNotification(message, spell, delay, incombat)
+    local DelaySetting = Action.GetToggle(2, "AnnouncerDelay")
+    local InCombatSetting = Action.GetToggle(2, "AnnouncerInCombatOnly")
+    local Enabled = Action.GetToggle(2, "UseAnnouncer")
+    
+    if not message then
+        Action.Print("You didn't set any message for Notification.")
+    end
+    
+    if not delay then
+        if DelaySetting then 
+            delay = DelaySetting
+        else
+            delay = 2
+        end
+    end
+    
+    if not incombat then
+        if InCombatSetting then 
+            incombat = InCombatSetting
+        else        
+            incombat = false
+        end
+    else
+        incombat = true
+    end
+    
+    -- Variables
+    local timer = TMW.time
+    local endtimer = timer + delay    
+    Action.NotificationMessage = ""
+    Action.NotificationIsValid = false
+    Action.NotificationIsValidUntil = endtimer
+    Action.CurrentNotificationIcon = GetSpellTexture(spell)
+    -- Check if enabled
+    if Enabled then
+        -- Option 1 : Combat only        
+        if message and spell and incombat then 
+            if (TMW.time <= endtimer) and Unit("player"):CombatTime() > 1 then 
+                Action.NotificationIsValid = true
+                Action.NotificationMessage = message                 
+            else
+                Action.NotificationIsValid = false
+            end
+            -- Option 2 : Everytime
+        elseif message and spell and not incombat then     
+            if TMW.time <= endtimer then 
+                Action.NotificationIsValid = true
+                Action.NotificationMessage = message            
+            else
+                Action.NotificationIsValid = false
+            end
+        end
+    end
+    TMW:Fire("TMW_ACTION_NOTIFICATION")    
+    return Action.NotificationMessage, Action.CurrentNotificationIcon, Action.NotificationIsValid, Action.NotificationIsValidUntil
+    
+end  			
+
+
 
 if DogTag then
 	-- Custom Icon
