@@ -764,7 +764,30 @@ A[3] = function(icon, isMulti)
 	local MissingDoom = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Doom.ID) 
     local AppliedDoom = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.Doom.ID)
     local DoomToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, A.Doom.ID, 6, 5)
-
+	local profileStop = false
+	------------------------------------
+	---------- DUMMY DPS TEST ----------
+	------------------------------------
+	local DummyTime = GetToggle(2, "DummyTime")
+	if DummyTime > 0 then
+    	local unit = "target"
+		local endtimer = 0
+		
+    	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
+        	if Unit("player"):CombatTime() >= (DummyTime * 60) then
+            	StopAttack()
+				endtimer = TMW.time
+            	--ClearTarget() -- Protected ? 
+	       	    -- Notification					
+          	    Action.SendNotification(DummyTime .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
+         	    
+				if endtimer < TMW.time + 5 then
+				    profileStop = true
+				    --return A.DummyTest:Show(icon)
+				end
+    	    end
+  	    end
+	end
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -1271,6 +1294,7 @@ A[3] = function(icon, isMulti)
             -- use_items,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             -- berserking,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and 
+			(
 			    (
 				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5
 				) 
@@ -1278,6 +1302,7 @@ A[3] = function(icon, isMulti)
 				(
 				    Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15
 				)
+			)
 			then
                 return A.Berserking:Show(icon)
             end
