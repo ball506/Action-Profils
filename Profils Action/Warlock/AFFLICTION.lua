@@ -619,6 +619,7 @@ A[3] = function(icon, isMulti)
     local time_to_shard = TimeToShard()
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
+	local profileStop = false
 	
 	DetermineEssenceRanks()
 	-- Multidots var
@@ -652,6 +653,29 @@ A[3] = function(icon, isMulti)
        	return SummonPet:Show(icon)
    	end
 	
+	------------------------------------
+	---------- DUMMY DPS TEST ----------
+	------------------------------------
+	local DummyTime = GetToggle(2, "DummyTime")
+	if DummyTime > 0 then
+    	local unit = "target"
+		local endtimer = 0
+		
+    	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
+        	if Unit("player"):CombatTime() >= (DummyTime * 60) then
+            	StopAttack()
+				endtimer = TMW.time
+            	--ClearTarget() -- Protected ? 
+	       	    -- Notification					
+          	    Action.SendNotification(DummyTime .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
+         	    
+				if endtimer < TMW.time + 5 then
+				    profileStop = true
+				    --return A.DummyTest:Show(icon)
+				end
+    	    end
+  	    end
+	end		
 	------------------------------------------------------
 	---------------- ENEMY UNIT ROTATION -----------------
 	------------------------------------------------------
