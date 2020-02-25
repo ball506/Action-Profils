@@ -508,7 +508,8 @@ A[3] = function(icon, isMulti)
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
         end
-        
+        Precombat = A.MakeFunctionCachedDynamic(Precombat)
+		
         --Standard
         local function Standard(unit)	
 					
@@ -651,7 +652,7 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Standard = A.MakeFunctionCachedDynamic(Standard)
         
         -- call precombat
         if not inCombat and Precombat(unit) and Unit(unit):IsExists() and unit ~= "mouseover" then 
@@ -687,8 +688,8 @@ A[3] = function(icon, isMulti)
                             if not Unit(DarkCommand_UnitID):IsPlayer() and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsDummy() and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit("player"):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
                                 if A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
 							        return A:Show(icon, ACTION_CONST_AUTOTARGET)
-								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
-								    return A:Show(icon, ACTION_CONST_AUTOTARGET)
+								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not Unit(unit):IsBoss() and not Unit(DarkCommand_UnitID):IsDummy() and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
+								    return A.DeathGrip:Show(icon)
 								else
 								    return
 								end
