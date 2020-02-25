@@ -194,7 +194,8 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
     MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
     MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
+    DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon	
 };
 
 -- To create essences use next code:
@@ -659,7 +660,8 @@ A[3] = function(icon, isMulti)
                 return A.ChainsofIce:Show(icon)
             end			
         end
-        
+        Precombat = A.MakeFunctionCachedDynamic(Precombat)
+		
         --Aoe
         local function Aoe(unit)
             -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targetA.remorseless_winter>=3&!buff.rime.up)
@@ -753,7 +755,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Aoe = A.MakeFunctionCachedDynamic(Aoe)
+		
         --BosPooling
         local function BosPooling(unit)
             -- howling_blast,if=buff.rime.up
@@ -821,7 +824,8 @@ A[3] = function(icon, isMulti)
                 return A.FrostStrike:Show(icon)
             end
         end
-        
+        BosPooling = A.MakeFunctionCachedDynamic(BosPooling)
+		
         --BosTicking
         local function BosTicking(unit)
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power<=30&!talent.frostscythe.enabled
@@ -903,7 +907,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        BosTicking = A.MakeFunctionCachedDynamic(BosTicking)
+		
         --ColdHeart
         local function ColdHeart(unit)
 	        -- chains_of_ice,if=buff.cold_heart.stack>5&target.time_to_die<gcd
@@ -934,7 +939,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        ColdHeart = A.MakeFunctionCachedDynamic(ColdHeart)
+		
         --Cooldowns
         local function Cooldowns(unit)
             -- use_item,name=azsharas_font_of_power,if=(cooldown.empowered_rune_weapon.ready&!variable.other_on_use_equipped)|(cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)
@@ -1076,7 +1082,8 @@ A[3] = function(icon, isMulti)
                 return A.FrostwyrmsFury:Show(icon)
             end
         end
-        
+        Cooldowns = A.MakeFunctionCachedDynamic(Cooldowns)
+		
         --Essences
         local function Essences(unit)
 			
@@ -1146,7 +1153,8 @@ A[3] = function(icon, isMulti)
             end
 
         end
-        
+        Essences = A.MakeFunctionCachedDynamic(Essences)
+		
         --Obliteration
         local function Obliteration(unit)
             -- remorseless_winter,if=talent.gathering_storm.enabled
@@ -1215,7 +1223,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Obliteration = A.MakeFunctionCachedDynamic(Obliteration)
+		
         --Standard
         local function Standard(unit)
             -- remorseless_winter
@@ -1269,15 +1278,15 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Standard = A.MakeFunctionCachedDynamic(Standard)
         
         -- call precombat
-        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
+        if Precombat(unit) and not profileStop and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() then
+        if inCombat and not profileStop and Unit(unit):IsExists() then
            
 		    -- auto_attack
 			VarPoolForBoS = A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() < BoSPoolTime and Player:RunicPower() < BoSMinPower
