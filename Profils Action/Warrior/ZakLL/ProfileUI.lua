@@ -16,7 +16,7 @@ local select                                        = select
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4 (07.11.2019)",
+    DateTime = "v4.0.1 (25.02.2020)",
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
             { -- [1]                            
@@ -44,7 +44,7 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },  
-				{
+                {
                     E = "Dropdown",                                                         
                     OT = {
                         { text = "Simcraft Logic", value = "Simcraft Logic" },
@@ -59,9 +59,9 @@ A.Data.ProfileUI                                     = {
                         enUS = "Simcraft Logic - Respect the Simcraft logic. \n HIGH PRIORITY LOGIC - Always use Rampage whenever available.", 
                     }, 
                     M = {},
-                },			
+                },            
             }, 
-			 { -- [2]
+            { -- [2]
                 {
                     E = "Checkbox", 
                     DB = "holdAoE",
@@ -74,7 +74,7 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
-				{
+                {
                     E = "Slider",                                                     
                     MIN = 2, 
                     MAX = 10,                            
@@ -85,7 +85,7 @@ A.Data.ProfileUI                                     = {
                         ANY = "Min. Units to Hold AoE Logic.",
                     }, 
                     M = {},
-                },			
+                },            
             }, 
             { -- [2]
                 {
@@ -148,7 +148,7 @@ A.Data.ProfileUI                                     = {
                 },
             }, 
             { -- [5]    
-
+                
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
@@ -162,6 +162,71 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 },
             }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },
             { -- [6]
                 {
                     E = "Header",
@@ -188,7 +253,7 @@ A.Data.ProfileUI                                     = {
                     }, 
                     TT = { 
                         enUS = "Enable/Disable relative party passive rotation", 
-						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                        frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
                 },            
@@ -267,8 +332,8 @@ A.Data.ProfileUI                                     = {
                 },
             },     
         }, 
-
-		[ACTION_CONST_WARRIOR_ARMS] = {
+        
+        [ACTION_CONST_WARRIOR_ARMS] = {
             { -- [1]                            
                 {
                     E = "Checkbox", 
@@ -356,7 +421,7 @@ A.Data.ProfileUI                                     = {
                 },
             }, 
             { -- [5]    
-
+                
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
@@ -427,7 +492,7 @@ A.Data.ProfileUI                                     = {
                     }, 
                     M = {},
                 },
-				{
+                {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
@@ -492,7 +557,7 @@ A.Data.ProfileUI                                     = {
             ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
                 return  A.StormBolt:IsReadyM(thisunit, true) and  
-						(
+                        (
                             IsInPvP and 
                             EnemyTeam():PlayersInRange(1, 20)
                         )                                                             
