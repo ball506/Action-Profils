@@ -579,6 +579,7 @@ A[3] = function(icon, isMulti)
 	local LucidDreamPower = A.GetToggle(2, "LucidDreamPower")
 	local LucidDreamUseAfter = A.GetToggle(2, "LucidDreamUseAfter")
 	local VarPoolForBoS = false
+	local profileStop = false
 	local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	-- BreathofSindragosa protection channel
 	local CanCast = true
@@ -600,7 +601,30 @@ A[3] = function(icon, isMulti)
 	if not CanCast then
 	    return A.PoolResource:Show(icon)
 	end
-
+	
+	------------------------------------
+	---------- DUMMY DPS TEST ----------
+	------------------------------------
+	local DummyTime = GetToggle(2, "DummyTime")
+	if DummyTime > 0 then
+    	local unit = "target"
+		local endtimer = 0
+		
+    	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
+        	if Unit("player"):CombatTime() >= (DummyTime * 60) then
+            	StopAttack()
+				endtimer = TMW.time
+            	--ClearTarget() -- Protected ? 
+	       	    -- Notification					
+          	    Action.SendNotification(DummyTime .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
+         	    
+				if endtimer < TMW.time + 5 then
+				    profileStop = true
+				    --return A.DummyTest:Show(icon)
+				end
+    	    end
+  	    end
+	end	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
