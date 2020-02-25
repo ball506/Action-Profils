@@ -596,14 +596,14 @@ A[3] = function(icon, isMulti)
 			and combatTime > 0     
 			then 
 			     -- if not fully aggroed or we are not current target then use taunt
-			    if A.Torment:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+			    if A.Torment:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and not Unit(unit):IsDummy() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
                     return A.Torment:Show(icon)
 				-- else if all good on current target, switch to another one we know we dont currently tank
                 else
                     local Growl_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if Torment_Nameplates then  
                         for Torment_UnitID in pairs(Torment_Nameplates) do             
-                            if not UnitIsUnit("target", Torment_UnitID) and A.Torment:IsReady(Torment_UnitID, true, nil, nil, nil) and not Unit(Torment_UnitID):IsBoss() and Unit(Torment_UnitID):GetRange() <= 30 and not Unit(Torment_UnitID):InLOS() and Unit("player"):ThreatSituation(Torment_UnitID) ~= 3 then 
+                            if not UnitIsUnit("target", Torment_UnitID) and A.Torment:IsReady(Torment_UnitID, true, nil, nil, nil) and not Unit(Torment_UnitID):IsDummy() and not Unit(Torment_UnitID):IsBoss() and Unit(Torment_UnitID):GetRange() <= 30 and not Unit(Torment_UnitID):InLOS() and Unit("player"):ThreatSituation(Torment_UnitID) ~= 3 then 
                                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
                             end         
                         end 
