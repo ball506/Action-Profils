@@ -1305,9 +1305,7 @@ function A.ImprisonIsReady(unit, isMsg, skipShouldStop)
             )
         ) and 
         Unit(unit):IsPlayer() and                     
-        A[A.PlayerSpec].Imprison:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true) and 
-        Unit(unit):IsControlAble("disarm", 0) and 
-        Unit(unit):HasDeBuffs("Disarmed") == 0
+        A[A.PlayerSpec].Imprison:AbsentImun(unit, {"CCTotalImun", "DamagePhysImun", "TotalImun"}, true)
     end 
 end 
 

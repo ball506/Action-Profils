@@ -97,6 +97,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     ChaosNovaGreen						   = Action.Create({ Type = "SpellSingleColor", ID = 179057, Color = "GREEN", Desc = "[1] CC", Hidden = true, QueueForbidden = true }),
 	-- PvP
     ManaRift                               = Action.Create({ Type = "Spell", ID = 235903}),	-- Mana destroyer
+	ManaBreak                              = Action.Create({ Type = "Spell", ID = 203704}),	-- Mana destroyer 2 :D
 	RainfromAbove                          = Action.Create({ Type = "Spell", ID = 206803}), -- Better if Unit is LOS
 	ReverseMagic                           = Action.Create({ Type = "Spell", ID = 205604}), -- Player + Friendly dispell and send back dispelled debuff to enemy
     -- Trinkets
@@ -1235,9 +1236,13 @@ local function ArenaRotation(icon, unit)
 			-- Disrupt
    		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
       		    return A.Disrupt
-   			end 	
+   			end
+		    -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= A.ManaRift:GetSpellCastTime() then
+			    return A.ManaRift:Show(icon)
+			end			
             -- Imprison Casting BreakAble CC
-            if A.ImprisonIsReady(unit) and not Unit(unit):InLOS() then
+            if A.ImprisonIsReady(unit) and Unit(unit):IsHealer() and not Unit(unit):InLOS() then
                 return A.ImprisonIsReady:Show(icon)
             end   
 			-- Purge
