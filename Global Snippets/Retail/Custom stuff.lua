@@ -775,7 +775,7 @@ TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 --------- NOTIFICATIONS API -------
 ------------------------------------
 -- Return a tost notification directly in game with status information from rotation. Useful for custom events announcer    
--- @Parameters : Message and Spell are mandaroty settings. 
+-- @Parameters : Message and Spell are mandatory settings. 
 -- @optional Parameters : Delay and incombat can be nil 
 -- Usage : /run Action.SendNotification("test", 22812, 2, false)    
 function Action.SendNotification(message, spell, delay, incombat)
