@@ -677,14 +677,14 @@ A[3] = function(icon, isMulti)
 			and combatTime > 0     
 			then 
 			    -- if not fully aggroed or we are not current target then use taunt
-			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
                     return A.DarkCommand:Show(icon)
 				-- else if all good on current target, switch to another one we know we dont currently tank
                 else
                     local DarkCommand_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if DarkCommand_Nameplates then  
                         for DarkCommand_UnitID in pairs(DarkCommand_Nameplates) do             
-                            if not Unit(DarkCommand_UnitID):IsPlayer() and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit("player"):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
+                            if not Unit(DarkCommand_UnitID):IsPlayer() and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsDummy() and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit("player"):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
                                 if A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
 							        return A:Show(icon, ACTION_CONST_AUTOTARGET)
 								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
