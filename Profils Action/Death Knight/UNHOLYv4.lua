@@ -1146,7 +1146,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
     
 	-- raise_dead
-    if A.RaiseDead:IsReady(player) and not Pet:IsActive() then
+    if A.RaiseDead:IsReady(player) and not Pet:IsActive() and not Player:IsMounted() then
         return A.RaiseDead:Show(icon)
     end
 	
