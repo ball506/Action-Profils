@@ -623,6 +623,9 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
 	local UseHeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local SyncBladeDanceDeathSweepWithEyeBeam = Action.GetToggle(2, "SyncBladeDanceDeathSweepWithEyeBeam")
+	local ImmolationAuraPrePull = Action.GetToggle(2, "ImmolationAuraPrePull")
+	local AzsharasFontofPowerPrePull = Action.GetToggle(2, "AzsharasFontofPowerPrePull")
+	local UnbridledFuryPrePull = Action.GetToggle(2, "UnbridledFuryPrePull")
     local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 	local profileStop = false
 	-- EyeBeam protection channel
@@ -718,21 +721,21 @@ A[3] = function(icon, isMulti)
         if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
 		
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= 6) then
+            if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= AzsharasFontofPowerPrePull) then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Azshara trinket", A.AzsharasFontofPower.ID) 
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
             -- immolation_aura
-            if A.ImmolationAura:IsReady(player) and ((Pull > 0.1 and Pull <= 4) or not Action.GetToggle(1, "DBM")) then
+            if A.ImmolationAura:IsReady(player) and ((Pull > 0.1 and Pull <= ImmolationAuraPrePull) or not Action.GetToggle(1, "DBM")) then
 	            -- Notification					
                 Action.SendNotification("Prepull: Immolation Aura", A.ImmolationAura.ID) 
                 return A.ImmolationAura:Show(icon)
             end	
 			
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 3
+            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= ArcaneTorrentPrePull 
 			then
 	            -- Notification					
                 Action.SendNotification("Prepull: Arcane Torrent", A.ArcaneTorrent.ID) 
@@ -740,7 +743,7 @@ A[3] = function(icon, isMulti)
             end	
 					
             -- PotionofUnbridledFury
-            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Pull > 0.1 and Pull <= 2) then
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Pull > 0.1 and Pull <= UnbridledFuryPrePull) then
 	            -- Notification					
                 Action.SendNotification("Using pre pot", A.PotionofUnbridledFury.ID) 
                 return A.PotionofUnbridledFury:Show(icon)

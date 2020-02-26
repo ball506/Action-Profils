@@ -128,6 +128,93 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 	
             },
+			
+			
+            { -- [7]  Azerite Beam settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Prepull Options -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 	
+                 -- Azshara Trinket				
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AzsharasFontofPowerPrePull",
+                    DBV = 6, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(296962) .. " sec",
+                    },
+                    TT = { 
+                        enUS = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(296962) .. ".", 
+                        ruRU = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(296962) .. ".", 
+                        frFR = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(296962) .. ".", 
+                    }, 					
+                    M = {},
+                },
+                -- Immolation Aura				
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ImmolationAuraPrePull",
+                    DBV = 4, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(258920) .. " sec",
+                    },
+                    TT = { 
+                        enUS = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(258920) .. ".", 
+                        ruRU = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(258920) .. ".", 
+                        frFR = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(258920) .. ".",  
+                    }, 					
+                    M = {},
+                },
+			},
+			{
+                 -- Arcane Torrent				
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ArcaneTorrentPrePull",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(28730) .. " sec",
+                    },
+                    TT = { 
+                        enUS = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(28730) .. ".", 
+                        ruRU = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(28730) .. ".", 
+                        frFR = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(28730) .. ".",  
+                    }, 					
+                    M = {},
+                },	
+                 -- UnbridledFury			
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "UnbridledFuryPrePull",
+                    DBV = 2, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(300714) .. " sec",
+                    },
+                    TT = { 
+                        enUS = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(300714) .. ".", 
+                        ruRU = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(300714) .. ".", 
+                        frFR = "Set the Pull timer in seconds to use " .. A.GetSpellInfo(300714) .. ".",  
+                    }, 					
+                    M = {},
+                },				
+            },
+			
 			-- FelBlade
             { -- [7] 
                 {
