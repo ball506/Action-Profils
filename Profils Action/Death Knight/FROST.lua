@@ -606,7 +606,7 @@ A[3] = function(icon, isMulti)
 	------------------------------------
 	---------- DUMMY DPS TEST ----------
 	------------------------------------
-	local DummyTime = GetToggle(2, "DummyTime")
+	local DummyTime = A.GetToggle(2, "DummyTime")
 	if DummyTime > 0 then
     	local unit = "target"
 		local endtimer = 0
