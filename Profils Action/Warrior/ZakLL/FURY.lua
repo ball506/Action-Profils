@@ -377,21 +377,27 @@ A[3] = function(icon, isMulti)
                 --end   
                 
                 -- Razor Coral specific logic
-                if A.AshvanesRazorCoral:IsExists() and A.AshvanesRazorCoral:IsReady(unitID) and (not Unit(unitID):HasDeBuffs(A.RazorCoralDebuff.ID) <= 0 or (Unit(unitID):HasDeBuffs(A.RazorCoralDebuff.ID) > 0 and Unit(unitID):HealthPercent() <= 30 and Unit(unitID):TimeToDie() >= 10)) then
+                if A.AshvanesRazorCoral:IsExists() and A.AshvanesRazorCoral:IsReady(unitID) and 
+				(
+				    Unit(unitID):HasDeBuffs(A.RazorCoralDebuff.ID) == 0 
+					or 
+					(Unit(unitID):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0 and Unit(unitID):HealthPercent() <= 30 and Unit(unitID):TimeToDie() >= 10)
+				)
+				then
                     if A.AshvanesRazorCoral:AbsentImun(unitID, "DamageMagicImun")  then 
                        return A.AshvanesRazorCoral:Show(icon)
                     end
                 end
                 
                 -- Trinket1 with check for blacklisted trinkets
-                if Action.GetToggle(1, "Trinkets")[1] and A.Trinket2:GetItemCategory() ~= "DEFF" and A.Trinket1:IsReady(unitID) and Trinket1IsAllowed then        
+                if Action.GetToggle(1, "Trinkets")[1] and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket1:IsReady(unitID) and Trinket1IsAllowed then        
                     if A.Trinket1:AbsentImun(unitID, "DamageMagicImun")  then 
                         return A.Trinket1:Show(icon)
                     end         
                 end
                 
                 -- Trinket2 with check for blacklisted trinkets
-                if Action.GetToggle(1, "Trinkets")[2] and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket2:IsReady(unitID) and Trinket2IsAllowed then        
+                if Action.GetToggle(1, "Trinkets")[2] and A.Trinket2:GetItemCategory() ~= "DEFF" and A.Trinket2:IsReady(unitID) and Trinket2IsAllowed then        
                     if A.Trinket2:AbsentImun(unitID, "DamageMagicImun")  then 
                         return A.Trinket2:Show(icon)
                     end     
