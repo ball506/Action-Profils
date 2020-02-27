@@ -86,6 +86,8 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     Outbreak                               = Action.Create({ Type = "Spell", ID = 77575 }),
     VirulentPlagueDebuff                   = Action.Create({ Type = "Spell", ID = 191587 }),
     Icecap                                 = Action.Create({ Type = "Spell", ID = 207126 }),
+    NecroticStrike                         = Action.Create({ Type = "Spell", ID = 223829     }),	 -- PvP
+    NecroticStrikeDebuff                   = Action.Create({ Type = "Spell", ID = 223929     }),	 -- PvP
 	-- Defensives
     IceboundFortitude                      = Action.Create({ Type = "Spell", ID = 48792 }),
     AntiMagicShell                         = Action.Create({ Type = "Spell", ID = 48707 }),
@@ -154,34 +156,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-	VisionofPerfection			           = Action.Create({ Type = "Spell", ID = 299368, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+	VisionofPerfection			           = Action.Create({ Type = "Spell", ID = 299368, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
     PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
 	DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
@@ -303,6 +278,8 @@ local function SelfDefensives(unit)
     end 
 
     -- Icebound Fortitude
+	
+	local IceboundFortitudeAntiStun = GetToggle(2, "IceboundFortitudeAntiStun")
     local IceboundFortitude = GetToggle(2, "IceboundFortitudeHP")
     if     IceboundFortitude >= 0 and A.IceboundFortitude:IsReady(player) and 
     (
@@ -310,12 +287,12 @@ local function SelfDefensives(unit)
             IceboundFortitude >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
-                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 30 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.30 or 
                 -- TTD 
-                Unit(player):TimeToDieX(25) < 5 or
+                Unit(player):TimeToDieX(25) < 2 or
 				-- Player stunned
-                LoC:Get("STUN") > 0	or			
+                LoC:Get("STUN") > 2 and IceboundFortitudeAntiStun or			
                 (
                     A.IsInPvP and 
                     (
@@ -382,10 +359,10 @@ local function SelfDefensives(unit)
                 AntiMagicShell >= 100 and 
                 (
                     -- HP lose per sec >= 10
-                    Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
-                    Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
+                    Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 15 or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.15 or 
                     -- TTD Magic
-                    Unit(player):TimeToDieMagicX(50) < 5 or 
+                    Unit(player):TimeToDieMagicX(30) < 3 or 
 					
                     (
                         A.IsInPvP and 
@@ -460,7 +437,7 @@ local function Interrupts(unit)
    	end 
 	
     -- DeathGrip
-    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and GetToggle(2, "DeathGripInterrupt") then 
+    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and DeathGripInterrupt then 
      	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
        	    return A.DeathGrip
        	end 
@@ -511,6 +488,7 @@ A[3] = function(icon, isMulti)
 	local DBM = GetToggle(1 ,"DBM")
 	local Potion = GetToggle(1, "Potion")
 	local Racial = GetToggle(1, "Racial")
+	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
 	local AutoSwitchFesteringStrike = GetToggle(2, "AutoSwitchFesteringStrike")
 	local MinRuneSoulReaper = GetToggle(2, "MinRuneSoulReaper")
 	local MinFesteringWoundSoulReaper = GetToggle(2, "MinFesteringWoundSoulReaper")
@@ -519,7 +497,18 @@ A[3] = function(icon, isMulti)
 	local MinInterrupt = GetToggle(2, "MinInterrupt")
 	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
 	local MinRuneDeathandDecay = GetToggle(2, "MinRuneDeathandDecay")
+	local MinAreaTTDDeathandDecay = GetToggle(2, "MinAreaTTDDeathandDecay")
+	local DeathandDecayIgnoreFesteringWoundUnits = GetToggle(2, "DeathandDecayIgnoreFesteringWoundUnits")
 	local MinFesteringWoundDeathandDecay = GetToggle(2, "MinFesteringWoundDeathandDecay")
+	local BloodoftheEnemySyncAoE = GetToggle(2, "BloodoftheEnemySyncAoE")
+	local BloodoftheEnemyAoETTD = GetToggle(2, "BloodoftheEnemyAoETTD")
+	local BloodoftheEnemyUnits = GetToggle(2, "BloodoftheEnemyUnits")
+	local ChainsofIceRange = GetToggle(2, "ChainsofIceRange")
+	local UseChainsofIce = GetToggle(2, "UseChainsofIce")
+	local DeathGripLowHealth = GetToggle(2, "DeathGripLowHealth")
+	local DeathGripInterrupt = GetToggle(2, "DeathGripInterrupt")
+	local UseDeathGrip = GetToggle(2, "UseDeathGrip")
+	local DeathGripHealthPercent = GetToggle(2, "DeathGripHealthPercent")
 	local profileStop = false
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
@@ -577,63 +566,71 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
 		
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and BurstIsON(unit) and GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and BurstIsON(unit) and HeartOfAzeroth and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
 			-- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ReapingFlames:Show(icon)
             end
 			
 			-- moment_of_glory
-            if A.MomentofGlory:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.MomentofGlory:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MomentofGlory:Show(icon)
             end
 
 			-- ReplicaofKnowledge
-            if A.ReplicaofKnowledge:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.ReplicaofKnowledge:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ReplicaofKnowledge:Show(icon)
             end				
 			
             -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and BurstIsON(unit) and GetToggle(1, "HeartOfAzeroth") and ((A.DeathandDecay:GetCooldown() > 0 and GetByRange(1, 30)) or (A.Defile:GetCooldown() > 0 and GetByRange(1, 8)) or (A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and not BloodoftheEnemySyncAoE and BurstIsON(unit) and HeartOfAzeroth and 
+			(
+			    (A.DeathandDecay:GetCooldown() > 0 and GetByRange(1, 30)) 
+				or 
+				(A.Defile:GetCooldown() > 0 and GetByRange(1, 8)) 
+				or 
+				(A.Apocalypse:GetCooldown() > 0 and A.DeathandDecay:GetCooldown() == 0)
+			)
+			then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and BurstIsON(unit) and GetToggle(1, "HeartOfAzeroth") and (A.Apocalypse:GetCooldown() < 6) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and BurstIsON(unit) and HeartOfAzeroth and (A.Apocalypse:GetCooldown() < 6) then
                 return A.GuardianofAzeroth:Show(icon)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
                 return A.TheUnboundForce:Show(icon)
             end
 			
             -- focused_azerite_beam,if=!death_and_decay.ticking
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and BurstIsON(unit) and GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and BurstIsON(unit) and HeartOfAzeroth then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
             -- purifying_blast,if=!death_and_decay.ticking
-            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.PurifyingBlast:Show(icon)
             end
 			
             -- worldvein_resonance,if=!death_and_decay.ticking
-            if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
 			
             -- ripple_in_space,if=!death_and_decay.ticking
-            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and GetToggle(1, "HeartOfAzeroth") then
-                return A.RippleInSpace:Show(icon)
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                return A.RippleinSpace:Show(icon)
             end
         end
         Essences = A.MakeFunctionCachedDynamic(Essences)  
@@ -755,6 +752,11 @@ A[3] = function(icon, isMulti)
                 return A.SoulReaper:Show(icon)
             end
 			
+			-- necrotic strike pvp
+			if A.IsInPvP and A.NecroticStrike:IsReady(unit) and A.NecroticStrike:IsSpellLearned() and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.NecroticStrikeDebuff.ID, true) <= 2 then
+			    return A.NecroticStrike:Show(icon)
+			end
+			
             -- unholy_blight
             if A.UnholyBlight:IsReady(unit) then
                 return A.UnholyBlight:Show(icon)
@@ -762,17 +764,35 @@ A[3] = function(icon, isMulti)
 			
 			-- auto_attack
 			-- Chains of Ice
-			if Unit(unit):IsMovingOut() and CanCast and GetToggle(2, "UseChainsofIce") and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
+			if (Unit(unit):IsMovingOut() or Unit(unit):GetRange() > ChainsofIceRange) and CanCast and UseChainsofIce and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
 			    return A.ChainsofIce:Show(icon) 
 			end
 			
 			-- Death Grip
-			if Unit(unit):IsMovingOut() and CanCast and GetToggle(2, "UseDeathGrip") and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) > 0 and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 then
+			if Unit(unit):CombatTime() > 0 and CanCast and UseDeathGrip and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 and
+			(
+				(
+				    A.IsInPvP and 
+					(
+					    Unit(unit):IsMovingOut() 
+					    or
+					    DeathGripLowHealth and Unit(unit):HealthPercent() < DeathGripHealthPercent
+					)
+				)
+				or
+				not A.IsInPvP and Unit(unit):TimeToDie() > 3 and not Unit(unit):IsBoss()
+			)
+			then
 			    return A.DeathGrip:Show(icon) 
 			end
 			
 			-- Wraith Walk if out of range 
-            if A.WraithWalk:IsReady(player) and CanCast and isMovingFor > GetToggle(2, "WraithWalkTime") and GetToggle(2, "UseWraithWalk") then
+            if A.WraithWalk:IsReady(player) and CanCast and isMovingFor > GetToggle(2, "WraithWalkTime") and GetToggle(2, "UseWraithWalk") 
+			then
+			    -- Avoid to stay in WraithWalk when our target is reached
+			    if Unit(unit):GetRange() <= 5 and Unit(player):HasBuffs(A.WraithWalk.ID, true) > 0 then
+				    Player:CancelBuff(A.WraithWalk:Info())
+				end
                 return A.WraithWalk:Show(icon)
             end
 			
@@ -927,12 +947,12 @@ A[3] = function(icon, isMulti)
             end
 
         
-            --Aoe
+            -- AoE multi targets
 	    	if (isMulti or GetToggle(2, "AoE")) and MultiUnits:GetByRange(MaxAoERange) > MinAoETargets and CanCast then
 			
 			    local ActiveFesteringWound = MultiUnits:GetByRangeAppliedDoTs(6, 5, A.FesteringWoundDebuff.ID)
 				local MissingFesteringWound = MultiUnits:GetByRangeMissedDoTs(6, 5, A.FesteringWoundDebuff.ID)
-				local currentTargets = MultiUnits:GetByRange(10)
+				local currentTargets = MultiUnits:GetByRange(MaxAoERange)
 				
 				--Action.MultiUnits.GetByRangeDoTsToRefresh(self, range, count, deBuffs, refreshTime, upTTD)
 				
@@ -947,20 +967,30 @@ A[3] = function(icon, isMulti)
                     DeathandDecayCanByPassLUA = true
 				else
 				    DeathandDecayCanByPassLUA = false
-                end						
-                				
-                --local DeathandDecayCanByPassLUA = currentTargets > 5 and FesteringStrikeToCast <= currentTargets - (currentTargets * 0.33)    				
-		        
-
-				--print("ActiveFesteringWound" .. ActiveFesteringWound)
-				--print("MissingFesteringWound" .. MissingFesteringWound)
+                end	
+				
+                -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
+                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and BloodoftheEnemySyncAoE and BurstIsON(unit) and HeartOfAzeroth and 
+			    (
+			        Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and Player:AreaTTD(MaxAoERange) >= BloodoftheEnemyAoETTD and MultiUnits:GetByRange(MaxAoERange) >= BloodoftheEnemyUnits
+					or
+					(A.LastPlayerCastName == A.DeathandDecay:Info() or Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0) and Unit(unit):IsDummy()
+			    )
+			    then
+                    return A.BloodoftheEnemy:Show(icon)
+                end					
 				
                 -- scourge_strike,if=death_and_decay.ticking&cooldown.apocalypse.remains
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 --and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0 
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and				--and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0 
+				(    
+				    A.BloodoftheEnemy:GetAzeriteRank() > 0 and A.BloodoftheEnemy:GetCooldown() > 0 
+					or 
+					A.BloodoftheEnemy:GetAzeriteRank() == 0
+				)
 				then
                     return A.ScourgeStrike:Show(icon)
                 end		
-				
+			
                 -- death_and_decay,if=cooldown.apocalypse.remains
                 if A.DeathandDecay:IsReady(player) and Player:Rune() >= MinRuneDeathandDecay and 
 				(
@@ -969,9 +999,11 @@ A[3] = function(icon, isMulti)
 					-- Dummy hack because GetByRangeAppliedDoTs methods dont work with dummies
 					Unit(unit):IsDummy() and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0
 					or
-					Player:AreaTTD(10) > 10 and Player:AreaTTD(10) <= 15 and currentTargets > 3
+					Player:AreaTTD(MaxAoERange) > MinAreaTTDDeathandDecay and Player:AreaTTD(MaxAoERange) <= 15 and currentTargets > 3
 					or
-					Player:Rune() > 2 and currentTargets > 5 and Player:AreaTTD(10) > 10
+					Player:Rune() > 2 and currentTargets > 5 and Player:AreaTTD(MaxAoERange) > MinAreaTTDDeathandDecay
+					or
+					DeathandDecayIgnoreFesteringWoundUnits > 0 and currentTargets >= DeathandDecayIgnoreFesteringWoundUnits
 				) 
 				then
                     return A.DeathandDecay:Show(icon)
@@ -1201,7 +1233,7 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
---[[local function FreezingTrapUsedByEnemy()
+local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
     Unit(player):GetDR("incapacitate") >= 50 
@@ -1213,13 +1245,22 @@ end
     end 
 end 
 local function ArenaRotation(icon, unit)
+    local DeathGripLowHealth = GetToggle(2, "DeathGripLowHealth")
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) then 
-            -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
-            end 
+        if unit == "arena1" or unit == "arena2" or unit == "arena3" --and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) 
+		then 	
+			-- Interrupt
+   		    local Interrupt = Interrupts(unit)
+  		    if Interrupt then 
+  		        return Interrupt:Show(icon)
+  		    end	
+
+			-- Death Grip
+			if UseDeathGrip and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 and Unit(unit):IsMovingOut() and Unit(unit):HealthPercent() < DeathGripLowHealth
+			then
+			    return A.DeathGrip:Show(icon) 
+			end
         end
     end 
 end 
@@ -1227,10 +1268,24 @@ local function PartyRotation(unit)
     if (unit == "party1" and not GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
-
-  	-- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
+  	
+	-- RaiseAlly
+    if A.RaiseAlly:IsReady(unit) and Unit(player):CombatTime() > 0 and Unit(unit):IsDead() and not Unit(unit):InLOS() and
+	(
+	    -- Tank
+	    GetToggle(2, "RaiseAllyUnits")[1] and Unit(unit):IsTank() and Unit(unit):IsPlayer()
+		or
+		-- Healer
+		GetToggle(2, "RaiseAllyUnits")[2] and Unit(unit):IsHealer() and Unit(unit):IsPlayer()
+		or
+		-- Damager
+		GetToggle(2, "RaiseAllyUnits")[3] and Unit(unit):IsDamager() and Unit(unit):IsPlayer() 
+		or
+		-- Mouseover
+		GetToggle(2, "RaiseAllyUnits")[4] and Unit("mouseover"):IsExists() and Unit(unit):IsPlayer()
+	)	
+	then
+        return A.RaiseAlly
     end
 end 
 
@@ -1252,5 +1307,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 

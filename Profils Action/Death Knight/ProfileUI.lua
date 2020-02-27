@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.4 (26.02.2020)",
+    DateTime = "v4.0.5 (27.02.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -157,8 +157,65 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+
+            -- Blood of the enemy
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(298277) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "BloodoftheEnemySyncAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(298277) .. " AoE sync", 
+                        ruRU = A.GetSpellInfo(298277) .. " AoE sync",  
+                        frFR = A.GetSpellInfo(298277) .. " AoE sync", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                        ruRU = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                        frFR = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "BloodoftheEnemyAoETTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(298277) .. " AoE TTD",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 8,                            
+                    DB = "BloodoftheEnemyUnits",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(298277) .. " AoE units",
+                    }, 
+                    TT = { 
+                        enUS = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                        ruRU = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                        frFR = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                    },
+                    M = {},
+                },
+			},
 			
-			
+			-- Death and decay
             { -- [7] 
                 {
                     E = "Header",
@@ -198,47 +255,43 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-			
-			
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- " .. A.GetSpellInfo(130736) .. " -- ",
-                    },
-                },
-            },
 			{
                 {
                     E = "Slider",                                                     
-                    MIN = 2, 
-                    MAX = 5,                            
-                    DB = "MinRuneSoulReaper",
-                    DBV = 2, -- Set healthpercentage @60% life. 
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "MinAreaTTDDeathandDecay",
+                    DBV = 10, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(130736) .. " runes",
+                        ANY =  A.GetSpellInfo(43265) .. " Area TTD",
                     }, 
+                    TT = { 
+                        enUS = "Minimum Time To Die for group of units around before using " .. A.GetSpellInfo(43265).. ".", 
+                        ruRU = "Minimum Time To Die for group of units around before using " .. A.GetSpellInfo(43265).. ".",
+                        frFR = "Minimum Time To Die for group of units around before using " .. A.GetSpellInfo(43265).. ".",
+                    },
                     M = {},
                 },
                 {
                     E = "Slider",                                                     
                     MIN = 2, 
-                    MAX = 5,                            
-                    DB = "MinFesteringWoundSoulReaper",
-                    DBV = 2, -- Set healthpercentage @60% life. 
+                    MAX = 10,                            
+                    DB = "DeathandDecayIgnoreFesteringWoundUnits",
+                    DBV = 5, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Min Festering Wound",
+                        ANY =  A.GetSpellInfo(43265) .. " ignore Festering Wound",
                     }, 
                     TT = { 
-                        enUS = "Minimum active Festering Wound debuff on units around.", 
-                        ruRU = "Minimum active Festering Wound debuff on units around.",
-                        frFR = "Minimum active Festering Wound debuff on units around.", 
+                        enUS = "Minimum number of units around before using " .. A.GetSpellInfo(43265).. " without waiting for Festering Wounds stacks.", 
+                        ruRU = "Minimum number of units around before using " .. A.GetSpellInfo(43265).. " without waiting for Festering Wounds stacks.", 
+                        frFR = "Minimum number of units around before using " .. A.GetSpellInfo(43265).. " without waiting for Festering Wounds stacks.", 
                     },
                     M = {},
                 },
-			},
+			},		
+            -- SoulReaper			
             { -- [7] 
                 {
                     E = "Header",
@@ -317,6 +370,22 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "IceboundFortitudeAntiStun",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. " AntiStun", 
+                        ruRU = A.GetSpellInfo(48792) .. " AntiStun", 
+                        frFR = A.GetSpellInfo(48792) .. " AntiStun",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to automatically cast " .. A.GetSpellInfo(48792) .. " when you are stunned.", 
+                        ruRU = "Enable this to option to automatically cast " .. A.GetSpellInfo(48792) .. " when you are stunned.",
+                        frFR = "Enable this to option to automatically cast " .. A.GetSpellInfo(48792) .. " when you are stunned.",
+                    }, 
+                    M = {},
+                }, 	
             },
             { -- [3] 3rd Row 
                 {
@@ -362,7 +431,79 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-
+            -- Death grip
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(49576) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseDeathGrip",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(49576), 
+                        ruRU = "Авто " .. A.GetSpellInfo(49576), 
+                        frFR = "Auto " .. A.GetSpellInfo(49576), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " if enemy try to move out.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " если враг попытается выйти.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " si l'ennemi essaie de partir.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "DeathGripInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49576) .. " interrupt", 
+                        ruRU = A.GetSpellInfo(49576) .. " прерывание", 
+                        frFR = A.GetSpellInfo(49576) .. " interrupt", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "DeathGripLowHealth",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49576) .. " low HP(%)", 
+                        ruRU = A.GetSpellInfo(49576) .. " low HP(%)", 
+                        frFR = A.GetSpellInfo(49576) .. " low HP(%)",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to automatically cast " .. A.GetSpellInfo(49576) .. " when enemy if running out and under specified percent life value.", 
+                        ruRU = "Enable this to option to automatically cast " .. A.GetSpellInfo(49576) .. " when enemy if running out and under specified percent life value.", 
+                        frFR = "Enable this to option to automatically cast " .. A.GetSpellInfo(49576) .. " when enemy if running out and under specified percent life value.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "DeathGripHealthPercent",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(49576) .. " HP(%)",
+                    }, 
+                    M = {},
+                },				
+			},
             { -- [7] 
                 {
                     E = "Header",
@@ -393,7 +534,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 7,                            
                     DB = "WraithWalkTime",
-                    DBV = 3, -- Set healthpercentage @60% life. 
+                    DBV = 5, -- Set healthpercentage @60% life. 
                     ONOFF = true, 
                     L = { 
                         enUS = A.GetSpellInfo(212552) .. " if moving for",
@@ -448,38 +589,6 @@ A.Data.ProfileUI = {
             { -- [3] 3rd Row 
                 {
                     E = "Checkbox", 
-                    DB = "UseDeathGrip",
-                    DBV = true,
-                    L = { 
-                        enUS = "Auto " .. A.GetSpellInfo(49576), 
-                        ruRU = "Авто " .. A.GetSpellInfo(49576), 
-                        frFR = "Auto " .. A.GetSpellInfo(49576), 
-                    }, 
-                    TT = { 
-                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " if enemy try to move out.", 
-                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " если враг попытается выйти.", 
-                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " si l'ennemi essaie de partir.",  
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
-                    DB = "DeathGripInterrupt",
-                    DBV = true,
-                    L = { 
-                        enUS = A.GetSpellInfo(49576) .. " interrupt", 
-                        ruRU = A.GetSpellInfo(49576) .. " прерывание", 
-                        frFR = A.GetSpellInfo(49576) .. " interrupt", 
-                    }, 
-                    TT = { 
-                        enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
-                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
-                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Checkbox", 
                     DB = "UseChainsofIce",
                     DBV = true,
                     L = { 
@@ -493,8 +602,82 @@ A.Data.ProfileUI = {
                         frFR = "Utiliser automatiquement " .. A.GetSpellInfo(45524), 
                     }, 
                     M = {},
+                },	
+                {				
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "ChainsofIceRange",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(45524) .. " range", 
+                        ruRU = A.GetSpellInfo(45524) .. " range", 
+                        frFR = A.GetSpellInfo(45524) .. " range",  
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(45524) .. " if current enemy range is equal or higher that the specified value.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(45524) .. " if current enemy range is equal or higher that the specified value.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(45524) .. " if current enemy range is equal or higher that the specified value.", 
+                    }, 					
+                    M = {},
                 },				
             },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Tank", value = 1 },
+                        { text = "Healer", value = 2 },
+                        { text = "Damager", value = 3 },
+                        { text = "Mouseover", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "RaiseAllyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                        [3] = false,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(61999) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "Tank: Will only use if current tank is dead.\nHealer: Will only use if current healer is dead.\nDamager: Will only use if one of friendly damager is dead.\nMouseover: Will only use if you are mouseovering a dead target.", 
+                        ruRU = "Tank: Will only use if current tank is dead.\nHealer: Will only use if current healer is dead.\nDamager: Will only use if one of friendly damager is dead.\nMouseover: Will only use if you are mouseovering a dead target.",  
+                    }, 
+                    M = {},
+                },				
+            }, 
             { -- [7] 
                 {
                     E = "Header",
