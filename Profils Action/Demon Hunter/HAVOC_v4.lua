@@ -626,6 +626,7 @@ A[3] = function(icon, isMulti)
 	local ImmolationAuraPrePull = Action.GetToggle(2, "ImmolationAuraPrePull")
 	local AzsharasFontofPowerPrePull = Action.GetToggle(2, "AzsharasFontofPowerPrePull")
 	local UnbridledFuryPrePull = Action.GetToggle(2, "UnbridledFuryPrePull")
+	local ArcaneTorrentPrePull = Action.GetToggle(2, "ArcaneTorrentPrePull")
     local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 	local profileStop = false
 	-- EyeBeam protection channel
@@ -672,6 +673,11 @@ A[3] = function(icon, isMulti)
     	    end
   	    end
 	end	
+    --print(A.DBM_GetTimer("test"))
+    if A.DBM_GetTimer("test") > 0 and A.DBM_GetTimer("test") < 5 then
+	    -- Notification					
+        Action.SendNotification("DBM Test Adds Spawn in: ".. round(A.DBM_GetTimer("test"), 0), A.DummyTest.ID)	
+	end
 
 	-- Start Rotation
     local function EnemyRotation(unit)
