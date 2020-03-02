@@ -1,19 +1,35 @@
 --- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
---local HealingEngine                        = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
-local setmetatable                           = setmetatable
-local TR                                     = Action.TasteRotation
-local pairs                                  = pairs
+local Action									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Azerite									= LibStub("AzeriteTraits")
+local Pet                                       = LibStub("PetLibrary")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -85,6 +101,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     DancingRuneWeapon                      = Action.Create({ Type = "Spell", ID = 49028 }),
     VampiricBlood                          = Action.Create({ Type = "Spell", ID = 55233 }),
     DeathPact                              = Action.Create({ Type = "Spell", ID = 48743 }),	-- Talent
+    GorefiendsGrasp                        = Action.Create({ Type = "Spell", ID = 108199 }),	-- Mass Grip
 	-- Utilities
 	DarkCommand                            = Action.Create({ Type = "Spell", ID = 56222     }), 
 	WraithWalk                             = Action.Create({ Type = "Spell", ID = 212552     }), 
@@ -193,53 +210,82 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	BigDeff                                 = {A.DancingRuneWeapon.ID},
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+local player = "player"
 
 local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+local function InMelee(unit)
+	-- @return boolean 
+	return A.HeartStrike:IsInRange(unit)
+end 
+
+local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InMelee(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			
+			if c >= count then 
+				return true 
+			end 
+		end 
+	end
+end 
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
+
 -- SelfDefensives
 local function SelfDefensives(unit)
-    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
+    local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
 		
-    if Unit("player"):CombatTime() == 0 then 
+    if Unit(player):CombatTime() == 0 then 
         return 
     end 
 	
     -- Vampiric Blood
     local VampiricBlood = Action.GetToggle(2, "VampiricBloodHP")
-    if     VampiricBlood >= 0 and A.VampiricBlood:IsReady("player") and 
+    if     VampiricBlood >= 0 and A.VampiricBlood:IsReady(player) and 
     (
         (   -- Auto 
             VampiricBlood >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(15) < 5 or
+                Unit(player):TimeToDieX(15) < 5 or
 				-- Custom logic with current HPS and DMG
-				Unit("player"):HealthPercent() <= 45 or			
+				Unit(player):HealthPercent() <= 45 or			
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             VampiricBlood < 100 and 
-            Unit("player"):HealthPercent() <= VampiricBlood
+            Unit(player):HealthPercent() <= VampiricBlood
         )
     ) 
     then 
@@ -247,185 +293,170 @@ local function SelfDefensives(unit)
     end
 	
     -- Dancing Rune Weapon
-    local DancingRuneWeapon = Action.GetToggle(2, "DancingRuneWeaponHP")
-    if     DancingRuneWeapon >= 0 and A.DancingRuneWeapon:IsReady("player") and 
+    if A.DancingRuneWeapon:IsReadyByPassCastGCD(player, nil, nil, true) then 
+        local DRW_HP                 = A.GetToggle(2, "DancingRuneWeaponHP")
+        local DRW_TTD                = A.GetToggle(2, "DancingRuneWeaponTTD")
+            
+        if  (    
+                ( DRW_HP     >= 0     or DRW_TTD                              >= 0                                        ) and 
+                ( DRW_HP     <= 0     or Unit(player):HealthPercent()     <= DRW_HP                                    ) and 
+                ( DRW_TTD     <= 0     or Unit(player):TimeToDie()         <= DRW_TTD      )  
+            ) 
+			or 
+            (
+                A.GetToggle(2, "DancingRuneWeaponCatchKillStrike") and 
+                (
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
+                )
+            )                
+        then
+            -- Marrowrend
+            if A.Marrowrend:IsReadyByPassCastGCD(player, nil, nil, true) and Player:RunicPower() >= A.Marrowrend:GetSpellPowerCostCache() and Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0 then  
+                return A.Marrowrend        -- #4
+            end 
+                
+            -- DancingRuneWeapon
+            return A.DancingRuneWeapon         -- #3                  
+             
+        end 
+    end
+		
+    -- Icebound Fortitude	
+    if A.IceboundFortitude:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "IceboundFortitudeIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
+        local IF_HP                 = A.GetToggle(2, "IceboundFortitudeHP")
+        local IF_TTD                = A.GetToggle(2, "IceboundFortitudeTTD")
+            
+        if  (    
+                ( IF_HP     >= 0     or IF_TTD                              >= 0                                        ) and 
+                ( IF_HP     <= 0     or Unit(player):HealthPercent()     <= IF_HP                                    ) and 
+                ( IF_TTD     <= 0     or Unit(player):TimeToDie()         <= IF_TTD                                      ) 
+            ) 
+		    or 
+            (
+                A.GetToggle(2, "IceboundFortitudeCatchKillStrike") and 
+                (
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD()
+                )
+            )                
+        then                
+            return A.IceboundFortitude
+        end 
+    end
+		
+    -- Emergency AntiMagicShell
+    local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellHP")
+	local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellTTDMagic")
+    local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellTTDMagicHP")
+	local total, Hits, phys, magic = Unit(player):GetDMG()
+	local RTtotal, RTHits, RTphys, RTmagic = Unit(player):GetRealTimeDMG()
+		
+    if     AntiMagicShell >= 0 and A.AntiMagicShell:IsReady(player) and 
     (
         (   -- Auto 
-            DancingRuneWeapon >= 100 and 
+            AntiMagicShell >= 100 and 
             (
-                -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
-                -- TTD 
-                Unit("player"):TimeToDieX(55) < 5 or					
+                -- HP lose per sec >= 10
+                magic * 100 / Unit(player):HealthMax() >= 10 or 
+                RTmagic >= Unit(player):HealthMax() * 0.10 or 
+                -- TTD Magic
+                Unit(player):TimeToDieMagicX(AntiMagicShellTTDMagicHP) < AntiMagicShellTTDMagic or 
+					
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
-            DancingRuneWeapon < 100 and 
-            Unit("player"):HealthPercent() <= DancingRuneWeapon
+            AntiMagicShell < 100 and 
+            Unit(player):HealthPercent() <= AntiMagicShell
         )
     ) 
     then 
-        return A.DancingRuneWeapon
-    end  
+        return A.AntiMagicShell
+    end  		
 
-    -- Icebound Fortitude
-    local IceboundFortitude = Action.GetToggle(2, "IceboundFortitudeHP")
-    if     IceboundFortitude >= 0 and A.IceboundFortitude:IsReady("player") and 
+    -- Emergency Death Pact
+    local DeathPact = Action.GetToggle(2, "DeathPactHP")
+    if     DeathPact >= 0 and A.DeathPact:IsReady(player) and A.DeathPact:IsSpellLearned() and 
     (
         (   -- Auto 
-            IceboundFortitude >= 100 and 
+            DeathPact >= 100 and 
             (
-                -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- HP lose per sec >= 30
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 30 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.30 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(15) < 5 or
-				-- HP value
-				Unit("player"):HealthPercent() < 35 or
-				-- Player stunned
-                A.IsInPvP and LoC:Get("STUN") > 0	or			
+                Unit(player):TimeToDieX(10) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
-            IceboundFortitude < 100 and 
-            Unit("player"):HealthPercent() <= IceboundFortitude
+            DeathPact < 100 and 
+            Unit(player):HealthPercent() <= DeathPact
         )
     ) 
     then 
-        return A.IceboundFortitude
-    end  
-	
-	    -- HealingPotion
+        return A.DeathPact
+    end  		
+
+	-- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady(player) and 
     (
         (     -- Auto 
             AbyssalHealingPotion >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(30) < 5 or 
+                Unit(player):TimeToDieX(30) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+            Unit(player):HealthPercent() <= AbyssalHealingPotion
         )
     ) 
     then 
         return A.AbyssalHealingPotion
     end 
-		
-    -- Emergency AntiMagicShell
-        local AntiMagicShell = Action.GetToggle(2, "AntiMagicShellHP")
-        if     AntiMagicShell >= 0 and A.AntiMagicShell:IsReady("player") and 
-        (
-            (   -- Auto 
-                AntiMagicShell >= 100 and 
-                (
-                    -- HP lose per sec >= 10
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
-                    -- TTD Magic
-                    Unit("player"):TimeToDieMagicX(40) < 5 or 
-					
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) and 
-                Unit("player"):HasBuffs("DeffBuffs", true) == 0
-            ) or 
-            (    -- Custom
-                AntiMagicShell < 100 and 
-                Unit("player"):HealthPercent() <= AntiMagicShell
-            )
-        ) 
-        then 
-            return A.AntiMagicShell
-        end  		
-
-        -- Emergency Death Pact
-        local DeathPact = Action.GetToggle(2, "DeathPactHP")
-        if     DeathPact >= 0 and A.DeathPact:IsReady("player") and A.DeathPact:IsSpellLearned() and 
-        (
-            (   -- Auto 
-                DeathPact >= 100 and 
-                (
-                    -- HP lose per sec >= 30
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 30 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.30 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(10) < 5 or 
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) and 
-                Unit("player"):HasBuffs("DeffBuffs", true) == 0
-            ) or 
-            (    -- Custom
-                DeathPact < 100 and 
-                Unit("player"):HealthPercent() <= DeathPact
-            )
-        ) 
-        then 
-            return A.DeathPact
-        end  		
-
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
@@ -435,21 +466,21 @@ local function Interrupts(unit)
 		
     -- MindFreeze
     if useKick and A.MindFreeze:IsReady(unit) then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+     	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
        	    return A.MindFreeze
        	end 
    	end 
 	
     -- DeathGrip
     if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and A.GetToggle(2, "DeathGripInterrupt") then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+     	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
        	    return A.DeathGrip
        	end 
    	end 
 	
    	-- Asphyxiate
    	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+ 		if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
    	        return A.Asphyxiate
    	    end 
    	end 
@@ -480,23 +511,29 @@ A[3] = function(icon, isMulti)
     --------------------
     local isMoving = A.Player:IsMoving()
 	local isMovingFor = A.Player:IsMovingTime()
-    local inCombat = Unit("player"):CombatTime() > 0
-    local combatTime = Unit("player"):CombatTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local unit = player
     local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
-	local IsTanking = Unit("player"):IsTanking("target", 8) or Unit("player"):IsTankingAoE(8)
-	local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
-	local targetThreatSituation, targetThreatPercent = Unit("player"):ThreatSituation()
+	local IsTanking = Unit(player):IsTanking("target", 8) or Unit(player):IsTankingAoE(8)
+	local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
+	local targetThreatSituation, targetThreatPercent = Unit(player):ThreatSituation()
 	local threatDamagerLimit = (A.Role == "DAMAGER" and A.GetToggle(2, "ThreatDamagerLimit")) or -1
     local isSafestThreatRotation = not A.IsInPvP and A.Zone ~= "none" and A.TeamCache.Friendly.Size > 1 and threatDamagerLimit ~= -1 and targetThreatPercent >= threatDamagerLimit
-
+	local BonestormHP = A.GetToggle(2, "BonestormHP")
+	local BonestormRunicPower = A.GetToggle(2, "BonestormRunicPower")
+	local BonestormRunicPowerWithVampiricBlood = A.GetToggle(2, "BonestormRunicPowerWithVampiricBlood")
+	local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
+	-- Trinkets vars
+    local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Standard
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -514,7 +551,13 @@ A[3] = function(icon, isMulti)
         local function Standard(unit)	
 					
             -- blooddrinker,if=!buff.dancing_rune_weapon.up
-            if A.BloodDrinker:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.VampiricBlood.ID, true) > 0) then
+            if A.BloodDrinker:IsReady(unit) and 
+			(
+			    Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) == 0 
+				or 
+				Unit(player):HasBuffs(A.VampiricBlood.ID, true) > 0
+			)
+			then
                 return A.BloodDrinker:Show(icon)
             end
 			
@@ -522,11 +565,11 @@ A[3] = function(icon, isMulti)
             if A.Marrowrend:IsReady(unit) and 
 			    (
 				    (
-					    Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) 
+					    Unit(player):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) 
 						or 
-						Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) 
+						Unit(player):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) 
 						or 
-						Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3
+						Unit(player):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3
 					) 
 					and Player:RunicPowerDeficit() >= 20
 				) 
@@ -535,11 +578,11 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bonestorm,if=runic_power>=100&!buff.dancing_rune_weapon.up
-            if A.Bonestorm:IsReady("player") and A.Bonestorm:IsSpellLearned() and 
+            if A.Bonestorm:IsReady(player) and A.Bonestorm:IsSpellLearned() and 
 			(
-			    Unit("player"):HealthPercent() <= 60 and Player:RunicPower() >= 50 
+			    Unit(player):HealthPercent() <= BonestormHP and Player:RunicPower() >= BonestormRunicPower
 			    or 
-			    (Player:RunicPower() >= 40 and Unit("player"):HasBuffs(A.VampiricBlood.ID, true) > 0)			
+			    (Player:RunicPower() >= BonestormRunicPowerWithVampiricBlood and Unit(player):HasBuffs(A.VampiricBlood.ID, true) > 2)			
 			) 
 			then
                 return A.Bonestorm:Show(icon)
@@ -554,17 +597,17 @@ A[3] = function(icon, isMulti)
                 DeathStrike >= 100 and
                 (
 				    -- HP lose per sec >= 8
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 8 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.08 or 
+                    Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 8 or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.08 or 
                     -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or
+                    Unit(player):TimeToDieX(35) < 5 or
 				    -- Custom logic with current HPS and DMG
-				    Unit("player"):HealthPercent() <= 85 
+				    Unit(player):HealthPercent() <= 85 
 				)                
 				or
                 (    -- Custom
                     DeathStrike < 100 and 
-                    Unit("player"):HealthPercent() <= DeathStrike
+                    Unit(player):HealthPercent() <= DeathStrike
                 )				
             )				
 			then
@@ -574,9 +617,12 @@ A[3] = function(icon, isMulti)
             -- blood_boil,if=charges_fractional>=1.8&(buff.hemostasis.stack<=(5-spell_targets.blood_boil)|spell_targets.blood_boil>2)
             if A.BloodBoil:IsReady(unit) and 
 			    (
-				    A.BloodBoil:GetSpellChargesFrac() >= 1.8 
-					and 
-					(Unit("player"):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRange(15, 5, 10)) or MultiUnits:GetByRange(15, 5, 10) > 2)
+				    A.BloodBoil:GetSpellChargesFrac() >= 1.8 and 
+					(
+					    Unit(player):HasBuffsStacks(A.HemostasisBuff.ID, true) <= (5 - MultiUnits:GetByRange(15)) 
+						or 
+						GetByRange(2, 15)
+					)
 				) 
 			then
                 return A.BloodBoil:Show(icon)
@@ -585,39 +631,54 @@ A[3] = function(icon, isMulti)
             -- marrowrend,if=buff.bone_shield.stack<5&talent.ossuary.enabled&runic_power.deficit>=15
             if A.Marrowrend:IsReady(unit) and 
 			    (
-			        Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 7 - num(A.BonesoftheDamned:GetAzeriteRank() > 0)
+			        Unit(player):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 7 - num(A.BonesoftheDamned:GetAzeriteRank() > 0)
 			    ) 
 			then
                 return A.Marrowrend:Show(icon)
             end
 			
             -- death_strike,if=runic_power.deficit<=(15+buff.dancing_rune_weapon.up*5+spell_targets.heart_strike*talent.heartbreaker.enabled*2)|Unit(unit):TimeToDie()<10
-            if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= (15 + num(Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) * 5 + MultiUnits:GetByRange(15, 5, 10) * num(A.Heartbreaker:IsSpellLearned()) * 2) or Unit(unit):TimeToDie() < 10) then
+            if A.DeathStrike:IsReady(unit) and 
+			(
+			    Player:RunicPowerDeficit() <= (15 + num(Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) * 5 + MultiUnits:GetByRange(15) * num(A.Heartbreaker:IsSpellLearned()) * 2) 
+				or 
+				Unit(unit):TimeToDie() < 10
+			)
+			then
                 return A.DeathStrike:Show(icon)
             end
 			
             -- death_and_decay,if=spell_targets.death_and_decay>=3
-            if A.DeathandDecay:IsReady("player") then
+            if A.DeathandDecay:IsReady(player) then
                 return A.DeathandDecay:Show(icon)
             end
 			
             -- rune_strike,if=(charges_fractional>=1.8|buff.dancing_rune_weapon.up)&rune.time_to_3>=gcd
-            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:GetSpellChargesFrac() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) and Player:RuneTimeToX(3) >= A.GetGCD()) then
+            if A.RuneStrike:IsReady(unit) and 
+			(
+			    (
+				    A.RuneStrike:GetSpellChargesFrac() >= 1.8 
+				    or 
+				    Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0
+				) 
+				and Player:RuneTimeToX(3) >= A.GetGCD()
+			)
+			then
                 return A.RuneStrike:Show(icon)
             end
 			
             -- heart_strike,if=buff.dancing_rune_weapon.up|rune.time_to_4<gcd
-            if A.HeartStrike:IsReady(unit) and Player:Rune() > 2 then
+            if A.HeartStrike:IsReady(unit) and Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0 and Player:RuneTimeToX(4) < A.GetGCD()  then
                 return A.HeartStrike:Show(icon)
             end
 			
             -- blood_boil,if=buff.dancing_rune_weapon.up
-            if A.BloodBoil:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) then
+            if A.BloodBoil:IsReady(unit) and (Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) then
                 return A.BloodBoil:Show(icon)
             end
 			
             -- death_and_decay,if=buff.crimson_scourge.up|talent.rapid_decomposition.enabled|spell_targets.death_and_decay>=2
-            if A.DeathandDecay:IsReady("player") and (Unit("player"):HasBuffs(A.CrimsonScourgeBuff.ID, true) > 0 or A.RapidDecomposition:IsSpellLearned() or MultiUnits:GetByRange(15, 5, 10) >= 2) then
+            if A.DeathandDecay:IsReady(player) and (Unit(player):HasBuffs(A.CrimsonScourgeBuff.ID, true) > 0 or A.RapidDecomposition:IsSpellLearned() or GetByRange(2, 15)) then
                 return A.DeathandDecay:Show(icon)
             end
 			
@@ -632,7 +693,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- heart_strike,if=rune.time_to_3<gcd|buff.bone_shield.stack>6
-            if A.HeartStrike:IsReady(unit) and (Player:RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
+            if A.HeartStrike:IsReady(unit) and 
+			(
+			    Player:RuneTimeToX(3) < A.GetGCD() 
+				or 
+				Unit(player):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6
+			)
+			then
                 return A.HeartStrike:Show(icon)
             end
 			
@@ -678,14 +745,14 @@ A[3] = function(icon, isMulti)
 			and combatTime > 0     
 			then 
 			    -- if not fully aggroed or we are not current target then use taunt
-			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit(player):InfoGUID() ) then 
                     return A.DarkCommand:Show(icon)
 				-- else if all good on current target, switch to another one we know we dont currently tank
                 else
                     local DarkCommand_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if DarkCommand_Nameplates then  
                         for DarkCommand_UnitID in pairs(DarkCommand_Nameplates) do             
-                            if not Unit(DarkCommand_UnitID):IsPlayer() and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsDummy() and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit("player"):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
+                            if not Unit(DarkCommand_UnitID):IsPlayer() and Unit(DarkCommand_UnitID):CombatTime() > 0 and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsDummy() and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit(player):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
                                 if A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
 							        return A:Show(icon, ACTION_CONST_AUTOTARGET)
 								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not Unit(unit):IsBoss() and not Unit(DarkCommand_UnitID):IsDummy() and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
@@ -709,7 +776,26 @@ A[3] = function(icon, isMulti)
                 return A.Berserking:Show(icon)
             end
 			
-            -- use_items,if=cooldown.dancing_rune_weapon.remains>90
+            -- Defensives trinkets
+            if Unit(player):CombatTime() > 0 and (Unit(player):HealthPercent() < 50 or Unit(player):TimeToDie() < 5) then 
+                if A.Trinket1:IsReady(player) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DPS" then 
+                    return A.Trinket1:Show(icon)
+               end 
+        
+                if A.Trinket2:IsReady(player) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DPS" then 
+                   return A.Trinket2:Show(icon)
+                end
+            end 
+	
+            -- Offensive Trinkets
+            if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket1:Show(icon)
+            end 
+            
+            if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
+                return A.Trinket2:Show(icon)
+            end 
+			
             -- use_item,name=razdunks_big_red_button
             if A.RazdunksBigRedButton:IsReady(unit) then
                 return A.RazdunksBigRedButton:Show(icon)
@@ -721,22 +807,22 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 then
                 return A.AshvanesRazorCoral:Show(icon)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=buff.dancing_rune_weapon.up&debuff.razor_coral_debuff.up
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) > 0) then
+            if A.AshvanesRazorCoral:IsReady(unit) and Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 0 then
                 return A.AshvanesRazorCoral:Show(icon)
             end
 			
             -- potion,if=buff.dancing_rune_weapon.up
-            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0) then
+            if A.SuperiorSteelskinPotion:IsReady(unit) and Action.GetToggle(1, "Potion") and Unit(player):HasBuffs(A.DancingRuneWeaponBuff.ID, true) > 0 then
                 return A.SuperiorSteelskinPotion:Show(icon)
             end
 			
             -- tombstone,if=buff.bone_shield.stack>=7
-            if A.Tombstone:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) >= 7) then
+            if A.Tombstone:IsReady(unit) and A.Tombstone:IsSpellLearned() and Unit(player):HasBuffsStacks(A.BoneShieldBuff.ID, true) >= 7 then
                 return A.Tombstone:Show(icon)
             end
 			
@@ -782,10 +868,10 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
---[[local function FreezingTrapUsedByEnemy()
+local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
+    Unit(player):GetDR("incapacitate") >= 50 
     then 
         local Caster = UnitCooldown:GetUnitID("arena", 3355)
         if Caster and Unit(Caster):GetRange() <= 40 then 
@@ -794,24 +880,47 @@ end
     end 
 end 
 local function ArenaRotation(icon, unit)
+    local DeathGripLowHealth = GetToggle(2, "DeathGripLowHealth")
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
-            -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
-            end 
+        if unit == "arena1" or unit == "arena2" or unit == "arena3" --and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) 
+		then 	
+			-- Interrupt
+   		    local Interrupt = Interrupts(unit)
+  		    if Interrupt then 
+  		        return Interrupt:Show(icon)
+  		    end	
+
+			-- Death Grip
+			if UseDeathGrip and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 and Unit(unit):IsMovingOut() and Unit(unit):HealthPercent() < DeathGripLowHealth
+			then
+			    return A.DeathGrip:Show(icon) 
+			end
         end
     end 
 end 
 local function PartyRotation(unit)
-    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+    if (unit == "party1" and not GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
-
-  	-- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
+  	
+	-- RaiseAlly
+    if A.RaiseAlly:IsReady(unit) and Unit(player):CombatTime() > 0 and Unit(unit):IsDead() and not Unit(unit):InLOS() and
+	(
+	    -- Tank
+	    GetToggle(2, "RaiseAllyUnits")[1] and Unit(unit):IsTank() and Unit(unit):IsPlayer()
+		or
+		-- Healer
+		GetToggle(2, "RaiseAllyUnits")[2] and Unit(unit):IsHealer() and Unit(unit):IsPlayer()
+		or
+		-- Damager
+		GetToggle(2, "RaiseAllyUnits")[3] and Unit(unit):IsDamager() and Unit(unit):IsPlayer() 
+		or
+		-- Mouseover
+		GetToggle(2, "RaiseAllyUnits")[4] and Unit("mouseover"):IsExists() and Unit(unit):IsPlayer()
+	)	
+	then
+        return A.RaiseAlly
     end
 end 
 
@@ -833,5 +942,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 

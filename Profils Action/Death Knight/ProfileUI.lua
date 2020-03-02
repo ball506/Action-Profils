@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.5 (27.02.2020)",
+    DateTime = "v4.0.6 (02.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -1639,6 +1639,300 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 				
             },
+            {
+				{
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(48792) .. " -- ",
+                    },
+                },
+            },
+			{ -- [1] 1st Row  	
+                {
+                    E = "Checkbox", 
+                    DB = "IceboundFortitudeIgnoreBigDeff",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",
+                        ruRU = A.GetSpellInfo(48792) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",  
+                        frFR = A.GetSpellInfo(48792) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used", 
+                    }, 
+                    M = {},
+                }, 		    
+                {
+                    E = "Checkbox", 
+                    DB = "IceboundFortitudeCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(48792) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(48792) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                },
+            },
+            {			
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "IceboundFortitudeTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(48792) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(48792) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "IceboundFortitudeHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(48792) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(48792) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            -- Dancing Rune Weapon
+			{
+				{
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(49028) .. " -- ",
+                    },
+                },
+            },
+			{ -- [1] 1st Row  	
+                {
+                    E = "Checkbox", 
+                    DB = "DancingRuneWeaponIgnoreBigDeff",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",
+                        ruRU = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",  
+                        frFR = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used", 
+                    }, 
+                    M = {},
+                }, 		    
+                {
+                    E = "Checkbox", 
+                    DB = "DancingRuneWeaponCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49028) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(49028) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(49028) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                },
+            },
+            {			
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "DancingRuneWeaponTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49028) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(49028) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(49028) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "DancingRuneWeaponHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49028) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(49028) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(49028) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            -- Bonestorm
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(194844) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BonestormHP",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(212552) .. " (%)",
+                        ruRU = A.GetSpellInfo(212552) .. " (%)",
+                        frFR = A.GetSpellInfo(212552) .. " (%)",
+                    },
+                    TT = { 
+                        enUS = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".",
+                        ruRU = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".",
+                        frFR = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".", 
+                    }, 
+                    M = {},
+                },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BonestormRunicPower",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(212552) .. " \nRunic Power",
+                        ruRU = A.GetSpellInfo(212552) .. " \nRunic Power",
+                        frFR = A.GetSpellInfo(212552) .. " \nRunic Power",
+                    },
+                    TT = { 
+                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
+                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
+                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BonestormRunicPowerWithVampiricBlood",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                        ruRU = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                        frFR = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                    },
+                    TT = { 
+                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                    }, 
+                    M = {},
+                },				
+            },
+			
+            -- AntiMagicShell
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(48707) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48707) .. " (%)",
+                        ruRU = A.GetSpellInfo(48707) .. " (%)",
+                        frFR = A.GetSpellInfo(48707) .. " (%)",
+                    },
+                    TT = { 
+                        enUS = "Set the HP percent value before using " .. A.GetSpellInfo(48707) .. ".\nIf set on AUTO, then will use custom logic inside rotation.",
+                        ruRU = "Set the HP percent value before using " .. A.GetSpellInfo(48707) .. ".\nIf set on AUTO, then will use custom logic inside rotation.",
+                        frFR = "Set the HP percent value before using " .. A.GetSpellInfo(48707) .. ".\nIf set on AUTO, then will use custom logic inside rotation.",
+                    }, 
+                    M = {},
+                },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellTTDMagic",
+                    DBV = 60, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48707) .. " TTD",
+                        ruRU = A.GetSpellInfo(48707) .. " TTD",
+                        frFR = A.GetSpellInfo(48707) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the Time To Die value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                        ruRU = "Set the Time To Die value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                        frFR = "Set the Time To Die value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AntiMagicShellTTDMagicHP",
+                    DBV = 40, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48707) .. " TTD(%)",
+                        ruRU = A.GetSpellInfo(48707) .. " TTD(%)",
+                        frFR = A.GetSpellInfo(48707) .. " TTD(%)",
+                    },
+                    TT = { 
+                        enUS = "Set the Time To Die Health Percent value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                        ruRU = "Set the Time To Die Health Percent value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                        frFR = "Set the Time To Die Health Percent value by magic damage before using " .. A.GetSpellInfo(48707) .. ".",
+                    }, 
+                    M = {},
+                },				
+            },
+			
+			
             { -- [4] 4th Row
 
                 {
@@ -1713,38 +2007,11 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "IceboundFortitudeHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(48792) .. " (%)",
-                    }, 
-                    M = {},
-                },
-
-            },
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "DancingRuneWeaponHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(49028) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "AntiMagicShellHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(48707) .. " (%)",
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -1775,27 +2042,105 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
-            { -- [4] 4th Row
-
+            { -- [6]
                 {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "AbyssalHealingPotionHP",
-                    DBV = 100, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
                     L = { 
-                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation", 
                     }, 
                     M = {},
                 },
-            },
-            { -- [4] 4th Row
-
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Tank", value = 1 },
+                        { text = "Healer", value = 2 },
+                        { text = "Damager", value = 3 },
+                        { text = "Mouseover", value = 4 },
+                    },
+                    MULT = true,
+                    DB = "RaiseAllyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                        [3] = false,
+                        [4] = true,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(61999) .. " units",
+                    }, 
+                    TT = { 
+                        enUS = "Tank: Will only use if current tank is dead.\nHealer: Will only use if current healer is dead.\nDamager: Will only use if one of friendly damager is dead.\nMouseover: Will only use if you are mouseovering a dead target.", 
+                        ruRU = "Tank: Will only use if current tank is dead.\nHealer: Will only use if current healer is dead.\nDamager: Will only use if one of friendly damager is dead.\nMouseover: Will only use if you are mouseovering a dead target.",  
+                    }, 
+                    M = {},
+                },				
+            }, 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
                 },
             },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [7] 
                 {
                     E = "Header",
