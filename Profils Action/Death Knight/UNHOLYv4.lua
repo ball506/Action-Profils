@@ -426,7 +426,7 @@ end
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover") or A.IsInPvP and A.InterruptIsValid(unit, "PvP")   
     local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
 		
     -- MindFreeze
@@ -556,7 +556,10 @@ A[3] = function(icon, isMulti)
     	    end
   	    end
 	end	
-	
+	-- Mounted
+	if Player:IsMounted() then
+	    profileStop = true
+	end
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -753,7 +756,13 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- necrotic strike pvp
-			if A.IsInPvP and A.NecroticStrike:IsReady(unit) and A.NecroticStrike:IsSpellLearned() and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.NecroticStrikeDebuff.ID, true) <= 2 then
+			if A.IsInPvP and A.NecroticStrike:IsReady(unit) and A.NecroticStrike:IsSpellLearned() and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and 
+			(
+			    Unit(unit):HasDeBuffs(A.NecroticStrikeDebuff.ID, true) <= 2 
+				or
+				A.Zone == "arena" and Unit(unit):HealthPercent() <= 30
+			)
+			then
 			    return A.NecroticStrike:Show(icon)
 			end
 			
