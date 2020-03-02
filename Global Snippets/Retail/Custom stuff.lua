@@ -161,6 +161,8 @@ local BlackListedTrinkets = {
     [1] = 168905, -- Shiver Venom Relic
 	[2] = 169314, -- Azsharas Font of Power
     [3] = 169311, -- AshvanesRazorCoral
+	[4] = 174044, -- Humming Black Dragonscale
+
 }
 
 function Action.TasteRotation:TrinketIsAllowed()
