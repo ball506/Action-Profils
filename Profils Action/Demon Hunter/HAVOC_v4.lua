@@ -708,7 +708,7 @@ A[3] = function(icon, isMulti)
 		
         -- Imprison CrowdControl PvP
         if A.ImprisonIsReady(unit) and not Unit(unit):InLOS() then
-            return A.ImprisonIsReady:Show(icon)
+            return A.Imprison:Show(icon)
         end  
 		
         -- Interrupts
@@ -1244,15 +1244,19 @@ local function ArenaRotation(icon, unit)
         if unit == "arena1" then 
 			-- Disrupt
    		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
-      		    return A.Disrupt
+      		    return A.Disrupt:Show(icon)
    			end
 		    -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
             if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= A.ManaRift:GetSpellCastTime() then
 			    return A.ManaRift:Show(icon)
-			end			
+			end	
+		    -- PvP Manarift if debuff FelEruption < ManaRift cast time (2.5sec)
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) > 0 and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) <= A.ManaRift:GetSpellCastTime() then
+			    return A.ManaRift:Show(icon)
+			end				
             -- Imprison Casting BreakAble CC
             if A.ImprisonIsReady(unit) and Unit(unit):IsHealer() and not Unit(unit):InLOS() then
-                return A.ImprisonIsReady:Show(icon)
+                return A.Imprison:Show(icon)
             end   
 			-- Purge
 		    -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")

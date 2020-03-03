@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.6 (25.02.2020)",
+    DateTime = "v4.0.7 (03.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
