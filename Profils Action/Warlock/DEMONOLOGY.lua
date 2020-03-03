@@ -59,34 +59,36 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     Implosion                              = Action.Create({ Type = "Spell", ID = 196277 }),
     CallDreadstalkers                      = Action.Create({ Type = "Spell", ID = 104316 }),
     BilescourgeBombers                     = Action.Create({ Type = "Spell", ID = 267211 }),
-    DemonicPowerBuff                       = Action.Create({ Type = "Spell", ID = 265273 }),
+    DemonicPowerBuff                       = Action.Create({ Type = "Spell", ID = 265273 , Hidden = true     }),
     DemonicCalling                         = Action.Create({ Type = "Spell", ID = 205145 }),
     GrimoireFelguard                       = Action.Create({ Type = "Spell", ID = 111898 }),
 	GrimoireFelguardTexture                = Action.Create({ Type = "Spell", ID = 108503 }), -- Hacky spellID to avoid icon conflict with summon felguard
     SummonDemonicTyrant                    = Action.Create({ Type = "Spell", ID = 265187 }),
-    DemonicCallingBuff                     = Action.Create({ Type = "Spell", ID = 205146 }),
+    DemonicCallingBuff                     = Action.Create({ Type = "Spell", ID = 205146 , Hidden = true     }),
     DemonicCoreBuff                        = Action.Create({ Type = "Spell", ID = 264173 }),
     SummonVilefiend                        = Action.Create({ Type = "Spell", ID = 264119 }),
     Doom                                   = Action.Create({ Type = "Spell", ID = 265412 }),
     DoomDebuff                             = Action.Create({ Type = "Spell", ID = 265412 }),
     NetherPortal                           = Action.Create({ Type = "Spell", ID = 267217 }),
-    NetherPortalBuff                       = Action.Create({ Type = "Spell", ID = 267218 }),
+    NetherPortalBuff                       = Action.Create({ Type = "Spell", ID = 267218 , Hidden = true     }),
     PowerSiphon                            = Action.Create({ Type = "Spell", ID = 264130 }),
     ExplosivePotential                     = Action.Create({ Type = "Spell", ID = 275395 }),
-    ExplosivePotentialBuff                 = Action.Create({ Type = "Spell", ID = 275398 }),
+    ExplosivePotentialBuff                 = Action.Create({ Type = "Spell", ID = 275398 , Hidden = true     }),
     DemonicStrength                        = Action.Create({ Type = "Spell", ID = 267171 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 , Hidden = true     }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 , Hidden = true     }),
     BalefulInvocation                      = Action.Create({ Type = "Spell", ID = 287059 }),
     ShadowsBite                            = Action.Create({ Type = "Spell", ID = 272944 }),
-    ShadowsBiteBuff                        = Action.Create({ Type = "Spell", ID = 272945 }),
+    ShadowsBiteBuff                        = Action.Create({ Type = "Spell", ID = 272945 , Hidden = true     }),
 	-- Utilities
     SpellLock                              = Action.Create({ Type = "Spell", ID = 19647}),
-    PetKick                                = Action.Create({ Type = "Spell", ID = 119914, Color = "RED", Desc = "RED" }), 
+    PetKick                                = Action.Create({ Type = "Spell", ID = 119914, Color = "RED", Desc = "RED Pet Stun" }), 
 	Shadowfury                             = Action.Create({ Type = "Spell", ID = 30283      }),
+    FearGreen                              = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true , Hidden = true     }),	
+    Fear                                   = Action.Create({ Type = "Spell", ID = 5782       }),
     -- Defensive
     UnendingResolve                        = Action.Create({ Type = "Spell", ID = 104773     }),
 	-- Felguard
@@ -99,8 +101,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     BurningRush                            = Action.Create({ Type = "Spell", ID = 278727     }),
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
     -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true , Hidden = true     }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true , Hidden = true     }),
     AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
     PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
     RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
@@ -1309,24 +1311,30 @@ A[3] = function(icon, isMulti)
 			
             -- blood_fury,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and 
+			(
 			    (
 				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5
 				) 
 				or 
 				(
 				    Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15
-				) 
+				)
+			)
 			then
                 return A.BloodFury:Show(icon)
             end
 			
             -- fireblood,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and 
+			(
 			    (
-				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5 
-					or
-					(Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15)
+				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5
+				) 
+				or 
+				(
+				    Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15
 				)
+			)
 			then
                 return A.Fireblood:Show(icon)
             end

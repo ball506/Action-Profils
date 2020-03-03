@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v3.0.8 (29.02.2020)",
+    DateTime = "v3.0.9 (03.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -31,7 +31,6 @@ A.Data.ProfileUI = {
                 },
             },		
             { -- [1] 1st Row
-		
                 {
                     E = "Checkbox", 
                     DB = "mouseover",
@@ -70,8 +69,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                
+                },                 
             },  
             { -- [2]
                 {
