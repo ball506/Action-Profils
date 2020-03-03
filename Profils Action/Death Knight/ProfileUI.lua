@@ -7,11 +7,12 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.6 (02.03.2020)",
+    DateTime = "v4.0.7 (02.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
-        [ACTION_CONST_DEATHKNIGHT_UNHOLY] = {          
+        [ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },			
             { -- [7]
                 {
                     E = "Header",
@@ -101,6 +102,85 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "TrinketsAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Trinkets\nAoE only", 
+                        ruRU = "Trinkets\nAoE only",  
+                        frFR = "Trinkets\nAoE only",  
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        ruRU = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        frFR = "Enable this to option to trinkets for AoE usage ONLY.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 30,                            
+                    DB = "TrinketsMinTTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min TTD",
+                    },
+                    TT = { 
+                        enUS = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        ruRU = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        frFR = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                    },					
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 10,                            
+                    DB = "TrinketsMinUnits",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min Units",
+                    },
+                    TT = { 
+                        enUS = "Minimum number of units in range to activate Trinkets.", 
+                        ruRU = "Minimum number of units in range to activate Trinkets.", 
+                        frFR = "Minimum number of units in range to activate Trinkets.",  
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "TrinketsUnitsRange",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        ruRU = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        frFR = "Maximum range for units detection to automatically activate AoE rotation.",  
+                    },					
+                    M = {},
+                },
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- AoE -- ",
                     },
                 },
@@ -157,7 +237,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-
             -- Blood of the enemy
             { -- [7] 
                 {
@@ -887,7 +966,8 @@ A.Data.ProfileUI = {
             },
         },
 		-- Frost
-        [ACTION_CONST_DEATHKNIGHT_FROST] = {          
+        [ACTION_CONST_DEATHKNIGHT_FROST] = {  
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },	        
             { -- [7]
                 {
                     E = "Header",
@@ -956,6 +1036,129 @@ A.Data.ProfileUI = {
                     M = {},
                 },                	
             },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- AoE -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 5,                            
+                    DB = "MinAoETargets",
+                    DBV = 2, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min AoE units",
+                    },
+                    TT = { 
+                        enUS = "Minimum units in range to automatically activate AoE rotation.", 
+                        ruRU = "Minimum units in range to automatically activate AoE rotation.", 
+                        frFR = "Minimum units in range to automatically activate AoE rotation.", 
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "MaxAoERange",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        ruRU = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        frFR = "Maximum range for units detection to automatically activate AoE rotation.",  
+                    },					
+                    M = {},
+                },
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "TrinketsAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Trinkets\nAoE only", 
+                        ruRU = "Trinkets\nAoE only",  
+                        frFR = "Trinkets\nAoE only",  
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        ruRU = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        frFR = "Enable this to option to trinkets for AoE usage ONLY.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 30,                            
+                    DB = "TrinketsMinTTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min TTD",
+                    },
+                    TT = { 
+                        enUS = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        ruRU = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        frFR = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                    },					
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 10,                            
+                    DB = "TrinketsMinUnits",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min Units",
+                    },
+                    TT = { 
+                        enUS = "Minimum number of units in range to activate Trinkets.", 
+                        ruRU = "Minimum number of units in range to activate Trinkets.", 
+                        frFR = "Minimum number of units in range to activate Trinkets.",  
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "TrinketsUnitsRange",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        ruRU = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        frFR = "Maximum range for units detection to automatically activate AoE rotation.",  
+                    },					
+                    M = {},
+                },
+			},
             { -- [7] 
                 {
                     E = "Header",
@@ -1067,6 +1270,62 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },
+            -- Blood of the enemy
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(298277) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "BloodoftheEnemySyncAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(298277) .. " AoE sync", 
+                        ruRU = A.GetSpellInfo(298277) .. " AoE sync",  
+                        frFR = A.GetSpellInfo(298277) .. " AoE sync", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                        ruRU = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                        frFR = "Enable this to option to keep " .. A.GetSpellInfo(298277) .. " for maximum AoE damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 20,                            
+                    DB = "BloodoftheEnemyAoETTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(298277) .. " AoE TTD",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 8,                            
+                    DB = "BloodoftheEnemyUnits",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(298277) .. " AoE units",
+                    }, 
+                    TT = { 
+                        enUS = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                        ruRU = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                        frFR = "Minimum active units around before using " .. A.GetSpellInfo(298277) .. ".", 
+                    },
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {
@@ -1498,7 +1757,8 @@ A.Data.ProfileUI = {
             },
         },
 		-- Blood
-        [ACTION_CONST_DEATHKNIGHT_BLOOD] = {          
+        [ACTION_CONST_DEATHKNIGHT_BLOOD] = { 
+        LayoutOptions = { gutter = 4, padding = { left = 5, right = 5 } },			
             { -- [7]
                 {
                     E = "Header",
@@ -1647,7 +1907,8 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-			{ -- [1] 1st Row  	
+			{ -- [1] 1st Row  
+            RowOptions = { margin = { top = 10 } },			
                 {
                     E = "Checkbox", 
                     DB = "IceboundFortitudeIgnoreBigDeff",
@@ -1658,25 +1919,7 @@ A.Data.ProfileUI = {
                         frFR = A.GetSpellInfo(48792) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used", 
                     }, 
                     M = {},
-                }, 		    
-                {
-                    E = "Checkbox", 
-                    DB = "IceboundFortitudeCatchKillStrike",
-                    DBV = true,
-                    L = { 
-                        enUS = A.GetSpellInfo(48792) .. "\nCatch death hit",
-                        ruRU = A.GetSpellInfo(48792) .. "\nCatch death hit",  
-                        frFR = A.GetSpellInfo(48792) .. "\nCatch death hit", 
-                    }, 
-                    TT = { 
-                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
-                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
-                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
-                    },
-                    M = {},
-                },
-            },
-            {			
+                }, 	
                 {
                     E         = "Slider",                                                     
                     MIN     = -1, 
@@ -1693,6 +1936,25 @@ A.Data.ProfileUI = {
                         enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
                         ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
                         frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },				
+            },
+            {	
+            RowOptions = { margin = { top = 10 } },			
+                {
+                    E = "Checkbox", 
+                    DB = "IceboundFortitudeCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(48792) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(48792) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(48792) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
                     },
                     M = {},
                 },
@@ -1725,36 +1987,19 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-			{ -- [1] 1st Row  	
+			{ -- [1] 1st Row  
+            RowOptions = { margin = { top = 10 } },			
                 {
                     E = "Checkbox", 
                     DB = "DancingRuneWeaponIgnoreBigDeff",
                     DBV = true,
                     L = { 
-                        enUS = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",
-                        ruRU = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used",  
-                        frFR = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(49028) .. " used", 
+                        enUS = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(55233) .. " used",
+                        ruRU = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(55233) .. " used",  
+                        frFR = A.GetSpellInfo(49028) .. "\nSkip if " .. A.GetSpellInfo(55233) .. " used", 
                     }, 
                     M = {},
-                }, 		    
-                {
-                    E = "Checkbox", 
-                    DB = "DancingRuneWeaponCatchKillStrike",
-                    DBV = true,
-                    L = { 
-                        enUS = A.GetSpellInfo(49028) .. "\nCatch death hit",
-                        ruRU = A.GetSpellInfo(49028) .. "\nCatch death hit",  
-                        frFR = A.GetSpellInfo(49028) .. "\nCatch death hit", 
-                    }, 
-                    TT = { 
-                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
-                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
-                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
-                    },
-                    M = {},
-                },
-            },
-            {			
+                }, 	
                 {
                     E         = "Slider",                                                     
                     MIN     = -1, 
@@ -1771,6 +2016,25 @@ A.Data.ProfileUI = {
                         enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
                         ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
                         frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },				
+            },
+            {	
+            RowOptions = { margin = { top = 10 } },			
+                {
+                    E = "Checkbox", 
+                    DB = "DancingRuneWeaponCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(49028) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(49028) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(49028) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use ability before receiving a fatal strike\nThis option is not related to other triggers!",  
                     },
                     M = {},
                 },
@@ -1812,14 +2076,14 @@ A.Data.ProfileUI = {
                     DBV = 30, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        enUS = A.GetSpellInfo(212552) .. " (%)",
-                        ruRU = A.GetSpellInfo(212552) .. " (%)",
-                        frFR = A.GetSpellInfo(212552) .. " (%)",
+                        enUS = A.GetSpellInfo(194844) .. " (%)",
+                        ruRU = A.GetSpellInfo(194844) .. " (%)",
+                        frFR = A.GetSpellInfo(194844) .. " (%)",
                     },
                     TT = { 
-                        enUS = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".",
-                        ruRU = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".",
-                        frFR = "Set the HP percent value before using " .. A.GetSpellInfo(212552) .. ".", 
+                        enUS = "Set the HP percent value before using " .. A.GetSpellInfo(194844) .. ".",
+                        ruRU = "Set the HP percent value before using " .. A.GetSpellInfo(194844) .. ".",
+                        frFR = "Set the HP percent value before using " .. A.GetSpellInfo(194844) .. ".", 
                     }, 
                     M = {},
                 },		
@@ -1831,14 +2095,14 @@ A.Data.ProfileUI = {
                     DBV = 60, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        enUS = A.GetSpellInfo(212552) .. " \nRunic Power",
-                        ruRU = A.GetSpellInfo(212552) .. " \nRunic Power",
-                        frFR = A.GetSpellInfo(212552) .. " \nRunic Power",
+                        enUS = A.GetSpellInfo(194844) .. " \nRunic Power",
+                        ruRU = A.GetSpellInfo(194844) .. " \nRunic Power",
+                        frFR = A.GetSpellInfo(194844) .. " \nRunic Power",
                     },
                     TT = { 
-                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
-                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
-                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. ".",
+                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. ".",
+                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. ".",
+                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. ".",
                     }, 
                     M = {},
                 },
@@ -1850,14 +2114,14 @@ A.Data.ProfileUI = {
                     DBV = 40, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        enUS = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
-                        ruRU = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
-                        frFR = A.GetSpellInfo(212552) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                        enUS = A.GetSpellInfo(194844) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                        ruRU = A.GetSpellInfo(194844) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
+                        frFR = A.GetSpellInfo(194844) .. " \nRunic Power with " .. A.GetSpellInfo(55233),
                     },
                     TT = { 
-                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
-                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
-                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(212552) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                        enUS = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                        ruRU = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
+                        frFR = "Set the Runic Power value before using " .. A.GetSpellInfo(194844) .. " IF " .. A.GetSpellInfo(55233) .. " is active.",
                     }, 
                     M = {},
                 },				

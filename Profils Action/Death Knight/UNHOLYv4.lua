@@ -509,9 +509,13 @@ A[3] = function(icon, isMulti)
 	local DeathGripInterrupt = GetToggle(2, "DeathGripInterrupt")
 	local UseDeathGrip = GetToggle(2, "UseDeathGrip")
 	local DeathGripHealthPercent = GetToggle(2, "DeathGripHealthPercent")
-	local profileStop = false
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
+	local TrinketsAoE = GetToggle(2, "TrinketsAoE")
+	local TrinketsMinTTD = GetToggle(2, "TrinketsMinTTD")
+	local TrinketsUnitsRange = GetToggle(2, "TrinketsUnitsRange")
+	local TrinketsMinUnits = GetToggle(2, "TrinketsMinUnits")
+	local profileStop = false
 	
 	-- FocusedAzeriteBeam protection channel
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
@@ -922,17 +926,26 @@ A[3] = function(icon, isMulti)
             end
 			
 	    	-- Non SIMC Custom Trinket1
-	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast then	    
-           	    if BurstIsON(unit) then 
-      	       	    return A.Trinket1:Show(icon)
-   	            end 		
-	        end
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then 
+      	        return A.Trinket1:Show(icon)
+   	        end 		
+	        
 		
 		    -- Non SIMC Custom Trinket2
-	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast then	    
-       	        if BurstIsON(unit) then 
-      	       	    return A.Trinket2:Show(icon)
-   	            end 	
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast and	    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then
+      	       	return A.Trinket2:Show(icon) 	
 	        end
 			
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
