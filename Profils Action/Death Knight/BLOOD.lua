@@ -741,8 +741,7 @@ A[3] = function(icon, isMulti)
             end
 						
 		    -- Taunt 
-            if A.GetToggle(2, "AutoTaunt") 
-			and combatTime > 0     
+            if A.GetToggle(2, "AutoTaunt") and combatTime > 0     
 			then 
 			    -- if not fully aggroed or we are not current target then use taunt
 			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit(player):InfoGUID() ) then 
@@ -758,7 +757,7 @@ A[3] = function(icon, isMulti)
 								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not Unit(unit):IsBoss() and not Unit(DarkCommand_UnitID):IsDummy() and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
 								    return A.DeathGrip:Show(icon)
 								else
-								    return
+								    return true
 								end
                             end         
                         end 
