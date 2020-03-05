@@ -325,6 +325,9 @@ ExpectedCombatLength = A.MakeFunctionCachedStatic(ExpectedCombatLength)
 local function GenerateBreathofSindragosa(meta, obj, skipObj, unit)
     -- Usage: @number meta, @table obj, @number castLeft or @string unit, @boolean skipObj will not queue itself Breath of Sindragosa if true 
     -- Sorts queue priority for specified meta to build enough runic power for successfully Breath of Sindragosa 
+	
+	--local BoSPoolSequenceMacro = A.GetToggle(2, "BoSPoolSequenceMacro")
+	
     if not A.IsQueueRunningAuto() then                
         local BoSEnemies      = A.GetToggle(2, "BoSEnemies")                             -- not static
         local BoSPoolTime     = A.GetToggle(2, "BoSPoolTime")                                                     -- not static
@@ -670,6 +673,7 @@ A[3] = function(icon, isMulti)
 	local BoSEnemies = A.GetToggle(2, "BoSEnemies")
 	local BoSLucidDream = A.GetToggle(2, "BoSLucidDream")
 	local BoSEnemiesRange = A.GetToggle(2, "BoSEnemiesRange")
+	local BosUsage = A.GetToggle(2, "BosUsage")
 	local LucidDreamPower = A.GetToggle(2, "LucidDreamPower")
 	local LucidDreamUseAfter = A.GetToggle(2, "LucidDreamUseAfter")
 	local BloodoftheEnemySyncAoE = GetToggle(2, "BloodoftheEnemySyncAoE")
@@ -678,6 +682,7 @@ A[3] = function(icon, isMulti)
 	local MinAoETargets = GetToggle(2, "MinAoETargets")
 	local MaxAoERange = GetToggle(2, "MaxAoERange")
 	local VarPoolForBoS = false
+	local VarPoolForBoSQueue = false
 	local BoSisActive = Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0
 	local profileStop = false
 	local meta = 3
@@ -862,9 +867,11 @@ A[3] = function(icon, isMulti)
 		    -- auto_attack
 			VarPoolForBoS = A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and 
 			(
-			    A.BreathofSindragosa:GetCooldown() < BoSPoolTime and Player:RunicPower() < BoSMinPower
+			    A.BreathofSindragosa:GetCooldown() < BoSPoolTime and Player:RunicPower() < BoSMinPower  
 				or
 				BoSisActive
+				or
+				BosUsage == "MACRO" and VarPoolForBoSQueue
 			)
 	        --print(VarPoolForBoS)
 			
@@ -876,21 +883,29 @@ A[3] = function(icon, isMulti)
 			
 			-- Chains of Ice
 			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseChainsofIce") and A.ChainsofIce:IsReady(unit) and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) == 0 then
+		   	    -- Notification					
+	            Action.SendNotification(A.GetSpellInfo(A.ChainsofIce.ID) .. " on " .. unit, A.ChainsofIce.ID)
 			    return A.ChainsofIce:Show(icon) 
 			end
 			
 			-- Death Grip
-			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseDeathGrip") and Unit(unit):HasDeBuffs(A.ChainsofIce.ID, true) > 0 and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 then
-			    return A.DeathGrip:Show(icon) 
+			if Unit(unit):IsMovingOut() and A.GetToggle(2, "UseDeathGrip") and A.DeathGrip:IsReady(unit) and Unit(unit):GetRange() > 8 and Unit(unit):GetRange() <= 30 then
+		   	    -- Notification					
+	            Action.SendNotification(A.GetSpellInfo(A.DeathGrip.ID) .. " on " .. unit, A.DeathGrip.ID)
+				return A.DeathGrip:Show(icon) 
 			end
 			
 			-- Wraith Walk if out of range 
             if A.WraithWalk:IsReady(player) and A.WraithWalk:IsSpellLearned() and isMovingFor > A.GetToggle(2, "WraithWalkTime") and A.GetToggle(2, "UseWraithWalk") and CanCast then
+				-- Notification					
+	            Action.SendNotification("Using " .. A.GetSpellInfo(A.WraithWalk.ID), A.WraithWalk.ID)
                 return A.WraithWalk:Show(icon)
             end
 			
 			-- Deaths Advance if out of range 
             if A.DeathsAdvance:IsReady(player) and isMovingFor > A.GetToggle(2, "DeathsAdvanceTime") and A.GetToggle(2, "UseDeathsAdvance") and CanCast then
+				-- Notification					
+	            Action.SendNotification("Using " .. A.GetSpellInfo(A.DeathsAdvance.ID), A.DeathsAdvance.ID)
                 return A.DeathsAdvance:Show(icon)
             end
             
@@ -936,7 +951,12 @@ A[3] = function(icon, isMulti)
             if Essences(unit) then
                 return true
             end
-
+			
+            -- pillar_of_frost,no BreathofSindragosa
+            if A.PillarofFrost:IsReady(player) and Player:RunicPower() >= BoSMinPower and not A.BreathofSindragosa:IsSpellLearned() and not VarPoolForBoS and not VarPoolForBoSQueue then
+                return A.PillarofFrost:Show(icon)
+            end
+			
             -- pillar_of_frost,no burst mode on
             if A.PillarofFrost:IsReady(player) and not A.BurstIsON(unit) and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) then
                 return A.PillarofFrost:Show(icon)
@@ -1073,49 +1093,46 @@ A[3] = function(icon, isMulti)
                     return A.Fireblood:Show(icon)
                 end
 				
- --[[               -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&talent.obliteration.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.1.time_to_die<20
-                if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and 
-				(
-				    A.PillarofFrost:GetCooldown() == 0 and A.Obliteration:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) 
-					or 
-					Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 20
-				)
-				then
-                    return A.EmpowerRuneWeapon:Show(icon)
-                end	
+                -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&talent.obliteration.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.1.time_to_die<20
+        --        if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and 
+		--		(
+		--		    A.PillarofFrost:GetCooldown() == 0 and A.Obliteration:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) 
+		--			or 
+		--			Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 20
+		--		)
+		--		then
+       --             return A.EmpowerRuneWeapon:Show(icon)
+       --         end	
 				
                 -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains|talent.icecap.enabled
-                if A.PillarofFrost:IsReady(player) and (A.EmpowerRuneWeapon:GetCooldown() > 0 or A.Icecap:IsSpellLearned()) and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) then
+                if A.PillarofFrost:IsReady(player) and (A.EmpowerRuneWeapon:GetCooldown() > 0 or A.Icecap:IsSpellLearned()) and not A.BreathofSindragosa:IsSpellLearned() then
                     return A.PillarofFrost:Show(icon)
                 end		
 			
                 -- empower_rune_weapon,if=(cooldown.pillar_of_frost.ready|Unit(unit):TimeToDie()<20)&talent.breath_of_sindragosa.enabled&runic_power>60
-                if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and A.PillarofFrost:GetCooldown() == 0 and A.BreathofSindragosa:IsSpellLearned() and Player:RunicPower() > BoSMinPower then
-                   return A.EmpowerRuneWeapon:Show(icon)
-                end
+            --    if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and A.PillarofFrost:GetCooldown() == 0 and A.BreathofSindragosa:IsSpellLearned() and Player:RunicPower() > BoSMinPower then
+            --       return A.EmpowerRuneWeapon:Show(icon)
+            --    end
 
                 -- empower_rune_weapon,if=talent.icecap.enabled&rune<3
-                if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) and (A.Icecap:IsSpellLearned() and Player:Rune() < 3) then
+                if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and not A.BreathofSindragosa:IsSpellLearned() and A.Icecap:IsSpellLearned() and Player:Rune() < 3 then
                     return A.EmpowerRuneWeapon:Show(icon)
                 end
 						
                 -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains
-                if A.PillarofFrost:IsReady(player) and A.EmpowerRuneWeapon:GetCooldown() > 0 and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) then
+                if A.PillarofFrost:IsReady(player) and A.EmpowerRuneWeapon:GetCooldown() > 0 and not A.BreathofSindragosa:IsSpellLearned() then
                     return A.PillarofFrost:Show(icon)
                 end		
-]]--				
 				
-				-- breath_of_sindragosa special macro 
-                if A.BreathofSindragosa:IsReadyByPassCastGCD(unit, nil, nil, true) then 
+				
+				-- breath_of_sindragosa special logic builder
+                if A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:IsReadyByPassCastGCD(unit, nil, nil, true) and BosUsage == "AUTO" then 
                     if GenerateBreathofSindragosa(meta, A.BreathofSindragosa, false, unit) then 
+						-- Notification					
+	                    Action.SendNotification("Building: " .. A.GetSpellInfo(A.BreathofSindragosa.ID) .. " burst.", A.BreathofSindragosa.ID)
                         return false 
                     end 
-            
-                  --  if not GenerateBreathofSindragosa(meta, A.BreathofSindragosa, true, unit) and A.BreathofSindragosa:IsReady(unit) then 
-                  --      return A.BreathofSindragosa:Show(icon)        
-                   -- end 
-
-                end 				
+				end 				
 --[[
                 -- breath_of_sindragosa,use_off_gcd=1,if=cooldown.empower_rune_weapon.remains&cooldown.pillar_of_frost.remains
                 if A.BreathofSindragosa:IsReadyByPassCastGCD(player) and A.BreathofSindragosa:IsSpellLearned() and GetByRange(BoSEnemies, BoSEnemiesRange) and
@@ -1232,9 +1249,7 @@ A[3] = function(icon, isMulti)
 			    	or 
 		    		Player:RuneTimeToX(3) > A.GetGCD()
 			    	or 
-		    		A.BreathofSindragosa:GetSpellTimeSinceLastCast() >= LucidDreamUseAfter and Player:RunicPower() < LucidDreamPower
-					or 
-					Player:RunicPower() <= 25
+		    		A.BreathofSindragosa:GetSpellTimeSinceLastCast() >= LucidDreamUseAfter and Player:Rune() < LucidDreamPower
 		    	) 
 		    	then
                     return A.MemoryofLucidDreams:Show(icon)
@@ -1636,4 +1651,93 @@ A[8] = function(icon)
     end     
     return ArenaRotation(icon, "arena3")
 end]]--
+-------------------------------------------
+-- [[ UI: QUEUE BASE ]] 
+-------------------------------------------
+local GameLocale = GetLocale()    
+local Localization = {
+    [GameLocale] = {},
+    enUS          = {
+        QERROR1 = "Already queued: ",
+        QERROR2 = "Not available: ",
+    },
+    ruRU         = {
+        QERROR1 = "Уже находится в очереди: ",
+        QERROR2 = "Недоступно: ",
+    },
+}
+local L = setmetatable(Localization[GameLocale], { __index = Localization.enUS })
 
+local QB = {
+    player                                 = {UnitID = "player",         Silence = false, Value = true, Auto = true, Priority = 1},
+    target                                 = {UnitID = "target",         Silence = false, Value = true, Auto = true, Priority = 1},
+    Cancel                                 = {Silence = false},
+    IsQueuedObjects                        = function(...)
+        local found 
+        for i = 1, select("#", ...) do
+            local object = select(i, ...)
+            if object:IsQueued() then 
+                found = true 
+                A.Print(L.QERROR1 .. object:Info())
+            end 
+        end 
+        
+        return found 
+    end,
+    IsUnavailableObjects                = function(...)
+        local found 
+        for i = 1, select("#", ...) do
+            local object = select(i, ...)
+            if object:GetCooldown() > 0 then 
+                found = true 
+                A.Print(L.QERROR2 .. object:Info())
+            end 
+        end 
+        
+        return found 
+    end,
+}
+
+function Action.QueueBase(name)
+     
+    local BoSEnemies      = A.GetToggle(2, "BoSEnemies")                             -- not static
+    local BoSPoolTime     = A.GetToggle(2, "BoSPoolTime")                                                     -- not static
+    local BoSMinPower     = A.GetToggle(2, "BoSMinPower")                                                 -- not static       
+    local myRunicPower    = Player:RunicPower()           
+    
+    if name == "BreathofSindragosa" then 
+		-- Notification					
+	    Action.SendNotification("Queue Macro: " .. A.GetSpellInfo(A.BreathofSindragosa.ID), A.BreathofSindragosa.ID)		
+        
+		-- Check valid 
+        if QB.IsQueuedObjects(A.BreathofSindragosa, A.EmpowerRuneWeapon) or QB.IsUnavailableObjects(A.BreathofSindragosa, A.EmpowerRuneWeapon) then 
+            return 
+        end         
+        
+        -- Cancel other queues 
+        A.CancelAllQueueForMeta(3)                                                       
+        
+		-- Obliterate
+		if myRunicPower < BoSMinPower then
+            A.Obliterate:SetQueue(QB.player)        -- #0
+			VarPoolForBoSQueue = true
+		end
+		
+	   -- EmpowerRuneWeapon
+        if not A.EmpowerRuneWeapon:IsQueued() and A.EmpowerRuneWeapon:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then  
+            A.EmpowerRuneWeapon:SetQueue(QB.player)        -- #1
+        end 	
+		
+		-- PillarofFrost
+        if not A.PillarofFrost:IsQueued() and A.EmpowerRuneWeapon:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then  
+            A.PillarofFrost:SetQueue(QB.player)            -- #2	
+		end
+		
+        -- Do nothing if not enough Runic Power generate
+        local canBreathofSindragosa = BoSMinPower > 0 and A.BreathofSindragosa:IsReadyP("player") 
+        if (A.EmpowerRuneWeapon:IsQueued() or A.EmpowerRuneWeapon:GetCooldown() > 0) and A.BreathofSindragosa:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then
+		    A.BreathofSindragosa:SetQueue(QB.player)    -- #3
+        end
+		VarPoolForBoSQueue = false
+    end 		
+end 

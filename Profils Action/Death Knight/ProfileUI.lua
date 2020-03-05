@@ -5,9 +5,12 @@ local TMW = TMW
 local CNDT = TMW.CNDT 
 local Env = CNDT.Env
 local A = Action
+local DK                                             = Action[ACTION_CONST_DEATHKNIGHT_FROST]
+local TR                                        = Action.TasteRotation
+
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.8 (05.03.2020)",
+    DateTime = "v4.0.9 (05.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -68,16 +71,16 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "SoloMode",
-                    DBV = false,
+                    DBV = true,
                     L = { 
                         enUS = "Enable Solo Mode", 
                         ruRU = "Включить Solo Mode",  
                         frFR = "Activez le mode solo", 
                     }, 
                     TT = { 
-                        enUS = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
-                        ruRU = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
-                        frFR = "Activate Solo Mode. Useful for low level chars or during leveling phase", 
+                        enUS = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.", 
+                        ruRU = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.", 
+                        frFR = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.",  
                     }, 
                     M = {},
                 }, 
@@ -1022,16 +1025,16 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "SoloMode",
-                    DBV = false,
+                    DBV = true,
                     L = { 
                         enUS = "Enable Solo Mode", 
                         ruRU = "Включить Solo Mode",  
                         frFR = "Activez le mode solo", 
                     },
                     TT = { 
-                        enUS = "Activate Solo Mode and priorize survivability over the rest.\nUseful for low level chars or during leveling phase", 
-                        ruRU = "Активируйте Solo Mode и установите приоритет выживаемости над остальными.\nПолезно для персонажей низкого уровня или во время фазы прокачки.", 
-                        frFR = "Activez le mode solo et priorisez la survie par rapport au reste.\nUtile pour les caractères de bas niveau ou pendant la phase de leveling.", 
+                        enUS = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.", 
+                        ruRU = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.", 
+                        frFR = "Activate Solo Mode. Useful for world quest or solo content.\nWARNING: Better to disable this option in raid to avoid wasting ressources with Healing spells.", 
                     }, 
                     M = {},
                 },                	
@@ -1167,7 +1170,47 @@ A.Data.ProfileUI = {
                     },
                 },
             },
-            { -- [3] 3rd Row 
+			{
+                {
+                    E = "Dropdown",                                                         
+                    OT = {                   
+                        { text = "AUTO", value = "AUTO" },
+                        { text = "MACRO", value = "MACRO" }, 
+                    },
+                    DB = "BosUsage",
+                    DBV = "AUTO",
+                    L = { 
+                        ANY = A.GetSpellInfo(152279) .. " usage",
+                    }, 
+                    TT = { 
+                        enUS = "AUTO: Automatic usage with logic from rotation.\nMACRO: Manual usage by pressing special macro that will pool all necessary ressources to maximize " .. A.GetSpellInfo(152279) .. " usage.", 
+                        ruRU = "AUTO: Automatic usage with logic from rotation.\nMACRO: Manual usage by pressing special macro that will pool all necessary ressources to maximize " .. A.GetSpellInfo(152279) .. " usage.", 
+                        frFR = "AUTO: Automatic usage with logic from rotation.\nMACRO: Manual usage by pressing special macro that will pool all necessary ressources to maximize " .. A.GetSpellInfo(152279) .. " usage.",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Button",
+                    H         = 35,
+                    OnClick = function(self, button, down)     
+                        if button == "LeftButton" then 
+                            --Action.QueueBase("BreathofSindragosa")
+							Action.CraftMacro("QB:BoS", [[#showtip ]] .. Action[ACTION_CONST_DEATHKNIGHT_FROST].BreathofSindragosa:Info() .. "\n" .. [[/run Action.QueueBase("BreathofSindragosa")]], 1, true, true) 
+                        else                
+                            Action.CraftMacro("QB:BoS", [[#showtip ]] .. Action[ACTION_CONST_DEATHKNIGHT_FROST].BreathofSindragosa:Info() .. "\n" .. [[/run Action.QueueBase("BreathofSindragosa")]], 1, true, true) 
+                        end 
+                    end, 
+                    L = { 
+                        ANY = A.GetSpellInfo(152279) .. "\nMacro Creator",
+                    }, 
+                    TT = { 
+                        enUS = "Click this button to create the special " .. A.GetSpellInfo(152279) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then when you want to prepare a " .. A.GetSpellInfo(152279) .. " burst, just SPAM this macro MULTIPLE times.\nIMPORTANT: Macro will only work if usage is set on MACRO in first setting.", 
+                        ruRU = "Click this button to create the special " .. A.GetSpellInfo(152279) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then when you want to prepare a " .. A.GetSpellInfo(152279) .. " burst, just SPAM this macro MULTIPLE times.\nIMPORTANT: Macro will only work if usage is set on MACRO in first setting.",   
+                        frFR = "Click this button to create the special " .. A.GetSpellInfo(152279) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then when you want to prepare a " .. A.GetSpellInfo(152279) .. " burst, just SPAM this macro MULTIPLE times.\nIMPORTANT: Macro will only work if usage is set on MACRO in first setting.", 
+                    },                           
+                }, 
+            },
+			{ -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
@@ -1242,14 +1285,14 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 100,                            
+                    MAX = 6,                            
                     DB = "LucidDreamPower",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 2, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        enUS = A.GetSpellInfo(299374) .. " Runic Power", 
-                        ruRU = A.GetSpellInfo(299374) .. " Runic Power", 
-                        frFR = A.GetSpellInfo(299374) .. " Puissance Runique", 
+                        enUS = A.GetSpellInfo(299374) .. " <= Runes", 
+                        ruRU = A.GetSpellInfo(299374) .. " <= Runes", 
+                        frFR = A.GetSpellInfo(299374) .. " <= Runes", 
                     }, 
                     M = {},
                 },
