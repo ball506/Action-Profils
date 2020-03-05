@@ -251,27 +251,48 @@ local Temp = {
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
 
+local MetaQueue                             = {
+    [3]                                        = {
+        player                                = {UnitID = "player",         Silence = true, Auto = true, Value = true, Priority = 1},
+        mouseover                             = {UnitID = "mouseover",     Silence = true, Auto = true, Value = true, Priority = 1},
+        target                                 = {UnitID = "target",         Silence = true, Auto = true, Value = true, Priority = 1},
+    },
+    [6]                                        = {
+        player                                 = {UnitID = "player",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 6},
+        target                                 = {UnitID = "arena1",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 6},
+    },
+    [7]                                        = {
+        player                                 = {UnitID = "player",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 7},
+        target                                 = {UnitID = "arena2",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 7},
+    },
+    [8]                                        = {
+        player                                 = {UnitID = "player",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 8},
+        target                                 = {UnitID = "arena3",         Silence = true, Auto = true, Value = true, Priority = 1, MetaSlot = 8},
+    },
+    Cancel                                     = {Silence = true},
+}
+
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
 
 local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function InMelee(unitID)
+local function InMelee(unit)
 	-- @return boolean 
-	return A.FrostStrike:IsInRange(unitID)
+	return A.FrostStrike:IsInRange(unit)
 end 
 
 -- @return boolean  
 -- @parameters count, range are mandatory, others parameters optionals
 local function GetByRange(count, range, isCheckEqual, isCheckCombat)
 	local c = 0 
-	for unitID in pairs(ActiveUnitPlates) do 
-		if (not isCheckEqual or not UnitIsUnit("target", unitID)) and (not isCheckCombat or Unit(unitID):CombatTime() > 0) then 
-			if InMelee(unitID) then 
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InMelee(unit) then 
 				c = c + 1
 			elseif range then 
-				local r = Unit(unitID):GetRange()
+				local r = Unit(unit):GetRange()
 				if r > 0 and r <= range then 
 					c = c + 1
 				end 
@@ -297,6 +318,63 @@ local function ExpectedCombatLength()
     return BossTTD
 end 
 ExpectedCombatLength = A.MakeFunctionCachedStatic(ExpectedCombatLength)
+
+-------------------------------------------
+-- [[ QUEUE GENERATOR ]] 
+-------------------------------------------
+local function GenerateBreathofSindragosa(meta, obj, skipObj, unit)
+    -- Usage: @number meta, @table obj, @number castLeft or @string unit, @boolean skipObj will not queue itself Breath of Sindragosa if true 
+    -- Sorts queue priority for specified meta to build enough runic power for successfully Breath of Sindragosa 
+    if not A.IsQueueRunningAuto() then                
+        local BoSEnemies      = A.GetToggle(2, "BoSEnemies")                             -- not static
+        local BoSPoolTime     = A.GetToggle(2, "BoSPoolTime")                                                     -- not static
+        local BoSMinPower     = A.GetToggle(2, "BoSMinPower")                                                 -- not static
+        
+        local myRunicPower        = Player:RunicPower()        
+        local needRunicPower      = obj:GetSpellPowerCostCache()                                                                      
+        
+        -- Do nothing if not enough Runic Power generate
+        local canBreathofSindragosa = BoSMinPower > 0 and A.BreathofSindragosa:IsReadyP("player") and myRunicPower >= BoSMinPower
+        
+		if A.BreathofSindragosa:GetCooldown() > 0 then
+		    return false
+		end
+		
+        -- General 
+        if not skipObj and canBreathofSindragosa and A.EmpowerRuneWeapon:GetCooldown() > 0 and A.PillarofFrost:GetCooldown() > 0 then 
+            local target = unit == "mouseover" and MetaQueue[3].mouseover or MetaQueue[meta].target
+           -- obj:SetQueue(target)                                     -- #4
+			obj:SetQueue(MetaQueue[meta].player)                     -- #4
+        end 
+		
+        -- Empower Rune Weapon
+        if canBreathofSindragosa and A.EmpowerRuneWeapon:GetCooldown() == 0 then 
+            A.EmpowerRuneWeapon:SetQueue(MetaQueue[meta].player)             -- #3
+        end 
+		
+        -- Pilar of Frost
+        if canBreathofSindragosa and A.PillarofFrost:GetCooldown() == 0 and (A.EmpowerRuneWeapon:GetCooldown() > 110 or A.LastPlayerCastName == A.EmpowerRuneWeapon:Info()) then 
+            A.PillarofFrost:SetQueue(MetaQueue[meta].player)             -- #2
+        end 	
+		
+		-- Obliterate
+        if not canBreathofSindragosa and Player:Rune() >= 2 then 
+		    local target = unit == "mouseover" and MetaQueue[3].mouseover or MetaQueue[meta].target
+            A.Obliterate:SetQueue(target)             -- #1
+        end 
+		
+        -- howling_blast,if=buff.rime.up
+        if not canBreathofSindragosa and Player:Rune() < 2 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+            A.HowlingBlast:SetQueue(target)             -- #1
+        end	
+		
+		-- Custom pool time user
+		if not canBreathofSindragosa and A.BreathofSindragosa:GetCooldown() <= BoSPoolTime then
+		    return true
+		end	
+        
+    end 
+end 
 
 -- Guardian of Azeroth active
 -- @return true if guardian is active
@@ -600,7 +678,9 @@ A[3] = function(icon, isMulti)
 	local MinAoETargets = GetToggle(2, "MinAoETargets")
 	local MaxAoERange = GetToggle(2, "MaxAoERange")
 	local VarPoolForBoS = false
+	local BoSisActive = Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0
 	local profileStop = false
+	local meta = 3
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	local TrinketsAoE = GetToggle(2, "TrinketsAoE")
@@ -780,7 +860,12 @@ A[3] = function(icon, isMulti)
         if not profileStop and inCombat and CanCast and unit ~= "mouseover" then
            
 		    -- auto_attack
-			VarPoolForBoS = A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() < BoSPoolTime and Player:RunicPower() < BoSMinPower
+			VarPoolForBoS = A.BurstIsON(unit) and A.BreathofSindragosa:IsSpellLearned() and 
+			(
+			    A.BreathofSindragosa:GetCooldown() < BoSPoolTime and Player:RunicPower() < BoSMinPower
+				or
+				BoSisActive
+			)
 	        --print(VarPoolForBoS)
 			
 			-- Interrupt
@@ -988,7 +1073,7 @@ A[3] = function(icon, isMulti)
                     return A.Fireblood:Show(icon)
                 end
 				
-                -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&talent.obliteration.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.1.time_to_die<20
+ --[[               -- empower_rune_weapon,if=cooldown.pillar_of_frost.ready&talent.obliteration.enabled&rune.time_to_5>gcd&runic_power.deficit>=10|target.1.time_to_die<20
                 if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and 
 				(
 				    A.PillarofFrost:GetCooldown() == 0 and A.Obliteration:IsSpellLearned() and Player:RuneTimeToX(5) > A.GetGCD() and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) 
@@ -1018,7 +1103,20 @@ A[3] = function(icon, isMulti)
                 if A.PillarofFrost:IsReady(player) and A.EmpowerRuneWeapon:GetCooldown() > 0 and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) then
                     return A.PillarofFrost:Show(icon)
                 end		
+]]--				
 				
+				-- breath_of_sindragosa special macro 
+                if A.BreathofSindragosa:IsReadyByPassCastGCD(unit, nil, nil, true) then 
+                    if GenerateBreathofSindragosa(meta, A.BreathofSindragosa, false, unit) then 
+                        return false 
+                    end 
+            
+                  --  if not GenerateBreathofSindragosa(meta, A.BreathofSindragosa, true, unit) and A.BreathofSindragosa:IsReady(unit) then 
+                  --      return A.BreathofSindragosa:Show(icon)        
+                   -- end 
+
+                end 				
+--[[
                 -- breath_of_sindragosa,use_off_gcd=1,if=cooldown.empower_rune_weapon.remains&cooldown.pillar_of_frost.remains
                 if A.BreathofSindragosa:IsReadyByPassCastGCD(player) and A.BreathofSindragosa:IsSpellLearned() and GetByRange(BoSEnemies, BoSEnemiesRange) and
 			    (A.EmpowerRuneWeapon:GetCooldown() > 0 and A.PillarofFrost:GetCooldown() > 0) 
@@ -1026,7 +1124,7 @@ A[3] = function(icon, isMulti)
 			    then
                     return A.BreathofSindragosa:Show(icon)
                 end			
-
+]]--
                 -- frostwyrms_fury,if=(buff.pillar_of_frost.up&azerite.icy_citadel.rank<=1&(buff.pillar_of_frost.remains<=gcd|buff.unholy_strength.remains<=gcd&buff.unholy_strength.up))
                 if A.FrostwyrmsFury:IsReady(unit) and ((Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.IcyCitadel:GetAzeriteRank() <= 1 and (Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) <= A.GetGCD() or Unit(player):HasBuffs(A.UnholyStrengthBuff.ID, true) <= A.GetGCD() and Unit(player):HasBuffs(A.UnholyStrengthBuff.ID, true) > 0))) then
                     return A.FrostwyrmsFury:Show(icon)
@@ -1125,8 +1223,34 @@ A[3] = function(icon, isMulti)
             end
             
 			-- BREATH OF SINDRAGOSA ACTIVE
-            if Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 then
+            if BoSisActive then
+                
+				-- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
+                if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+		    	(
+			        Unit(player):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 8 
+			    	or 
+		    		Player:RuneTimeToX(3) > A.GetGCD()
+			    	or 
+		    		A.BreathofSindragosa:GetSpellTimeSinceLastCast() >= LucidDreamUseAfter and Player:RunicPower() < LucidDreamPower
+					or 
+					Player:RunicPower() <= 25
+		    	) 
+		    	then
+                    return A.MemoryofLucidDreams:Show(icon)
+                end	
 			
+                -- arcane_torrent
+                if A.ArcaneTorrent:IsRacialReady(unit) and 
+				(
+				    (Unit(player):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RuneTimeToX(3) > A.GetGCD() and Player:RunicPower() <= 80) 
+					or 
+					not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20
+				)  
+				then
+                    return A.ArcaneTorrent:Show(icon)
+                end	
+				
                 -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power<=30&!talent.frostscythe.enabled
                 if A.Obliterate:IsReadyByPassCastGCD(unit) and ((Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPower() <= 30 and not A.Frostscythe:IsSpellLearned()) then
                     return A.Obliterate:Show(icon)
@@ -1138,7 +1262,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter,if=talent.gathering_storm.enabled
-                if A.RemorselessWinter:IsReady(unit) and A.GatheringStorm:IsSpellLearned() and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and A.GatheringStorm:IsSpellLearned() and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1168,7 +1292,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter
-                if A.RemorselessWinter:IsReady(unit) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 		    	
@@ -1187,23 +1311,7 @@ A[3] = function(icon, isMulti)
                     return A.Obliterate:Show(icon)
                 end
 			
-                -- memory_of_lucid_dreams,if=buff.empower_rune_weapon.remains<5&buff.breath_of_sindragosa.up|(rune.time_to_2>gcd&runic_power<50)
-                if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
-		    	(
-			        Unit(player):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 
-			    	or 
-		    		(Player:RuneTimeToX(2) > A.GetGCD())
-			    	or 
-		    		A.BreathofSindragosa:TimeSinceLastCast() > LucidDreamUseAfter and A.BreathofSindragosa:TimeSinceLastCast() < 10 and Player:RunicPower() < LucidDreamPower
-		    	) 
-		    	then
-                    return A.MemoryofLucidDreams:Show(icon)
-                end	
-			
-                -- arcane_torrent
-                if A.ArcaneTorrent:IsRacialReady(unit) and ((Unit(player):HasBuffs(A.BreathofSindragosa.ID, true) > 0 and Player:RunicPower() <= 80) or not A.BreathofSindragosa:IsSpellLearned() and Player:RunicPowerDeficit() >= 20)  then
-                    return A.ArcaneTorrent:Show(icon)
-                end
+
             end
             
 			-- OBLITERATION ROTATION
@@ -1211,7 +1319,7 @@ A[3] = function(icon, isMulti)
             if Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.Obliteration:IsSpellLearned() then
 			
                 -- remorseless_winter,if=talent.gathering_storm.enabled
-                if A.RemorselessWinter:IsReady(unit) and (A.GatheringStorm:IsSpellLearned()) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and (A.GatheringStorm:IsSpellLearned()) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1278,7 +1386,7 @@ A[3] = function(icon, isMulti)
             
 			-- AoE ROTATION
 			-- run_action_list,name=aoe,if=active_enemies>=2
-            if (isMulti or GetToggle(2, "AoE")) and MultiUnits:GetByRange(MaxAoERange) > MinAoETargets and CanCast then
+            if (isMulti or GetToggle(2, "AoE")) and MultiUnits:GetByRange(MaxAoERange) > MinAoETargets and Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) == 0 and CanCast then
 			
 		        -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
                 if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and BloodoftheEnemySyncAoE and BurstIsON(unit) and HeartOfAzeroth and 
@@ -1291,7 +1399,7 @@ A[3] = function(icon, isMulti)
                 end	
 				
                 -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targetA.remorseless_winter>=3&!buff.rime.up)
-                if A.RemorselessWinter:IsReady(unit) and CanCast and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() > 0 and GetByRange(3, 8) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0)) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and CanCast and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() > 0 and GetByRange(3, 8) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0)) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1336,7 +1444,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter
-                if A.RemorselessWinter:IsReady(unit) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1390,7 +1498,7 @@ A[3] = function(icon, isMulti)
 			-- STANDARD ROTATION
 			
             -- remorseless_winter
-            if A.RemorselessWinter:IsReady(unit) and Player:AreaTTD(20) >= 4 then
+            if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
                 return A.RemorselessWinter:Show(icon)
             end
 			

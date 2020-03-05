@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.7 (02.03.2020)",
+    DateTime = "v4.0.8 (05.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -1171,9 +1171,9 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 10,                            
+                    MAX = 30,                            
                     DB = "BoSPoolTime",
-                    DBV = 5, -- Set healthpercentage @60% life. 
+                    DBV = 10, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         enUS = A.GetSpellInfo(152279) .. " pool time", 
@@ -1187,7 +1187,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 100,                            
                     DB = "BoSMinPower",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 70, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         enUS = A.GetSpellInfo(152279) .. " pool power", 
@@ -2039,10 +2039,10 @@ A.Data.ProfileUI = {
                     M = {},
                 },
                 {
-                    E         = "Slider",                                                     
+                    E       = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 100,                            
-                    DB         = "DancingRuneWeaponHP",
+                    DB      = "DancingRuneWeaponHP",
                     DBV     = 20,
                     ONLYOFF    = true,
                     L = { 
@@ -2158,10 +2158,10 @@ A.Data.ProfileUI = {
                 },		
                 {
                     E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 100,                            
+                    MIN = 2, 
+                    MAX = 30,                            
                     DB = "AntiMagicShellTTDMagic",
-                    DBV = 60, -- Set healthpercentage @60% life. 
+                    DBV = 3, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         enUS = A.GetSpellInfo(48707) .. " TTD",
@@ -2207,7 +2207,7 @@ A.Data.ProfileUI = {
     			{
                     E = "Checkbox", 
                     DB = "AutoTaunt",
-                    DBV = true,
+                    DBV = false,
                     L = { 
                         enUS = "Automatic Taunt", 
                         ruRU = "Автоматическая Насмешка", 
@@ -2517,6 +2517,22 @@ A.Data.ProfileUI = {
                         enUS = "Automatically use " .. A.GetSpellInfo(49576) .. " as interrupt.", 
                         ruRU = "Автоматически использовать " .. A.GetSpellInfo(49576) .. " как прерывание.", 
                         frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49576) .. " comme interrupt.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "GorefiendsGraspInterrupt",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(108199) .. " interrupt", 
+                        ruRU = A.GetSpellInfo(108199) .. " прерывание", 
+                        frFR = A.GetSpellInfo(108199) .. " interrupt", 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(108199) .. " as interrupt.", 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(108199) .. " как прерывание.", 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(108199) .. " comme interrupt.", 
                     }, 
                     M = {},
                 },
