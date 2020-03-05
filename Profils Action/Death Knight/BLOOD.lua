@@ -102,6 +102,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     VampiricBlood                          = Action.Create({ Type = "Spell", ID = 55233 }),
     DeathPact                              = Action.Create({ Type = "Spell", ID = 48743 }),	-- Talent
     GorefiendsGrasp                        = Action.Create({ Type = "Spell", ID = 108199 }),	-- Mass Grip
+	MarkofBlood                            = Action.Create({ Type = "Spell", ID = 206940 }),
 	-- Utilities
 	DarkCommand                            = Action.Create({ Type = "Spell", ID = 56222     }), 
 	WraithWalk                             = Action.Create({ Type = "Spell", ID = 212552     }), 
@@ -364,6 +365,9 @@ local function SelfDefensives(unit)
                 RTmagic >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD Magic
                 Unit(player):TimeToDieMagicX(AntiMagicShellTTDMagicHP) < AntiMagicShellTTDMagic or 
+				-- GGL logic by Ayni on magic inc damage
+				Unit(player):GetDMG(4) > Unit(player):GetDMG() / 2 or
+				Unit(player):GetDMG(4) * 5 >= A.AntiMagicShell:GetSpellDescription()[1] or
 					
                 (
                     A.IsInPvP and 
@@ -477,6 +481,13 @@ local function Interrupts(unit)
        	    return A.DeathGrip
        	end 
    	end 
+
+    -- GorefiendsGrasp
+    if useCC and not A.MindFreeze:IsReady(unit) and A.GorefiendsGrasp:IsReady(unit) and A.GetToggle(2, "GorefiendsGraspInterrupt") then 
+     	if MultiUnits:GetByRangeTaunting(20, 3, 10) >= 3 then
+       	    return A.GorefiendsGrasp
+       	end 
+   	end 		
 	
    	-- Asphyxiate
    	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
@@ -502,6 +513,20 @@ local function Interrupts(unit)
     end      
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+local function PredictDS() 
+    local ReceivedLast5sec, HP7 = Unit(player):GetLastTimeDMGX(5) * 0.25, Unit(player):HealthMax() * 0.07  
+    -- if this value lower than 7% then set fixed 7% heal    
+    if ReceivedLast5sec <= HP7 then         
+        ReceivedLast5sec = HP7    
+    end 
+    -- Extra buff which adding additional +10% heal 
+    --[[
+    if Env.Buffs("player", 101568, "player") > 0 then 
+        ReceivedLast5sec = ReceivedLast5sec + HP10
+    end ]]
+    return Unit(player):HealthMax() - Unit(player):HealthPercent() >= ReceivedLast5sec or ReceivedLast5sec >= Unit(player):HealthMax() * 0.25
+end 
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -587,29 +612,53 @@ A[3] = function(icon, isMulti)
 			then
                 return A.Bonestorm:Show(icon)
             end
-			
-            -- death_strike
+			            
+			-- death_strike
 			local DeathStrike = Action.GetToggle(2, "DeathStrikeHP")
             if DeathStrike >= 0 and A.DeathStrike:IsReady(unit) and 
 			(
-			    
-				-- Auto 
-                DeathStrike >= 100 and
-                (
-				    -- HP lose per sec >= 8
-                    Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 8 or 
-                    Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.08 or 
-                    -- TTD 
-                    Unit(player):TimeToDieX(35) < 5 or
-				    -- Custom logic with current HPS and DMG
-				    Unit(player):HealthPercent() <= 85 
-				)                
+   			    -- POOLING
+    			(
+        		    Unit(player):RunicPower() >= 95 
+					and
+        		    -- Bonestorm
+        		    A.Bonestorm:IsSpellLearned() 
+					and
+        		    A.Bonestorm:GetCooldown() <= 5
+    			) 
+				or 
+				-- Enough Runic Power pooled
+				Unit(player):RunicPower() >= 105 
 				or
-                (    -- Custom
-                    DeathStrike < 100 and 
-                    Unit(player):HealthPercent() <= DeathStrike
-                )				
-            )				
+    			-- HEALING
+    			(
+				    -- AUTO
+        			DeathStrike >= 100 and
+        			(
+            			Unit(player):HealthPercent() <= 78 or
+            			(       
+               		 		Unit(player):HealthPercent() <= 93 and
+                			BloodPredictDS() and
+                			-- Bonestorm
+                			(            
+                   		 		not A.Bonestorm:IsSpellLearned() or
+                    			A.Bonestorm:GetCooldown() > 5
+                			) and
+                			-- Mark of Blood
+                			(
+                    			not A.MarkofBlood:IsSpellLearned() or
+                    			Unit(unit):HasBuffs(A.MarkofBlood.ID, true) > 0            
+                			)        
+            			)
+        			)
+					or
+					-- CUSTOM
+					DeathStrike < 100 and 
+               		(    
+                    	Unit(player):HealthPercent() <= DeathStrike and Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.07
+                	)
+    			)  
+			)
 			then
                 return A.DeathStrike:Show(icon)
             end	
@@ -649,7 +698,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_and_decay,if=spell_targets.death_and_decay>=3
-            if A.DeathandDecay:IsReady(player) then
+            if A.DeathandDecay:IsReady(player) and GetByRange(3, 15) and Player:IsStayingTime() > 2 then
                 return A.DeathandDecay:Show(icon)
             end
 			
@@ -678,7 +727,15 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_and_decay,if=buff.crimson_scourge.up|talent.rapid_decomposition.enabled|spell_targets.death_and_decay>=2
-            if A.DeathandDecay:IsReady(player) and (Unit(player):HasBuffs(A.CrimsonScourgeBuff.ID, true) > 0 or A.RapidDecomposition:IsSpellLearned() or GetByRange(2, 15)) then
+            if A.DeathandDecay:IsReady(player) and Player:IsStayingTime() > 2 and 
+			(
+			    Unit(player):HasBuffs(A.CrimsonScourgeBuff.ID, true) > 0 
+				or
+				A.RapidDecomposition:IsSpellLearned() 
+				or 
+				GetByRange(2, 15)
+			) 
+			then
                 return A.DeathandDecay:Show(icon)
             end
 			
