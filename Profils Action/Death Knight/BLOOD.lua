@@ -619,7 +619,7 @@ A[3] = function(icon, isMulti)
 			(
    			    -- POOLING
     			(
-        		    Unit(player):RunicPower() >= 95 
+        		    Player:RunicPower() >= 95 
 					and
         		    -- Bonestorm
         		    A.Bonestorm:IsSpellLearned() 
@@ -628,7 +628,7 @@ A[3] = function(icon, isMulti)
     			) 
 				or 
 				-- Enough Runic Power pooled
-				Unit(player):RunicPower() >= 105 
+				Player:RunicPower() >= 105 
 				or
     			-- HEALING
     			(
