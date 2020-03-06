@@ -134,6 +134,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     VisionofPerfectionMinor              = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}), -- used by APL 
     VisionofPerfectionMinor2             = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3             = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
+	DummyTest                            = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
     -- Here come all the stuff needed by simcraft but not classic spells or items. 
 }
 
@@ -401,7 +402,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         return A.PetKick
     end 
     
@@ -495,112 +496,6 @@ A[2] = function(icon)
 end
 
 
------------------------------------------
---           TARGET CYCLE              --
------------------------------------------
-
--- Evaluate Target cycle functions 
-local function EvaluateTargetIfFilterAgony160(unit)
-    return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
-end
-
-local function EvaluateTargetIfAgony201(unit)
-    return A.CreepingDeath:IsSpellLearned() and MultiUnits:GetByRangeAppliedDoTs(40, 10, A.Agony.ID, 5) < 6 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not A.PandemicInvocation:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER)))
-end
-
-local function EvaluateTargetIfFilterAgony207(unit)
-    return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
-end
-
-local function EvaluateTargetIfAgony248(unit)
-    return not A.CreepingDeath:IsSpellLearned() and MultiUnits:GetByRangeAppliedDoTs(40, 10, A.Agony.ID, 5) < 8 and Unit(unit):TimeToDie() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and (Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) < 5 or not A.PandemicInvocation:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER)))
-end
-
-local function EvaluateTargetIfFilterSiphonLife254(unit)
-    return Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true)
-end
-
-local function EvaluateTargetIfSiphonLife293(unit)
-    return (MultiUnits:GetByRangeAppliedDoTs(40, 10, A.SiphonLife.ID, 5) < 8 - num(A.CreepingDeath:IsSpellLearned()) - MultiUnits:GetActiveEnemies() and Unit(unit):TimeToDie() > 10 and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) <= (A.GetGCD() + A.GetCurrentGCD() + A.GetPing() + (TMW.UPD_INTV or 0) + ACTION_CONST_CACHE_DEFAULT_TIMER) and Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) == 0 and MultiUnits:GetActiveEnemies() == 1 or A.SummonDarkglare:GetCooldown() > Player:SoulShardsP() * A.UnstableAffliction:GetSpellCastTime())
-end
-
-local function EvaluateCycleCorruption300(unit)
-    return MultiUnits:GetActiveEnemies() < 3 + num(A.WritheInAgony:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= A.GetGCD() or A.SummonDarkglare:GetCooldown() > 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) <= 4) and Unit(unit):TimeToDie() > 10
-end
-
-local function EvaluateCycleShadowBolt524(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) == 0 and not A.ShadowBolt:IsSpellInFlight()
-end
-
-local function EvaluateTargetIfFilterShadowBolt540(unit)
-    return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
-end
-
-local function EvaluateTargetIfShadowBolt551(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe)
-end
-
-local function EvaluateCycleUnstableAffliction640(unit)
-    return not bool(VarUseSeed) and (not A.Deathbolt:IsSpellLearned() or A.Deathbolt:GetCooldown() > time_to_shard or Player:SoulShardsP() > 1) and (not A.VileTaint:IsSpellLearned() or Player:SoulShardsP() > 1) and contagion <= A.UnstableAffliction:GetSpellCastTime() + VarPadding and (not A.CascadingCalamity:GetAzeriteRank() >= 1 or Player:BuffRemainsP(A.CascadingCalamityBuff.ID) > time_to_shard)
-end
-
-local function EvaluateCycleDrainSoul711(unit)
-    return Unit(unit):TimeToDie() <= A.GetGCD() and Player:SoulShardsP() < 5
-end
-
-local function EvaluateTargetIfFilterAgony751(unit)
-    return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true)
-end
-
-local function EvaluateTargetIfAgony768(unit)
-    return Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() + A.ShadowBolt:GetSpellCastTime() and Unit(unit):TimeToDie() > 8
-end
-
-local function EvaluateCycleUnstableAffliction781(unit)
-    return contagion < 1 and Unit(unit):TimeToDie() <= 8
-end
-
-local function EvaluateTargetIfFilterDrainSoul787(unit)
-    return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
-end
-
-local function EvaluateTargetIfDrainSoul802(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff, true) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.GetGCD() * 2
-end
-
-local function EvaluateTargetIfFilterShadowBolt808(unit)
-    return Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true)
-end
-
-local function EvaluateTargetIfShadowBolt835(unit)
-    return A.ShadowEmbrace:IsSpellLearned() and bool(VarMaintainSe) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff, true) and Unit(unit):HasDeBuffs(A.ShadowEmbraceDebuff.ID, true) <= A.ShadowBolt:GetSpellCastTime() * 2 and not A.ShadowBolt:IsSpellInFlight()
-end
-
-local function EvaluateTargetIfFilterPhantomSingularity841(unit)
-    return Unit(unit):TimeToDie()
-end
-
-local function EvaluateTargetIfPhantomSingularity850(unit)
-    return Unit("player"):CombatTime() > 35 and Unit(unit):TimeToDie() > 16 * Player:SpellHaste() and (not A.VisionofPerfectionMinor:IsSpellLearned() and not A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() > 45 + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() or A.SummonDarkglare:GetCooldown() < 15 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank())
-end
-
-local function EvaluateTargetIfFilterVileTaint856(unit)
-    return Unit(unit):TimeToDie()
-end
-
-local function EvaluateTargetIfVileTaint859(unit)
-    return Unit("player"):CombatTime() > 15 and Unit(unit):TimeToDie() >= 10 and (A.SummonDarkglare:GetCooldown() > 30 or A.SummonDarkglare:GetCooldown() < 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) >= 10 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) >= 10 or not A.SiphonLife:IsSpellLearned()))
-end
-
-local function EvaluateTargetIfFilterUnstableAffliction865(unit)
-    return contagion
-end
-
-local function EvaluateTargetIfUnstableAffliction870(unit)
-    return not bool(VarUseSeed) and Player:SoulShardsP() == 5
-end
-
-
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
 	
@@ -620,7 +515,8 @@ A[3] = function(icon, isMulti)
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
 	local profileStop = false
-	
+	local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")	
 	DetermineEssenceRanks()
 	-- Multidots var
 	local MissingCorruption = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Corruption.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
@@ -743,7 +639,7 @@ A[3] = function(icon, isMulti)
         	end
 			
         	-- use_item,name=azsharas_font_of_power
-        	if A.AzsharasFontofPower:IsExists() and (not isMoving) and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) then
+        	if A.AzsharasFontofPower:IsExists() and (not isMoving) and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady("player") then
             	return A.AzsharasFontofPower:Show(icon)
         	end
 			
@@ -788,7 +684,8 @@ A[3] = function(icon, isMulti)
             end 
 			
         end
-    
+        Pandemic = A.MakeFunctionCachedDynamic(Pandemic)
+		
         -- Rotation Fillers 
         local function Fillers(unit)
 		
@@ -893,8 +790,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-    
-    
+        Fillers = A.MakeFunctionCachedDynamic(Fillers)
+        
         local function Spenders(unit)
 		
             -- seed_of_corruption,if=variable.use_seed&soul_shard=5
@@ -948,7 +845,8 @@ A[3] = function(icon, isMulti)
           --  end
 						
         end 
-
+        Spenders = A.MakeFunctionCachedDynamic(Spenders)
+		
 		-- Combat started and valid unit
 		if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then -- and not Unit(unit):IsTotem()
 			
@@ -1029,7 +927,7 @@ A[3] = function(icon, isMulti)
 		    if A.BurstIsON(unit) and unit ~= "mouseover" then 
                 
 				-- use_item,name=azsharas_font_of_power,if=(!talent.phantom_singularity.enabled|cooldown.phantom_singularity.remains<4*spell_haste|!cooldown.phantom_singularity.remains)&cooldown.summon_darkglare.remains<19*spell_haste+soul_shard*azerite.dreadful_calling.rank&dot.agony.remains&dot.corruption.remains&(dot.siphon_life.remains|!talent.siphon_life.enabled)
-                if TR.TrinketON() and not ShouldStop and not isMoving and A.AzsharasFontofPower:IsReady(unit) and ((not A.PhantomSingularity:IsSpellLearned() or A.PhantomSingularity:GetCooldown() < 4 * Player:SpellHaste() or A.PhantomSingularity:GetCooldown() == 0) and A.SummonDarkglare:GetCooldown() < 19 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 0 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) > 0 or not A.SiphonLife:IsSpellLearned())) then
+                if TR.TrinketON() and not ShouldStop and not isMoving and A.AzsharasFontofPower:IsReady("player") and ((not A.PhantomSingularity:IsSpellLearned() or A.PhantomSingularity:GetCooldown() < 4 * Player:SpellHaste() or A.PhantomSingularity:GetCooldown() == 0) and A.SummonDarkglare:GetCooldown() < 19 * Player:SpellHaste() + Player:SoulShardsP() * A.DreadfulCalling:GetAzeriteRank() and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) > 0 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) > 0 or not A.SiphonLife:IsSpellLearned())) then
                     return A.AzsharasFontofPower:Show(icon)
                 end
 				
@@ -1196,8 +1094,7 @@ A[3] = function(icon, isMulti)
             end
 		
             -- agony,target_if=min:dot.agony.remains,if=remains<=gcd+action.shadow_bolt.execute_time&target.time_to_die>8
-            if A.Agony:IsReady(unit) and not ShouldStop and Action.Utils.CastTargetIf(A.Agony, 40, "min", EvaluateTargetIfFilterAgony751, EvaluateTargetIfAgony768) 
-			then
+            if A.Agony:IsReady(unit) and not ShouldStop and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.AgonyDebuff.ID, true) <= A.GetGCD() + A.ShadowBolt:GetSpellCastTime() and Unit(unit):TimeToDie() > 8 then
                 return A.Agony:Show(icon)
             end
 		
@@ -1250,12 +1147,12 @@ A[3] = function(icon, isMulti)
             end	
 		
             -- vile_taint,target_if=max:target.time_to_die,if=time>15&target.time_to_die>=10&(cooldown.summon_darkglare.remains>30|cooldown.summon_darkglare.remains<10&dot.agony.remains>=10&dot.corruption.remains>=10&(dot.siphon_life.remains>=10|!talent.siphon_life.enabled))
-            if A.VileTaint:IsReady(unit) and not ShouldStop and Action.Utils.CastTargetIf(A.VileTaint, 40, "min", EvaluateTargetIfFilterVileTaint856, EvaluateTargetIfVileTaint859) then
+            if A.VileTaint:IsReady(unit) and not ShouldStop and Unit(unit):TimeToDie() >= 10 and (A.SummonDarkglare:GetCooldown() > 30 or A.SummonDarkglare:GetCooldown() < 10 and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) >= 10 and (Unit(unit):HasDeBuffs(A.SiphonLifeDebuff.ID, true) >= 10 or not A.SiphonLife:IsSpellLearned())) then
                 return A.VileTaint:Show(icon)
             end
 		
             -- use_item,name=azsharas_font_of_power,if=time<=3
-            if A.AzsharasFontofPower:IsExists() and not isMoving and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):CombatTime() <= 5) then
+            if A.AzsharasFontofPower:IsExists() and not isMoving and TR.TrinketON() and not ShouldStop and A.AzsharasFontofPower:IsReady("player") and (Unit("player"):CombatTime() <= 5) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 		
@@ -1322,7 +1219,7 @@ A[3] = function(icon, isMulti)
             inRange = A.Agony:IsInRange(unit)
 		
 		    -- PetKick
-            if useKick and A.PetKick:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+            if useKick and A.PetKick:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
                 return A.PetKick:Show(icon)
             end 
 
@@ -1412,7 +1309,7 @@ local function ArenaRotation(icon, unit)
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")    
     
 	    -- Pet Kick
-        if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
             return A.PetKick:Show(icon)
         end 
    
