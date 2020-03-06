@@ -1019,24 +1019,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
-			(
- 				-- AUTO
-				(
-			        BladeDancePoolSeconds >= 15 and
-			        (
-			            (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
-				    )				
-			    ) 
-			    or  
-			    -- MANUAL
-		        (
-			        BladeDancePoolSeconds < 15 and
-				    (A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
-			    )
-			    -- DISABLED NO SYNC
-			    or not SyncBladeDanceDeathSweepWithEyeBeam	
-			)
+            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem()
 			then
                 return A.DeathSweep:Show(icon)
             end
