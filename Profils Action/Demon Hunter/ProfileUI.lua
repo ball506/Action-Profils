@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.7 (03.03.2020)",
+    DateTime = "v4.0.8 (06.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -226,6 +226,30 @@ A.Data.ProfileUI = {
             },
             { -- [3] 3rd Row
                 {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "AUTO", value = "AUTO" },
+                        { text = "PVP", value = "PVP" },
+                        { text = "NEVER", value = "NEVER" },
+                    },
+                    MULT = false,
+                    DB = "FelBladeMode",
+                    DBV = {
+                        ["AUTO"] = false, 
+                        ["PVP"] = false,
+                        ["NEVER"] = true,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(232893) .. " Mode",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(232893) .. " options. Multiple checks possible.\nAUTO: Will use it as soon as you are out of range of your current target.\nPVP: Will use it only in PvP to chase enemy.\nNEVER: Will never use " .. A.GetSpellInfo(232893) .. ".", 
+                        ruRU = "Customize your " .. A.GetSpellInfo(232893) .. " options. Multiple checks possible.\nAUTO: Will use it as soon as you are out of range of your current target.\nPVP: Will use it only in PvP to chase enemy.\nNEVER: Will never use " .. A.GetSpellInfo(232893) .. ".", 
+                        frFR = "Customize your " .. A.GetSpellInfo(232893) .. " options. Multiple checks possible.\nAUTO: Will use it as soon as you are out of range of your current target.\nPVP: Will use it only in PvP to chase enemy.\nNEVER: Will never use " .. A.GetSpellInfo(232893) .. ".", 
+                    }, 
+                    M = {},
+                },	
+                {
                     E = "Checkbox", 
                     DB = "FelBladeOutOfRange",
                     DBV = false,
@@ -241,6 +265,25 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 }, 			
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 15,                            
+                    DB = "FelBladeRangePvP",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(232893) .. "\nPvP range",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".\nThis setting only valid in PvP.", 
+                        ruRU = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".\nThis setting only valid in PvP.", 
+                        frFR = "Set the maximum range for a unit before using " .. A.GetSpellInfo(232893) .. ".\nThis setting only valid in PvP.", 
+                    }, 					
+                    M = {},
+                },
+			},
+			{
                 {
                     E = "Slider",                                                     
                     MIN = 5, 
@@ -300,7 +343,25 @@ A.Data.ProfileUI = {
                         frFR = "If activated, will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))", 
                     }, 
                     M = {},
-                }, 			
+                }, 	
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "BladeDancePoolSeconds",
+                    DBV = 15, -- Set healthpercentage @30% life. 
+					Precision = 1,
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(188499) .. "\nPool secs",
+                    },
+                    TT = { 
+                        enUS = "Define the value in seconds you want to be pooling " .. A.GetSpellInfo(188499) .. " in order to sync it with next " .. A.GetSpellInfo(198013) .. ".\nAUTO: will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))", 
+                        ruRU = "Define the value in seconds you want to be pooling " .. A.GetSpellInfo(188499) .. " in order to sync it with next " .. A.GetSpellInfo(198013) .. ".\nAUTO: will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))",  
+                        frFR = "Define the value in seconds you want to be pooling " .. A.GetSpellInfo(188499) .. " in order to sync it with next " .. A.GetSpellInfo(198013) .. ".\nAUTO: will pool BladeDance if cooldown of EyeBeam > (9 / (1 + Player:HastePct() * 0.01))",  
+                    }, 					
+                    M = {},
+                },				
                 {
                     E = "Dropdown",                                                         
                     OT = {

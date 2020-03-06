@@ -329,6 +329,30 @@ local function HandleDarkness()
 	--print(choice)
 end
 
+-- Fel Blade UI --
+local function HandleFelBlade()
+    local choice = Action.GetToggle(2, "FelBladeMode")
+       
+    if choice == "AUTO" then
+	    -- Add protection for raid
+		if not IsInRaid() then
+    		return true
+		-- IF in Raid but in range of current target.
+		elseif IsInRaid() and InMelee(unit) then
+		    return true
+		else
+		    return false
+		end
+    elseif choice == "PVP" then 
+		if A.IsInPvP then 
+    		return true
+		end	
+    else
+		return false
+    end
+
+end
+
 -- Auto Darkness Handler
 local function CanDarkness()
     if A.Darkness:IsReady(player) then 
@@ -612,7 +636,8 @@ A[3] = function(icon, isMulti)
 	local FelBladeRange = A.GetToggle(2, "FelBladeRange")
 	local FelBladeFury = A.GetToggle(2, "FelBladeFury")	
 	local FelBladeOutOfRange = A.GetToggle(2, "FelBladeOutOfRange")	
-	local ImprisonAsInterrupt = A.GetToggle(2, "ImprisonAsInterrupt")			
+	local ImprisonAsInterrupt = A.GetToggle(2, "ImprisonAsInterrupt")	
+    local BladeDancePoolSeconds = A.GetToggle(2, "BladeDancePoolSeconds")		
 	local ExpectedCombatLength = ExpectedCombatLength()
 	local HandleDarkness = HandleDarkness()
 	local Fury = Player:Fury()
@@ -990,15 +1015,43 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance 
-			and ((A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) or not SyncBladeDanceDeathSweepWithEyeBeam)
+            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
+ 			-- AUTO
+			(
+			    BladeDancePoolSeconds >= 15 and
+			    (
+			        (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
+				)				
+			) 
+			or  
+			-- MANUAL
+		    (
+			    BladeDancePoolSeconds < 15 and
+				(A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
+			)
+			-- DISABLED NO SYNC
+			or not SyncBladeDanceDeathSweepWithEyeBeam	
 			then
                 return A.DeathSweep:Show(icon)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(player) and InMelee(unit) and CanCast and VarBladeDance 
-			and ((A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) or not SyncBladeDanceDeathSweepWithEyeBeam)
+            if A.BladeDance:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
+ 			-- AUTO
+			(
+			    BladeDancePoolSeconds >= 15 and
+			    (
+			        (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
+				)				
+			) 
+			or  
+			-- MANUAL
+		    (
+			    BladeDancePoolSeconds < 15 and
+				(A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
+			)
+			-- DISABLED NO SYNC
+			or not SyncBladeDanceDeathSweepWithEyeBeam			
 			then
                 --(BladeDancePool and A.EyeBeam:GetCooldown() < A.BladeDance:GetCooldown() * BladeDancePoolSeconds)  
 				-- EyeBeam cooldown < Blade Dance Cooldown = stop using Blade Dance
@@ -1037,7 +1090,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() <= FelBladeRange and CanCast and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
+            if A.Felblade:IsReady(unit) and HandleFelBlade() and Unit(unit):GetRange() <= FelBladeRange and CanCast and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1052,7 +1105,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and CanCast and Unit(unit):GetRange() > 10 and FelBladeOutOfRange and A.Felblade:IsSpellLearned() and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and HandleFelBlade() and CanCast and Unit(unit):GetRange() > 10 and FelBladeOutOfRange and A.Felblade:IsSpellLearned() and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1101,12 +1154,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and InMelee(unit) and CanCast and VarBladeDance then
+            if A.BladeDance:IsReady(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
                 return A.BladeDance:Show(icon)
             end
 			
             -- felblade,if=fury.deficit>=40
-            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() <= FelBladeRange and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
+            if A.Felblade:IsReady(unit) and HandleFelBlade() and Unit(unit):GetRange() <= FelBladeRange and A.Felblade:IsSpellLearned() and Fury < FelBladeFury then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1151,7 +1204,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- felblade,if=movement.distance>15|buff.out_of_range.up
-            if A.Felblade:IsReady(unit) and Unit(unit):GetRange() > 7 and FelBladeOutOfRange and CanCast and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
+            if A.Felblade:IsReady(unit) and HandleFelBlade() and Unit(unit):GetRange() > 7 and FelBladeOutOfRange and CanCast and A.Felblade:IsSpellLearned() and (Unit(unit):GetRange() > 15) and not A.Momentum:IsSpellLearned() then
                 return A.Felblade:Show(icon)
             end
 			
@@ -1167,11 +1220,26 @@ A[3] = function(icon, isMulti)
 		end
 		
 		-- PvP Rotation
-	--[[	local function RotationPvP(unit)
-		    -- PvP Manarift
-            if A.ManaRift:IsReady(unit) and Unit(unit):IsStayingTime() > 2 then
+		local function RotationPvP(unit)
+			-- Disrupt
+   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
+      		    return A.Disrupt:Show(icon)
+   			end
+			
+		    -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= A.ManaRift:GetSpellCastTime() then
 			    return A.ManaRift:Show(icon)
-			end
+			end	
+			
+		    -- PvP Manarift if debuff FelEruption < ManaRift cast time (2.5sec)
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) > 0 and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) <= A.ManaRift:GetSpellCastTime() then
+			    return A.ManaRift:Show(icon)
+			end		
+			
+            -- Imprison Casting BreakAble CC
+            if A.ImprisonIsReady(unit) and Unit(unit):IsHealer() and not Unit(unit):InLOS() then
+                return A.Imprison:Show(icon)
+            end 
             
 			-- PvP Reverse Magic
             if A.ReverseMagic:IsReady(unit) and Unit(player):HasDeBuffs("DamageDeBuffs") > 2 then
@@ -1188,7 +1256,7 @@ A[3] = function(icon, isMulti)
 		if A.IsInPvP and RotationPvP(unit) then 
 		   return true
 		end
-		]]--
+		
 		
     end
     
