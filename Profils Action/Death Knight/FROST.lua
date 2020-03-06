@@ -594,65 +594,6 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
-local function EvaluateCycleFrostStrike42(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and A.RemorselessWinter:GetCooldown() <= 2 * A.GetGCD() and A.GatheringStorm:IsSpellLearned() and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleFrostStrike77(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() < (15 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate102(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > (25 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleFrostStrike123(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate146(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and true and Player:RunicPowerDeficit() >= 25 and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleFrostStrike165(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() < 20 and not A.Frostscythe:IsSpellLearned() and A.PillarofFrost:GetCooldown() > 5
-end
-
-local function EvaluateCycleObliterate194(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() >= (35 + num(A.RunicAttenuation:IsSpellLearned()) * 3) and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleFrostStrike217(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and A.PillarofFrost:GetCooldown() > Player:RuneTimeToX(4) and Player:RunicPowerDeficit() < 40 and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate236(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPower() <= 32 and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate259(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RuneTimeToX(5) < A.GetGCD() or Player:RunicPower() <= 45 and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate284(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate596(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned() and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0 and MultiUnits:GetByRange(30, 5, 10) >= 3
-end
-
-local function EvaluateCycleObliterate629(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and bool(Unit(player):HasBuffsStacks(A.KillingMachineBuff.ID, true)) or (Unit(player):HasBuffs(A.KillingMachineBuff.ID, true) and (Unit(player):GetSpellLastCast(A.FrostStrike) or Unit(player):GetSpellLastCast(A.HowlingBlast) or Unit(player):GetSpellLastCast(A.GlacialAdvance)))
-end
-
-local function EvaluateCycleFrostStrike670(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0 or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > A.GetGCD() and not A.Frostscythe:IsSpellLearned()
-end
-
-local function EvaluateCycleObliterate693(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned()
-end
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -740,7 +681,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Aoe, BosPooling, BosTicking, ColdHeart, Cooldowns, Essences, Obliteration, Standard
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -1705,9 +1646,7 @@ function Action.QueueBase(name)
     local BoSMinPower     = A.GetToggle(2, "BoSMinPower")                                                 -- not static       
     local myRunicPower    = Player:RunicPower()           
     
-    if name == "BreathofSindragosa" then 
-		-- Notification					
-	    Action.SendNotification("Queue Macro: " .. A.GetSpellInfo(A.BreathofSindragosa.ID), A.BreathofSindragosa.ID)		
+    if name == "BreathofSindragosa" then 	
         
 		-- Check valid 
         if QB.IsQueuedObjects(A.BreathofSindragosa, A.EmpowerRuneWeapon) or QB.IsUnavailableObjects(A.BreathofSindragosa, A.EmpowerRuneWeapon) then 
@@ -1721,15 +1660,17 @@ function Action.QueueBase(name)
 		if myRunicPower < BoSMinPower then
             A.Obliterate:SetQueue(QB.player)        -- #0
 			VarPoolForBoSQueue = true
+			-- Notification					
+	        Action.SendNotification("Pooling ressources for " .. A.GetSpellInfo(A.BreathofSindragosa.ID), A.BreathofSindragosa.ID)	
 		end
-		
+
 	   -- EmpowerRuneWeapon
         if not A.EmpowerRuneWeapon:IsQueued() and A.EmpowerRuneWeapon:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then  
             A.EmpowerRuneWeapon:SetQueue(QB.player)        -- #1
         end 	
 		
 		-- PillarofFrost
-        if not A.PillarofFrost:IsQueued() and A.EmpowerRuneWeapon:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then  
+        if not A.PillarofFrost:IsQueued() and A.PillarofFrost:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then  
             A.PillarofFrost:SetQueue(QB.player)            -- #2	
 		end
 		
@@ -1738,6 +1679,13 @@ function Action.QueueBase(name)
         if (A.EmpowerRuneWeapon:IsQueued() or A.EmpowerRuneWeapon:GetCooldown() > 0) and A.BreathofSindragosa:IsReadyByPassCastGCDP("player", nil, nil, true) and myRunicPower >= BoSMinPower then
 		    A.BreathofSindragosa:SetQueue(QB.player)    -- #3
         end
+		
+		-- Notification if all good		
+		if A.EmpowerRuneWeapon:IsQueued() and A.BreathofSindragosa:IsQueued() then
+			-- Notification					
+	        Action.SendNotification("BoS Bursting ", A.BreathofSindragosa.ID)	
+		end
+		
 		VarPoolForBoSQueue = false
     end 		
 end 
