@@ -568,7 +568,7 @@ A[3] = function(icon, isMulti)
             local CurrentNameplates = MultiUnits:GetActiveUnitPlates()
             if CurrentNameplates then  
                 for Currents_UnitID in pairs(CurrentNameplates) do             
-                    if Unit(Currents_UnitID):NPCID() == 160966 then 
+                    if Unit(Currents_UnitID):NPCID() == 160966 or Unit(Currents_UnitID):NPCID() == 161895 then 
                         return A.FeignDeath:Show(icon)
                     end         
                 end 
