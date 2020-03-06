@@ -154,6 +154,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     RecklessForceCounter                   = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),
     DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
 	PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+	GrandDelusionsDebuff                   = Action.Create({ Type = "Spell", ID = 319695, Hidden = true     }), -- Corruption pet chasing you
 };
 
 -- To create essences use next code:
@@ -564,7 +565,7 @@ A[3] = function(icon, isMulti)
 
 		
 		-- Feign Death & Thing from Beyond
-		if UseFeignDeathOnThingFromBeyond and A.FeignDeath:IsReady(player) and Player:GetCurrentCorruption() >= 40 and inCombat then
+--[[		if UseFeignDeathOnThingFromBeyond and A.FeignDeath:IsReady(player) and Player:GetCurrentCorruption() >= 40 and inCombat then
             local CurrentNameplates = MultiUnits:GetActiveUnitPlates()
             if CurrentNameplates then  
                 for Currents_UnitID in pairs(CurrentNameplates) do             
@@ -574,7 +575,10 @@ A[3] = function(icon, isMulti)
                 end 
             end		    
 		end
-		
+		]]--
+		if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and A.FeignDeath:IsReady(player) then
+		    return A.FeignDeath:Show(icon)
+		end
         -- mendpet
         if A.MendPet:IsReady(player) and Pet:IsActive() and Unit(pet):HealthPercent() > 0 and
         (
