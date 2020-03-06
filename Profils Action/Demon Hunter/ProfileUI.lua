@@ -234,11 +234,7 @@ A.Data.ProfileUI = {
                     },
                     MULT = false,
                     DB = "FelBladeMode",
-                    DBV = {
-                        ["AUTO"] = false, 
-                        ["PVP"] = false,
-                        ["NEVER"] = true,
-                    }, 
+                    DBV = "AUTO", 
                     L = { 
                         ANY = A.GetSpellInfo(232893) .. " Mode",
                     }, 

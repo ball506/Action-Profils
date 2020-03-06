@@ -646,6 +646,8 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryTTD = A.GetToggle(2, "UnbridledFuryTTD")
 	local UnbridledFuryWithSecondMeta = A.GetToggle(2, "UnbridledFuryWithSecondMeta")
 	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
+	local UnbridledFuryHP = A.GetToggle(2, "UnbridledFuryHP")
+	local UnbridledFuryWithExecute = A.GetToggle(2, "UnbridledFuryWithExecute")
 	local UseHeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local SyncBladeDanceDeathSweepWithEyeBeam = Action.GetToggle(2, "SyncBladeDanceDeathSweepWithEyeBeam")
 	local ImmolationAuraPrePull = Action.GetToggle(2, "ImmolationAuraPrePull")
@@ -932,6 +934,8 @@ A[3] = function(icon, isMulti)
 			    (Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 25 and UnbridledFuryWithSecondMeta)
 				or
 				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
+				or
+				(UnbridledFuryWithExecute and Unit(unit):HealthPercent() <= 30)
 			)
 			and Unit(unit):TimeToDie() > UnbridledFuryTTD
 			then
@@ -1016,42 +1020,46 @@ A[3] = function(icon, isMulti)
 			
             -- death_sweep,if=variable.blade_dance
             if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
- 			-- AUTO
 			(
-			    BladeDancePoolSeconds >= 15 and
-			    (
-			        (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
-				)				
-			) 
-			or  
-			-- MANUAL
-		    (
-			    BladeDancePoolSeconds < 15 and
-				(A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
+ 				-- AUTO
+				(
+			        BladeDancePoolSeconds >= 15 and
+			        (
+			            (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
+				    )				
+			    ) 
+			    or  
+			    -- MANUAL
+		        (
+			        BladeDancePoolSeconds < 15 and
+				    (A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
+			    )
+			    -- DISABLED NO SYNC
+			    or not SyncBladeDanceDeathSweepWithEyeBeam	
 			)
-			-- DISABLED NO SYNC
-			or not SyncBladeDanceDeathSweepWithEyeBeam	
 			then
                 return A.DeathSweep:Show(icon)
             end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
             if A.BladeDance:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
- 			-- AUTO
 			(
-			    BladeDancePoolSeconds >= 15 and
-			    (
-			        (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
-				)				
-			) 
-			or  
-			-- MANUAL
-		    (
-			    BladeDancePoolSeconds < 15 and
-				(A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
-			)
-			-- DISABLED NO SYNC
-			or not SyncBladeDanceDeathSweepWithEyeBeam			
+ 				-- AUTO
+				(
+			        BladeDancePoolSeconds >= 15 and
+			        (
+			            (A.EyeBeam:GetCooldown() > (9 / (1 + Player:HastePct() * 0.01)) and SyncBladeDanceDeathSweepWithEyeBeam) 
+				    )				
+			    ) 
+			    or  
+			    -- MANUAL
+		        (
+			        BladeDancePoolSeconds < 15 and
+				    (A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
+			    )
+			    -- DISABLED NO SYNC
+			    or not SyncBladeDanceDeathSweepWithEyeBeam	
+			)			
 			then
                 --(BladeDancePool and A.EyeBeam:GetCooldown() < A.BladeDance:GetCooldown() * BladeDancePoolSeconds)  
 				-- EyeBeam cooldown < Blade Dance Cooldown = stop using Blade Dance
