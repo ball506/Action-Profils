@@ -958,7 +958,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- pillar_of_frost,no burst mode on
-            if A.PillarofFrost:IsReady(player) and not A.BurstIsON(unit) and (Player:RunicPower() >= BoSMinPower or not A.BreathofSindragosa:IsSpellLearned()) then
+            if A.PillarofFrost:IsReady(player) and not A.BurstIsON(unit) then
                 return A.PillarofFrost:Show(icon)
             end	
 			
@@ -1120,7 +1120,7 @@ A[3] = function(icon, isMulti)
                 end
 						
                 -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains
-                if A.PillarofFrost:IsReady(player) and A.EmpowerRuneWeapon:GetCooldown() > 0 and not A.BreathofSindragosa:IsSpellLearned() then
+                if A.PillarofFrost:IsReady(player) and A.EmpowerRuneWeapon:GetCooldown() > 0 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() >= 45) then
                     return A.PillarofFrost:Show(icon)
                 end		
 				
