@@ -30,6 +30,7 @@ local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
 local Pet                                       = LibStub("PetLibrary")
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -100,6 +101,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
 	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
+	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -497,6 +499,7 @@ A[3] = function(icon, isMulti)
 	local TrinketsMinUnits = GetToggle(2, "TrinketsMinUnits")
 	local MinInterrupt = GetToggle(2, "MinInterrupt")
 	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -557,6 +560,20 @@ A[3] = function(icon, isMulti)
         if Interrupt then 
             return Interrupt:Show(icon)
         end  
+      
+
+		
+		-- Feign Death & Thing from Beyond
+		if UseFeignDeathOnThingFromBeyond and A.FeignDeath:IsReady(player) and Player:GetCurrentCorruption() >= 40 and inCombat then
+            local CurrentNameplates = MultiUnits:GetActiveUnitPlates()
+            if CurrentNameplates then  
+                for Currents_UnitID in pairs(CurrentNameplates) do             
+                    if Unit(Currents_UnitID):NPCID() == 160966 then 
+                        return A.FeignDeath:Show(icon)
+                    end         
+                end 
+            end		    
+		end
 		
         -- mendpet
         if A.MendPet:IsReady(player) and Pet:IsActive() and Unit(pet):HealthPercent() > 0 and
@@ -776,7 +793,7 @@ A[3] = function(icon, isMulti)
 	    	-- Non SIMC Custom Trinket1
 	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and    
 			(
-    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+    			TrinketsAoE and MultiUnits:GetByRange(TrinketsUnitsRange) >= TrinketsMinUnits and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 				or
 				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
 			)
@@ -788,7 +805,7 @@ A[3] = function(icon, isMulti)
 		    -- Non SIMC Custom Trinket2
 	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and	    
 			(
-    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+    			TrinketsAoE and MultiUnits:GetByRange(TrinketsUnitsRange) >= TrinketsMinUnits and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 				or
 				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
 			)
