@@ -196,7 +196,7 @@ local function SelfDefensives()
     end  
 	
     -- Exhilaration
-    local Exhilaration = A.GetToggle(2, "ExhilarationHP")
+    local Exhilaration = GetToggle(2, "ExhilarationHP")
     if     Exhilaration >= 0 and A.Exhilaration:IsReady(player) and 
     (
         (     -- Auto 
@@ -232,7 +232,7 @@ local function SelfDefensives()
         return A.Exhilaration
     end
     -- SpiritMend
-    local SpiritMend = A.GetToggle(2, "SpiritMendHP")
+    local SpiritMend = GetToggle(2, "SpiritMendHP")
     if     SpiritMend >= 0 and A.SpiritMend:IsReady(player) and 
     (
         (     -- Auto 
@@ -270,7 +270,7 @@ local function SelfDefensives()
 	
 	
     -- AspectoftheTurtle
-    local AspectoftheTurtle = A.GetToggle(2, "Turtle")
+    local AspectoftheTurtle = GetToggle(2, "Turtle")
     if     AspectoftheTurtle >= 0 and A.AspectoftheTurtle:IsReady(player) and 
     (
         (     -- Auto 
@@ -315,7 +315,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
 	    -- Notification					
         Action.SendNotification("Counter Shot interrupting on Target ", A.CounterShot.ID)
         return A.CounterShot
@@ -362,17 +362,15 @@ PurgeDispellMagic = A.MakeFunctionCachedDynamic(PurgeDispellMagic)
 
 -- BestialWrath Handler UI --
 local function HandleBestialWrath()
-    local choice = A.GetToggle(2, "BestialWrathMode")
-	local MinAoETargets = Action.GetToggle(2, "MinAoETargets")
-	local MaxAoERange = Action.GetToggle(2, "MaxAoERange")
-	
+    local choice = GetToggle(2, "BestialWrathMode")
+	local unit = "target"
     return     (
         (A.BurstIsON(unit) and choice[1]) or 
-        (MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets and choice[2]) or
+        (MultiUnits:GetByRange(40) >= 2 and choice[2]) or
         (A.BestialWrath:IsReady(player) and choice[3])
     )
  
-  --[[  local choice = A.GetToggle(2, "BestialWrathMode")
+  --[[  local choice = GetToggle(2, "BestialWrathMode")
 	--print(choice) 
     local unit = "target"
     -- CDs ON
@@ -382,9 +380,9 @@ local function HandleBestialWrath()
 	elseif choice[2] then
 	    -- also checks CDs
 	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets and A.GetToggle(2, "AoE")) or false
+		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets and GetToggle(2, "AoE")) or false
 		else
-		    return (MultiUnits:GetByRange(MaxAoERange) > 2 and A.GetToggle(2, "AoE")) or false
+		    return (MultiUnits:GetByRange(MaxAoERange) > 2 and GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
@@ -481,16 +479,24 @@ A[3] = function(icon, isMulti)
 	local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local Racial = Action.GetToggle(1, "Racial")
 	local Potion = Action.GetToggle(1, "Potion")
-	local MinAoETargets = Action.GetToggle(2, "MinAoETargets")
-	local MaxAoERange = Action.GetToggle(2, "MaxAoERange")
-	local UnbridledFuryAuto = A.GetToggle(2, "UnbridledFuryAuto")
-	local UnbridledFuryTTD = A.GetToggle(2, "UnbridledFuryTTD")
-	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
-	local UnbridledFuryHP = A.GetToggle(2, "UnbridledFuryHP")
-	local UnbridledFuryWithExecute = A.GetToggle(2, "UnbridledFuryWithExecute")
-	local BarbedShotRefreshSec = A.GetToggle(2, "BarbedShotRefreshSec")
-	local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
-	local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
+	local MultishotMinAoETargets = Action.GetToggle(2, "MultishotMinAoETargets")
+	local MultishotMaxAoERange = Action.GetToggle(2, "MultishotMaxAoERange")
+	local UnbridledFuryAuto = GetToggle(2, "UnbridledFuryAuto")
+	local UnbridledFuryTTD = GetToggle(2, "UnbridledFuryTTD")
+	local UnbridledFuryWithBloodlust = GetToggle(2, "UnbridledFuryWithBloodlust")
+	local UnbridledFuryHP = GetToggle(2, "UnbridledFuryHP")
+	local UnbridledFuryWithExecute = GetToggle(2, "UnbridledFuryWithExecute")
+	local BarbedShotRefreshSec = GetToggle(2, "BarbedShotRefreshSec")
+	local FocusedAzeriteBeamTTD = GetToggle(2, "FocusedAzeriteBeamTTD")
+	local FocusedAzeriteBeamUnits = GetToggle(2, "FocusedAzeriteBeamUnits")
+	-- Trinkets vars
+    local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
+	local TrinketsAoE = GetToggle(2, "TrinketsAoE")
+	local TrinketsMinTTD = GetToggle(2, "TrinketsMinTTD")
+	local TrinketsUnitsRange = GetToggle(2, "TrinketsUnitsRange")
+	local TrinketsMinUnits = GetToggle(2, "TrinketsMinUnits")
+	local MinInterrupt = GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -675,7 +681,7 @@ A[3] = function(icon, isMulti)
         end
         
 		-- Burst Phase
-		if BurstIsON(unit) and unit ~= "mouseover" and inCombat and not profileStop then
+		if BurstIsON(unit) and unit ~= "mouseover" and inCombat and not profileStop and CanCast then
             -- ancestral_call,if=cooldown.bestial_wrath.remains>30
             if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) 
 			then
@@ -697,7 +703,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- potion
-            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
 			and 
 			(
 				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
@@ -766,10 +772,34 @@ A[3] = function(icon, isMulti)
 			then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+			
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then 
+      	        return A.Trinket1:Show(icon)
+   	        end 		
+	        
+		
+		    -- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and	    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then
+      	       	return A.Trinket2:Show(icon) 	
+	        end
+			
         end
 
         -- AoE Cleave
-        if inCombat and unit ~= "mouseover" and not profileStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):IsExists() and MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets then 
+        if inCombat and unit ~= "mouseover" and not profileStop and (isMulti or GetToggle(2, "AoE")) and Unit(unit):IsExists() and MultiUnits:GetByRange(40) >= 2 and CanCast then 
 		   -- print("AoE ROT")
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
@@ -783,7 +813,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) then
+            if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and MultiUnits:GetByRange(MultishotMaxAoERange) >= MultishotMinAoETargets then
                 return A.Multishot:Show(icon)
             end
 			
@@ -885,7 +915,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
-            if A.Multishot:IsReady(unit) and (A.RapidReload:GetAzeriteRank() > 0 and MultiUnits:GetByRange(MaxAoERange) > 2) then
+            if A.Multishot:IsReady(unit) and A.RapidReload:GetAzeriteRank() > 0 and MultiUnits:GetByRange(MultishotMaxAoERange) >= MultishotMinAoETargets then
                 return A.Multishot:Show(icon)
             end
 			
@@ -910,7 +940,7 @@ A[3] = function(icon, isMulti)
         end
         
         --SINGLE TARGET
-        if inCombat and unit ~= "mouseover" and not profileStop and Unit(unit):IsExists() and (MultiUnits:GetByRange(MaxAoERange) == 1 or not A.GetToggle(2, "AoE")) then 
+        if inCombat and unit ~= "mouseover" and not profileStop and Unit(unit):IsExists() and (MultiUnits:GetByRange(MaxAoERange) == 1 or not GetToggle(2, "AoE")) and CanCast then 
 		--    print("ST ROT")
             -- barbed_shot,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and 
@@ -1154,7 +1184,7 @@ local function ArenaRotation(icon, unit)
     end 
 end 
 local function PartyRotation(unit)
-    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+    if (unit == "party1" and not GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
 

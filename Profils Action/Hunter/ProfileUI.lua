@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.3 (06.03.2020)",
+    DateTime = "v4.0.4 (06.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -96,7 +96,86 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- AoE -- ",
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "TrinketsAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Trinkets\nAoE only", 
+                        ruRU = "Trinkets\nAoE only",  
+                        frFR = "Trinkets\nAoE only",  
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        ruRU = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        frFR = "Enable this to option to trinkets for AoE usage ONLY.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 30,                            
+                    DB = "TrinketsMinTTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min TTD",
+                    },
+                    TT = { 
+                        enUS = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        ruRU = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        frFR = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                    },					
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 10,                            
+                    DB = "TrinketsMinUnits",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min Units",
+                    },
+                    TT = { 
+                        enUS = "Minimum number of units in range to activate Trinkets.", 
+                        ruRU = "Minimum number of units in range to activate Trinkets.", 
+                        frFR = "Minimum number of units in range to activate Trinkets.",  
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "TrinketsUnitsRange",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate trinkets.", 
+                        ruRU = "Maximum range for units detection to automatically activate trinkets.", 
+                        frFR = "Maximum range for units detection to automatically activate trinkets.",  
+                    },					
+                    M = {},
+                },
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(2643) .. " -- ",
                     },
                 },
             },
@@ -105,16 +184,16 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = 2, 
                     MAX = 5,                            
-                    DB = "MinAoETargets",
+                    DB = "MultishotMinAoETargets",
                     DBV = 2, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Min AoE units",
+                        ANY = A.GetSpellInfo(2643) .. "\nmin AoE units",
                     },
                     TT = { 
-                        enUS = "Minimum units in range to automatically activate AoE rotation.", 
-                        ruRU = "Minimum units in range to automatically activate AoE rotation.", 
-                        frFR = "Minimum units in range to automatically activate AoE rotation.", 
+                        enUS = "Minimum units in range to automatically activate " .. A.GetSpellInfo(2643) .. ".", 
+                        ruRU = "Minimum units in range to automatically activate " .. A.GetSpellInfo(2643) .. ".", 
+                        frFR = "Minimum units in range to automatically activate " .. A.GetSpellInfo(2643) .. ".",
                     },					
                     M = {},
                 },
@@ -122,33 +201,34 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = 5, 
                     MAX = 40,                            
-                    DB = "MaxAoERange",
+                    DB = "MultishotMaxAoERange",
                     DBV = 30, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = "Max AoE range",
+                        ANY = A.GetSpellInfo(2643) .. "\nmax AoE range",
                     },
                     TT = { 
-                        enUS = "Maximum range for units detection to automatically activate AoE rotation.", 
-                        ruRU = "Maximum range for units detection to automatically activate AoE rotation.", 
-                        frFR = "Maximum range for units detection to automatically activate AoE rotation.",  
+                        enUS = "Maximum range for units detection to automatically activate " .. A.GetSpellInfo(2643) .. ".", 
+                        ruRU = "Maximum range for units detection to automatically activate " .. A.GetSpellInfo(2643) .. ".", 
+                        frFR = "Maximum range for units detection to automatically activate " .. A.GetSpellInfo(2643) .. ".",  
                     },					
                     M = {},
                 },
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 10,                            
+                    MAX = 5,                            
                     DB = "BarbedShotRefreshSec",
-                    DBV = 2, -- Set healthpercentage @60% life. 
+                    DBV = 1.8, -- Set healthpercentage @60% life. 
+					Precision = 1,
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(19574) .. "\nrefresh sec",
+                        ANY = A.GetSpellInfo(217200) .. "\nrefresh sec",
                     },
                     TT = { 
-                        enUS = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(19574) .. ".\nDefault: 2.", 
-                        ruRU = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(19574) .. ".\nDefault: 2.",  
-                        frFR = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(19574) .. ".\nDefault: 2.",   
+                        enUS = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8", 
+                        ruRU = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",  
+                        frFR = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",   
                     },					
                     M = {},
                 },
@@ -257,6 +337,50 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },	
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [7] 
                 {
                     E = "Header",
