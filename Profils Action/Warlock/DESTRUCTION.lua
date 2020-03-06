@@ -182,7 +182,8 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
     MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
     MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	
+    DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon	
 };
 
 -- To create essences use next code:
@@ -380,7 +381,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and Pet:IsActive(417) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.PetKick:IsReady(unit) and Pet:IsActive(417) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         return A.PetKick
     end 
     
@@ -557,7 +558,8 @@ A[3] = function(icon, isMulti)
 	local MortalCoilHP = Action.GetToggle(2, "MortalCoilHP")
 	local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local Racial = Action.GetToggle(1, "Racial")
-	
+	local MinInterrupt = Action.GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = Action.GetToggle(2, "MaxInterrupt")	
     -- Call for Havoc debuff tracking on every unit nameplates
 	HavocDebuffTime()
     local HavocRemains = HavocDebuffTime()
@@ -1299,7 +1301,7 @@ local function ArenaRotation(icon, unit)
 		local maxkickpercent = A.GetToggle(2, "maxkickpercent")
 		
 	    -- Pet Kick
-        if useKick and Pet:IsActive(417) and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        if useKick and Pet:IsActive(417) and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
             return A.PetKick:Show(icon)
         end 
    
@@ -1309,12 +1311,12 @@ local function ArenaRotation(icon, unit)
         end 
 		
 	    -- Mortal Coil PvP
-	    if useCC and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	    if useCC and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
 	       return A.MortalCoil:Show(icon) 
         end 	
 	
 	    -- Fear
-	    if useCC and A.Fear:IsReady(unit) and UseFearAsInterrupt and not Unit(unit):IsTotem() and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("disorient", 50) then 
+	    if useCC and A.Fear:IsReady(unit) and UseFearAsInterrupt and not Unit(unit):IsTotem() and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("disorient", 50) then 
             return A.Fear:Show(icon)              
         end	
 		

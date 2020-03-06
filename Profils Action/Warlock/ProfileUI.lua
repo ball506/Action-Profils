@@ -18,7 +18,7 @@ local HealingEngine                                 = A.HealingEngine
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v3.0.9 (03.03.2020)",
+    DateTime = "v4.0.1 (06.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_WARLOCK_AFFLICTION] = {  
@@ -275,7 +275,50 @@ A.Data.ProfileUI = {
                     E = "LayoutSpace",                                                                         
                 },
             },
-			
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},			
             { -- [7]
                 {
                     E = "Header",
@@ -952,6 +995,50 @@ A.Data.ProfileUI = {
                     M = {},
                 },	
             }, 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [7]
                 {
                     E = "Header",
@@ -1400,7 +1487,51 @@ A.Data.ProfileUI = {
                     }, 					
                     M = {},
                 },
-			},		
+			},	
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},			
             { -- [7]
                 {
                     E = "Header",
