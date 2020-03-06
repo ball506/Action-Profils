@@ -150,6 +150,8 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
     RecklessForceCounter                   = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),
+    DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
+	PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
 };
 
 -- To create essences use next code:
@@ -361,6 +363,16 @@ PurgeDispellMagic = A.MakeFunctionCachedDynamic(PurgeDispellMagic)
 -- BestialWrath Handler UI --
 local function HandleBestialWrath()
     local choice = A.GetToggle(2, "BestialWrathMode")
+	local MinAoETargets = Action.GetToggle(2, "MinAoETargets")
+	local MaxAoERange = Action.GetToggle(2, "MaxAoERange")
+	
+    return     (
+        (A.BurstIsON(unit) and choice[1]) or 
+        (MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets and choice[2]) or
+        (A.BestialWrath:IsReady(player) and choice[3])
+    )
+ 
+  --[[  local choice = A.GetToggle(2, "BestialWrathMode")
 	--print(choice) 
     local unit = "target"
     -- CDs ON
@@ -379,7 +391,7 @@ local function HandleBestialWrath()
         return A.BestialWrath:IsReady(player) or false
 	else
 	    return false
-	end		
+	end	]]--	
 end
 
 -- [1] CC AntiFake Rotation
@@ -476,6 +488,29 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
 	local UnbridledFuryHP = A.GetToggle(2, "UnbridledFuryHP")
 	local UnbridledFuryWithExecute = A.GetToggle(2, "UnbridledFuryWithExecute")
+	local BarbedShotRefreshSec = A.GetToggle(2, "BarbedShotRefreshSec")
+	local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
+	local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
+	-- Azerite beam protection channel
+	local CanCast = true
+	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+	local _, castStartedTime, castEndTime = Unit(player):IsCasting()
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
+	-- Ensure all channel and cast are really safe
+	-- Double protection with check on current casts and also timestamp of the cast
+	if (spellID == A.FocusedAzeriteBeam.ID) then 
+	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
+		    if TMW.time < castEndTime then			
+			    CanCast = false
+	        else
+	            CanCast = true
+			end
+		end
+	end
+	-- Showing icon PoolResource to make sure nothing else is read by GG
+	if not CanCast then
+	    return A.PoolResource:Show(icon)
+	end
 	------------------------------------
 	---------- DUMMY DPS TEST ----------
 	------------------------------------
@@ -735,11 +770,11 @@ A[3] = function(icon, isMulti)
 
         -- AoE Cleave
         if inCombat and unit ~= "mouseover" and not profileStop and (isMulti or A.GetToggle(2, "AoE")) and Unit(unit):IsExists() and MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets then 
-		
+		   -- print("AoE ROT")
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
 			(
-			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= 2 
+			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec
 				or 
 				Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 			)
@@ -820,9 +855,13 @@ A[3] = function(icon, isMulti)
                 end
             end
 			
-            -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                return A.FocusedAzeriteBeam:Show(icon)
+            -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
+			and (MultiUnits:GetByRange(MaxAoERange) >= FocusedAzeriteBeamUnits or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
+			then
+ 	            -- Notification					
+                Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
+				return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- purifying_blast
@@ -836,7 +875,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
@@ -872,7 +911,7 @@ A[3] = function(icon, isMulti)
         
         --SINGLE TARGET
         if inCombat and unit ~= "mouseover" and not profileStop and Unit(unit):IsExists() and (MultiUnits:GetByRange(MaxAoERange) == 1 or not A.GetToggle(2, "AoE")) then 
-		
+		--    print("ST ROT")
             -- barbed_shot,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and 
 			(
