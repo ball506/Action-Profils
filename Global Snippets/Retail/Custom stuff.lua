@@ -236,6 +236,15 @@ function Unit:HasHeroism()
 end 
 
 ------------------------------------
+--- Corruption API patch 8.3
+------------------------------------
+
+function Player:GetCurrentCorruption()
+    local TotalCorruption = GetCorruption()
+    local CorruptionResistance = GetCorruptionResistance()
+    return TotalCorruption - CorruptionResistance
+end
+------------------------------------
 --- HasDeBuffsDown simc reference
 ------------------------------------
 function Unit:HasDeBuffsDown(spell, byID)
