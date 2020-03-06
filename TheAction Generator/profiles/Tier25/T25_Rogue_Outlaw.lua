@@ -78,8 +78,7 @@ Action[ACTION_CONST_ROGUE_OUTLAW] = {
     ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
     ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
-    Detection                              = Action.Create({ Type = "Spell", ID =  })
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -532,8 +531,8 @@ A[3] = function(icon, isMulti)
             if (not Unit("player"):IsStealthed(true, true)) then
                 local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
             end
-            -- adrenaline_rush,if=!buff.adrenaline_rush.up&energy.time_to_max>1&(!equipped.azsharas_font_of_power|cooldown.latent_arcana.remains>20)
-            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and Player:EnergyTimeToMaxPredicted() > 1 and (not A.AzsharasFontofPower:IsExists() or A.LatentArcana:GetCooldown() > 20)) then
+            -- adrenaline_rush,if=!buff.adrenaline_rush.up&(!equipped.azsharas_font_of_power|cooldown.latent_arcana.remains>20)
+            if A.AdrenalineRush:IsReady(unit) and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) and (not A.AzsharasFontofPower:IsExists() or A.LatentArcana:GetCooldown() > 20)) then
                 return A.AdrenalineRush:Show(icon)
             end
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit|!stealthed.rogue&combo_points.deficit>=cp_max_spend-1)
@@ -558,8 +557,8 @@ A[3] = function(icon, isMulti)
             if A.KillingSpree:IsReady(unit) and (bool(VarBladeFlurrySync) and (Player:EnergyTimeToMaxPredicted() > 5 or Player:EnergyPredicted() < 15)) then
                 return A.KillingSpree:Show(icon)
             end
-            -- blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1
-            if A.BladeRush:IsReady(unit) and (bool(VarBladeFlurrySync) and Player:EnergyTimeToMaxPredicted() > 1) then
+            -- blade_rush,if=variable.blade_flurry_sync&energy.time_to_max>1&(!buff.adrenaline_rush.up|energy<45)
+            if A.BladeRush:IsReady(unit) and (bool(VarBladeFlurrySync) and Player:EnergyTimeToMaxPredicted() > 1 and (not Unit("player"):HasBuffs(A.AdrenalineRushBuff.ID, true) or Player:EnergyPredicted() < 45)) then
                 return A.BladeRush:Show(icon)
             end
             -- vanish,if=!stealthed.all&variable.ambush_condition
@@ -697,8 +696,12 @@ A[3] = function(icon, isMulti)
             if (true) then
                 VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) or not Unit("player"):HasBuffs(A.GrandMeleeBuff.ID, true) and not Unit("player"):HasBuffs(A.RuthlessPrecisionBuff.ID, true)))
             end
-            -- variable,name=rtb_reroll,op=set,if=azerite.deadshot.enabled|azerite.ace_up_your_sleeve.enabled,value=rtb_buffs<2&(buff.loaded_dice.up|buff.ruthless_precision.remains<=cooldown.between_the_eyes.remains)
-            if (bool(A.Deadshot:GetAzeriteRank()) or bool(A.AceUpYourSleeve:GetAzeriteRank())) then
+            -- variable,name=rtb_reroll,op=set,if=azerite.deadshot.enabled,value=rtb_buffs<2&(buff.loaded_dice.up|!buff.broadside.up)
+            if (bool(A.Deadshot:GetAzeriteRank())) then
+                VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) or not Unit("player"):HasBuffs(A.BroadsideBuff.ID, true)))
+            end
+            -- variable,name=rtb_reroll,op=set,if=azerite.ace_up_your_sleeve.enabled&azerite.ace_up_your_sleeve.rank>=azerite.deadshot.rank,value=rtb_buffs<2&(buff.loaded_dice.up|buff.ruthless_precision.remains<=cooldown.between_the_eyes.remains)
+            if (bool(A.AceUpYourSleeve:GetAzeriteRank()) and A.AceUpYourSleeve:GetAzeriteRank() >= A.Deadshot:GetAzeriteRank()) then
                 VarRtbReroll = num(RtB_Buffs < 2 and (Unit("player"):HasBuffs(A.LoadedDiceBuff.ID, true) or Unit("player"):HasBuffs(A.RuthlessPrecisionBuff.ID, true) <= A.BetweentheEyes:GetCooldown()))
             end
             -- variable,name=rtb_reroll,op=set,if=azerite.snake_eyes.rank>=2,value=rtb_buffs<2
@@ -756,10 +759,6 @@ A[3] = function(icon, isMulti)
             -- bag_of_tricks
             if A.BagofTricks:IsReady(unit) then
                 return A.BagofTricks:Show(icon)
-            end
-            -- detection,if=equipped.echoing_void|equipped.echoing_void_oh
-            if A.Detection:IsReady(unit) and (A.EchoingVoid:IsExists() or A.EchoingVoidOh:IsExists()) then
-                return A.Detection:Show(icon)
             end
         end
     end

@@ -286,8 +286,8 @@ A[3] = function(icon, isMulti)
             if A.IronskinBrew:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and incoming_damage_1999ms > (health.max * 0.1 + stagger.last_tick_damage_4) and Unit("player"):HasBuffsStacks(A.ElusiveBrawlerBuff.ID, true) < 2 and not Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true)) then
                 return A.IronskinBrew:Show(icon)
             end
-            -- ironskin_brew,if=cooldown.brews.charges_fractional>1&cooldown.black_ox_brew.remains<3
-            if A.IronskinBrew:IsReady(unit) and (A.Brews:ChargesFractionalP() > 1 and A.BlackOxBrew:GetCooldown() < 3) then
+            -- ironskin_brew,if=cooldown.brews.charges_fractional>1&cooldown.black_ox_brew.remains<3&buff.ironskin_brew.remains<15
+            if A.IronskinBrew:IsReady(unit) and (A.Brews:ChargesFractionalP() > 1 and A.BlackOxBrew:GetCooldown() < 3 and Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true) < 15) then
                 return A.IronskinBrew:Show(icon)
             end
             -- purifying_brew,if=stagger.pct>(6*(3-(cooldown.brews.charges_fractional)))&(stagger.last_tick_damage_1>((0.02+0.001*(3-cooldown.brews.charges_fractional))*stagger.last_tick_damage_30))

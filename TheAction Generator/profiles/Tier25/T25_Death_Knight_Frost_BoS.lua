@@ -295,7 +295,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady("player") then
+            if A.AzsharasFontofPower:IsReady(unit) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- variable,name=other_on_use_equipped,value=(equipped.notorious_gladiators_badge|equipped.corrupted_gladiators_badge|equipped.corrupted_gladiators_medallion|equipped.vial_of_animated_blood|equipped.first_mates_spyglass|equipped.jes_howler|equipped.notorious_gladiators_medallion|equipped.ashvanes_razor_coral)
@@ -553,7 +553,7 @@ A[3] = function(icon, isMulti)
         --Cooldowns
         local function Cooldowns(unit)
             -- use_item,name=azsharas_font_of_power,if=(cooldown.empowered_rune_weapon.ready&!variable.other_on_use_equipped)|(cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)
-            if A.AzsharasFontofPower:IsReady("player") and ((A.EmpoweredRuneWeapon:GetCooldown() == 0 and not bool(VarOtherOnUseEquipped)) or (A.PillarofFrost:GetCooldown() <= 10 and bool(VarOtherOnUseEquipped))) then
+            if A.AzsharasFontofPower:IsReady(unit) and ((A.EmpoweredRuneWeapon:GetCooldown() == 0 and not bool(VarOtherOnUseEquipped)) or (A.PillarofFrost:GetCooldown() <= 10 and bool(VarOtherOnUseEquipped))) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=lurkers_insidious_gift,if=talent.breath_of_sindragosa.enabled&((cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)|(buff.pillar_of_frost.up&!variable.other_on_use_equipped))|(buff.pillar_of_frost.up&!talent.breath_of_sindragosa.enabled)

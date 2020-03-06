@@ -53,7 +53,7 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     Thorns                                 = Action.Create({ Type = "Spell", ID = 467 }),
     ThornsDebuff                           = Action.Create({ Type = "Spell", ID = 467 }),
     FeralFrenzy                            = Action.Create({ Type = "Spell", ID = 274837 }),
-    HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
+    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Incarnation                            = Action.Create({ Type = "Spell", ID = 102543 }),
     IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102543 }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
@@ -80,10 +80,11 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     ScentofBloodBuff                       = Action.Create({ Type = "Spell", ID = 285646 }),
     SwipeCat                               = Action.Create({ Type = "Spell", ID = 106785 }),
     MoonfireCat                            = Action.Create({ Type = "Spell", ID = 155625 }),
+    Shred                                  = Action.Create({ Type = "Spell", ID = 5221 }),
     MoonfireCatDebuff                      = Action.Create({ Type = "Spell", ID = 155625 }),
     ClearcastingBuff                       = Action.Create({ Type = "Spell", ID = 135700 }),
-    Shred                                  = Action.Create({ Type = "Spell", ID = 5221 }),
-    ShadowmeldBuff                         = Action.Create({ Type = "Spell", ID = 58984 })
+    ShadowmeldBuff                         = Action.Create({ Type = "Spell", ID = 58984 }),
+    CyclingVariable                        = Action.Create({ Type = "Spell", ID =  })
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -172,10 +173,12 @@ local A = setmetatable(Action[ACTION_CONST_DRUID_FERAL], { __index = Action })
 ---------------- VARIABLES ---------------
 ------------------------------------------
 local VarUseThrash = 0;
+local VarReapingDelay = 0;
 local VarOpenerDone = 0;
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarUseThrash = 0
+  VarReapingDelay = 0
   VarOpenerDone = 0
 end)
 
@@ -214,35 +217,39 @@ end
 
 
 
-local function EvaluateCyclePrimalWrath169(unit)
+local function EvaluateCycleReapingFlames106(unit)
+    return Unit(unit):TimeToDie() < 1.5 or ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and VarReapingDelay > 29) or (target.time_to_pct_20 > 30 and VarReapingDelay > 44)
+end
+
+local function EvaluateCyclePrimalWrath192(unit)
     return MultiUnits:GetByRangeInCombat(5, 5, 10) > 1 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4
 end
 
-local function EvaluateCyclePrimalWrath180(unit)
+local function EvaluateCyclePrimalWrath203(unit)
     return MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2
 end
 
-local function EvaluateCycleRip189(unit)
+local function EvaluateCycleRip212(unit)
     return not Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff.ID, true:BaseDuration() * 0.8 and A.Persistent_PMultiplier(A.Rip) > A.PMultiplier(unit, A.RipDebuff.ID)) and Unit(unit):TimeToDie() > 8
 end
 
-local function EvaluateTargetIfFilterFerociousBite248(unit)
+local function EvaluateTargetIfFilterFerociousBite271(unit)
   return max:druid.rip.ticks_gained_on_refresh
 end
 
-local function EvaluateCycleRake326(unit)
+local function EvaluateCycleRake349(unit)
     return not Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) or (not A.Bloodtalons:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < A.RakeDebuff.ID, true:BaseDuration() * 0.3) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleRake355(unit)
+local function EvaluateCycleRake378(unit)
     return A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and ((Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) <= 7) and A.Persistent_PMultiplier(A.Rake) > A.PMultiplier(unit, A.RakeDebuff.ID) * 0.85) and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleMoonfireCat398(unit)
+local function EvaluateCycleMoonfireCat437(unit)
     return Unit(unit):HasDeBuffsRefreshable(A.MoonfireCatDebuff.ID, true)
 end
 
-local function EvaluateCycleFerociousBite514(unit)
+local function EvaluateCycleFerociousBite559(unit)
     return Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and (A.Sabertooth:IsSpellLearned())
 end
 
@@ -345,9 +352,27 @@ A[3] = function(icon, isMulti)
             if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 or 10000000000 > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
-            -- heart_essence,if=buff.tigers_fury.up
-            if A.HeartEssence:IsReady(unit) and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
-                return A.HeartEssence:Show(icon)
+            -- guardian_of_azeroth,if=buff.tigers_fury.up
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+                return A.GuardianofAzeroth:Show(icon)
+            end
+            -- concentrated_flame,if=buff.tigers_fury.up
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+                return A.ConcentratedFlame:Show(icon)
+            end
+            -- ripple_in_space,if=buff.tigers_fury.up
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+                return A.RippleInSpace:Show(icon)
+            end
+            -- worldvein_resonance,if=buff.tigers_fury.up
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true)) then
+                return A.WorldveinResonance:Show(icon)
+            end
+            -- reaping_flames,target_if=target.time_to_die<1.5|((target.health.pct>80|target.health.pct<=20)&variable.reaping_delay>29)|(target.time_to_pct_20>30&variable.reaping_delay>44)
+            if A.ReapingFlames:IsReady(unit) then
+                if Action.Utils.CastTargetIf(A.ReapingFlames, 8, "min", EvaluateCycleReapingFlames106) then
+                    return A.ReapingFlames:Show(icon) 
+                end
             end
             -- incarnation,if=energy>=30&(cooldown.tigers_fury.remains>15|buff.tigers_fury.up)
             if A.Incarnation:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 15 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
@@ -394,21 +419,21 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath169) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath192) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
             if A.PrimalWrath:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath180) then
+                if Action.Utils.CastTargetIf(A.PrimalWrath, 8, "min", EvaluateCyclePrimalWrath203) then
                     return A.PrimalWrath:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rip, 8, "min", EvaluateCycleRip189) then
+                if Action.Utils.CastTargetIf(A.Rip, 8, "min", EvaluateCycleRip212) then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -432,7 +457,7 @@ A[3] = function(icon, isMulti)
             end
             -- ferocious_bite,max_energy=1,target_if=max:druid.rip.ticks_gained_on_refresh
             if A.FerociousBiteMaxEnergy:IsReady(unit) and A.FerociousBiteMaxEnergy:IsUsableP then
-                if Action.Utils.CastTargetIf(A.FerociousBiteMaxEnergy, 8, "max", EvaluateTargetIfFilterFerociousBite248) then 
+                if Action.Utils.CastTargetIf(A.FerociousBiteMaxEnergy, 8, "max", EvaluateTargetIfFilterFerociousBite271) then 
                     return A.FerociousBiteMaxEnergy:Show(icon) 
                 end
             end
@@ -482,14 +507,14 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- rake,target_if=!ticking|(!talent.bloodtalons.enabled&remains<duration*0.3)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake326) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake349) then
                     return A.Rake:Show(icon) 
                 end
             end
             -- pool_resource,for_next=1
             -- rake,target_if=talent.bloodtalons.enabled&buff.bloodtalons.up&((remains<=7)&persistent_multiplier>dot.rake.pmultiplier*0.85)&target.time_to_die>4
             if A.Rake:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake355) then
+                if Action.Utils.CastTargetIf(A.Rake, 8, "min", EvaluateCycleRake378) then
                     return A.Rake:Show(icon) 
                 end
             end
@@ -497,13 +522,13 @@ A[3] = function(icon, isMulti)
             if A.MoonfireCat:IsReady(unit) and (Unit("player"):HasBuffs(A.BloodtalonsBuff.ID, true) and bool(Unit("player"):HasBuffsDown(A.PredatorySwiftnessBuff.ID, true)) and Player:ComboPoints() < 5) then
                 return A.MoonfireCat:Show(icon)
             end
-            -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))
-            if A.BrutalSlash:IsReady(unit) and ((Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (10000000000 > (1 + A.BrutalSlash:MaxCharges() - A.BrutalSlash:ChargesFractionalP()) * A.BrutalSlash:RechargeP()))) then
+            -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))&(spell_targets.brutal_slash*action.brutal_slash.damage%action.brutal_slash.cost)>(action.shred.damage%action.shred.cost)
+            if A.BrutalSlash:IsReady(unit) and ((Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (10000000000 > (1 + A.BrutalSlash:MaxCharges() - A.BrutalSlash:ChargesFractionalP()) * A.BrutalSlash:RechargeP())) and (MultiUnits:GetByRangeInCombat(8, 5, 10) * action.brutal_slash.damage / A.BrutalSlash:Cost()) > (action.shred.damage / A.Shred:Cost())) then
                 return A.BrutalSlash:Show(icon)
             end
             -- moonfire_cat,target_if=refreshable
             if A.MoonfireCat:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, "min", EvaluateCycleMoonfireCat398) then
+                if Action.Utils.CastTargetIf(A.MoonfireCat, 40, "min", EvaluateCycleMoonfireCat437) then
                     return A.MoonfireCat:Show(icon) 
                 end
             end
@@ -581,13 +606,21 @@ A[3] = function(icon, isMulti)
             if A.Rake:IsReady(unit) and (Unit("player"):HasBuffs(A.ProwlBuff.ID, true) or Unit("player"):HasBuffs(A.ShadowmeldBuff.ID, true)) then
                 return A.Rake:Show(icon)
             end
+            -- variable,name=reaping_delay,value=target.time_to_die,if=variable.reaping_delay=0
+            if (VarReapingDelay == 0) then
+                VarReapingDelay = Unit(unit):TimeToDie()
+            end
+            -- cycling_variable,name=reaping_delay,op=min,value=target.time_to_die
+            if A.CyclingVariable:IsReady(unit) then
+                return A.CyclingVariable:Show(icon) = math.min(return A.CyclingVariable:Show(icon), Unit(unit):TimeToDie())
+            end
             -- call_action_list,name=cooldowns
             if (true) then
                 local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
             if A.FerociousBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FerociousBite, 8, "min", EvaluateCycleFerociousBite514) then
+                if Action.Utils.CastTargetIf(A.FerociousBite, 8, "min", EvaluateCycleFerociousBite559) then
                     return A.FerociousBite:Show(icon) 
                 end
             end

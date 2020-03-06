@@ -57,7 +57,6 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
     UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
     VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
     BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID =  }),
@@ -75,6 +74,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
     DanceofDeath                           = Action.Create({ Type = "Spell", ID =  }),
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID =  }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
     GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -194,29 +194,29 @@ local function IsSchoolFree()
 end 
 
 
-local function EvaluateTargetIfFilterBarbedShot135(unit)
+local function EvaluateTargetIfFilterBarbedShot133(unit)
   return Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true)
 end
 
-local function EvaluateTargetIfBarbedShot146(unit)
+local function EvaluateTargetIfBarbedShot144(unit)
   return Pet:HasBuffs(A.FrenzyBuff.ID, true) and Pet:HasBuffs(A.FrenzyBuff.ID, true) <= A.GetGCD()
 end
 
 
-local function EvaluateTargetIfFilterBarbedShot156(unit)
+local function EvaluateTargetIfFilterBarbedShot154(unit)
   return Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true)
 end
 
-local function EvaluateTargetIfBarbedShot169(unit)
+local function EvaluateTargetIfBarbedShot167(unit)
   return A.BarbedShot:FullRechargeTimeP() < A.GetGCD() and bool(A.BestialWrath:GetCooldown())
 end
 
 
-local function EvaluateTargetIfFilterBarbedShot207(unit)
+local function EvaluateTargetIfFilterBarbedShot205(unit)
   return Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true)
 end
 
-local function EvaluateTargetIfBarbedShot232(unit)
+local function EvaluateTargetIfBarbedShot230(unit)
   return bool(Pet:HasBuffsDown(A.FrenzyBuff.ID, true)) and (A.BarbedShot:ChargesFractionalP() > 1.8 or Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true)) or A.AspectoftheWild:GetCooldown() < A.FrenzyBuff.ID, true:BaseDuration() - A.GetGCD() and bool(A.PrimalInstincts:GetAzeriteRank()) or A.BarbedShot:ChargesFractionalP() > 1.4 or Unit(unit):TimeToDie() < 9
 end
 
@@ -328,10 +328,6 @@ A[3] = function(icon, isMulti)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            -- bag_of_tricks
-            if A.BagofTricks:IsReady(unit) then
-                return A.BagofTricks:Show(icon)
-            end
             -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
             if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
                 return A.ReapingFlames:Show(icon)
@@ -342,7 +338,7 @@ A[3] = function(icon, isMulti)
         local function Cleave(unit)
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
             if A.BarbedShot:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot135, EvaluateTargetIfBarbedShot146) then 
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot133, EvaluateTargetIfBarbedShot144) then 
                     return A.BarbedShot:Show(icon) 
                 end
             end
@@ -352,7 +348,7 @@ A[3] = function(icon, isMulti)
             end
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
             if A.BarbedShot:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot156, EvaluateTargetIfBarbedShot169) then 
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot154, EvaluateTargetIfBarbedShot167) then 
                     return A.BarbedShot:Show(icon) 
                 end
             end
@@ -390,7 +386,7 @@ A[3] = function(icon, isMulti)
             end
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
             if A.BarbedShot:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot207, EvaluateTargetIfBarbedShot232) then 
+                if Action.Utils.CastTargetIf(A.BarbedShot, 40, "min", EvaluateTargetIfFilterBarbedShot205, EvaluateTargetIfBarbedShot230) then 
                     return A.BarbedShot:Show(icon) 
                 end
             end
@@ -474,6 +470,10 @@ A[3] = function(icon, isMulti)
             if A.KillCommand:IsReady(unit) then
                 return A.KillCommand:Show(icon)
             end
+            -- bag_of_tricks,if=buff.bestial_wrath.down|target.time_to_die<5
+            if A.BagofTricks:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+                return A.BagofTricks:Show(icon)
+            end
             -- chimaera_shot
             if A.ChimaeraShot:IsReady(unit) then
                 return A.ChimaeraShot:Show(icon)
@@ -517,13 +517,13 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- auto_shot
-            -- use_items
+            -- use_items,if=prev_gcd.1.aspect_of_the_wild|target.time_to_die<20
             -- use_item,name=azsharas_font_of_power,if=cooldown.aspect_of_the_wild.remains_guess<15&target.time_to_die>10
             if A.AzsharasFontofPower:IsReady(unit) and (cooldown.aspect_of_the_wild.remains_guess < 15 and Unit(unit):TimeToDie() > 10) then
                 A.AzsharasFontofPower:Show(icon)
             end
-            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(!equipped.azsharas_font_of_power|trinket.azsharas_font_of_power.cooldown.remains>86|essence.blood_of_the_enemy.major)&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.remains>5)&(!essence.condensed_lifeforce.major|buff.guardian_of_azeroth.up)&(target.health.pct<35|!essence.condensed_lifeforce.major|!talent.killer_instinct.enabled)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and (not A.AzsharasFontofPower:IsExists() or trinket.azsharas_font_of_power.cooldown.remains > 86 or bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID))) and (Unit("player"):GetSpellLastCast(A.AspectoftheWild) or not A.CyclotronicBlast:IsExists() and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) > 5) and (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true)) and (Unit(unit):HealthPercent() < 35 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or not A.KillerInstinct:IsSpellLearned()) or (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(!equipped.azsharas_font_of_power|trinket.azsharas_font_of_power.cooldown.remains>86|essence.blood_of_the_enemy.major)&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.remains>9)&(!essence.condensed_lifeforce.major|buff.guardian_of_azeroth.up)&(target.health.pct<35|!essence.condensed_lifeforce.major|!talent.killer_instinct.enabled)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and (not A.AzsharasFontofPower:IsExists() or trinket.azsharas_font_of_power.cooldown.remains > 86 or bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID))) and (Unit("player"):GetSpellLastCast(A.AspectoftheWild) or not A.CyclotronicBlast:IsExists() and Unit("player"):HasBuffs(A.AspectoftheWildBuff.ID, true) > 9) and (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true)) and (Unit(unit):HealthPercent() < 35 or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or not A.KillerInstinct:IsSpellLearned()) or (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,effect_name=cyclotronic_blast,if=buff.bestial_wrath.down|target.time_to_die<5

@@ -63,6 +63,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
+    SiegebreakerDebuff                     = Action.Create({ Type = "Spell", ID = 280773 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     BagofTricks                            = Action.Create({ Type = "Spell", ID =  })
@@ -382,8 +383,8 @@ A[3] = function(icon, isMulti)
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
-            -- lights_judgment,if=buff.recklessness.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true))) then
+            -- lights_judgment,if=buff.recklessness.down&debuff.siegebreaker.down
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true)) and bool(Unit(unit):HasDeBuffsDown(A.SiegebreakerDebuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.recklessness.up
@@ -394,8 +395,8 @@ A[3] = function(icon, isMulti)
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
-            -- bag_of_tricks,if=buff.recklessness.up
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.RecklessnessBuff.ID, true)) then
+            -- bag_of_tricks,if=buff.recklessness.down&debuff.siegebreaker.down&buff.enrage.up
+            if A.BagofTricks:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RecklessnessBuff.ID, true)) and bool(Unit(unit):HasDeBuffsDown(A.SiegebreakerDebuff.ID, true)) and Unit("player"):HasBuffs(A.EnrageBuff.ID, true)) then
                 return A.BagofTricks:Show(icon)
             end
             -- run_action_list,name=single_target

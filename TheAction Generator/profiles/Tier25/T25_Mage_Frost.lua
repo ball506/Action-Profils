@@ -455,8 +455,8 @@ A[3] = function(icon, isMulti)
             if A.Ebonbolt:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and not bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true))) then
                 return A.Ebonbolt:Show(icon)
             end
-            -- ice_lance,if=buff.brain_freeze.react&(buff.fingers_of_frost.react|prev_gcd.1.flurry)&(buff.icicles.max_stack-buff.icicles.stack)*action.frostbolt.execute_time+action.glacial_spike.cast_time+action.glacial_spike.travel_time<incanters_flow_time_to.5.any
-            if A.IceLance:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) and (bool(Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Flurry)) and (buff.icicles.max_stack - Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.5.any) then
+            -- ice_lance,if=buff.brain_freeze.react&(buff.fingers_of_frost.react|prev_gcd.1.flurry)&(buff.icicles.max_stack-buff.icicles.stack)*action.frostbolt.execute_time+action.glacial_spike.cast_time+action.glacial_spike.travel_time<incanters_flow_time_to.5.any&buff.memory_of_lucid_dreams.down
+            if A.IceLance:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true)) and (bool(Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true)) or Unit("player"):GetSpellLastCast(A.Flurry)) and (buff.icicles.max_stack - Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.5.any and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true))) then
                 return A.IceLance:Show(icon)
             end
             -- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down

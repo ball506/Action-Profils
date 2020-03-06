@@ -499,8 +499,8 @@ local function APL()
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.MortalStrike:GetCooldown() > 1.5 and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Player:Rage() < 50) then
                 return A.ArcaneTorrent:Show(icon)
             end
-            -- lights_judgment,if=debuff.colossus_smash.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true))) then
+            -- lights_judgment,if=debuff.colossus_smash.down&buff.memory_of_lucid_dreams.down&cooldown.mortal_strike.remains
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and bool(A.MortalStrike:GetCooldown())) then
                 return A.LightsJudgment:Show(icon)
             end
             -- fireblood,if=buff.memory_of_lucid_dreams.remains<5|(!essence.memory_of_lucid_dreams.major&debuff.colossus_smash.up)
@@ -511,8 +511,8 @@ local function APL()
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) < 5 or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true))) then
                 return A.AncestralCall:Show(icon)
             end
-            -- bag_of_tricks,if=buff.memory_of_lucid_dreams.remains<5|(!essence.memory_of_lucid_dreams.major&debuff.colossus_smash.up)
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) < 5 or (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true))) then
+            -- bag_of_tricks,if=debuff.colossus_smash.down&buff.memory_of_lucid_dreams.down&cooldown.mortal_strike.remains
+            if A.BagofTricks:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and bool(A.MortalStrike:GetCooldown())) then
                 return A.BagofTricks:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=!debuff.razor_coral_debuff.up|(target.health.pct<20.1&buff.memory_of_lucid_dreams.up&cooldown.memory_of_lucid_dreams.remains<117)|(target.health.pct<30.1&debuff.conductive_ink_debuff.up&!essence.memory_of_lucid_dreams.major)|(!debuff.conductive_ink_debuff.up&!essence.memory_of_lucid_dreams.major&debuff.colossus_smash.up)|target.time_to_die<30
