@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.0.3 (16.01.2020)",
+    DateTime = "v4.0.1 (06.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -59,24 +59,7 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "OffGCDasOffGCD",
-                    DBV = true,
-                    L = { 
-                        enUS = "Use spells OffGCD", 
-                        ruRU = "Используйте заклинания OffGCD", 
-                        frFR = "Utiliser les spells OffGCD",
-                    }, 
-                    TT = { 
-                        enUS = "Will force certains spells to be used as off GCD", 
-                        ruRU = "Вынудит определенные заклинания использоваться как вне GCD", 
-                        frFR = "Forcera certains spells à être utilisés sur le GCD",
-                    }, 
-                    M = {},
-                }, 
-                
+                },                 
             }, 
             { -- [4] 4th Row
 
@@ -109,7 +92,153 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
-
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- AoE -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 5,                            
+                    DB = "MinAoETargets",
+                    DBV = 2, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min AoE units",
+                    },
+                    TT = { 
+                        enUS = "Minimum units in range to automatically activate AoE rotation.", 
+                        ruRU = "Minimum units in range to automatically activate AoE rotation.", 
+                        frFR = "Minimum units in range to automatically activate AoE rotation.", 
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "MaxAoERange",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        ruRU = "Maximum range for units detection to automatically activate AoE rotation.", 
+                        frFR = "Maximum range for units detection to automatically activate AoE rotation.",  
+                    },					
+                    M = {},
+                },
+			},
+            { -- [7] UnbridledFuryAuto
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(300714) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryAuto",
+                    DBV = false,
+                    L = { 
+                        enUS = "Burst Potion", 
+                        ruRU = "Burst Potion",
+                        frFR = "Burst Potion",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots depending of the settings of this section", 
+                        ruRU = "If activated, will auto re pots depending of the settings of this section", 
+                        frFR = "If activated, will auto re pots depending of the settings of this section", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithExecute",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync execute phase", 
+                        ruRU = "Sync execute phase",
+                        frFR = "Sync execute phase",   
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        frFR = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 60,      					
+                    DB = "UnbridledFuryTTD",
+                    DBV = 40, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(300714) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(300714) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(300714) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(300714) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dummy DPS Test -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 10,                            
+                    DB = "DummyTime",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "DPS Testing Time",
+                    },
+                    TT = { 
+                        enUS = "Set the desired time for test in minutes.\nWill show a notification icon when time is expired.\nMin: 1 / Max: 10.", 
+                        ruRU = "Установите желаемое время для теста в минутах.\nПо истечении времени будет отображаться значок уведомления.\nMin: 1 / Max: 10.",  
+                        frFR = "Définissez la durée souhaitée pour le test en minutes.\nAffiche une icône de notification lorsque le temps est écoulé.\nMin: 1 / Max: 10.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 15,                            
+                    DB = "DummyStopDelay",
+                    DBV = 10, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Stop Delay",
+                    },
+                    TT = { 
+                        enUS = "After the dummy test is concluded, how much time should we stop the rotation. (In seconds)\nThis value is mainly used as a protection when you are out of combat to avoid auto attack.\nDefault value : 10 seconds.", 
+                        ruRU = "После того, как фиктивный тест закончен, сколько времени мы должны остановить вращение. (В секундах)\nЭто значение в основном используется в качестве защиты, когда вы находитесь вне боя, чтобы избежать автоматической атаки.\nЗначение по умолчанию: 10 секунд.", 
+                        frFR = "Une fois le test fictif terminé, combien de temps devons-nous arrêter la rotation. (En secondes)\nCette valeur est principalement utilisée comme protection lorsque vous êtes hors de combat pour éviter l'attaque automatique.\nValeur par défaut: 10 secondes.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [4] 4th Row
 
                 {
