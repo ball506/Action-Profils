@@ -992,7 +992,7 @@ A[3] = function(icon, isMulti)
             -- bestial_wrath,if=!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
             if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
 			(
-			    not Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) and A.AspectoftheWild:GetCooldown() > 15 
+			    Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and A.AspectoftheWild:GetCooldown() > 15 
 				or
 				Unit(unit):TimeToDie() < 15 + A.GetGCD()
 			)
