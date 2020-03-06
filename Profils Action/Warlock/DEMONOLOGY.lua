@@ -85,7 +85,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     ShadowsBiteBuff                        = Action.Create({ Type = "Spell", ID = 272945 , Hidden = true     }),
 	-- Utilities
     SpellLock                              = Action.Create({ Type = "Spell", ID = 19647}),
-    PetKick                                = Action.Create({ Type = "Spell", ID = 119914, Color = "RED", Desc = "RED Pet Stun" }), 
+    PetKick                                = Action.Create({ Type = "SpellSingleColor", ID = 119914, Color = "RED", Desc = "RED Pet Stun" }), 
 	Shadowfury                             = Action.Create({ Type = "Spell", ID = 30283      }),
     FearGreen                              = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true , Hidden = true     }),	
     Fear                                   = Action.Create({ Type = "Spell", ID = 5782       }),
@@ -180,6 +180,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 	VisionofPerfection                     = Action.Create({ Type = "Spell", ID = 299368, Hidden = true     }),	
+	DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
 };
 
 -- To create essences use next code:
@@ -671,7 +672,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         return A.PetKick
     end 
     
@@ -762,6 +763,8 @@ A[3] = function(icon, isMulti)
 	local ImplosionImp = A.GetToggle(2, "ImplosionImp")
 	local ImplosionRange = A.GetToggle(2, "ImplosionRange")
 	local ImplosionMode = A.GetToggle(2, "ImplosionMode")
+	local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
 	-- Multidots var
 	local MissingDoom = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Doom.ID) 
     local AppliedDoom = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.Doom.ID)
