@@ -776,7 +776,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(unit) and 
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
 			(
 			    A.AspectoftheWild:GetCooldown() > 20 
 				or 
@@ -951,7 +951,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bestial_wrath,if=!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(unit) and 
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
 			(
 			    not Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) and A.AspectoftheWild:GetCooldown() > 15 
 				or
