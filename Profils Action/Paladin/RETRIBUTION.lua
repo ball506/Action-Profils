@@ -219,7 +219,7 @@ end
 
 local function InMelee(unitID)
 	-- @return boolean 
-	return A.Judgment:IsInRange(unitID)
+	return A.TemplarsVerdict:IsInRange(unitID)
 end 
 
 -- @return boolean  
@@ -455,7 +455,7 @@ A[3] = function(icon, isMulti)
             -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and 
 			(
-			    (A.GuardianofAzeroth:GetCooldown() > 90 or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) 
+			    (A.GuardianofAzeroth:GetCooldown() > 90 or not Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) 
 				and 
 				(
 				    Unit("player"):HasHeroism() 
@@ -506,7 +506,7 @@ A[3] = function(icon, isMulti)
 					or 
 					Unit(unit):TimeToDie() < 30 
 					or 
-					not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)
+					not Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)
 				)
 			)
 			then
@@ -573,7 +573,7 @@ A[3] = function(icon, isMulti)
 								(not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6)
 							)
             -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
-            VarDsCastable = (GetByRange(2, 10) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 10) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
+            VarDsCastable = (GetByRange(2, 8) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 8) and A.RighteousVerdict:IsSpellLearned() or Unit("player"):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
 
             -- inquisition,if=buff.avenging_wrath.down&(buff.inquisition.down|buff.inquisition.remains<8&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3)
             if A.Inquisition:IsReady(unit) and (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 and (Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) == 0 or Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit("player"):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3)) then
@@ -586,17 +586,17 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- divine_storm,if=spell_targets.divine_storm>2
-            if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and GetByRange(2, 10)
-			then
-                return A.DivineStorm:Show(icon)
-            end	
+          --  if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and GetByRange(2, 10)
+		--	then
+         --       return A.DivineStorm:Show(icon)
+        --   end	
 			
             -- divine_storm,if=variable.ds_castable&variable.wings_pool&((!talent.execution_sentence.enabled|(spell_targets.divine_storm>=2|cooldown.execution_sentence.remains>gcd*2))|(cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10))
             if A.DivineStorm:IsReady("player") and Action.GetToggle(2, "AoE") and 
 			(
-			    VarDsCastable and VarWingsPool and  
+			    VarDsCastable and (VarWingsPool or not A.BurstIsON(unit)) and  
 				(
-				    (not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 10) or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
+				    (not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 8) or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
 					or 
 					(A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > A.GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit("player"):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)
 				)
@@ -608,7 +608,7 @@ A[3] = function(icon, isMulti)
             -- templars_verdict,if=variable.wings_pool&(!talent.execution_sentence.enabled|cooldown.execution_sentence.remains>gcd*2|cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10)
             if A.TemplarsVerdict:IsReady(unit) and 
 			(
-			    VarWingsPool and 
+			    (VarWingsPool or not A.BurstIsON(unit)) and 
 				(
 				    not A.ExecutionSentence:IsSpellLearned() 
 					or 
