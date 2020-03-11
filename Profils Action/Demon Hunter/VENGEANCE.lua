@@ -46,6 +46,7 @@ Action[ACTION_CONST_DEMONHUNTER_VENGEANCE] = {
     Shear                                  = Action.Create({ Type = "Spell", ID = 203782     }),
     SoulFragments                          = Action.Create({ Type = "Spell", ID = 203981     }),
     ThrowGlaive                            = Action.Create({ Type = "Spell", ID = 204157     }), 
+	Imprison                               = Action.Create({ Type = "Spell", ID = 217832     }),
     -- Sigils	
     SigilofFlameNoCS                       = Action.Create({ Type = "Spell", ID = 204596     }),
     SigilofFlameCS                         = Action.Create({ Type = "Spell", ID = 204513     }),
@@ -218,6 +219,11 @@ local function Interrupts(unit)
 	-- Sigil of Silence (Silence)
 	if useKick and (not A.Disrupt:IsReady(unit) or EnemiesCasting > 1) and A.SigilofSilence:IsReady("player") and Unit(unit):CanInterrupt(true, nil, 25, 70) and A.SigilofSilence:AbsentImun(unit, Temp.TotalAndCC, true) then 
         return A.SigilofSilence              
+    end 
+
+	-- Imprison    
+    if useCC and A.Imprison:IsReady(unit) and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then        
+		return A.Imprison              
     end 
 	
     -- Chaos Nova    
