@@ -1140,7 +1140,12 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and ((A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4)
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
+				(
+				    (A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) 
+					or 
+					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
+				)
 			    then
                     return A.ScourgeStrike:Show(icon)
                 end
@@ -1160,6 +1165,17 @@ A[3] = function(icon, isMulti)
             if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
+
+            -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
+            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
+				(
+				    (A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) 
+					or 
+					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
+				)
+			    then
+                    return A.ScourgeStrike:Show(icon)
+                end
 			
             -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
             if A.DeathandDecay:IsReady(player) and A.Pestilence:IsSpellLearned() and A.Apocalypse:GetCooldown() > 0 then
