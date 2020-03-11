@@ -10,7 +10,7 @@ local TR                                        = Action.TasteRotation
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.1.2 (07.03.2020)",
+    DateTime = "v4.1.3 (11.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	

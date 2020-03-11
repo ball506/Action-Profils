@@ -856,17 +856,17 @@ A[3] = function(icon, isMulti)
 			
             -- use_items,if=time>20|!equipped.ramping_amplitude_gigavolt_engine|!equipped.vision_of_demise
             -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
-            if A.AzsharasFontofPower:IsReady(player) and ((A.VisionofPerfection:GetAzeriteRank() > 0 and not A.UnholyFrenzy:IsSpellLearned()) or (not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and A.VisionofPerfection:GetAzeriteRank() == 0)) then
+            if A.AzsharasFontofPower:IsReady(player) and ((A.VisionofPerfection:GetAzeriteRank() > 0 and not A.UnholyFrenzy:IsSpellLearned()) or (not Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID) and A.VisionofPerfection:GetAzeriteRank() == 0)) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
 	        -- use_item,name=azsharas_font_of_power,if=(essence.vision_of_perfection.enabled&!talent.unholy_frenzy.enabled)|(!essence.condensed_lifeforce.major&!essence.vision_of_perfection.enabled)
-            if A.AzsharasFontofPower:IsReady(player) and ((A.VisionofPerfection:GetAzeriteRank() > 0 and not A.UnholyFrenzy:IsSpellLearned()) or (not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and A.VisionofPerfection:GetAzeriteRank() == 0)) then
+            if A.AzsharasFontofPower:IsReady(player) and ((A.VisionofPerfection:GetAzeriteRank() > 0 and not A.UnholyFrenzy:IsSpellLearned()) or (not Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID) and A.VisionofPerfection:GetAzeriteRank() == 0)) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=cooldown.apocalypse.remains<14&(essence.condensed_lifeforce.major|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled)
-            if A.AzsharasFontofPower:IsReady(player) and (A.Apocalypse:GetCooldown() < 14 and (Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) or A.VisionofPerfection:GetAzeriteRank() > 0 and A.UnholyFrenzy:IsSpellLearned())) then
+            if A.AzsharasFontofPower:IsReady(player) and (A.Apocalypse:GetCooldown() < 14 and (Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID) or A.VisionofPerfection:GetAzeriteRank() > 0 and A.UnholyFrenzy:IsSpellLearned())) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
