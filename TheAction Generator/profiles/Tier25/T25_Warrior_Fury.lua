@@ -316,7 +316,7 @@ A[3] = function(icon, isMulti)
                 return A.HeroicLeap:Show(icon)
             end
             -- potion,if=buff.guardian_of_azeroth.up|(!essence.condensed_lifeforce.major&target.time_to_die=60)
-            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and Unit(unit):TimeToDie() == 60)) then
+            if A.BattlePotionofStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or (not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and Unit(unit):TimeToDie() == 60)) then
                 A.BattlePotionofStrength:Show(icon)
             end
             -- rampage,if=cooldown.recklessness.remains<3
@@ -364,7 +364,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- recklessness,if=!essence.condensed_lifeforce.major&!essence.blood_of_the_enemy.major|cooldown.guardian_of_azeroth.remains>1|buff.guardian_of_azeroth.up|cooldown.blood_of_the_enemy.remains<gcd
-            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or A.GuardianofAzeroth:GetCooldown() > 1 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
+            if A.Recklessness:IsReady(unit) and A.BurstIsON(unit) and (not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) and not bool(Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID)) or A.GuardianofAzeroth:GetCooldown() > 1 or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() < A.GetGCD()) then
                 return A.Recklessness:Show(icon)
             end
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
@@ -372,7 +372,7 @@ A[3] = function(icon, isMulti)
                 return A.Whirlwind:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=target.time_to_die<20|!debuff.razor_coral_debuff.up|(target.health.pct<30.1&debuff.conductive_ink_debuff.up)|(!debuff.conductive_ink_debuff.up&buff.memory_of_lucid_dreams.up|prev_gcd.2.guardian_of_azeroth|prev_gcd.2.recklessness&(!essence.memory_of_lucid_dreams.major&!essence.condensed_lifeforce.major))
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):TimeToDie() < 20 or not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID))))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):TimeToDie() < 20 or not Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) or (Unit(unit):HealthPercent() < 30.1 and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or (not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):GetSpellLastCast(A.GuardianofAzeroth) or Unit("player"):GetSpellLastCast(A.Recklessness) and (not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and not bool(Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID))))) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- blood_fury,if=buff.recklessness.up
