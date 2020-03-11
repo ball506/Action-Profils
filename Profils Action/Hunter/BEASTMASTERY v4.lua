@@ -186,6 +186,19 @@ local Temp = {
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
 
+-- API - Spell
+-- Example of create:
+Pet:Add(253, {
+	-- number accepted
+	17253, -- Bite
+	16827, -- Claw
+	49966, -- Smack
+	--47481, -- Gnaw
+	-- strings also accepted!
+--	"Gnaw",
+--	(GetSpellInfo(47481)), -- must be in '(' ')' because call this function will return multi returns through ',' 
+})
+
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
         return 
@@ -363,13 +376,68 @@ local function PurgeDispellMagic(unit)
 end
 PurgeDispellMagic = A.MakeFunctionCachedDynamic(PurgeDispellMagic)
 
+local function InRange(unit)
+	-- @return boolean 
+	return A.BarbedShot:IsInRange(unit)
+end 
+InRange = A.MakeFunctionCachedDynamic(InRange)
+
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InRange(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
+			
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
+		end 
+		
+	end
+	
+end  
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
+
 -- BestialWrath Handler UI --
 local function HandleBestialWrath()
     local choice = GetToggle(2, "BestialWrathMode")
 	local unit = "target"
     return     (
         (A.BurstIsON(unit) and choice[1]) or 
-        (MultiUnits:GetByRange(40) >= 2 and choice[2]) or
+        (GetByRange(2, 40) and choice[2]) or
         (A.BestialWrath:IsReady(player) and choice[3])
     )
  
@@ -383,9 +451,9 @@ local function HandleBestialWrath()
 	elseif choice[2] then
 	    -- also checks CDs
 	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(MaxAoERange) >= MinAoETargets and GetToggle(2, "AoE")) or false
+		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(40) >= MinAoETargets and GetToggle(2, "AoE")) or false
 		else
-		    return (MultiUnits:GetByRange(MaxAoERange) > 2 and GetToggle(2, "AoE")) or false
+		    return (MultiUnits:GetByRange(40) > 2 and GetToggle(2, "AoE")) or false
 		end
 	-- Everytime
 	elseif choice[3] then
@@ -464,6 +532,7 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -501,6 +570,7 @@ A[3] = function(icon, isMulti)
 	local MinInterrupt = GetToggle(2, "MinInterrupt")
 	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
 	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
+	local AoEMode = A.GetToggle(2, "AoEMode")
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -641,6 +711,8 @@ A[3] = function(icon, isMulti)
             if A.AzsharasFontofPower:IsReady(unit)
 			and ((Pull > 0.1 and Pull <= 8) or not DBM) 
 			then
+			 	 -- Notification					
+                Action.SendNotification("Stop moving!! Azsharas Font of Power", A.AzsharasFontofPower.ID) 
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
@@ -797,7 +869,7 @@ A[3] = function(icon, isMulti)
 	    	-- Non SIMC Custom Trinket1
 	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and    
 			(
-    			TrinketsAoE and MultiUnits:GetByRange(TrinketsUnitsRange) >= TrinketsMinUnits and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 				or
 				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
 			)
@@ -809,7 +881,7 @@ A[3] = function(icon, isMulti)
 		    -- Non SIMC Custom Trinket2
 	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and	    
 			(
-    			TrinketsAoE and MultiUnits:GetByRange(TrinketsUnitsRange) >= TrinketsMinUnits and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 				or
 				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
 			)
@@ -818,151 +890,10 @@ A[3] = function(icon, isMulti)
 	        end
 			
         end
-
-        -- AoE Cleave
-        if inCombat and unit ~= "mouseover" and not profileStop and (isMulti or GetToggle(2, "AoE")) and Unit(unit):IsExists() and MultiUnits:GetByRange(40) >= 2 and CanCast then 
-		   -- print("AoE ROT")
-            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
-            if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
-			(
-			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec
-				or 
-				Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
-			)
-			then
-                return A.BarbedShot:Show(icon) 
-            end
-			
-            -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and MultiUnits:GetByRange(MultishotMaxAoERange) >= MultishotMinAoETargets then
-                return A.Multishot:Show(icon)
-            end
-			
-            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
-            if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and A.BarbedShot:GetSpellChargesFullRechargeTime() < A.GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
-                    return A.BarbedShot:Show(icon) 
-                end
-            end
-			
-            -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) then
-                return A.AspectoftheWild:Show(icon)
-            end
-			
-            -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
-            if A.Stampede:IsReady(unit) and 
-			(
-			    Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0
-				or 
-				Unit(unit):TimeToDie() < 15
-			)
-			then
-                return A.Stampede:Show(icon)
-            end
-			
-            -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
-			(
-			    A.AspectoftheWild:GetCooldown() > 20 
-				or 
-				A.OneWiththePack:IsSpellLearned() 
-				or 
-				Unit(unit):TimeToDie() < 15
-			)
-			then
-                return A.BestialWrath:Show(icon)
-            end
-			
-            -- chimaera_shot
-            if A.ChimaeraShot:IsReady(unit) then
-                return A.ChimaeraShot:Show(icon)
-            end
-			
-            -- a_murder_of_crows
-            if A.AMurderofCrows:IsReady(unit) then
-                return A.AMurderofCrows:Show(icon)
-            end
-			
-            -- barrage
-            if A.Barrage:IsReady(unit) then
-                return A.Barrage:Show(icon)
-            end
-			
-            -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
-            if A.KillCommand:IsReadyByPassCastGCD(unit) and (MultiUnits:GetByRange(MaxAoERange) < 4 or A.RapidReload:GetAzeriteRank() == 0) then
-                return A.KillCommand:Show(icon)
-            end
-			
-            -- dire_beast
-            if A.DireBeast:IsReady(unit) then
-                return A.DireBeast:Show(icon)
-            end
-			
-            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
-            if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0 and (A.BarbedShot:GetSpellChargesFrac() > 1.8 or Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and A.PrimalInstincts:GetAzeriteRank() > 0 then 
-                    return A.BarbedShot:Show(icon) 
-                end
-            end
-			
-            -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
-			and (MultiUnits:GetByRange(MaxAoERange) >= FocusedAzeriteBeamUnits or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
-			then
- 	            -- Notification					
-                Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
-				return A.FocusedAzeriteBeam:Show(icon)
-            end
-			
-            -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                return A.PurifyingBlast:Show(icon)
-            end
-			
-            -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                return A.ConcentratedFlame:Show(icon)
-            end
-			
-            -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
-                return A.BloodoftheEnemy:Show(icon)
-            end
-			
-            -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
-                return A.TheUnboundForce:Show(icon)
-            end
-			
-            -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
-            if A.Multishot:IsReady(unit) and A.RapidReload:GetAzeriteRank() > 0 and MultiUnits:GetByRange(MultishotMaxAoERange) >= MultishotMinAoETargets then
-                return A.Multishot:Show(icon)
-            end
-			
-            -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-            if A.CobraShot:IsReady(unit) and 
-			(
-			    A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
-				(
-				    MultiUnits:GetByRange(MaxAoERange) < 3 
-					or 
-					A.RapidReload:GetAzeriteRank() == 0
-				)
-			)
-			then
-                return A.CobraShot:Show(icon)
-            end
-			
-            -- spitting_cobra
-            if A.SpittingCobra:IsReady(unit) then
-                return A.SpittingCobra:Show(icon)
-            end
-        end
         
-        --SINGLE TARGET
-        if inCombat and unit ~= "mouseover" and not profileStop and Unit(unit):IsExists() and (MultiUnits:GetByRange(MaxAoERange) == 1 or not GetToggle(2, "AoE")) and CanCast then 
-		--    print("ST ROT")
+        -- Classic rotation
+        if inCombat and unit ~= "mouseover" and not profileStop and Unit(unit):IsExists() then 
+
             -- barbed_shot,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and 
 			(
@@ -999,7 +930,166 @@ A[3] = function(icon, isMulti)
             if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) and (A.BarbedShot:GetSpellCharges() < 1 or A.PrimalInstincts:GetAzeriteRank() == 0) then
                 return A.AspectoftheWild:Show(icon)
             end
+
+            -- AoE Cleave
+            if (isMulti or GetToggle(2, "AoE")) and CanCast and
+                -- Range by pet
+				AoEMode == "RangeByPet" and 
+				(
+				    Pet:GetMultiUnitsBySpell(263854) > 1										    					
+				)
+				or 
+				-- Range by nameplate
+				AoEMode == "RangeByNameplate" and
+				(					    
+				    GetByRange(1, 40, true)
+				)
+				or
+				-- Range by active enemies CLEU
+				AoEMode == "RangeByCLEU" and
+				(        				
+					MultiUnits:GetActiveEnemies() > 1					     
+				)
+			then 
+		    
+                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
+                if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
+			    (
+			        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec
+				    or 
+				    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
+		    	)
+		    	then
+                    return A.BarbedShot:Show(icon) 
+                end
 			
+                -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
+                if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) then
+                    return A.Multishot:Show(icon)
+                end
+			
+                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
+                if A.BarbedShot:IsReadyByPassCastGCD(unit) then
+                    if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and A.BarbedShot:GetSpellChargesFullRechargeTime() < A.GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
+                        return A.BarbedShot:Show(icon) 
+                    end
+                end
+			
+                -- aspect_of_the_wild
+                if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) then
+                    return A.AspectoftheWild:Show(icon)
+                end
+		    	
+                -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
+                if A.Stampede:IsReady(unit) and 
+		    	(
+			        Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0
+				    or 
+				    Unit(unit):TimeToDie() < 15
+		    	)
+			    then
+                    return A.Stampede:Show(icon)
+                end
+			
+               -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
+                if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+			    (
+			        A.AspectoftheWild:GetCooldown() > 20 
+			    	or 
+			    	A.OneWiththePack:IsSpellLearned() 
+			    	or 
+			    	Unit(unit):TimeToDie() < 15
+		    	)
+			    then
+                    return A.BestialWrath:Show(icon)
+                end
+			
+                -- chimaera_shot
+                if A.ChimaeraShot:IsReady(unit) then
+                    return A.ChimaeraShot:Show(icon)
+                end
+			
+                -- a_murder_of_crows
+                if A.AMurderofCrows:IsReady(unit) then
+                    return A.AMurderofCrows:Show(icon)
+                end
+			
+                -- barrage
+                if A.Barrage:IsReady(unit) then
+                    return A.Barrage:Show(icon)
+                end
+			
+                -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
+                if A.KillCommand:IsReadyByPassCastGCD(unit) and (GetByRange(4, 40, false, true) or A.RapidReload:GetAzeriteRank() == 0) then
+                    return A.KillCommand:Show(icon)
+                end
+			
+                -- dire_beast
+                if A.DireBeast:IsReady(unit) then
+                    return A.DireBeast:Show(icon)
+                end
+			
+                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
+                if A.BarbedShot:IsReadyByPassCastGCD(unit) then
+                    if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0 and (A.BarbedShot:GetSpellChargesFrac() > 1.8 or Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and A.PrimalInstincts:GetAzeriteRank() > 0 then 
+                        return A.BarbedShot:Show(icon) 
+                    end
+                end
+			
+                -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
+                if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
+		    	and (GetByRange(FocusedAzeriteBeamUnits, 30) or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
+		    	then
+ 	                -- Notification					
+                    Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
+			    	return A.FocusedAzeriteBeam:Show(icon)
+                end
+			
+                -- purifying_blast
+                if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                    return A.PurifyingBlast:Show(icon)
+                end
+			
+                -- concentrated_flame
+                if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                    return A.ConcentratedFlame:Show(icon)
+                end
+			
+                -- blood_of_the_enemy
+                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
+                    return A.BloodoftheEnemy:Show(icon)
+                end
+			
+                -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
+                if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
+                    return A.TheUnboundForce:Show(icon)
+                end
+			
+                -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
+                if A.Multishot:IsReady(unit) and A.RapidReload:GetAzeriteRank() > 0 and GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) then
+                    return A.Multishot:Show(icon)
+                end
+			
+                -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
+                if A.CobraShot:IsReady(unit) and 
+		    	(
+			        A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
+				    (
+			    	    GetByRange(3, 40, false, true) 
+			    		or 
+			    		A.RapidReload:GetAzeriteRank() == 0
+			    	)
+		    	)
+		    	then
+                    return A.CobraShot:Show(icon)
+                end
+			
+                -- spitting_cobra
+                if A.SpittingCobra:IsReady(unit) then
+                    return A.SpittingCobra:Show(icon)
+                end
+            end
+
             -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
             if A.Stampede:IsReady(unit) and 
 			(

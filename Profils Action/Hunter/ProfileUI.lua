@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.6 (06.03.2020)",
+    DateTime = "v4.0.7 (11.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -59,7 +59,25 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                },                 
+                },    
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Range By Pet", value = "RangeByPet" },
+                        { text = "Range By Nameplate", value = "RangeByNameplate" },                    
+                        { text = "Range By CLEU", value = "RangeByCLEU" },
+                    },
+                    DB = "AoEMode",
+                    DBV = "RangeByPet",
+                    L = { 
+                        ANY = "AoE\nDetection Mode",
+                    }, 
+                    TT = { 
+                        enUS = "Set the mode you want to use. \nRange By Pet: Get number of enemies in pet range by checking Bite, Smack and Claw attack. \nRange By Nameplate: Get number of enemies with nameplates. \nRange By CLEU: Get number of enemies with combat events logs.\n!!!DON'T FORGET TO ADD BITE, SMACK OR CLAW IN YOUR SPELLBAR. NOT THE PET SPELLBAR.", 
+                        ruRU = "Set the mode you want to use. \nRange By Pet: Get number of enemies in pet range. \nRange By Nameplate: Get number of enemies with nameplates. \nRange By CLEU: Get number of enemies with combat events logs.\n!!!DON'T FORGET TO ADD BITE, SMACK OR CLAW IN YOUR SPELLBAR. NOT THE PET SPELLBAR.",
+                    }, 
+                    M = {},
+                },				
             }, 
             { -- [4] 4th Row
 
