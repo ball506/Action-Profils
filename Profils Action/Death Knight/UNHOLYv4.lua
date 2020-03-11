@@ -1140,7 +1140,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.DeathandDecay:GetCooldown() > 2
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and ((A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4)
 			    then
                     return A.ScourgeStrike:Show(icon)
                 end
@@ -1169,12 +1169,6 @@ A[3] = function(icon, isMulti)
             -- defile,if=cooldown.apocalypse.remains
             if A.Defile:IsReady(unit) and (A.Apocalypse:GetCooldown() > 0) then
                 return A.Defile:Show(icon)
-            end
-			
-            -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
-			then
-                return A.ScourgeStrike:Show(icon)
             end
 			
             -- clawing_shadows,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
