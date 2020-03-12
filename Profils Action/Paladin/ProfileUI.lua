@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v2.0.4 (11.03.2020)",
+    DateTime = "v4.0.1 (12.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -60,67 +60,7 @@ A.Data.ProfileUI = {
 						Print = '@string' or nil,
 					},
                 },                 
-            },  
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Rotation -- ",
-                    },
-                },
-            },
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "Bubble",
-                    DBV = 30, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(642) .. " (%)",
-                    }, 
-                    M = {},
-                },
-            },
-            { -- [6]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Party -- ",
-                    },
-                },
-            }, 
-            { -- [7]
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "@party1", value = 1 },
-                        { text = "@party2", value = 2 },
-                    },
-                    MULT = true,
-                    DB = "PartyUnits",
-                    DBV = {
-                        [1] = true, 
-                        [2] = true,
-                    }, 
-                    L = { 
-                        ANY = "Party Units",
-                    }, 
-                    TT = { 
-                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
-                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
-						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
-                    }, 
-                    M = {},
-                },            
-            }, 			
+            },  			
             { -- [4] 4th Row
 
                 {
@@ -157,6 +97,18 @@ A.Data.ProfileUI = {
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(19750) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "Bubble",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(642) .. " (%)",
                     }, 
                     M = {},
                 },
@@ -238,12 +190,82 @@ A.Data.ProfileUI = {
                     M = {},
                 },	
 			},
-            { -- [4] 4th Row
-
+            { -- [7] 
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
                 },
             },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                    }, 
+                    M = {},
+                },            
+            }, 
             { -- [7]
                 {
                     E = "Header",
