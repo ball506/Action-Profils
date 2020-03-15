@@ -90,7 +90,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     --PickUpFragment                         = Action.Create({ Type = "Spell", ID =  }),
     EyesofRage                             = Action.Create({ Type = "Spell", ID = 278500 }),
     Imprison                               = Action.Create({ Type = "Spell", ID = 217832}),
-    ImprisonAntiFake                       = Action.Create({ Type = "Spell", ID = 217832, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
+    --ImprisonAntiFake                       = Action.Create({ Type = "Spell", ID = 217832, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
     Disrupt                                = Action.Create({ Type = "Spell", ID = 183752}),
     DisruptGreen		                   = Action.Create({ Type = "SpellSingleColor", ID = 183752, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }),
     ChaosNova                              = Action.Create({ Type = "Spell", ID = 179057}),
@@ -275,8 +275,8 @@ A[2] = function(icon)
             end 
 			
             -- Imprison
-            if A.ImprisonAntiFake:IsReady(unit, nil, nil, true) and A.ImprisonAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then
-                return A.ImprisonAntiFake:Show(icon)                  
+            if A.Imprison:IsReady(unit, nil, nil, true) and A.Imprison:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then
+                return A.Imprison:Show(icon)                  
             end			
   
             -- Racials 
@@ -734,7 +734,7 @@ A[3] = function(icon, isMulti)
 		end
 		
         -- Imprison CrowdControl PvP
-        if A.ImprisonIsReady(unit) and not Unit(unit):InLOS() then
+        if A.ImprisonIsReady(unit) then
             return A.Imprison:Show(icon)
         end  
 		
@@ -1218,12 +1218,12 @@ A[3] = function(icon, isMulti)
    			end
 			
 		    -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
-            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= A.ManaRift:GetSpellCastTime() then
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= 2.5 then
 			    return A.ManaRift:Show(icon)
 			end	
 			
 		    -- PvP Manarift if debuff FelEruption < ManaRift cast time (2.5sec)
-            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) > 0 and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) <= A.ManaRift:GetSpellCastTime() then
+            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) > 0 and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) <= 2.5 then
 			    return A.ManaRift:Show(icon)
 			end		
 			
