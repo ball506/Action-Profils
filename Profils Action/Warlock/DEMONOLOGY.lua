@@ -1,28 +1,43 @@
 --- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
---local HealingEngine                        = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
+local Action									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Azerite									= LibStub("AzeriteTraits")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local Pet                                       = LibStub("PetLibrary")
 local wipe                                   = wipe 
 local math_floor                             = math.floor
 local math_ceil                              = math.ceil
 local tinsert                                = table.insert 
 local TMW                                    = TMW
 local TR                                     = Action.TasteRotation
-local setmetatable, select, unpack, table, pairs = setmetatable, select, unpack, table, pairs 
-local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local _G, setmetatable							= _G, setmetatable
+local select, unpack, table, pairs = select, unpack, table, pairs 
+local CombatLogGetCurrentEventInfo			 = _G.CombatLogGetCurrentEventInfo
 local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
-local Listener = Action.Listener
-local GetToggle = Action.GetToggle
-local SetToggle = Action.SetToggle
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -89,6 +104,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
 	Shadowfury                             = Action.Create({ Type = "Spell", ID = 30283      }),
     FearGreen                              = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true , Hidden = true     }),	
     Fear                                   = Action.Create({ Type = "Spell", ID = 5782       }),
+	NetherWard                             = Action.Create({ Type = "Spell", ID = 212295     }), -- Spell Reflect
     -- Defensive
     UnendingResolve                        = Action.Create({ Type = "Spell", ID = 104773     }),
 	-- Felguard
@@ -187,6 +203,8 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
 Action:CreateEssencesFor(ACTION_CONST_WARLOCK_DEMONOLOGY)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_WARLOCK_DEMONOLOGY], { __index = Action })
 
+local player = "player"
+
 -- API - Tracker
 -- Initialize Tracker 
 Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { -- this template table is the same with what has this library already built-in, just for example
@@ -264,14 +282,14 @@ end
 -- Calculate future shard count
 local function FutureShard()
     local Shard = Player:SoulShards()
-    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
     
-	if not Unit("player"):IsCasting() then
+	if not Unit(player):IsCasting() then
         return Shard
     else
         if spellID == A.NetherPortal.ID then
             return Shard - 1
-        elseif spellID == A.CallDreadstalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0 then
+        elseif spellID == A.CallDreadstalkers.ID and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) == 0 then
             return Shard - 2
         elseif spellID == A.BilescourgeBombers.ID then
             return Shard - 2
@@ -279,7 +297,7 @@ local function FutureShard()
             return Shard - 1
         elseif spellID == A.GrimoireFelguard.ID then
             return Shard - 1
-        elseif spellID == A.CallDreadstalkers.ID and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0 then
+        elseif spellID == A.CallDreadstalkers.ID and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) > 0 then
             return Shard - 1
         elseif spellID == A.SummonDemonicTyrant.ID and A.BalefulInvocation:GetAzeriteRank() > 0 then
             return 5
@@ -395,13 +413,10 @@ end
 local PetTrackerGUID = Pet:GetTrackerGUID()
 local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
 
-TR.GuardiansTable = {
-    ImpCastsRemaing = 0,
-	PetEnergy = 0,     
-};
-
-local PetEnergy = 0
-local ImpTotalEnergy = 0
+-- Protect errors
+TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
+    Action.TimerSet("DISABLE_PET_ERRORS", 99999, function() Pet:DisableErrors(true)  end)
+end)
 
 TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
@@ -421,43 +436,11 @@ TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, Pet
 
 end)
 
---TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_REMOVED", function(callbackEvent, PetID, PetGUID)
-	--print("Removed " .. PetID .. ", GUID: " .. PetGUID)
-    -- reset impcasts
-	--PetData.impcasts = 0
-	--PetTrackerData[55659].impcasts = 0
-	-- Also reset impcasts & petenergy
-	--PetTrackerData[55659].GUIDs[PetGUID].impcasts = 0
-	--PetTrackerData[55659].GUIDs[PetGUID].petenergy = 0
---end)
-
--- Not working alternative
---[[
-local function IMP_TRACKER_UPDATE()
-    local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
-
-	-- Check for imp bolt casts		
-	if SourceGUID and SourceGUID ~= Pet.MainGUID and PetTrackerGUID[SourceGUID] and PetTrackerData[55659] and SpellID == 104318 then 
-   	    if PetTrackerData[55659].GUIDs[SourceGUID].impcasts > 0 then 
-	  	    PetTrackerData[55659].GUIDs[SourceGUID].impcasts = PetTrackerData[55659].GUIDs[SourceGUID].impcasts - 1	
-            PetTrackerData[55659].GUIDs[SourceGUID].petenergy = PetTrackerData[55659].GUIDs[SourceGUID].petenergy - 20			
-		    --print("Imp with GUID : " .. SourceGUID .. " just casted firebolt and now got " .. PetTrackerData[55659].GUIDs[SourceGUID].impcasts .. " firebolts left.")
-		else
-		    PetTrackerData[55659].GUIDs[SourceGUID].impcasts = 0
-			PetTrackerData[55659].GUIDs[SourceGUID].petenergy = 0
-		end
-	end 		
-
-	-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
-	if SourceGUID and SourceGUID == UnitGUID("player") and SpellID == 196277 then 
-  	    --PetTrackerData[55659].count	= 0		
-		PetTrackerData[55659] = nil 
-		--print("Player just casted Implosion. New Imp count is " .. PetTrackerData[55659].count)		
-	end
-	
-end 
-]]--
---Listener:Add("ACTION_TASTE_IMP_TRACKER", "COMBAT_LOG_EVENT_UNFILTERED", IMP_TRACKER_UPDATE)
+TR.ImpData = {
+    ImpCastsRemaing = 0,
+	ImpCount = 0,
+	ImpTotalEnergy = 0,
+}
 
 -- Working stuff
 local function GetWildImpInfos(petID)
@@ -466,84 +449,167 @@ local function GetWildImpInfos(petID)
 	-- Also return Total Casts Remainings for all current imps AND Total sum of Imp energy to be more accurate with Demonic Tyrant and Demonic Consumption 
     -- @usage: local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos()
 	
-	local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
-	local TotalCastsRemains = 0
-	local ImpCount = 0
-	local currentImpCasts = 0
+	local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()
+
 	
 	-- Protect against nil
     if not petID then 
 	    petID = 55659 
-	end			
-			
-	-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
-	if SourceGUID and SourceGUID == UnitGUID("player") and PetTrackerData[55659] and (Event == "SPELL_CAST_SUCCESS") and 
-	   (   -- Implosion
-	        SpellID == 196277 
-	       	or 
-	       	-- Summon Demonic Tyrant with Demonic Consumption
-	       	(SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
-	   ) 
-	then 
-  	    --PetTrackerData[petID].count	= 0		
-		PetTrackerData[55659] = nil
-	    --print("Player just casted Implosion. New Imp count is " .. PetTrackerData[55659].count)		
-	end   
-	
+	end		
+		
     -- Identify 55659 Wild Imp ID
-	if petID and PetTrackerData[petID] and petID == 55659 then 
-		for _, data in pairs(PetTrackerData[petID].GUIDs) do 
+	if petID and PetTrackerData[55659] and petID == 55659 then 
+		for _, data in pairs(PetTrackerData[55659].GUIDs) do 
 			local casts = data.impcasts 
-			ImpCount = PetTrackerData[petID].count
+			local ImpCastsRemaing = 0
+			local ImpCount = PetTrackerData[55659].count
+			local ImpTotalEnergy = 0
 			
 			-- If current Imp GUID got casts > 0
-			if SourceGUID and SourceGUID ~= Pet.MainGUID and PetTrackerGUID[SourceGUID] and PetTrackerData[PetTrackerGUID[SourceGUID]]
+			if PetTrackerGUID[SourceGUID] and PetTrackerData[PetTrackerGUID[SourceGUID]]
 			and (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 and casts > 0 
 			then
                 --currentImpCasts = PetTrackerData[petID].GUIDs[SourceGUID].impcasts			
 				-- Decrement cast by 1 in current Imp GUID
-				PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts - 1
+				if PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts then
+				    PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts - 1
+				end
 				--data.impcasts = data.impcasts - 1
 				-- Decrement energy by 20 in current Imp GUID
-				PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy - 20	
+				if PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy then
+				    PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy - 20	
+				end
 				--data.petenergy = data.petenergy - 20
 				-- Update PetTrackerData.count for all petID 55659
 				--ImpCount = ImpCount + 1				 
 			else
 			    -- else if no cast left for current Imp GUID reset every values
 			    if casts == 0 then
-				    --PetTrackerData[55659].GUIDs[SourceGUID].petenergy = 0
-			        TotalCastsRemains = 0
-				    ImpCount = 0
-					data.petenergy = 0
-					data.impcasts = 0
+				    TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, SourceGUID)
+					
+				    --data.impcasts = 0
+					--data.petenergy = 0
 				end
 			end 
-			
+
 			-- For every Imp we got in table, get casts lefts.
-			if PetTrackerData[petID].count > 0 then
-	   	  	    for _, data2 in pairs(PetTrackerData[petID].GUIDs) do 
+			if PetTrackerData[55659].count > 0 then
+	   	  	    for _, data2 in pairs(PetTrackerData[55659].GUIDs) do 
 				    -- Calculate Total Wild Imp cast lefts 
-				    TotalCastsRemains = TotalCastsRemains + data2.impcasts
+				    ImpCastsRemaing = ImpCastsRemaing + data2.impcasts
 					-- Calculate Total Wild Imp energy 
-	     	   	    ImpTotalEnergy = TotalCastsRemains * 20
+	     	   	    ImpTotalEnergy = ImpCastsRemaing * 20
 				end 
 			end
-			-- Return current Wild Imp count, Total Casts Remains and projected total Wild Imp energy
-            return ImpCount, ImpTotalEnergy, TotalCastsRemains
+			
+		--	if ImpCastsRemaing == 0 then
+		--	    ImpCount = 0
+		--	end
+						
+			TR.ImpData.ImpCount = ImpCount
+			TR.ImpData.ImpTotalEnergy = ImpTotalEnergy
+			TR.ImpData.ImpCastsRemaing = ImpCastsRemaing
+			
+			-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
+	        if  (Event == "SPELL_CAST_SUCCESS") and SourceGUID == UnitGUID(player) and --and SourceGUID  and
+	        (   -- Implosion
+	            SpellID == 196277 or SpellName == A.Implosion:Info()
+	           	or 
+	       	    -- Summon Demonic Tyrant with Demonic Consumption
+	       	    (SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
+	        ) 
+	        then 
+  	            --ImpCount = 0	
+                --TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)	
+                --if PetTrackerData[55659] then				
+		        
+				
+	   	  	    for _, data3 in pairs(PetTrackerData[55659].GUIDs) do 
+				    data3 = nil
+				end 
+				PetTrackerData[55659] = nil
+				--PetTrackerData[55659].count = 0
+				--PetTrackerData[55659].GUIDs[DestGUID] = nil 
+				--end
+		        --if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
+		        TR.ImpData.ImpCount = 0
+		        TR.ImpData.ImpTotalEnergy = 0
+		        TR.ImpData.ImpCastsRemaing = 0
+		    end	
+
+		    -- Return current Wild Imp count, Total Casts Remains and projected total Wild Imp energy
+            return TR.ImpData.ImpCount, TR.ImpData.ImpTotalEnergy, TR.ImpData.ImpCastsRemaing
 		end
-		
+
 	end 
-		
-	return  0, 0, 0	
+	--UpdateWildImpInfos()
+	-- Return current Wild Imp count, Total Casts Remains and projected total Wild Imp energy
+    return 0, 0, 0
 end 
+GetWildImpInfos = A.MakeFunctionCachedDynamic(GetWildImpInfos)
 Listener:Add("ACTION_TASTE_IMP_TRACKER", "COMBAT_LOG_EVENT_UNFILTERED", GetWildImpInfos)
- 
+
+local function UpdateWildImpInfos()
+    local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
+    	-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
+	if  (Event == "SPELL_CAST_SUCCESS") and --and SourceGUID == UnitGUID(player) and --SourceGUID  and
+	   (   -- Implosion
+	        SpellID == 196277 or SpellName == A.Implosion:Info()
+	       	or 
+	       	-- Summon Demonic Tyrant with Demonic Consumption
+	       	(SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
+	   ) 
+	then 
+  	    --PetTrackerData[petID].count	= 0	
+        --TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)		
+		PetTrackerData[55659] = nil
+		--if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
+		    TR.ImpData.ImpCount = 0
+		    TR.ImpData.ImpTotalEnergy = 0
+		    TR.ImpData.ImpCastsRemaing = 0
+		--end
+		
+		--TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)
+	    --return TR.ImpData.ImpCount, TR.ImpData.ImpTotalEnergy, TR.ImpData.TotalCastsRemains		
+	end   
+end
+UpdateWildImpInfos = A.MakeFunctionCachedDynamic(UpdateWildImpInfos)
+Listener:Add("ACTION_TASTE_IMP_TRACKER", "UNIT_SPELLCAST_SUCCEEDED", UpdateWildImpInfos)
+
+local function ResetWildImpInfos()
+    --local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
+	PetTrackerData[55659] = nil
+	--if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
+	TR.ImpData.ImpCount = 0
+	TR.ImpData.ImpTotalEnergy = 0
+	TR.ImpData.ImpCastsRemaing = 0	
+end
+ResetWildImpInfos = A.MakeFunctionCachedDynamic(ResetWildImpInfos)
+Listener:Add("ACTION_TASTE_IMP_TRACKER", "PLAYER_REGEN_ENABLED", ResetWildImpInfos)
+
+TMW:RegisterCallback("TMW_ACTION_IMP_IMPLOSION", function()
+	-- PetData is a @table with next keys: name, duration, count, GUIDs 
+    -- Add 5 cast to PetData table for each summoned Imp
+	--PetData.impcasts = 5
+	--PetData.petenergy = 100
+	--PetTrackerData[55659].impcasts = 5
+	-- Also add 5 to local TR.GuardianTable
+	--TR.GuardiansTable.ImpCastsRemaing = 5
+	--if PetID == 55659 then
+	TR.ImpData.ImpCount = 0
+	TR.ImpData.ImpTotalEnergy = 0
+	TR.ImpData.ImpCastsRemaing = 0
+	    --PetTrackerData[PetID].GUIDs[PetGUID].impcasts = 5
+	    --PetTrackerData[PetID].GUIDs[PetGUID].petenergy = 100
+	--end
+	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID .. "and he got " .. PetData.impcasts .. " casts lefts")
+
+end)
+	
 -- On Successful HoG cast add how many Imps will spawn
 local ImpsSpawnedFromHoG = 0 
-local _, event, _, sourceGuid, _, _, _, DestGUID, DestName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()	
-
-if (event == "SPELL_CAST_SUCCESS") and sourceGuid == pGUID and spellID == 105174 then
+local _, event, _, sourceGUID, _, _, _, destGUID, destName, _, _, spellID, spellName = CombatLogGetCurrentEventInfo()	
+if (event == "SPELL_CAST_SUCCESS") and sourceGUID == UnitGUID(player) and spellID == 105174 then
     ImpsSpawnedFromHoG = ImpsSpawnedFromHoG + (Player:SoulShardsP() >= 3 and 3 or Player:SoulShardsP())
     Env.LastPlayerCastID 	= spellID
 	A.LastPlayerCastName	= spellName
@@ -558,7 +624,7 @@ local function ImpsSpawnedDuring(miliseconds)
     local InnerDemonsNextCast = 0
     local ImpCastsRemaing = 0
     local SpellCastTime = ( miliseconds / 1000 ) * Player:SpellHaste()
-    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
 	
     if TMW.time <= NextPassiveImpSpawn() and (TMW.time + SpellCastTime) >= NextPassiveImpSpawn() then
         ImpSpawned = ImpSpawned + 1
@@ -572,16 +638,17 @@ local function ImpsSpawnedDuring(miliseconds)
 
     return ImpSpawned
 end
+ImpsSpawnedDuring = A.MakeFunctionCachedDynamic(ImpsSpawnedDuring)
 
 -- SummonDemonicTyrant checker
 local function MegaTyrant()
-    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit("player"):IsCasting()
+    local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
 	local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos(55659)
     return (WildImpCount + ImpsSpawnedDuring(2000) >= 6 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
 end
 
 local function SelfDefensives()
-    if Unit("player"):CombatTime() == 0 then 
+    if Unit(player):CombatTime() == 0 then 
         return 
     end 
     
@@ -594,72 +661,72 @@ local function SelfDefensives()
 		
     -- UnendingResolve
     local UnendingResolve = A.GetToggle(2, "UnendingResolve")
-    if     UnendingResolve >= 0 and A.UnendingResolve:IsReady("player") and 
+    if     UnendingResolve >= 0 and A.UnendingResolve:IsReady(player) and 
     (
         (     -- Auto 
             UnendingResolve >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             UnendingResolve < 100 and 
-            Unit("player"):HealthPercent() <= UnendingResolve
+            Unit(player):HealthPercent() <= UnendingResolve
         )
     ) 
     then 
         return A.UnendingResolve
     end     
     -- Stoneform on self dispel (only PvE)
-    if A.Stoneform:IsRacialReady("player", true) and not A.IsInPvP and A.AuraIsValid("player", "UseDispel", "Dispel") then 
+    if A.Stoneform:IsRacialReady(player, true) and not A.IsInPvP and A.AuraIsValid(player, "UseDispel", "Dispel") then 
         return A.Stoneform
     end 
 	
 	    -- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady(player) and 
     (
         (     -- Auto 
             AbyssalHealingPotion >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+            Unit(player):HealthPercent() <= AbyssalHealingPotion
         )
     ) 
     then 
@@ -744,10 +811,10 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local inCombat = Unit(player):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local unit = player
 	local FutureShard = FutureShard()
     local WildImpsCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos(55659)
 	local DreadStalkersTime = DreadStalkersTime()
@@ -779,7 +846,7 @@ A[3] = function(icon, isMulti)
 		local endtimer = 0
 		
     	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
-        	if Unit("player"):CombatTime() >= (DummyTime * 60) then
+        	if Unit(player):CombatTime() >= (DummyTime * 60) then
             	StopAttack()
 				endtimer = TMW.time
             	--ClearTarget() -- Protected ? 
@@ -797,8 +864,8 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, BuildAShard, Implosion, NetherPortal, NetherPortalActive, NetherPortalBuilding, Opener
         
+
 	-- DEBUG PRINT PETS	
 	--print("WildImpsCount: " .. WildImpsCount)
 	--print("Pet:GetCount(55659): " .. Pet:GetWildImpCount(55659))
@@ -810,6 +877,7 @@ A[3] = function(icon, isMulti)
 	--end	 
 	--if WildImpTotalEnergy ~= nil then
 	--    print("WildImpTotalEnergy " .. WildImpTotalEnergy)
+	--	 print("WildImpTotalCastsRemains " .. WildImpTotalCastsRemains)
 	--end	
 	
 		--Precombat
@@ -834,7 +902,8 @@ A[3] = function(icon, isMulti)
                 return A.Demonbolt:Show(icon)
             end
         end
-        
+        Precombat = A.MakeFunctionCachedDynamic(Precombat)
+		
         --BuildAShard
         local function BuildAShard(unit)
 		
@@ -853,7 +922,8 @@ A[3] = function(icon, isMulti)
                 return A.ShadowBolt:Show(icon)
             end
         end
-        
+        BuildAShard = A.MakeFunctionCachedDynamic(BuildAShard)
+		
         --Implosion
         local function Implosion(unit)
 		
@@ -863,7 +933,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady("player") then
+            if A.BilescourgeBombers:IsReady(player) then
                 return A.BilescourgeBombers:Show(icon)
             end		
 			
@@ -894,9 +964,9 @@ A[3] = function(icon, isMulti)
             -- call_dreadstalkers,if=(cooldown.summon_demonic_tyrant.remains<9&buff.demonic_calling.remains)|(cooldown.summon_demonic_tyrant.remains<11&!buff.demonic_calling.remains)|cooldown.summon_demonic_tyrant.remains>14
             if A.CallDreadstalkers:IsReady(unit) and 
 			    (
-				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
+				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
 					or 
-					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
+					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
 					or
 					A.SummonDemonicTyrant:GetCooldown() > 14
 					or
@@ -920,7 +990,7 @@ A[3] = function(icon, isMulti)
 						or 
 						A.SummonDemonicTyrant:GetCooldown() <= A.GetGCD() * 2 
 						or 
-						Unit("player"):HasBuffs(A.DemonicPowerBuff.ID, true) > A.GetGCD() * 2
+						Unit(player):HasBuffs(A.DemonicPowerBuff.ID, true) > A.GetGCD() * 2
 					)
 				)
 			then
@@ -936,7 +1006,7 @@ A[3] = function(icon, isMulti)
 					and 
 					(Player:SoulShardsP() < 4 or (FutureShard < 4 and PredictShards)) 
 					and
-					Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) > 0
+					Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) > 0
 				)
 			then
                 return A.Demonbolt:Show(icon)
@@ -948,7 +1018,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bilescourge_bombers,if=cooldown.summon_demonic_tyrant.remains>9
-            if A.BilescourgeBombers:IsReady("player") and (A.SummonDemonicTyrant:GetCooldown() > 9 or not A.BurstIsON(unit)) then
+            if A.BilescourgeBombers:IsReady(player) and (A.SummonDemonicTyrant:GetCooldown() > 9 or not A.BurstIsON(unit)) then
                 return A.BilescourgeBombers:Show(icon)
             end
 
@@ -988,7 +1058,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- soul_strike,if=soul_shard<5&buff.demonic_core.stack<=2
-            if A.SoulStrike:IsReady(unit) and ((Player:SoulShardsP() < 5 or (FutureShard < 5 and PredictShards)) and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2) then
+            if A.SoulStrike:IsReady(unit) and ((Player:SoulShardsP() < 5 or (FutureShard < 5 and PredictShards)) and Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2) then
                 return A.SoulStrike:Show(icon)
             end
 			
@@ -997,9 +1067,9 @@ A[3] = function(icon, isMulti)
 			    (
 				   (Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) 
 				   and 
-				   Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 
+				   Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 
 				   and 
-				   (Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) >= 3 or Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) <= A.GetGCD() * 5.7)
+				   (Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) >= 3 or Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) <= A.GetGCD() * 5.7)
 			    )
 			then
                 return A.Demonbolt:Show(icon)
@@ -1024,12 +1094,13 @@ A[3] = function(icon, isMulti)
                 return true
             end
         end
-               
+        Implosion = A.MakeFunctionCachedDynamic(Implosion) 
+		
         --NetherPortalActive
         local function NetherPortalActive(unit)
 		
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady("player") then
+            if A.BilescourgeBombers:IsReady(player) then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
@@ -1046,9 +1117,9 @@ A[3] = function(icon, isMulti)
             -- call_dreadstalkers,if=(cooldown.summon_demonic_tyrant.remains<9&buff.demonic_calling.remains)|(cooldown.summon_demonic_tyrant.remains<11&!buff.demonic_calling.remains)|cooldown.summon_demonic_tyrant.remains>14
             if A.CallDreadstalkers:IsReady(unit) and 
 			    (
-				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
+				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
 					or 
-					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
+					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
 					or 
 					A.SummonDemonicTyrant:GetCooldown() > 14
 				)
@@ -1082,17 +1153,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<5&soul_shard=0
-            if A.SummonDemonicTyrant:IsReady("player") and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
+            if A.SummonDemonicTyrant:IsReady(player) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<action.summon_demonic_tyrant.cast_time+0.5
-            if A.SummonDemonicTyrant:IsReady("player") and (Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
+            if A.SummonDemonicTyrant:IsReady(player) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
             -- demonbolt,if=buff.demonic_core.up&soul_shard<=3
-            if A.Demonbolt:IsReady(unit) and (Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 and (Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards))) then
+            if A.Demonbolt:IsReady(unit) and (Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 and (Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards))) then
                 return A.Demonbolt:Show(icon)
             end
 			
@@ -1102,12 +1173,13 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        NetherPortalActive = A.MakeFunctionCachedDynamic(NetherPortalActive)
+		
         --NetherPortalBuilding
         local function NetherPortalBuilding(unit)
 		
             -- use_item,name=azsharas_font_of_power,if=cooldown.nether_portal.remains<=5*spell_haste
-            if A.AzsharasFontofPower:IsReady(unit) and (A.NetherPortal:GetCooldown() <= 5 * Player:SpellHaste()) then
+            if A.AzsharasFontofPower:IsReady(player) and (A.NetherPortal:GetCooldown() <= 5 * Player:SpellHaste()) then
                 A.AzsharasFontofPower:Show(icon)
             end
 			
@@ -1122,28 +1194,28 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_dreadstalkers,if=time>=30
-            if A.CallDreadstalkers:IsReady(unit) and (Unit("player"):CombatTime() >= 30) then
+            if A.CallDreadstalkers:IsReady(unit) and (Unit(player):CombatTime() >= 30) then
                 return A.CallDreadstalkers:Show(icon)
             end
 			
             -- hand_of_guldan,if=time>=30&cooldown.call_dreadstalkers.remains>18&soul_shard>=3
-            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime() >= 30 and A.CallDreadstalkers:GetCooldown() > 18 and (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))) then
+            if A.HandofGuldan:IsReady(unit) and (Unit(player):CombatTime() >= 30 and A.CallDreadstalkers:GetCooldown() > 18 and (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))) then
                 return A.HandofGuldan:Show(icon)
             end
 			
             -- power_siphon,if=time>=30&buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&soul_shard>=3
             if A.PowerSiphon:IsReady(unit) and 
 			    (
-				    Unit("player"):CombatTime() >= 30 and WildImpsCount >= 2 and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 
+				    Unit(player):CombatTime() >= 30 and WildImpsCount >= 2 and Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 
 					and 
-					Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true) and (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))
+					Unit(player):HasBuffsDown(A.DemonicPowerBuff.ID, true) and (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))
 				)
 			then
                 return A.PowerSiphon:Show(icon)
             end
 			
             -- hand_of_guldan,if=time>=30&soul_shard>=5
-            if A.HandofGuldan:IsReady(unit) and (Unit("player"):CombatTime() >= 30 and (Player:SoulShardsP() >= 5 or (FutureShard >= 5 and PredictShards))) then
+            if A.HandofGuldan:IsReady(unit) and (Unit(player):CombatTime() >= 30 and (Player:SoulShardsP() >= 5 or (FutureShard >= 5 and PredictShards))) then
                 return A.HandofGuldan:Show(icon)
             end
 			
@@ -1153,6 +1225,7 @@ A[3] = function(icon, isMulti)
             end
 			
         end
+		NetherPortalBuilding = A.MakeFunctionCachedDynamic(NetherPortalBuilding)
 		
         --NetherPortal
         local function NetherPortal(unit)
@@ -1168,17 +1241,18 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        NetherPortal = A.MakeFunctionCachedDynamic(NetherPortal)
+		
         --Opener
         local function Opener(unit)
 		
             -- hand_of_guldan,line_cd=30,if=azerite.explosive_potential.enabled
-            if A.HandofGuldan:IsReady(unit) and A.LastPlayerCastName ~= A.HandofGuldan:Info() and Unit("player"):CombatTime() < 2 and Player:SoulShardsP() >= 3 and A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0 then
+            if A.HandofGuldan:IsReady(unit) and A.LastPlayerCastName ~= A.HandofGuldan:Info() and Unit(player):CombatTime() < 2 and Player:SoulShardsP() >= 3 and A.ExplosivePotential:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0 then
                 return A.HandofGuldan:Show(icon)
             end
 			
             -- implosion,if=azerite.explosive_potential.enabled&buff.wild_imps.stack>2&buff.explosive_potential.down
-            if A.Implosion:IsReady(unit) and Unit("player"):CombatTime() < 6 and (A.ExplosivePotential:GetAzeriteRank() > 0 and (WildImpsCount > 2 or A.HandofGuldan:GetSpellTimeSinceLastCast() > 1.5) and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0) then
+            if A.Implosion:IsReady(unit) and Unit(player):CombatTime() < 6 and (A.ExplosivePotential:GetAzeriteRank() > 0 and (WildImpsCount > 2 or A.HandofGuldan:GetSpellTimeSinceLastCast() > 1.5) and Unit(player):HasBuffs(A.ExplosivePotentialBuff.ID, true) == 0) then
                 return A.Implosion:Show(icon)
             end
 			
@@ -1193,53 +1267,53 @@ A[3] = function(icon, isMulti)
             end
 			
             -- hand_of_guldan,if=prev_gcd.1.hand_of_guldan&soul_shard>0&prev_gcd.2.soul_strike
-            if A.HandofGuldan:IsReady(unit) and Unit("player"):CombatTime() > 5 and (A.LastPlayerCastName == A.HandofGuldan:Info() and (A.SoulStrike:GetSpellTimeSinceLastCast() > 1 and A.SoulStrike:GetCooldown() >= 7 or not A.SoulStrike:IsSpellLearned())) then
+            if A.HandofGuldan:IsReady(unit) and Unit(player):CombatTime() > 5 and (A.LastPlayerCastName == A.HandofGuldan:Info() and (A.SoulStrike:GetSpellTimeSinceLastCast() > 1 and A.SoulStrike:GetCooldown() >= 7 or not A.SoulStrike:IsSpellLearned())) then
                 return A.HandofGuldan:Show(icon)	
             end
 			
             -- demonic_strength,if=prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&(buff.wild_imps.stack>1&action.hand_of_guldan.in_flight)
-            if A.DemonicStrength:IsReady(unit) and (A.LastPlayerCastName == A.HandofGuldan:Info() and (WildImpsCount > 1 and A.HandofGuldan:IsSpellInFlight())) and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) > 0 then
+            if A.DemonicStrength:IsReady(unit) and (A.LastPlayerCastName == A.HandofGuldan:Info() and (WildImpsCount > 1 and A.HandofGuldan:IsSpellInFlight())) and Unit(player):HasBuffs(A.ExplosivePotentialBuff.ID, true) > 0 then
                 return A.DemonicStrength:Show(icon)
             end
 			
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady("player") then
+            if A.BilescourgeBombers:IsReady(player) then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
             -- soul_strike,line_cd=30,if=!buff.bloodlust.remains|time>5&prev_gcd.1.hand_of_guldan
-            if A.SoulStrike:IsReady(unit) and Player:SoulShardsP() < 5 and (not Unit("player"):HasHeroism() or Unit("player"):CombatTime() > 3 and A.LastPlayerCastName == A.HandofGuldan:Info()) then
+            if A.SoulStrike:IsReady(unit) and Player:SoulShardsP() < 5 and (not Unit(player):HasHeroism() or Unit(player):CombatTime() > 3 and A.LastPlayerCastName == A.HandofGuldan:Info()) then
                 return A.SoulStrike:Show(icon)
             end
 			
             -- summon_vilefiend,if=soul_shard=5
-            if A.SummonVilefiend:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
+            if A.SummonVilefiend:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit(player):CombatTime() > 3 then
                 return A.SummonVilefiend:Show(icon)
             end
 			
             -- grimoire_felguard,if=soul_shard=5
-            if A.GrimoireFelguard:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
+            if A.GrimoireFelguard:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit(player):CombatTime() > 3 then
                 return A.GrimoireFelguardTexture:Show(icon)
             end
 			
             -- call_dreadstalkers,if=soul_shard=5
-            if A.CallDreadstalkers:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
+            if A.CallDreadstalkers:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit(player):CombatTime() > 3 then
                 return A.CallDreadstalkers:Show(icon)
             end
 			
             -- hand_of_guldan,if=soul_shard=5
-            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit("player"):CombatTime() > 3 then
+            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP() == 5 or (FutureShard == 5 and PredictShards)) and Unit(player):CombatTime() > 3 then
                 return A.HandofGuldan:Show(icon)
             end
 			
             -- hand_of_guldan,if=soul_shard>=3&prev_gcd.2.hand_of_guldan&time>5&(prev_gcd.1.soul_strike|!talent.soul_strike.enabled&prev_gcd.1.shadow_bolt)
-            if A.HandofGuldan:IsReady(unit) and Unit("player"):CombatTime() > 3 and 
+            if A.HandofGuldan:IsReady(unit) and Unit(player):CombatTime() > 3 and 
 			    (
 				    (Player:SoulShardsP() >= 3 or (FutureShard >= 3 and PredictShards))
 					and 
 					A.HandofGuldan:GetSpellTimeSinceLastCast() < 3 and A.HandofGuldan:GetSpellTimeSinceLastCast() > 0
 					and 
-					Unit("player"):CombatTime() > 5 
+					Unit(player):CombatTime() > 5 
 					and 
 					(A.LastPlayerCastName == A.SoulStrike:Info() or not A.SoulStrike:IsSpellLearned() and A.LastPlayerCastName == A.ShadowBolt:Info())
 				)
@@ -1248,7 +1322,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
-            if A.SummonDemonicTyrant:IsReady("player") and 
+            if A.SummonDemonicTyrant:IsReady(player) and 
 			(
 			    A.LastPlayerCastName == A.DemonicStrength:Info() and (Player:SoulShardsP() <= 1 or (FutureShard <= 1 and PredictShards)) 
 				or 
@@ -1261,7 +1335,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demonbolt,if=soul_shard<=3&buff.demonic_core.remains
-            if A.Demonbolt:IsReady(unit) and ((Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) > 0) then
+            if A.Demonbolt:IsReady(unit) and ((Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) > 0) then
                 return A.Demonbolt:Show(icon)
             end
 			
@@ -1271,7 +1345,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Opener = A.MakeFunctionCachedDynamic(Opener)
+		
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and Precombat(unit) then
             return true
@@ -1279,7 +1354,8 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-		
+		    -- Force refresh
+			GetWildImpInfos(55659)
 		    -- Interrupt
             local Interrupt = Interrupts(unit)
             if Interrupt then 
@@ -1292,7 +1368,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=cooldown.summon_demonic_tyrant.remains<=20&!talent.nether_portal.enabled
-            if A.AzsharasFontofPower:IsReady(unit) and (A.SummonDemonicTyrant:GetCooldown() <= 20 and not A.NetherPortal:IsSpellLearned()) then
+            if A.AzsharasFontofPower:IsReady(player) and (A.SummonDemonicTyrant:GetCooldown() <= 20 and not A.NetherPortal:IsSpellLearned()) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
@@ -1365,7 +1441,7 @@ A[3] = function(icon, isMulti)
             -- worldvein_resonance,if=buff.lifeblood.stack<3&(pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15)
             if A.WorldveinResonance:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
-				    Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 
+				    Unit(player):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3 
 					and 
 					(RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) or not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() >= 15 - 5) 
 					or 
@@ -1421,14 +1497,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=opener,if=!talent.nether_portal.enabled&time<30&!cooldown.summon_demonic_tyrant.remains
-            if Opener(unit) and (not A.NetherPortal:IsSpellLearned() and Unit("player"):CombatTime() < 30 and A.SummonDemonicTyrant:GetCooldown() == 0) then
+            if Opener(unit) and (not A.NetherPortal:IsSpellLearned() and Unit(player):CombatTime() < 30 and A.SummonDemonicTyrant:GetCooldown() == 0) then
                 return true
             end
 			
             -- use_item,name=azsharas_font_of_power,if=(time>30|!talent.nether_portal.enabled)&talent.grimoire_felguard.enabled&(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15)|target.time_to_die<=35
-            if A.AzsharasFontofPower:IsReady(unit) and 
+            if A.AzsharasFontofPower:IsReady(player) and 
 			    (
-				    (Unit("player"):CombatTime() > 30 or not A.NetherPortal:IsSpellLearned()) 
+				    (Unit(player):CombatTime() > 30 or not A.NetherPortal:IsSpellLearned()) 
 					and 
 					A.GrimoireFelguard:IsSpellLearned() 
 					and 
@@ -1445,11 +1521,11 @@ A[3] = function(icon, isMulti)
 			    (
 				    A.ExplosivePotential:GetAzeriteRank() > 0 
 					and 
-					Unit("player"):CombatTime() < 5 
+					Unit(player):CombatTime() < 5 
 					and 
 					(Player:SoulShardsP() > 2 or (FutureShard > 2 and PredictShards))
 					and 
-					Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true) 
+					Unit(player):HasBuffsDown(A.ExplosivePotentialBuff.ID, true) 
 					and 
 					WildImpsCount < 3 
 					and 
@@ -1460,14 +1536,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- demonbolt,if=soul_shard<=3&buff.demonic_core.up&buff.demonic_core.stack=4
-            if A.Demonbolt:IsReady(unit) and ((Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) == 4) then
+            if A.Demonbolt:IsReady(unit) and ((Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) and Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) == 4) then
                 return A.Demonbolt:Show(icon)
             end
 			
             -- implosion,if=azerite.explosive_potential.rank&buff.wild_imps.stack>2&buff.explosive_potential.remains<action.shadow_bolt.execute_time&(!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>12)
             if A.Implosion:IsReady(unit) and 
 			    (
-				    A.ExplosivePotential:GetAzeriteRank() > 0 and WildImpsCount > 2 and Unit("player"):HasBuffs(A.ExplosivePotentialBuff.ID, true) < A.GetGCD() + 0.5
+				    A.ExplosivePotential:GetAzeriteRank() > 0 and WildImpsCount > 2 and Unit(player):HasBuffs(A.ExplosivePotentialBuff.ID, true) < A.GetGCD() + 0.5
 					and 
 					(not A.DemonicConsumption:IsSpellLearned() or A.SummonDemonicTyrant:GetCooldown() > 12)
 				) 
@@ -1476,17 +1552,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- doom,if=!ticking&time_to_die>30&spell_targets.implosion<2&!buff.nether_portal.remains
-            if A.Doom:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) == 0 and Unit(unit):TimeToDie() > 30 and MultiUnits:GetActiveEnemies() < 2 and Unit("player"):HasBuffs(A.NetherPortalBuff.ID, true) == 0) then
+            if A.Doom:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) == 0 and Unit(unit):TimeToDie() > 30 and MultiUnits:GetActiveEnemies() < 2 and Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) == 0) then
                 return A.Doom:Show(icon)
             end
 			
             -- bilescourge_bombers,if=azerite.explosive_potential.rank>0&time<10&spell_targets.implosion<2&buff.dreadstalkers.remains&talent.nether_portal.enabled
-            if A.BilescourgeBombers:IsReady("player") and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit("player"):CombatTime() < 10 and MultiUnits:GetActiveEnemies() < 2 and Unit("player"):HasBuffs(A.DreadstalkersBuff.ID, true) > 0 and A.NetherPortal:IsSpellLearned()) then
+            if A.BilescourgeBombers:IsReady(player) and (A.ExplosivePotential:GetAzeriteRank() > 0 and Unit(player):CombatTime() < 10 and MultiUnits:GetActiveEnemies() < 2 and DreadStalkersTime > 0 and A.NetherPortal:IsSpellLearned()) then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
             -- demonic_strength,if=(buff.wild_imps.stack<6|buff.demonic_power.up)|spell_targets.implosion<2
-            if A.DemonicStrength:IsReady(unit) and ((WildImpsCount < 6 or Unit("player"):HasBuffs(A.DemonicPowerBuff.ID, true) > 0) or MultiUnits:GetActiveEnemies() < 2) then
+            if A.DemonicStrength:IsReady(unit) and ((WildImpsCount < 6 or Unit(player):HasBuffs(A.DemonicPowerBuff.ID, true) > 0) or MultiUnits:GetActiveEnemies() < 2) then
                 return A.DemonicStrength:Show(icon)
             end
 			
@@ -1518,9 +1594,9 @@ A[3] = function(icon, isMulti)
             -- call_dreadstalkers,if=(cooldown.summon_demonic_tyrant.remains<9&buff.demonic_calling.remains)|(cooldown.summon_demonic_tyrant.remains<11&!buff.demonic_calling.remains)|cooldown.summon_demonic_tyrant.remains>14
             if A.CallDreadstalkers:IsReady(unit) and 
 			    (
-				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
+				    (A.SummonDemonicTyrant:GetCooldown() < 9 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) > 0) 
 					or 
-					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit("player"):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
+					(A.SummonDemonicTyrant:GetCooldown() < 11 and Unit(player):HasBuffs(A.DemonicCallingBuff.ID, true) == 0) 
 					or 
 					A.SummonDemonicTyrant:GetCooldown() > 14
 				) 
@@ -1529,12 +1605,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- the_unbound_force,if=buff.reckless_force.react
-            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0) then
+            if A.TheUnboundForce:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffsStacks(A.RecklessForceBuff.ID, true) > 0) then
                 return A.TheUnboundForce:Show(icon)
             end
 			
             -- bilescourge_bombers
-            if A.BilescourgeBombers:IsReady("player") then
+            if A.BilescourgeBombers:IsReady(player) then
                 return A.BilescourgeBombers:Show(icon)
             end
 			
@@ -1548,7 +1624,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-            if A.SummonDemonicTyrant:IsReady("player") and 
+            if A.SummonDemonicTyrant:IsReady(player) and 
 			    (
 				    (Player:SoulShardsP() < 3 or (FutureShard < 3 and PredictShards)) 
 					and 
@@ -1565,7 +1641,7 @@ A[3] = function(icon, isMulti)
             -- power_siphon,if=buff.wild_imps.stack>=2&buff.demonic_core.stack<=2&buff.demonic_power.down&spell_targets.implosion<2
             if A.PowerSiphon:IsReady(unit) and 
 			    (
-				    WildImpsCount >= 2 and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 and Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true) and MultiUnits:GetActiveEnemies() < 2
+				    WildImpsCount >= 2 and Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2 and Unit(player):HasBuffsDown(A.DemonicPowerBuff.ID, true) and MultiUnits:GetActiveEnemies() < 2
 				) 
 			then
                 return A.PowerSiphon:Show(icon)
@@ -1600,24 +1676,24 @@ A[3] = function(icon, isMulti)
             end
 			
             -- soul_strike,if=soul_shard<5&buff.demonic_core.stack<=2
-            if A.SoulStrike:IsReady(unit) and ((Player:SoulShardsP() < 5 or (FutureShard < 5 and PredictShards)) and Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2) then
+            if A.SoulStrike:IsReady(unit) and ((Player:SoulShardsP() < 5 or (FutureShard < 5 and PredictShards)) and Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) <= 2) then
                 return A.SoulStrike:Show(icon)
             end
 			
             -- demonbolt,if=soul_shard<=3&buff.demonic_core.up&((cooldown.summon_demonic_tyrant.remains<6|cooldown.summon_demonic_tyrant.remains>22&!azerite.shadows_bite.enabled)|buff.demonic_core.stack>=3|buff.demonic_core.remains<5|time_to_die<25|buff.shadows_bite.remains)
             if A.Demonbolt:IsReady(unit) and 
 			    (
-				    (Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 and 
+				    (Player:SoulShardsP() <= 3 or (FutureShard <= 3 and PredictShards)) and Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) > 0 and 
 					(
 					    (A.SummonDemonicTyrant:GetCooldown() < 6 or A.SummonDemonicTyrant:GetCooldown() > 22 and A.ShadowsBite:GetAzeriteRank() == 0) 
 						or 
-						Unit("player"):HasBuffsStacks(A.DemonicCoreBuff.ID, true) >= 3 
+						Unit(player):HasBuffsStacks(A.DemonicCoreBuff.ID, true) >= 3 
 						or 
-						Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true) < 5 
+						Unit(player):HasBuffs(A.DemonicCoreBuff.ID, true) < 5 
 						or 
 						(Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 25) 
 						or 
-						Unit("player"):HasBuffs(A.ShadowsBiteBuff.ID, true) > 0
+						Unit(player):HasBuffs(A.ShadowsBiteBuff.ID, true) > 0
 					)
 				)
 			then
@@ -1659,7 +1735,7 @@ A[3] = function(icon, isMulti)
 			
         end
     end
-
+    EnemyRotation = A.MakeFunctionCachedDynamic(EnemyRotation)
     -- End on EnemyRotation()
 
     -- Defensive
@@ -1694,25 +1770,19 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
---[[local function FreezingTrapUsedByEnemy()
-    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
-    UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
-    then 
-        local Caster = UnitCooldown:GetUnitID("arena", 3355)
-        if Caster and Unit(Caster):GetRange() <= 40 then 
-            return true 
-        end 
-    end 
-end 
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+        if unit == "arena1" and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) then 
             -- Reflect Casting BreakAble CC
             if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
                 return A.NetherWard:Show(icon)
             end 
+		    -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
+            end
         end
     end 
 end 
@@ -1720,11 +1790,11 @@ local function PartyRotation(unit)
     if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
-
+    
   	-- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
-    end
+    --if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
+   --     return A.SingeMagic
+   -- end
 end 
 
 A[6] = function(icon)
@@ -1745,5 +1815,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 
