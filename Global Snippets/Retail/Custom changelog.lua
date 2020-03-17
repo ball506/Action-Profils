@@ -164,7 +164,7 @@ List of latest changes :
 - Reworked DBM opener
 - Fixed Healing Surge				
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 
 	end	
@@ -179,14 +179,14 @@ List of latest changes :
 - Fixed Interrupts
 - Added logic for Counter Strike Totem				
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 
 	end
 	
 	-- Restoration
 	if PlayerSpec == 264 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 	
 --------------------
@@ -205,7 +205,7 @@ List of latest changes :
 - Fixed Templar Verdict never used				
 - Added Interrupt UI settings
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -221,14 +221,14 @@ List of latest changes :
 - Fixed Consecration logic
 - Added moves in ProfileUI			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
 	
 	-- Holy
 	if PlayerSpec == 65 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 
 --------------------
@@ -245,7 +245,7 @@ List of latest changes :
 - Fixed Fear spam in certain situations			
 - Added Interrupt UI settings
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -257,7 +257,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 List of latest changes :
 
-- Totally reworked Imp Tracking system. 
+- Third version of Imp Tracker system. Now really good ! NO MOAR LUA ERROR
 - Fixed issue with DreadStalkers
 - Added logic for PvP Fear (arena123)
 - Added Auto NetherWard in Arena if dangerous or cc is casted by unit
@@ -266,10 +266,9 @@ List of latest changes :
 - Added multiple range detection mode in ProfileUI		
 - Added Interrupt UI settings
 
-IMPORTANT : I noticed some lua warning with PetSystem. It doesnt break the rotation at all but I recommand install the addon BugSack to avoid spam on your screen :)
-IMPORTANT2: IF YOU SEE THE ROTATION IS NOT USING IMPLOSION AND YOU GOT SUFFISANT NUMBER OF IMPS THEN TRY A /RELOAD 		
+IMPORTANT: IF YOU SEE THE ROTATION IS NOT USING IMPLOSION AND YOU GOT SUFFISANT NUMBER OF IMPS THEN TRY A /RELOAD 		
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -287,7 +286,7 @@ List of latest changes :
 - Fixed Fear spam issue
 - Added Interrupt UI settings
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end	
@@ -307,7 +306,7 @@ List of latest changes :
 - Massive update for 8.3
 - Fixed issue with Battle Shout spam			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -322,7 +321,7 @@ List of latest changes :
 - Massive update for 8.3
 - Fixed issue with Battle Shout spam				
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -344,7 +343,7 @@ List of latest changes :
 - Victory Rush fix
 - Revenge free procs should now work as intended			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -367,7 +366,7 @@ List of latest changes :
 - Added Area Time To Die for better AoE logic
 - Improved Death Strike logic			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -388,7 +387,7 @@ List of latest changes :
 - Added Memory of Lucid Dream UI
 - Reworked Defensives logic			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -411,7 +410,7 @@ List of latest changes :
 - Fixed Scourge Strike usage
 - Reworked AoE logic with Feastering Wounds	
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -434,7 +433,7 @@ List of latest changes :
 - Added UI for Felblade PvP
 			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -450,7 +449,7 @@ List of latest changes :
 - Added Imprison as interrupt
 - Fixed Concentrated Flame usage			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -474,7 +473,7 @@ List of latest changes :
 - Added Toxic Blade pool UI settings
 - Reworked ST opener			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -494,7 +493,7 @@ List of latest changes :
 - Added BladeFlurry UI settings
 - Added check on Azerite Beam essence				
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -506,7 +505,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -533,7 +532,7 @@ List of latest changes :
 IMPORTANT FOR BEASTMATERY : PLEASE ADD THE PET SPELL : CLAW, BITE OR SMACK DIRECTLY FROM PET SPELLBOOK TO YOUR SPELLBAR !
 THIS IS USED FOR THE RANGE DETECTION BY YOUR PET WHICH IS CURRENTLY THE BEST DETECTION MODE :) ENJOY AND FEEL FREE TO TRY THE OTHER IF NEEDED FOR SPECIFICS CASES
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -545,7 +544,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -557,7 +556,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -568,17 +567,17 @@ As always, please report on GGL Discord or message me directly if you need anyth
 --------------------
 	-- Arcane
 	if PlayerSpec == 62 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 
 	-- Fire
 	if PlayerSpec == 63 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 
 	-- MFrost
 	if PlayerSpec == 64 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 
 
@@ -592,7 +591,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -604,7 +603,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(				
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -622,7 +621,7 @@ List of latest changes :
 
 TODO : Rework all defensives logic			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -639,7 +638,7 @@ List of latest changes :
 - Added more notification for user
 - Profile performance improvements
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -650,17 +649,17 @@ As always, please report on GGL Discord or message me directly if you need anyth
 --------------------
 	-- Brewmaster
 	if PlayerSpec == 268 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."					
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
 	end
 
 	-- Windwalker
 	if PlayerSpec == 269 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."				
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."				
 	end
 
 	-- Mistweaver
 	if PlayerSpec == 270 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."				
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."				
 	end
 
 
@@ -669,12 +668,12 @@ As always, please report on GGL Discord or message me directly if you need anyth
 --------------------
 	-- Discipline
 	if PlayerSpec == 256 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."				
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."				
 	end
 
 	-- PHoly
 	if PlayerSpec == 257 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord."				
+	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."				
 	end
 
 	-- Shadow
@@ -684,7 +683,7 @@ As always, please report on GGL Discord or message me directly if you need anyth
 		
 This specialisation is currently outdated :(			
 
-As always, please report on GGL Discord or message me directly if you need anything !
+As always, please report on Discord or message me directly if you need anything !
 ]]  
 					
 	end
@@ -720,7 +719,7 @@ local profileName = TMW.db:GetCurrentProfile()
   --  if Action.PlayerSpec then
         TR:CreatePopup(Action.PlayerSpec, currentChangelog, "Okay Taste", "Marry Me", 0, true, true)
    -- else
-        --TR:CreatePopup(999, "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on GGL discord.", "OK", nil, 0, true, true)
+        --TR:CreatePopup(999, "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord.", "OK", nil, 0, true, true)
   --  end
 	
 	-- Create Popup Frame dynamically 
