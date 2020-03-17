@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v2.1.0 (09.02.2020)",
+    DateTime = "v3.1.0 (17.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
