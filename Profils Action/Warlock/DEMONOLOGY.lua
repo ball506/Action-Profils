@@ -205,6 +205,17 @@ local A = setmetatable(Action[ACTION_CONST_WARLOCK_DEMONOLOGY], { __index = Acti
 
 local player = "player"
 
+-- API - Spell
+Pet:Add(266, { -- Felguard
+	-- number accepted
+	89751, -- Felstorm
+	30213, -- Legion Strike
+
+	-- strings also accepted!
+	--"Gnaw",
+	--GetSpellInfo(47481),
+})
+
 -- API - Tracker
 -- Initialize Tracker 
 Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { -- this template table is the same with what has this library already built-in, just for example
@@ -214,12 +225,12 @@ Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { -- this template tab
 	},
 	[55659] = {
 		name = "Wild Imp",
-		duration = 12,
+		duration = 20,
 	},
-	[143622] = {
-		name = "Wild Imp",
-		duration = 12,
-	},
+	--[143622] = {
+	--	name = "Wild Imp",
+	--	duration = 12,
+	--},
 	[17252] = {
 		name = "Felguard",
 		duration = 28,
@@ -234,16 +245,9 @@ Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DEMONOLOGY, { -- this template tab
     },
 })
 
--- API - Spell
-Pet:Add(17252, { -- Felguard
-	-- number accepted
-	89751, -- Felstorm
-	30213, -- Legion Strike
+local PetTrackerGUID = Pet:GetTrackerGUID()
+local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
 
-	-- strings also accepted!
-	--"Gnaw",
-	--GetSpellInfo(47481),
-})
 
 local function num(val)
     if val then return 1 else return 0 end
@@ -410,15 +414,12 @@ end
 ------- CUSTOM IMP TRACKER --------
 -----------------------------------
 
-local PetTrackerGUID = Pet:GetTrackerGUID()
-local PetTrackerData = Pet:GetTrackerData() -- this is table with [petID] = @table 
-
 -- Protect errors
 TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
     Action.TimerSet("DISABLE_PET_ERRORS", 99999, function() Pet:DisableErrors(true)  end)
 end)
 
-TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
+--TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
     -- Add 5 cast to PetData table for each summoned Imp
 	--PetData.impcasts = 5
@@ -427,184 +428,190 @@ TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, Pet
 	-- Also add 5 to local TR.GuardianTable
 	--TR.GuardiansTable.ImpCastsRemaing = 5
 	--if PetID == 55659 then
-	    PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].impcasts = 5
-		PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].petenergy = 100
+	   -- PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].impcasts = 5
+		--PetTrackerData[PetTrackerGUID[PetGUID]].GUIDs[PetGUID].petenergy = 100
 	    --PetTrackerData[PetID].GUIDs[PetGUID].impcasts = 5
 	    --PetTrackerData[PetID].GUIDs[PetGUID].petenergy = 100
 	--end
 	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID .. "and he got " .. PetData.impcasts .. " casts lefts")
 
+--end)
+
+TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_REMOVED", function(callbackEvent, PetID, PetGUID)
+	--PetTrackerGUID[PetGUID].impcasts = 0
+	--PetTrackerGUID[PetGUID].petenergy = 0
+	--print("Removed " .. PetID .. ", GUID: " .. PetGUID)
 end)
 
+TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
+	-- PetData is a @table with next keys: name, duration, count, GUIDs 
+	if PetID == 55659 then
+	    PetData.GUIDs[PetGUID].impcasts = 5
+	    PetData.GUIDs[PetGUID].petenergy = 100
+	    --print("Added " .. PetID .. ", his name is " .. PetData.name .. ", he got " .. PetData.GUIDs[PetGUID].impcasts .. " cast lefts and got " .. PetData.GUIDs[PetGUID].petenergy .. " energy. GUID: " .. PetGUID)
+	    -- If we want to modify data we can 
+	    --PetTrackerData.myVar = "custom data"
+	    --print(PetTrackerData.myVar)
+	end
+end)
+--/dump LibStub("PetLibrary"):GetTrackerData().[55659].GUIDs
+-------------------------------------------------------------------------------
+-- Remap
+-------------------------------------------------------------------------------
+local A_Unit, A_GetSpellInfo, A_GetSpellLink, ActiveNameplates
+local TeamCacheFriendly, TeamCacheFriendlyUNITs
+
+-------------------------------------------------------------------------------
+local A_Unit						= A.Unit
+local A_GetSpellInfo				= A.GetSpellInfo
+local A_GetSpellLink				= A.GetSpellLink
+local ActiveNameplates				= A.MultiUnits:GetActiveUnitPlates()
+local TeamCacheFriendly				= TeamCache.Friendly
+local TeamCacheFriendlyUNITs		= TeamCacheFriendly.UNITs
+
+local PetOnEventCLEU					= {
+		["UNIT_DIED"] 		= "Remove",
+		["UNIT_DESTROYED"] 	= "Remove",
+		["UNIT_DISSIPATES"] = "Remove",		
+		["PARTY_KILL"] 		= "Remove",
+		["SPELL_INSTAKILL"] = "Remove",
+		["SPELL_SUMMON"] 	= "Add",
+}
+		
 TR.ImpData = {
     ImpCastsRemaing = 0,
 	ImpCount = 0,
 	ImpTotalEnergy = 0,
 }
 
--- Working stuff
-local function GetWildImpInfos(petID)
-	-- @return number, number, number
-	-- Note: Number of active Wild Imps depending of their current cast left
-	-- Also return Total Casts Remainings for all current imps AND Total sum of Imp energy to be more accurate with Demonic Tyrant and Demonic Consumption 
-    -- @usage: local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos()
-	
-	local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()
+local function GetGUID(unitID)
+	return (unitID and TeamCacheFriendlyUNITs[unitID]) or UnitGUID(unitID)
+end 
+	  
+local function ConvertGUIDtoNPCID(GUID)
+	if A_Unit then 
+		local _, _, _, _, _, npc_id = A_Unit(""):InfoGUID(GUID) -- A_Unit("") because no unitID 
+		return npc_id
+	else
+		local _, _, _, _, _, _, _, NPCID = strfind(GUID, "(%S+)-(%d+)-(%d+)-(%d+)-(%d+)-(%d+)-(%S+)")
+		return NPCID and tonumber(NPCID)
+	end 
+end 
 
+local function AddWildImpToTracker(PetID, PetGUID, PetName)
+	--local PetID = 55659
 	
-	-- Protect against nil
-    if not petID then 
-	    petID = 55659 
-	end		
+	if not PetTrackerData[PetID] then 
+		PetTrackerData[PetID] = { count = 0, GUIDs = {} }
+	end 
+	
+	PetTrackerData[PetID].name 				= "Wild Imp"
+	PetTrackerData[PetID].duration 			= 20
+	PetTrackerData[PetID].count				= PetTrackerData[PetID].count + 1
+	PetTrackerData[PetID].GUIDs[PetGUID]	= { 
+		updated			= TMW.time, 
+		start 			= TMW.time, 
+		expiration		= TMW.time + PetTrackerData[PetID].duration,
+		impcasts        = 5,
+		petenergy       = 100,
+	}
+	
+	PetTrackerGUID[PetGUID]					= PetID
+	
+	TMW:Fire("TMW_ACTION_PET_LIBRARY_ADDED", PetID, PetGUID, PetTrackerData[PetID])
+end 
+
+TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
+	 	
+		local _, Event, _, SourceGUID, _, SourceFlags, _, DestGUID, DestName, DestFlags,_, SpellID, SpellName = CombatLogGetCurrentEventInfo()
+
+		--local CastedImplosion = (A.LastPlayerCastName == A.Implosion:Info())
+		local PetID = 55659
 		
-    -- Identify 55659 Wild Imp ID
-	if petID and PetTrackerData[55659] and petID == 55659 then 
-		for _, data in pairs(PetTrackerData[55659].GUIDs) do 
-			local casts = data.impcasts 
-			local ImpCastsRemaing = 0
-			local ImpCount = PetTrackerData[55659].count
-			local ImpTotalEnergy = 0
-			
-			-- If current Imp GUID got casts > 0
-			if PetTrackerGUID[SourceGUID] and PetTrackerData[PetTrackerGUID[SourceGUID]]
-			and (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 and casts > 0 
-			then
-                --currentImpCasts = PetTrackerData[petID].GUIDs[SourceGUID].impcasts			
-				-- Decrement cast by 1 in current Imp GUID
-				if PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts then
-				    PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts - 1
-				end
-				--data.impcasts = data.impcasts - 1
-				-- Decrement energy by 20 in current Imp GUID
-				if PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy then
-				    PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy - 20	
-				end
-				--data.petenergy = data.petenergy - 20
-				-- Update PetTrackerData.count for all petID 55659
-				--ImpCount = ImpCount + 1				 
-			else
-			    -- else if no cast left for current Imp GUID reset every values
-			    if casts == 0 then
-				    TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, SourceGUID)
-					
-				    --data.impcasts = 0
-					--data.petenergy = 0
-				end
-			end 
+		--print("SourceGUID " .. SourceGUID)
+		--if SpellID and DestGUID and SourceGUID then
+		--    print("SourceGUID: " .. SourceGUID .. " casted SpellID: " .. SpellID)
+		--end
 
-			-- For every Imp we got in table, get casts lefts.
-			if PetTrackerData[55659].count > 0 then
-	   	  	    for _, data2 in pairs(PetTrackerData[55659].GUIDs) do 
-				    -- Calculate Total Wild Imp cast lefts 
-				    ImpCastsRemaing = ImpCastsRemaing + data2.impcasts
-					-- Calculate Total Wild Imp energy 
-	     	   	    ImpTotalEnergy = ImpCastsRemaing * 20
-				end 
-			end
-			
-		--	if ImpCastsRemaing == 0 then
-		--	    ImpCount = 0
-		--	end
-						
-			TR.ImpData.ImpCount = ImpCount
-			TR.ImpData.ImpTotalEnergy = ImpTotalEnergy
-			TR.ImpData.ImpCastsRemaing = ImpCastsRemaing
-			
-			-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
-	        if  (Event == "SPELL_CAST_SUCCESS") and SourceGUID == UnitGUID(player) and --and SourceGUID  and
+		if SourceGUID and SourceGUID ~= Pet.MainGUID and PetTrackerData[55659] and PetTrackerData[55659].GUIDs[SourceGUID] then 
+			PetTrackerData[55659].GUIDs[SourceGUID].updated = TMW.time 
+		end 
+
+        -- Decrement impcasts and petenergy
+	    if PetTrackerData and PetTrackerData[55659] and PetTrackerGUID[SourceGUID] and SourceGUID and SourceGUID ~= Pet.MainGUID and (Event == "SPELL_CAST_SUCCESS") and SpellID == 104318 then
+            --PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].impcasts - 1
+			PetTrackerData[55659].GUIDs[SourceGUID].impcasts = PetTrackerData[55659].GUIDs[SourceGUID].impcasts - 1 
+			--PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy = PetTrackerData[PetTrackerGUID[SourceGUID]].GUIDs[SourceGUID].petenergy - 20
+			PetTrackerData[55659].GUIDs[SourceGUID].petenergy = PetTrackerData[55659].GUIDs[SourceGUID].petenergy - 20
+
+		end
+		--	if PetTrackerData[55659] and SourceGUID and PetTrackerData[55659].GUIDs[SourceGUID].impcasts and PetTrackerData[55659].GUIDs[SourceGUID].impcasts < 1 then
+		--	    PetTrackerData[55659].count = PetTrackerData[55659].count - 1
+		--	end	
+		--/dump LibStub("PetLibrary"):PetTrackerData[55659].count
+	    -- Add Implosion and Demonic Consumption listener
+		if  (Event == "SPELL_CAST_SUCCESS") and SourceGUID == GetGUID("player") and --and SourceGUID  and
 	        (   -- Implosion
 	            SpellID == 196277 or SpellName == A.Implosion:Info()
 	           	or 
 	       	    -- Summon Demonic Tyrant with Demonic Consumption
 	       	    (SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
 	        ) 
-	        then 
-  	            --ImpCount = 0	
-                --TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)	
-                --if PetTrackerData[55659] then				
-		        
-				
-	   	  	    for _, data3 in pairs(PetTrackerData[55659].GUIDs) do 
-				    data3 = nil
-				end 
-				PetTrackerData[55659] = nil
-				--PetTrackerData[55659].count = 0
-				--PetTrackerData[55659].GUIDs[DestGUID] = nil 
-				--end
-		        --if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
-		        TR.ImpData.ImpCount = 0
-		        TR.ImpData.ImpTotalEnergy = 0
-		        TR.ImpData.ImpCastsRemaing = 0
-		    end	
+	    then 
+    		--PetTrackerData[55659].count = 0
+			PetTrackerData[55659] = nil 
+		end	
+	
+end
+Listener:Add("ACTION_TASTE_IMP_TRACKER", "COMBAT_LOG_EVENT_UNFILTERED", TR.COMBAT_LOG_EVENT_UNFILTERED)
 
-		    -- Return current Wild Imp count, Total Casts Remains and projected total Wild Imp energy
-            return TR.ImpData.ImpCount, TR.ImpData.ImpTotalEnergy, TR.ImpData.ImpCastsRemaing
+local function GetImpsData(petID, petName)
+	-- @return number 
+	-- Note: Only if template has "duration" key otherwise it's huge 
+	local TotalImpEnergy = 0
+	local TotalImpCast = 0
+	local TotalImpCount = 0
+	
+	-- Note: Number of active pets
+	if petName then 
+		for _, v in pairs(PetTrackerData) do
+			if v.name == petName and v.count > 0 then 
+				TotalImpCount = v.count
+			end 			 
 		end
-
 	end 
-	--UpdateWildImpInfos()
-	-- Return current Wild Imp count, Total Casts Remains and projected total Wild Imp energy
-    return 0, 0, 0
+	
+	-- Note: Imp energy value + remaining casts
+	if petID and PetTrackerData[petID] then 
+		for _, data in pairs(PetTrackerData[petID].GUIDs) do 
+			local petenergy = data.petenergy
+			local impcasts = data.impcasts
+			local impcount = PetTrackerData[petID].count
+			
+			if PetTrackerData[petID].count > 1 then
+			    TotalImpCount = impcount
+			end
+			
+			if impcasts > 0 then 
+                TotalImpCast = TotalImpCast + impcasts
+			else
+			    TotalImpCast = 0
+				TotalImpCount = 0
+				TotalImpEnergy = 0
+			end 
+			
+			if petenergy > 0 then 
+                TotalImpEnergy = TotalImpEnergy + petenergy
+			else
+			    TotalImpCast = 0
+				TotalImpCount = 0
+				TotalImpEnergy = 0
+			end 			
+		end 
+	end 
+	
+	return TotalImpCount, TotalImpEnergy, TotalImpCast  
 end 
-GetWildImpInfos = A.MakeFunctionCachedDynamic(GetWildImpInfos)
-Listener:Add("ACTION_TASTE_IMP_TRACKER", "COMBAT_LOG_EVENT_UNFILTERED", GetWildImpInfos)
-
-local function UpdateWildImpInfos()
-    local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
-    	-- Check for player Implosion cast or Summon Demonic Tyrant with Demonic Consumption enabled.
-	if  (Event == "SPELL_CAST_SUCCESS") and --and SourceGUID == UnitGUID(player) and --SourceGUID  and
-	   (   -- Implosion
-	        SpellID == 196277 or SpellName == A.Implosion:Info()
-	       	or 
-	       	-- Summon Demonic Tyrant with Demonic Consumption
-	       	(SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
-	   ) 
-	then 
-  	    --PetTrackerData[petID].count	= 0	
-        --TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)		
-		PetTrackerData[55659] = nil
-		--if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
-		    TR.ImpData.ImpCount = 0
-		    TR.ImpData.ImpTotalEnergy = 0
-		    TR.ImpData.ImpCastsRemaing = 0
-		--end
-		
-		--TMW:Fire("TMW_ACTION_PET_LIBRARY_REMOVED", 55659, DestGUID)
-	    --return TR.ImpData.ImpCount, TR.ImpData.ImpTotalEnergy, TR.ImpData.TotalCastsRemains		
-	end   
-end
-UpdateWildImpInfos = A.MakeFunctionCachedDynamic(UpdateWildImpInfos)
-Listener:Add("ACTION_TASTE_IMP_TRACKER", "UNIT_SPELLCAST_SUCCEEDED", UpdateWildImpInfos)
-
-local function ResetWildImpInfos()
-    --local _, Event, _, SourceGUID, _, _, _, DestGUID, DestName, _, _, SpellID, SpellName = CombatLogGetCurrentEventInfo()	
-	PetTrackerData[55659] = nil
-	--if PetTrackerData[55659] and PetTrackerData[55659].count > 0 then
-	TR.ImpData.ImpCount = 0
-	TR.ImpData.ImpTotalEnergy = 0
-	TR.ImpData.ImpCastsRemaing = 0	
-end
-ResetWildImpInfos = A.MakeFunctionCachedDynamic(ResetWildImpInfos)
-Listener:Add("ACTION_TASTE_IMP_TRACKER", "PLAYER_REGEN_ENABLED", ResetWildImpInfos)
-
-TMW:RegisterCallback("TMW_ACTION_IMP_IMPLOSION", function()
-	-- PetData is a @table with next keys: name, duration, count, GUIDs 
-    -- Add 5 cast to PetData table for each summoned Imp
-	--PetData.impcasts = 5
-	--PetData.petenergy = 100
-	--PetTrackerData[55659].impcasts = 5
-	-- Also add 5 to local TR.GuardianTable
-	--TR.GuardiansTable.ImpCastsRemaing = 5
-	--if PetID == 55659 then
-	TR.ImpData.ImpCount = 0
-	TR.ImpData.ImpTotalEnergy = 0
-	TR.ImpData.ImpCastsRemaing = 0
-	    --PetTrackerData[PetID].GUIDs[PetGUID].impcasts = 5
-	    --PetTrackerData[PetID].GUIDs[PetGUID].petenergy = 100
-	--end
-	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID .. "and he got " .. PetData.impcasts .. " casts lefts")
-
-end)
 	
 -- On Successful HoG cast add how many Imps will spawn
 local ImpsSpawnedFromHoG = 0 
@@ -643,7 +650,7 @@ ImpsSpawnedDuring = A.MakeFunctionCachedDynamic(ImpsSpawnedDuring)
 -- SummonDemonicTyrant checker
 local function MegaTyrant()
     local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
-	local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos(55659)
+	local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetImpsData(55659, "Wild Imp")
     return (WildImpCount + ImpsSpawnedDuring(2000) >= 6 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
 end
 
@@ -816,7 +823,7 @@ A[3] = function(icon, isMulti)
     local Pull = Action.BossMods_Pulling()
     local unit = player
 	local FutureShard = FutureShard()
-    local WildImpsCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetWildImpInfos(55659)
+    local WildImpsCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetImpsData(55659, "Wild Imp")
 	local DreadStalkersTime = DreadStalkersTime()
 	local GrimoireFelguardTime = GrimoireFelguardTime()
 	local DemonicTyrantTime = DemonicTyrantTime()
@@ -865,19 +872,18 @@ A[3] = function(icon, isMulti)
     ------------------------------------------------------
     local function EnemyRotation(unit)
         
-
 	-- DEBUG PRINT PETS	
 	--print("WildImpsCount: " .. WildImpsCount)
 	--print("Pet:GetCount(55659): " .. Pet:GetWildImpCount(55659))
 	--print("Pet:GetCount(Wild Imp): " .. Pet:GetWildImpCount("Wild Imp"))
 	--print("DreadStalkersTime: " .. DreadStalkersTime)
 	--if WildImpsCount ~= nil then
-	--    print("WildImpsCount " .. WildImpsCount)
+	-- print("WildImpsCount " .. WildImpsCount)
 
 	--end	 
 	--if WildImpTotalEnergy ~= nil then
-	--    print("WildImpTotalEnergy " .. WildImpTotalEnergy)
-	--	 print("WildImpTotalCastsRemains " .. WildImpTotalCastsRemains)
+	-- print("WildImpTotalEnergy " .. WildImpTotalEnergy)
+	-- print("WildImpTotalCastsRemains " .. WildImpTotalCastsRemains)
 	--end	
 	
 		--Precombat
@@ -1354,8 +1360,6 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-		    -- Force refresh
-			GetWildImpInfos(55659)
 		    -- Interrupt
             local Interrupt = Interrupts(unit)
             if Interrupt then 
