@@ -11,7 +11,7 @@ local ActiveUnitPlates						= MultiUnits:GetActiveUnitPlates()
 local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
-local PetLib                                = LibStub("PetLibrary")
+local Pet                                   = LibStub("PetLibrary")
 local Unit                                  = Action.Unit 
 local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
@@ -48,7 +48,6 @@ function Action.AoEToggleMode()
     Action.Print(Action.UseAoE and "Mode AoE: On" or not Action.UseAoE and "Mode AoE: Off")
     TMW:Fire("TMW_ACTION_AOE_MODE_CHANGED")
 end 
-
 
 --[[CheckProfilePerSpecialization = function()
 	-- Druid
