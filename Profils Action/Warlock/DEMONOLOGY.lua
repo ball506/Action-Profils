@@ -185,9 +185,9 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
     TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
     TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
     WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
     WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
     WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
@@ -1158,12 +1158,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<5&soul_shard=0
-            if A.SummonDemonicTyrant:IsReady(player) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
+            if A.SummonDemonicTyrant:IsReady(player) and A.BurstIsON(unit) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < 5 and (Player:SoulShardsP() == 0 or (FutureShard == 0 and PredictShards))) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
             -- summon_demonic_tyrant,if=buff.nether_portal.remains<action.summon_demonic_tyrant.cast_time+0.5
-            if A.SummonDemonicTyrant:IsReady(player) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
+            if A.SummonDemonicTyrant:IsReady(player) and A.BurstIsON(unit) and (Unit(player):HasBuffs(A.NetherPortalBuff.ID, true) < A.SummonDemonicTyrant:GetSpellCastTime() + 0.5) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
 			
@@ -1327,7 +1327,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
-            if A.SummonDemonicTyrant:IsReady(player) and 
+            if A.SummonDemonicTyrant:IsReady(player) and A.BurstIsON(unit) and 
 			(
 			    A.LastPlayerCastName == A.DemonicStrength:Info() and (Player:SoulShardsP() <= 1 or (FutureShard <= 1 and PredictShards)) 
 				or 
@@ -1427,7 +1427,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blood_of_the_enemy,if=pet.demonic_tyrant.active&pet.demonic_tyrant.remains<=15-gcd*3&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)
-            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    RealTyrantIsActive and DemonicTyrantTime <= 15 - A.GetGCD() * 3 
 					and 
@@ -1455,7 +1455,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ripple_in_space,if=pet.demonic_tyrant.active&(!essence.vision_of_perfection.major|!talent.demonic_consumption.enabled|cooldown.summon_demonic_tyrant.remains>=cooldown.summon_demonic_tyrant.duration-5)|target.time_to_die<=15
-            if A.RippleInSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
+            if A.RippleinSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and 
 			    (
 				    RealTyrantIsActive and (not Azerite:EssenceHasMajor(A.VisionofPerfection.ID)) 
 					or 
@@ -1466,7 +1466,7 @@ A[3] = function(icon, isMulti)
 					(Unit(unit):IsBoss() and Unit(unit):TimeToDie() <= 15)
 				)
 			then
-                return A.RippleInSpace:Show(icon)
+                return A.RippleinSpace:Show(icon)
             end
 			
             -- use_item,name=pocketsized_computation_device,if=cooldown.summon_demonic_tyrant.remains>=20&cooldown.summon_demonic_tyrant.remains<=cooldown.summon_demonic_tyrant.duration-15|target.time_to_die<=30
@@ -1505,7 +1505,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=(time>30|!talent.nether_portal.enabled)&talent.grimoire_felguard.enabled&(target.time_to_die>120|target.time_to_die<cooldown.summon_demonic_tyrant.remains+15)|target.time_to_die<=35
-            if A.AzsharasFontofPower:IsReady(player) and 
+            if A.AzsharasFontofPower:IsReady(player) and A.BurstIsON(unit) and 
 			    (
 				    (Unit(player):CombatTime() > 30 or not A.NetherPortal:IsSpellLearned()) 
 					and 
@@ -1570,7 +1570,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=nether_portal,if=talent.nether_portal.enabled&spell_targets.implosion<=2
-            if NetherPortal(unit) and (A.NetherPortal:IsSpellLearned() and MultiUnits:GetActiveEnemies() <= 2) then
+            if NetherPortal(unit) and A.BurstIsON(unit) and (A.NetherPortal:IsSpellLearned() and MultiUnits:GetActiveEnemies() <= 2) then
                 return true
             end
 			
@@ -1627,7 +1627,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- summon_demonic_tyrant,if=soul_shard<3&(!talent.demonic_consumption.enabled|buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6&time_to_imps.all.remains<cast_time)|target.time_to_die<20
-            if A.SummonDemonicTyrant:IsReady(player) and 
+            if A.SummonDemonicTyrant:IsReady(player) and A.BurstIsON(unit) and 
 			    (
 				    (Player:SoulShardsP() < 3 or (FutureShard < 3 and PredictShards)) 
 					and 
