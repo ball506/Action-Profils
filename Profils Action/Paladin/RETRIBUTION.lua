@@ -54,55 +54,55 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     EscapeArtist                           = Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generic Spells
-    WakeofAshes                          = Create({ Type = "Spell", ID = 255937     }),
-    LightsJudgment                       = Create({ Type = "Spell", ID = 255647     }),
-    ShieldofVengeance                    = Create({ Type = "Spell", ID = 184662     }),
-    AvengingWrath                        = Create({ Type = "Spell", ID = 31884     }),
-    Inquisition                          = Create({ Type = "Spell", ID = 84963     }),
-    Crusade                              = Create({ Type = "Spell", ID = 231895     }),
-    RighteousVerdict                     = Create({ Type = "Spell", ID = 267610     }),
-    ExecutionSentence                    = Create({ Type = "Spell", ID = 267798     }),
-    DivineStorm                          = Create({ Type = "Spell", ID = 53385     }),
-    DivinePurpose                        = Create({ Type = "Spell", ID = 223817     }),
-    TemplarsVerdict                      = Create({ Type = "Spell", ID = 85256     }),
-    HammerofWrath                        = Create({ Type = "Spell", ID = 24275     }),
-    BladeofJustice                       = Create({ Type = "Spell", ID = 184575     }),
-    Judgment                             = Create({ Type = "Spell", ID = 20271     }),
-    Consecration                         = Create({ Type = "Spell", ID = 205228     }),
-    CrusaderStrike                       = Create({ Type = "Spell", ID = 35395     }),
-    Rebuke                               = Create({ Type = "Spell", ID = 96231     }),
-    FistofJustice                        = Create({ Type = "Spell", ID = 198054     }),
-    Repentance                           = Create({ Type = "Spell", ID = 20066     }), 
-    Cavalier                             = Create({ Type = "Spell", ID = 190784     }),
-	JusticarsVengeance                   = Create({ Type = "Spell", ID = 215661    }),
-    BlessingofProtectionYellow           = Create({ Type = "Spell", ID = 1022, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
-    BlessingofProtection                 = Create({ Type = "Spell", ID = 1022     }), 
-    WordofGlory                          = Create({ Type = "Spell", ID = 210191     }),
-    BlessingofFreedom                    = Create({ Type = "Spell", ID = 1044     }),
-    BlessingofFreedomYellow              = Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
-    HammerofJustice                      = Create({ Type = "Spell", ID = 853     }),
-	HammerofJusticeGreen                 = Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
-	DivineShield                         = Create({ Type = "Spell", ID = 642     }),
-	FlashofLight                         = Create({ Type = "Spell", ID = 19750   }),
-    CleanseToxins                        = Create({ Type = "Spell", ID = 213644   }),
+    WakeofAshes                            = Create({ Type = "Spell", ID = 255937     }),
+    LightsJudgment                         = Create({ Type = "Spell", ID = 255647     }),
+    ShieldofVengeance                      = Create({ Type = "Spell", ID = 184662     }),
+    AvengingWrath                          = Create({ Type = "Spell", ID = 31884     }),
+    Inquisition                            = Create({ Type = "Spell", ID = 84963     }),
+    Crusade                                = Create({ Type = "Spell", ID = 231895     }),
+    RighteousVerdict                       = Create({ Type = "Spell", ID = 267610     }),
+    ExecutionSentence                      = Create({ Type = "Spell", ID = 267798     }),
+    DivineStorm                            = Create({ Type = "Spell", ID = 53385     }),
+    DivinePurpose                          = Create({ Type = "Spell", ID = 223817     }),
+    TemplarsVerdict                        = Create({ Type = "Spell", ID = 85256     }),
+    HammerofWrath                          = Create({ Type = "Spell", ID = 24275     }),
+    BladeofJustice                         = Create({ Type = "Spell", ID = 184575     }),
+    Judgment                               = Create({ Type = "Spell", ID = 20271     }),
+    Consecration                           = Create({ Type = "Spell", ID = 205228     }),
+    CrusaderStrike                         = Create({ Type = "Spell", ID = 35395     }),
+    Rebuke                                 = Create({ Type = "Spell", ID = 96231     }),
+    FistofJustice                          = Create({ Type = "Spell", ID = 198054     }),
+    Repentance                             = Create({ Type = "Spell", ID = 20066     }), 
+    Cavalier                               = Create({ Type = "Spell", ID = 190784     }),
+	JusticarsVengeance                     = Create({ Type = "Spell", ID = 215661    }),
+    BlessingofProtectionYellow             = Create({ Type = "Spell", ID = 1022, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
+    BlessingofProtection                   = Create({ Type = "Spell", ID = 1022     }), 
+    WordofGlory                            = Create({ Type = "Spell", ID = 210191     }),
+    BlessingofFreedom                      = Create({ Type = "Spell", ID = 1044     }),
+    BlessingofFreedomYellow                = Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
+    HammerofJustice                        = Create({ Type = "Spell", ID = 853     }),
+	HammerofJusticeGreen                   = Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
+	DivineShield                           = Create({ Type = "Spell", ID = 642     }),
+	FlashofLight                           = Create({ Type = "Spell", ID = 19750   }),
+    CleanseToxins                          = Create({ Type = "Spell", ID = 213644   }),
     -- PvP
-    HammerofReckoning                    = Create({ Type = "Spell", ID = 247675     }),
-    BlessingofSanctuary                  = Create({ Type = "Spell", ID = 210256     }),
+    HammerofReckoning                      = Create({ Type = "Spell", ID = 247675     }),
+    BlessingofSanctuary                    = Create({ Type = "Spell", ID = 210256     }),
     BlessingofSanctuaryYellow              = Create({ Type = "Spell", ID = 210256, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
     -- Buffs
-    DivinePurposeBuff                    = Create({ Type = "Spell", ID = 223819, Hidden = true     }),
-    EmpyreanPowerBuff                    = Create({ Type = "Spell", ID = 286393, Hidden = true     }),
-    AvengingWrathBuff                    = Create({ Type = "Spell", ID = 31884, Hidden = true     }),
-    AvengingWrathAutocritBuff            = Create({ Type = "Spell", ID = 294027, Hidden = true     }),
-    InquisitionBuff                      = Create({ Type = "Spell", ID = 84963, Hidden = true     }),  
-    CrusadeBuff                          = Create({ Type = "Spell", ID = 231895, Hidden = true     }), 
-    SeethingRageBuff                     = Create({ Type = "Spell", ID = 297126, Hidden = true     }), 
-    RecklessForceBuff                    = Create({ Type = "Spell", ID = 302932, Hidden = true     }),  
-    SelfLessHealerBuff                   = Create({ Type = "Spell", ID = 114250, Hidden = true     }), 
+    DivinePurposeBuff                      = Create({ Type = "Spell", ID = 223819, Hidden = true     }),
+    EmpyreanPowerBuff                      = Create({ Type = "Spell", ID = 286393, Hidden = true     }),
+    AvengingWrathBuff                      = Create({ Type = "Spell", ID = 31884, Hidden = true     }),
+    AvengingWrathAutocritBuff              = Create({ Type = "Spell", ID = 294027, Hidden = true     }),
+    InquisitionBuff                        = Create({ Type = "Spell", ID = 84963, Hidden = true     }),  
+    CrusadeBuff                            = Create({ Type = "Spell", ID = 231895, Hidden = true     }), 
+    SeethingRageBuff                       = Create({ Type = "Spell", ID = 297126, Hidden = true     }), 
+    RecklessForceBuff                      = Create({ Type = "Spell", ID = 302932, Hidden = true     }),  
+    SelfLessHealerBuff                     = Create({ Type = "Spell", ID = 114250, Hidden = true     }), 
     -- Debuffs
-    JudgmentDebuff                       = Create({ Type = "Spell", ID = 197277, Hidden = true     }),
-    ConcentratedFlameBurn                = Create({ Type = "Spell", ID = 295368, Hidden = true     }),
-    RazorCoralDebuff                     = Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    JudgmentDebuff                         = Create({ Type = "Spell", ID = 197277, Hidden = true     }),
+    ConcentratedFlameBurn                  = Create({ Type = "Spell", ID = 295368, Hidden = true     }),
+    RazorCoralDebuff                       = Create({ Type = "Spell", ID = 303568, Hidden = true     }),
 	
     -- Trinkets
     TrinketTest                            = Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
@@ -149,38 +149,13 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     ConductiveInkDebuff                    = Create({ Type = "Spell", ID = 302565, Hidden = true     }),
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
-    VisionofPerfectionMinor                = Create({ Type = "Spell", ID = 296320, Hidden = true}),
-    VisionofPerfectionMinor2               = Create({ Type = "Spell", ID = 299367, Hidden = true}),
-    VisionofPerfectionMinor3               = Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
-    RecklessForceBuff                      = Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+    VisionofPerfectionMinor                = Create({ Type = "Spell", ID = 296320, Hidden = true     }),
+    VisionofPerfectionMinor2               = Create({ Type = "Spell", ID = 299367, Hidden = true     }),
+    VisionofPerfectionMinor3               = Create({ Type = "Spell", ID = 299369, Hidden = true     }),
+    UnleashHeartOfAzeroth                  = Create({ Type = "Spell", ID = 280431, Hidden = true     }),
+    RecklessForceBuff                      = Create({ Type = "Spell", ID = 302932, Hidden = true     }),	
+    PoolResource                           = Create({ Type = "Spell", ID = 209274, Hidden = true     }),
+    DummyTest                              = Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon	
 };
 
 -- To create essences use next code:
@@ -507,6 +482,7 @@ A[3] = function(icon, isMulti)
 	local PlayerCombatTime = Unit(player):CombatTime()
 	local TargetCombatTime = Unit("target"):CombatTime()
     local ShouldStop = Action.ShouldStop()
+	local CanCast = true
     local Pull = Action.BossMods_Pulling()
     local unit = player
     local FlashofLightHP = GetToggle(2, "FlashofLightHP")
@@ -520,6 +496,35 @@ A[3] = function(icon, isMulti)
 	local Potion = GetToggle(1, "Potion")
 	local Racial = GetToggle(1, "Racial")
 	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
+	local TrinketsAoE = Action.GetToggle(2, "TrinketsAoE")
+	local TrinketsMinTTD = Action.GetToggle(2, "TrinketsMinTTD")
+	local TrinketsUnitsRange = Action.GetToggle(2, "TrinketsUnitsRange")
+	local TrinketsMinUnits = Action.GetToggle(2, "TrinketsMinUnits")	
+	local BlessingofProtectionHP = Action.GetToggle(2, "BlessingofProtectionHP")
+	local BlessingofProtectionTTD = Action.GetToggle(2, "BlessingofProtectionTTD")
+	local UnbridledFuryAuto = A.GetToggle(2, "UnbridledFuryAuto")
+	local UnbridledFuryTTD = A.GetToggle(2, "UnbridledFuryTTD")
+	local UnbridledFuryWithExecute = A.GetToggle(2, "UnbridledFuryWithExecute")
+	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
+	local UnbridledFuryHP = A.GetToggle(2, "UnbridledFuryHP")	
+	-- FocusedAzeriteBeam protection channel
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
+		-- @return:
+		-- [1] Currect Casting Left Time (seconds) (@number)
+		-- [2] Current Casting Left Time (percent) (@number)
+		-- [3] spellID (@number)
+		-- [4] spellName (@string)
+		-- [5] notInterruptable (@boolean, false is able to be interrupted)
+		-- [6] isChannel (@boolean)
+	if percentLeft > 0.01 and spellName == A.FocusedAzeriteBeam:Info() then 
+	    CanCast = false
+	else
+	    CanCast = true
+	end	
+	
+	if not CanCast then
+	    return A.PoolResource:Show(icon)
+	end	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -624,32 +629,46 @@ A[3] = function(icon, isMulti)
 	 		return A.CleanseToxins:Show(icon)
     	end
 
-        -- Trinkets
-        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket1:Show(icon)
-        end  
+	   	-- Non SIMC Custom Trinket1
+	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and Unit(unit):GetRange() < 6 and    
+		(
+    		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+			or
+			not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+		)
+		then 
+      	    return A.Trinket1:Show(icon)
+   	    end 		
+	        
 		
-		if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DEFF" then 
-            return A.Trinket2:Show(icon)
-        end 
+		-- Non SIMC Custom Trinket2
+	    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast and Unit(unit):GetRange() < 6 and	    
+		(
+    		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+			or
+			not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+		)
+		then
+      	   	return A.Trinket2:Show(icon) 	
+	    end
  
         -- BURST
         if A.BurstIsON(unit) and unit ~= "mouseover" then
-		
-            -- potion,if=(cooldown.guardian_of_azeroth.remains>90|!essence.condensed_lifeforce.major)&(buff.bloodlust.react|buff.avenging_wrath.up&buff.avenging_wrath.remains>18|buff.crusade.up&buff.crusade.remains<25)
-            if A.PotionofUnbridledFury:IsReady(unit) and Potion and 
+			
+            -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
+            if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
+			and 
 			(
-			    (A.GuardianofAzeroth:GetCooldown() > 90 or not Azerite:EssenceHasMajor(A.GuardianofAzeroth.ID)) 
-				and 
-				(
-				    Unit(player):HasHeroism() 
-					or 
-					Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 and Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 18 
-					or 
-					Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit(player):HasBuffs(A.CrusadeBuff.ID, true) < 25
-				)
+			    (Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 and UnbridledFuryWithSecondAscendance)
+				or
+				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
+				or
+				(UnbridledFuryWithExecute and Unit(unit):HealthPercent() <= 30)
 			)
+			and Unit(unit):TimeToDie() > UnbridledFuryTTD
 			then
+ 	            -- Notification					
+                Action.SendNotification("Burst: Potion of Unbridled Fury", A.PotionofUnbridledFury.ID)	
                 return A.PotionofUnbridledFury:Show(icon)
             end
 			
@@ -717,18 +736,13 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
 			
-            -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and 
-			(
-                (
-				    Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) == 0 
-					or 
-					Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0
-				)
-				and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)
-			)
-			then
-                return A.FocusedAzeriteBeam:Show(icon)
+            -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
+	        and (GetByRange(FocusedAzeriteBeamUnits, 20) or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
+		    then
+ 	            -- Notification					
+                Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
+			    return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- memory_of_lucid_dreams,if=(buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10)&holy_power<=3
@@ -815,12 +829,31 @@ A[3] = function(icon, isMulti)
         end
 			
         -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up
-        if Finishers(unit) and (A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 or Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0) then
+        if Finishers(unit) and 
+		(
+		    A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 
+			or 
+			Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 
+			or 
+			Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0
+		)
+		then
             return Finishers(unit):Show(icon)
         end
 			
         -- crusader_strike,if=cooldown.crusader_strike.charges_fractional>=1.75&(holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2&cooldown.consecration.remains>gcd*2)
-        if A.CrusaderStrike:IsReady(unit) and (A.CrusaderStrike:GetSpellChargesFrac() >= 1.75 and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2)) then
+        if A.CrusaderStrike:IsReady(unit) and 
+		(
+		    A.CrusaderStrike:GetSpellChargesFrac() >= 1.75 and 
+			(
+			    Player:HolyPower() <= 2 
+				or 
+				Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 
+				or 
+				Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2 and A.Consecration:GetCooldown() > A.GetGCD() * 2
+			)
+		)
+		then
             return A.CrusaderStrike:Show(icon)
         end
 			
@@ -920,19 +953,19 @@ local function PartyRotation(unit)
 	end
 
   	-- BlessingofFreedom
-    if A.BlessingofFreedom:IsCastable() and Unit(unit):HasDeBuffs("Rooted") > 0 and not Unit(unit):InLOS() then
+    if A.BlessingofFreedom:IsReady(unit) and Unit(unit):HasDeBuffs("Rooted") > 0 and not Unit(unit):InLOS() then
         return A.BlessingofFreedom
     end
 	
   	-- BlessingofProtection
-    if A.BlessingofProtection:IsCastable() and not Unit(unit):InLOS() and 	 
+    if A.BlessingofProtection:IsReady(unit) and not Unit(unit):InLOS() and 	 
 	   -- HP lose per sec >= 20
-        Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 
+        Unit(unit):GetDMG() * 100 / Unit(unit):HealthMax() >= 30 
 		or 
-        Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 
+        Unit(unit):GetRealTimeDMG() >= Unit(unit):HealthMax() * 0.30 
 		or 
         -- TTD 
-        Unit(player):TimeToDieX(10) < 3 
+        Unit(unit):TimeToDieX(10) < 3 
 	then
         return A.BlessingofProtection
     end

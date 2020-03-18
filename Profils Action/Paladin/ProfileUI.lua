@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.1 (12.03.2020)",
+    DateTime = "v4.0.3 (18.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -60,7 +60,162 @@ A.Data.ProfileUI = {
 						Print = '@string' or nil,
 					},
                 },                 
-            },  			
+            }, 	
+            { -- [7]  Azerite Beam settings
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(295258) .. " -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 				
+		
+                {
+                    E = "Slider",                                                     
+                    MIN = 3, 
+                    MAX = 50,                            
+                    DB = "FocusedAzeriteBeamTTD",
+                    DBV = 10, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(295258) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(295258) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "FocusedAzeriteBeamUnits",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(295258) .. " units",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum number of units around before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Set the minimum number of units around before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.",
+                        frFR = "Set the minimum number of units around before using " .. A.GetSpellInfo(295258) .. " \nDoes not apply to Boss.",
+                    }, 					
+                    M = {},
+                }, 				
+            },
+            { -- [7] UnbridledFury 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(300714) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryAuto",
+                    DBV = false,
+                    L = { 
+                        enUS = "Burst Potion", 
+                        ruRU = "Burst Potion",
+                        frFR = "Burst Potion",
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots depending of the settings of this section", 
+                        ruRU = "If activated, will auto re pots depending of the settings of this section", 
+                        frFR = "If activated, will auto re pots depending of the settings of this section", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithExecute",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync execute phase", 
+                        ruRU = "Sync execute phase",
+                        frFR = "Sync execute phase",   
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                        frFR = "If activated, will auto re pots as soon as Execute phase is detected.", 
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,      					
+                    DB = "UnbridledFuryTTD",
+                    DBV = 40, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(300714) .. " TTD",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum Time To Die for a unit before using " .. A.GetSpellInfo(300714) .. " \nDoes not apply to Boss.", 
+                        ruRU = "Установите минимальное время смерти для отряда перед использованием " .. A.GetSpellInfo(300714) .. " \nНе применимо к боссу.", 
+                        frFR = "Définissez le temps minimum pour mourir pour une unité avant d'utiliser " .. A.GetSpellInfo(300714) .. " \nNe s'applique pas aux boss.", 
+                    }, 					
+                    M = {},
+                },				
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithBloodlust",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync Bloodlust", 
+                        ruRU = "Sync Bloodlust", 
+                        frFR = "Sync Bloodlust",  
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Bloodlust is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Bloodlust is detected.",
+                        frFR = "If activated, will auto re pots as soon as Bloodlust is detected.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UnbridledFuryWithSecondAscendance",
+                    DBV = false,
+                    L = { 
+                        enUS = "Sync Avenging Wrath", 
+                        ruRU = "Sync Avenging Wrath", 
+                        frFR = "Sync Avenging Wrath",  
+                    }, 
+                    TT = { 
+                        enUS = "If activated, will auto re pots as soon as Avenging Wrath is detected.", 
+                        ruRU = "If activated, will auto re pots as soon as Avenging Wrath is detected.", 
+                        frFR = "If activated, will auto re pots as soon as Avenging Wrath is detected.", 
+                    }, 
+                    M = {},
+                }, 				
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,      					
+                    DB = "UnbridledFuryHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(300714) .. " HP",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".", 
+                        ruRU = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".",  
+                        frFR = "Set the minimum health percent for a unit before using " .. A.GetSpellInfo(300714) .. ".", 
+                    }, 					
+                    M = {},
+                },
+			},	 			
             { -- [4] 4th Row
 
                 {
@@ -190,6 +345,83 @@ A.Data.ProfileUI = {
                     M = {},
                 },	
 			},
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                    }, 
+                    M = {},
+                },            
+            }, 
+            -- Blessing of Protection
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(1022) .." -- ",
+                    },
+                },
+            },
+            {
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BlessingofProtectionHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1022) .. "\nunit HP",
+                    },
+                    TT = { 
+                        enUS = A.GetSpellInfo(1022) .. " on low HP unit depending of the value you set.", 
+                        ruRU = A.GetSpellInfo(1022) .. " on low HP unit depending of the value you set.", 
+                        frFR = A.GetSpellInfo(1022) .. " on low HP unit depending of the value you set.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 30,                            
+                    DB = "BlessingofProtectionTTD",
+                    DBV = 5, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1022) .. "\nTTD",
+                    },
+                    TT = { 
+                        enUS = A.GetSpellInfo(1022) .. " if unit time to die is inferior to this value.", 
+                        ruRU = A.GetSpellInfo(1022) .. " if unit time to die is inferior to this value.", 
+                        frFR = A.GetSpellInfo(1022) .. " if unit time to die is inferior to this value.", 
+                    }, 					
+                    M = {},
+                },
+			},
             { -- [7] 
                 {
                     E = "Header",
@@ -234,38 +466,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-            { -- [6]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Party -- ",
-                    },
-                },
-            }, 
-            { -- [7]
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "@party1", value = 1 },
-                        { text = "@party2", value = 2 },
-                    },
-                    MULT = true,
-                    DB = "PartyUnits",
-                    DBV = {
-                        [1] = true, 
-                        [2] = true,
-                    }, 
-                    L = { 
-                        ANY = "Party Units",
-                    }, 
-                    TT = { 
-                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
-                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
-						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
-                    }, 
-                    M = {},
-                },            
-            }, 
             { -- [7]
                 {
                     E = "Header",
