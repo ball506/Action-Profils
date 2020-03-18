@@ -175,6 +175,15 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Big UI update
+- New UnbridledFury settings
+- New Focused Azerite Beam settings
+- New buff refresh settings
+- New SkyFury settings
+- New Feral Lounge settings
+- New Counterstrike Totem settings
+- Added new conditions on Lavalash
+- Malestrom should be more used
 - Improved PvP Logics
 - Fixed Interrupts
 - Added logic for Counter Strike Totem				
@@ -198,7 +207,10 @@ As always, please report on Discord or message me directly if you need anything 
 		Welcome to Taste - Retribution Paladin !
 		
 List of latest changes :
-
+- New UI settings
+- Added new condition for Unbridled Fury potion
+- Added new condition for Focused Azerite Beam
+- Templar Verdict now correctly used if AoE Disabled OR enemies around < 2
 - Fixed Wake of Ashes
 - Fixed Party Dispell texture icon
 - Fixed Divine Storm usage
