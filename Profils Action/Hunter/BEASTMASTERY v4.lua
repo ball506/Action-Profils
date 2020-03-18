@@ -89,6 +89,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
     DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
+	AnimalCompanion                        = Action.Create({ Type = "Spell", ID = 267116 , isTalent = true, Hidden = true     }), -- Avoid error with second pet with no abilities
     -- Pet
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
     MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
@@ -254,7 +255,7 @@ local function SelfDefensives()
     -- SpiritMend
 	local CurrentCreatureFamily = UnitCreatureFamily(pet)
     local SpiritMend = GetToggle(2, "SpiritMendHP")
-    if     SpiritMend >= 0 and A.SpiritMend:IsReady(pet) and CurrentCreatureFamily == "Spirit Beast" and 
+    if     SpiritMend >= 0 and A.SpiritMend:IsReady(pet) and not A.AnimalCompanion:IsSpellLearned() and CurrentCreatureFamily == "Spirit Beast" and 
     (
         (     -- Auto 
             SpiritMend >= 100 and 
