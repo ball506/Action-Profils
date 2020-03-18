@@ -426,6 +426,85 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "TrinketsAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Trinkets\nAoE only", 
+                        ruRU = "Trinkets\nAoE only",  
+                        frFR = "Trinkets\nAoE only",  
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        ruRU = "Enable this to option to trinkets for AoE usage ONLY.", 
+                        frFR = "Enable this to option to trinkets for AoE usage ONLY.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 30,                            
+                    DB = "TrinketsMinTTD",
+                    DBV = 10, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min TTD",
+                    },
+                    TT = { 
+                        enUS = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        ruRU = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                        frFR = "Minimum Time To Die for units in range before using Trinkets.\nNOTE: This will calculate Time To Die of your current target OR the Area Time To Die if multiples units are detected.", 
+                    },					
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 10,                            
+                    DB = "TrinketsMinUnits",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min Units",
+                    },
+                    TT = { 
+                        enUS = "Minimum number of units in range to activate Trinkets.", 
+                        ruRU = "Minimum number of units in range to activate Trinkets.", 
+                        frFR = "Minimum number of units in range to activate Trinkets.",  
+                    },					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 40,                            
+                    DB = "TrinketsUnitsRange",
+                    DBV = 20, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max AoE range",
+                    },
+                    TT = { 
+                        enUS = "Maximum range for units detection to automatically activate trinkets.", 
+                        ruRU = "Maximum range for units detection to automatically activate trinkets.", 
+                        frFR = "Maximum range for units detection to automatically activate trinkets.",  
+                    },					
+                    M = {},
+                },
+			},
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- Interrupts Settings -- ",
                     },
                 },

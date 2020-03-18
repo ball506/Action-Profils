@@ -947,10 +947,10 @@ local function PartyRotation(unit)
     end
 
    	--Dispell
- 	if A.CleanseToxins:IsReady(unit) and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
-	then
-	    return A.CleanseToxins
-	end
+ --	if A.CleanseToxins:IsReady(unit) and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
+--	then
+--	    return A.CleanseToxins
+--	end
 
   	-- BlessingofFreedom
     if A.BlessingofFreedom:IsReady(unit) and Unit(unit):HasDeBuffs("Rooted") > 0 and not Unit(unit):InLOS() then
