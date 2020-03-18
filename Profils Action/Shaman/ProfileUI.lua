@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.3 (18.03.2020)",
+    DateTime = "v4.0.4 (18.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -74,6 +74,22 @@ A.Data.ProfileUI = {
                         enUS = "Uncheck this if you don't want to see Feral Spirit in the rotation.", 
                         ruRU = "Uncheck this if you don't want to see Feral Spirit in the rotation.", 
                         frFR = "Uncheck this if you don't want to see Feral Spirit in the rotation.",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseSyncCooldowns",
+                    DBV = false,
+                    L = { 
+                        enUS = "Cooldowns Synchronisation", 
+                        ruRU = "Cooldowns Synchronisation",
+                        frFR = "Cooldowns Synchronisation",
+                    }, 
+                    TT = { 
+                        enUS = "Uncheck this if you don't want to synchronize all your cooldowns.\nIf disabled, will use each cooldowns as soon as they are ready !", 
+                        ruRU = "Uncheck this if you don't want to synchronize all your cooldowns.\nIf disabled, will use each cooldowns as soon as they are ready !", 
+                        frFR = "Uncheck this if you don't want to synchronize all your cooldowns.\nIf disabled, will use each cooldowns as soon as they are ready !", 
                     }, 
                     M = {},
                 },
@@ -573,7 +589,7 @@ A.Data.ProfileUI = {
                     DBV = 30, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(198103) .. "\n%HP lost per sec",
+                        ANY = A.GetSpellInfo(198103) .. "\n %HP lost per sec",
                     },
                     TT = { 
                         enUS = A.GetSpellInfo(198103) .. " if player is taking damage and HP lost per seconds >= value.", 

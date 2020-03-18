@@ -681,8 +681,31 @@ A[3] = function(icon, isMulti)
 		local UnbridledFuryHP = Action.GetToggle(2, "UnbridledFuryHP")
 		local MinInterrupt = Action.GetToggle(2, "MinInterrupt")
 		local MaxInterrupt = Action.GetToggle(2, "MaxInterrupt")
+		local UseSyncCooldowns = Action.GetToggle(2, "UseSyncCooldowns")
+		
         -- variable,name=cooldown_sync,value=(talent.ascendance.enabled&(buff.ascendance.up|cooldown.ascendance.remains>50))|(!talent.ascendance.enabled&(SpiritWolvesTime>5|cooldown.SpiritWolvesTime>50))
-        VarCooldownSync = ((A.Ascendance:IsSpellLearned() and (Unit(player):HasBuffs(A.AscendanceBuff.ID, true) > 0 or A.Ascendance:GetCooldown() > 50)) or (not A.Ascendance:IsSpellLearned() and (SpiritWolvesTime > 5 or A.FeralSpirit:GetCooldown() > 50)))
+        VarCooldownSync = (UseSyncCooldowns and 
+		                    (
+		                        (
+							        A.Ascendance:IsSpellLearned() and 
+									(
+									    Unit(player):HasBuffs(A.AscendanceBuff.ID, true) > 0
+									    or 
+									    A.Ascendance:GetCooldown() > 50
+									)
+							    )
+								or 
+								(
+								    not A.Ascendance:IsSpellLearned() and 
+									(
+									    SpiritWolvesTime > 5 
+										or 
+										A.FeralSpirit:GetCooldown() > 50
+									)
+								)
+						    )
+							or not UseSyncCooldowns)
+							
 
         -- variable,name=furyCheck_SS,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.stormstrike.cost))
         VarFurycheckSs = (Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Stormstrike:GetSpellPowerCostCache())))
@@ -739,6 +762,11 @@ A[3] = function(icon, isMulti)
             return Interrupt:Show(icon)
         end	
 		
+        -- lightning_shield
+        if A.LightningShield:IsReady(unit) and Unit(player):HasBuffs(A.LightningShield.ID, true) == 0 then
+            return A.LightningShield:Show(icon)
+        end		
+			
         -- Ghost Wolf
         if isMovingFor > Action.GetToggle(2, "GhostWolfTime") and Unit(unit):GetRange() > 8 and A.GhostWolf:IsReady(player) and Action.GetToggle(2, "UseGhostWolf") and Unit(player):HasBuffs(A.GhostWolfBuff.ID, true) == 0 then
             -- Notification                    
@@ -747,7 +775,7 @@ A[3] = function(icon, isMulti)
         end
 		
 	   	-- CounterStrike Totem on Enemyburst
-        if A.IsInPvP and A.CounterStrikeTotem:IsReady(player) and A.CounterStrikeTotem:IsSpellLearned() and --Unit(player):IsFocused("DAMAGER") and 
+        if A.IsInPvP and inCombat and A.CounterStrikeTotem:IsReady(player) and A.CounterStrikeTotem:IsSpellLearned() and --Unit(player):IsFocused("DAMAGER") and 
 		(
 		    -- HP lose per sec >= 5
             Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 5 or 
@@ -760,14 +788,14 @@ A[3] = function(icon, isMulti)
         end
 	
         -- Grounding Totem Casting BreakAble CC
-        if A.IsInPvP and A.GroundingTotem:IsReady(player) and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) then 
+        if A.IsInPvP and inCombat and A.GroundingTotem:IsReady(player) and A.GroundingTotem:IsSpellLearned() and Action.ShouldReflect(unit) then 
             return A.GroundingTotem:Show(icon)
         end
 			
         -- Purge
         -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if A.Purge:IsReady(unit) and A.LastPlayerCastName ~= A.Purge:Info() and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") 
+        if A.Purge:IsReady(unit) and inCombat and A.LastPlayerCastName ~= A.Purge:Info() and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeHigh") 
 		and Unit(unit):HasBuffs(A.BlessingofProtection.ID, true) == 0
 		then
             return A.Purge:Show(icon)
@@ -776,36 +804,36 @@ A[3] = function(icon, isMulti)
         -- Purge
         -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
         -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-        if A.Purge:IsReady(unit) and A.LastPlayerCastName ~= A.Purge:Info() and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeLow") 
+        if A.Purge:IsReady(unit) and inCombat and A.LastPlayerCastName ~= A.Purge:Info() and not ShouldStop and Action.AuraIsValid("target", "UsePurge", "PurgeLow") 
 		and Unit(unit):HasBuffs(A.BlessingofProtection.ID, true) == 0
 		then
             return A.Purge:Show(icon)
         end 
 			
         -- Feral Lunge
-        if (Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 or Unit(unit):IsMovingOut()) and Unit(unit):HealthPercent() <= Action.GetToggle(2, "FeralLungeHP") and A.FeralLunge:IsReady(unit) and A.FeralLunge:IsSpellLearned() then
+        if (Unit(unit):GetRange() >= 8 and inCombat and Unit(unit):GetRange() <= 25 or Unit(unit):IsMovingOut()) and Unit(unit):HealthPercent() <= Action.GetToggle(2, "FeralLungeHP") and A.FeralLunge:IsReady(unit) and A.FeralLunge:IsSpellLearned() then
             -- Notification                    
             Action.SendNotification("Out of range: auto Feral Lunge", A.FeralLunge.ID)
             return A.FeralLunge:Show(icon)
         end
 			
 		-- Bloodlust Shamanism PvP
-        if A.BloodLust:IsReady(player) and A.BurstIsON(unit) and A.Shamanism:IsSpellLearned() and A.IsInPvP then 
+        if A.BloodLust:IsReady(player) and inCombat and A.BurstIsON(unit) and A.Shamanism:IsSpellLearned() and A.IsInPvP then 
             return A.BloodLust:Show(icon)
         end 
 			
 		-- Skyfury Totem
-        if A.IsInPvP and A.SkyfuryTotem:IsReady(player) and (Unit(unit):HealthPercent() <= SkyfuryTotemHP or Unit(unit):TimeToDie() <= SkyfuryTotemTTD) and A.BurstIsON(unit) and A.SkyfuryTotem:IsSpellLearned() then 
+        if A.IsInPvP and A.SkyfuryTotem:IsReady(player) and inCombat and (Unit(unit):HealthPercent() <= SkyfuryTotemHP or Unit(unit):TimeToDie() <= SkyfuryTotemTTD) and A.BurstIsON(unit) and A.SkyfuryTotem:IsSpellLearned() then 
             return A.SkyfuryTotem:Show(icon)
         end
 
 		-- Tremor Totem on Friendly LOC
-        if A.TremorTotem:IsReady(player) and FriendlyTeam():GetCC() > 0 then 
+        if A.TremorTotem:IsReady(player) and inCombat and FriendlyTeam():GetCC() > 0 then 
             return A.TremorTotem:Show(icon)
         end
 			
 		-- CounterStrikeTotem on enemy burst 
-        if A.IsInPvP and Unit(player):IsFocused() and A.CounterStrikeTotem:IsReady(player) and A.CounterStrikeTotem:IsSpellLearned() and
+        if A.IsInPvP and Unit(player):IsFocused() and inCombat and A.CounterStrikeTotem:IsReady(player) and A.CounterStrikeTotem:IsSpellLearned() and
 		   (
 		        -- HP lose per sec >= 30
                 Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= CounterStrikeTotemHPlosepersec 
@@ -819,7 +847,7 @@ A[3] = function(icon, isMulti)
         end
 		
 	   	-- Non SIMC Custom Trinket1
-	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and Unit(unit):GetRange() < 6 and    
+	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -830,7 +858,7 @@ A[3] = function(icon, isMulti)
    	    end 		
 	        	
 		-- Non SIMC Custom Trinket2
-	    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast and Unit(unit):GetRange() < 6 and	    
+	    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and	    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -1038,7 +1066,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- berserking,if=variable.cooldown_sync
-            if A.Berserking:AutoRacial(unit) and Racial and not Unit(player):HasHeroism() and A.BurstIsON(unit) and VarCooldownSync then
+            if A.Berserking:AutoRacial(unit) and Racial and not Unit(player):HasHeroism() and VarCooldownSync then
                 return A.Berserking:Show(icon)
             end
 			
