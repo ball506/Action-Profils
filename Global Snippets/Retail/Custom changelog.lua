@@ -534,6 +534,9 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- Added check on pet type to avoid using spells they don't have
+- Reworked the AoE mode a little (don't forget to add pet spell in YOUR spellbar)
+- Added little padding and gutter to ProfileUI
 - Fixed chat spam cause of pet spell not being in player spell bar (see above)
 - Updated to 8.3 APLs
 - Bestial Wrath special UI settings
@@ -543,7 +546,6 @@ List of latest changes :
 - Reworked AoE rotation to improve uptime on Frenzy buff
 
 IMPORTANT FOR BEASTMATERY : PLEASE ADD THE PET SPELL : CLAW, BITE OR SMACK DIRECTLY FROM PET SPELLBOOK TO YOUR SPELLBAR !
-THIS IS USED FOR THE RANGE DETECTION BY YOUR PET WHICH IS CURRENTLY THE BEST DETECTION MODE :) ENJOY AND FEEL FREE TO TRY THE OTHER IF NEEDED FOR SPECIFICS CASES
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
