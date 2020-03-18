@@ -959,6 +959,7 @@ local function PartyRotation(unit)
 	
   	-- BlessingofProtection
     if A.BlessingofProtection:IsReady(unit) and not Unit(unit):InLOS() and 	 
+	(
 	   -- HP lose per sec >= 20
         Unit(unit):GetDMG() * 100 / Unit(unit):HealthMax() >= 30 
 		or 
@@ -966,6 +967,7 @@ local function PartyRotation(unit)
 		or 
         -- TTD 
         Unit(unit):TimeToDieX(10) < 3 
+	)
 	then
         return A.BlessingofProtection
     end
