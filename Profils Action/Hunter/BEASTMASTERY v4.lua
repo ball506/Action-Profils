@@ -250,18 +250,20 @@ local function SelfDefensives()
         Action.SendNotification("[DEF] Exhilaration", A.Exhilaration.ID)
         return A.Exhilaration
     end
+	
     -- SpiritMend
+	local CurrentCreatureFamily = UnitCreatureFamily(pet)
     local SpiritMend = GetToggle(2, "SpiritMendHP")
-    if     SpiritMend >= 0 and A.SpiritMend:IsReady(player) and 
+    if     SpiritMend >= 0 and A.SpiritMend:IsReady(pet) and CurrentCreatureFamily == "Spirit Beast" and 
     (
         (     -- Auto 
             SpiritMend >= 100 and 
             (
-                -- HP lose per sec >= 10
-                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
-                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
+                -- HP lose per sec >= 30
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 30 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.30 or 
                 -- TTD 
-                Unit(player):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(15) < 3 or 
                 (
                     A.IsInPvP and 
                     (
@@ -285,8 +287,7 @@ local function SelfDefensives()
 		    -- Notification					
         Action.SendNotification("[DEF] Spirit Mend", A.SpiritMend.ID)
         return A.SpiritMend
-    end
-	
+    end	
 	
     -- AspectoftheTurtle
     local AspectoftheTurtle = GetToggle(2, "Turtle")
@@ -324,6 +325,7 @@ local function SelfDefensives()
         Action.SendNotification("[DEF] Aspect of the Turtle", A.AspectoftheTurtle.ID)	
         return A.AspectoftheTurtle
     end     
+	
     -- Stoneform on self dispel (only PvE)
     if A.Stoneform:IsRacialReady(player, true) and not A.IsInPvP and A.AuraIsValid(player, "UseDispel", "Dispel") then 
         return A.Stoneform
@@ -366,14 +368,15 @@ Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Offensive dispel rotation
 local function PurgeDispellMagic(unit)
-		
+	local CurrentCreatureFamily = UnitCreatureFamily("pet") 
+	
 	-- SpiritShock
-	if A.SpiritShock:IsReady(unit) and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
+	if A.SpiritShock:IsReady(unit) and CurrentCreatureFamily == "Spirit Beast" and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
 		return A.SpiritShock:Show(icon)
     end
 			
     -- SonicBlast
-    if A.SonicBlast:IsReady(unit) and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
+    if A.SonicBlast:IsReady(unit) and CurrentCreatureFamily == "Bat" and not ShouldStop and (Action.AuraIsValid(unit, "UseExpelEnrage", "Enrage") or Action.AuraIsValid(unit, "UseDispel", "Magic")) then
         return A.SonicBlast:Show(icon)
     end		
 end
@@ -653,6 +656,7 @@ A[3] = function(icon, isMulti)
 		if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and A.FeignDeath:IsReady(player) then
 		    return A.FeignDeath:Show(icon)
 		end
+		
         -- mendpet
         if A.MendPet:IsReady(player) and Pet:IsActive() and Unit(pet):HealthPercent() > 0 and
         (
@@ -664,7 +668,7 @@ A[3] = function(icon, isMulti)
                     Unit(pet):GetDMG() * 100 / Unit(pet):HealthMax() >= 30 or 
                     Unit(pet):GetRealTimeDMG() >= Unit(pet):HealthMax() * 0.30 or 
                     -- TTD 
-                    Unit(pet):TimeToDieX(25) < 5  
+                    Unit(pet):TimeToDieX(15) < 2  
 				)				
 			) 
 			or  
@@ -680,7 +684,7 @@ A[3] = function(icon, isMulti)
         end
 			
 	    -- summon_pet if not active
-        if not Pet:IsActive() and A.MendPet:IsReady(player) then
+        if not Pet:IsActive() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
 		    return A.MendPet:Show(icon)
         end
 			
@@ -803,7 +807,7 @@ A[3] = function(icon, isMulti)
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
 			and 
 			(
-				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
+				(UnbridledFuryWithBloodlust and Unit(player):HasHeroism())
 				or
 				(UnbridledFuryWithExecute and Unit(unit):HealthPercent() <= 30)
 			)
@@ -881,7 +885,6 @@ A[3] = function(icon, isMulti)
       	        return A.Trinket1:Show(icon)
    	        end 		
 	        
-		
 		    -- Non SIMC Custom Trinket2
 	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and	    
 			(
@@ -897,6 +900,7 @@ A[3] = function(icon, isMulti)
        
         -- AoE Cleave
         if (isMulti or GetToggle(2, "AoE")) and CanCast and
+	        (
                 -- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
@@ -916,6 +920,7 @@ A[3] = function(icon, isMulti)
 				(        				
 					MultiUnits:GetActiveEnemies() > 1					     
 				)
+			)
 	    then 
 		    
                 -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
@@ -1146,7 +1151,6 @@ A[3] = function(icon, isMulti)
 			
 			
 			-- SINGLE Target
-
             -- call_action_list,name=st,if=active_enemies<2
             if (isMulti or GetToggle(2, "AoE")) and
 			(
@@ -1355,7 +1359,6 @@ A[3] = function(icon, isMulti)
             end
         end
     end
-
     -- End on EnemyRotation()
 
     -- Defensive
