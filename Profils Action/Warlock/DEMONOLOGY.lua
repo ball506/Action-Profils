@@ -524,14 +524,8 @@ end
 TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
 	 	
 		local _, Event, _, SourceGUID, _, SourceFlags, _, DestGUID, DestName, DestFlags,_, SpellID, SpellName = CombatLogGetCurrentEventInfo()
+		--local PetID = 55659
 
-		--local CastedImplosion = (A.LastPlayerCastName == A.Implosion:Info())
-		local PetID = 55659
-		
-		--print("SourceGUID " .. SourceGUID)
-		--if SpellID and DestGUID and SourceGUID then
-		--    print("SourceGUID: " .. SourceGUID .. " casted SpellID: " .. SpellID)
-		--end
 
 		if SourceGUID and SourceGUID ~= Pet.MainGUID and PetTrackerData[55659] and PetTrackerData[55659].GUIDs[SourceGUID] then 
 			PetTrackerData[55659].GUIDs[SourceGUID].updated = TMW.time 
@@ -545,12 +539,9 @@ TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
 			PetTrackerData[55659].GUIDs[SourceGUID].petenergy = PetTrackerData[55659].GUIDs[SourceGUID].petenergy - 20
 
 		end
-		--	if PetTrackerData[55659] and SourceGUID and PetTrackerData[55659].GUIDs[SourceGUID].impcasts and PetTrackerData[55659].GUIDs[SourceGUID].impcasts < 1 then
-		--	    PetTrackerData[55659].count = PetTrackerData[55659].count - 1
-		--	end	
-		--/dump LibStub("PetLibrary"):PetTrackerData[55659].count
+
 	    -- Add Implosion and Demonic Consumption listener
-		if  (Event == "SPELL_CAST_SUCCESS") and SourceGUID == GetGUID("player") and --and SourceGUID  and
+		if  (Event == "SPELL_CAST_SUCCESS") and SourceGUID == GetGUID("player") and PetTrackerData[55659] and  --and SourceGUID  and
 	        (   -- Implosion
 	            SpellID == 196277 or SpellName == A.Implosion:Info()
 	           	or 
@@ -558,8 +549,16 @@ TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
 	       	    (SpellID == 265187 and A.DemonicConsumption:IsSpellLearned())
 	        ) 
 	    then 
-    		--PetTrackerData[55659].count = 0
-			PetTrackerData[55659] = nil 
+	        local PetID = 55659
+	        for GUID in pairs(PetTrackerData[PetID].GUIDs) do 
+  	            PetTrackerGUID[GUID] = nil 
+	        end
+	        wipe(PetTrackerData[PetID].GUIDs)
+	        if not PetTrackerData[PetID].isMain and PetTrackerData[PetID].count > 1 then 
+  	            PetTrackerData[PetID].count = 0  
+	        else  
+ 	            PetTrackerData[PetID] = nil 
+	        end 
 		end	
 	
 end
