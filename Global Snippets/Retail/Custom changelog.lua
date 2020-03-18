@@ -269,6 +269,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Added CDs check on Summon Demonic Tyran and big cooldowns >= 2min
 - Third version of Imp Tracker system. Now really good ! NO MOAR LUA ERROR
 - Fixed issue with DreadStalkers
 - Added logic for PvP Fear (arena123)
