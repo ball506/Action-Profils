@@ -695,7 +695,7 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) 
+            if A.AzsharasFontofPower:IsReady(player) 
 			and (Pull > 0 and Pull <= 6 or not A.GetToggle(1 ,"DBM"))
 			then
                 return A.AzsharasFontofPower:Show(icon)
@@ -944,7 +944,7 @@ A[3] = function(icon, isMulti)
 		    -- Burst Phase
 		    if unit ~= "mouseover" and BurstIsON(unit) and inCombat and not profileStop then
                 -- use_item,name=azsharas_font_of_power,if=(cooldown.empowered_rune_weapon.ready&!variable.other_on_use_equipped)|(cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)
-                if A.AzsharasFontofPower:IsReady(unit) and ((A.EmpowerRuneWeapon:GetCooldown() == 0 and not VarOtherOnUseEquipped) or (A.PillarofFrost:GetCooldown() <= 10 and VarOtherOnUseEquipped)) then
+                if A.AzsharasFontofPower:IsReady(player) and ((A.EmpowerRuneWeapon:GetCooldown() == 0 and not VarOtherOnUseEquipped) or (A.PillarofFrost:GetCooldown() <= 10 and VarOtherOnUseEquipped)) then
                     return A.AzsharasFontofPower:Show(icon)
                 end
 			
