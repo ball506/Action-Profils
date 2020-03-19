@@ -7,7 +7,7 @@ local Env = CNDT.Env
 local A = Action
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.1 (18.03.2020)",
+    DateTime = "v4.1.3 (19.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -254,7 +254,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 5,                            
                     DB = "BarbedShotRefreshSec",
-                    DBV = 1.8, -- Set healthpercentage @60% life. 
+                    DBV = 2, -- Set healthpercentage @60% life. 
 					Precision = 1,
                     ONOFF = true,
                     L = { 

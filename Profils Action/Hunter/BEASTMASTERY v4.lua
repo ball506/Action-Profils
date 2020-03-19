@@ -704,6 +704,17 @@ A[3] = function(icon, isMulti)
         if inCombat and A.CyclotronicBlast:IsReady(unit) and (Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 or Unit(unit):TimeToDie() < 5) then
             return A.CyclotronicBlast:Show(icon)
         end     
+
+        -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
+        if inCombat and A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
+		(
+			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + A.GetPing()
+			or 
+			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
+		)
+		then
+            return A.BarbedShot:Show(icon) 
+        end
 			
 		--Precombat
         if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
@@ -717,7 +728,7 @@ A[3] = function(icon, isMulti)
 			
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit)
+            if A.AzsharasFontofPower:IsReady(player)
 			and ((Pull > 0.1 and Pull <= 8) or not DBM) 
 			then
 			 	 -- Notification					
@@ -927,7 +938,7 @@ A[3] = function(icon, isMulti)
                 -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
                 if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
 			    (
-			        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec
+			        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + A.GetPing()
 				    or 
 				    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 		    	)
@@ -936,7 +947,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-                if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
+                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
 				(
 					-- Range by pet
 					AoEMode == "RangeByPet" and 
@@ -1085,7 +1096,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
-                if A.Multishot:IsReady(unit) and A.RapidReload:GetAzeriteRank() > 0 and 
+                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and 
 				(
 					-- Range by pet
 					AoEMode == "RangeByPet" and 
