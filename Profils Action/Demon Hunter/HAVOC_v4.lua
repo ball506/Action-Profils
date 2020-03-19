@@ -863,7 +863,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and UseHeartOfAzeroth and (GetByRange(2, 8) ) then
+            if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and ((HoABossOnly and Unit(unit):IsBoss()) or not HoABossOnly) and CanCast and UseHeartOfAzeroth and GetByRange(2, 8) then
                 return A.PurifyingBlast:Show(icon)
             end
 			
@@ -978,7 +978,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>60
-            if A.AzsharasFontofPower:IsReady(unit) and CanCast and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
+            if A.AzsharasFontofPower:IsReady(player) and CanCast and (A.Metamorphosis:GetCooldown() < 10 or A.Metamorphosis:GetCooldown() > 60) then
   	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Azshara trinket", A.AzsharasFontofPower.ID)               
 				return A.AzsharasFontofPower:Show(icon)
