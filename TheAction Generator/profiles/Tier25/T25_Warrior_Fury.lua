@@ -209,7 +209,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- worldvein_resonance

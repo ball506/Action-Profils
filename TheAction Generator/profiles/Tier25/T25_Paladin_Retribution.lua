@@ -222,7 +222,7 @@ A[3] = function(icon, isMulti)
                 A.BattlePotionofStrength:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- arcane_torrent,if=!talent.wake_of_ashes.enabled
