@@ -10,8 +10,9 @@ local UnitCooldown							= Action.UnitCooldown
 local ActiveUnitPlates						= MultiUnits:GetActiveUnitPlates()
 local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
+local UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura = UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
-local Pet                                   = LibStub("PetLibrary")
+--local Pet                                   = LibStub("PetLibrary") Too fast loading snippets ?
 local Unit                                  = Action.Unit 
 local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
@@ -32,7 +33,7 @@ local PrefixCombatEvents = {}
 local SuffixCombatEvents = {}
 Action.TasteRotation = {}
 local TR                                    = Action.TasteRotation
-
+TR.Enum = {}
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -79,9 +80,9 @@ end)
 ]]--
 
 -- Pet error hide
-TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
-    Action.TimerSet("DISABLE_PET_ERRORS", 9999, function() Pet:DisableErrors(true)  end)
-end)
+--TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
+--    Action.TimerSet("DISABLE_PET_ERRORS", 9999, function() Pet:DisableErrors(true)  end)
+--end)
 
 ------------------------------------
 --- Area Time To Die
@@ -157,6 +158,23 @@ end
 -- attack_power
 function A.Player:AttackPower()
     return UnitAttackPower("player")
+end
+
+function A.Player:AttackPowerDamageMod(offHand)
+    local useOH = offHand or false
+    local wdpsCoeff = 6
+    local ap = Player:AttackPower()
+    local minDamage, maxDamage, minOffHandDamage, maxOffHandDamage, physicalBonusPos, physicalBonusNeg, percent = UnitDamage(self.UnitID)
+    local speed, offhandSpeed = UnitAttackSpeed(self.UnitID)
+    if useOH and offhandSpeed then
+        local wSpeed = offhandSpeed * (1 + Player:HastePct() / 100)
+        local wdps = (minOffHandDamage + maxOffHandDamage) / wSpeed / percent - ap / wdpsCoeff
+            return (ap + wdps * wdpsCoeff) * 0.5
+    else
+        local wSpeed = speed * (1 + Player:HastePct() / 100)
+        local wdps = (minDamage + maxDamage) / 2 / wSpeed / percent - ap / wdpsCoeff
+        return ap + wdps * wdpsCoeff
+    end
 end
 
 ------------------------------------
@@ -328,6 +346,8 @@ local function GetTableKeyIdentify(action)
 	end 
 	return action.TableKeyIdentify
 end
+
+
 
 --------------------------------------
 --------- Action Status Frame --------
