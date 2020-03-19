@@ -254,3 +254,40 @@ function TR:MythicPlus(spec, latency)
 	end
 	return ExtraordinaryShouldPool
 end
+
+--------------------------------------
+------- Taste Custom Functions -------
+--------------------------------------
+
+-- Only checks IsUsableP against the primary resource for pooling
+function A:IsUsablePPool(Offset)
+    local CostTable = GetSpellPowerCost(self.SpellID)
+    if CostTable then
+        local CostInfo = CostTable[1]
+        local Type = CostInfo.type
+        return ( Player.PredictedResourceMap[Type]() >= ( ( (self.CustomCost and self.CustomCost[Type]) and self.CustomCost[Type]() or CostInfo.minCost ) + ( Offset and Offset or 0 ) ) )
+    else
+        return true
+    end
+end
+
+-- Base Duration of a dot/hot/channel...
+local SpellDuration = TR.Enum.SpellDuration
+function A:BaseDuration()
+    local Duration = SpellDuration[self.SpellID]
+    if not Duration or Duration == 0 then 
+	    return 0 
+	end
+    local BaseDuration = Duration[1]
+    return BaseDuration / 1000
+end
+
+-- Max Duration of a dot/hot/channel...
+function A:MaxDuration()
+    local Duration = SpellDuration[self.SpellID]
+    if not Duration or Duration == 0 then 
+	    return 0 
+	end
+    local BaseDuration = Duration[2]
+    return BaseDuration / 1000
+end
