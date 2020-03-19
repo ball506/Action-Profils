@@ -76,7 +76,7 @@ if currentClass == "DEMONHUNTER" then
 end
 
 if currentClass == "DRUID" then
-    Action.Data.DefaultProfile[currentClass] = "[Taste&ZakLL]Action - Druid"
+    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
 end
 
 
@@ -175,6 +175,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Fixed issue with Tremor Totem logic
 - Big UI update
 - New UnbridledFury settings
 - New Focused Azerite Beam settings
@@ -534,6 +535,8 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- Changed priority of Barbed Shot
+- Changed default Barbed Shot refresh value from 1.8 to 2 considering feedbacks
 - Added check on pet type to avoid using spells they don't have
 - Reworked the AoE mode a little (don't forget to add pet spell in YOUR spellbar)
 - Added little padding and gutter to ProfileUI
@@ -616,7 +619,20 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Feral Druid !
 		
-This specialisation is currently outdated :(				
+***** TEST BUILD *****
+- Reworked all the rotation
+- Added Thing From Below mouseover roots
+- Updated APLs to latest T25
+- Added Damage formula for all simc reference
+- Added AttackPowerDamageMod simc reference
+- Reworked all the UI 
+- Added Party dispell
+- Added IsUsablePPool (check next spell cost against primary ressource for pooling)
+- Added Wildcharge cat out of range
+- Added Wildcharge bear out of range
+- Added Stampeding Roar
+- Added Dash
+				
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
