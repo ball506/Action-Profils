@@ -828,7 +828,7 @@ A[3] = function(icon, isMulti)
         end
 
 		-- Tremor Totem on Friendly LOC
-        if A.TremorTotem:IsReady(player) and inCombat and FriendlyTeam():GetCC() > 0 then 
+        if A.TremorTotem:IsReady(player) and inCombat and FriendlyTeam():GetDeBuffs("Fear") > 0 then 
             return A.TremorTotem:Show(icon)
         end
 			
