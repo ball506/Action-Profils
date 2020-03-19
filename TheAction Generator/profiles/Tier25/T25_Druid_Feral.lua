@@ -289,11 +289,11 @@ A[3] = function(icon, isMulti)
                 return A.Regrowth:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- cat_form
-            if A.CatForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.CatFormBuff.ID, true) then
+            if A.CatForm:IsReady(unit) and Unit("player"):HasBuffs(A.CatFormBuff.ID, true) then
                 return A.CatForm:Show(icon)
             end
             -- prowl
@@ -399,7 +399,7 @@ A[3] = function(icon, isMulti)
                 A.CyclotronicBlast:Show(icon)
             end
             -- use_item,effect_name=azsharas_font_of_power,if=energy.deficit>=50
-            if A.AzsharasFontofPower:IsReady(unit) and (Player:EnergyDeficitPredicted() >= 50) then
+            if A.AzsharasFontofPower:IsReady(player) and (Player:EnergyDeficitPredicted() >= 50) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_items,if=buff.tigers_fury.up|target.time_to_die<20
@@ -593,7 +593,7 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
-                    -- auto_attack,if=!buff.prowl.up&!buff.shadowmeld.up
+            -- auto_attack,if=!buff.prowl.up&!buff.shadowmeld.up
             -- run_action_list,name=opener,if=variable.opener_done=0
             if (VarOpenerDone == 0) then
                 return Opener(unit);
