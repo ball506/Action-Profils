@@ -147,7 +147,23 @@ A.Data.ProfileUI = {
                         frFR = "Will only start the rotation if your current target is <= at this setting.", 
                     }, 
                     M = {},
-                },				                
+                },	
+                {
+                    E = "Checkbox", 
+                    DB = "AutoCatForm",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(768), 
+                        ruRU = "Авто" .. A.GetSpellInfo(768), 
+                        frFR = "Auto" .. A.GetSpellInfo(768), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(768), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(768), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(768), 
+                    }, 
+                    M = {},
+                },				
             }, 	
             -- Utilities
             { -- [7] 
@@ -228,6 +244,42 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            {
+                {
+                    E = "Checkbox", 
+                    DB = "UseWildChargeCat",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(49376), 
+                        ruRU = "Авто" .. A.GetSpellInfo(49376), 
+                        frFR = "Auto" .. A.GetSpellInfo(49376), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(49376), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(49376), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(49376), 
+                    }, 
+                    M = {},
+                },
+            },
+            {
+                {
+                    E = "Checkbox", 
+                    DB = "UseWildChargeBear",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto" .. A.GetSpellInfo(16979), 
+                        ruRU = "Авто" .. A.GetSpellInfo(16979), 
+                        frFR = "Auto" .. A.GetSpellInfo(16979), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(16979), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(16979), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(16979), 
+                    }, 
+                    M = {},
+                },
+            },
             -- Blood of the enemy
             { -- [7] 
                 {

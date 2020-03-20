@@ -82,7 +82,17 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     BearForm                                = Create({ Type = "Spell", ID = 5487      }), 
     CatForm                                 = Create({ Type = "Spell", ID = 768      }), 
 	CatFormBuff                             = Create({ Type = "Spell", ID = 768, Hidden = true     }),
-    AquaticForm                             = Create({ Type = "Spell", ID = 276012      }),     
+    AquaticForm                             = Create({ Type = "Spell", ID = 276012      }), 
+    -- Balance Affinity
+    Moonfire                                = Create({ Type = "Spell", ID = 8921      }), 
+	MoonfireDebuff                          = Create({ Type = "Spell", ID = 164812, Hidden = true     }),
+	Sunfire                                 = Create({ Type = "Spell", ID = 197630      }), 
+	SunfireDebuff                           = Create({ Type = "Spell", ID = 164815, Hidden = true     }),
+	SolarWrath                              = Create({ Type = "Spell", ID = 197629      }), 
+	LunarStrike                             = Create({ Type = "Spell", ID = 197628      }), 
+	Starsurge                               = Create({ Type = "Spell", ID = 197626      }), 
+	LunarEmpowermentBuff                    = Create({ Type = "Spell", ID = 164547, Hidden = true     }),
+	SolarEmpowermentBuff                    = Create({ Type = "Spell", ID = 164545, Hidden = true     }),
     -- Utilities
     EntanglingRoots                         = Create({ Type = "Spell", ID = 339     }),
     SkullBash                               = Create({ Type = "Spell", ID = 106839     }),
@@ -157,6 +167,7 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     SuperiorBattlePotionOfAgility           = Create({ Type = "Potion", ID = 168489, QueueForbidden = true      }), 
     PotionTest                              = Create({ Type = "Potion", ID = 142117, QueueForbidden = true      }),
     --Talents
+	MassEntanglement                        = Create({ Type = "Spell", ID = 102359, isTalent = true, Hidden = true     }),
     Predator                                = Create({ Type = "Spell", ID = 202021, isTalent = true, Hidden = true     }),
     Sabertooth                              = Create({ Type = "Spell", ID = 202031, isTalent = true, Hidden = true     }),
     LunarInspiration                        = Create({ Type = "Spell", ID = 155580, isTalent = true, Hidden = true     }),
@@ -444,8 +455,7 @@ local function HandleStealth()
     return     (
         (IsInRaid() and choice[1]) or 
         (IsInGroup() and choice[2]) or
-        (A.IsInPvP and choice[3]) or
-		(A.Prowl:IsReady() and choice[4])
+        (A.IsInPvP and choice[3])
     )
 end
 
@@ -498,6 +508,63 @@ local function EvaluateCycleFerociousBite559(unit)
 end
 ]]--
 
+local function BalanceAffinity(unit)
+	
+	-- Sunfire
+	if A.Sunfire:IsReady(unit) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) < 4 then
+        return A.Sunfire	
+	end
+		
+	-- Moonfire	
+	if A.Moonfire:IsReady(unit) and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) < 4 then
+        return A.Moonfire	
+	end
+		
+	-- Solar Wrath
+	if A.SolarWrath:IsReady(unit) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 3 and 
+    Unit(player):HasBuffs(A.SolarEmpowermentBuff.ID, true) > 0
+	then
+        return A.SolarWrath	
+	end
+		
+	-- Lunar Strike
+	if A.LunarStrike:IsReady(unit) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 3 and
+	Unit(player):HasBuffs(A.LunarEmpowermentBuff.ID, true) > 0
+	then
+        return A.LunarStrike
+	end
+		
+	-- Starsurge
+	if A.Starsurge:IsReady(unit) and (Unit(player):HasBuffs(A.LunarEmpowermentBuff.ID, true) == 0 or Unit(player):HasBuffs(A.SolarEmpowermentBuff.ID, true) == 0) then
+        return A.Starsurge	
+	end	
+	
+	-- Solar Wrath
+	if A.SolarWrath:IsReady(unit) and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) > 3 and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 3 and 
+    Unit(player):HasBuffs(A.SolarEmpowermentBuff.ID, true) == 0 and Unit(player):HasBuffs(A.LunarEmpowermentBuff.ID, true) == 0 and A.Starsurge:GetCooldown() > 0
+	then
+        return A.SolarWrath	
+	end
+
+end
+
+local function IsInBearForm()
+    return Player:GetStance() == 1
+end
+
+local function IsInCatForm()
+    return Player:GetStance() == 2
+end
+
+local function IsInTravelForm()
+    return Player:GetStance() == 3
+end
+
+local function IsInMoonkinForm()
+    return Player:GetStance() == 4
+end
+    
+
 -- [3] Single Rotation
 A[3] = function(icon)
     --------------------
@@ -537,6 +604,9 @@ A[3] = function(icon)
 	local RootThingFromBeyond = GetToggle(2, "RootThingFromBeyond")
 	local HandleStealth = HandleStealth()
 	local OpenerRange = GetToggle(2, "OpenerRange")
+	local UseWildChargeBear = GetToggle(2, "UseWildChargeBear")
+	local UseWildChargeCat = GetToggle(2, "UseWildChargeCat")
+	local AutoCatForm = GetToggle(2, "AutoCatForm")
     -- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
     local TrinketsAoE = GetToggle(2, "TrinketsAoE")
@@ -564,7 +634,8 @@ A[3] = function(icon)
     if not CanCast then
         return A.PoolResource:Show(icon)
     end
-    
+	
+
     ------------------------------------
     ---------- DUMMY DPS TEST ----------
     ------------------------------------
@@ -593,14 +664,18 @@ A[3] = function(icon)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------   
     local function EnemyRotation(unit)
-        
+        local IsInBearForm = IsInBearForm()
+		local IsInCatForm = IsInCatForm()
+		local IsInTravelForm = IsInTravelForm()
+		local IsInMoonkinForm = IsInMoonkinForm()
+		
 		-- Rake update damage real time
 		if A.LastPlayerCastName == A.Rake:Info() then
             LastRakeAP = Player:AttackPowerDamageMod()
         end 
 		
 		--Precombat
-        if combatTime == 0 and Unit(unit):GetRange() <= OpenerRange and not Player:IsMounted() and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if combatTime == 0 and IsInCatForm and Unit(unit):GetRange() <= OpenerRange and not Player:IsMounted() and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
             -- flask
             -- food
             -- augmentation
@@ -618,6 +693,11 @@ A[3] = function(icon)
                 return A.Regrowth:Show(icon)
             end
 			
+            -- potion,dynamic_prepot=1
+            if A.PotionofUnbridledFury:IsReady(unit) and Potion then
+                return A.PotionofUnbridledFury:Show(icon)
+            end	
+			
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -629,15 +709,10 @@ A[3] = function(icon)
             end
 			
             -- cat_form
-            if A.CatForm:IsReady(unit) and Unit(player):HasBuffs(A.CatFormBuff.ID, true) == 0 and not A.LastPlayerCastName == A.Prowl:Info() then
+            if A.CatForm:IsReady(player) and Unit(player):HasBuffs(A.CatFormBuff.ID, true) == 0 and not A.LastPlayerCastName == A.Prowl:Info() then
                 return A.CatForm:Show(icon)
             end
-			
-            -- potion,dynamic_prepot=1
-            if A.PotionofUnbridledFury:IsReady(unit) and Potion then
-                return A.PotionofUnbridledFury:Show(icon)
-            end
-			
+						
             -- berserk
             if A.Berserk:IsReady(unit) and Unit(player):HasBuffs(A.BerserkBuff.ID, true) == 0 and A.BurstIsON(unit) then
                 return A.Berserk:Show(icon)
@@ -649,22 +724,28 @@ A[3] = function(icon)
             -- Notification					
 	        Action.SendNotification("Thing from Beyond Detected!!! MOUSEOVER IT NOW!!", A.GrandDelusionsDebuff.ID)		   
 		end
-        if inCombat and A.EntanglingRoots:IsReady("mouseover") and RootThingFromBeyond and A.EntanglingRoots:IsSpellLearned() and Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 then
-            return A.EntanglingRoots:Show(icon)
+        if inCombat and RootThingFromBeyond and Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 then
+		    if A.EntanglingRoots:IsReady(unit) and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) > 0 then 
+                return A.EntanglingRoots:Show(icon)
+			else
+			    if A.MassEntanglement:IsReady(unit) and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) == 0 and A.MassEntanglement:IsSpellLearned() then
+			        return A.MassEntanglement:Show(icon)
+				end
+			end
         end
-		
+ 		
         -- Expel Enrage 
         if inCombat and A.Soothe:IsReady(unit) and Action.AuraIsValid("target", "UseExpelEnrage", "Enrage") then
             return A.Soothe:Show(icon)
         end 
 
 	    -- WildCharge Bear  out of range
-        if inCombat and Unit(player):HasBuffs(A.BearForm.ID, true) > 0 and A.WildCharge:IsSpellLearned() and A.WildChargeBear:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 + (A.BalanceAffinity:IsSpellLearned() and 3 or 0) then
+        if inCombat and IsInBearForm and A.WildCharge:IsSpellLearned() and A.WildChargeBear:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 + (A.BalanceAffinity:IsSpellLearned() and 3 or 0) then
             return A.WildChargeBear:Show(icon)
         end
 
         -- WildCharge Cat out of range
-        if inCombat and Unit(player):HasBuffs(A.CatForm.ID, true) > 0 and A.WildCharge:IsSpellLearned() and A.WildChargeCat:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 + (A.BalanceAffinity:IsSpellLearned() and 3 or 0) then
+        if inCombat and IsInCatForm and A.WildCharge:IsSpellLearned() and A.WildChargeCat:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 25 + (A.BalanceAffinity:IsSpellLearned() and 3 or 0) then
             return A.WildChargeCat:Show(icon)
         end
 			
@@ -683,11 +764,16 @@ A[3] = function(icon)
   	    if Interrupt and inCombat then 
   	        return Interrupt:Show(icon)
   	    end	
+		
+		local BalanceRotation = BalanceAffinity(unit)
+        if BalanceRotation and inCombat and IsInMoonkinForm then
+		    return BalanceRotation:Show(icon)
+		end
  
         --Opener
         -- auto_attack,if=!buff.prowl.up&!buff.shadowmeld.up        
         -- run_action_list,name=opener,if=variable.opener_done=0
-        if VarOpenerDone == 0 and Unit(unit):GetRange() <= OpenerRange then
+        if VarOpenerDone == 0 and Unit(unit):GetRange() <= OpenerRange and IsInCatForm then
         
             -- tigers_fury
             if A.TigersFury:IsReady(player) then
@@ -713,9 +799,9 @@ A[3] = function(icon)
             end
             
             -- moonfire_cat,if=!ticking
-            if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) and Unit(unit):HasDeBuffs(A.MoonfireCatDebuff.ID, true) == 0 then
-                return A.MoonfireCat:Show(icon)
-            end
+        --    if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) and Unit(unit):HasDeBuffs(A.MoonfireCatDebuff.ID, true) == 0 then
+        --        return A.MoonfireCat:Show(icon)
+       --     end
 			
             -- Manual addition: Use Primal Wrath if >= 2 targets or Rip if only 1 target
             if A.PrimalWrath:IsReady(player) and A.PrimalWrath:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) == 0 and GetByRange(2, 8) then
@@ -730,12 +816,12 @@ A[3] = function(icon)
         end
         
         -- cat_form,if=!buff.cat_form.up
-        if A.CatForm:IsReady(unit) and Unit(player):HasBuffs(A.CatFormBuff.ID, true) == 0 then
+        if A.CatForm:IsReady(player) and not IsInCatForm and AutoCatForm and ((not IsInMoonkinForm and A.BalanceAffinity:IsSpellLearned()) or not A.BalanceAffinity:IsSpellLearned()) then
             return A.CatForm:Show(icon)
         end
         
         -- rake,if=buff.prowl.up|buff.shadowmeld.up
-        if inCombat and A.Rake:IsReady(unit) and (Unit(player):HasBuffs(A.ProwlBuff.ID, true) > 0 or Unit(player):HasBuffs(A.ShadowmeldBuff.ID, true) > 0) then
+        if A.Rake:IsReady(unit) and IsInCatForm and (Unit(player):HasBuffs(A.ProwlBuff.ID, true) > 0 or Unit(player):HasBuffs(A.ShadowmeldBuff.ID, true) > 0) then
             return A.Rake:Show(icon)
         end
         
@@ -751,7 +837,7 @@ A[3] = function(icon)
         --end
 		
 		-- Tigers Fury reset
-		if inCombat and A.TigersFury:IsReady(player) and A.Predator:IsSpellLearned() and
+		if inCombat and IsInCatForm and A.TigersFury:IsReady(player) and A.Predator:IsSpellLearned() and
 		    (
 			    Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) > 0 and Unit(unit):TimeToDie() < Unit(unit):HasDeBuffs(A.RakeDebuff)  
 				or
@@ -767,7 +853,7 @@ A[3] = function(icon)
       --  end
         
         -- call_action_list,name=cooldowns
-        if inCombat and A.BurstIsON(unit) and unit ~= "mouseover" then
+        if inCombat and IsInCatForm and A.BurstIsON(unit) and unit ~= "mouseover" then
         
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
             if A.Berserk:IsReady(unit) and A.BurstIsON(unit) and (EnergyPredicted >= 30 and (A.TigersFury:GetCooldown() > 5 or Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0)) then
@@ -866,7 +952,7 @@ A[3] = function(icon)
             
             -- potion,if=target.time_to_die<65|(time_to_die<180&(buff.berserk.up|buff.incarnation.up))
             if A.PotionofUnbridledFury:IsReady(unit) and Potion and (Unit(unit):TimeToDie() < 65 or (Unit(unit):TimeToDie() < 180 and (Unit(player):HasBuffs(A.BerserkBuff.ID, true) > 0 or Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0))) then
-                A.PotionofUnbridledFury:Show(icon)
+                return A.PotionofUnbridledFury:Show(icon)
             end
             
             -- shadowmeld,if=combo_points<5&energy>=action.rake.cost&dot.rake.pmultiplier<2.1&buff.tigers_fury.up&(buff.bloodtalons.up|!talent.bloodtalons.enabled)&(!talent.incarnation.enabled|cooldown.incarnation.remains>18)&!buff.incarnation.up
@@ -875,10 +961,46 @@ A[3] = function(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.time_to_pct_30<1.5|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=25-10*debuff.blood_of_the_enemy.up|target.time_to_die<40)&buff.tigers_fury.remains>10
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):TimeToDieX(30) < 1.5 or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) == 0 and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 25 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) > 0) or Unit(unit):TimeToDie() < 40) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 10) then
+            if A.AshvanesRazorCoral:IsReady(unit) and 
+			(
+			    Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 
+				or 
+				Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) > 0 and Unit(unit):TimeToDieX(30) < 1.5 
+				or 
+				Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) == 0 and 
+				(
+				    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 25 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) > 0) 
+				    or
+				    Unit(unit):TimeToDie() < 40
+				)
+				and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 10
+			)
+			then
                 return A.AshvanesRazorCoral:Show(icon)
             end
-            
+
+            -- use_item,effect_name=writhing.segment.of.drestagath,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
+            if A.WrithingSegmentofDrestagath:IsReady(unit) and    
+            (
+                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                or
+                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 		
+            )
+            then 
+                return A.WrithingSegmentofDrestagath:Show(icon)
+            end  
+
+            -- use_item,effect_name=remote.guidance.device,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
+            if A.RemoteGuidanceDevice:IsReady(unit) and    
+            (
+                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                or
+                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 		
+            )
+            then 
+                return A.RemoteGuidanceDevice:Show(icon)
+            end    			
+		
             -- use_item,effect_name=cyclotronic_blast,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
             if A.CyclotronicBlast:IsReady(unit) and ((EnergyDeficitPredicted >= EnergyRegen * 3) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) == 0 and A.JungleFury:GetAzeriteRank() == 0) then
                 return A.CyclotronicBlast:Show(icon)
@@ -922,7 +1044,7 @@ A[3] = function(icon)
         end
 
         -- ferocious_bite,target_if=dot.rip.ticking&dot.rip.remains<3&target.time_to_die>10&(talent.sabertooth.enabled)
-        if inCombat and A.FerociousBite:IsReady(unit) then
+        if inCombat and IsInCatForm and A.FerociousBite:IsReady(unit) then
             if Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 3 and Unit(unit):TimeToDie() > 10 and A.Sabertooth:IsSpellLearned() then
                 return A.FerociousBite:Show(icon) 
             end
@@ -1083,9 +1205,9 @@ A[3] = function(icon)
             end
 			
             -- moonfire_cat,if=buff.bloodtalons.up&buff.predatory_swiftness.down&combo_points<5
-            if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) and (Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) > 0 and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) == 0 and Player:ComboPoints() < 5) then
-                return A.MoonfireCat:Show(icon)
-            end
+       --     if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) and (Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) > 0 and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) == 0 and Player:ComboPoints() < 5) then
+        --        return A.MoonfireCat:Show(icon)
+        --    end
 			
             -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))&(spell_targets.brutal_slash*A.BrutalSlash:Damage()%action.brutal_slash.cost)>(A.Shred:Damage()%action.shred.cost)
             if A.BrutalSlash:IsReady(player, true) and not A.LastPlayerCastName == A.BrutalSlash:Info() and 
@@ -1099,11 +1221,11 @@ A[3] = function(icon)
             end
 			
             -- moonfire_cat,target_if=refreshable
-            if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) then
-                if Unit(unit):HasDeBuffs(A.MoonfireCatDebuff.ID, true) < 5 then
-                    return A.MoonfireCat:Show(icon) 
-                end
-            end
+        --    if A.MoonfireCat:IsReady(unit) and ((Unit(unit):GetRange() > 5 and MoonfireOnlyOutOfRange) or not MoonfireOnlyOutOfRange) then
+        --        if Unit(unit):HasDeBuffs(A.MoonfireCatDebuff.ID, true) < 5 then
+        --            return A.MoonfireCat:Show(icon) 
+        --        end
+        --    end
 			
             -- pool_resource,for_next=1
             -- thrash_cat,if=refreshable&((variable.use_thrash=2&(!buff.incarnation.up|azerite.wild_fleshrending.enabled))|spell_targets.thrash_cat>1)
