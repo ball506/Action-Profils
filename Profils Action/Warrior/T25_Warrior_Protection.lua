@@ -392,10 +392,11 @@ local function SelfDefensives()
                 )
             ) and 
             Unit("player"):HasBuffs("DeffBuffs", true) == 0
-        ) or 
+        ) 
+		or 
         (    -- Custom
             RallyingCry < 100 and 
-            Unit(unit):HealthPercent() <= RallyingCry
+            Unit("player"):HealthPercent() <= RallyingCry
         )
     ) 
     then 
