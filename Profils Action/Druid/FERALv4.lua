@@ -592,7 +592,6 @@ A[3] = function(icon)
     local BloodoftheEnemySyncAoE = Action.GetToggle(2, "BloodoftheEnemySyncAoE")
     local BloodoftheEnemyAoETTD = Action.GetToggle(2, "BloodoftheEnemyAoETTD")
     local BloodoftheEnemyUnits = Action.GetToggle(2, "BloodoftheEnemyUnits")
-    local BloodoftheEnemySyncAoE = Action.GetToggle(2, "Potion")
     local FocusedAzeriteBeamTTD = GetToggle(2, "FocusedAzeriteBeamTTD")
     local FocusedAzeriteBeamUnits = GetToggle(2, "FocusedAzeriteBeamUnits")
     local UnbridledFuryAuto = GetToggle(2, "UnbridledFuryAuto")
@@ -714,7 +713,7 @@ A[3] = function(icon)
             end
 						
             -- berserk
-            if A.Berserk:IsReady(unit) and Unit(player):HasBuffs(A.BerserkBuff.ID, true) == 0 and A.BurstIsON(unit) then
+            if A.Berserk:IsReady(player) and Unit(player):HasBuffs(A.BerserkBuff.ID, true) == 0 and A.BurstIsON(unit) then
                 return A.Berserk:Show(icon)
             end		
 		end
@@ -856,7 +855,16 @@ A[3] = function(icon)
         if inCombat and IsInCatForm and A.BurstIsON(unit) and unit ~= "mouseover" then
         
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
-            if A.Berserk:IsReady(unit) and A.BurstIsON(unit) and (EnergyPredicted >= 30 and (A.TigersFury:GetCooldown() > 5 or Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0)) then
+            if A.Berserk:IsReady(player) and A.BurstIsON(unit) and 
+			(
+			    EnergyPredicted >= 30 and 
+				(
+				    A.TigersFury:GetCooldown() > 5 
+					or
+					Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0
+				)
+			)
+			then
                 return A.Berserk:Show(icon)
             end
             
@@ -884,12 +892,18 @@ A[3] = function(icon)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BerserkBuff.ID, true) == 0) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            
+			
             -- blood_of_the_enemy,if=buff.tigers_fury.up
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and BurstIsON(unit) and HeartOfAzeroth and 
+			(
+			    not BloodoftheEnemySyncAoE and Unit(unit):TimeToDie() > 3
+				or
+				BloodoftheEnemySyncAoE and Player:AreaTTD(OpenerRange) >= BloodoftheEnemyAoETTD and GetByRange(BloodoftheEnemyUnits, OpenerRange) 
+			)
+			then
                 return A.BloodoftheEnemy:Show(icon)
-            end
-            
+            end           
+  
             -- feral_frenzy,if=combo_points=0
             if A.FeralFrenzy:IsReady(unit) and (Player:ComboPoints() == 0) then
                 return A.FeralFrenzy:Show(icon)
@@ -930,7 +944,7 @@ A[3] = function(icon)
             end
             
             -- reaping_flames,target_if=target.time_to_die<1.5|((target.health.pct>80|target.health.pct<=20)&variable.reaping_delay>29)|(target.time_to_pct_20>30&variable.reaping_delay>44)
-            if A.ReapingFlames:IsReady(unit) then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit) then
                 if Unit(unit):TimeToDie() < 1.5 
                     or 
                     (
@@ -946,17 +960,64 @@ A[3] = function(icon)
             end
             
             -- incarnation,if=energy>=30&(cooldown.tigers_fury.remains>15|buff.tigers_fury.up)
-            if A.Incarnation:IsReady(player) and A.BurstIsON(unit) and (EnergyPredicted >= 30 and (A.TigersFury:GetCooldown() > 15 or Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0)) then
+            if A.Incarnation:IsReady(player) and A.BurstIsON(unit) and 
+			(
+			    EnergyPredicted >= 30 and 
+				(
+				    A.TigersFury:GetCooldown() > 15 
+					or
+					Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0
+				)
+			)
+			then
                 return A.Incarnation:Show(icon)
             end
-            
-            -- potion,if=target.time_to_die<65|(time_to_die<180&(buff.berserk.up|buff.incarnation.up))
-            if A.PotionofUnbridledFury:IsReady(unit) and Potion and (Unit(unit):TimeToDie() < 65 or (Unit(unit):TimeToDie() < 180 and (Unit(player):HasBuffs(A.BerserkBuff.ID, true) > 0 or Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0))) then
+
+            -- potion
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
+			and 
+			(
+				(UnbridledFuryWithBloodlust and Unit(player):HasHeroism())
+				or
+				(UnbridledFuryWithExecute and Unit(unit):HealthPercent() <= 30)
+				or
+				(
+				    Unit(unit):TimeToDie() < 65 
+					or 
+					(
+					    Unit(unit):TimeToDie() < 180 and 
+						(
+						    Unit(player):HasBuffs(A.BerserkBuff.ID, true) > 0 
+							or 
+							Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0
+						)
+					)
+				)
+			) and Unit(unit):TimeToDie() > UnbridledFuryTTD
+			then
+ 	            -- Notification					
+                Action.SendNotification("Burst: Potion of Unbridled Fury", A.PotionofUnbridledFury.ID)	
                 return A.PotionofUnbridledFury:Show(icon)
             end
             
             -- shadowmeld,if=combo_points<5&energy>=action.rake.cost&dot.rake.pmultiplier<2.1&buff.tigers_fury.up&(buff.bloodtalons.up|!talent.bloodtalons.enabled)&(!talent.incarnation.enabled|cooldown.incarnation.remains>18)&!buff.incarnation.up
-            if A.Shadowmeld:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:ComboPoints() < 5 and EnergyPredicted >= A.Rake:GetSpellPowerCost() and A.PMultiplier(unit, A.Rake.ID) < 2.1 and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and (Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) > 0 or not A.Bloodtalons:IsSpellLearned()) and (not A.Incarnation:IsSpellLearned() or A.Incarnation:GetCooldown() > 18) and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) then
+            if A.Shadowmeld:AutoRacial(unit) and Racial and A.BurstIsON(unit) and 
+			(
+			    Player:ComboPoints() < 5 and EnergyPredicted >= A.Rake:GetSpellPowerCost() and A.PMultiplier(unit, A.Rake.ID) < 2.1 and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and 
+				(
+				    Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) > 0 
+					or
+					not A.Bloodtalons:IsSpellLearned()
+				)
+				and 
+				(
+				    not A.Incarnation:IsSpellLearned() 
+					or
+					A.Incarnation:GetCooldown() > 18
+				) 
+				and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0
+			)
+			then
                 return A.Shadowmeld:Show(icon)
             end
             
@@ -971,7 +1032,7 @@ A[3] = function(icon)
 				(
 				    Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 25 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) > 0) 
 				    or
-				    Unit(unit):TimeToDie() < 40
+				    Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 40
 				)
 				and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 10
 			)
@@ -982,9 +1043,9 @@ A[3] = function(icon)
             -- use_item,effect_name=writhing.segment.of.drestagath,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
             if A.WrithingSegmentofDrestagath:IsReady(unit) and    
             (
-                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
                 or
-                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 		
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
             )
             then 
                 return A.WrithingSegmentofDrestagath:Show(icon)
@@ -993,9 +1054,9 @@ A[3] = function(icon)
             -- use_item,effect_name=remote.guidance.device,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
             if A.RemoteGuidanceDevice:IsReady(unit) and    
             (
-                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
                 or
-                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 		
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
             )
             then 
                 return A.RemoteGuidanceDevice:Show(icon)
@@ -1012,7 +1073,7 @@ A[3] = function(icon)
             end
             
             -- use_item,effect_name=azsharas_font_of_power,if=energy.deficit>=50
-            if A.AzsharasFontofPower:IsReady(player) and (EnergyDeficitPredicted >= 50) then
+            if A.AzsharasFontofPower:IsReady(player) and EnergyDeficitPredicted >= 50 then
                 return A.AzsharasFontofPower:Show(icon)
             end
             
@@ -1021,9 +1082,9 @@ A[3] = function(icon)
             -- Non SIMC Custom Trinket1
             if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and    
             (
-                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
                 or
-                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 		
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
             )
             then 
                   return A.Trinket1:Show(icon)
@@ -1033,9 +1094,9 @@ A[3] = function(icon)
             -- Non SIMC Custom Trinket2
             if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and        
             (
-                TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
                 or
-                not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD        			
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD)        			
             )
             then
                 return A.Trinket2:Show(icon)     
@@ -1070,7 +1131,7 @@ A[3] = function(icon)
         
             -- pool_resource,for_next=1            
             -- savage_roar,if=buff.savage_roar.down
-            if A.SavageRoar:IsReady(player) and (Unit(player):HasBuffs(A.SavageRoarBuff.ID, true) == 0) then
+            if A.SavageRoar:IsReadyByPassCastGCD(player) and (Unit(player):HasBuffs(A.SavageRoarBuff.ID, true) == 0) then
                 if A.SavageRoar:IsUsablePPool() then
                     return A.SavageRoar:Show(icon)
                 else
@@ -1080,7 +1141,7 @@ A[3] = function(icon)
             
             -- pool_resource,for_next=1            
             -- primal_wrath,target_if=spell_targets.primal_wrath>1&dot.rip.remains<4
-            if A.PrimalWrath:IsReady(player) then
+            if A.PrimalWrath:IsReadyByPassCastGCD(player) then
                 if GetByRange(2, 8) and Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) < 4 then
                     return A.PrimalWrath:Show(icon) 
                 end
@@ -1088,7 +1149,7 @@ A[3] = function(icon)
             
             -- pool_resource,for_next=1
             -- primal_wrath,target_if=spell_targets.primal_wrath>=2
-            if A.PrimalWrath:IsReady(player) then
+            if A.PrimalWrath:IsReadyByPassCastGCD(player) then
                 if GetByRange(2, 8) then
                     return A.PrimalWrath:Show(icon) 
                 end
@@ -1096,7 +1157,7 @@ A[3] = function(icon)
             
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
-            if A.Rip:IsReady(unit) then
+            if A.Rip:IsReadyByPassCastGCD(unit) then
                 if Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) == 0 or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.8 and A.Persistent_PMultiplier(A.Rip.ID) > A.PMultiplier(unit, A.Rip.ID)) and Unit(unit):TimeToDie() > 8 then
                     return A.Rip:Show(icon) 
                 end
@@ -1104,7 +1165,7 @@ A[3] = function(icon)
             
             -- pool_resource,for_next=1
             -- savage_roar,if=buff.savage_roar.remains<12
-            if A.SavageRoar:IsReady(player) and (Unit(player):HasBuffs(A.SavageRoarBuff.ID, true) < 12) then
+            if A.SavageRoar:IsReadyByPassCastGCD(player) and (Unit(player):HasBuffs(A.SavageRoarBuff.ID, true) < 12) then
                 if A.SavageRoar:IsUsablePPool() then
                     return A.SavageRoar:Show(icon)
                 else
@@ -1114,7 +1175,7 @@ A[3] = function(icon)
             
             -- pool_resource,for_next=1
             -- maim,if=buff.iron_jaws.up
-            if A.Maim:IsReady(unit) and (Unit(player):HasBuffs(A.IronJawsBuff.ID, true) > 0) then
+            if A.Maim:IsReadyByPassCastGCD(unit) and (Unit(player):HasBuffs(A.IronJawsBuff.ID, true) > 0) then
                 if A.Maim:IsUsablePPool() then
                     return A.Maim:Show(icon)
                 else
@@ -1148,7 +1209,7 @@ A[3] = function(icon)
             end
 			
             -- brutal_slash,if=spell_targets.brutal_slash>desired_targets
-            if A.BrutalSlash:IsReady(player, true) and GetByRange(2, 8) and A.BrutalSlash:IsSpellLearned() and not A.LastPlayerCastName == A.BrutalSlash:Info() then
+            if A.BrutalSlash:IsReadyByPassCastGCD(player, true) and GetByRange(2, 8) and A.BrutalSlash:IsSpellLearned() then
                 return A.BrutalSlash:Show(icon)
             end
 			
@@ -1210,7 +1271,7 @@ A[3] = function(icon)
         --    end
 			
             -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))&(spell_targets.brutal_slash*A.BrutalSlash:Damage()%action.brutal_slash.cost)>(A.Shred:Damage()%action.shred.cost)
-            if A.BrutalSlash:IsReady(player, true) and not A.LastPlayerCastName == A.BrutalSlash:Info() and 
+            if A.BrutalSlash:IsReadyByPassCastGCD(player, true) and 
 			(
 			    (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 ) 
 				and
@@ -1253,7 +1314,7 @@ A[3] = function(icon)
             end
 			
             -- shred,if=dot.rake.remains>(action.shred.cost+action.rake.cost-energy)%energy.regen|buff.clearcasting.react
-            if A.Shred:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) > (A.Shred:GetSpellPowerCost() + A.Rake:GetSpellPowerCost() - EnergyPredicted) / EnergyRegen or Unit(player):HasBuffsStacks(A.ClearcastingBuff.ID, true) > 0) then
+            if A.Shred:IsReadyByPassCastGCD(unit) and (Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) > (A.Shred:GetSpellPowerCost() + A.Rake:GetSpellPowerCost() - EnergyPredicted) / EnergyRegen or Unit(player):HasBuffsStacks(A.ClearcastingBuff.ID, true) > 0) then
                 return A.Shred:Show(icon)
             end
 			
