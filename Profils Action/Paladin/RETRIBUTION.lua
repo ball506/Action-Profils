@@ -432,7 +432,11 @@ local function Finishers(unit)
     -- divine_storm,if=variable.ds_castable&variable.wings_pool&((!talent.execution_sentence.enabled|(spell_targets.divine_storm>=2|cooldown.execution_sentence.remains>gcd*2))|(cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10))
     if A.DivineStorm:IsReadyByPassCastGCD(player) and Action.GetToggle(2, "AoE") and 
 	(
-	    VarDsCastable and (VarWingsPool or not A.BurstIsON(unit)) and  
+	    VarDsCastable and 
+		(
+		    VarWingsPool
+		)
+		and  
 		(
 		    (not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 8) or A.ExecutionSentence:GetCooldown() > A.GetGCD() * 2)) 
 			or 
@@ -448,8 +452,6 @@ local function Finishers(unit)
 	(
 	    (
 		    VarWingsPool 
-		    or 
-	    	not A.BurstIsON(unit)
 		) 
 		and 
 		(
@@ -534,7 +536,10 @@ A[3] = function(icon, isMulti)
 		                    not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) 
 							or 
 							(not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6)
+							or
+							A.AvengingWrath:GetCooldown() == 0 and Player:HolyPower() > 4
 						)
+					--print(VarWingsPool)
         -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
         VarDsCastable = (GetByRange(2, 8) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 8) and A.RighteousVerdict:IsSpellLearned() or Unit(player):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit(player):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
         -- variable,name=HoW,value=(!talent.hammer_of_wrath.enabled|target.health.pct>=20&!(buff.avenging_wrath.up|buff.crusade.up))
