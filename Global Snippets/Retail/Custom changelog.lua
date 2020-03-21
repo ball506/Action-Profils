@@ -585,7 +585,19 @@ As always, please report on Discord or message me directly if you need anything 
 --------------------
 	-- Arcane
 	if PlayerSpec == 62 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
+	    ChangeLog = [[
+		Welcome to Taste - Arcane Mage !
+		
+***** TEST BUILD *****
+- Reworked all the rotation
+- Updated  to latest T25 APLs
+- Fixed most lua errors
+- Added Burn & Conserve logic
+				
+
+As always, please report on Discord or message me directly if you need anything !
+
+]]  				
 	end
 
 	-- Fire
