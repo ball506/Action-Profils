@@ -995,7 +995,8 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- use_item,name=merekthas_fang,if=!buff.breath_of_sindragosa.up&!buff.pillar_of_frost.up
-                if A.MerekthasFang:IsReady(unit) and (Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) == 0 and Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) == 0) then
+                if A.MerekthasFang:IsReady(player) --and (Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) == 0 and Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) == 0) 
+				then
                     return A.MerekthasFang:Show(icon)
                 end
 			
