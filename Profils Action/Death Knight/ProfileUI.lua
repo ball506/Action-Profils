@@ -1964,10 +1964,10 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 	
                 {
-                    E         = "Slider",                                                     
+                    E       = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 20,                            
-                    DB         = "IceboundFortitudeTTD",
+                    DB      = "IceboundFortitudeTTD",
                     DBV     = 6,
                     ONLYOFF    = true,
                     L = { 
@@ -2002,12 +2002,12 @@ A.Data.ProfileUI = {
                     M = {},
                 },
                 {
-                    E         = "Slider",                                                     
+                    E       = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 100,                            
-                    DB         = "IceboundFortitudeHP",
-                    DBV     = 30,
-                    ONLYOFF    = true,
+                    DB      = "IceboundFortitudeHP",
+                    DBV     = 20,
+                    ONLYOFF = true,
                     L = { 
                         enUS = A.GetSpellInfo(48792) .. "\n<= health (%)", 
                         ruRU = A.GetSpellInfo(48792) .. "\n<= health (%)",  
@@ -2147,7 +2147,7 @@ A.Data.ProfileUI = {
                     MIN     = -1, 
                     MAX     = 20,                            
                     DB         = "VampiricBloodTTD",
-                    DBV     = 3,
+                    DBV     = 6,
                     ONLYOFF    = true,
                     L = { 
                         enUS = A.GetSpellInfo(55233) .. "\n<= time to die (sec)", 
@@ -2185,7 +2185,7 @@ A.Data.ProfileUI = {
                     MIN     = -1, 
                     MAX     = 100,                            
                     DB      = "VampiricBloodHP",
-                    DBV     = 25,
+                    DBV     = 45,
                     ONLYOFF    = true,
                     L = { 
                         enUS = A.GetSpellInfo(55233) .. "\n<= health (%)", 
@@ -2223,11 +2223,11 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 	
                 {
-                    E         = "Slider",                                                     
+                    E       = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 20,                            
-                    DB         = "DancingRuneWeaponTTD",
-                    DBV     = 3,
+                    DB      = "DancingRuneWeaponTTD",
+                    DBV     = 5,
                     ONLYOFF    = true,
                     L = { 
                         enUS = A.GetSpellInfo(49028) .. "\n<= time to die (sec)", 
@@ -2265,7 +2265,7 @@ A.Data.ProfileUI = {
                     MIN     = -1, 
                     MAX     = 100,                            
                     DB      = "DancingRuneWeaponHP",
-                    DBV     = 20,
+                    DBV     = 35,
                     ONLYOFF    = true,
                     L = { 
                         enUS = A.GetSpellInfo(49028) .. "\n<= health (%)", 
