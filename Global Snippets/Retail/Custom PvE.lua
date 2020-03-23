@@ -64,7 +64,9 @@ local ActiveMitigationSpells = {
     Channel = {}
 }
 
--- Active Mitigation checks
+-------------------------------------------------------------------------------
+-- Active mitigation 
+-------------------------------------------------------------------------------
 -- Predict dangerous attacks and use defensives if needed
 function Player:ActiveMitigationNeeded()
     -- Specials Dungeon behavior
@@ -83,6 +85,228 @@ function Player:ActiveMitigationNeeded()
     return false
 end
 
+-------------------------------------------------------------------------------
+-- Smart Reflect Mythic+
+-------------------------------------------------------------------------------
+-- @Use with inside rotation function
+
+TR.Mythic.ReflectID = {
+    --Battle of Dazar'alor
+    [283572] = "Sacred Blade",
+    [284449] = "Reckoning",
+    [286988] = "Divine Burst",
+    [282036] = "Fireball",
+    [286988] = "Searing Embers",
+    [286646] = "Gigavolt Charge",
+    [282182] = "Buster Cannon",
+    --Uldir
+    [279669] = "Bacterial Outbreak",
+    [279660] = "Endemic Virus",
+    [274262] = "Explosive Corruption",
+    --Reaping
+    [288693] = "Grave Bolt",
+    --Atal'Dazar
+    [250096] = "Wracking Pain",
+    [253562] = "Wildfire",
+    [252923] = "Venom Blast",
+    --Kings Rest
+    [267618] = "Drain Fluids",
+    [267308] = "Lighting Bolt",
+    [270493] = "Spectral Bolt",
+    [269973] = "Deathly Chill",
+    [270923] = "Shadow Bolt",
+    --Free Hold
+    [259092] = "Lightning Bolt",
+    [281420] = "Water Bolt",
+    --Siege of Boralus
+    [272588] = "Rotting Wounds",
+    [272581] = "Water Spray",
+    [257063] = "Brackish Bolt",
+    [272571] = "Choking Waters",
+    -- Temple of Sethraliss
+    [263318] = "Jolt",
+    [263775] = "Gust",
+    [268061] = "Chain Lightning",
+    [272820] = "Shock",
+    [268013] = "Flame Shock",
+    [274642] = "Lava Burst",
+    [268703] = "Lightning Bolt",
+    [272699] = "Venomous Spit",
+    --Shrine of the Storm
+    [265001] = "Sea Blast",
+    [264560] = "Choking Brine",
+    [264144] = "Undertow",
+    [268347] = "Void Bolt",
+    [267969] = "Water Blast",
+    [268233] = "Electrifying Shock",
+    [268315] = "Lash",
+    [268177] = "Windblast",
+    [268273] = "Deep Smash",
+    [268317] = "Rip Mind",
+    [265001] = "Sea Blast",
+    [274703] = "Void Bolt",
+    [268214] = "Carve Flesh",
+    --Motherlode
+    [259856] = "Chemical Burn",
+    [260318] = "Alpha Cannon",
+    [262794] = "Energy Lash",
+    [263202] = "Rock Lance",
+    [262268] = "Caustic Compound",
+    [263262] = "Shale Spit",
+    [263628] = "Charged Claw",
+    --Underrot
+    [260879] = "Blood Bolt",
+    [265084] = "Blood Bolt",
+    --Tol Dagor
+    [257777] = "Crippling Shiv",
+    [257033] = "Fuselighter",
+    [258150] = "Salt Blast",
+    [258869] = "Blaze",
+    --Waycrest Manor
+    [260701] = "Bramble Bolt",
+    [260700] = "Ruinous Bolt",
+    [260699] = "Soul Bolt",
+    [268271] = "Wracking Chord",
+    [261438] = "Wasting Strike",
+    [261440] = "Virulent Pathogen",
+    [266225] = "Darkened Lightning",
+    [273653] = "Shadow Claw",
+    [265881] = "Decaying Touch",
+    [264153] = "Spit",
+    [278444] = "Infest",
+    --Operation: Mechagn
+    [298669] = "Taze",
+    [300764] = "slimebolt",
+    [300650] = "suffocating smog",
+    [294195] = "arcing zap",
+    [291878] = "pulse blast"
+}
+-- Stormbolt Warrior Protection
+-- Specifics NPC
+TR.Mythic.Storm_Unit_List = {
+    [131009] = "Spirit of Gold",
+    [134388] = "A Knot of Snakes",
+    [129758] = "Irontide Grenadier"
+}  
+
+-- Dangerous NPC Abilities that we can Stormbolt
+TR.Mythic.Storm_Spells_List = {
+    274400,
+    274383,
+    257756,
+    276292,
+    268273,
+    256897,
+    272542,
+    272888,
+    269266,
+    258317,
+    258864,
+    259711,
+    258917,
+    264038,
+    253239,
+    269931,
+    270084,
+    270482,
+    270506,
+    270507,
+    267433,
+    267354,
+    268702,
+    268846,
+    268865,
+    258908,
+    264574,
+    272659,
+    272655,
+    267237,
+    265568,
+    277567,
+    265540,
+    268202,
+    258058,
+    257739
+}
+
+-- All units that we know we can't stun     
+TR.Mythic.StunsBlackList = {
+	-- Atal'Dazar
+	[87318] = "Dazar'ai Colossus",
+	[122984] = "Dazar'ai Colossus",
+	[128455] = "T'lonja",
+	[129553] = "Dinomancer Kish'o",
+	[129552] = "Monzumi",
+	-- Freehold
+	[129602] = "Irontide Enforcer",
+	[130400] = "Irontide Crusher",
+	-- King's Rest
+	[133935] = "Animated Guardian",
+	[134174] = "Shadow-Borne Witch Doctor",
+	[134158] = "Shadow-Borne Champion",
+	[137474] = "King Timalji",
+	[137478] = "Queen Wasi",
+	[137486] = "Queen Patlaa",
+	[137487] = "Skeletal Hunting Raptor",
+	[134251] = "Seneschal M'bara",
+	[134331] = "King Rahu'ai",
+	[137484] = "King A'akul",
+	[134739] = "Purification Construct",
+	[137969] = "Interment Construct",
+	[135231] = "Spectral Brute",
+	[138489] = "Shadow of Zul",
+	-- Shrine of the Storm
+	[134144] = "Living Current",
+	[136214] = "Windspeaker Heldis",
+	[134150] = "Runecarver Sorn",
+	[136249] = "Guardian Elemental",
+	[134417] = "Deepsea Ritualist",
+	[136353] = "Colossal Tentacle",
+	[136295] = "Sunken Denizen",
+	[136297] = "Forgotten Denizen",
+	-- Siege of Boralus
+	[129369] = "Irontide Raider",
+	[129373] = "Dockhound Packmaster",
+	[128969] = "Ashvane Commander",
+	[138255] = "Ashvane Spotter",
+	[138465] = "Ashvane Cannoneer",
+	[135245] = "Bilge Rat Demolisher",
+	-- Temple of Sethraliss
+	[134991] = "Sandfury Stonefist",
+	[139422] = "Scaled Krolusk Tamer",
+	[136076] = "Agitated Nimbus",
+	[134691] = "Static-charged Dervish",
+	[139110] = "Spark Channeler",
+	[136250] = "Hoodoo Hexer",
+	[139946] = "Heart Guardian",
+	-- MOTHERLODE!!
+	[130485] = "Mechanized Peacekeeper",
+	[136139] = "Mechanized Peacekeeper",
+	[136643] = "Azerite Extractor",
+	[134012] = "Taskmaster Askari",
+	[133430] = "Venture Co. Mastermind",
+	[133463] = "Venture Co. War Machine",
+	[133436] = "Venture Co. Skyscorcher",
+	[133482] = "Crawler Mine",
+	-- Underrot
+	[131436] = "Chosen Blood Matron",
+	[133912] = "Bloodsworn Defiler",
+	[138281] = "Faceless Corruptor",
+	-- Tol Dagor
+	[130025] = "Irontide Thug",
+	-- Waycrest Manor
+	[131677] = "Heartsbane Runeweaver",
+	[135329] = "Matron Bryndle",
+	[131812] = "Heartsbane Soulcharmer",
+	[131670] = "Heartsbane Vinetwister",
+	[135365] = "Matron Alma",
+}
+
+TR.Mythic.HOJ_Unit_List = {
+	[131009] = "Spirit of Gold",
+	[134388] = "A Knot of Snakes",
+	[129758] = "Irontide Grenadier",
+}
 -------------------------------------------------------------------------------
 -- Rogue Marked for death special functions
 -------------------------------------------------------------------------------
