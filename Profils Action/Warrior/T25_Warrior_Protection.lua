@@ -1,17 +1,38 @@
+-----------------------------
+-- Taste TMW Action Rotation
+-----------------------------
 --- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
---local HealingEngine                        = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
-local setmetatable                           = setmetatable
+local Action									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Azerite									= LibStub("AzeriteTraits")
+local Pet                                       = LibStub("PetLibrary")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -73,8 +94,9 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     IntimidatingShout                      = Action.Create({ Type = "Spell", ID = 5246     }),
 	Shockwave                              = Action.Create({ Type = "Spell", ID = 46968    }),
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368     }),
-	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570}),
+	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570     }),
  	StormboltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
+	SpellReflection                        = Action.Create({ Type = "Spell", ID = 23920     }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
@@ -501,7 +523,8 @@ A[3] = function(icon, isMulti)
 	local offensiveShieldBlock = offensiveShieldBlock()
 	local shouldCastIp = shouldCastIp()
 	local isCurrentlyTanking = isCurrentlyTanking()
-	
+	local SmartReflect = Action.GetToggle(2, "SmartReflect")
+	local SmartReflectPercent = Action.GetToggle(2, "SmartReflectPercent")
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -656,30 +679,52 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-                    -- auto_attack
+            -- auto_attack
+			
+			-- Smart Reflect			
+            if SmartReflect then
+                local Reflect_Nameplates = MultiUnits:GetActiveUnitPlates()
+                if Reflect_Nameplates then                         				
+                    for Reflect_UnitID in pairs(Reflect_Nameplates) do    
+                        local _, _, _, startCast, endCast, _, _, _, spellcastID = UnitCastingInfo(Reflect_UnitID)							
+                        if UnitIsUnit(Reflect_UnitID .. "target", "player") and TR.Mythic.ReflectID[spellcastID] and (((GetTime() * 1000) - startCast) / (endCast - startCast) * 100) > SmartReflectPercent then
+                            if A.SpellReflection:IsReadyByPassCastGCD("player") then
+                                return A.SpellReflection:Show(icon)
+                            end
+                        end     
+                    end 
+                end						
+            end			
+			
             -- intercept,if=time=0
           --  if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime() == 0) then
           --      return A.Intercept:Show(icon)
           --  end
+		  
 			-- VigilantProtector
             if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.VigilantProtector:Show(icon)
             end
 			
-
+		    -- HeroicThrow pull with option
+    	    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
+        	    return A.HeroicThrow:Show(icon)
+ 	        end
+	
 		    -- Taunt Taunt
             if A.GetToggle(2, "AutoTaunt") 
 			and combatTime > 0     
 			then 
 			    -- if not fully aggroed or we are not current target then use taunt
-			    if A.Taunt:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) then 
+			    if A.Taunt:IsReady(unit) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and Unit("player"):ThreatSituation(unit) <= 2 --and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) 
+				then 
                     return A.Taunt:Show(icon)
 				-- else if all good on current target, switch to another one we know we dont currently tank
                 else
                     local Taunt_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if Taunt_Nameplates then  
                         for Taunt_UnitID in pairs(Taunt_Nameplates) do             
-                            if not UnitIsUnit("target", Taunt_UnitID) and Unit(Taunt_UnitID):CombatTime() > 0 and A.Taunt:IsReady(Taunt_UnitID, true, nil, nil, nil) and not Unit(Taunt_UnitID):IsDummy() and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) ~= 3 then 
+                            if not UnitIsUnit("target", Taunt_UnitID) and Unit(Taunt_UnitID):CombatTime() > 0 and A.Taunt:IsReady(Taunt_UnitID) and not Unit(Taunt_UnitID):IsDummy() and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) <= 2 then 
                                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
                             end         
                         end 
@@ -826,10 +871,7 @@ A[3] = function(icon, isMulti)
 
     -- End on EnemyRotation()
 
-	-- HeroicThrow pull with option
-    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
-        return A.HeroicThrow:Show(icon)
-    end
+
 
     -- Defensive
     local SelfDefensive = SelfDefensives()
