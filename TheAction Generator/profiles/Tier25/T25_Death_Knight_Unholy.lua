@@ -58,6 +58,7 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     MagusoftheDead                         = Action.Create({ Type = "Spell", ID = 288417 }),
     SoulReaper                             = Action.Create({ Type = "Spell", ID = 130736 }),
     UnholyBlight                           = Action.Create({ Type = "Spell", ID = 115989 }),
+    BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
     ArmyoftheDamned                        = Action.Create({ Type = "Spell", ID = 276837 }),
     UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
@@ -207,7 +208,7 @@ local function EvaluateCycleSoulReaper175(unit)
     return Unit(unit):TimeToDie() < 8 and Unit(unit):TimeToDie() > 4
 end
 
-local function EvaluateCycleOutbreak511(unit)
+local function EvaluateCycleOutbreak533(unit)
     return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD()
 end
 
@@ -374,8 +375,8 @@ A[3] = function(icon, isMulti)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-            -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(A.DeathandDecay:GetCooldown()) and MultiUnits:GetByRangeInCombat(30, 5, 10) > 1) or (bool(A.Defile:GetCooldown()) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 1) or (bool(A.Apocalypse:GetCooldown()) and A.DeathandDecay:GetCooldown() == 0)) then
+            -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&active_enemies=1)
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((bool(A.DeathandDecay:GetCooldown()) and MultiUnits:GetByRangeInCombat(30, 5, 10) > 1) or (bool(A.Defile:GetCooldown()) and MultiUnits:GetByRangeInCombat(5, 5, 10) > 1) or (bool(A.Apocalypse:GetCooldown()) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2
@@ -434,20 +435,20 @@ A[3] = function(icon, isMulti)
             if A.Defile:IsReady(unit) and (bool(A.Apocalypse:GetCooldown())) then
                 return A.Defile:Show(icon)
             end
-            -- scourge_strike,if=((debuff.festering_wound.up&(cooldown.apocalypse.remains>5&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled)|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&cooldown.unholy_frenzy.remains>6))|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) and (A.Apocalypse:GetCooldown() > 5 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned()) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and A.UnholyFrenzy:GetCooldown() > 6)) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
+            -- scourge_strike,if=((debuff.festering_wound.up&(cooldown.apocalypse.remains>5&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled)|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&(cooldown.unholy_frenzy.remains>6&azerite.magus_of_the_dead.enabled|!azerite.magus_of_the_dead.enabled&cooldown.apocalypse.remains>4)))|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
+            if A.ScourgeStrike:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) and (A.Apocalypse:GetCooldown() > 5 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned()) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and (A.UnholyFrenzy:GetCooldown() > 6 and bool(A.MagusoftheDead:GetAzeriteRank()) or not bool(A.MagusoftheDead:GetAzeriteRank()) and A.Apocalypse:GetCooldown() > 4))) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
                 return A.ScourgeStrike:Show(icon)
             end
-            -- clawing_shadows,if=((debuff.festering_wound.up&(cooldown.apocalypse.remains>5&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled)|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&cooldown.unholy_frenzy.remains>6))|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) and (A.Apocalypse:GetCooldown() > 5 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned()) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and A.UnholyFrenzy:GetCooldown() > 6)) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
+            -- clawing_shadows,if=((debuff.festering_wound.up&(cooldown.apocalypse.remains>5&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled)|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&(cooldown.unholy_frenzy.remains>6&azerite.magus_of_the_dead.enabled|!azerite.magus_of_the_dead.enabled&cooldown.apocalypse.remains>4)))|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
+            if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffs(A.FesteringWoundDebuff.ID, true) and (A.Apocalypse:GetCooldown() > 5 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned()) or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and (A.UnholyFrenzy:GetCooldown() > 6 and bool(A.MagusoftheDead:GetAzeriteRank()) or not bool(A.MagusoftheDead:GetAzeriteRank()) and A.Apocalypse:GetCooldown() > 4))) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
                 return A.ClawingShadows:Show(icon)
             end
             -- death_coil,if=runic_power.deficit<20&!variable.pooling_for_gargoyle
             if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 20 and not bool(VarPoolingForGargoyle)) then
                 return A.DeathCoil:Show(icon)
             end
-            -- festering_strike,if=debuff.festering_wound.stack<4&(cooldown.apocalypse.remains<3&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&cooldown.unholy_frenzy.remains<7))|debuff.festering_wound.stack<1&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.FesteringStrike:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 4 and (A.Apocalypse:GetCooldown() < 3 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned() or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and A.UnholyFrenzy:GetCooldown() < 7)) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
+            -- festering_strike,if=debuff.festering_wound.stack<4&(cooldown.apocalypse.remains<3&(!essence.vision_of_perfection.enabled|!talent.unholy_frenzy.enabled|essence.vision_of_perfection.enabled&talent.unholy_frenzy.enabled&(cooldown.unholy_frenzy.remains<7&azerite.magus_of_the_dead.enabled|!azerite.magus_of_the_dead.enabled)))|debuff.festering_wound.stack<1&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
+            if A.FesteringStrike:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 4 and (A.Apocalypse:GetCooldown() < 3 and (not bool(A.VisionofPerfection:IsSpellLearned()) or not A.UnholyFrenzy:IsSpellLearned() or bool(A.VisionofPerfection:IsSpellLearned()) and A.UnholyFrenzy:IsSpellLearned() and (A.UnholyFrenzy:GetCooldown() < 7 and bool(A.MagusoftheDead:GetAzeriteRank()) or not bool(A.MagusoftheDead:GetAzeriteRank())))) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or bool(death_knight.disable_aotd))) then
                 return A.FesteringStrike:Show(icon)
             end
             -- death_coil,if=!variable.pooling_for_gargoyle
@@ -560,7 +561,7 @@ A[3] = function(icon, isMulti)
             end
             -- outbreak,target_if=dot.virulent_plague.remains<=gcd
             if A.Outbreak:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak511) then
+                if Action.Utils.CastTargetIf(A.Outbreak, 40, "min", EvaluateCycleOutbreak533) then
                     return A.Outbreak:Show(icon) 
                 end
             end

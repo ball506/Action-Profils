@@ -63,19 +63,19 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     Eviscerate                             = Action.Create({ Type = "Spell", ID = 196819 }),
+    SecretTechnique                        = Action.Create({ Type = "Spell", ID =  }),
     Nightblade                             = Action.Create({ Type = "Spell", ID = 195452 }),
     DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687 }),
     ReplicatingShadows                     = Action.Create({ Type = "Spell", ID =  }),
-    SecretTechnique                        = Action.Create({ Type = "Spell", ID =  }),
     Vanish                                 = Action.Create({ Type = "Spell", ID = 1856 }),
     FindWeaknessDebuff                     = Action.Create({ Type = "Spell", ID =  }),
     Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984 }),
+    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
     TheFirstDance                          = Action.Create({ Type = "Spell", ID =  }),
     Nightstalker                           = Action.Create({ Type = "Spell", ID = 14062 }),
     Shadowstrike                           = Action.Create({ Type = "Spell", ID = 185438 }),
     FindWeakness                           = Action.Create({ Type = "Spell", ID =  }),
     VanishBuff                             = Action.Create({ Type = "Spell", ID = 1856 }),
-    DeeperStratagem                        = Action.Create({ Type = "Spell", ID = 193531 }),
     BladeIntheShadows                      = Action.Create({ Type = "Spell", ID =  }),
     Weaponmaster                           = Action.Create({ Type = "Spell", ID =  }),
     Inevitability                          = Action.Create({ Type = "Spell", ID =  }),
@@ -227,11 +227,11 @@ local function EvaluateTargetIfMarkedForDeath86(unit)
 end
 
 
-local function EvaluateCycleNightblade246(unit)
+local function EvaluateCycleNightblade252(unit)
   return not bool(VarUsePriorityRotation) and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (bool(A.NightsVengeance:GetAzeriteRank()) or not bool(A.ReplicatingShadows:GetAzeriteRank()) or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
 end
 
-local function EvaluateCycleShadowstrike383(unit)
+local function EvaluateCycleShadowstrike397(unit)
   return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
 end
 
@@ -427,8 +427,8 @@ A[3] = function(icon, isMulti)
         --Finish
         local function Finish(unit)
             -- pool_resource,for_next=1
-            -- eviscerate,if=buff.nights_vengeance.up
-            if A.Eviscerate:IsReady(unit) and (Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)) then
+            -- eviscerate,if=buff.nights_vengeance.up&(spell_targets.shuriken_storm<2|variable.use_priority_rotation|!talent.secret_technique.enabled|!cooldown.secret_technique.up)
+            if A.Eviscerate:IsReady(unit) and (Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true) and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or bool(VarUsePriorityRotation) or not A.SecretTechnique:IsSpellLearned() or not A.SecretTechnique:GetCooldown() == 0)) then
                 if A.Eviscerate:IsUsablePPool() then
                     return A.Eviscerate:Show(icon)
                 else
@@ -441,7 +441,7 @@ A[3] = function(icon, isMulti)
             end
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
             if A.Nightblade:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade246) then
+                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade252) then
                     return A.Nightblade:Show(icon) 
                 end
             end
@@ -478,9 +478,9 @@ A[3] = function(icon, isMulti)
                     return A.PoolResource:Show(icon)
                 end
             end
-            -- variable,name=shd_combo_points,value=combo_points.deficit>=4
+            -- variable,name=shd_combo_points,value=combo_points.deficit>=4-(talent.deeper_stratagem.enabled&(azerite.the_first_dance.enabled&!talent.dark_shadow.enabled&!talent.subterfuge.enabled&spell_targets.shuriken_storm<3))
             if (true) then
-                VarShdComboPoints = num(Player:ComboPointsDeficit() >= 4)
+                VarShdComboPoints = num(Player:ComboPointsDeficit() >= 4 - num((A.DeeperStratagem:IsSpellLearned() and (bool(A.TheFirstDance:GetAzeriteRank()) and not A.DarkShadow:IsSpellLearned() and not A.Subterfuge:IsSpellLearned() and MultiUnits:GetByRangeInCombat(10, 5, 10) < 3))))
             end
             -- variable,name=shd_combo_points,value=combo_points.deficit<=1+2*azerite.the_first_dance.enabled,if=variable.use_priority_rotation&(talent.nightstalker.enabled|talent.dark_shadow.enabled)
             if (bool(VarUsePriorityRotation) and (A.Nightstalker:IsSpellLearned() or A.DarkShadow:IsSpellLearned())) then
@@ -520,7 +520,7 @@ A[3] = function(icon, isMulti)
             end
             -- shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
             if A.Shadowstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike383) then
+                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike397) then
                     return A.Shadowstrike:Show(icon) 
                 end
             end

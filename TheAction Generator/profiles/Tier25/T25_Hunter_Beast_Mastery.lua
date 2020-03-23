@@ -434,8 +434,8 @@ A[3] = function(icon, isMulti)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
-            -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(unit) and (A.BarbedShot:ChargesP() < 1 or not bool(A.PrimalInstincts:GetAzeriteRank())) then
+            -- aspect_of_the_wild,if=buff.aspect_of_the_wild.down&(cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled)
+            if A.AspectoftheWild:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.AspectoftheWildBuff.ID, true)) and (A.BarbedShot:ChargesP() < 1 or not bool(A.PrimalInstincts:GetAzeriteRank()))) then
                 return A.AspectoftheWild:Show(icon)
             end
             -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
@@ -454,12 +454,12 @@ A[3] = function(icon, isMulti)
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10 or Unit(unit):TimeToDie() < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
-            -- bestial_wrath,if=!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(unit) and (not Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) and A.AspectoftheWild:GetCooldown() > 15 or Unit(unit):TimeToDie() < 15 + A.GetGCD()) then
+            -- bestial_wrath,if=talent.one_with_the_pack.enabled&buff.bestial_wrath.remains<gcd|buff.bestial_wrath.down&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
+            if A.BestialWrath:IsReady(unit) and (A.OneWiththePack:IsSpellLearned() and Unit("player"):HasBuffs(A.BestialWrathBuff.ID, true) < A.GetGCD() or bool(Unit("player"):HasBuffsDown(A.BestialWrathBuff.ID, true)) and A.AspectoftheWild:GetCooldown() > 15 or Unit(unit):TimeToDie() < 15 + A.GetGCD()) then
                 return A.BestialWrath:Show(icon)
             end
-            -- barbed_shot,if=azerite.dance_of_death.rank>1&buff.dance_of_death.remains<gcd&crit_pct_current>40
-            if A.BarbedShot:IsReady(unit) and (A.DanceofDeath:GetAzeriteRank() > 1 and Unit("player"):HasBuffs(A.DanceofDeathBuff.ID, true) < A.GetGCD() and crit_pct_current > 40) then
+            -- barbed_shot,if=azerite.dance_of_death.rank>1&buff.dance_of_death.remains<gcd
+            if A.BarbedShot:IsReady(unit) and (A.DanceofDeath:GetAzeriteRank() > 1 and Unit("player"):HasBuffs(A.DanceofDeathBuff.ID, true) < A.GetGCD()) then
                 return A.BarbedShot:Show(icon)
             end
             -- blood_of_the_enemy,if=buff.aspect_of_the_wild.remains>10+gcd|target.time_to_die<10+gcd

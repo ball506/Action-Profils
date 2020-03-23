@@ -38,11 +38,12 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
     SummonPet                              = Action.Create({ Type = "Spell", ID = 883 }),
+    CoordinatedAssaultBuff                 = Action.Create({ Type = "Spell", ID = 266779 }),
+    CoordinatedAssault                     = Action.Create({ Type = "Spell", ID = 266779 }),
     SteelTrapDebuff                        = Action.Create({ Type = "Spell", ID = 162487 }),
     SteelTrap                              = Action.Create({ Type = "Spell", ID = 162488 }),
     Harpoon                                = Action.Create({ Type = "Spell", ID = 190925 }),
     MongooseBite                           = Action.Create({ Type = "Spell", ID = 259387 }),
-    CoordinatedAssaultBuff                 = Action.Create({ Type = "Spell", ID = 266779 }),
     BlurofTalonsBuff                       = Action.Create({ Type = "Spell", ID = 277969 }),
     RaptorStrike                           = Action.Create({ Type = "Spell", ID = 186270 }),
     FlankingStrike                         = Action.Create({ Type = "Spell", ID = 269751 }),
@@ -54,7 +55,6 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     SerpentSting                           = Action.Create({ Type = "Spell", ID = 259491 }),
     SerpentStingDebuff                     = Action.Create({ Type = "Spell", ID = 259491 }),
     AMurderofCrows                         = Action.Create({ Type = "Spell", ID = 131894 }),
-    CoordinatedAssault                     = Action.Create({ Type = "Spell", ID = 266779 }),
     TipoftheSpearBuff                      = Action.Create({ Type = "Spell", ID = 260286 }),
     ShrapnelBombDebuff                     = Action.Create({ Type = "Spell", ID = 270339 }),
     Chakrams                               = Action.Create({ Type = "Spell", ID = 259391 }),
@@ -240,77 +240,77 @@ local function CurrentMongooseBite ()
   return A.MongooseBiteEagle:IsSpellLearned() and A.MongooseBiteEagle or A.MongooseBiteNormal
 end
 
-local function EvaluateTargetIfFilterKillCommand53(unit)
+local function EvaluateTargetIfFilterKillCommand55(unit)
   return Unit(unit):DebuffRemainsP(A.BloodseekerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfKillCommand70(unit)
+local function EvaluateTargetIfKillCommand72(unit)
   return A.KillCommand:FullRechargeTimeP() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
 end
 
 
-local function EvaluateTargetIfFilterKillCommand132(unit)
+local function EvaluateTargetIfFilterKillCommand134(unit)
   return Unit(unit):DebuffRemainsP(A.BloodseekerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfKillCommand151(unit)
+local function EvaluateTargetIfKillCommand153(unit)
   return Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < A.MongooseBite:Cost())
 end
 
 
-local function EvaluateCycleCarveCdr450(unit)
+local function EvaluateCycleCarveCdr472(unit)
     return (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5) and (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5)
 end
 
-local function EvaluateTargetIfFilterMongooseBite486(unit)
+local function EvaluateTargetIfFilterMongooseBite508(unit)
   return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
 end
 
-local function EvaluateTargetIfMongooseBite495(unit)
+local function EvaluateTargetIfMongooseBite517(unit)
   return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true) == 10
 end
 
 
-local function EvaluateTargetIfFilterKillCommand503(unit)
+local function EvaluateTargetIfFilterKillCommand525(unit)
   return Unit(unit):DebuffRemainsP(A.BloodseekerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfKillCommand516(unit)
+local function EvaluateTargetIfKillCommand538(unit)
   return Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
 end
 
 
-local function EvaluateTargetIfFilterSerpentSting552(unit)
+local function EvaluateTargetIfFilterSerpentSting574(unit)
   return Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)
 end
 
-local function EvaluateTargetIfSerpentSting569(unit)
+local function EvaluateTargetIfSerpentSting591(unit)
   return bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff.ID, true))
 end
 
 
-local function EvaluateTargetIfFilterSerpentSting587(unit)
+local function EvaluateTargetIfFilterSerpentSting609(unit)
   return Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)
 end
 
-local function EvaluateTargetIfSerpentSting610(unit)
+local function EvaluateTargetIfSerpentSting632(unit)
   return Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.TipoftheSpearBuff.ID, true) < 3
 end
 
 
-local function EvaluateTargetIfFilterMongooseBite616(unit)
+local function EvaluateTargetIfFilterMongooseBite638(unit)
   return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
 end
 
-local function EvaluateTargetIfFilterRaptorStrike627(unit)
+local function EvaluateTargetIfFilterRaptorStrike649(unit)
   return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
 end
 
-local function EvaluateTargetIfFilterKillCommand670(unit)
+local function EvaluateTargetIfFilterKillCommand692(unit)
   return Unit(unit):DebuffRemainsP(A.BloodseekerDebuff.ID, true)
 end
 
-local function EvaluateTargetIfKillCommand683(unit)
+local function EvaluateTargetIfKillCommand705(unit)
   return Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
 end
 
@@ -336,13 +336,13 @@ local function APL()
             if A.AzsharasFontofPower:IsReady(unit) then
                 A.AzsharasFontofPower:Show(icon)
             end
-            -- use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists
-            if A.CyclotronicBlast:IsReady(unit) and (not bool(raid_event.invulnerable.exists)) then
-                A.CyclotronicBlast:Show(icon)
-            end
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
+            end
+            -- coordinated_assault
+            if A.CoordinatedAssault:IsReady(unit) and Unit("player"):HasBuffsDown(A.CoordinatedAssaultBuff.ID, true) and A.BurstIsON(unit) then
+                return A.CoordinatedAssault:Show(icon)
             end
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
@@ -378,7 +378,7 @@ local function APL()
             end
             -- kill_command,target_if=min:bloodseeker.remains,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max
             if A.KillCommand:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand53, EvaluateTargetIfKillCommand70) then 
+                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand55, EvaluateTargetIfKillCommand72) then 
                     return A.KillCommand:Show(icon) 
                 end
             end
@@ -396,7 +396,7 @@ local function APL()
             end
             -- kill_command,target_if=min:bloodseeker.remains,if=focus+cast_regen<focus.max&(buff.mongoose_fury.stack<5|focus<action.mongoose_bite.cost)
             if A.KillCommand:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand132, EvaluateTargetIfKillCommand151) then 
+                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand134, EvaluateTargetIfKillCommand153) then 
                     return A.KillCommand:Show(icon) 
                 end
             end
@@ -536,8 +536,8 @@ local function APL()
             if A.AshvanesRazorCoral:IsReady(unit) and (A.DribblingInkpod:IsExists() and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or time_to_pct_30 < 1 or (health.pct < 30 and Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) or (not A.DribblingInkpod:IsExists() and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and A.GuardianofAzeroth:GetCooldown() > 175) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
-            -- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|cooldown.cyclotronic_blast.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
-            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or bool(A.CyclotronicBlast:GetCooldown()) or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and bool(A.CoordinatedAssault:GetCooldown())) then
+            -- use_item,name=galecallers_boon,if=cooldown.memory_of_lucid_dreams.remains|talent.wildfire_infusion.enabled&cooldown.coordinated_assault.remains|!essence.memory_of_lucid_dreams.major&cooldown.coordinated_assault.remains
+            if A.GalecallersBoon:IsReady(unit) and (bool(A.MemoryofLucidDreams:GetCooldown()) or A.WildfireInfusion:IsSpellLearned() and bool(A.CoordinatedAssault:GetCooldown()) or not bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and bool(A.CoordinatedAssault:GetCooldown())) then
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power
@@ -580,6 +580,14 @@ local function APL()
             if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
                 return A.ReapingFlames:Show(icon)
             end
+            -- mongoose_bite,if=essence.memory_of_lucid_dreams.major&!cooldown.memory_of_lucid_dreams.remains
+            if A.MongooseBite:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and not bool(A.MemoryofLucidDreams:GetCooldown())) then
+                return A.MongooseBite:Show(icon)
+            end
+            -- wildfire_bomb,if=essence.memory_of_lucid_dreams.major&full_recharge_time<1.5*gcd&focus<action.mongoose_bite.cost&!cooldown.memory_of_lucid_dreams.remains
+            if A.WildfireBomb:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and A.WildfireBomb:FullRechargeTimeP() < 1.5 * A.GetGCD() and Player:Focus() < A.MongooseBite:Cost() and not bool(A.MemoryofLucidDreams:GetCooldown())) then
+                return A.WildfireBomb:Show(icon)
+            end
             -- memory_of_lucid_dreams,if=focus<action.mongoose_bite.cost&buff.coordinated_assault.up
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() < A.MongooseBite:Cost() and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
@@ -590,7 +598,7 @@ local function APL()
         local function Cleave(unit)
             -- variable,name=carve_cdr,op=setif,value=active_enemies,value_else=5,condition=active_enemies<5
             if  then
-                if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr450) then
+                if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr472) then
                     return VarCarveCdr:Show(icon) 
                 end
             end
@@ -612,7 +620,7 @@ local function APL()
             end
             -- mongoose_bite,target_if=max:debuff.latent_poison.stack,if=debuff.latent_poison.stack=10
             if A.MongooseBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MongooseBite, 8, "max", EvaluateTargetIfFilterMongooseBite486, EvaluateTargetIfMongooseBite495) then 
+                if Action.Utils.CastTargetIf(A.MongooseBite, 8, "max", EvaluateTargetIfFilterMongooseBite508, EvaluateTargetIfMongooseBite517) then 
                     return A.MongooseBite:Show(icon) 
                 end
             end
@@ -622,7 +630,7 @@ local function APL()
             end
             -- kill_command,target_if=min:bloodseeker.remains,if=focus+cast_regen<focus.max
             if A.KillCommand:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand503, EvaluateTargetIfKillCommand516) then 
+                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand525, EvaluateTargetIfKillCommand538) then 
                     return A.KillCommand:Show(icon) 
                 end
             end
@@ -644,7 +652,7 @@ local function APL()
             end
             -- serpent_sting,target_if=min:remains,if=buff.vipers_venom.react
             if A.SerpentSting:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SerpentSting, 8, "min", EvaluateTargetIfFilterSerpentSting552, EvaluateTargetIfSerpentSting569) then 
+                if Action.Utils.CastTargetIf(A.SerpentSting, 8, "min", EvaluateTargetIfFilterSerpentSting574, EvaluateTargetIfSerpentSting591) then 
                     return A.SerpentSting:Show(icon) 
                 end
             end
@@ -662,19 +670,19 @@ local function APL()
             end
             -- serpent_sting,target_if=min:remains,if=refreshable&buff.tip_of_the_spear.stack<3
             if A.SerpentSting:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.SerpentSting, 8, "min", EvaluateTargetIfFilterSerpentSting587, EvaluateTargetIfSerpentSting610) then 
+                if Action.Utils.CastTargetIf(A.SerpentSting, 8, "min", EvaluateTargetIfFilterSerpentSting609, EvaluateTargetIfSerpentSting632) then 
                     return A.SerpentSting:Show(icon) 
                 end
             end
             -- mongoose_bite,target_if=max:debuff.latent_poison.stack
             if A.MongooseBite:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.MongooseBite, 8, "max", EvaluateTargetIfFilterMongooseBite616) then 
+                if Action.Utils.CastTargetIf(A.MongooseBite, 8, "max", EvaluateTargetIfFilterMongooseBite638) then 
                     return A.MongooseBite:Show(icon) 
                 end
             end
             -- raptor_strike,target_if=max:debuff.latent_poison.stack
             if A.RaptorStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.RaptorStrike, 8, "max", EvaluateTargetIfFilterRaptorStrike627) then 
+                if Action.Utils.CastTargetIf(A.RaptorStrike, 8, "max", EvaluateTargetIfFilterRaptorStrike649) then 
                     return A.RaptorStrike:Show(icon) 
                 end
             end
@@ -700,9 +708,13 @@ local function APL()
             end
             -- kill_command,target_if=min:bloodseeker.remains,if=focus+cast_regen<focus.max
             if A.KillCommand:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand670, EvaluateTargetIfKillCommand683) then 
+                if Action.Utils.CastTargetIf(A.KillCommand, 8, "min", EvaluateTargetIfFilterKillCommand692, EvaluateTargetIfKillCommand705) then 
                     return A.KillCommand:Show(icon) 
                 end
+            end
+            -- serpent_sting,if=buff.vipers_venom.up&buff.vipers_venom.remains<1*gcd
+            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) < 1 * A.GetGCD()) then
+                return A.SerpentSting:Show(icon)
             end
             -- steel_trap,if=focus+cast_regen<focus.max
             if A.SteelTrap:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.SteelTrap:GetSpellCastTime) < Player:FocusMax()) then
