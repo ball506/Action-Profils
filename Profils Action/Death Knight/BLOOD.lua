@@ -1,3 +1,6 @@
+-----------------------------
+-- Taste TMW Action Rotation
+-----------------------------
 --- ====================== ACTION HEADER ============================ ---
 local Action									= Action
 local Listener									= Action.Listener
@@ -155,34 +158,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
@@ -259,7 +235,7 @@ local function SelfDefensives(unit)
     end 
 
     -- RuneTap	
-    if A.RuneTap:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "RuneTapIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.RuneTap:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "RuneTapIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local RT_HP                 = A.GetToggle(2, "RuneTapHP")
         local RT_TTD                = A.GetToggle(2, "RuneTapTTD")
         local RT_UNITS              = A.GetToggle(2, "RuneTapUnits")
@@ -267,7 +243,7 @@ local function SelfDefensives(unit)
                 ( RT_HP     >= 0     or RT_TTD                              >= 0                                        ) and 
                 ( RT_HP     <= 0     or Unit(player):HealthPercent()     <= RT_HP                                    ) and 
                 ( RT_TTD     <= 0     or Unit(player):TimeToDie()         <= RT_TTD                                      ) and
-				( RT_UNITS   >= 0 and MultiUnits:GetByRange(8) >= RT_UNITS and Player:AreaTTD(8) > 4 and (Unit(player):HealthPercent() <= RT_HP or Unit(player):TimeToDie() <= RT_TTD) )
+				( RT_UNITS   >= 0 and MultiUnits:GetByRange(8) >= RT_UNITS and Player:AreaTTD(8) > 3 and (Unit(player):HealthPercent() <= RT_HP or Unit(player):TimeToDie() <= RT_TTD) )
             ) 
 		    or 
             (
@@ -328,7 +304,7 @@ local function SelfDefensives(unit)
     end 
 		
     -- Icebound Fortitude	
-    if A.IceboundFortitude:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "IceboundFortitudeIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.IceboundFortitude:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "IceboundFortitudeIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local IF_HP                 = A.GetToggle(2, "IceboundFortitudeHP")
         local IF_TTD                = A.GetToggle(2, "IceboundFortitudeTTD")
             
@@ -352,7 +328,7 @@ local function SelfDefensives(unit)
     end 
 	
     -- Vampiric Blood
-    if A.VampiricBlood:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "VampiricBloodIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.VampiricBlood:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "VampiricBloodIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local VB_HP                 = A.GetToggle(2, "VampiricBloodHP")
         local VB_TTD                = A.GetToggle(2, "VampiricBloodTTD")
             
@@ -365,7 +341,7 @@ local function SelfDefensives(unit)
             (
                 A.GetToggle(2, "VampiricBloodCatchKillStrike") and 
                 (
-                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 30 ) or 
                     Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
                     Unit(player):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
                 )
@@ -378,7 +354,7 @@ local function SelfDefensives(unit)
     end
 	
     -- Dancing Rune Weapon
-    if A.DancingRuneWeapon:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "DancingRuneWeaponIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.DancingRuneWeapon:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "DancingRuneWeaponIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local DRW_HP                 = A.GetToggle(2, "DancingRuneWeaponHP")
         local DRW_TTD                = A.GetToggle(2, "DancingRuneWeaponTTD")
             
@@ -391,7 +367,7 @@ local function SelfDefensives(unit)
             (
                 A.GetToggle(2, "DancingRuneWeaponCatchKillStrike") and 
                 (
-                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 25 ) or 
                     Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
                     Unit(player):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
                 )
@@ -854,6 +830,41 @@ A[3] = function(icon, isMulti)
 			-- VigilantProtector
             if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.VigilantProtector:Show(icon)
+            end
+
+			-- EmpoweredNullBarrier
+            if A.EmpoweredNullBarrier:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.EmpoweredNullBarrier:Show(icon)
+            end
+
+			-- AnimaofDeath
+            if A.AnimaofDeath:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.AnimaofDeath:Show(icon)
+            end
+
+			-- AzerothsUndyingGift
+            if A.AzerothsUndyingGift:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.AzerothsUndyingGift:Show(icon)
+            end
+
+			-- RippleinSpace
+            if A.RippleinSpace:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.RippleinSpace:Show(icon)
+            end
+
+			-- AegisoftheDeep
+            if A.AegisoftheDeep:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.AegisoftheDeep:Show(icon)
+            end
+
+            -- memory_of_lucid_dreams
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.MemoryofLucidDreams:Show(icon)
+            end
+			
+            -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 then
+                return A.ConcentratedFlame:Show(icon)
             end
 						
 		    -- Taunt 
