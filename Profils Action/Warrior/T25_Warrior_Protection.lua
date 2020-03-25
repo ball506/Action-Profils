@@ -217,6 +217,7 @@ local Temp = {
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+local player = "player"
 
 local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0

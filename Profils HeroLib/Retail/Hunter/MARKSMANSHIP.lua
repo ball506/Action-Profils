@@ -149,9 +149,9 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     TheUnboundForce                      = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
     TheUnboundForce2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
     TheUnboundForce3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    RippleinSpace                        = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleinSpace2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleinSpace3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
     WorldveinResonance                   = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
     WorldveinResonance2                  = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
     WorldveinResonance3                  = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
@@ -265,8 +265,8 @@ local function DetermineEssenceRanks()
     S.MemoryofLucidDreams = S.MemoryofLucidDreams3:IsAvailable() and S.MemoryofLucidDreams3 or S.MemoryofLucidDreams
     S.PurifyingBlast = S.PurifyingBlast2:IsAvailable() and S.PurifyingBlast2 or S.PurifyingBlast
     S.PurifyingBlast = S.PurifyingBlast3:IsAvailable() and S.PurifyingBlast3 or S.PurifyingBlast
-    S.RippleInSpace = S.RippleInSpace2:IsAvailable() and S.RippleInSpace2 or S.RippleInSpace
-    S.RippleInSpace = S.RippleInSpace3:IsAvailable() and S.RippleInSpace3 or S.RippleInSpace
+    S.RippleinSpace = S.RippleinSpace2:IsAvailable() and S.RippleinSpace2 or S.RippleinSpace
+    S.RippleinSpace = S.RippleinSpace3:IsAvailable() and S.RippleinSpace3 or S.RippleinSpace
     S.ConcentratedFlame = S.ConcentratedFlame2:IsAvailable() and S.ConcentratedFlame2 or S.ConcentratedFlame
     S.ConcentratedFlame = S.ConcentratedFlame3:IsAvailable() and S.ConcentratedFlame3 or S.ConcentratedFlame
     S.TheUnboundForce = S.TheUnboundForce2:IsAvailable() and S.TheUnboundForce2 or S.TheUnboundForce
@@ -409,8 +409,8 @@ local function APL(icon)
             if HR.Cast(S.GuardianofAzeroth) then return "guardian_of_azeroth"; end
         end
         -- ripple_in_space,if=cooldown.trueshot.remains<7
-        if S.RippleInSpace:IsCastableP() and not ShouldStop and (S.Trueshot:CooldownRemainsP() < 7) then
-            if HR.Cast(S.RippleInSpace) then return "ripple_in_space"; end
+        if S.RippleinSpace:IsCastableP() and not ShouldStop and (S.Trueshot:CooldownRemainsP() < 7) then
+            if HR.Cast(S.RippleinSpace) then return "ripple_in_space"; end
         end
         -- memory_of_lucid_dreams,if=!buff.trueshot.up
         if S.MemoryofLucidDreams:IsCastableP() and not ShouldStop and (Player:BuffDownP(S.TrueshotBuff)) then
@@ -459,7 +459,7 @@ local function APL(icon)
             if HR.Cast(S.ArcaneShot) then return "arcane_shot 158"; end
         end
         -- aimed_shot,if=buff.trueshot.up|(buff.double_tap.down|ca_execute)&buff.precise_shots.down|full_recharge_time<cast_time&cooldown.trueshot.remains
-        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrueshotBuff) or (Player:BuffDownP(S.DoubleTap) or ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable())) and Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() and bool(S.Trueshot:CooldownRemainsP())) then
+        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrueshotBuff) or (Player:BuffDownP(S.DoubleTap) or ((Target:HealthPercentage() < 20 or Target:HealthPercentage() > 80) and S.CarefulAim:IsAvailable())) and Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:GetSpellChargesFullRechargeTime() < S.AimedShot:CastTime() and bool(S.Trueshot:CooldownRemainsP())) then
             if HR.Cast(S.AimedShot) then return "aimed_shot 170"; end
         end
         -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&buff.memory_of_lucid_dreams.up
@@ -475,7 +475,7 @@ local function APL(icon)
             if HR.Cast(S.PurifyingBlast) then return "purifying_blast"; end
         end
         -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.trueshot.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusRegen() * Player:GCD() < Player:FocusMax() and Player:BuffDownP(S.TrueshotBuff) and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight()) or S.ConcentratedFlame:FullRechargeTimeP() < Player:GCD() or Target:TimeToDie() < 5) then
+        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (Player:Focus() + Player:FocusRegen() * Player:GCD() < Player:FocusMax() and Player:BuffDownP(S.TrueshotBuff) and (Target:DebuffDownP(S.ConcentratedFlameBurn) and not S.ConcentratedFlame:InFlight()) or S.ConcentratedFlame:GetSpellChargesFullRechargeTime() < Player:GCD() or Target:TimeToDie() < 5) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
@@ -509,7 +509,7 @@ local function APL(icon)
             if HR.Cast(S.RapidFire) then return "rapid_fire 214"; end
         end
         -- aimed_shot,if=buff.trick_shots.up&(buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up)
-        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and (Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:FullRechargeTimeP() < S.AimedShot:CastTime() or Player:BuffP(S.TrueshotBuff))) then
+        if S.AimedShot:IsReadyP() and not Player:IsMoving() and not ShouldStop and (Player:BuffP(S.TrickShotsBuff) and (Player:BuffDownP(S.PreciseShotsBuff) or S.AimedShot:GetSpellChargesFullRechargeTime() < S.AimedShot:CastTime() or Player:BuffP(S.TrueshotBuff))) then
             if HR.Cast(S.AimedShot) then return "aimed_shot 226"; end
         end
         -- rapid_fire,if=buff.trick_shots.up

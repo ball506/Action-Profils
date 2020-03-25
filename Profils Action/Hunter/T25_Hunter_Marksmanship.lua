@@ -148,9 +148,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
 Action:CreateEssencesFor(ACTION_CONST_HUNTER_MARKSMANSHIP)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_HUNTER_MARKSMANSHIP], { __index = Action })
 
-
-
-
+local player = "player"
 
 local function num(val)
     if val then return 1 else return 0 end

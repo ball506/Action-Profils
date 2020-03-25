@@ -172,7 +172,7 @@ local function bool(val)
     return val ~= 0
 end
 
-
+local player = "player"
 ------------------------------------------
 ------------ ELEMENTAL PREAPL ------------
 ------------------------------------------
@@ -594,7 +594,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Aoe, Funnel, SingleUnit
+
         --Precombat
         local function Precombat(unit)
             -- flask

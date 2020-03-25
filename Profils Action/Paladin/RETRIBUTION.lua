@@ -187,7 +187,7 @@ end
 local function bool(val)
     return val ~= 0
 end
-
+local player = "player"
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------

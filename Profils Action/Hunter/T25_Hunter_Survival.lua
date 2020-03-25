@@ -1466,7 +1466,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- carve,if=dot.shrapnel_bomb.ticking
-            if A.Carve:IsReady(player, true, nil, nil) and (Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) > 0) then
+            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) > 0) then
+                return A.Carve:Show(icon)
+            end
+			
+            -- carve,if=cooldown.wildfire_bomb.remains>variable.carve_cdr%2
+            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (WildfireBomb:GetCooldown() > VarCarveCdr / 2) then
                 return A.Carve:Show(icon)
             end
 			
@@ -1514,7 +1519,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- carve,if=talent.guerrilla_tactics.enabled
-            if A.Carve:IsReady(player, true, nil, nil) and (A.GuerrillaTactics:IsSpellLearned()) then
+            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (A.GuerrillaTactics:IsSpellLearned()) then
                 return A.Carve:Show(icon)
             end
 			
@@ -1533,11 +1538,6 @@ A[3] = function(icon, isMulti)
                 if Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5 and Unit("player"):HasBuffsStacks(A.VipersVenomBuff.ID, true) > 0 then 
                     return A.SerpentSting:Show(icon) 
                 end
-            end
-
-            -- carve,if=cooldown.wildfire_bomb.remains>variable.carve_cdr%2
-            if A.Carve:IsReady(player, true, nil, nil) and (WildfireBomb:GetCooldown() > VarCarveCdr / 2) then
-                return A.Carve:Show(icon)
             end
 
             -- steel_trap

@@ -240,6 +240,7 @@ local mathmin = math.min;
 local pairs = pairs;
 local tableconcat = table.concat;
 local tostring = tostring;
+local player = "player"
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarVendettaSubterfugeCondition = false

@@ -106,8 +106,8 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -142,34 +142,7 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
+    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
@@ -214,7 +187,7 @@ end
 local function bool(val)
     return val ~= 0
 end
-
+local player = "player"
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------
@@ -304,7 +277,7 @@ A[3] = function(icon, isMulti)
             end
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power,if=!variable.disable_combustion
-            if A.AzsharasFontofPower:IsReady(unit) and (not bool(VarDisableCombustion)) then
+            if A.AzsharasFontofPower:IsReady(player) and (not bool(VarDisableCombustion)) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- mirror_image
@@ -340,7 +313,7 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- bag_of_tricks,if=buff.combustion.down
-            if A.BagofTricks:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.BagofTricks:AutoRacial(unit) and (bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
                 return A.BagofTricks:Show(icon)
             end
             -- living_bomb,if=active_enemies>1&buff.combustion.down
@@ -368,7 +341,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&(essence.memory_of_lucid_dreams.major|!essence.memory_of_lucid_dreams.minor)&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&action.rune_of_power.executing&action.rune_of_power.execute_remains<0.6|(variable.time_to_combustion<=0|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
-            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or not bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID))) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (VarTimeToCombustion <= 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
+            if A.FireBlast:IsReady(unit) and (bool(A.BlasterMaster:GetAzeriteRank()) and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or not bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID))) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and bool(Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and bool(action.rune_of_power.executing) and action.rune_of_power.execute_remains < 0.6 or (VarTimeToCombustion <= 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
                 return A.FireBlast:Show(icon)
             end
             -- call_action_list,name=active_talents
@@ -505,7 +478,7 @@ A[3] = function(icon, isMulti)
                 A.ManifestoofMadness:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=variable.time_to_combustion<=5+15*variable.font_double_on_use&!variable.disable_combustion
-            if A.AzsharasFontofPower:IsReady(unit) and (VarTimeToCombustion <= 5 + 15 * VarFontDoubleOnUse and not bool(VarDisableCombustion)) then
+            if A.AzsharasFontofPower:IsReady(player) and (VarTimeToCombustion <= 5 + 15 * VarFontDoubleOnUse and not bool(VarDisableCombustion)) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=rotcrusted_voodoo_doll,if=variable.time_to_combustion>variable.on_use_cutoff|variable.disable_combustion
@@ -649,7 +622,7 @@ A[3] = function(icon, isMulti)
                 return A.FireBlast:Show(icon)
             end
             -- fire_blast,if=talent.kindling.enabled&buff.heating_up.react&!firestarter.active&(variable.time_to_combustion>full_recharge_time+2+talent.kindling.enabled|variable.disable_combustion|(!talent.rune_of_power.enabled|cooldown.rune_of_power.remains>target.time_to_die&action.rune_of_power.charges<1)&variable.time_to_combustion>target.time_to_die)
-            if A.FireBlast:IsReady(unit) and (A.Kindling:IsSpellLearned() and bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(S.Firestarter:ActiveStatus()) and (VarTimeToCombustion > A.FireBlast:FullRechargeTimeP() + 2 + num(A.Kindling:IsSpellLearned()) or bool(VarDisableCombustion) or (not A.RuneofPower:IsSpellLearned() or A.RuneofPower:GetCooldown() > Unit(unit):TimeToDie() and A.RuneofPower:ChargesP() < 1) and VarTimeToCombustion > Unit(unit):TimeToDie())) then
+            if A.FireBlast:IsReady(unit) and (A.Kindling:IsSpellLearned() and bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(S.Firestarter:ActiveStatus()) and (VarTimeToCombustion > A.FireBlast:GetSpellChargesFullRechargeTime() + 2 + num(A.Kindling:IsSpellLearned()) or bool(VarDisableCombustion) or (not A.RuneofPower:IsSpellLearned() or A.RuneofPower:GetCooldown() > Unit(unit):TimeToDie() and A.RuneofPower:ChargesP() < 1) and VarTimeToCombustion > Unit(unit):TimeToDie())) then
                 return A.FireBlast:Show(icon)
             end
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&talent.searing_touch.enabled&target.health.pct<=30&((talent.flame_patch.enabled&active_enemies=1&!firestarter.active)|(active_enemies<4&!talent.flame_patch.enabled))
@@ -707,7 +680,7 @@ end
                 VarTimeToCombustion = A.Combustion:GetCooldown()
             end
             -- variable,name=time_to_combustion,op=max,value=cooldown.memory_of_lucid_dreams.remains,if=essence.memory_of_lucid_dreams.major&buff.memory_of_lucid_dreams.down&cooldown.memory_of_lucid_dreams.remains-cooldown.combustion.remains<=variable.hold_combustion_threshold
-            if (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and A.MemoryofLucidDreams:GetCooldown() - A.Combustion:GetCooldown() <= VarHoldCombustionThreshold) then
+            if (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and A.MemoryofLucidDreams:GetCooldown() - A.Combustion:GetCooldown() <= VarHoldCombustionThreshold) then
                 VarTimeToCombustion = math.max(VarTimeToCombustion, A.MemoryofLucidDreams:GetCooldown())
             end
             -- variable,name=time_to_combustion,op=max,value=cooldown.worldvein_resonance.remains,if=essence.worldvein_resonance.major&buff.worldvein_resonance.down&cooldown.worldvein_resonance.remains-cooldown.combustion.remains<=variable.hold_combustion_threshold
@@ -731,7 +704,7 @@ end
                 return A.ConcentratedFlame:Show(icon)
             end
             -- reaping_flames
-            if A.ReapingFlames:IsReady(unit) then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
                 return A.ReapingFlames:Show(icon)
             end
             -- focused_azerite_beam
@@ -743,15 +716,15 @@ end
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.RippleInSpace:Show(icon)
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.RippleinSpace:Show(icon)
             end
             -- the_unbound_force
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.TheUnboundForce:Show(icon)
             end
             -- rune_of_power,if=talent.firestarter.enabled&firestarter.remains>full_recharge_time|variable.time_to_combustion>variable.combustion_rop_cutoff&buff.combustion.down|target.time_to_die<variable.time_to_combustion&buff.combustion.down|variable.disable_combustion
-            if A.RuneofPower:IsReady(unit) and (A.Firestarter:IsSpellLearned() and S.Firestarter:ActiveRemains() > A.RuneofPower:FullRechargeTimeP() or VarTimeToCombustion > VarCombustionRopCutoff and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) or Unit(unit):TimeToDie() < VarTimeToCombustion and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) or bool(VarDisableCombustion)) then
+            if A.RuneofPower:IsReady(unit) and (A.Firestarter:IsSpellLearned() and S.Firestarter:ActiveRemains() > A.RuneofPower:GetSpellChargesFullRechargeTime() or VarTimeToCombustion > VarCombustionRopCutoff and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) or Unit(unit):TimeToDie() < VarTimeToCombustion and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) or bool(VarDisableCombustion)) then
                 return A.RuneofPower:Show(icon)
             end
             -- call_action_list,name=combustion_phase,if=!variable.disable_combustion&(talent.rune_of_power.enabled&variable.time_to_combustion<=action.rune_of_power.cast_time|variable.time_to_combustion<=0)&!firestarter.active|buff.combustion.up
@@ -759,7 +732,7 @@ end
                 local ShouldReturn = CombustionPhase(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=(essence.memory_of_lucid_dreams.major|essence.memory_of_lucid_dreams.minor&azerite.blaster_master.enabled)&charges=max_charges&!buff.hot_streak.react&!(buff.heating_up.react&(buff.combustion.up&(action.fireball.in_flight|action.pyroblast.in_flight|action.scorch.executing)|target.health.pct<=30&action.scorch.executing))&!(!buff.heating_up.react&!buff.hot_streak.react&buff.combustion.down&(action.fireball.in_flight|action.pyroblast.in_flight))
-            if A.FireBlast:IsReady(unit) and ((bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) or bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID)) and bool(A.BlasterMaster:GetAzeriteRank())) and A.FireBlast:ChargesP() == A.FireBlast:MaxCharges() and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not (bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or bool(action.scorch.executing)) or Unit(unit):HealthPercent() <= 30 and bool(action.scorch.executing))) and not (not bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
+            if A.FireBlast:IsReady(unit) and ((Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or bool(Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID)) and bool(A.BlasterMaster:GetAzeriteRank())) and A.FireBlast:ChargesP() == A.FireBlast:MaxCharges() and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not (bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or bool(action.scorch.executing)) or Unit(unit):HealthPercent() <= 30 and bool(action.scorch.executing))) and not (not bool(Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
                 return A.FireBlast:Show(icon)
             end
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=firestarter.active&charges>=1&(!variable.fire_blast_pooling|buff.rune_of_power.up)&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)&(!action.fireball.executing&!action.pyroblast.in_flight&buff.heating_up.up|action.fireball.executing&buff.hot_streak.down|action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
@@ -772,11 +745,11 @@ end
             end
             -- variable,name=fire_blast_pooling,value=talent.rune_of_power.enabled&cooldown.rune_of_power.remains<cooldown.fire_blast.full_recharge_time&(variable.time_to_combustion>variable.combustion_rop_cutoff|variable.disable_combustion|firestarter.active)&(cooldown.rune_of_power.remains<target.time_to_die|action.rune_of_power.charges>0)|!variable.disable_combustion&variable.time_to_combustion<action.fire_blast.full_recharge_time+cooldown.fire_blast.duration*azerite.blaster_master.enabled&!firestarter.active&variable.time_to_combustion<target.time_to_die|talent.firestarter.enabled&firestarter.active&firestarter.remains<cooldown.fire_blast.full_recharge_time+cooldown.fire_blast.duration*azerite.blaster_master.enabled
             if (true) then
-                VarFireBlastPooling = num(A.RuneofPower:IsSpellLearned() and A.RuneofPower:GetCooldown() < A.FireBlast:FullRechargeTimeP() and (VarTimeToCombustion > VarCombustionRopCutoff or bool(VarDisableCombustion) or bool(S.Firestarter:ActiveStatus())) and (A.RuneofPower:GetCooldown() < Unit(unit):TimeToDie() or A.RuneofPower:ChargesP() > 0) or not bool(VarDisableCombustion) and VarTimeToCombustion < A.FireBlast:FullRechargeTimeP() + A.FireBlast:BaseDuration() * A.BlasterMaster:GetAzeriteRank() and not bool(S.Firestarter:ActiveStatus()) and VarTimeToCombustion < Unit(unit):TimeToDie() or A.Firestarter:IsSpellLearned() and bool(S.Firestarter:ActiveStatus()) and S.Firestarter:ActiveRemains() < A.FireBlast:FullRechargeTimeP() + A.FireBlast:BaseDuration() * A.BlasterMaster:GetAzeriteRank())
+                VarFireBlastPooling = num(A.RuneofPower:IsSpellLearned() and A.RuneofPower:GetCooldown() < A.FireBlast:GetSpellChargesFullRechargeTime() and (VarTimeToCombustion > VarCombustionRopCutoff or bool(VarDisableCombustion) or bool(S.Firestarter:ActiveStatus())) and (A.RuneofPower:GetCooldown() < Unit(unit):TimeToDie() or A.RuneofPower:ChargesP() > 0) or not bool(VarDisableCombustion) and VarTimeToCombustion < A.FireBlast:GetSpellChargesFullRechargeTime() + A.FireBlast:BaseDuration() * A.BlasterMaster:GetAzeriteRank() and not bool(S.Firestarter:ActiveStatus()) and VarTimeToCombustion < Unit(unit):TimeToDie() or A.Firestarter:IsSpellLearned() and bool(S.Firestarter:ActiveStatus()) and S.Firestarter:ActiveRemains() < A.FireBlast:GetSpellChargesFullRechargeTime() + A.FireBlast:BaseDuration() * A.BlasterMaster:GetAzeriteRank())
             end
             -- variable,name=phoenix_pooling,value=talent.rune_of_power.enabled&cooldown.rune_of_power.remains<cooldown.phoenix_flames.full_recharge_time&(variable.time_to_combustion>variable.combustion_rop_cutoff|variable.disable_combustion)&(cooldown.rune_of_power.remains<target.time_to_die|action.rune_of_power.charges>0)|!variable.disable_combustion&variable.time_to_combustion<action.phoenix_flames.full_recharge_time&variable.time_to_combustion<target.time_to_die
             if (true) then
-                VarPhoenixPooling = num(A.RuneofPower:IsSpellLearned() and A.RuneofPower:GetCooldown() < A.PhoenixFlames:FullRechargeTimeP() and (VarTimeToCombustion > VarCombustionRopCutoff or bool(VarDisableCombustion)) and (A.RuneofPower:GetCooldown() < Unit(unit):TimeToDie() or A.RuneofPower:ChargesP() > 0) or not bool(VarDisableCombustion) and VarTimeToCombustion < A.PhoenixFlames:FullRechargeTimeP() and VarTimeToCombustion < Unit(unit):TimeToDie())
+                VarPhoenixPooling = num(A.RuneofPower:IsSpellLearned() and A.RuneofPower:GetCooldown() < A.PhoenixFlames:GetSpellChargesFullRechargeTime() and (VarTimeToCombustion > VarCombustionRopCutoff or bool(VarDisableCombustion)) and (A.RuneofPower:GetCooldown() < Unit(unit):TimeToDie() or A.RuneofPower:ChargesP() > 0) or not bool(VarDisableCombustion) and VarTimeToCombustion < A.PhoenixFlames:GetSpellChargesFullRechargeTime() and VarTimeToCombustion < Unit(unit):TimeToDie())
             end
             -- call_action_list,name=standard_rotation
             if (true) then

@@ -169,6 +169,8 @@ local function DetermineEssenceRanks()
 end
 DetermineEssenceRanks = A.MakeFunctionCachedStatic(DetermineEssenceRanks)
 
+local player = "player"
+
 -- Pet Handler UI --
 local function HandlePetChoice()
     local choice = Action.GetToggle(2, "PetChoice")

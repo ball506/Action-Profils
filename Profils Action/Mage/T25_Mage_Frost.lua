@@ -107,8 +107,8 @@ Action[ACTION_CONST_MAGE_FROST] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -162,9 +162,9 @@ Action[ACTION_CONST_MAGE_FROST] = {
     TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
     TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
     TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
     WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
     WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
     WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
@@ -189,7 +189,7 @@ end
 local function bool(val)
     return val ~= 0
 end
-
+local player = "player"
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------
@@ -246,7 +246,7 @@ A[3] = function(icon, isMulti)
             end
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- mirror_image
@@ -350,7 +350,7 @@ A[3] = function(icon, isMulti)
                 return A.RuneofPower:Show(icon)
             end
             -- call_action_list,name=talent_rop,if=talent.rune_of_power.enabled&active_enemies=1&cooldown.rune_of_power.full_recharge_time<cooldown.frozen_orb.remains
-            if (A.RuneofPower:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and A.RuneofPower:FullRechargeTimeP() < A.FrozenOrb:GetCooldown()) then
+            if (A.RuneofPower:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and A.RuneofPower:GetSpellChargesFullRechargeTime() < A.FrozenOrb:GetCooldown()) then
                 local ShouldReturn = TalentRop(unit); if ShouldReturn then return ShouldReturn; end
             end
             -- potion,if=prev_gcd.1.icy_veins|target.time_to_die<30
@@ -383,7 +383,7 @@ A[3] = function(icon, isMulti)
                 return A.AncestralCall:Show(icon)
             end
             -- bag_of_tricks
-            if A.BagofTricks:IsReady(unit) then
+            if A.BagofTricks:AutoRacial(unit) then
                 return A.BagofTricks:Show(icon)
             end
         end
@@ -407,15 +407,15 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- ripple_in_space,if=buff.rune_of_power.down|active_enemies>3
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
-                return A.RippleInSpace:Show(icon)
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
+                return A.RippleinSpace:Show(icon)
             end
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- reaping_flames,if=buff.rune_of_power.down
-            if A.ReapingFlames:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true))) then
                 return A.ReapingFlames:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up
