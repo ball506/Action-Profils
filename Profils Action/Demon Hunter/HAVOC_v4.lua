@@ -119,8 +119,8 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions, 
-    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionofAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
@@ -1025,6 +1025,19 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
 			
+            -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
+			(
+			    Unit(unit):TimeToDie() > EyeBeamTTD 
+				or 
+				Unit(unit):IsBoss()
+			) 
+			then
+ 	            -- Notification					
+                Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
+				return A.EyeBeam:Show(icon)
+            end	
+			
             -- death_sweep,if=variable.blade_dance
             if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem()
 			then
@@ -1055,20 +1068,7 @@ A[3] = function(icon, isMulti)
 				-- EyeBeam cooldown < Blade Dance Cooldown = stop using Blade Dance
                 return A.BladeDance:Show(icon)
             end	
-			
-            -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
-			(
-			    Unit(unit):TimeToDie() > EyeBeamTTD 
-				or 
-				Unit(unit):IsBoss()
-			) 
-			then
- 	            -- Notification					
-                Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
-				return A.EyeBeam:Show(icon)
-            end	
-			
+						
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
             if A.FelBarrage:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and 
 			(

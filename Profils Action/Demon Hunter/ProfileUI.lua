@@ -1,6 +1,6 @@
---------------------
--- Taste TMW Action ProfileUI
-
+--------------------------------
+-- Taste TMW Action ProfileUI --
+--------------------------------
 local TMW											= TMW 
 local CNDT											= TMW.CNDT
 local Env											= CNDT.Env
