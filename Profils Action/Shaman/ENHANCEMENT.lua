@@ -1,4 +1,6 @@
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -30,6 +32,7 @@ local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
 local Pet                                       = LibStub("PetLibrary")
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -590,7 +593,6 @@ A[3] = function(icon, isMulti)
     local Pull = Action.BossMods_Pulling()
 	local CanCast = true
 	local profileStop = false
-    local unit = player
     local SpiritWolvesTime = SpiritWolvesTime()
     local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
     local Potion = Action.GetToggle(1, "Potion")	
