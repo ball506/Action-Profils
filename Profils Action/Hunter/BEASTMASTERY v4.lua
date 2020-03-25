@@ -562,7 +562,6 @@ A[3] = function(icon, isMulti)
 	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
 	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
 	local AoEMode = A.GetToggle(2, "AoEMode")
-	Pet:DisableErrors(true)
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -1281,7 +1280,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bag_of_tricks,if=buff.bestial_wrath.down|target.time_to_die<5
-            if A.BagofTricks:IsReady(unit) and (Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 or Unit(unit):TimeToDie() < 5) then
+            if A.BagofTricks:AutoRacial(unit) and (Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 or Unit(unit):TimeToDie() < 5) then
                 return A.BagofTricks:Show(icon)
             end
 			
