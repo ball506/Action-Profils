@@ -119,8 +119,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     VialofStorms                           = Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorPotionofUnbridledFury          = Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -884,7 +884,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- reaping_flames
-        if A.ReapingFlames:IsReady(unit) then
+        if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
             return A.ReapingFlames:Show(icon)
         end
 			
