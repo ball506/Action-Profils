@@ -148,8 +148,8 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
 	AbyssalHealingPotion    			   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }),	   
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
@@ -205,9 +205,9 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
     TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
     TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
+    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
+    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
+    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
     WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
     WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
     WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
@@ -1129,7 +1129,7 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
 			
@@ -1161,8 +1161,8 @@ A[3] = function(icon, isMulti)
             end
 			
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.RippleInSpace:Show(icon)
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+                return A.RippleinSpace:Show(icon)
             end
 			
             -- worldvein_resonance
@@ -1176,7 +1176,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
-            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or Unit(unit):TimeToDieX(20) > 30) then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or Unit(unit):TimeToDieX(20) > 30) then
                 return A.ReapingFlames:Show(icon)
             end
         end
@@ -1184,7 +1184,7 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- use_item,name=azsharas_font_of_power,if=!stealthed.all&master_assassin_remains=0&(cooldown.vendetta.remains<?cooldown.toxic_blade.remains)<10+10*equipped.ashvanes_razor_coral&!debuff.vendetta.up&!debuff.toxic_blade.up
-            if A.AzsharasFontofPower:IsReady(unit) and (not Player:IsStealthed() and MasterAssassinRemains == 0 and num((A.Vendetta:GetCooldown() < A.ToxicBlade:GetCooldown())) < 10 + 10 * num(A.AshvanesRazorCoral:IsExists()) and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0) then
+            if A.AzsharasFontofPower:IsReady(player) and (not Player:IsStealthed() and MasterAssassinRemains == 0 and num((A.Vendetta:GetCooldown() < A.ToxicBlade:GetCooldown())) < 10 + 10 * num(A.AshvanesRazorCoral:IsExists()) and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             -- call_action_list,name=essences,if=!stealthed.all&dot.rupture.ticking&master_assassin_remains=0
@@ -1628,7 +1628,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bag_of_tricks
-            if A.BagofTricks:IsReady(unit) then
+            if A.BagofTricks:AutoRacial(unit) then
                 return A.BagofTricks:Show(icon)
             end
 			
