@@ -120,8 +120,8 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     RaiseAlly                              = Action.Create({ Type = "Spell", ID = 61999     }),	 -- Battle rez
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
 	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
 	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
@@ -236,14 +236,14 @@ local function SelfDefensives(unit)
     end 
 
     -- RuneTap	
-    if A.RuneTap:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "RuneTapIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
+    if A.RuneTap:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "RuneTapIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local RT_HP                 = A.GetToggle(2, "RuneTapHP")
         local RT_TTD                = A.GetToggle(2, "RuneTapTTD")
         local RT_UNITS              = A.GetToggle(2, "RuneTapUnits")
         if  (    
-                ( RT_HP     >= 0     or RT_TTD                              >= 0                                        ) and 
+                ( RT_HP     >= 0     or RT_TTD                              >= 0                                     ) and 
                 ( RT_HP     <= 0     or Unit(player):HealthPercent()     <= RT_HP                                    ) and 
-                ( RT_TTD     <= 0     or Unit(player):TimeToDie()         <= RT_TTD                                      ) and
+                ( RT_TTD     <= 0     or Unit(player):TimeToDie()         <= RT_TTD                                  ) and
 				( RT_UNITS   >= 0 and MultiUnits:GetByRange(8) >= RT_UNITS and Player:AreaTTD(8) > 3 and (Unit(player):HealthPercent() <= RT_HP or Unit(player):TimeToDie() <= RT_TTD) )
             ) 
 		    or 
@@ -305,14 +305,14 @@ local function SelfDefensives(unit)
     end 
 		
     -- Icebound Fortitude	
-    if A.IceboundFortitude:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "IceboundFortitudeIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
+    if A.IceboundFortitude:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "IceboundFortitudeIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local IF_HP                 = A.GetToggle(2, "IceboundFortitudeHP")
         local IF_TTD                = A.GetToggle(2, "IceboundFortitudeTTD")
             
         if  (    
-                ( IF_HP     >= 0     or IF_TTD                              >= 0                                        ) and 
+                ( IF_HP     >= 0     or IF_TTD                              >= 0                                     ) and 
                 ( IF_HP     <= 0     or Unit(player):HealthPercent()     <= IF_HP                                    ) and 
-                ( IF_TTD     <= 0     or Unit(player):TimeToDie()         <= IF_TTD                                      ) 
+                ( IF_TTD    <= 0     or Unit(player):TimeToDie()         <= IF_TTD                                   ) 
             ) 
 		    or 
             (
@@ -329,14 +329,14 @@ local function SelfDefensives(unit)
     end 
 	
     -- Vampiric Blood
-    if A.VampiricBlood:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "VampiricBloodIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
+    if A.VampiricBlood:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "VampiricBloodIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local VB_HP                 = A.GetToggle(2, "VampiricBloodHP")
         local VB_TTD                = A.GetToggle(2, "VampiricBloodTTD")
             
         if  (    
-                ( VB_HP     >= 0     or VB_TTD                              >= 0                                        ) and 
-                ( VB_HP     <= 0     or Unit(player):HealthPercent()     <= VB_HP                                    ) and 
-                ( VB_TTD     <= 0     or Unit(player):TimeToDie()         <= VB_TTD      )  
+                ( VB_HP     >= 0     or VB_TTD                           >= 0                                     ) and 
+                ( VB_HP     <= 0     or Unit(player):HealthPercent()     <= VB_HP                                 ) and 
+                ( VB_TTD    <= 0     or Unit(player):TimeToDie()         <= VB_TTD                                )  
             ) 
 			or 
             (
@@ -355,14 +355,14 @@ local function SelfDefensives(unit)
     end
 	
     -- Dancing Rune Weapon
-    if A.DancingRuneWeapon:IsReadyByPassCastGCD(player, nil, nil, true) and (not A.GetToggle(2, "DancingRuneWeaponIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
+    if A.DancingRuneWeapon:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "DancingRuneWeaponIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
         local DRW_HP                 = A.GetToggle(2, "DancingRuneWeaponHP")
         local DRW_TTD                = A.GetToggle(2, "DancingRuneWeaponTTD")
             
         if  (    
-                ( DRW_HP     >= 0     or DRW_TTD                              >= 0                                        ) and 
-                ( DRW_HP     <= 0     or Unit(player):HealthPercent()     <= DRW_HP                                    ) and 
-                ( DRW_TTD     <= 0     or Unit(player):TimeToDie()         <= DRW_TTD      )  
+                ( DRW_HP     >= 0     or DRW_TTD                          >= 0                                     ) and 
+                ( DRW_HP     <= 0     or Unit(player):HealthPercent()     <= DRW_HP                                ) and 
+                ( DRW_TTD    <= 0     or Unit(player):TimeToDie()         <= DRW_TTD                               )  
             ) 
 			or 
             (
