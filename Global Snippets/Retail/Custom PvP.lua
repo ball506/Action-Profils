@@ -1,24 +1,22 @@
 ---------------------------------------------------
 ---------------- CUSTOM PVP FUNCTIONS -------------
 ---------------------------------------------------
-
-local TMW = TMW
-local CNDT = TMW.CNDT
-local Env = CNDT.Env
-local Action = Action
-local MultiUnits = Action.MultiUnits
-local next, pairs, type, print  = next, pairs, type, print
+local TMW                                   = TMW
+local CNDT                                  = TMW.CNDT
+local Env                                   = CNDT.Env
+local Action                                = Action
+local MultiUnits                            = Action.MultiUnits
+local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
-local UnitIsPlayer, UnitExists, UnitGUID = UnitIsPlayer, UnitExists, UnitGUID
-local PetLib = LibStub("PetLibrary")
-local Unit = Action.Unit 
+local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
+local PetLib                                = LibStub("PetLibrary")
+local Unit                                  = Action.Unit 
 local huge                                  = math.huge
+
 ---------------------------------------------------
 -------------------- CONSTANTS --------------------
 ---------------------------------------------------
-
 --- Reflect Spells List
-
 local pvpReflect = {
     161372, -- Poly
     190319, -- Combustion
@@ -31,10 +29,10 @@ local pvpReflect = {
     116858, -- Chaos Bolt
 	118, -- Poly
 }
+
 ---------------------------------------------------
 -------------------- FUNCTIONS --------------------
 ---------------------------------------------------
-
 -- Local Randomizer
 local randomReflect = math.random(90, 100)
 
