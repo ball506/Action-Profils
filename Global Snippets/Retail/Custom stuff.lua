@@ -1,7 +1,6 @@
 ---------------------------------------------------
 -------------- CUSTOM STUFF FUNCTIONS -------------
 ---------------------------------------------------
-
 local TMW                                   = TMW
 local A     								= Action
 local TeamCache								= Action.TeamCache
@@ -87,7 +86,6 @@ end
 -----------------------------------
 -- Trinkets
 -----------------------------------
-
 -- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
 local BlackListedTrinkets = {
 
@@ -123,12 +121,12 @@ end
 ------------------------------------
 -- Register the spell damage formula.
 function A:RegisterDamage(Function)
-  self.DamageFormula = Function
+    self.DamageFormula = Function
 end
 
 -- Get the spell damage formula if it exists.
 function A:Damage()
-  return self.DamageFormula and self.DamageFormula() or 0
+    return self.DamageFormula and self.DamageFormula() or 0
 end
 
 -- attack_power
@@ -157,7 +155,6 @@ end
 ------------------------------------
 --- HasHeroism simc reference
 ------------------------------------
-
 local HeroismBuff = { 
     [2825] =  true, -- Bloodlust Horde 
     [32182] =  true, -- Heroism Ally  		
@@ -220,7 +217,7 @@ end
 function Unit:HasDeBuffsRefreshable(spell, byID)
     local unitID = self.UnitID
 	
-    return (self(unitID):HasDeBuffs(spell, byID) < 5 or self(unitID):HasDeBuffsDown(spell, ID) and true) or false
+    return (self(unitID):HasDeBuffs(spell, byID) < 5 or self(unitID):HasDeBuffsDown(spell, byID) and true) or false
 end
 
 -------------------------------------------------------------------------------
