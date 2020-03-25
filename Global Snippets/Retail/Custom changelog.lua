@@ -1,3 +1,6 @@
+---------------------------------------------------
+------------ CUSTOM CHANGELOG FUNCTIONS -----------
+---------------------------------------------------
 local TMW                                   = TMW
 local A     								= Action
 local TeamCache								= Action.TeamCache
@@ -24,7 +27,6 @@ local stringformat                          = string.format
 local tableinsert                           = table.insert
 local TR                                    = Action.TasteRotation
 
-
 -------------------------------------------------------------------------------
 -- Profil Loader
 -------------------------------------------------------------------------------
@@ -32,49 +34,58 @@ local TR                                    = Action.TasteRotation
 local currentClass = select(2, UnitClass("player"))
 local currentSpec = GetSpecialization()
 local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentSpec)) or "None"
---print(currentSpec)
 
 -- Druid
 if currentClass == "WARRIOR" then
     Action.Data.DefaultProfile[currentClass] = "> ZakLL < Warrior"
 end
 
+-- Warlock
 if currentClass == "WARLOCK" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Warlock"
 end
 
+-- Rogue
 if currentClass == "ROGUE" then
     Action.Data.DefaultProfile[currentClass] = "> ZakLL < Rogue"
 end
 
+-- Shaman
 if currentClass == "SHAMAN" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Shaman"
 end
 
+-- DeathKnight
 if currentClass == "DEATHKNIGHT" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Death Knight"
 end
 
+-- Priest
 if currentClass == "PRIEST" then
     Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Priest"
 end
 
+-- Paladin
 if currentClass == "PALADIN" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Paladin"
 end
 
+-- Mage
 if currentClass == "MAGE" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Mage"
 end
 
+-- Hunter
 if currentClass == "HUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Hunter"
 end
 
+-- Demon Hunter
 if currentClass == "DEMONHUNTER" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Demon Hunter"
 end
 
+-- Druid
 if currentClass == "DRUID" then
     Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
 end
@@ -84,7 +95,10 @@ end
 --------------------------------------
 --------- POPUP/CHANGELOG API --------
 --------------------------------------
+-- Return a popup message on player login that show all the latest change for rotations. 
+-- Each classes got a ProfileUI button to enable/disable this option. (In case of Streaming)
 
+-- Init popup
 TR.Popup = {
     popupname = Action.PlayerSpec,
     message = "",
@@ -95,9 +109,8 @@ TR.Popup = {
 	hideOnEscape = true,	
 }
 
---Initiate everyclasses 
-
-
+-- Popup Creation function.
+-- @Return string depending of current player specialization
 -- @Usage TR:CreatePopup(PlayerSpec, TR.PlayerSpec.Changelog, "OK", nil, 0, true, true)
 function TR:CreatePopup(popupname, message, button1, button2, timeout, whileDead, hideOnEscape)
     local Errormessage = "Error on popup : You did not set any message."
@@ -147,6 +160,7 @@ function TR:CreatePopup(popupname, message, button1, button2, timeout, whileDead
 end
 
 -- Changelog handler for each specialisation
+-- @To do: find a way to improve ingame indentation and presentation
 function TR:UpdateChangeLog()
 local PlayerSpec = Action.PlayerSpec
 
@@ -735,6 +749,7 @@ As always, please report on Discord or message me directly if you need anything 
 end
 
 -- Love Popup
+-- This is secret popup :)
 StaticPopupDialogs["LOVE_POPUP"] = {
   text = "Hey there ! Thanks for clicking the love button :)\n\nLove is the most important part :)\n\nDon't forget that you can ask me whatever you want on rotations. Feedbacks are really appreciated if you got optimized gear for the current content and see some rotations mistakes !\n\nCreating good profils is long task and take a lot of time as you can imagine. I will always try to do my best to satisfy everyone so do not hesitate to discord me if needed!\n\nAlso if you really like my work you can make a little coffee donation to: paypal.me/roifok\n\nEvery donation is welcome but not mandatory.\n\nHave a good game and thanks for reading !\n\nPS:Don't forget to post logs on discord :)",
   button1 = "Okay :)",
@@ -752,49 +767,43 @@ StaticPopupDialogs["LOVE_POPUP"] = {
 -- CHANGELOG CALLBACK --
 ------------------------ 
 TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
--- Spec specific Popup
 
+-- Spec specific Popup
 local PlayerSpec = Action.PlayerSpec
 local currentChangelog = TR:UpdateChangeLog()
 local Errormessage = "Error on popup : You did not set any message."
 local profileName = TMW.db:GetCurrentProfile()
+local ChangelogOnStartup = A.GetToggle(2, "ChangelogOnStartup")
 
-  --  if Action.PlayerSpec then
-        TR:CreatePopup(Action.PlayerSpec, currentChangelog, "Okay Taste", "Marry Me", 0, true, true)
-   -- else
-        --TR:CreatePopup(999, "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord.", "OK", nil, 0, true, true)
-  --  end
+    -- Dynamic popup creation
+    if Action.PlayerSpec and ChangelogOnStartup then
+        TR:CreatePopup(Action.PlayerSpec, currentChangelog, "Okay", "Marry Me", 0, true, true)
+    end
 	
 	-- Create Popup Frame dynamically 
     StaticPopupDialogs[TR.Popup.popupname] = {
-      text = TR.Popup.message, --"Do you want to greet the world today?",
-      button1 = TR.Popup.button1, --"Yes", -- On ACCEPT
-      button2 = TR.Popup.button2, --"No", -- On CANCEL
-      OnAccept = function()
-          StaticPopup_Hide (TR.Popup.popupname)
-      end,
-      OnCancel = function()
-          StaticPopup_Show ("LOVE_POPUP")
-      end,
-      timeout = TR.Popup.timeout,
-      whileDead = TR.Popup.whileDead,
-      hideOnEscape = TR.Popup.hideOnEscape,
-      preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+        text = TR.Popup.message, --"Do you want to greet the world today?",
+        button1 = TR.Popup.button1, --"Yes", -- On ACCEPT
+        button2 = TR.Popup.button2, --"No", -- On CANCEL
+        OnAccept = function()
+            StaticPopup_Hide (TR.Popup.popupname)
+        end,
+        OnCancel = function()
+            StaticPopup_Show ("LOVE_POPUP")
+        end,
+        timeout = TR.Popup.timeout,
+        whileDead = TR.Popup.whileDead,
+        hideOnEscape = TR.Popup.hideOnEscape,
+        preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
     }
-
 
     -- Check for Taste profils
     if PlayerSpec then
         if profileName:match("Taste") then
-            if PlayerSpec then
+            if PlayerSpec and ChangelogOnStartup then
                 StaticPopup_Show (PlayerSpec)
 	        end
         end
     end
 	
 end)
-
-
-
-
-
