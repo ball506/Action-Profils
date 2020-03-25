@@ -1,7 +1,6 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -16,7 +15,6 @@ local AuraIsValid								= Action.AuraIsValid
 local InterruptIsValid							= Action.InterruptIsValid
 local FrameHasSpell								= Action.FrameHasSpell
 local Azerite									= LibStub("AzeriteTraits")
-local Pet                                       = LibStub("PetLibrary")
 local Utils										= Action.Utils
 local TeamCache									= Action.TeamCache
 local EnemyTeam									= Action.EnemyTeam
@@ -33,6 +31,9 @@ local _G, setmetatable							= _G, setmetatable
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -568,7 +569,6 @@ A[3] = function(icon, isMulti)
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = player
     local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
 	local IsTanking = Unit(player):IsTanking("target", 8) or Unit(player):IsTankingAoE(8)
 	local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
