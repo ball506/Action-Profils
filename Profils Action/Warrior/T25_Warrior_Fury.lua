@@ -1,4 +1,6 @@
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -13,7 +15,6 @@ local AuraIsValid								= Action.AuraIsValid
 local InterruptIsValid							= Action.InterruptIsValid
 local FrameHasSpell								= Action.FrameHasSpell
 local Azerite									= LibStub("AzeriteTraits")
-local Pet                                       = LibStub("PetLibrary")
 local Utils										= Action.Utils
 local TeamCache									= Action.TeamCache
 local EnemyTeam									= Action.EnemyTeam
@@ -30,6 +31,7 @@ local _G, setmetatable							= _G, setmetatable
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -390,7 +392,6 @@ A[3] = function(icon, isMulti)
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
 	local DBM = GetToggle(1 ,"DBM")
 	local Potion = GetToggle(1, "Potion")
 	local Racial = GetToggle(1, "Racial")
