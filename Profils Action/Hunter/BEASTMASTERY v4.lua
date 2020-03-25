@@ -1,4 +1,6 @@
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -446,28 +448,7 @@ local function HandleBestialWrath()
         (A.BurstIsON(unit) and choice[1]) or 
         (GetByRange(2, 40) and choice[2]) or
         (A.BestialWrath:IsReady(player) and choice[3])
-    )
- 
-  --[[  local choice = GetToggle(2, "BestialWrathMode")
-	--print(choice) 
-    local unit = "target"
-    -- CDs ON
-    if choice[1] then 
-	    return A.BurstIsON(unit) or false 
-	-- AoE Only
-	elseif choice[2] then
-	    -- also checks CDs
-	    if choice[1] then
-		    return (A.BurstIsON(unit) and MultiUnits:GetByRange(40) >= MinAoETargets and GetToggle(2, "AoE")) or false
-		else
-		    return (MultiUnits:GetByRange(40) > 2 and GetToggle(2, "AoE")) or false
-		end
-	-- Everytime
-	elseif choice[3] then
-        return A.BestialWrath:IsReady(player) or false
-	else
-	    return false
-	end	]]--	
+    )	
 end
 
 -- [1] CC AntiFake Rotation
@@ -539,6 +520,10 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+-- Pet error hide
+TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
+    Action.TimerSet("DISABLE_PET_ERRORS", 999, function() Pet:DisableErrors(true)  end)
+end)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -551,7 +536,6 @@ A[3] = function(icon, isMulti)
 	local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = player
 	local profileStop = false
 	local MendPet = Action.GetToggle(2, "MendPet")
 	local DBM = Action.GetToggle(1, "DBM")
