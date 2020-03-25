@@ -1,7 +1,6 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -16,7 +15,6 @@ local AuraIsValid								= Action.AuraIsValid
 local InterruptIsValid							= Action.InterruptIsValid
 local FrameHasSpell								= Action.FrameHasSpell
 local Azerite									= LibStub("AzeriteTraits")
-local Pet                                       = LibStub("PetLibrary")
 local Utils										= Action.Utils
 local TeamCache									= Action.TeamCache
 local EnemyTeam									= Action.EnemyTeam
@@ -33,6 +31,11 @@ local _G, setmetatable							= _G, setmetatable
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -486,7 +489,6 @@ A[3] = function(icon, isMulti)
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
     local GuardianofAzerothIsActive = GuardianofAzerothIsActive()
     local DeathStrikeHeal = DeathStrikeHeal()
 	local DBM = GetToggle(1 ,"DBM")
@@ -701,7 +703,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unholy_frenzy,if=essence.vision_of_perfection.enabled|(essence.condensed_lifeforce.enabled&pet.apoc_ghoul.active)|debuff.festering_wound.stack<4&!(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)|cooldown.apocalypse.remains<2&(equipped.ramping_amplitude_gigavolt_engine|azerite.magus_of_the_dead.enabled)
-            if A.UnholyFrenzy:IsReady(player) and A.DarkTransformation:GetCooldown() > 0 and 
+            if A.UnholyFrenzy:IsReady(player) and BurstIsON(unit) and A.DarkTransformation:GetCooldown() > 0 and 
 			(
 			    Azerite:EssenceHasMajor(A.VisionofPerfection.ID) 
 				or 
@@ -716,7 +718,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- unholy_frenzy,if=active_enemies>=2&((cooldown.death_and_decay.remains<=gcd&!talent.defile.enabled)|(cooldown.defile.remains<=gcd&talent.defile.enabled))
-            if A.UnholyFrenzy:IsReady(player) and A.DarkTransformation:GetCooldown() > 0 and 
+            if A.UnholyFrenzy:IsReady(player) and BurstIsON(unit) and A.DarkTransformation:GetCooldown() > 0 and 
 			(
 			    GetByRange(2, 8) and 
 				(
@@ -1115,7 +1117,7 @@ A[3] = function(icon, isMulti)
 					or 
 					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
 				)
-			    and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD") or not A.BurstIsON(unit)) 
+			    and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD")) 
 			    then
                     return A.ScourgeStrike:Show(icon)
                 end
@@ -1137,19 +1139,14 @@ A[3] = function(icon, isMulti)
 				    or 
 				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3 and A.Apocalypse:GetCooldown() < 3 
 			    	or 
-			    	Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD") or not A.BurstIsON(unit))
+			    	Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD"))
 			    )
 			    then
                     return A.FesteringStrike:Show(icon)
                 end
 				
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
-				(
-				    (A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) 
-					or 
-					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
-				)
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.DeathandDecay:GetCooldown() > 2
 			    then
                     return A.ScourgeStrike:Show(icon)
                 end
@@ -1169,17 +1166,6 @@ A[3] = function(icon, isMulti)
             if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and (A.Apocalypse:GetCooldown() > 5 or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
-
-            -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
-				(
-				    (A.Apocalypse:GetCooldown() > 5 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0) 
-					or 
-					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
-				)
-			    then
-                    return A.ScourgeStrike:Show(icon)
-                end
 			
             -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
             if A.DeathandDecay:IsReady(player) and A.Pestilence:IsSpellLearned() and A.Apocalypse:GetCooldown() > 0 then
@@ -1191,8 +1177,14 @@ A[3] = function(icon, isMulti)
                 return A.Defile:Show(icon)
             end
 			
+            -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
+            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
+			then
+                return A.ScourgeStrike:Show(icon)
+            end
+			
             -- clawing_shadows,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD") or not A.BurstIsON(unit))) then
+            if A.ClawingShadows:IsReady(unit) and (((Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5) or Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4) and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD"))) then
                 return A.ClawingShadows:Show(icon)
             end
 			
@@ -1216,7 +1208,7 @@ A[3] = function(icon, isMulti)
 					or 
 					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1
 				) 
-				and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD") or not A.BurstIsON(unit))
+				and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD"))
 			)
 			then
                 return A.FesteringStrike:Show(icon)
@@ -1344,4 +1336,3 @@ A[8] = function(icon)
     end     
     return ArenaRotation(icon, "arena3")
 end
-

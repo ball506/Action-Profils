@@ -10,7 +10,7 @@ local TR                                        = Action.TasteRotation
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.1.4 (18.03.2020)",
+    DateTime = "v4.1.5 (25.03.2020)",
     -- Class settings
     [2] = {
         -- Unholy	
@@ -66,7 +66,52 @@ A.Data.ProfileUI = {
 					},
                 },  
                 
-            },  
+            }, 
+            { -- [7] Spell Status Frame
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Spell Status Frame -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E         = "Button",
+                    H         = 35,
+                    OnClick = function(self, button, down)     
+                        if button == "LeftButton" then 
+							TR.ToggleStatusFrame() 
+                        else                
+                            Action.CraftMacro("Status Frame", [[/run Action.TasteRotation.ToggleStatusFrame()]], 1, true, true)   
+                        end 
+                    end, 
+                    L = { 
+                        ANY = "Status Frame\nMacro Creator",
+                    }, 
+                    TT = { 
+                        enUS = "Click this button to create the special status frame macro.\nStatus Frame is a new windows that allow user to track blocked spells during fight. So you don't have to check your chat anymore.", 
+                        ruRU = "Нажмите эту кнопку, чтобы создать специальный макрос статуса.\nStatus Frame - это новые окна, которые позволяют пользователю отслеживать заблокированные заклинания во время боя. Так что вам больше не нужно проверять свой чат.",  
+                        frFR = "Cliquez sur ce bouton pour créer la macro de cadre d'état spécial.\nLe cadre d'état est une nouvelle fenêtre qui permet à l'utilisateur de suivre les sorts bloqués pendant le combat. Vous n'avez donc plus besoin de vérifier votre chat.", 
+                    },                           
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "ChangelogOnStartup",
+                    DBV = true,
+                    L = { 
+                        enUS = "Changelog On Startup", 
+                        ruRU = "Журнал изменений при запуске", 
+                        frFR = "Journal des modifications au démarrage",
+                    }, 
+                    TT = { 
+                        enUS = "Will show latest changelog of the current rotation when you enter in game.\nDisable this option to block the popup when you enter the game.", 
+                        ruRU = "При входе в игру будет отображаться последний список изменений текущего вращения.\nОтключить эту опцию, чтобы заблокировать всплывающее окно при входе в игру.", 
+                        frFR = "Affiche le dernier journal des modifications de la rotation actuelle lorsque vous entrez dans le jeu.\nDésactivez cette option pour bloquer la fenêtre contextuelle lorsque vous entrez dans le jeu..", 
+                    }, 
+                    M = {},
+                }, 
+			},				
             { -- [2] 2nd Row 
                 {
                     E = "Checkbox", 
@@ -1021,6 +1066,51 @@ A.Data.ProfileUI = {
 					},
                 },                 
             },  
+            { -- [7] Spell Status Frame
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Spell Status Frame -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E         = "Button",
+                    H         = 35,
+                    OnClick = function(self, button, down)     
+                        if button == "LeftButton" then 
+							TR.ToggleStatusFrame() 
+                        else                
+                            Action.CraftMacro("Status Frame", [[/run Action.TasteRotation.ToggleStatusFrame()]], 1, true, true)   
+                        end 
+                    end, 
+                    L = { 
+                        ANY = "Status Frame\nMacro Creator",
+                    }, 
+                    TT = { 
+                        enUS = "Click this button to create the special status frame macro.\nStatus Frame is a new windows that allow user to track blocked spells during fight. So you don't have to check your chat anymore.", 
+                        ruRU = "Нажмите эту кнопку, чтобы создать специальный макрос статуса.\nStatus Frame - это новые окна, которые позволяют пользователю отслеживать заблокированные заклинания во время боя. Так что вам больше не нужно проверять свой чат.",  
+                        frFR = "Cliquez sur ce bouton pour créer la macro de cadre d'état spécial.\nLe cadre d'état est une nouvelle fenêtre qui permet à l'utilisateur de suivre les sorts bloqués pendant le combat. Vous n'avez donc plus besoin de vérifier votre chat.", 
+                    },                           
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "ChangelogOnStartup",
+                    DBV = true,
+                    L = { 
+                        enUS = "Changelog On Startup", 
+                        ruRU = "Журнал изменений при запуске", 
+                        frFR = "Journal des modifications au démarrage",
+                    }, 
+                    TT = { 
+                        enUS = "Will show latest changelog of the current rotation when you enter in game.\nDisable this option to block the popup when you enter the game.", 
+                        ruRU = "При входе в игру будет отображаться последний список изменений текущего вращения.\nОтключить эту опцию, чтобы заблокировать всплывающее окно при входе в игру.", 
+                        frFR = "Affiche le dernier journal des modifications de la rotation actuelle lorsque vous entrez dans le jeu.\nDésactivez cette option pour bloquer la fenêtre contextuelle lorsque vous entrez dans le jeu..", 
+                    }, 
+                    M = {},
+                }, 
+			},	
             { -- [2] 2nd Row 
                 {
                     E = "Checkbox", 
@@ -1852,6 +1942,51 @@ A.Data.ProfileUI = {
 					},
                 },                 
             },  
+            { -- [7] Spell Status Frame
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Spell Status Frame -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E         = "Button",
+                    H         = 35,
+                    OnClick = function(self, button, down)     
+                        if button == "LeftButton" then 
+							TR.ToggleStatusFrame() 
+                        else                
+                            Action.CraftMacro("Status Frame", [[/run Action.TasteRotation.ToggleStatusFrame()]], 1, true, true)   
+                        end 
+                    end, 
+                    L = { 
+                        ANY = "Status Frame\nMacro Creator",
+                    }, 
+                    TT = { 
+                        enUS = "Click this button to create the special status frame macro.\nStatus Frame is a new windows that allow user to track blocked spells during fight. So you don't have to check your chat anymore.", 
+                        ruRU = "Нажмите эту кнопку, чтобы создать специальный макрос статуса.\nStatus Frame - это новые окна, которые позволяют пользователю отслеживать заблокированные заклинания во время боя. Так что вам больше не нужно проверять свой чат.",  
+                        frFR = "Cliquez sur ce bouton pour créer la macro de cadre d'état spécial.\nLe cadre d'état est une nouvelle fenêtre qui permet à l'utilisateur de suivre les sorts bloqués pendant le combat. Vous n'avez donc plus besoin de vérifier votre chat.", 
+                    },                           
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "ChangelogOnStartup",
+                    DBV = true,
+                    L = { 
+                        enUS = "Changelog On Startup", 
+                        ruRU = "Журнал изменений при запуске", 
+                        frFR = "Journal des modifications au démarrage",
+                    }, 
+                    TT = { 
+                        enUS = "Will show latest changelog of the current rotation when you enter in game.\nDisable this option to block the popup when you enter the game.", 
+                        ruRU = "При входе в игру будет отображаться последний список изменений текущего вращения.\nОтключить эту опцию, чтобы заблокировать всплывающее окно при входе в игру.", 
+                        frFR = "Affiche le dernier journal des modifications de la rotation actuelle lorsque vous entrez dans le jeu.\nDésactivez cette option pour bloquer la fenêtre contextuelle lorsque vous entrez dans le jeu..", 
+                    }, 
+                    M = {},
+                }, 
+			},	
             { -- [2] 2nd Row 
                 {
                     E = "Checkbox", 
