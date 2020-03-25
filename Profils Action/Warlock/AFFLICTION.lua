@@ -1,7 +1,6 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -16,7 +15,6 @@ local AuraIsValid								= Action.AuraIsValid
 local InterruptIsValid							= Action.InterruptIsValid
 local FrameHasSpell								= Action.FrameHasSpell
 local Azerite									= LibStub("AzeriteTraits")
-local Pet                                       = LibStub("PetLibrary")
 local Utils										= Action.Utils
 local TeamCache									= Action.TeamCache
 local EnemyTeam									= Action.EnemyTeam
@@ -33,6 +31,11 @@ local _G, setmetatable							= _G, setmetatable
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 
 Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     -- Racial
@@ -527,7 +530,6 @@ A[3] = function(icon, isMulti)
 	local ShouldStop = Action.ShouldStop()
 	local Pull = Action.BossMods_Pulling()
     local CanMultidot = HandleMultidots()
-	local unit = "player"
     local time_to_shard = TimeToShard()
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")
