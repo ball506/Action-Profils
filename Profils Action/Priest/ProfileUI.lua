@@ -1,18 +1,27 @@
-local TMW                                           = TMW 
+--------------------------------
+-- Taste TMW Action ProfileUI --
+--------------------------------
+local TMW											= TMW 
+local CNDT											= TMW.CNDT
+local Env											= CNDT.Env
 
-local A                                             = Action
-local UnitCooldown                                  = A.UnitCooldown
-local Unit                                          = A.Unit 
-local Player                                        = A.Player 
-local Pet                                           = A.Pet
-local LoC                                           = A.LossOfControl
-local MultiUnits                                    = A.MultiUnits
-local EnemyTeam                                     = A.EnemyTeam
-local FriendlyTeam                                  = A.FriendlyTeam
-local TeamCache                                     = A.TeamCache
-local InstanceInfo                                  = A.InstanceInfo
+local A												= Action
+local GetToggle										= A.GetToggle
+local InterruptIsValid								= A.InterruptIsValid
 
-local select                                        = select
+local UnitCooldown									= A.UnitCooldown
+local Unit											= A.Unit 
+local Player										= A.Player 
+local Pet											= A.Pet
+local LoC											= A.LossOfControl
+local MultiUnits									= A.MultiUnits
+local EnemyTeam										= A.EnemyTeam
+local FriendlyTeam									= A.FriendlyTeam
+local TeamCache										= A.TeamCache
+local InstanceInfo									= A.InstanceInfo
+local TR                                            = Action.TasteRotation
+local select, setmetatable							= select, setmetatable
+
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
