@@ -292,3 +292,57 @@ hooksecurefunc(Action, "ToggleMainUI", function()
     end 
 	
 end)
+
+
+
+
+----------------- Status Frame Resizer trash -----------------------
+if not TMW.db.global.ActionDB.StatusFrame then
+    TMW.db.global.ActionDB.StatusFrame = {Width = 0, Height = 0}
+end
+TMW.db.global.ActionDB.StatusFrame.Width = 160
+TMW.db.global.ActionDB.StatusFrame.Height = 200
+
+local function OnMoveStart(self)
+	if IsMouseButtonDown() then
+		self:StartMoving()
+	elseif IsAltKeyDown() then
+		self:StartSizing("BOTTOMRIGHT")
+	end
+end
+
+local function OnMovingStop(self)
+	self:StopMovingOrSizing()
+end
+
+local function OnSizeChanged(self)
+	if not TMW.db.global.ActionDB.StatusFrame then return end
+	TMW.db.global.ActionDB.StatusFrame.Width = self:GetWidth() -- Save the new width
+	TMW.db.global.ActionDB.StatusFrame.Height = self:GetHeight() -- and height to SavedVariables
+end 
+
+
+local customHeight = #TR.BlockedListArray > 0 and #TR.BlockedListArray * 10 or 20
+
+local StatusFrame = StdUi:Window(Action.MainUI, 160, 200, "Blocked Spells");
+StatusFrame:SetPoint('CENTER');
+StatusFrame:SetMovable(true)
+StatusFrame:SetResizable(true)
+StatusFrame:SetUserPlaced()
+StatusFrame:EnableMouse(true)
+StatusFrame:SetMinResize(16, 20)
+StatusFrame:SetMaxResize(1600, 2000)
+StatusFrame:RegisterForDrag("LeftButton")
+StatusFrame:SetScript("OnDragStart", OnMoveStart)
+StatusFrame:SetScript("OnDragStop", OnMovingStop)
+StatusFrame:SetScript("OnSizeChanged", OnSizeChanged)
+StatusFrame:RegisterEvent("PLAYER_LOGIN")
+StatusFrame:SetScript("OnEvent", function(self, event, ...)
+	if not TMW.db.global.ActionDB.StatusFrame then
+		TMW.db.global.ActionDB.StatusFrame = {
+			Width = 160,
+			Height = 200,
+		}
+	end
+	self:SetSize(TMW.db.global.ActionDB.StatusFrame.Width, TMW.db.global.ActionDB.StatusFrame.Height)
+end)
