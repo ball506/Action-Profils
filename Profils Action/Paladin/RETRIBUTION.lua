@@ -1,4 +1,6 @@
---- ====================== ACTION HEADER ============================ ---
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -30,6 +32,7 @@ local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
 local Pet                                       = LibStub("PetLibrary")
+
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
@@ -486,7 +489,6 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
 	local CanCast = true
     local Pull = Action.BossMods_Pulling()
-    local unit = player
     local FlashofLightHP = GetToggle(2, "FlashofLightHP")
 	local WordofGloryHP = GetToggle(2, "WordofGloryHP")
 	local JusticarsVengeanceHP = GetToggle(2, "JusticarsVengeanceHP")
@@ -664,7 +666,7 @@ A[3] = function(icon, isMulti)
             if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
 			and 
 			(
-			    (Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 and UnbridledFuryWithSecondAscendance)
+			    (Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 )
 				or
 				(UnbridledFuryWithBloodlust and Unit("player"):HasHeroism())
 				or
@@ -766,7 +768,16 @@ A[3] = function(icon, isMulti)
             end
 			
             -- avenging_wrath,if=(!talent.inquisition.enabled|buff.inquisition.up)&holy_power>=3
-            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and ((not A.Inquisition:IsSpellLearned() or Unit(player):HasBuffs(A.InquisitionBuff.ID, true) > 0) and Player:HolyPower() >= 3) then
+            if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and 
+			(
+			    (
+				    not A.Inquisition:IsSpellLearned() 
+					or
+					Unit(player):HasBuffs(A.InquisitionBuff.ID, true) > 0
+				)
+				and Player:HolyPower() >= 3
+			)
+			then
                 return A.AvengingWrath:Show(icon)
             end
 			
