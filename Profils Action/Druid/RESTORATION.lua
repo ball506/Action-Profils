@@ -1,21 +1,55 @@
-local TMW                                     = TMW 
-
-local Action                                 = Action
-local TeamCache                                = Action.TeamCache
-local EnemyTeam                                = Action.EnemyTeam
-local FriendlyTeam                            = Action.FriendlyTeam
-local HealingEngine                            = Action.HealingEngine
-local LoC                                     = Action.LossOfControl
-local Player                                = Action.Player 
-local MultiUnits                            = Action.MultiUnits
-local UnitCooldown                            = Action.UnitCooldown
-local Unit                                    = Action.Unit 
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
+local TMW                                       = TMW 
+local HealingEngine                             = Action.HealingEngine
 --local Pet                                     = LibStub("PetLibrary")
 --local Azerite                                 = LibStub("AzeriteTraits")
+local Action									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Azerite									= LibStub("AzeriteTraits")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+local wipe                                      = wipe 
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert 
+local TMW                                       = TMW
+local _G, setmetatable                          = _G, setmetatable
+local select, unpack, table, pairs              = select, unpack, table, pairs 
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
-local setmetatable                            = setmetatable
-local TR                                     = Action.TasteRotation
-local pairs                                  = pairs
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 
 Action[ACTION_CONST_DRUID_RESTORATION] = {
     -- Racial
