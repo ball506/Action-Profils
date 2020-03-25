@@ -72,12 +72,6 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
-    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
-    VisionofPerfection                     = Action.Create({ Type = "Spell", ID =  }),
-    WorldveinResonanceBuff                 = Action.Create({ Type = "Spell", ID =  }),
-    PotionofUnbridledFuryBuff              = Action.Create({ Type = "Spell", ID =  }),
-    UnbridledFuryBuff                      = Action.Create({ Type = "Spell", ID =  }),
     PreciseShotsBuff                       = Action.Create({ Type = "Spell", ID = 260242 }),
     ExplosiveShot                          = Action.Create({ Type = "Spell", ID = 212431 }),
     Barrage                                = Action.Create({ Type = "Spell", ID = 120360 }),
@@ -88,7 +82,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     UnerringVision                         = Action.Create({ Type = "Spell", ID = 274444 }),
     ArcaneShot                             = Action.Create({ Type = "Spell", ID = 185358 }),
     MasterMarksmanBuff                     = Action.Create({ Type = "Spell", ID = 269576 }),
-    DoubleTapBuff                          = Action.Create({ Type = "Spell", ID =  }),
+    DoubleTapBuff                          = Action.Create({ Type = "Spell", ID = 260402 }),
     PiercingShot                           = Action.Create({ Type = "Spell", ID = 198670 }),
     FocusedFire                            = Action.Create({ Type = "Spell", ID = 278531 }),
     SteadyShot                             = Action.Create({ Type = "Spell", ID = 56641 }),
@@ -98,7 +92,6 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     Streamline                             = Action.Create({ Type = "Spell", ID = 260367 }),
     Multishot                              = Action.Create({ Type = "Spell", ID = 257620 }),
     CallingtheShots                        = Action.Create({ Type = "Spell", ID = 260404 }),
-    GuardianofAzerothBuff                  = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -111,8 +104,8 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -148,33 +141,6 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
@@ -228,14 +194,57 @@ A[3] = function(icon, isMulti)
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
 
-
+	-- Azerite beam protection channel
+	local CanCast = true
+	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+	local _, castStartedTime, castEndTime = Unit(player):IsCasting()
+	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
+	-- Ensure all channel and cast are really safe
+	-- Double protection with check on current casts and also timestamp of the cast
+	if (spellID == A.FocusedAzeriteBeam.ID) then 
+	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
+		    if TMW.time < castEndTime then			
+			    CanCast = false
+	        else
+	            CanCast = true
+			end
+		end
+	end
+	-- Showing icon PoolResource to make sure nothing else is read by GG
+	if not CanCast then
+	    return A.PoolResource:Show(icon)
+	end
+	------------------------------------
+	---------- DUMMY DPS TEST ----------
+	------------------------------------
+	local DummyTime = GetToggle(2, "DummyTime")
+	if DummyTime > 0 then
+    	local unit = "target"
+		local endtimer = 0
+		
+    	if Unit(unit):IsExists() and Unit(unit):IsDummy() then
+        	if Unit(player):CombatTime() >= (DummyTime * 60) then
+            	StopAttack()
+				endtimer = TMW.time
+            	--ClearTarget() -- Protected ? 
+	       	    -- Notification					
+          	    Action.SendNotification(DummyTime .. " Minutes Dummy Test Concluded - Profile Stopped", A.DummyTest.ID)			
+         	    
+				if endtimer < TMW.time + 5 then
+				    profileStop = true
+				    --return A.DummyTest:Show(icon)
+				end
+    	    end
+  	    end
+	end	
+	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
 
-        --Precombat
-        local function Precombat(unit)
+		--Precombat
+        if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
             -- flask
             -- augmentation
             -- food
@@ -244,38 +253,47 @@ A[3] = function(icon, isMulti)
             if A.HuntersMark:IsReady(unit) and Unit("player"):HasDebuffsDown(A.HuntersMarkDebuff.ID, true) then
                 return A.HuntersMark:Show(icon)
             end
+			
             -- double_tap,precast_time=10
             if A.DoubleTap:IsReady(unit) then
                 return A.DoubleTap:Show(icon)
             end
+			
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
-                A.AzsharasFontofPower:Show(icon)
+            if A.AzsharasFontofPower:IsReady(player) then
+                return A.AzsharasFontofPower:Show(icon)
             end
+			
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
+			
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
+			
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+			
             -- trueshot,precast_time=1.5,if=active_enemies>2
             if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
                 return A.Trueshot:Show(icon)
             end
+			
             -- potion,dynamic_prepot=1
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofUnbridledFury:Show(icon)
             end
+			
             -- aimed_shot,if=active_enemies<3
             if A.AimedShot:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.AimedShot:Show(icon)
             end
+			
         end
         
         --Cds
@@ -309,11 +327,11 @@ A[3] = function(icon, isMulti)
                 return A.LightsJudgment:Show(icon)
             end
             -- bag_of_tricks
-            if A.BagofTricks:IsReady(unit) then
+            if A.BagofTricks:AutoRacial(unit) then
                 return A.BagofTricks:Show(icon)
             end
             -- reaping_flames,if=target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30
-            if A.ReapingFlames:IsReady(unit) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30) then
                 return A.ReapingFlames:Show(icon)
             end
             -- worldvein_resonance,if=(trinket.azsharas_font_of_power.cooldown.remains>20|!equipped.azsharas_font_of_power|target.time_to_die<trinket.azsharas_font_of_power.cooldown.duration+34&target.health.pct>20)&(cooldown.trueshot.remains_guess<3|(essence.vision_of_perfection.minor&target.time_to_die>cooldown+buff.worldvein_resonance.duration))|target.time_to_die<20
@@ -325,16 +343,16 @@ A[3] = function(icon, isMulti)
                 return A.GuardianofAzeroth:Show(icon)
             end
             -- ripple_in_space,if=cooldown.trueshot.remains<7
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Trueshot:GetCooldown() < 7) then
-                return A.RippleInSpace:Show(icon)
+            if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Trueshot:GetCooldown() < 7) then
+                return A.RippleinSpace:Show(icon)
             end
             -- memory_of_lucid_dreams,if=!buff.trueshot.up
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- potion,if=buff.trueshot.react&buff.bloodlust.react|buff.trueshot.up&target.health.pct<20|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (bool(Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
+                A.PotionofUnbridledFury:Show(icon)
             end
             -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>cooldown.trueshot.duration_guess+buff.trueshot.duration|(target.health.pct<20|!talent.careful_aim.enabled)&(!equipped.azsharas_font_of_power|trinket.azsharas_font_of_power.cooldown.remains>15))|target.time_to_die<15
             if A.Trueshot:IsReady(unit) and (Player:Focus() > 60 and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) and bool(A.RapidFire:GetCooldown()) and Unit(unit):TimeToDie() > cooldown.trueshot.duration_guess + A.TrueshotBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned()) and (not A.AzsharasFontofPower:IsExists() or trinket.azsharas_font_of_power.cooldown.remains > 15)) or Unit(unit):TimeToDie() < 15) then
@@ -377,7 +395,7 @@ A[3] = function(icon, isMulti)
                 return A.ArcaneShot:Show(icon)
             end
             -- aimed_shot,if=buff.trueshot.up|(buff.double_tap.down|ca_execute)&buff.precise_shots.down|full_recharge_time<cast_time&cooldown.trueshot.remains
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or (bool(Unit("player"):HasBuffsDown(A.DoubleTapBuff.ID, true)) or bool(ca_execute)) and bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() and bool(A.Trueshot:GetCooldown())) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or (bool(Unit("player"):HasBuffsDown(A.DoubleTapBuff.ID, true)) or bool(ca_execute)) and bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() and bool(A.Trueshot:GetCooldown())) then
                 return A.AimedShot:Show(icon)
             end
             -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&buff.memory_of_lucid_dreams.up
@@ -393,7 +411,7 @@ A[3] = function(icon, isMulti)
                 return A.PurifyingBlast:Show(icon)
             end
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.trueshot.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:FullRechargeTimeP() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and bool(Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (not bool(Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
@@ -429,7 +447,7 @@ A[3] = function(icon, isMulti)
                 return A.RapidFire:Show(icon)
             end
             -- aimed_shot,if=buff.trick_shots.up&(buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up)
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true))) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (bool(Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true))) then
                 return A.AimedShot:Show(icon)
             end
             -- rapid_fire,if=buff.trick_shots.up
@@ -492,7 +510,7 @@ A[3] = function(icon, isMulti)
                 A.LurkersInsidiousGift:Show(icon)
             end
             -- use_item,name=azsharas_font_of_power,if=(target.time_to_die>cooldown+34|target.health.pct<20|target.time_to_pct_20<15)&cooldown.trueshot.remains_guess<15|target.time_to_die<35
-            if A.AzsharasFontofPower:IsReady(unit) and ((Unit(unit):TimeToDie() > cooldown + 34 or Unit(unit):HealthPercent() < 20 or target.time_to_pct_20 < 15) and cooldown.trueshot.remains_guess < 15 or Unit(unit):TimeToDie() < 35) then
+            if A.AzsharasFontofPower:IsReady(player) and ((Unit(unit):TimeToDie() > cooldown + 34 or Unit(unit):HealthPercent() < 20 or target.time_to_pct_20 < 15) and cooldown.trueshot.remains_guess < 15 or Unit(unit):TimeToDie() < 35) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- use_item,name=lustrous_golden_plumage,if=cooldown.trueshot.remains_guess<5|target.time_to_die<20
@@ -504,7 +522,7 @@ A[3] = function(icon, isMulti)
                 A.GalecallersBoon:Show(icon)
             end
             -- use_item,name=ashvanes_razor_coral,if=buff.trueshot.up&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major&target.health.pct<20)|debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) and Unit(unit):HealthPercent() < 20) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and Unit(unit):HealthPercent() < 20) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up|target.time_to_die<5
