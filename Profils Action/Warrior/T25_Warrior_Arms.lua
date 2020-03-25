@@ -99,8 +99,8 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     ExecuteMassacre                        = Action.Create({ Type = "Spell", ID = 281000 }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -307,7 +307,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady(unit) then
+            if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
             -- worldvein_resonance
@@ -387,7 +387,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- bag_of_tricks,if=debuff.colossus_smash.down&buff.memory_of_lucid_dreams.down&cooldown.mortal_strike.remains
-                if A.BagofTricks:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) == 0 and A.MortalStrike:GetCooldown() > 0) then
+                if A.BagofTricks:AutoRacial(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) == 0 and A.MortalStrike:GetCooldown() > 0) then
                     return A.BagofTricks:Show(icon)
                 end
 			
@@ -460,7 +460,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- reaping_flames,if=!debuff.colossus_smash.up&!buff.test_of_might.up
-                if A.ReapingFlames:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) == 0) then
+                if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) == 0) then
                     return A.ReapingFlames:Show(icon)
                 end
 			    
