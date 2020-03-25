@@ -476,7 +476,7 @@ local function APL(icon)
             if HR.Cast(S.FlankingStrike) then return "flanking_strike 34"; end
         end
         -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-10
-        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 10) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 10) then
             if HR.Cast(S.KillCommand) then return "kill_command 42"; end
         end
         -- steel_trap,if=focus+cast_regen<focus.max
@@ -484,7 +484,7 @@ local function APL(icon)
             if HR.Cast(S.SteelTrap) then return "steel_trap 54"; end
         end
         -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up)
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 64"; end
         end
         -- serpent_sting,if=!dot.serpent_sting.ticking&!buff.coordinated_assault.up
@@ -538,7 +538,7 @@ local function APL(icon)
             if HR.Cast(S.AMurderofCrows, Action.GetToggle(2, "OffGCDasOffGCD")) then return "a_murder_of_crows 166"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd|focus+cast_regen<focus.max&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() or Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 168"; end
         end
         -- coordinated_assault
@@ -550,7 +550,7 @@ local function APL(icon)
             if HR.Cast(S.MongooseBite) then return "mongoose_bite 206"; end
         end
         -- kill_command,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max-20
-        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 20) then
+        if S.KillCommand:IsReadyP() and not ShouldStop and (S.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.KillCommand:ExecuteTime()) < Player:FocusMax() - 20) then
             if HR.Cast(S.KillCommand) then return "kill_command 210"; end
         end
         -- steel_trap,if=focus+cast_regen<focus.max
@@ -664,7 +664,7 @@ local function APL(icon)
             if HR.Cast(S.RippleInSpace) then return "ripple_in_space 336"; end
         end
         -- concentrated_flame,if=full_recharge_time<1*gcd
-        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (S.ConcentratedFlame:FullRechargeTimeP() < 1 * Player:GCD()) then
+        if S.ConcentratedFlame:IsCastableP() and not ShouldStop and (S.ConcentratedFlame:GetSpellChargesFullRechargeTime() < 1 * Player:GCD()) then
             if HR.Cast(S.ConcentratedFlame) then return "concentrated_flame 338"; end
         end
         -- the_unbound_force,if=buff.reckless_force.up
@@ -692,7 +692,7 @@ local function APL(icon)
             if HR.Cast(S.Carve) then return "carve 379"; end
         end
         -- wildfire_bomb,if=!talent.guerrilla_tactics.enabled|full_recharge_time<gcd
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (not S.GuerrillaTactics:IsAvailable() or S.WildfireBomb:FullRechargeTimeP() < Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (not S.GuerrillaTactics:IsAvailable() or S.WildfireBomb:GetSpellChargesFullRechargeTime() < Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 383"; end
         end
         -- mongoose_bite,target_if=max:debuff.latent_poison.stack,if=debuff.latent_poison.stack=10
@@ -708,7 +708,7 @@ local function APL(icon)
             if HR.Cast(S.KillCommand) then return "kill_command 428" end
         end
         -- butchery,if=full_recharge_time<gcd|!talent.wildfire_infusion.enabled|dot.shrapnel_bomb.ticking&dot.internal_bleeding.stack<3
-        if S.Butchery:IsCastableP() and not ShouldStop and (S.Butchery:FullRechargeTimeP() < Player:GCD() or not S.WildfireInfusion:IsAvailable() or Target:DebuffP(S.ShrapnelBombDebuff) and Target:DebuffStackP(S.InternalBleedingDebuff) < 3) then
+        if S.Butchery:IsCastableP() and not ShouldStop and (S.Butchery:GetSpellChargesFullRechargeTime() < Player:GCD() or not S.WildfireInfusion:IsAvailable() or Target:DebuffP(S.ShrapnelBombDebuff) and Target:DebuffStackP(S.InternalBleedingDebuff) < 3) then
             if HR.Cast(S.Butchery, Action.GetToggle(2, "OffGCDasOffGCD")) then return "butchery 429"; end
         end
         -- carve,if=talent.guerrilla_tactics.enabled
@@ -778,7 +778,7 @@ local function APL(icon)
             if HR.Cast(S.SteelTrap) then return "steel_trap 577"; end
         end
         -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up)
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() and not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.MemoryofLucidDreams) and (S.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() or not Target:DebuffP(S.WildfireBombDebuff) and not Player:BuffP(S.CoordinatedAssaultBuff))) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 587"; end
         end
         -- mongoose_bite,if=buff.mongoose_fury.stack>5&!cooldown.coordinated_assault.remains
@@ -832,7 +832,7 @@ local function APL(icon)
             if HR.Cast(S.SerpentSting) then return "serpent_sting 689"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max|(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD() and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Target:DebuffP(S.SerpentStingDebuff) and Target:DebuffRefreshableCP(S.SerpentStingDebuff) or S.PheromoneBomb:IsLearned() and not Player:BuffP(S.MongooseFuryBuff) and Player:Focus() + Player:FocusCastRegen(S.WildfireBomb:ExecuteTime()) < Player:FocusMax() - Player:FocusCastRegen(S.KillCommand:ExecuteTime()) * 3)) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 697"; end
         end
         -- kill_command,if=focus+cast_regen<focus.max-focus.regen
@@ -848,7 +848,7 @@ local function APL(icon)
             if HR.Cast(S.SteelTrap) then return "steel_trap 743"; end
         end
         -- wildfire_bomb,if=full_recharge_time<1.5*gcd
-        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:FullRechargeTimeP() < 1.5 * Player:GCD()) then
+        if S.WildfireBomb:IsReadyP() and not ShouldStop and (S.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * Player:GCD()) then
             if HR.Cast(S.WildfireBomb) then return "wildfire_bomb 753"; end
         end
         -- coordinated_assault
