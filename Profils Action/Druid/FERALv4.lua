@@ -168,8 +168,8 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     LustrousGoldenPlumage                   = Create({ Type = "Trinket", ID = 159617, QueueForbidden = true      }),
     -- Potions
     PotionofUnbridledFury                   = Create({ Type = "Potion", ID = 169299, QueueForbidden = true      }), 
-    BattlePotionOfAgility                   = Create({ Type = "Potion", ID = 163223, QueueForbidden = true      }), 
-    SuperiorBattlePotionOfAgility           = Create({ Type = "Potion", ID = 168489, QueueForbidden = true      }), 
+    PotionofUnbridledFury                   = Create({ Type = "Potion", ID = 163223, QueueForbidden = true      }), 
+    SuperiorPotionofUnbridledFury           = Create({ Type = "Potion", ID = 168489, QueueForbidden = true      }), 
     PotionTest                              = Create({ Type = "Potion", ID = 142117, QueueForbidden = true      }),
     --Talents
 	MassEntanglement                        = Create({ Type = "Spell", ID = 102359, isTalent = true, Hidden = true     }),
