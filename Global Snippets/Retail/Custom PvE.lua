@@ -1,3 +1,6 @@
+---------------------------------------------------
+---------------- CUSTOM PVE FUNCTIONS -------------
+---------------------------------------------------
 local TMW                                   = TMW
 local A     								= Action
 local TeamCache								= Action.TeamCache
@@ -26,8 +29,7 @@ local TR                                    = Action.TasteRotation
 -------------------------------------------------------------------------------
 -- Tanks specifics functions
 -------------------------------------------------------------------------------
-
--- To update for BFA
+-- To do: update for BFA !!
 local ActiveMitigationSpells = {
     Buff = {
         -- PR Legion
@@ -90,7 +92,7 @@ end
 -------------------------------------------------------------------------------
 -- @Use with inside rotation function
 
-TR.Mythic.ReflectID = {
+TR.Lists.ReflectID = {
     --Battle of Dazar'alor
     [283572] = "Sacred Blade",
     [284449] = "Reckoning",
@@ -183,14 +185,14 @@ TR.Mythic.ReflectID = {
 }
 -- Stormbolt Warrior Protection
 -- Specifics NPC
-TR.Mythic.Storm_Unit_List = {
+TR.Lists.Storm_Unit_List = {
     [131009] = "Spirit of Gold",
     [134388] = "A Knot of Snakes",
     [129758] = "Irontide Grenadier"
 }  
 
 -- Dangerous NPC Abilities that we can Stormbolt
-TR.Mythic.Storm_Spells_List = {
+TR.Lists.Storm_Spells_List = {
     274400,
     274383,
     257756,
@@ -230,7 +232,7 @@ TR.Mythic.Storm_Spells_List = {
 }
 
 -- All units that we know we can't stun     
-TR.Mythic.StunsBlackList = {
+TR.Lists.StunsBlackList = {
 	-- Atal'Dazar
 	[87318] = "Dazar'ai Colossus",
 	[122984] = "Dazar'ai Colossus",
@@ -303,14 +305,14 @@ TR.Mythic.StunsBlackList = {
 }
 
 -- Protection Paladin Hand of Justice
-TR.Mythic.HOJ_Unit_List = {
+TR.Lists.HOJ_Unit_List = {
 	[131009] = "Spirit of Gold",
 	[134388] = "A Knot of Snakes",
 	[129758] = "Irontide Grenadier",
 }
 
 -- Death Knight Asphyxiate
-TR.Mythic.Asphyxiate_List = {
+TR.Lists.Asphyxiate_List = {
     274400,
     274383,
     257756,
@@ -524,7 +526,7 @@ end
 --------------------------------------
 ------- Taste Custom Functions -------
 --------------------------------------
-
+-- Since they need some CustomStuff snippets that load in 0.6, these function only work in this CustomPvE snippets that load in 1
 -- Only checks IsUsableP against the primary resource for pooling
 function A:IsUsablePPool(Offset)
     local CostTable = GetSpellPowerCost(self.SpellID)
