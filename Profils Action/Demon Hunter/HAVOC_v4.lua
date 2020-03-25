@@ -1,3 +1,6 @@
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
 local Action									= Action
 local Listener									= Action.Listener
 local Create									= Action.Create
@@ -28,6 +31,11 @@ local _G, setmetatable							= _G, setmetatable
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+
+--- ============================ CONTENT ===========================
+--- ======= APL LOCALS =======
+-- luacheck: max_line_length 9999
 
 Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     -- Racial
@@ -625,7 +633,6 @@ A[3] = function(icon, isMulti)
 	local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = player
 	local HoABossOnly = A.GetToggle(2, "HoABossOnly")
 	local EyeBeamTTD = A.GetToggle(2, "EyeBeamTTD")
     local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
