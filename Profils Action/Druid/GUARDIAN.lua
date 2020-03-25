@@ -1,27 +1,51 @@
------------------------------
--- Taste TMW Action Rotation
------------------------------
---- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
---local HealingEngine                        = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
-local setmetatable                           = setmetatable
-local TR                                     = Action.TasteRotation
-local pairs                                  = pairs
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
+local Action									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local Azerite									= LibStub("AzeriteTraits")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+local wipe                                      = wipe 
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert 
+local TMW                                       = TMW
+local _G, setmetatable                          = _G, setmetatable
+local select, unpack, table, pairs              = select, unpack, table, pairs 
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
 -- luacheck: max_line_length 9999
-
 -- Spells
 Action[ACTION_CONST_DRUID_GUARDIAN] = {
     -- Racial
@@ -514,7 +538,6 @@ A[3] = function(icon, isMulti)
     local inStance = GetStance()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
     local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
 	local IsTanking = Unit("player"):IsTanking("target", 8) or Unit("player"):IsTankingAoE(8)
 	local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
