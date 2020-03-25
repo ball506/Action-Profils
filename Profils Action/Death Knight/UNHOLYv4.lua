@@ -119,9 +119,9 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
     VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
 	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
     PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -953,6 +953,17 @@ A[3] = function(icon, isMulti)
 			then
       	       	return A.Trinket2:Show(icon) 	
 	        end
+			
+            -- Defensives trinkets
+            if Unit(player):CombatTime() > 0 and (Unit(player):HealthPercent() < 50 or Unit(player):TimeToDie() < 5) then 
+                if A.Trinket1:IsReady(player) and Trinket1IsAllowed and A.Trinket1:GetItemCategory() ~= "DPS" then 
+                    return A.Trinket1:Show(icon)
+               end 
+        
+                if A.Trinket2:IsReady(player) and Trinket2IsAllowed and A.Trinket2:GetItemCategory() ~= "DPS" then 
+                   return A.Trinket2:Show(icon)
+                end
+            end 
 			
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
             if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Potion and (A.ArmyoftheDead:GetCooldown() == 0 or Pet:IsActive(27829) or Unit(player):HasBuffs(A.UnholyFrenzyBuff.ID, true) > 0) then
