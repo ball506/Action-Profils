@@ -1,3 +1,7 @@
+---------------------------------------------------
+-------------- CUSTOM STUFF FUNCTIONS -------------
+---------------------------------------------------
+
 local TMW                                   = TMW
 local A     								= Action
 local TeamCache								= Action.TeamCache
@@ -12,28 +16,34 @@ local next, pairs, type, print              = next, pairs, type, print
 local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo = IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetSpellInfo
 local UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura = UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
---local Pet                                   = LibStub("PetLibrary") Too fast loading snippets ?
+--local Pet                                 = LibStub("PetLibrary") Don't work. Too fast loading snippets ?
 local Unit                                  = Action.Unit 
 local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
 local EventFrame                            = CreateFrame("Frame", "Taste_EventFrame", UIParent)
 local UnitIsUnit                            = UnitIsUnit
-local StdUi 								= LibStub("StdUi")
--- Lua
-local error = error
-local setmetatable = setmetatable
-local stringformat = string.format
-local tableinsert = table.insert
--- File Locals
-local Events = {} -- All Events
-local CombatEvents = {} -- Combat Log Unfiltered
-local SelfCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
-local PetCombatEvents = {} -- Combat Log Unfiltered with SourceGUID == PetGUID filter
+local StdUi                                 = Action.StdUi -- Custom StdUI with Action shared settings
+-- Lua methods
+local error                                 = error
+local setmetatable 						    = setmetatable
+local stringformat 						    = string.format
+local tableinsert 						    = table.insert
+local tableremove							= table.remove 
+-- Local Tables
+local Events = {}             -- All Events
+local CombatEvents = {}       -- Combat Log Unfiltered
+local SelfCombatEvents = {}   -- Combat Log Unfiltered with SourceGUID == PlayerGUID filter
+local PetCombatEvents = {}    -- Combat Log Unfiltered with SourceGUID == PetGUID filter
 local PrefixCombatEvents = {}
 local SuffixCombatEvents = {}
+-- Global TasteRotation Table
 Action.TasteRotation = {}
 local TR                                    = Action.TasteRotation
+-- Global Tables
 TR.Enum = {}
+TR.Lists = {}
+TR.storedTables = {}
+
 -------------------------------------------------------------------------------
 -- UI Toggles
 -------------------------------------------------------------------------------
@@ -49,40 +59,6 @@ function Action.AoEToggleMode()
     Action.Print(Action.UseAoE and "Mode AoE: On" or not Action.UseAoE and "Mode AoE: Off")
     TMW:Fire("TMW_ACTION_AOE_MODE_CHANGED")
 end 
-
---[[CheckProfilePerSpecialization = function()
-	-- Druid
-	if currentClass == "DRUID" then
-	    if currentSpec == 2 then 
-            Action.Data.DefaultProfile[currentClass] = "[ZakLL]Druid - Feral"
-	    else
-	        Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
-	    end
-	end
-end
-
-
---A.Listener:Add("TASTE_EVENTS_SPEC_PROFILE", "PLAYER_SPECIALIZATION_CHANGED", 	CheckProfilePerSpecialization)
---TMW:RegisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", 					CheckProfilePerSpecialization)
-
-TMW:RegisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", function()
-    local currentClass = select(2, UnitClass("player"))
-    local currentSpec = GetSpecialization()
-	-- Druid
-	if currentClass == "DRUID" then
-	    if currentSpec == 2 then 
-            Action.Data.DefaultProfile[currentClass] = "[ZakLL]Druid - Feral"
-	    else
-	        Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Druid"
-	    end
-	end
-end)
-]]--
-
--- Pet error hide
---TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
---    Action.TimerSet("DISABLE_PET_ERRORS", 9999, function() Pet:DisableErrors(true)  end)
---end)
 
 ------------------------------------
 --- Area Time To Die
@@ -108,9 +84,9 @@ function Player:AreaTTD(range)
     return ttdtotal / totalunits
 end
 
--------------------------------------------------------------------------------
+-----------------------------------
 -- Trinkets
--------------------------------------------------------------------------------
+-----------------------------------
 
 -- List all BlackListed Trinkets we dont want to use on cooldown but with some specific APLs.
 local BlackListedTrinkets = {
@@ -160,6 +136,7 @@ function A.Player:AttackPower()
     return UnitAttackPower("player")
 end
 
+-- AttackPowerDamageMod
 function A.Player:AttackPowerDamageMod(offHand)
     local useOH = offHand or false
     local wdpsCoeff = 6
@@ -212,7 +189,7 @@ end
 ------------------------------------
 --- Corruption API patch 8.3
 ------------------------------------
-
+-- Return current Corruption amount (Total - Resistance)
 function Player:GetCurrentCorruption()
     local TotalCorruption = GetCorruption()
     local CorruptionResistance = GetCorruptionResistance()
@@ -225,12 +202,7 @@ end
 function Unit:HasDeBuffsDown(spell, byID)
 	local unitID = self.UnitID
 	
-    local ID = byID
-	if not ID then
-	    ID = true
-	end
-	
-    return (self(unitID):HasDeBuffs(spell, ID) == 0 and true) or false
+    return (self(unitID):HasDeBuffs(spell, byID) == 0 and true) or false
 end
 
 ------------------------------------
@@ -238,12 +210,8 @@ end
 ------------------------------------
 function Unit:HasBuffsDown(spell, byID)
     local unitID = self.UnitID
-    local ID = byID
-	if not ID then
-	    ID = true
-	end
 	
-    return (self(unitID):HasBuffs(spell, ID) == 0 and true) or false
+    return (self(unitID):HasBuffs(spell, byID) == 0 and true) or false
 end
 
 ------------------------------------
@@ -251,12 +219,8 @@ end
 ------------------------------------
 function Unit:HasDeBuffsRefreshable(spell, byID)
     local unitID = self.UnitID
-    local ID = byID
-	if not ID then
-	    ID = true
-	end
 	
-    return (self(unitID):HasDeBuffs(spell, ID) < 5 or self(unitID):HasDeBuffsDown(spell, ID) and true) or false
+    return (self(unitID):HasDeBuffs(spell, byID) < 5 or self(unitID):HasDeBuffsDown(spell, ID) and true) or false
 end
 
 -------------------------------------------------------------------------------
@@ -338,93 +302,215 @@ local function removeLastChar(text)
 	return text:sub(1, -2)
 end
 
-local tabFrame, strOnlyBuilder
-local function GetTableKeyIdentify(action)
-	-- Using to link key in DB
-	if not action.TableKeyIdentify then 
-		action.TableKeyIdentify = strOnlyBuilder(action.SubType, action.ID, action.Desc, action.Color)
-	end 
-	return action.TableKeyIdentify
-end
-
-
-
 --------------------------------------
 --------- Action Status Frame --------
 --------------------------------------
---- Draw a dynamic list based on current Blocked and Queued spells
---- Future will add some other functions
-local function GetActionSpellStatus()
-    local BlockedSpell = {
-    
-    }
+--- Draw a dynamic list based on current Blocked spells
+--- Future will add Queued frame and maybe other options depending on users feedbacks
+
+TR.BlockedListAssoc				= {}
+TR.BlockedListArray 			= {}
+TR.BlockedListIcon   			= {}
+
+local pairs, next, type, wipe	= pairs, next, type, wipe
+local hooksecurefunc 			= hooksecurefunc
+local isHooked					-- nil 
+
+local L 						= {
+	enUS 						= "No blocked actions :)",
+	frFR 						= "Aucune action bloquée :)",
+	ruRU						= "Нет заблокированных действий :)",
+}
+
+local function GetActionSpellStatus(this)
+	if not this then 
+		wipe(TR.BlockedListAssoc)
 		
-    --for i = 1, #Action[Action.PlayerSpec] do
-	---    if TMWdb.profile.ActionDB[3][Action.PlayerSpec].disabledActions[i] then
-	--	    return    
-	--end 
-	local PlayerSpec = Action[Action.PlayerSpec]
-	local Error = "Error during initilization of Taste Status Frame"
-	
-	if PlayerSpec then
-	
-	    for k, v in pairs(PlayerSpec) do 
-			if type(v) == "table" and v.Type == "Spell" then 	
-                local currentSpell = Action[Action.PlayerSpec][k]	
-                print(v.ID)
-                print(Action[Action.PlayerSpec][k])				
-				if currentSpell then 
-			        --tableinsert(BlockedList, )
-			        BlockedSpell = v.ID .. " Blocked"				
-			    else
-			        BlockedSpell = v.ID .. " Unlocked"
-			    end
+		if Action[Action.PlayerSpec] then 
+			for k, v in pairs(Action[Action.PlayerSpec]) do 
+				if type(v) == "table" and v.Type and v:IsBlocked() then 	
+					TR.BlockedListAssoc[k] = v
+				end 
 			end 
-			--return BlockedSpell
 		end 
-    end
+	else 
+		local k = this:GetKeyName()
+		if k then 
+			if this:IsBlocked() then 
+				TR.BlockedListAssoc[k] = this 
+			else 
+				TR.BlockedListAssoc[k] = nil 
+			end 
+		end 
+	end 
 	
---	for i = 1, #TMWdb.profile.ActionDB[3][Action.PlayerSpec].disabledActions
-	    
+	wipe(TR.BlockedListArray)
+	wipe(TR.BlockedListIcon)
+	for k, v in pairs(TR.BlockedListAssoc) do 
+		TR.BlockedListArray[#TR.BlockedListArray + 1] = k --.. " " .. (v.Desc or "") .. " " .. (v.Color or "")
+		TR.BlockedListIcon[#TR.BlockedListIcon + 1] = v:Icon()
+	end 
 	
---[[		for k, v in pairs(PlayerSpec) do
-		--Action[Action.PlayerSpec].WordofGlory
-		    local currentSpell = k
-	  	    if currentSpell:IsBlocked() then
-			    --tableinsert(BlockedList, )
-			    BlockedSpell = currentSpell .. " Blocked"
-				
-			else
-			    BlockedSpell = currentSpell .. " Unlocked"
-			end
-		end]]--
-		
-	
---[[	
-    local tabFrame
-    local CL, L = "enUS"
-	local BlockedSpell = ""
-	local spec = Action.PlayerSpec .. CL	
-    local ScrollTable = tabFrame.tabs[3].childs[spec].ScrollTable
-    for i = 1, #data do 
-	    if Identify == GetTableKeyIdentify(ScrollTable.data[i]) then 
-	    	if self:IsBlocked() then 
-		    	BlockedSpell = " Blocked"
-		    else 
-		    	BlockedSpell = " Unblocked"
-		    end								 			
-	    end 
-    end
-	]]--
-	return BlockedSpell or Error
+	TMW:Fire("TMW_ACTION_STATUS_BLOCKED_CHANGED")
 end
 
-------------------------------------
--- DogTags
-------------------------------------
+local function OnCallback()
+	GetActionSpellStatus()
+end 
+
+-- Finally, callbackEvent on init
+TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function(callbackEvent) 
+	if Action.CurrentProfile:match("Taste") then 
+		GetActionSpellStatus()
+		if not isHooked then 
+			TMW:RegisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", OnCallback, "TASTE_BLOCKED_TRACKER")
+			isHooked = true 
+		end 
+	else
+		if isHooked then 
+			wipe(TR.BlockedListAssoc)
+			wipe(TR.BlockedListArray)
+			wipe(TR.BlockedListIcon)
+			TMW:UnregisterCallback("TMW_ACTION_PLAYER_SPECIALIZATION_CHANGED", OnCallback, "TASTE_BLOCKED_TRACKER")
+			TMW:Fire("TMW_ACTION_STATUS_BLOCKED_CHANGED")			
+			isHooked = nil
+		end 
+	end 
+end)
+
+--------------------------------------
+--------- StdUI Status Frame ---------
+--------------------------------------
+Action.StatusFrame = StdUi:Window(UIParent, 140, 180, "-- Blocked Spells --");
+Action.StatusFrame.titlePanel.label:SetFontSize(15)
+Action.StatusFrame.default_w = Action.StatusFrame:GetWidth()
+Action.StatusFrame.default_h = Action.StatusFrame:GetHeight() 
+Action.StatusFrame.titlePanel:SetPoint("TOP", 0, -20)
+Action.StatusFrame:SetFrameStrata("HIGH")
+Action.StatusFrame:SetPoint("CENTER")
+Action.StatusFrame:SetShown(false) 
+
+-- Test refresh button
+--local btn = StdUi:Button(StatusFrame, 100, 24, 'Refresh Data');
+--StdUi:GlueTop(btn, StatusFrame, 0, -40);
+
+local data = {};
+local cols = {
+
+	{
+		name         = 'Name',
+		width        = 80,
+		align        = 'LEFT',
+		index        = 'name',
+		format       = 'string',
+	},
+
+    {
+		name         = '',
+		width        = 20,
+		align        = 'LEFT',
+		index        = 'icon',
+		format       = 'icon',
+	},
+}
+
+local customHeight = 5
+if customHeight == 5 then
+    GetActionSpellStatus()
+    customHeight = #TR.BlockedListArray > 0 and #TR.BlockedListArray or 5
+end
+
+local StatusFrameScrollTable = StdUi:ScrollTable(Action.StatusFrame, cols, customHeight, 15);
+StatusFrameScrollTable:EnableSelection(true);
+StatusFrameScrollTable:SetResizable(true)
+StdUi:GlueTop(StatusFrameScrollTable, Action.StatusFrame, 0, -75);
+
+local function UpdateTableData()
+	data = {};
+
+	for i = 1, #TR.BlockedListArray do
+		local r = {name = TR.BlockedListArray[i] or (L[Action.GetCL()] or L.enUS), icon = TR.BlockedListIcon[i] or 841383}
+		-- index
+		r.i = i;
+		tableinsert(data, r);
+	end
+
+	-- update scroll table data
+	StatusFrameScrollTable:SetData(data);
+end
+
+--btn:SetScript('OnClick', UpdateTableData)
+
+hooksecurefunc(Action, "SetBlocker", function(this)
+	if isHooked then 
+		GetActionSpellStatus(this)
+		UpdateTableData()
+		
+	end 
+end)
+
+function TR.ToggleStatusFrame()
+	if not Action.PlayerSpec or (not Action.MainUI and not Action.IsInitialized) then 
+		return 
+	end 
+	
+	if Action.StatusFrame:IsShown() then 
+	    UpdateTableData()
+		customHeight = #TR.BlockedListArray or 5
+		Action.StatusFrame:SetShown(not Action.StatusFrame:IsShown())
+		Action.StatusFrame.resizer = Action.CreateResizer(Action.StatusFrame)
+		return
+	else 
+	    UpdateTableData()
+		customHeight = #TR.BlockedListArray or 5
+		Action.StatusFrame:SetShown(not Action.StatusFrame:IsShown())
+        Action.StatusFrame.resizer = Action.CreateResizer(Action.StatusFrame)		
+	end 
+	
+end
+
+--------------------------------------------------------
+----------- DOGTAG CALL FOR STATUS FRAME ---------------
+--------------------------------------------------------
+-- Replaced by StdUI code as of 24/03/2020 but still working if someone wants to use it through TMW DogTags
 local DogTag = LibStub("LibDogTag-3.0", true)
--- Taste's 
-TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
+TMW:RegisterCallback("TMW_ACTION_STATUS_BLOCKED_CHANGED",  	DogTag.FireEvent, DogTag)
+if DogTag then 
+	-- Status Frame Blocked Spells
+	DogTag:AddTag("TMW", "ActionStatusBlockedSpell", {
+		code = function()
+			if #TR.BlockedListArray > 0 then
+			    for i = 1, #TR.BlockedListArray do
+				    return TR.BlockedListArray[i]
+				end
+			else
+				return L[Action.GetCL()] or L.enUS
+			end
+		end,
+		ret = "string",
+		doc = "Displays Blocked Spells Icon",
+		example = '[ActionStatusFrame] => "TR.BlockedListArray.icon"',
+		events = "TMW_ACTION_STATUS_BLOCKED_CHANGED",
+		category = "Action",
+	})	
+	-- Status Frame Blocked Spells Icon
+	DogTag:AddTag("TMW", "ActionStatusBlockedIcon", {
+		code = function()
+			if #TR.BlockedListIcon > 0 then
+			    for i = 1, #TR.BlockedListIcon do
+				    return TR.BlockedListIcon[i]
+				end
+			else
+				return L[Action.GetCL()] or L.enUS
+			end
+		end,
+		ret = "string",
+		doc = "Displays Blocked Spells",
+		example = '[ActionStatusFrame] => "TR.BlockedListArray.spellname"',
+		events = "TMW_ACTION_STATUS_BLOCKED_CHANGED",
+		category = "Action",
+	})
+end 
 
 ------------------------------------
 --------- NOTIFICATIONS API --------
@@ -492,7 +578,11 @@ function Action.SendNotification(message, spell, delay, incombat)
     
 end  			
 
-
+------------------------------------
+-- DogTags
+------------------------------------
+-- Taste's 
+TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 
 if DogTag then
 	-- Custom Icon
@@ -525,22 +615,7 @@ if DogTag then
 		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
-    })	
-
-	-- Status Frame Blocked Spells
-	DogTag:AddTag("TMW", "ActionStatusBlocked", {
-        code = function()
-		    local GetActionSpellStatus = GetActionSpellStatus()
-            if GetActionSpellStatus then
-			    return GetActionSpellStatus
-			end
-        end,
-        ret = "string",
-        doc = "Displays Blocked Spells",
-		example = '[ActionStatusFrame] => "GetActionSpellStatus()"',
-        events = "TMW_ACTION_STATUS_BLOCKED",
-        category = "Action",
-    })		
+    })			
 	
 	-- The biggest problem of TellMeWhen what he using :setup on frames which use DogTag and it's bring an error
 	TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
