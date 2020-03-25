@@ -378,11 +378,11 @@ end)
 --------------------------------------
 --------- StdUI Status Frame ---------
 --------------------------------------
-Action.StatusFrame = StdUi:Window(UIParent, 140, 180, "-- Blocked Spells --");
-Action.StatusFrame.titlePanel.label:SetFontSize(15)
+Action.StatusFrame = StdUi:Window(UIParent, 120, 150, "-- Blocked Spells --");
+Action.StatusFrame.titlePanel.label:SetFontSize(14)
 Action.StatusFrame.default_w = Action.StatusFrame:GetWidth()
 Action.StatusFrame.default_h = Action.StatusFrame:GetHeight() 
-Action.StatusFrame.titlePanel:SetPoint("TOP", 0, -20)
+Action.StatusFrame.titlePanel:SetPoint("TOP", 0, -10)
 Action.StatusFrame:SetFrameStrata("HIGH")
 Action.StatusFrame:SetPoint("CENTER")
 Action.StatusFrame:SetShown(false) 
@@ -392,35 +392,53 @@ Action.StatusFrame:SetShown(false)
 --StdUi:GlueTop(btn, StatusFrame, 0, -40);
 
 local data = {};
-local cols = {
-
+local columns = {
 	{
 		name         = 'Name',
-		width        = 80,
+		width        = 70,
+		defaultwidth = 70,
 		align        = 'LEFT',
 		index        = 'name',
 		format       = 'string',
 	},
-
     {
 		name         = '',
 		width        = 20,
-		align        = 'LEFT',
+		defaultwidth = 20,
+		align        = 'RIGHT',
 		index        = 'icon',
 		format       = 'icon',
 	},
 }
 
 local customHeight = 5
-if customHeight == 5 then
-    GetActionSpellStatus()
-    customHeight = #TR.BlockedListArray > 0 and #TR.BlockedListArray or 5
-end
 
-local StatusFrameScrollTable = StdUi:ScrollTable(Action.StatusFrame, cols, customHeight, 15);
+local StatusFrameScrollTable = StdUi:ScrollTable(Action.StatusFrame, columns, customHeight, 15);
 StatusFrameScrollTable:EnableSelection(true);
 StatusFrameScrollTable:SetResizable(true)
-StdUi:GlueTop(StatusFrameScrollTable, Action.StatusFrame, 0, -75);
+StdUi:GlueTop(StatusFrameScrollTable, Action.StatusFrame, 0, -50);
+StatusFrameScrollTable.defaultrows = { numberOfRows = StatusFrameScrollTable.numberOfRows, rowHeight = StatusFrameScrollTable.rowHeight }
+
+function Action.StatusFrame.UpdateResize()
+    --StatusFrameScrollTable:SetWidth(Action.StatusFrame:GetWidth() - 50 )
+    --StatusFrameScrollTable:SetHeight(Action.StatusFrame:GetHeight() ) 
+	-- ScrollTable
+	if StatusFrameScrollTable.columns then 
+		for i = 1, #StatusFrameScrollTable.columns do 										
+			if StatusFrameScrollTable.columns[i].index == "name" then
+				-- Column by Name resize
+				StatusFrameScrollTable.columns[i].width = round(StatusFrameScrollTable.columns[i].defaultwidth + (Action.StatusFrame:GetWidth() - Action.StatusFrame.default_w - 1), 0)
+				StatusFrameScrollTable:SetColumns(StatusFrameScrollTable.columns)	
+				-- Row resize
+				StatusFrameScrollTable.numberOfRows = StatusFrameScrollTable.defaultrows.numberOfRows + round((Action.StatusFrame:GetHeight() - Action.StatusFrame.default_h + 10) / StatusFrameScrollTable.defaultrows.rowHeight, 0)
+				StatusFrameScrollTable:SetDisplayRows(StatusFrameScrollTable.numberOfRows, StatusFrameScrollTable.defaultrows.rowHeight)
+				break 
+			end 
+		end
+	end 
+end
+
+Action.StatusFrame:HookScript("OnSizeChanged", Action.StatusFrame.UpdateResize)
 
 local function UpdateTableData()
 	data = {};
