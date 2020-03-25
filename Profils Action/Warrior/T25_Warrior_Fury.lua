@@ -625,7 +625,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- reaping_flames,if=!buff.recklessness.up&!buff.siegebreaker.up
-                if A.ReapingFlames:IsReady(unit) and (Unit(player):HasBuffs(A.RecklessnessBuff.ID, true) == 0 and Unit(player):HasBuffs(A.SiegebreakerBuff.ID, true) == 0) then
+                if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and (Unit(player):HasBuffs(A.RecklessnessBuff.ID, true) == 0 and Unit(player):HasBuffs(A.SiegebreakerBuff.ID, true) == 0) then
                     return A.ReapingFlames:Show(icon)
                end
 			
@@ -762,7 +762,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bag_of_tricks,if=buff.recklessness.down&debuff.siegebreaker.down&buff.enrage.up
-            if A.BagofTricks:IsReady(unit) and 
+            if A.BagofTricks:AutoRacial(unit) and 
 			(
 			    Unit(player):HasBuffs(A.RecklessnessBuff.ID, true) == 0 and Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) == 0 and Unit(player):HasBuffs(A.EnrageBuff.ID, true) > 0
 			)
