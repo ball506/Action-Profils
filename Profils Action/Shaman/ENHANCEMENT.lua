@@ -1324,12 +1324,12 @@ A[3] = function(icon, isMulti)
         end
 			
         -- reaping_flames
-        if A.ReapingFlames:IsReady(unit) then
+        if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
             return A.ReapingFlames:Show(icon)
         end
 			
         -- bag_of_tricks
-        if A.BagofTricks:IsReady(unit) then
+        if A.BagofTricks:AutoRacial(unit) then
             return A.BagofTricks:Show(icon)
         end
 			
