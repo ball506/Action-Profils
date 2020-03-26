@@ -110,10 +110,10 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
 	RallyingCry	                           = Action.Create({ Type = "Spell", ID = 97462         }),
 	DiebytheSword						= Action.Create({ Type = "Spell", ID = 118038}),
 	-- CrownControl
-	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
-	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", QueueForbidden = true    }),
-	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
-	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),  
+	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570    }),
+	StormboltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true    }),
+	Pummel	                               = Action.Create({ Type = "Spell", ID = 6552    }),
+	PummelGreen	                           = Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true    }),   
 	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
 	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
 	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true}),
@@ -230,11 +230,15 @@ local function AntiFakeStun(unit)
     return 
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 20 and 
-    Unit(unit):IsControlAble("stun", 0) and 
-    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+	(
+        (A.IsInPvP and Unit(unit):IsControlAble("stun", 0)) 
+        or
+        not A.IsInPvP		
+    ) 
+	and A.StormboltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
-    if	A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
+    if	A.StormboltGreen:IsReady(nil, nil, nil, true) and 
     (
         AntiFakeStun("mouseover") or 
         AntiFakeStun("target") or 
@@ -244,7 +248,7 @@ A[1] = function(icon)
         )
     )
     then 
-        return A.StormBoltGreen:Show(icon)         
+        return A.StormboltGreen:Show(icon)         
     end                                                                     
 end
 
@@ -259,13 +263,15 @@ A[2] = function(icon)
     
     if unit then         
         local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
-        if castLeft > 0 then             
+        if castLeft > 0 then 
+            -- Pummel		
             if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
                 return A.PummelGreen:Show(icon)                                                  
             end 
             
-            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
-                return A.StormBoltAntiFake:Show(icon)                  
+			-- Stormbolt
+            if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
+                return A.Stormbolt:Show(icon)                  
             end 
             
             -- Racials 
@@ -341,9 +347,9 @@ local function Interrupts(unit)
         return A.Pummel
     end 
      
-	-- StormBolt
-    if useCC and A.StormBolt:IsReady(unit) and A.StormBolt:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
-        return A.StormBolt              
+	-- Stormbolt
+    if useCC and A.Stormbolt:IsReady(unit) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
+        return A.Stormbolt              
     end  
     
 	-- IntimidatingShout
@@ -472,26 +478,37 @@ A[3] = function(icon, isMulti)
             -- food
             -- augmentation
             -- snapshot_stats
+			
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) then
                 A.AzsharasFontofPower:Show(icon)
             end
+			
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.WorldveinResonance:Show(icon)
             end
+			
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+			
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
             end
+			
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.PotionofUnbridledFury:Show(icon)
             end
+
+            -- charge
+            if A.Charge:IsReady(unit) and UseCharge then
+                return A.Charge:Show(icon)
+            end	
+			
         end             
 
         -- In Combat
@@ -500,6 +517,28 @@ A[3] = function(icon, isMulti)
             -- charge
             if A.Charge:IsReady(unit) and UseCharge and isMovingFor > ChargeTime then
                 return A.Charge:Show(icon)
+            end
+
+			-- Smart Stormbolt			
+            if SmartStormbolt then
+                local Stormbolt_Nameplates = MultiUnits:GetActiveUnitPlates()
+                if Stormbolt_Nameplates then                         				
+                    for Stormbolt_UnitID in pairs(Stormbolt_Nameplates) do    						
+                        for k, v in pairs(TR.Lists.Storm_Spells_List) do
+                            if (TR.Lists.Storm_Unit_List[select(6, Unit(Stormbolt_UnitID):InfoGUID())] ~= nil or UnitCastingInfo(Stormbolt_UnitID) == GetSpellInfo(v) or UnitChannelInfo(Stormbolt_UnitID) == GetSpellInfo(v)) and Unit(Stormbolt_UnitID):GetRange() <= 20 then                           
+						        if A.Stormbolt:IsSpellLearned() and A.Stormbolt:IsReadyByPassCastGCD("player") then
+                                    return A.Stormbolt:Show(icon)
+                                end
+                            end
+                        end    
+                    end 
+                end						
+            end	  
+
+    	    -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt then 
+                return Interrupt:Show(icon)
             end
 			
             -- run_action_list,name=movement,if=movement.distance>5
@@ -801,7 +840,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- cleave,if=spell_targets.whirlwind>2
-                if A.Cleave:IsReady(unit) and GetByRange(3, 5) then
+                if A.Cleave:IsReady(player) and GetByRange(3, 5) then
                     return A.Cleave:Show(icon)
                 end
 				
@@ -898,7 +937,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- cleave
-                if A.Cleave:IsReady(unit) then
+                if A.Cleave:IsReady(player) then
                     return A.Cleave:Show(icon)
                 end
 			
@@ -1050,7 +1089,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- cleave,if=spell_targets.whirlwind>2
-                if A.Cleave:IsReady(unit) and GetByRange(3, 5) then
+                if A.Cleave:IsReady(player) and GetByRange(3, 5) then
                     return A.Cleave:Show(icon)
                 end
 				
@@ -1171,7 +1210,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- cleave,if=spell_targets.whirlwind>2
-            if A.Cleave:IsReady(unit) and GetByRange(3, 5) then
+            if A.Cleave:IsReady(player) and GetByRange(3, 5) then
                 return A.Cleave:Show(icon)
             end
 			

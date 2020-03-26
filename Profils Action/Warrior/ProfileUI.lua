@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.0.5 (26.03.2020)",
+    DateTime = "v4.0.9 (26.03.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -558,7 +558,7 @@ A.Data.ProfileUI                                     = {
                 },
                 {
                     E = "Checkbox", 
-                    DB = "SmartStormBolt",
+                    DB = "SmartStormbolt",
                     DBV = true,
                     L = { 
                         enUS = "Smart " .. A.GetSpellInfo(107570), 
@@ -620,13 +620,13 @@ A.Data.ProfileUI                                     = {
                         { text = "BOTH", value = "BOTH" },
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "StormBoltPvP",
+                    DB = "StormboltPvP",
                     DBV = "BOTH",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(107570),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by StormBolt\nMore custom config you can find in group by open /tmw", 
+                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Stormbolt\nMore custom config you can find in group by open /tmw", 
                     }, 
                     M = {},
                 },
@@ -878,6 +878,91 @@ A.Data.ProfileUI                                     = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+               --Charge {              
+					{
+						E = "Checkbox", 
+						DB = "UseCharge",
+						DBV = true,
+						L = { 
+							enUS = "Auto " .. A.GetSpellInfo(100), 
+							ruRU = "Авто " .. A.GetSpellInfo(100), 
+							frFR = "Auto " .. A.GetSpellInfo(100), 
+						}, 
+						TT = { 
+							enUS = "Automatically use " .. A.GetSpellInfo(100), 
+							ruRU = "Автоматически использовать " .. A.GetSpellInfo(100), 
+							frFR = "Utiliser automatiquement " .. A.GetSpellInfo(100), 
+						}, 
+						M = {},
+					},
+					{
+						E = "Slider",                                                     
+						MIN = 1, 
+						MAX = 7,                            
+						DB = "ChargeTime",
+						DBV = 3, -- Set healthpercentage @60% life. 
+						ONOFF = true,
+						L = { 
+							enUS = A.GetSpellInfo(100) .. " if moving for",
+							ruRU = A.GetSpellInfo(100) .. " если переехать",
+							frFR = A.GetSpellInfo(100) .. " si vous bougez pendant",
+						},
+						TT = { 
+							enUS = "If " .. A.GetSpellInfo(100) .. " is talented and ready, will use it if moving for set value.", 
+							ruRU = "Если " .. A.GetSpellInfo(100) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+							frFR = "Si " .. A.GetSpellInfo(100) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+						}, 
+						M = {},
+					},	
+            },	
+			-- Heroic Leap
+            {              
+					{
+						E = "Checkbox", 
+						DB = "UseHeroicLeap",
+						DBV = true,
+						L = { 
+							enUS = "Auto " .. A.GetSpellInfo(6544), 
+							ruRU = "Авто " .. A.GetSpellInfo(6544), 
+							frFR = "Auto " .. A.GetSpellInfo(6544), 
+						}, 
+						TT = { 
+							enUS = "Automatically use " .. A.GetSpellInfo(6544), 
+							ruRU = "Автоматически использовать " .. A.GetSpellInfo(6544), 
+							frFR = "Utiliser automatiquement " .. A.GetSpellInfo(6544), 
+						}, 
+						M = {},
+					},
+					{
+						E = "Slider",                                                     
+						MIN = 1, 
+						MAX = 7,                            
+						DB = "HeroicLeapTime",
+						DBV = 3, -- Set healthpercentage @60% life. 
+						ONOFF = true,
+						L = { 
+							enUS = A.GetSpellInfo(6544) .. " if moving for",
+							ruRU = A.GetSpellInfo(6544) .. " если переехать",
+							frFR = A.GetSpellInfo(6544) .. " si vous bougez pendant",
+						},
+						TT = { 
+							enUS = "If " .. A.GetSpellInfo(6544) .. " is talented and ready, will use it if moving for set value.", 
+							ruRU = "Если " .. A.GetSpellInfo(6544) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+							frFR = "Si " .. A.GetSpellInfo(6544) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+						}, 
+						M = {},
+					},	
+                --},					
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- Interrupts Settings -- ",
                     },
                 },
@@ -917,6 +1002,22 @@ A.Data.ProfileUI                                     = {
                     }, 					
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "SmartStormbolt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Smart " .. A.GetSpellInfo(107570), 
+                        ruRU = "Smart " .. A.GetSpellInfo(107570), 
+                        frFR = "Smart " .. A.GetSpellInfo(107570), 
+                    }, 
+                    TT = { 
+                        enUS = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        ruRU = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        frFR = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.",   
+                    }, 
+                    M = {},
+                },				
 			},
             { -- [7] 
                 {
@@ -1084,13 +1185,13 @@ A.Data.ProfileUI                                     = {
                         { text = "BOTH", value = "BOTH" },
                         { text = "OFF", value = "OFF" },
                     },
-                    DB = "StormBoltPvP",
+                    DB = "StormboltPvP",
                     DBV = "BOTH",
                     L = { 
                         ANY = "PvP " .. A.GetSpellInfo(107570),
                     }, 
                     TT = { 
-                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by StormBolt\nMore custom config you can find in group by open /tmw", 
+                        enUS = "@arena1-3 interrupt PvP list from 'Interrupts' tab by Stormbolt\nMore custom config you can find in group by open /tmw", 
                     }, 
                     M = {},
                 },
@@ -1654,6 +1755,151 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 }, 
             },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 
+               --Charge {              
+					{
+						E = "Checkbox", 
+						DB = "UseCharge",
+						DBV = true,
+						L = { 
+							enUS = "Auto " .. A.GetSpellInfo(100), 
+							ruRU = "Авто " .. A.GetSpellInfo(100), 
+							frFR = "Auto " .. A.GetSpellInfo(100), 
+						}, 
+						TT = { 
+							enUS = "Automatically use " .. A.GetSpellInfo(100), 
+							ruRU = "Автоматически использовать " .. A.GetSpellInfo(100), 
+							frFR = "Utiliser automatiquement " .. A.GetSpellInfo(100), 
+						}, 
+						M = {},
+					},
+					{
+						E = "Slider",                                                     
+						MIN = 1, 
+						MAX = 7,                            
+						DB = "ChargeTime",
+						DBV = 3, -- Set healthpercentage @60% life. 
+						ONOFF = true,
+						L = { 
+							enUS = A.GetSpellInfo(100) .. " if moving for",
+							ruRU = A.GetSpellInfo(100) .. " если переехать",
+							frFR = A.GetSpellInfo(100) .. " si vous bougez pendant",
+						},
+						TT = { 
+							enUS = "If " .. A.GetSpellInfo(100) .. " is talented and ready, will use it if moving for set value.", 
+							ruRU = "Если " .. A.GetSpellInfo(100) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+							frFR = "Si " .. A.GetSpellInfo(100) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+						}, 
+						M = {},
+					},	
+            },	
+			-- Heroic Leap
+            {              
+					{
+						E = "Checkbox", 
+						DB = "UseHeroicLeap",
+						DBV = true,
+						L = { 
+							enUS = "Auto " .. A.GetSpellInfo(6544), 
+							ruRU = "Авто " .. A.GetSpellInfo(6544), 
+							frFR = "Auto " .. A.GetSpellInfo(6544), 
+						}, 
+						TT = { 
+							enUS = "Automatically use " .. A.GetSpellInfo(6544), 
+							ruRU = "Автоматически использовать " .. A.GetSpellInfo(6544), 
+							frFR = "Utiliser automatiquement " .. A.GetSpellInfo(6544), 
+						}, 
+						M = {},
+					},
+					{
+						E = "Slider",                                                     
+						MIN = 1, 
+						MAX = 7,                            
+						DB = "HeroicLeapTime",
+						DBV = 3, -- Set healthpercentage @60% life. 
+						ONOFF = true,
+						L = { 
+							enUS = A.GetSpellInfo(6544) .. " if moving for",
+							ruRU = A.GetSpellInfo(6544) .. " если переехать",
+							frFR = A.GetSpellInfo(6544) .. " si vous bougez pendant",
+						},
+						TT = { 
+							enUS = "If " .. A.GetSpellInfo(6544) .. " is talented and ready, will use it if moving for set value.", 
+							ruRU = "Если " .. A.GetSpellInfo(6544) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+							frFR = "Si " .. A.GetSpellInfo(6544) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+						}, 
+						M = {},
+					},	
+                --},					
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "SmartStormbolt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Smart " .. A.GetSpellInfo(107570), 
+                        ruRU = "Smart " .. A.GetSpellInfo(107570), 
+                        frFR = "Smart " .. A.GetSpellInfo(107570), 
+                    }, 
+                    TT = { 
+                        enUS = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        ruRU = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        frFR = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.",   
+                    }, 
+                    M = {},
+                },				
+			},
             { -- [4] 4th Row
                 {
                     E = "LayoutSpace",                                                                         
@@ -1716,7 +1962,7 @@ A.Data.ProfileUI                                     = {
     },
     [7] = {
         [ACTION_CONST_WARRIOR_FURY] = {
-            ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
+            ["stun"] = { Enabled = true, Key = "Stormbolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
                 return  (
                             IsInPvP and 
@@ -1737,7 +1983,7 @@ A.Data.ProfileUI                                     = {
             ]] },
         },
         [ACTION_CONST_WARRIOR_ARMS] = {
-            ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
+            ["stun"] = { Enabled = true, Key = "Stormbolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
                 return  (
                             IsInPvP and 
@@ -1758,7 +2004,7 @@ A.Data.ProfileUI                                     = {
             ]] },
         },
         [ACTION_CONST_WARRIOR_PROTECTION] = {
-            ["stun"] = { Enabled = true, Key = "StormBolt", LUAVER = 5, LUA = [[
+            ["stun"] = { Enabled = true, Key = "Stormbolt", LUAVER = 5, LUA = [[
                 local A = Action[ACTION_CONST_WARRIOR_ARMS]
                 return  (
                             IsInPvP and 
@@ -1866,8 +2112,8 @@ function A.Second_CastBars(unit)
         return false 
     end 
     
-    local Toggle = A.GetToggle(2, "StormBoltPvP")    
-    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].StormBolt and A[A.PlayerSpec].StormBolt:IsReadyP(unit, nil, true) and A[A.PlayerSpec].StormBolt:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
+    local Toggle = A.GetToggle(2, "StormboltPvP")    
+    if Toggle and Toggle ~= "OFF" and A[A.PlayerSpec] and A[A.PlayerSpec].Stormbolt and A[A.PlayerSpec].Stormbolt:IsReadyP(unit, nil, true) and A[A.PlayerSpec].Stormbolt:AbsentImun(unit, {"CCTotalImun", "TotalImun", "DamagePhysImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
         if Toggle == "BOTH" then 
             return select(2, A.InterruptIsValid(unit, "Heal", true)) or select(2, A.InterruptIsValid(unit, "PvP", true)) 
         else
