@@ -174,6 +174,7 @@ local PlayerSpec = Action.PlayerSpec
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Elemental Blast behavior
 - Reworked DBM opener
 - Fixed Healing Surge				
@@ -189,6 +190,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Fixed some Fury of Air logic (need feedbacks)
 - Fixed issue with Tremor Totem logic
 - Big UI update
 - New UnbridledFury settings
@@ -222,6 +225,8 @@ As always, please report on Discord or message me directly if you need anything 
 		Welcome to Taste - Retribution Paladin !
 		
 List of latest changes :
+
+- New : Blocked Spells Status Frame (see 2nd tab)
 - New UI settings
 - Added new condition for Unbridled Fury potion
 - Added new condition for Focused Azerite Beam
@@ -244,6 +249,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Auto taunt issue
 - Fixed Consecration logic
 - Added moves in ProfileUI			
@@ -268,6 +274,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Fixed lua error that stuck the rotation
 - Added Player ping to spells prediction
 - Fixed Fear spam in certain situations			
 - Added Interrupt UI settings
@@ -284,6 +292,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Added CDs check on Summon Demonic Tyran and big cooldowns >= 2min
 - Third version of Imp Tracker system. Now really good ! NO MOAR LUA ERROR
 - Fixed issue with DreadStalkers
@@ -308,6 +317,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Fixed the fix for Shards being capped at infinite...
 - Reworked AoE logic with Havoc
 - Fixed issue with Chaos Bolt not being used with 4+ shards
 - Fixed issue with Havoc pool when AoE is off
@@ -329,8 +340,12 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Arms Warrior !
 		
+        ***** TEST BUILD *****
+		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Arms still missing some stuff but will be worked hard till its good ! (Feedback me)
 - Massive update for 8.3
 - Fixed issue with Battle Shout spam			
 
@@ -344,8 +359,12 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Fury Warrior !
 		
+        ***** TEST BUILD *****
+		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Better state than Arms (Need feedbacks !)
 - Massive update for 8.3
 - Fixed issue with Battle Shout spam				
 
@@ -361,6 +380,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Massive 8.3 update
 - Massive UI rework
 - Reworked all defensives logic
@@ -387,6 +407,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Smart Asphyxiate in next build (Mythic+)
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Reworked all defensives logic
 - Fixed Auto Taunt
 - Fixed Arcane Torrent
@@ -406,6 +428,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Smart Asphyxiate in next build (Mythic+)
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Improvement on Profile performance
 - APLs update to 8.3
 - Added Dummy Test option
@@ -427,6 +451,9 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Smart Asphyxiate in next build (Mythic+)
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Fixed issue with rotation stucked in Mythic+
 - Improvement on Profile performance
 - APLs update to 8.3
 - Added Dummy Test option
@@ -454,6 +481,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Changed priority between Eyebeam and Deathsweep (Little dps increase)
 - Added UI for BladeDance pool/sync with Eyebeam
 - Added FelEruption + Manarift combo
 - Added Imprison + Manarift combo
@@ -473,6 +502,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Updated to 8.3 APLs
 - Added Imprison as interrupt
 - Fixed Concentrated Flame usage			
@@ -493,6 +523,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Rupture not being refreshed
 - Fixed Toxic Blade usage
 - Added check on Azerite Beam essence
@@ -513,6 +544,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Arcane Torrent logic
 - Improved Profile performance
 - Updated APLs to 8.3
@@ -549,6 +581,7 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Changed priority of Barbed Shot
 - Changed default Barbed Shot refresh value from 1.8 to 2 considering feedbacks
 - Added check on pet type to avoid using spells they don't have
@@ -602,7 +635,10 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Arcane Mage !
 		
-***** TEST BUILD *****
+        ***** TEST BUILD *****
+		
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Need feedback !!
 - Reworked all the rotation
 - Updated  to latest T25 APLs
 - Fixed most lua errors
@@ -645,7 +681,19 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Feral Druid !
 		
-***** TEST BUILD *****
+        ***** TEST BUILD *****
+
+- New : Blocked Spells Status Frame (see 2nd tab)
+- AutoWild Charge fix
+- Range Rotation option
+- Blood of the enemy AoE / CD options
+- Mass root Thing from Beyond 
+- Tigers Fury fix
+- Range check on most spells 
+- Death check on most spells
+- Added Entangling root on mouseover
+- Bear Form issue should be fixed (no more spam)
+- Trinkets range check
 - Reworked all the rotation
 - Added Thing From Below mouseover roots
 - Updated APLs to latest T25
@@ -672,6 +720,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Updated to 8.3 APLs
 - Fix on AutoTaunt
 - Fixed Arcane Torrent logic
@@ -690,6 +739,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Catweaving rotation
 - Reworked cooldowns usage
 - Added more notification for user
