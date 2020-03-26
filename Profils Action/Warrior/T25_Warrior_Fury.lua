@@ -209,10 +209,10 @@ local function AntiFakeStun(unit)
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 20 and 
     Unit(unit):IsControlAble("stun", 0) and 
-    A.StormboltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
-    if	A.StormboltGreen:IsReady(nil, nil, nil, true) and 
+    if	A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
     (
         AntiFakeStun("mouseover") or 
         AntiFakeStun("target") or 
@@ -222,7 +222,7 @@ A[1] = function(icon)
         )
     )
     then 
-        return A.StormboltGreen:Show(icon)         
+        return A.StormBoltGreen:Show(icon)         
     end                                                                     
 end
 
@@ -353,12 +353,17 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Pummel
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true) then 
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         return A.Pummel
     end 
-    
+	
+ 	-- Stormbolt
+    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
+        return A.Stormbolt:Show(icon)                  
+    end 
+ 
 	-- IntimidatingShout
-    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("fear", 0) then 
+    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("fear", 0) then 
         return A.IntimidatingShout              
     end             
     
@@ -413,6 +418,7 @@ A[3] = function(icon, isMulti)
 	local ChargeTime = GetToggle(2, "ChargeTime")
 	local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
 	local HeroicLeapTime = GetToggle(2, "HeroicLeapTime")
+	local SmartStormBolt = GetToggle(2, "SmartStormBolt")
 	local profileStop = false
 	local CanCast = true
 	-- FocusedAzeriteBeam protection channel
@@ -515,16 +521,32 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
 			
+            -- auto_attack
+            -- charge
+            if A.Charge:IsReady(unit) and UseCharge then
+                return A.Charge:Show(icon)
+            end	
+			
         end
                         
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-		
-            -- auto_attack
-            -- charge
-            if A.Charge:IsReady(unit) and UseCharge and isMovingFor > ChargeTime then
-                return A.Charge:Show(icon)
-            end
+	
+			-- Smart StormBolt			
+            if SmartStormBolt then
+                local Stormbolt_Nameplates = MultiUnits:GetActiveUnitPlates()
+                if Stormbolt_Nameplates then                         				
+                    for Stormbolt_UnitID in pairs(Stormbolt_Nameplates) do    						
+                        for k, v in pairs(TR.Lists.Storm_Spells_List) do
+                            if (TR.Lists.Storm_Unit_List[select(6, Unit(Stormbolt_UnitID):InfoGUID())] ~= nil or UnitCastingInfo(Stormbolt_UnitID) == GetSpellInfo(v) or UnitChannelInfo(Stormbolt_UnitID) == GetSpellInfo(v)) and Unit(Stormbolt_UnitID):GetRange() <= 20 then                           
+						        if A.StormBolt:IsReadyByPassCastGCD("player") then
+                                    return A.StormBolt:Show(icon)
+                                end
+                            end
+                        end    
+                    end 
+                end						
+            end	  
 			
             -- run_action_list,name=movement,if=movement.distance>5
             if Unit(unit):GetRange() > 5 then
@@ -784,19 +806,19 @@ A[3] = function(icon, isMulti)
 				)
 				or 
 				(
-				    A.FrothingBerserker:IsSpellLearned() 
+				    A.FrothingBerserker:IsSpellLearned() and Player:Rage() >= 95
 					or
 					A.Carnage:IsSpellLearned() and 
 					(
 					    Unit(player):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() 
 					    or
-					    Player:Rage() > 80
+					    Player:Rage() >= 75
 					) 
 					or A.Massacre:IsSpellLearned() and 
 					(
 					    Unit(player):HasBuffs(A.EnrageBuff.ID, true) < A.GetGCD() 
 						or
-						Player:Rage() > 80
+						Player:Rage() >= 85
 					)
 				)
 			)
@@ -842,13 +864,13 @@ A[3] = function(icon, isMulti)
             -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<80)|(talent.frothing_berserker.enabled&rage<90)
             if A.RagingBlow:IsReady(unit) and 
 			(
-			    A.Carnage:IsSpellLearned() 
+			    A.Carnage:IsSpellLearned() and Player:Rage() < 75
 				or
 				(
-				    A.Massacre:IsSpellLearned() and Player:Rage() < 80
+				    A.Massacre:IsSpellLearned() and Player:Rage() < 85
 				)
 				or 
-				(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 90)
+				(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 95)
 			)
 			then
                 return A.RagingBlow:Show(icon)

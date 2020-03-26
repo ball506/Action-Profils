@@ -556,6 +556,22 @@ A.Data.ProfileUI                                     = {
                     }, 					
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "SmartStormBolt",
+                    DBV = true,
+                    L = { 
+                        enUS = "Smart " .. A.GetSpellInfo(107570), 
+                        ruRU = "Smart " .. A.GetSpellInfo(107570), 
+                        frFR = "Smart " .. A.GetSpellInfo(107570), 
+                    }, 
+                    TT = { 
+                        enUS = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        ruRU = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        frFR = "[BETA] Activate the smart " .. A.GetSpellInfo(107570) .. " system working with special list for all Battle For Azeroth Mythic dungeon.",   
+                    }, 
+                    M = {},
+                },				
 			},
             { -- [6]
                 {
