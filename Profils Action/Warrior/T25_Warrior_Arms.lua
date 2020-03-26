@@ -56,6 +56,7 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+	BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     -- Generics
     Skullsplitter                          = Action.Create({ Type = "Spell", ID = 260643 }),
     DeadlyCalmBuff                         = Action.Create({ Type = "Spell", ID = 262228 }),
@@ -97,6 +98,25 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     Massacre                               = Action.Create({ Type = "Spell", ID = 281001 }),
     ExecuteDefault                         = Action.Create({ Type = "Spell", ID = 163201 }),
     ExecuteMassacre                        = Action.Create({ Type = "Spell", ID = 281000 }),
+	IntimidatingShout                      = Action.Create({ Type = "Spell", ID = 5246, Hidden = true     }),
+	Pummel	                               = Action.Create({ Type = "Spell", ID = 6552    }),
+	BattleShout                            = Action.Create({ Type = "Spell", ID = 6673         }),
+    HeroicLeap                             = Action.Create({ Type = "Spell", ID = 6544      }),
+	-- Self Defensive
+	EnragedRegeneration                    = Action.Create({ Type = "Spell", ID = 184364         }),
+	BerserkerRage                          = Action.Create({ Type = "Spell", ID = 18499         }),
+	VictoryRush	                           = Action.Create({ Type = "Spell", ID = 34428         }),
+	ImpendingVictory                       = Action.Create({ Type = "Spell", ID = 202168         }),
+	RallyingCry	                           = Action.Create({ Type = "Spell", ID = 97462         }),
+	DiebytheSword						= Action.Create({ Type = "Spell", ID = 118038}),
+	-- CrownControl
+	StormBoltGreen						= Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
+	StormBoltAntiFake                   = Action.Create({ Type = "Spell", ID = 107570, Desc = "[2] Kick", QueueForbidden = true    }),
+	Pummel                              = Action.Create({ Type = "Spell", ID = 6552    }),
+	PummelGreen							= Action.Create({ Type = "SpellSingleColor", ID = 6552, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),  
+	IntimidatingShout                   = Action.Create({ Type = "Spell", ID = 5246    }),
+	Hamstring							= Action.Create({ Type = "Spell", ID = 1715    }),
+	Taunt								= Action.Create({ Type = "Spell", ID = 355, Desc = "[6] PvP Pets Taunt", QueueForbidden = true}),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
@@ -136,7 +156,8 @@ Action[ACTION_CONST_WARRIOR_ARMS] = {
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	
+    DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon   	
 };
 
 -- To create essences use next code:
@@ -203,6 +224,151 @@ GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 local function UpdateExecuteID()
     Execute = A.Massacre:IsSpellLearned() and A.ExecuteMassacre or A.ExecuteDefault
 end
+
+-- [1] CC AntiFake Rotation
+local function AntiFakeStun(unit) 
+    return 
+    A.IsUnitEnemy(unit) and  
+    Unit(unit):GetRange() <= 20 and 
+    Unit(unit):IsControlAble("stun", 0) and 
+    A.StormBoltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
+end 
+A[1] = function(icon)    
+    if	A.StormBoltGreen:IsReady(nil, nil, nil, true) and 
+    (
+        AntiFakeStun("mouseover") or 
+        AntiFakeStun("target") or 
+        (
+            not A.IsUnitEnemy("mouseover") and 
+            not A.IsUnitEnemy("target")
+        )
+    )
+    then 
+        return A.StormBoltGreen:Show(icon)         
+    end                                                                     
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.PummelGreen:IsReady(unit, nil, nil, true) and A.PummelGreen:AbsentImun(unit, Temp.TotalAndPhysKick, true) then
+                return A.PummelGreen:Show(icon)                                                  
+            end 
+            
+            if A.StormBoltAntiFake:IsReady(unit, nil, nil, true) and A.StormBoltAntiFake:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):IsControlAble("stun", 0) then
+                return A.StormBoltAntiFake:Show(icon)                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
+
+local function SelfDefensives()
+    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
+    if Unit(player):CombatTime() == 0 then 
+        return 
+    end 
+  
+	-- Rallying Cry
+    local RallyingCry = A.GetToggle(2, "RallyingCry")
+    if     RallyingCry >= 0 and A.RallyingCry:IsReady(player) and 
+    (
+        (     -- Auto 
+            RallyingCry >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit(player):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit(player):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
+        ) 
+		or 
+        (    -- Custom
+            RallyingCry < 100 and 
+            Unit(player):HealthPercent() <= RallyingCry
+        )
+    ) 
+    then 
+        return A.RallyingCry
+    end  
+	 
+end 
+SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+	-- Pummel
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true) then 
+        return A.Pummel
+    end 
+     
+	-- StormBolt
+    if useCC and A.StormBolt:IsReady(unit) and A.StormBolt:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then
+        return A.StormBolt              
+    end  
+    
+	-- IntimidatingShout
+    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("fear", 0) then 
+        return A.IntimidatingShout              
+    end             
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -506,6 +672,28 @@ A[3] = function(icon, isMulti)
                     return A.MemoryofLucidDreams:Show(icon)
                 end
 			end
+
+	    	-- Non SIMC Custom Trinket1
+	        if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then 
+      	        return A.Trinket1:Show(icon)
+   	        end 	        
+		
+		    -- Non SIMC Custom Trinket2
+	        if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast and	    
+			(
+    			TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
+				or
+				not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD 					
+			)
+			then
+      	       	return A.Trinket2:Show(icon) 	
+	        end
 			
             -- run_action_list,name=hac,if=raid_event.adds.exists
             if GetByRange(2, 5) then
@@ -589,7 +777,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- bladestorm,if=(debuff.colossus_smash.up&raid_event.adds.in>target.time_to_die)|raid_event.adds.up&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-                if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and 
+                if A.Bladestorm:IsReady(player) and A.BurstIsON(unit) and 
 				( 
 					(
 					    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 4.5 and A.TestofMight:GetAzeriteRank() == 0) 
@@ -684,7 +872,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- bladestorm,if=buff.sweeping_strikes.down&(!talent.deadly_calm.enabled|buff.deadly_calm.down)&((debuff.colossus_smash.remains>4.5&!azerite.test_of_might.enabled)|buff.test_of_might.up)
-                if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and 
+                if A.Bladestorm:IsReady(player) and A.BurstIsON(unit) and 
 				(
 				    Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) == 0 and 
 					(
@@ -853,7 +1041,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- bladestorm,if=!buff.memory_of_lucid_dreams.up&buff.test_of_might.up&rage<30&!buff.deadly_calm.up
-                if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and 
+                if A.Bladestorm:IsReady(player) and A.BurstIsON(unit) and 
 				(
 				    Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) == 0 and Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) and Player:Rage() < 30 and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0
 				)
@@ -964,7 +1152,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bladestorm,if=cooldown.mortal_strike.remains&(!talent.deadly_calm.enabled|buff.deadly_calm.down)&((debuff.colossus_smash.up&!azerite.test_of_might.enabled)|buff.test_of_might.up)&buff.memory_of_lucid_dreams.down&rage<40
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and 
+            if A.Bladestorm:IsReady(player) and A.BurstIsON(unit) and 
 			(
 			    A.MortalStrike:GetCooldown() > 0 and 
 				(
