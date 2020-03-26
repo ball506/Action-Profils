@@ -218,9 +218,35 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
 end 
 
+local WildfireInfusions = {
+  A.ShrapnelBomb,
+  A.PheromoneBomb,
+  A.VolatileBomb,
+}
+
+local function CurrentWildfireInfusion()
+    if A.WildfireInfusion:IsSpellLearned() then
+        for _, infusion in pairs(WildfireInfusions) do
+            if infusion:IsSpellLearned() then 
+			    return infusion 
+			end
+        end
+    end
+    return A.WildfireBomb
+end
+
+local function CurrentRaptorStrike()
+     return A.RaptorStrikeEagle:IsSpellLearned() and A.RaptorStrikeEagle or A.RaptorStrike
+end
+
+local function CurrentMongooseBite()
+    return A.MongooseBiteEagle:IsSpellLearned() and A.MongooseBiteEagle or A.MongooseBite
+end
+
 local function InRange(unit)
+    local CurrentMongooseBite = CurrentMongooseBite()
 	-- @return boolean 
-	return A.Carve:IsInRange(unit)
+	return CurrentMongooseBite:IsInRange(unit)
 end 
 InRange = A.MakeFunctionCachedDynamic(InRange)
 
@@ -273,46 +299,22 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
-local WildfireInfusions = {
-  A.ShrapnelBomb,
-  A.PheromoneBomb,
-  A.VolatileBomb,
-}
-
-local function CurrentWildfireInfusion()
-    if A.WildfireInfusion:IsSpellLearned() then
-        for _, infusion in pairs(WildfireInfusions) do
-            if infusion:IsSpellLearned() then 
-			    return infusion 
-			end
-        end
-    end
-    return A.WildfireBomb
-end
-
-local function CurrentRaptorStrike()
-  return A.RaptorStrikeEagle:IsSpellLearned() and A.RaptorStrikeEagle or A.RaptorStrike
-end
-
-local function CurrentMongooseBite()
-  return A.MongooseBiteEagle:IsSpellLearned() and A.MongooseBiteEagle or A.MongooseBite
-end
 
 local function EvaluateTargetIfFilterKillCommand55(unit)
-  return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
+    return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
 end
 
 local function EvaluateTargetIfKillCommand72(unit)
-  return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax()
+    return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax()
 end
 
 
 local function EvaluateTargetIfFilterKillCommand134(unit)
-  return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
+    return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
 end
 
 local function EvaluateTargetIfKillCommand153(unit)
-  return Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < MongooseBite:GetSpellPowerCostCache())
+    return Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < MongooseBite:GetSpellPowerCostCache())
 end
 
 local function EvaluateCycleCarveCdr472(unit)
@@ -664,7 +666,7 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-		
+			
         -- mongoose_bite,if=active_enemies=1&(talent.alpha_predator.enabled&target.time_to_die<10|target.time_to_die<5)
         if MongooseBite:IsReady(unit) and 
 		(
@@ -678,7 +680,7 @@ A[3] = function(icon, isMulti)
 		then
             return MongooseBite:Show(icon)
         end
-
+		
         -- call_action_list,name=apwfi,if=active_enemies<3&talent.chakrams.enabled&talent.alpha_predator.enabled
         if (GetByRange(3, 8, false, true) and A.Chakrams:IsSpellLearned() and A.AlphaPredator:IsSpellLearned()) then
 		
@@ -709,9 +711,9 @@ A[3] = function(icon, isMulti)
 				or 
 				Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() and 
 				(
-				    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
+				    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
 					or 
-					A.PheromoneBomb:IsLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and
+					A.PheromoneBomb:IsSpellLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and
 					Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
 				)
 			)
@@ -725,7 +727,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- mongoose_bite,if=buff.mongoose_fury.remains&next_wi_bomb.pheromone
-            if MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) > 0 and A.PheromoneBomb:IsLearned()) then
+            if MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) > 0 and A.PheromoneBomb:IsSpellLearned()) then
                 return MongooseBite:Show(icon)
             end
 			
@@ -756,7 +758,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>30&dot.serpent_sting.remains>5*gcd
-            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsSpellLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
                 return WildfireBomb:Show(icon)
             end
 			
@@ -805,9 +807,9 @@ A[3] = function(icon, isMulti)
             -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
             if WildfireBomb:IsReady(unit) and 
 			(
-			    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) 
+			    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) 
 				or 
-				A.PheromoneBomb:IsLearned() or A.ShrapnelBomb:IsLearned() and Player:Focus() > 50
+				A.PheromoneBomb:IsSpellLearned() or A.ShrapnelBomb:IsSpellLearned() and Player:Focus() > 50
 			)
 			then
                 return WildfireBomb:Show(icon)
@@ -850,9 +852,9 @@ A[3] = function(icon, isMulti)
 			    WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() 
 				or 
 				(
-				    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
+				    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
 					or 
-					A.PheromoneBomb:IsLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and 
+					A.PheromoneBomb:IsSpellLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and 
 					Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
 				)
 			)
@@ -896,7 +898,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&dot.serpent_sting.remains>5*gcd
-            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
                 return WildfireBomb:Show(icon)
             end
 			
@@ -928,9 +930,9 @@ A[3] = function(icon, isMulti)
             -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel
             if WildfireBomb:IsReady(unit) and 
 			(
-			    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
+			    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
 				or 
-				A.PheromoneBomb:IsLearned() or A.ShrapnelBomb:IsLearned()
+				A.PheromoneBomb:IsSpellLearned() or A.ShrapnelBomb:IsSpellLearned()
 			)
 			then
                 return WildfireBomb:Show(icon)
@@ -1221,9 +1223,9 @@ A[3] = function(icon, isMulti)
 				or 
 				Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() and 
 				(
-				    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
+				    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5
 					or 
-					A.PheromoneBomb:IsLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
+					A.PheromoneBomb:IsSpellLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
 				)
 			)
 			then
@@ -1236,7 +1238,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- mongoose_bite,if=buff.mongoose_fury.remains&next_wi_bomb.pheromone
-            if MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) > 0 and A.PheromoneBomb:IsLearned()) then
+            if MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) > 0 and A.PheromoneBomb:IsSpellLearned()) then
                 return MongooseBite:Show(icon)
             end
 			
@@ -1267,7 +1269,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>30&dot.serpent_sting.remains>5*gcd
-            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsSpellLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
                 return WildfireBomb:Show(icon)
             end
 			
@@ -1316,11 +1318,11 @@ A[3] = function(icon, isMulti)
             -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel&focus>50
             if WildfireBomb:IsReady(unit) and 
 			(
-			    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
+			    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
 				or 
-				A.PheromoneBomb:IsLearned()
+				A.PheromoneBomb:IsSpellLearned()
 				or 
-				A.ShrapnelBomb:IsLearned() and Player:Focus() > 50
+				A.ShrapnelBomb:IsSpellLearned() and Player:Focus() > 50
 			)
 			then
                 return WildfireBomb:Show(icon)
@@ -1363,9 +1365,9 @@ A[3] = function(icon, isMulti)
 			    WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() 
 				or 
 				(
-				    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5 
+				    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5 
 					or 
-					A.PheromoneBomb:IsLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
+					A.PheromoneBomb:IsSpellLearned() and Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) == 0 and Player:Focus() + Player:FocusCastRegen(WildfireBomb:GetSpellCastTime()) < Player:FocusMax() - Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) * 3
 				)
 			)
 			then
@@ -1408,7 +1410,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&dot.serpent_sting.remains>5*gcd
-            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if WildfireBomb:IsReady(unit) and (A.ShrapnelBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
                 return WildfireBomb:Show(icon)
             end
 			
@@ -1440,11 +1442,11 @@ A[3] = function(icon, isMulti)
             -- wildfire_bomb,if=next_wi_bomb.volatile&dot.serpent_sting.ticking|next_wi_bomb.pheromone|next_wi_bomb.shrapnel
             if WildfireBomb:IsReady(unit) and 
 			(
-			    A.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
+			    A.VolatileBomb:IsSpellLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 0 
 				or 
-				A.PheromoneBomb:IsLearned() 
+				A.PheromoneBomb:IsSpellLearned() 
 				or 
-				A.ShrapnelBomb:IsLearned()
+				A.ShrapnelBomb:IsSpellLearned()
 			)
 			then
                 return WildfireBomb:Show(icon)
@@ -1466,15 +1468,10 @@ A[3] = function(icon, isMulti)
             end
 			
             -- carve,if=dot.shrapnel_bomb.ticking
-            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) > 0) then
+            if A.Carve:IsReady(player) and Unit(unit):GetRange() <= 8 and (Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) > 0) then
                 return A.Carve:Show(icon)
             end
-			
-            -- carve,if=cooldown.wildfire_bomb.remains>variable.carve_cdr%2
-            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (WildfireBomb:GetCooldown() > VarCarveCdr / 2) then
-                return A.Carve:Show(icon)
-            end
-			
+						
             -- wildfire_bomb,if=!talent.guerrilla_tactics.enabled|full_recharge_time<gcd
             if WildfireBomb:IsReady(unit) and 
 			(
@@ -1519,7 +1516,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- carve,if=talent.guerrilla_tactics.enabled
-            if A.Carve:IsReadyByPassCastGCD(player, true, nil, nil) and (A.GuerrillaTactics:IsSpellLearned()) then
+            if A.Carve:IsReady(player) and Unit(unit):GetRange() <= 8 and (A.GuerrillaTactics:IsSpellLearned()) then
                 return A.Carve:Show(icon)
             end
 			
@@ -1538,6 +1535,11 @@ A[3] = function(icon, isMulti)
                 if Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5 and Unit("player"):HasBuffsStacks(A.VipersVenomBuff.ID, true) > 0 then 
                     return A.SerpentSting:Show(icon) 
                 end
+            end
+			
+            -- carve,if=cooldown.wildfire_bomb.remains>variable.carve_cdr%2
+            if A.Carve:IsReady(player) and Unit(unit):GetRange() <= 8 and (WildfireBomb:GetCooldown() > VarCarveCdr / 2) then
+                return A.Carve:Show(icon)
             end
 
             -- steel_trap
