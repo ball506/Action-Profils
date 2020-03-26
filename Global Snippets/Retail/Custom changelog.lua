@@ -37,7 +37,7 @@ local currentSpecName = currentSpec and select(2, GetSpecializationInfo(currentS
 
 -- Druid
 if currentClass == "WARRIOR" then
-    Action.Data.DefaultProfile[currentClass] = "> ZakLL < Warrior"
+    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Warrior"
 end
 
 -- Warlock
@@ -47,7 +47,7 @@ end
 
 -- Rogue
 if currentClass == "ROGUE" then
-    Action.Data.DefaultProfile[currentClass] = "> ZakLL < Rogue"
+    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Rogue"
 end
 
 -- Shaman
@@ -62,7 +62,7 @@ end
 
 -- Priest
 if currentClass == "PRIEST" then
-    Action.Data.DefaultProfile[currentClass] = "[ZakLL]Action - Priest"
+    Action.Data.DefaultProfile[currentClass] = "[Taste]Action - Priest"
 end
 
 -- Paladin
