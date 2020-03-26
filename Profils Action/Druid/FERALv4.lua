@@ -427,13 +427,13 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.SkullBash:IsReady(unit) and A.SkullBash:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.SkullBash:IsReady(unit) and A.SkullBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         -- Notification                    
         Action.SendNotification("Skull Bash interrupting on " .. unit, A.SkullBash.ID)
         return A.SkullBash
     end         
 
-    if useCC and A.MightyBash:IsReady(unit) and not A.SkullBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useCC and A.MightyBash:IsReady(unit) and not A.SkullBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         -- Notification                    
         Action.SendNotification("Mighty Bash interrupting on " .. unit, A.MightyBash.ID)
         return A.MightyBash
