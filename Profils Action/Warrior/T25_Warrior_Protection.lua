@@ -440,7 +440,7 @@ SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	    -- Notification					
         Action.SendNotification("Pummel interrupting on Target ", A.Pummel.ID)
         return A.Pummel
@@ -540,6 +540,11 @@ A[3] = function(icon, isMulti)
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.PotionofUnbridledFury:Show(icon)
+            end
+
+            -- Intercept
+            if A.Intercept:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 20 and UseCharge then
+                return A.Intercept:Show(icon)
             end
 			
             -- devastate
@@ -668,8 +673,13 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
-            -- auto_attack
-						
+            
+			-- auto_attack
+            -- Intercept
+            if A.Intercept:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 20 and UseCharge and isMovingFor > ChargeTime then
+                return A.Intercept:Show(icon)
+            end
+			
             -- run_action_list,name=movement,if=movement.distance>5
             if Unit(unit):GetRange() > 5 then
                 -- heroic_leap
@@ -684,7 +694,7 @@ A[3] = function(icon, isMulti)
                 if Reflect_Nameplates then                         				
                     for Reflect_UnitID in pairs(Reflect_Nameplates) do    
                         local _, _, _, startCast, endCast, _, _, _, spellcastID = UnitCastingInfo(Reflect_UnitID)							
-                        if UnitIsUnit(Reflect_UnitID .. "target", "player") and TR.Mythic.ReflectID[spellcastID] and (((GetTime() * 1000) - startCast) / (endCast - startCast) * 100) > SmartReflectPercent then
+                        if UnitIsUnit(Reflect_UnitID .. "target", "player") and TR.Lists.ReflectID[spellcastID] and (((GetTime() * 1000) - startCast) / (endCast - startCast) * 100) > SmartReflectPercent then
                             if A.SpellReflection:IsReadyByPassCastGCD("player") then
                                 return A.SpellReflection:Show(icon)
                             end
