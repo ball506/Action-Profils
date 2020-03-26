@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.6 (25.03.2020)",
+    DateTime = "v4.0.7 (26.03.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -147,27 +147,27 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 }, 
-			},	
-			{
+			},
+            {			
                 {
                     E = "Checkbox", 
-                    DB = "MoonfireOnlyOutOfRange",
+                    DB = "RootThingFromBeyond",
                     DBV = true,
                     L = { 
-                        enUS = A.GetSpellInfo(8921) .. "\nOut of range only", 
-                        ruRU = A.GetSpellInfo(8921) .. "\nOut of range only", 
-                        frFR = A.GetSpellInfo(8921) .. "\nOut of range only",
+                        enUS = A.GetSpellInfo(339) .. "\nThing from Beyond", 
+                        ruRU = A.GetSpellInfo(339) .. "\nThing from Beyond", 
+                        frFR = A.GetSpellInfo(339) .. "\nThing from Beyond", 
                     }, 
                     TT = { 
-                        enUS = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
-                        ruRU = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
-                        frFR = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
+                        enUS = "Will auto use " .. A.GetSpellInfo(339) .. " as soon as you mouseover the Thing from Beyond.", 
+                        ruRU = "Will auto use " .. A.GetSpellInfo(339) .. " as soon as you mouseover the Thing from Beyond.",
+                        frFR = "Will auto use " .. A.GetSpellInfo(339) .. " as soon as you mouseover the Thing from Beyond.", 
                     }, 
                     M = {},
                 },
                 {
                     E = "Checkbox", 
-                    DB = "RootThingFromBeyond",
+                    DB = "MassEntanglementThingFromBeyond",
                     DBV = true,
                     L = { 
                         enUS = A.GetSpellInfo(102359) .. "\nThing from Beyond", 
@@ -175,9 +175,9 @@ A.Data.ProfileUI = {
                         frFR = A.GetSpellInfo(102359) .. "\nThing from Beyond", 
                     }, 
                     TT = { 
-                        enUS = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.", 
-                        ruRU = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.",
-                        frFR = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.", 
+                        enUS = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.\nOnly works if " .. A.GetSpellInfo(102359) .. " is talented.", 
+                        ruRU = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.\nOnly works if " .. A.GetSpellInfo(102359) .. " is talented.",
+                        frFR = "Will auto use " .. A.GetSpellInfo(102359) .. " as soon as you mouseover the Thing from Beyond.\nOnly works if " .. A.GetSpellInfo(102359) .. " is talented.",
                     }, 
                     M = {},
                 },
@@ -205,9 +205,9 @@ A.Data.ProfileUI = {
                     DB = "AutoCatForm",
                     DBV = true,
                     L = { 
-                        enUS = "Auto" .. A.GetSpellInfo(768), 
-                        ruRU = "Авто" .. A.GetSpellInfo(768), 
-                        frFR = "Auto" .. A.GetSpellInfo(768), 
+                        enUS = "Auto " .. A.GetSpellInfo(768), 
+                        ruRU = "Авто " .. A.GetSpellInfo(768), 
+                        frFR = "Auto " .. A.GetSpellInfo(768), 
                     }, 
                     TT = { 
                         enUS = "Automatically use " .. A.GetSpellInfo(768), 
@@ -217,6 +217,51 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             }, 	
+			
+            -- Range Rotation
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Range Rotation -- ",
+                    },
+                },
+            },			
+            {			
+                {
+                    E = "Checkbox", 
+                    DB = "MoonfireOnlyOutOfRange",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(8921) .. "\nOut of range only", 
+                        ruRU = A.GetSpellInfo(8921) .. "\nOut of range only", 
+                        frFR = A.GetSpellInfo(8921) .. "\nOut of range only",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
+                        ruRU = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
+                        frFR = "Will only use " .. A.GetSpellInfo(8921) .. " if target is out of range.\nWill bypass using it when unit is in range.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "UseBalanceRotation",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use " .. A.GetSpellInfo(197488), 
+                        ruRU = "Use " .. A.GetSpellInfo(197488), 
+                        frFR = "Use " .. A.GetSpellInfo(197488), 
+                    }, 
+                    TT = { 
+                        enUS = "If you morph into Moonkin form, will auto use balance rotation if " .. A.GetSpellInfo(197488) .. " is learned.", 
+                        ruRU = "If you morph into Moonkin form, will auto use balance rotation if " .. A.GetSpellInfo(197488) .. " is learned.", 
+                        frFR = "If you morph into Moonkin form, will auto use balance rotation if " .. A.GetSpellInfo(197488) .. " is learned.", 
+                    }, 
+                    M = {},
+                },
+			},
+			
             -- Utilities
             { -- [7] 
                 {
@@ -302,9 +347,9 @@ A.Data.ProfileUI = {
                     DB = "UseWildChargeCat",
                     DBV = true,
                     L = { 
-                        enUS = "Auto" .. A.GetSpellInfo(49376), 
-                        ruRU = "Авто" .. A.GetSpellInfo(49376), 
-                        frFR = "Auto" .. A.GetSpellInfo(49376), 
+                        enUS = "Auto " .. A.GetSpellInfo(49376) .. " Cat", 
+                        ruRU = "Авто " .. A.GetSpellInfo(49376) .. " Cat", 
+                        frFR = "Auto " .. A.GetSpellInfo(49376) .. " Cat", 
                     }, 
                     TT = { 
                         enUS = "Automatically use " .. A.GetSpellInfo(49376), 
@@ -320,9 +365,9 @@ A.Data.ProfileUI = {
                     DB = "UseWildChargeBear",
                     DBV = true,
                     L = { 
-                        enUS = "Auto" .. A.GetSpellInfo(16979), 
-                        ruRU = "Авто" .. A.GetSpellInfo(16979), 
-                        frFR = "Auto" .. A.GetSpellInfo(16979), 
+                        enUS = "Auto " .. A.GetSpellInfo(16979) .. " Bear",  
+                        ruRU = "Авто " .. A.GetSpellInfo(16979) .. " Bear", 
+                        frFR = "Auto " .. A.GetSpellInfo(16979) .. " Bear",
                     }, 
                     TT = { 
                         enUS = "Automatically use " .. A.GetSpellInfo(16979), 
