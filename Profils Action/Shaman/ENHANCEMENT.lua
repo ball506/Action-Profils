@@ -261,18 +261,27 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function InMelee(unit)
+local function InRange(unit)
 	-- @return boolean 
-	return A.LavaLash:IsInRange(unit)
+	return LavaLash:IsInRange(unit)
 end 
-InMelee = A.MakeFunctionCachedDynamic(InMelee)
+InRange = A.MakeFunctionCachedDynamic(InRange)
 
-local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
 	-- @return boolean 
 	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
 	for unit in pairs(ActiveUnitPlates) do 
 		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
-			if InMelee(unit) then 
+			if InRange(unit) then 
 				c = c + 1
 			elseif range then 
 				local r = Unit(unit):GetRange()
@@ -280,12 +289,30 @@ local function GetByRange(count, range, isCheckEqual, isCheckCombat)
 					c = c + 1
 				end 
 			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
 			
-			if c >= count then 
-				return true 
-			end 
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
 		end 
+		
 	end
+	
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
@@ -820,7 +847,7 @@ A[3] = function(icon, isMulti)
         end
 			
 		-- Bloodlust Shamanism PvP
-        if A.BloodLust:IsReady(player) and inCombat and A.BurstIsON(unit) and A.Shamanism:IsSpellLearned() and A.IsInPvP then 
+        if A.BloodLust:IsReady(player) and inCombat and A.BurstIsON(unit) and A.Shamanism:IsSpellLearned() then 
             return A.BloodLust:Show(icon)
         end 
 			
@@ -980,12 +1007,14 @@ A[3] = function(icon, isMulti)
         end
 			
         -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
-        if A.FuryofAir:IsReady(unit) and Unit(player):HasBuffs(A.FuryofAirBuff.ID, true) == 0 and Player:Maelstrom() >= 20 and MultiUnits:GetByRange(8) >= (1 + VarFreezerburnEnabled) then
+        if A.FuryofAir:IsReady(player) and Unit(player):HasBuffs(A.FuryofAirBuff.ID, true) == 0 and Player:Maelstrom() >= 20 and GetByRange((1 + VarFreezerburnEnabled), 8) 
+		
+		then
             return A.FuryofAir:Show(icon)
         end
-			
+		
         -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
-        if A.FuryofAir:IsReady(unit) and Unit(player):HasBuffs(A.FuryofAirBuff.ID, true) > 0 and MultiUnits:GetByRange(8) < (1 + VarFreezerburnEnabled) then
+        if A.FuryofAir:IsReady(player) and Unit(player):HasBuffs(A.FuryofAirBuff.ID, true) > 0 and GetByRange((1 + VarFreezerburnEnabled), 8, false, true) then
             return A.FuryofAir:Show(icon)
         end
 			
