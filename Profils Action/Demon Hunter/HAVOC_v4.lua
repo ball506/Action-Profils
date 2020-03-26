@@ -171,6 +171,7 @@ local Temp										= {
 	TotalAndPhysAndStun							= {"TotalImun", "DamagePhysImun", "StunImun"},
 	TotalAndPhysAndCCAndStun					= {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
 	TotalAndMag									= {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
 	DisablePhys									= {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
 	DisableMag									= {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
 }
@@ -243,7 +244,6 @@ local function AntiFakeStun(unit)
     return 
     Action.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 7 and 
-    Unit(unit):IsControlAble("stun", 0) and 
     A.ChaosNovaGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
@@ -1025,6 +1025,12 @@ A[3] = function(icon, isMulti)
                 return A.ImmolationAura:Show(icon)
             end
 			
+            -- death_sweep,if=variable.blade_dance
+            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem()
+			then
+                return A.DeathSweep:Show(icon)
+            end	
+			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
             if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
 			(
@@ -1037,12 +1043,6 @@ A[3] = function(icon, isMulti)
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
             end	
-			
-            -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem()
-			then
-                return A.DeathSweep:Show(icon)
-            end
 			
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
             if A.BladeDance:IsReadyByPassCastGCD(player) and InMelee(unit) and CanCast and VarBladeDance and not Unit(unit):IsTotem() and
