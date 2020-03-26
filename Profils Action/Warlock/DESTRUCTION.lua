@@ -173,33 +173,6 @@ Action[ACTION_CONST_WARLOCK_DESTRUCTION] = {
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	
     DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon	
 };
@@ -320,7 +293,7 @@ local function SelfDefensives()
     end  
 		
     -- UnendingResolve
-    local UnendingResolve = A.GetToggle(2, "UnendingResolve")
+    local UnendingResolve = GetToggle(2, "UnendingResolve")
     if     UnendingResolve >= 0 and A.UnendingResolve:IsReady("player") and 
     (
         (     -- Auto 
@@ -359,7 +332,7 @@ local function SelfDefensives()
     end 
 	
 	    -- HealingPotion
-    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    local AbyssalHealingPotion = GetToggle(2, "AbyssalHealingPotionHP")
     if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
     (
         (     -- Auto 
@@ -471,7 +444,7 @@ A[2] = function(icon)
 end
 
 local function IsSaveManaPhase()
-    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") and Unit(player):HasBuffs(A.Innervate.ID) == 0 then 
+    if not A.IsInPvP and GetToggle(2, "ManaManagement") and Unit(player):HasBuffs(A.Innervate.ID) == 0 then 
         for i = 1, MAX_BOSS_FRAMES do 
             if Unit("boss" .. i):IsExists() and not Unit("boss" .. i):IsDead() and Unit(player):PowerPercent() < Unit("boss" .. i):HealthPercent() then 
                 return true 
@@ -505,7 +478,7 @@ HavocDebuffTime = A.MakeFunctionCachedStatic(HavocDebuffTime)
 
 -- Pet Handler UI --
 local function HandlePetChoice()
-    local choice = Action.GetToggle(2, "PetChoice")
+    local choice = GetToggle(2, "PetChoice")
     local currentspell = "Spell(688)"
     
     if choice == "IMP" then
@@ -561,22 +534,23 @@ A[3] = function(icon, isMulti)
 	local profileStop = false
     local InfernalIsActive = InfernalIsActive()
 	local InfernalTime = InfernalTime()
-	local RainofFireUnits = Action.GetToggle(2, "RainofFireUnits")	
-	local RainofFireRange = Action.GetToggle(2, "RainofFireRange")	
-	local RainofFireTTD = Action.GetToggle(2, "RainofFireTTD")
-    local RainofFireForceUse = Action.GetToggle(2, "RainofFireForceUse") -- Ignore CrashingChaos buffs
-	local HavocTTD = Action.GetToggle(2, "HavocTTD")
-	local HavocPoolShards = Action.GetToggle(2, "HavocPoolShards")	
-	local HavocRange = Action.GetToggle(2, "HavocRange")
-	local HavocUnits = Action.GetToggle(2, "HavocUnits")
-    local IgnoreChaosBolt = Action.GetToggle(2, "IgnoreChaosBolt")
-	local UseFearAsInterrupt = Action.GetToggle(2, "UseFearAsInterrupt")
-	local DummyStopDelay = Action.GetToggle(2, "DummyStopDelay")
-	local MortalCoilHP = Action.GetToggle(2, "MortalCoilHP")
+	local RainofFireUnits = GetToggle(2, "RainofFireUnits")	
+	local RainofFireRange = GetToggle(2, "RainofFireRange")	
+	local RainofFireTTD = GetToggle(2, "RainofFireTTD")
+    local RainofFireForceUse = GetToggle(2, "RainofFireForceUse") -- Ignore CrashingChaos buffs
+	local HavocTTD = GetToggle(2, "HavocTTD")
+	local HavocPoolShards = GetToggle(2, "HavocPoolShards")	
+	local HavocRange = GetToggle(2, "HavocRange")
+	local HavocUnits = GetToggle(2, "HavocUnits")
+	local AutoHavoc = GetToggle(2, "AutoHavoc")
+    local IgnoreChaosBolt = GetToggle(2, "IgnoreChaosBolt")
+	local UseFearAsInterrupt = GetToggle(2, "UseFearAsInterrupt")
+	local DummyStopDelay = GetToggle(2, "DummyStopDelay")
+	local MortalCoilHP = GetToggle(2, "MortalCoilHP")
 	local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local Racial = Action.GetToggle(1, "Racial")
-	local MinInterrupt = Action.GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = Action.GetToggle(2, "MaxInterrupt")	
+	local MinInterrupt = GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = GetToggle(2, "MaxInterrupt")	
     -- Call for Havoc debuff tracking on every unit nameplates
 	HavocDebuffTime()
     local HavocRemains = HavocDebuffTime()
@@ -598,7 +572,7 @@ A[3] = function(icon, isMulti)
 	------------------------------------
 	---------- DUMMY DPS TEST ----------
 	------------------------------------
-	local DummyTime = Action.GetToggle(2, "DummyTime")
+	local DummyTime = GetToggle(2, "DummyTime")
 	if DummyTime > 0 then
     	local unit = "target"
 		local endtimer = 0
@@ -623,13 +597,31 @@ A[3] = function(icon, isMulti)
    	if SummonPet:IsReady(unit) and (not isMoving) and not ShouldStop and not Pet:IsActive() then
        	return SummonPet:Show(icon)
    	end
-	
+
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
 	   --print(InfernalIsActive)		
-		
+            
+			-- VarPoolSoulShards
+			VarPoolSoulShards = 
+			(
+			    -- Pool Havoc
+				(GetToggle(2, "AoE") and AutoHavoc and Player:SoulShards() < HavocPoolShards and MultiUnits:GetByRange(HavocRange) > 1 and A.Havoc:GetCooldown() <= 5)  
+				or 
+				-- Pool for coming Burst
+				(A.BurstIsON(unit) and Player:SoulShards() < 3.8 and A.SummonInfernal:GetCooldown() <= 5) --and 
+			)    
+	
+				--( 
+			   --    (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) 
+				--	or 
+				--	A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie())
+			   -- )
+					
+					--print(VarPoolSoulShards)
+					
         -- Precombat
         local function Precombat(unit)
             -- flask
@@ -832,7 +824,7 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- rain_of_fire,if=pet.infernal.active&(buff.crashing_chaos.down|!talent.grimoire_of_supremacy.enabled)&(!cooldown.havoc.ready|active_enemies>3)
-            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and Action.GetToggle(2, "AoE") and Player:AreaTTD(RainofFireRange) > RainofFireTTD
+            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and GetToggle(2, "AoE") and Player:AreaTTD(RainofFireRange) > RainofFireTTD
 			and MultiUnits:GetByRange(RainofFireRange) > RainofFireUnits and  
 			    (
 				    (
@@ -846,7 +838,7 @@ A[3] = function(icon, isMulti)
 						    (
 							    A.Havoc:GetCooldown() > 0 
 								or 
-								not A.GetToggle(2, "AutoHavoc")
+								not AutoHavoc
 							)							 
 						) 
 					    or 
@@ -872,28 +864,9 @@ A[3] = function(icon, isMulti)
                 return true
             end
 			
-		    -- Auto Havoc 
-			-- Crappy auto switch target until i find a way to fix Retarget
-			
-			-- if Havoc available then use it on main target
-			if A.Havoc:IsReady(unit) and A.GetToggle(2, "AoE") and not A.IsInPvP
-			and Player:SoulShards() > HavocPoolShards and Action.GetToggle(2, "AutoHavoc") 
-			and MultiUnits:GetByRange(HavocRange) > 1 
-			-- protect override with Rain of fire value. 
-			and MultiUnits:GetByRange(HavocRange) <= HavocUnits 
-			and Unit(unit):TimeToDie() > HavocTTD
-			then 		
-			    return A.Havoc:Show(icon)
-            end
-			
-			-- then switch to another target
-			if Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) > 0 and Action.GetToggle(2, "AutoHavoc") and not A.IsInPvP then
-			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
-			end 
-			
 	--[[		
 			-- if Havoc available then use it on main target
-			if A.Havoc:IsReady(unit) and Action.GetToggle(2, "AutoHavoc") and MultiUnits:GetByRange(40) > 1 then 
+			if A.Havoc:IsReady(unit) and GetToggle(2, "AutoHavoc") and MultiUnits:GetByRange(40) > 1 then 
                 local currentUnitID = Unit(unit):GetUnitID()
                 -- if boss frames				
 				for i = 1, MAX_BOSS_FRAMES do 
@@ -938,15 +911,20 @@ A[3] = function(icon, isMulti)
 					or 
 					A.Inferno:IsSpellLearned() and MultiUnits:GetActiveEnemies() <= 4
 				)
+				or 
+				(
+				    EnemyHasHavoc and Player:SoulShards() >= HavocPoolShards
+				)
 			)
 			then
                 return A.ChaosBolt:Show(icon)
             end
-
+			
             -- focused_azerite_beam
             if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
+			
             -- purifying_blast
             if A.PurifyingBlast:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth then
                 return A.PurifyingBlast:Show(icon)
@@ -957,37 +935,44 @@ A[3] = function(icon, isMulti)
           --          return A.Havoc:Show(icon) 
           --      end
           --  end
+		  
             -- incinerate,if=talent.fire_and_brimstone.enabled&buff.backdraft.up&soul_shard<5-0.2*active_enemies
             if A.Incinerate:IsReady(unit) and IsFireSchoolFree() and (A.FireandBrimstone:IsSpellLearned() and Unit(player):HasBuffs(A.BackdraftBuff.ID, true) > 0 and SoulShardsP < 5 - 0.2 * MultiUnits:GetByRange(40)) then
                 return A.Incinerate:Show(icon)
             end
+			
             -- soul_fire
             if A.SoulFire:IsReady(unit) and IsFireSchoolFree() then
                 return A.SoulFire:Show(icon)
             end
+			
             -- conflagrate,if=buff.backdraft.down
             if A.Conflagrate:IsReady(unit) and IsFireSchoolFree() and (Unit(player):HasBuffs(A.BackdraftBuff.ID, true) == 0) then
                 return A.Conflagrate:Show(icon)
             end
+			
             -- shadowburn,if=!talent.fire_and_brimstone.enabled
             if A.Shadowburn:IsReady(unit) and IsShadowSchoolFree() and (not A.FireandBrimstone:IsSpellLearned()) then
                 return A.Shadowburn:Show(icon)
             end
+			
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight&active_enemies<5
             if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() and MultiUnits:GetActiveEnemies() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
+			
             -- incinerate
             if A.Incinerate:IsReady(unit) and IsFireSchoolFree() and SoulShardsP < 5 then
                 return A.Incinerate:Show(icon)
             end
+			
         end
 		Aoe = A.MakeFunctionCachedDynamic(Aoe)
                 
         --GosupInfernal
         local function GosupInfernal(unit)
             -- rain_of_fire,if=soul_shard=5&!buff.backdraft.up&buff.memory_of_lucid_dreams.up&buff.grimoire_of_supremacy.stack<=10
-            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and Action.GetToggle(2, "AoE") 
+            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and GetToggle(2, "AoE") 
 			and MultiUnits:GetByRange(RainofFireRange) > RainofFireUnits and 
 			(
 			    SoulShardsP == 5 and Unit(player):HasBuffs(A.BackdraftBuff.ID, true) == 0 and Unit(player):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 and Unit(player):HasBuffsStacks(A.GrimoireofSupremacyBuff.ID, true) <= 10
@@ -1044,6 +1029,7 @@ A[3] = function(icon, isMulti)
 		
         --Havoc
         local function Havoc(unit)
+		
             -- conflagrate,if=buff.backdraft.down&soul_shard>=1&soul_shard<=4
             if A.Conflagrate:IsReady(unit) and IsFireSchoolFree() and 
 			(
@@ -1054,23 +1040,28 @@ A[3] = function(icon, isMulti)
 			then
                 return A.Conflagrate:Show(icon)
             end
+			
             -- immolate,if=talent.internal_combustion.enabled&remains<duration*0.5|!talent.internal_combustion.enabled&refreshable
           --  if A.Immolate:IsReady(unit) and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 18 * 0.5 or not A.InternalCombustion:IsSpellLearned() and Unit(unit):HasDeBuffsRefreshable(A.ImmolateDebuff.ID, true)) then
           --      return A.Immolate:Show(icon)
           --  end
+		  
             -- chaos_bolt,if=cast_time<havoc_remains
-            if A.ChaosBolt:IsReady(unit) and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and Unit(player):HasBuffs(A.BackdraftBuff.ID, true) > 0 and IsChaosSchoolFree() --and A.ChaosBolt:GetSpellCastTime() < HavocRemains 
+            if A.ChaosBolt:IsReady(unit) and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and IsChaosSchoolFree() --and Unit(player):HasBuffs(A.BackdraftBuff.ID, true) > 0 and A.ChaosBolt:GetSpellCastTime() < HavocRemains 
 			then
                 return A.ChaosBolt:Show(icon)
             end
+			
             -- soul_fire
             if A.SoulFire:IsReady(unit) and IsFireSchoolFree() then
                 return A.SoulFire:Show(icon)
             end
+			
             -- shadowburn,if=active_enemies<3|!talent.fire_and_brimstone.enabled
             if A.Shadowburn:IsReady(unit) and IsShadowSchoolFree() and (MultiUnits:GetActiveEnemies() < 3 or not A.FireandBrimstone:IsSpellLearned()) then
                 return A.Shadowburn:Show(icon)
             end
+			
             -- incinerate,if=cast_time<havoc_remains
             if A.Incinerate:IsReady(unit) and IsFireSchoolFree() and A.Incinerate:GetSpellCastTime() < HavocRemains then
                 return A.Incinerate:Show(icon)
@@ -1085,15 +1076,6 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then
-            
-			-- VarPoolSoulShards
-			VarPoolSoulShards = A.BurstIsON(unit) and MultiUnits:GetByRange(40) > 1 and (A.Havoc:GetCooldown() <= 10 or A.SummonInfernal:GetCooldown() <= 15) and 
-			            ( 
-			                 (A.GrimoireofSupremacy:IsSpellLearned() or A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15) 
-							  or 
-							  A.DarkSoulInstability:IsSpellLearned() and A.DarkSoulInstability:GetCooldown() <= 15 and (A.SummonInfernal:GetCooldown() > Unit(unit):TimeToDie() or A.SummonInfernal:GetCooldown() + 30 > Unit(unit):TimeToDie())
-			            )
-					
 
 			-- Mortal Coil PvP critical regen + fear 
 			if A.IsInPvP and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(player):HealthPercent() < MortalCoilHP then 
@@ -1107,7 +1089,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- call_action_list,name=havoc,if=havoc_active&active_enemies<5-talent.inferno.enabled+(talent.inferno.enabled&talent.internal_combustion.enabled)
-            if Havoc(unit) and EnemyHasHavoc then
+            if Havoc(unit) and (EnemyHasHavoc or A.LastPlayerCastName == A.Havoc:Info()) then
                 return true
             end
 			
@@ -1117,7 +1099,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- rain_of_fire,if=pet.infernal.active&(buff.crashing_chaos.down|!talent.grimoire_of_supremacy.enabled)&(!cooldown.havoc.ready|active_enemies>3)
-            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and Action.GetToggle(2, "AoE") 
+            if A.RainofFire:IsReady("player") and IsFireSchoolFree() and GetToggle(2, "AoE") 
 			and MultiUnits:GetByRange(RainofFireRange) > RainofFireUnits and RainofFireForceUse
 			then
                 return A.RainofFire:Show(icon)
@@ -1127,14 +1109,44 @@ A[3] = function(icon, isMulti)
             if A.IsInPvP and A.ChaosBolt:IsReady(unit) and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and Unit(player):HasBuffs(A.BackdraftBuff.ID, true) > 0 and IsChaosSchoolFree() and SoulShardsP > 2 then
                 return A.ChaosBolt:Show(icon)
             end			
+
+            -- chaos_bolt,if=talent.grimoire_of_supremacy.enabled&pet.infernal.active&(havoc_active|talent.cataclysm.enabled|talent.inferno.enabled&active_enemies<4)
+            if A.ChaosBolt:IsReady(unit) and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and not RainofFireForceUse and not VarPoolSoulShards and IsChaosSchoolFree() and 
+			(
+			    EnemyHasHavoc and Player:SoulShards() >= HavocPoolShards
+				or
+				A.Havoc:GetCooldown() > 2 and Player:SoulShards() > 4.2
+			)		
+			then
+                return A.ChaosBolt:Show(icon)
+            end
 						
             -- cataclysm,if=!(pet.infernal.active&dot.immolate.remains+1>InfernalTime)|spell_targets.cataclysm>1|!talent.grimoire_of_supremacy.enabled
             if A.Cataclysm:IsReady("player") and IsFireSchoolFree() and not isMoving and  (not (InfernalIsActive and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) + 1 > InfernalTime) or MultiUnits:GetActiveEnemies() > 1 or not A.GrimoireofSupremacy:IsSpellLearned()) then
                 return A.Cataclysm:Show(icon)
             end
 			
+		    -- Auto Havoc 
+			-- Crappy auto switch target until i find a way to fix Retarget
+			
+			-- if Havoc available then use it on main target
+			if A.Havoc:IsReady(unit) and GetToggle(2, "AoE") and not A.IsInPvP
+			and Player:SoulShards() >= HavocPoolShards and AutoHavoc and not VarPoolSoulShards
+			and MultiUnits:GetByRange(HavocRange) > 1 
+			-- protect override with Rain of fire value. 
+			and MultiUnits:GetByRange(HavocRange) <= HavocUnits 
+			and Unit(unit):TimeToDie() > HavocTTD
+			then 		
+			    return A.Havoc:Show(icon)
+            end
+			
+			-- then switch to another target
+			if Unit(unit):HasDeBuffs(A.HavocDebuff.ID, true) > 0 and GetToggle(2, "AutoHavoc") and not A.IsInPvP then
+			    return A:Show(icon, ACTION_CONST_AUTOTARGET)
+			end 
+			
             -- call_action_list,name=aoe,if=active_enemies>2
-            if Aoe(unit) and not A.IsInPvP and A.GetToggle(2, "AoE") and MultiUnits:GetByRange(40) > 2 then
+            if Aoe(unit) and not A.IsInPvP and GetToggle(2, "AoE") and MultiUnits:GetByRange(40) > 2 then
                 return true
             end
 			
@@ -1154,7 +1166,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- chaos_bolt basic usage no cd, no aoe, no pooling
-            if A.ChaosBolt:IsReady(unit) and IsChaosSchoolFree() and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and SoulShardsP >= 4 and not A.BurstIsON(unit) and not RainofFireForceUse then
+            if A.ChaosBolt:IsReady(unit) and IsChaosSchoolFree() and A.ChaosBolt:AbsentImun(unit, Temp.TotalAndMag) and SoulShardsP >= 3.8 and not VarPoolSoulShards and not RainofFireForceUse then
                 return A.ChaosBolt:Show(icon)
             end		
 			
@@ -1314,8 +1326,8 @@ end]]--
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then   
         local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")    
-        local minkickpercent = A.GetToggle(2, "minkickpercent")
-		local maxkickpercent = A.GetToggle(2, "maxkickpercent")
+        local minkickpercent = GetToggle(2, "minkickpercent")
+		local maxkickpercent = GetToggle(2, "maxkickpercent")
 		
 	    -- Pet Kick
         if useKick and Pet:IsActive(417) and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
@@ -1351,7 +1363,7 @@ local function ArenaRotation(icon, unit)
 end 
 
 local function PartyRotation(unit)
-    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
+    if (unit == "party1" and not GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end 
     
