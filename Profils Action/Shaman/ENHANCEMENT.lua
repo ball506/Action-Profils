@@ -263,7 +263,7 @@ end
 
 local function InRange(unit)
 	-- @return boolean 
-	return LavaLash:IsInRange(unit)
+	return A.LavaLash:IsInRange(unit)
 end 
 InRange = A.MakeFunctionCachedDynamic(InRange)
 
