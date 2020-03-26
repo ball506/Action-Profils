@@ -91,6 +91,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
 	VictoryRush	                           = Action.Create({ Type = "Spell", ID = 34428         }),
 	ImpendingVictory                       = Action.Create({ Type = "Spell", ID = 202168         }),
 	RallyingCry	                           = Action.Create({ Type = "Spell", ID = 97462         }),
+	Interception                           = Action.Create({ Type = "Spell", ID = 198304         }),
 	-- CrownControl
 	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570    }),
 	StormboltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true    }),
@@ -717,7 +718,7 @@ A[3] = function(icon, isMulti)
 			(
 			    GetByRange(2, 8) and Unit(player):HasBuffs(A.MeatCleaverBuff.ID, true) == 0
 			)
-			and A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.Bloodthirst:IsReady(unit) and not A.Siegebreaker:IsReady(unit) and not A.Rampage:IsReady(unit) 
+			and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) )
 			then
                 return A.Whirlwind:Show(icon)
             end
@@ -895,7 +896,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- whirlwind
-            if A.Whirlwind:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and not A.Siegebreaker:IsReady(unit) and not A.Rampage:IsReady(unit) then
+            if A.Whirlwind:IsReady(unit) and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) ) then
                 return A.Whirlwind:Show(icon)
             end
 			
