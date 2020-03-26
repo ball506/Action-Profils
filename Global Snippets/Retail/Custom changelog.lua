@@ -363,6 +363,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Adjusted some Rage values thanks to feedback !
+- New : Smart Stormbolt for mythic + (See interrupt tab)
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Better state than Arms (Need feedbacks !)
 - Massive update for 8.3
