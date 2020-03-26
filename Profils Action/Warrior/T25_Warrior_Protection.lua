@@ -96,6 +96,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
 	Stormbolt                              = Action.Create({ Type = "Spell", ID = 107570     }),
  	StormboltGreen                         = Action.Create({ Type = "SpellSingleColor", ID = 107570, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true}),
 	SpellReflection                        = Action.Create({ Type = "Spell", ID = 23920     }),
+	HeroicLeap                             = Action.Create({ Type = "Spell", ID = 6544      }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
@@ -156,33 +157,6 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
@@ -260,7 +234,6 @@ local function AntiFakeStun(unit)
     return 
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 20 and 
-    Unit(unit):IsControlAble("stun", 0) and 
     A.StormboltGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
@@ -329,12 +302,12 @@ local function SelfDefensives()
     end 
 	
     -- ShieldBlock (any role, whenever have physical damage)
-    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and A.ShieldBlock:IsReady("player", nil, nil, nil, true) and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
+    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and HPLoosePerSecond >= 5 and A.ShieldBlock:IsReady("player") and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
         return A.ShieldBlock
     end 
 	
     -- LastStand
-    if A.LastStand:IsReadyByPassCastGCD("player", nil, nil, true) and (not A.GetToggle(2, "LastStandIgnoreBigDeff") or Unit("player"):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.LastStand:IsReadyByPassCastGCD("player") and (not A.GetToggle(2, "LastStandIgnoreBigDeff") or Unit("player"):HasBuffs(Temp.BigDeff) == 0) then 
         local LS_HP                 = A.GetToggle(2, "LastStandHP")
         local LS_TTD                = A.GetToggle(2, "LastStandTTD")
             
@@ -359,7 +332,7 @@ local function SelfDefensives()
 		
 		
     -- ShieldWall
-    if A.ShieldWall:IsReadyByPassCastGCD("player", nil, nil, true) then 
+    if A.ShieldWall:IsReadyByPassCastGCD("player") then 
         local SW_HP                 = A.GetToggle(2, "ShieldWallHP")
         local SW_TTD                = A.GetToggle(2, "ShieldWallTTD")
             
@@ -379,7 +352,7 @@ local function SelfDefensives()
             )                
         then
             -- ShieldBlock
-            if A.ShieldBlock:IsReadyByPassCastGCD("player", nil, nil, true) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
+            if A.ShieldBlock:IsReadyByPassCastGCD("player") and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
                 return A.ShieldBlock        -- #4
             end 
                 
@@ -514,22 +487,30 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
-	local combatTime = Unit("player"):CombatTime()
+	local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
+	local DBM = GetToggle(1 ,"DBM")
+	local Potion = GetToggle(1, "Potion")
+	local Racial = GetToggle(1, "Racial")
+	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
     local offensiveRage = offensiveRage()
 	local offensiveShieldBlock = offensiveShieldBlock()
 	local shouldCastIp = shouldCastIp()
 	local isCurrentlyTanking = isCurrentlyTanking()
 	local SmartReflect = Action.GetToggle(2, "SmartReflect")
 	local SmartReflectPercent = Action.GetToggle(2, "SmartReflectPercent")
-	
+	local UseCharge = GetToggle(2, "UseCharge")
+	local ChargeTime = GetToggle(2, "ChargeTime")
+	local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
+	local HeroicLeapTime = GetToggle(2, "HeroicLeapTime")	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Aoe, St
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -552,9 +533,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit) then
-                return A.GuardianofAzeroth:Show(icon)
-            end
+         --   if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit) then
+         --       return A.GuardianofAzeroth:Show(icon)
+         --   end
 			
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
@@ -567,7 +548,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Precombat = A.MakeFunctionCachedDynamic(Precombat)
+		
         --Aoe
         local function Aoe(unit)
             -- thunder_clap
@@ -606,7 +588,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+        Aoe = A.MakeFunctionCachedDynamic(Aoe)
+		
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
@@ -671,15 +654,29 @@ A[3] = function(icon, isMulti)
                 return A.Devastate:Show(icon)
             end
         end        
-        
+        St = A.MakeFunctionCachedDynamic(St)
+		
         -- call precombat
         if not inCombat and Precombat(unit) and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
         end
 
+	    -- HeroicThrow pull with option
+   	    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
+       	    return A.HeroicThrow:Show(icon)
+        end
+
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
             -- auto_attack
+						
+            -- run_action_list,name=movement,if=movement.distance>5
+            if Unit(unit):GetRange() > 5 then
+                -- heroic_leap
+                if A.HeroicLeap:IsReady(unit) and UseHeroicLeap and isMovingFor > HeroicLeapTime then
+                    return A.HeroicLeap:Show(icon)
+                end
+            end	
 			
 			-- Smart Reflect			
             if SmartReflect then
@@ -695,6 +692,22 @@ A[3] = function(icon, isMulti)
                     end 
                 end						
             end			
+
+			-- Smart Stormbolt			
+            if SmartStormbolt then
+                local Stormbolt_Nameplates = MultiUnits:GetActiveUnitPlates()
+                if Stormbolt_Nameplates then                         				
+                    for Stormbolt_UnitID in pairs(Stormbolt_Nameplates) do    						
+                        for k, v in pairs(TR.Lists.Storm_Spells_List) do
+                            if (TR.Lists.Storm_Unit_List[select(6, Unit(Stormbolt_UnitID):InfoGUID())] ~= nil or UnitCastingInfo(Stormbolt_UnitID) == GetSpellInfo(v) or UnitChannelInfo(Stormbolt_UnitID) == GetSpellInfo(v)) and Unit(Stormbolt_UnitID):GetRange() <= 20 then                           
+						        if A.Stormbolt:IsSpellLearned() and A.Stormbolt:IsReadyByPassCastGCD("player") then
+                                    return A.Stormbolt:Show(icon)
+                                end
+                            end
+                        end    
+                    end 
+                end						
+            end	
 			
             -- intercept,if=time=0
           --  if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime() == 0) then
@@ -705,12 +718,7 @@ A[3] = function(icon, isMulti)
             if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.VigilantProtector:Show(icon)
             end
-			
-		    -- HeroicThrow pull with option
-    	    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
-        	    return A.HeroicThrow:Show(icon)
- 	        end
-	
+				
 		    -- Taunt Taunt
             if A.GetToggle(2, "AutoTaunt") 
 			and combatTime > 0     
