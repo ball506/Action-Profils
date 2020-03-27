@@ -529,7 +529,7 @@ end
 -- Since they need some CustomStuff snippets that load in 0.6, these function only work in this CustomPvE snippets that load in 1
 -- Only checks IsUsableP against the primary resource for pooling
 function A:IsUsablePPool(Offset)
-    local CostTable = GetSpellPowerCost(self.SpellID)
+    local CostTable = GetSpellPowerCost(self.ID)
     if CostTable then
         local CostInfo = CostTable[1]
         local Type = CostInfo.type
@@ -542,7 +542,7 @@ end
 -- Base Duration of a dot/hot/channel...
 local SpellDuration = TR.Enum.SpellDuration
 function A:BaseDuration()
-    local Duration = SpellDuration[self.SpellID]
+    local Duration = SpellDuration[self.ID]
     if not Duration or Duration == 0 then 
 	    return 0 
 	end
@@ -552,7 +552,7 @@ end
 
 -- Max Duration of a dot/hot/channel...
 function A:MaxDuration()
-    local Duration = SpellDuration[self.SpellID]
+    local Duration = SpellDuration[self.ID]
     if not Duration or Duration == 0 then 
 	    return 0 
 	end
