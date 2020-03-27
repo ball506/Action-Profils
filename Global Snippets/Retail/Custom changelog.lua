@@ -830,7 +830,9 @@ local ChangelogOnStartup = A.GetToggle(2, "ChangelogOnStartup")
     -- Dynamic popup creation
     if Action.PlayerSpec and ChangelogOnStartup then
         TR:CreatePopup(Action.PlayerSpec, currentChangelog, "Okay", "Marry Me", 0, true, true)
-    end
+    else	 
+        TR:CreatePopup(999, "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord.", "OK", nil, 0, true, true)
+    end	
 	
 	-- Create Popup Frame dynamically 
     StaticPopupDialogs[TR.Popup.popupname] = {
