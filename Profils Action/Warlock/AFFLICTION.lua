@@ -246,8 +246,8 @@ Action.Enum.SpellDuration = {
 
 -- Base Duration of a dot/hot/channel...
 local SpellDuration = Action.Enum.SpellDuration
-function A:BaseDuration()
-    local Duration = SpellDuration[self.SpellID]
+function Action:BaseDuration()
+    local Duration = SpellDuration[self.ID]
     if not Duration or Duration == 0 then 
 	    return 0 
 	end
@@ -256,7 +256,7 @@ function A:BaseDuration()
 end
 
 -- Pandemic Threshold
-function A:PandemicThreshold()
+function Action:PandemicThreshold()
     local BaseDuration = self:BaseDuration()
     if not BaseDuration or BaseDuration == 0 then 
 	    return 0 
