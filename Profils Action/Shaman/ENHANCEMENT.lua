@@ -976,6 +976,22 @@ A[3] = function(icon, isMulti)
 			
         end
 
+        -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
+        if A.Stormstrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.StormbringerBuff.ID, true) > 0 then
+            return A.Stormstrike:Show(icon) 
+        end
+
+        -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
+        if A.LavaLash:IsReadyByPassCastGCD(unit) and 
+		(
+		    (not A.FuryofAir:IsSpellLearned() and Player:Maelstrom() >= 40) 
+			or 
+			(A.FuryofAir:IsSpellLearned() and Player:Maelstrom() >= 50)
+		)
+		then
+            return A.LavaLash:Show(icon)
+        end
+
         -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
         if A.CrashLightning:IsReady(player) and GetByRange(CrashLightningUnits, CrashLightningRange) and Player:AreaTTD(CrashLightningRange) >= CrashLightningAreaTTD and bool(VarFreezerburnEnabled) and VarFurycheckCl then
             return A.CrashLightning:Show(icon)
@@ -987,7 +1003,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&active_enemies=1&variable.freezerburn_enabled&variable.furyCheck_LL
-        if A.LavaLash:IsReady(unit) and 
+        if A.LavaLash:IsReadyByPassCastGCD(unit) and 
 		(
 		   A.PrimalPrimer:GetAzeriteRank() >= 2 
 			and 
@@ -1002,7 +1018,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-        if A.CrashLightning:IsReady(player) and Unit(player):HasBuffs(A.CrashLightningBuff.ID, true) == 0 and GetByRange(1, CrashLightningRange) and VarFurycheckCl then
+        if A.CrashLightning:IsReady(player) and Unit(player):HasBuffs(A.CrashLightningBuff.ID, true) == 0 and GetByRange(2, CrashLightningRange) and VarFurycheckCl then
             return A.CrashLightning:Show(icon)
         end
 			
@@ -1221,7 +1237,7 @@ A[3] = function(icon, isMulti)
         --FreezerburnCore
         if bool(VarFreezerburnEnabled) then
             -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
-            if A.LavaLash:IsReady(unit) then
+            if A.LavaLash:IsReadyByPassCastGCD(unit) then
                 if Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 0 and A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl and VarClpoolLl then 
                     return A.LavaLash:Show(icon) 
                 end
@@ -1233,14 +1249,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
-            if A.Stormstrike:IsReady(unit) then
-                if GetByRange(1, 10) and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) then
+                if GetByRange(2, 10) and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
                     return A.Stormstrike:Show(icon) 
                 end
             end
 			
             -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-            if A.Stormstrike:IsReady(unit) and 
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) and 
 			(
 			    Unit(player):HasBuffs(A.StormbringerBuff.ID, true) > 0 
 				or 
@@ -1261,17 +1277,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- lava_lash,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack>7&variable.furyCheck_LL&variable.CLPool_LL
-            if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 7 and VarFurycheckLl and VarClpoolLl) then
+            if A.LavaLash:IsReadyByPassCastGCD(unit) and (A.PrimalPrimer:GetAzeriteRank() >= 2 and Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) > 7 and VarFurycheckLl and VarClpoolLl) then
                 return A.LavaLash:Show(icon)
             end
 			
             -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS&variable.CLPool_SS
-            if A.Stormstrike:IsReady(unit) and (VarOcpoolSs and VarFurycheckSs and VarClpoolSs) then
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) and (VarOcpoolSs and VarFurycheckSs and VarClpoolSs) then
                 return A.Stormstrike:Show(icon)
             end
 			
             -- lava_lash,if=debuff.primal_primer.stack=10&variable.furyCheck_LL
-            if A.LavaLash:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl) then
+            if A.LavaLash:IsReadyByPassCastGCD(unit) and (Unit(unit):HasDeBuffsStacks(A.PrimalPrimerDebuff.ID, true) == 10 and VarFurycheckLl) then
                 return A.LavaLash:Show(icon)
             end
 		
@@ -1284,14 +1300,14 @@ A[3] = function(icon, isMulti)
             end
 			
             -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
-            if A.Stormstrike:IsReady(unit) then
-                if GetByRange(1, 10) and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) then
+                if GetByRange(2, 10) and A.LightningConduit:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.LightningConduitDebuff.ID, true) == 0 and VarFurycheckSs then
                     return A.Stormstrike:Show(icon) 
                 end
             end
 			
             -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-            if A.Stormstrike:IsReady(unit) and (Unit(player):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (GetByRange(1, 5) and Unit(player):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) and (Unit(player):HasBuffs(A.StormbringerBuff.ID, true) > 0 or (GetByRange(1, 5) and Unit(player):HasBuffs(A.GatheringStormsBuff.ID, true) > 0 and VarFurycheckSs)) then
                 return A.Stormstrike:Show(icon)
             end
 			
@@ -1306,7 +1322,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- stormstrike,if=variable.OCPool_SS&variable.furyCheck_SS
-            if A.Stormstrike:IsReady(unit) and (VarOcpoolSs and VarFurycheckSs) then
+            if A.Stormstrike:IsReadyByPassCastGCD(unit) and (VarOcpoolSs and VarFurycheckSs) then
                 return A.Stormstrike:Show(icon)
             end
 			
@@ -1373,7 +1389,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- lava_lash,if=!azerite.primal_primer.enabled&talent.hot_hand.enabled&buff.hot_hand.react
-        if A.LavaLash:IsReady(unit) and (A.PrimalPrimer:GetAzeriteRank() == 0 and A.HotHand:IsSpellLearned() and Unit(player):HasBuffsStacks(A.HotHandBuff.ID, true) > 0) then
+        if A.LavaLash:IsReadyByPassCastGCD(unit) and (A.PrimalPrimer:GetAzeriteRank() == 0 and A.HotHand:IsSpellLearned() and Unit(player):HasBuffsStacks(A.HotHandBuff.ID, true) > 0) then
             return A.LavaLash:Show(icon)
         end
 			
@@ -1393,7 +1409,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- lava_lash,if=variable.OCPool_LL&variable.furyCheck_LL
-        if A.LavaLash:IsReady(unit) and (VarOcpoolLl and VarFurycheckLl) then
+        if A.LavaLash:IsReadyByPassCastGCD(unit) and (VarOcpoolLl and VarFurycheckLl) then
             return A.LavaLash:Show(icon)
         end
 			
