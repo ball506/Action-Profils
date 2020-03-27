@@ -557,6 +557,13 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+	
+	-- Disrupt
+    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+	    -- Notification					
+        Action.SendNotification("Kick : Disrupt", A.Disrupt.ID)        
+		return A.Disrupt
+    end 
     
 	-- Fel Eruption
 	if (useCC) and not A.Disrupt:IsReady(unit) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and GetByRange(1, 20) and A.FelEruption:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun") then 
@@ -566,25 +573,20 @@ local function Interrupts(unit)
     end 
 	
     -- Chaos Nova    
-    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) and Unit(unit):IsControlAble("stun") then 
+    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun") then 
 	    -- Notification					
         Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
 		return A.ChaosNova              
     end 
     
 	-- Imprison    
-    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
+    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
 	    -- Notification					
         Action.SendNotification("CC : Imprison", A.Imprison.ID)        
 		return A.Imprison              
     end 
 	
-	-- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
-	    -- Notification					
-        Action.SendNotification("Kick : Disrupt", A.Disrupt.ID)        
-		return A.Disrupt
-    end 	
+	
 	    
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         return A.QuakingPalm
@@ -638,8 +640,8 @@ A[3] = function(icon, isMulti)
     local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
 	local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
 	local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
-	local InterruptMin = A.GetToggle(2, "InterruptMin")
-	local InterruptMax = A.GetToggle(2, "InterruptMax")
+	local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
 	local FelBladeRange = A.GetToggle(2, "FelBladeRange")
 	local FelBladeFury = A.GetToggle(2, "FelBladeFury")	
 	local FelBladeOutOfRange = A.GetToggle(2, "FelBladeOutOfRange")	
@@ -1220,7 +1222,7 @@ A[3] = function(icon, isMulti)
 		-- PvP Rotation
 		local function RotationPvP(unit)
 			-- Disrupt
-   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
+   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
       		    return A.Disrupt:Show(icon)
    			end
 			
@@ -1309,7 +1311,7 @@ local function ArenaRotation(icon, unit)
         -- Note: "arena1" is just identification of meta 6
         if unit == "arena1" then 
 			-- Disrupt
-   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, InterruptMin, InterruptMax) then 
+   		    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
       		    return A.Disrupt:Show(icon)
    			end
 		    -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
