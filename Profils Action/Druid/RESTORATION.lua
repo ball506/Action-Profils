@@ -918,26 +918,30 @@ A[3] = function(icon, isMulti)
 			--if A.Prowl:IsReady(unit) and Unit("player"):HasBuffs(A.Prowl.ID, true) == 0 then
 			--    return A.Prowl:Show(icon)
 			--end	
+			
             -- Mass Rez
 			if A.Revitalize:IsReady(unit) and Unit(unit):InGroup() and Unit(unit):IsDead() and Unit(unit):IsPlayer() and Unit(unit):GetRange() <= 100 and not isMoving and IsSchoolFree() then 
                 return A.Revitalize:Show(icon)
             end 
+			
             -- Rez
             if A.Revive:IsReady(unit) and Unit(unit):IsDead() and Unit(unit):IsPlayer() and not isMoving and IsSchoolFree() then 
                 return A.Revive:Show(icon)
             end 
+			
             -- Efflorescence out of combat
             if not A.IsInPvP and A.Efflorescence:IsReady(unit) and A.GetToggle(2,"AoE") and Efflorescence() <= 2 then 
                 -- Notification					
                 Action.SendNotification("Pre casting Efflorescence", A.Efflorescence.ID)
 				return A.Efflorescence:Show(icon)
             end 
+			
             -- Pre Rejuvenation on 1/3 of our party / raid
-            if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) and Unit(unit):GetRange() <= 40 then 
-                -- Notification					
-                Action.SendNotification("Pre casting Rejuvenation", A.Rejuvenation.ID) 
-				return A.Rejuvenation:Show(icon)				
-            end 
+       --     if (Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 4 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) and Unit(unit):GetRange() <= 40 then 
+       --         -- Notification					
+       --         Action.SendNotification("Pre casting Rejuvenation", A.Rejuvenation.ID) 
+		--		return A.Rejuvenation:Show(icon)				
+       --     end 
 			
 			-- BossMods
             local Pull = A.BossMods_Pulling()  
