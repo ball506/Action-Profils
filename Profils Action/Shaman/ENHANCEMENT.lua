@@ -977,7 +977,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- stormstrike,cycle_targets=1,if=active_enemies>1&azerite.lightning_conduit.enabled&!debuff.lightning_conduit.up&variable.furyCheck_SS
-        if A.Stormstrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.StormbringerBuff.ID, true) > 0 then
+        if A.Stormstrike:IsReadyByPassCastGCD(unit) then
             return A.Stormstrike:Show(icon) 
         end
 
