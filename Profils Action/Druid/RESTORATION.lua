@@ -195,6 +195,8 @@ local Temp                                     = {
 local GetTotemInfo, IsMouseButtonDown, UnitIsUnit = 
 GetTotemInfo, IsMouseButtonDown, UnitIsUnit
 
+local player = "player"
+
 local function IsSchoolFree()
     return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
 end 
@@ -204,7 +206,6 @@ local function AntiFakeStun(unit)
     return 
     A.IsUnitEnemy(unit) and  
     Unit(unit):GetRange() <= 5 and A.MightyBash:IsSpellLearned() and 
-    Unit(unit):IsControlAble("stun", 0) and 
     A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)         
 end 
 A[1] = function(icon)
@@ -217,11 +218,7 @@ A[1] = function(icon)
         (
             not A.IsUnitEnemy("mouseover") and 
             not A.IsUnitEnemy("target") and             
-            not A.IsUnitEnemy("targettarget") and            
-            (
-                (A.IsInPvP and EnemyTeam():PlayersInRange(1, 5)) or 
-                (not A.IsInPvP and MultiUnits:GetByRange(5, 1) >= 1)
-            )
+            not A.IsUnitEnemy("targettarget") 
         )
     )
     then 
@@ -840,7 +837,7 @@ A[3] = function(icon, isMulti)
 		-- Feral Affinity rotation
         if A.FeralAffinity:IsSpellLearned() and A.IsUnitEnemy("target") then 
 		    -- CatForm
-			if A.CatForm:IsReady(unit) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
+			if A.CatForm:IsReady(player) and Unit("player"):HasBuffs(A.CatForm.ID, true) == 0 then
 			    return A.CatForm:Show(icon)
 			end
 			-- Swipe aoe
