@@ -651,7 +651,8 @@ A[3] = function(icon)
         return A.PoolResource:Show(icon)
     end
 	
-
+--print("Rip:" .. A.RipDebuff:BaseDuration())
+--print("Rake:" .. A.RakeDebuff:BaseDuration())
     ------------------------------------
     ---------- DUMMY DPS TEST ----------
     ------------------------------------
@@ -868,6 +869,11 @@ A[3] = function(icon)
         
         -- call_action_list,name=cooldowns
         if inCombat and IsInCatForm and not Unit(unit):IsDead() and Unit(unit):GetRange() < 7 and unit ~= "mouseover" then
+       
+            -- tigers_fury,if=energy.deficit>=60
+            if A.TigersFury:IsReady(player) and EnergyDeficitPredicted >= 60 then
+                return A.TigersFury:Show(icon)
+            end
         
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
             if A.Berserk:IsReady(player) and A.BurstIsON(unit) and 
@@ -881,11 +887,6 @@ A[3] = function(icon)
 			)
 			then
                 return A.Berserk:Show(icon)
-            end
-            
-            -- tigers_fury,if=energy.deficit>=60
-            if A.TigersFury:IsReady(player) and EnergyDeficitPredicted >= 60 then
-                return A.TigersFury:Show(icon)
             end
             
             -- berserking
@@ -1196,7 +1197,15 @@ A[3] = function(icon)
             -- pool_resource,for_next=1
             -- rip,target_if=!ticking|(remains<=duration*0.3)&(!talent.sabertooth.enabled)|(remains<=duration*0.8&persistent_multiplier>dot.rip.pmultiplier)&target.time_to_die>8
             if A.Rip:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) == 0 or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.3) and (not A.Sabertooth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.8 and A.Persistent_PMultiplier(A.Rip.ID) > A.PMultiplier(unit, A.Rip.ID)) and Unit(unit):TimeToDie() > 8 then
+                if Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) == 0 or 
+				(
+				    Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.3
+				) and (not A.Sabertooth:IsSpellLearned()) 
+				or 
+				(
+				    Unit(unit):HasDeBuffs(A.RipDebuff.ID, true) <= A.RipDebuff:BaseDuration() * 0.8 and A.Persistent_PMultiplier(A.Rip.ID) > A.PMultiplier(unit, A.Rip.ID)
+				)
+				and Unit(unit):TimeToDie() > 8 then
                     return A.Rip:Show(icon) 
                 end
             end
@@ -1222,7 +1231,7 @@ A[3] = function(icon)
             end
             
             -- ferocious_bite,max_energy=1
-            if A.FerociousBiteMaxEnergy:IsReady(unit) and Player:ComboPoints() > 0 then
+            if A.FerociousBiteMaxEnergy:IsReady(unit) and (Player:Energy() >= 50 or (Unit(player):HasBuffs(A.BerserkBuff.ID, true) > 0 and Player:Energy() >= 30)) and Player:ComboPoints() > 0 then
                 return A.FerociousBiteMaxEnergy:Show(icon)
             end
 			
