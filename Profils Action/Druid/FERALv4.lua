@@ -110,7 +110,6 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     Rebirth                                 = Create({ Type = "Spell", ID = 20484      }),  -- Combat Rez
     Revive                                  = Create({ Type = "Spell", ID = 50769      }), 
     Hibernate                               = Create({ Type = "Spell", ID = 2637      }), 
-    Prowl                                   = Create({ Type = "Spell", ID = 2908      }), 
     Revitalize                              = Create({ Type = "Spell", ID = 212040      }), 
     Regrowth                                = Create({ Type = "Spell", ID = 8936     }),
     Soothe                                  = Create({ Type = "Spell", ID = 2908     }),
@@ -396,7 +395,7 @@ local function SelfDefensives()
     end 
  
     -- Bear Form
-    local BearForm = A.GetToggle(2, "BearForm")
+ --[[   local BearForm = A.GetToggle(2, "BearForm")
     if     BearForm >= 0 and not IsInBearForm and A.BearForm:IsReady("player") and
     (
         (     -- Auto 
@@ -416,7 +415,7 @@ local function SelfDefensives()
     then 
         return A.BearForm
     end
- 
+ ]]--
     -- Stoneform on self dispel (only PvE)
     if A.Stoneform:IsRacialReady(player, true) and not A.IsInPvP and A.AuraIsValid(player, "UseDispel", "Dispel") then 
         return A.Stoneform
@@ -459,15 +458,15 @@ Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Stealth Handler UI --
 local function HandleStealth()
-    local choice = GetToggle(2, "AutoStealth")
+    local choice = GetToggle(2, "AutoStealthOOC")
     local unit = "target"
     return     (
         (IsInRaid() and choice[1]) or 
         (IsInGroup() and choice[2]) or
-        (A.IsInPvP and choice[3])
+        (A.IsInPvP and choice[3]) or
+		(A.Prowl:IsReady() and choice[4])
     )
 end
-
 
 A.FerociousBiteMaxEnergy.CustomCost = {
     [3] = function ()
@@ -600,6 +599,12 @@ A[3] = function(icon)
     local Potion = Action.GetToggle(1, "Potion") 
     local MinInterrupt = GetToggle(2, "MinInterrupt")
     local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+    local IsInBearForm = IsInBearForm()
+	local IsInCatForm = IsInCatForm()
+	local IsInTravelForm = IsInTravelForm()
+	local IsInMoonkinForm = IsInMoonkinForm()
+	local IsInHumanForm = IsInHumanForm()
+	local MassEntanglementThingFromBeyond = GetToggle(2, "MassEntanglementThingFromBeyond")
     local AoEMode = A.GetToggle(2, "AoEMode")        
     local BloodoftheEnemySyncAoE = Action.GetToggle(2, "BloodoftheEnemySyncAoE")
     local BloodoftheEnemyAoETTD = Action.GetToggle(2, "BloodoftheEnemyAoETTD")
@@ -670,45 +675,33 @@ A[3] = function(icon)
             end
           end
     end    
-    
+
+    -- prowl
+    if A.Prowl:IsReady(player) and not inCombat and Unit(player):HasBuffs(A.Prowl.ID, true) == 0 and not Player:IsMounted() and not Player:IsStealthed() and HandleStealth then
+        return A.Prowl:Show(icon)
+    end
+		
+    -- cat_form,if=!buff.cat_form.up
+    if A.CatForm:IsReady() and A.LastPlayerCastName ~= A.Prowl:Info() and not Player:IsMounted() and not Player:IsStealthed() and not IsInCatForm and AutoCatForm and 
+    (
+	    (not IsInMoonkinForm and A.BalanceAffinity:IsSpellLearned()) 
+		or
+		(not A.BalanceAffinity:IsSpellLearned() )
+	)
+	then
+        return A.CatForm:Show(icon)
+    end	
+
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------   
     local function EnemyRotation(unit)
-        local IsInBearForm = IsInBearForm()
-		local IsInCatForm = IsInCatForm()
-		local IsInTravelForm = IsInTravelForm()
-		local IsInMoonkinForm = IsInMoonkinForm()
-		local IsInHumanForm = IsInHumanForm()
-		local MassEntanglementThingFromBeyond = GetToggle(2, "MassEntanglementThingFromBeyond")
-		
+
 		-- Rake update damage real time
 		if A.LastPlayerCastName == A.Rake:Info() then
             LastRakeAP = Player:AttackPowerDamageMod()
         end 
-
-        -- prowl
-        if A.Prowl:IsReady(player) and not inCombat and Unit(player):HasBuffs(A.ProwlBuff.ID, true) == 0 and not Player:IsMounted() and not Player:IsStealthed() and HandleStealth then
-            return A.Prowl:Show(icon)
-        end
-		
-        -- cat_form,if=!buff.cat_form.up
-        if A.CatForm:IsReady(player) and not Player:IsMounted() and not Player:IsStealthed() and not A.LastPlayerCastName == A.Prowl:Info() and not IsInCatForm and AutoCatForm and 
-		(
-		    IsInBearForm 
-			or 
-			IsInHumanForm
-		) 
-		and 
-		(
-		    (not IsInMoonkinForm and A.BalanceAffinity:IsSpellLearned()) 
-			or 
-			not A.BalanceAffinity:IsSpellLearned()
-		) 
-		then
-            return A.CatForm:Show(icon)
-        end	
-		
+				
 		--Precombat
         if combatTime == 0 and not Unit(unit):IsDead() and IsInCatForm and Unit(unit):GetRange() <= OpenerRange and not Player:IsMounted() and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
             -- flask
@@ -874,7 +867,7 @@ A[3] = function(icon)
       --  end
         
         -- call_action_list,name=cooldowns
-        if inCombat and IsInCatForm and not Unit(unit):IsDead() and Unit(unit):GetRange() < 7 and A.BurstIsON(unit) and unit ~= "mouseover" then
+        if inCombat and IsInCatForm and not Unit(unit):IsDead() and Unit(unit):GetRange() < 7 and unit ~= "mouseover" then
         
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
             if A.Berserk:IsReady(player) and A.BurstIsON(unit) and 
@@ -921,6 +914,8 @@ A[3] = function(icon)
 			    not BloodoftheEnemySyncAoE and Unit(unit):TimeToDie() > 3
 				or
 				BloodoftheEnemySyncAoE and Player:AreaTTD(OpenerRange) >= BloodoftheEnemyAoETTD and GetByRange(BloodoftheEnemyUnits, OpenerRange) 
+				or
+				Unit(unit):IsBoss()
 			)
 			then
                 return A.BloodoftheEnemy:Show(icon)
@@ -1085,17 +1080,38 @@ A[3] = function(icon)
             end    			
 		
             -- use_item,effect_name=cyclotronic_blast,if=(energy.deficit>=energy.regen*3)&buff.tigers_fury.down&!azerite.jungle_fury.enabled
-            if A.CyclotronicBlast:IsReady(unit) and ((EnergyDeficitPredicted >= EnergyRegen * 3) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) == 0 and A.JungleFury:GetAzeriteRank() == 0) then
+            if A.CyclotronicBlast:IsReady(unit) and ((EnergyDeficitPredicted >= EnergyRegen * 3) and Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) == 0 and A.JungleFury:GetAzeriteRank() == 0) 
+			and    
+            (
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
+                or
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
+            )
+			then
                 return A.CyclotronicBlast:Show(icon)
             end
             
             -- use_item,effect_name=cyclotronic_blast,if=buff.tigers_fury.up&azerite.jungle_fury.enabled
-            if A.CyclotronicBlast:IsReady(unit) and (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and A.JungleFury:GetAzeriteRank() > 0) then
+            if A.CyclotronicBlast:IsReady(unit) and (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and A.JungleFury:GetAzeriteRank() > 0) 
+			and    
+            (
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
+                or
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
+            )
+			then
                 return A.CyclotronicBlast:Show(icon)
             end
             
             -- use_item,effect_name=azsharas_font_of_power,if=energy.deficit>=50
-            if A.AzsharasFontofPower:IsReady(player) and EnergyDeficitPredicted >= 50 then
+            if A.AzsharasFontofPower:IsReady(player) and EnergyDeficitPredicted >= 50 
+			and    
+            (
+                (TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD)
+                or
+                (not TrinketAoE and Unit(unit):TimeToDie() >= TrinketsMinTTD) 		
+            )
+			then
                 return A.AzsharasFontofPower:Show(icon)
             end
             
