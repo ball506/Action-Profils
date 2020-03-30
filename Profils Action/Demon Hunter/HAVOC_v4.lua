@@ -777,7 +777,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= ArcaneTorrentPrePull 
+            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and (Pull > 0.1 and Pull <= ArcaneTorrentPrePull or not Action.GetToggle(1, "DBM")) 
 			then
 	            -- Notification					
                 Action.SendNotification("Prepull: Arcane Torrent", A.ArcaneTorrent.ID) 
@@ -792,7 +792,7 @@ A[3] = function(icon, isMulti)
             end	
 
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.8
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and (Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.7 or not Action.GetToggle(1, "DBM"))
 			then
 	            -- Notification					
                 Action.SendNotification("Prepull: Guardian of Azeroth", A.GuardianofAzeroth.ID) 
@@ -800,7 +800,7 @@ A[3] = function(icon, isMulti)
             end			
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 6 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 0.5) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 6 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
