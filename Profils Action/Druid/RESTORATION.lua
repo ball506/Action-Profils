@@ -149,7 +149,8 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	-- Offensives Spells
     Moonfire                                  = Action.Create({ Type = "Spell", ID = 164812     }),
 	Sunfire                                   = Action.Create({ Type = "Spell", ID = 93402     }),
-	SolarWrath                                   = Action.Create({ Type = "Spell", ID = 5176     }),
+	SolarWrath                                = Action.Create({ Type = "Spell", ID = 5176     }),
+	Mutilate                                  = Action.Create({ Type = "Spell", ID = 33917     }),
 	-- Offensives abilities with Affinity
 	-- Boomkin
 	Starsurge                                 = Action.Create({ Type = "Spell", ID = 5176     }),
@@ -284,6 +285,24 @@ end
 local function IsEnoughHPS(unit)
     return Unit(player):GetHPS() > Unit(unit):GetDMG()
 end 
+
+-- Return boolean
+-- Current Group HPS > Incoming damage
+local function IsGroupEnoughHPS()
+    return ((HealingEngine.GetIncomingHPSAVG() > HealingEngine.GetIncomingDMGAVG()) or (not IsInRaid() and not IsInGroup()))
+end
+
+-- Return boolean
+-- Current Group is taking massive damage that need burst
+local function NeedEmergencyHPS()
+    return ( HealingEngine.GetIncomingHPSAVG() * 2 < HealingEngine.GetIncomingDMGAVG() )
+end
+
+-- Return boolean
+-- Current Group is taking ultra massive damage that need burst
+local function NeedUltraEmergencyHPS()
+    return ( HealingEngine.GetIncomingHPSAVG() * 3 < HealingEngine.GetIncomingDMGAVG() )
+end
 
 -- Mana Management
 local function IsSaveManaPhase()
@@ -754,14 +773,16 @@ A[3] = function(icon, isMulti)
 	local Racial = GetToggle(1, "Racial")
 	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
     local isMoving = Player:IsMoving()	
-    local inRange = true
+	local Emergency = NeedEmergencyHPS()
+	local SuperEmergency = NeedUltraEmergencyHPS()	
 	
     --------------------
     --- DPS ROTATION ---
     --------------------
     local function DamageRotation(unit)
         inRange = A.SolarWrath:IsInRange(unit)
-        
+        inMeleeRange = A.Mutilate:IsInRange(unit)
+		
         -- Purge
         if A.ArcaneTorrent:AutoRacial(unit, nil, nil, true) then 
             return A.ArcaneTorrent:Show(icon)
@@ -815,7 +836,7 @@ A[3] = function(icon, isMulti)
         end     
         
 		-- Balance Affinity rotation
-        if A.BalanceAffinity:IsSpellLearned() and IsEnoughHPS(unit) and not IsSaveManaPhase() then 
+        if A.BalanceAffinity:IsSpellLearned() and IsGroupEnoughHPS() and inRange and not IsSaveManaPhase() then 
 		
 		    -- MoonkinForm
 			if A.MoonkinForm:IsReady(unit) and Unit(player):HasBuffs(A.MoonkinForm.ID, true) == 0 then
@@ -831,6 +852,7 @@ A[3] = function(icon, isMulti)
    			if A.LunarStrike:IsReady(unit) and Unit(player):HasBuffs(A.MoonkinForm.ID, true) > 0 then
 			    return A.LunarStrike:Show(icon)
 			end
+			
         end
 		
 			-- Prowl
@@ -839,7 +861,7 @@ A[3] = function(icon, isMulti)
 			--end	
 		
 		-- Feral Affinity rotation
-        if A.FeralAffinity:IsSpellLearned() and IsEnoughHPS(unit) and A.IsUnitEnemy(unit) then 
+        if A.FeralAffinity:IsSpellLearned() and IsGroupEnoughHPS() and inMeleeRange and A.IsUnitEnemy(unit) then 
 		    
 			-- CatForm
 			if A.CatForm:IsReady(player) and Unit(player):HasBuffs(A.CatForm.ID, true) == 0 then
@@ -847,7 +869,7 @@ A[3] = function(icon, isMulti)
 			end
 			
 			-- Swipe aoe
-   			if A.Swipe:IsReady(unit) and Unit(player):HasBuffs(A.CatForm.ID, true) > 0 and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
+   			if A.Swipe:IsReady(player) and Unit(player):HasBuffs(A.CatForm.ID, true) > 0 and Player:EnergyPredicted() >= 35 and MultiUnits:GetByRange(5, 5) > 1  then
 			    return A.Swipe:Show(icon)
 			end			
 		   
@@ -873,12 +895,12 @@ A[3] = function(icon, isMulti)
         end 
 		
 		-- Sunfire
-        if A.Sunfire:IsReady(unit) and not IsSaveManaPhase()  and Unit(player):HasBuffs(A.CatForm.ID, true) == 0  and IsEnoughHPS(unit) and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
+        if A.Sunfire:IsReady(unit) and not IsSaveManaPhase()  and Unit(player):HasBuffs(A.CatForm.ID, true) == 0  and IsGroupEnoughHPS() and A.Sunfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Sunfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Sunfire.ID) == 0) then 
             return A.Sunfire:Show(icon)
         end 
 		
         -- Moonfire
-        if A.Moonfire:IsReady(unit) and not IsSaveManaPhase()  and Unit(player):HasBuffs(A.CatForm.ID, true) == 0 and IsEnoughHPS(unit) and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
+        if A.Moonfire:IsReady(unit) and not IsSaveManaPhase()  and Unit(player):HasBuffs(A.CatForm.ID, true) == 0 and IsGroupEnoughHPS() and A.Moonfire:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.Moonfire.ID) <= 2 or Unit(unit):HasDeBuffs(A.Moonfire.ID) == 0)then 
             return A.Moonfire:Show(icon)
         end 
 		
@@ -990,10 +1012,7 @@ A[3] = function(icon, isMulti)
 		
         -- Bursting 
         if A.BurstIsON(unit) and inCombat then 
-		    
-			local Emergency = Unit(unit):TimeToDieX(30) < 3 and Unit(unit):HealthPercent() <= 50 and A.IsUnitFriendly(unit)
-		    local SuperEmergency = (Unit(unit):TimeToDieX(10) < 3 or Unit(unit):HealthPercent() <= 50) and A.IsUnitFriendly(unit)
-            
+		                
 			-- Multi (for [4])
             if isMulti or A.GetToggle(2, "AoE") then 
 			
@@ -1146,10 +1165,7 @@ A[3] = function(icon, isMulti)
                 end             
             end 
             
-            -- AoE
-			local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60
-		    local SuperEmergency = Unit(unit):TimeToDieX(20) < 2 and Unit(unit):HealthPercent() <= 50
-			
+            -- AoE			
             if (isMulti or A.GetToggle(2, "AoE")) then 
 			    
 				-- Tranquility
@@ -1249,12 +1265,9 @@ A[3] = function(icon, isMulti)
         end
         
         -- Super Emergency 
-        local Emergency = Unit(unit):TimeToDieX(25) < 4 and Unit(unit):HealthPercent() <= 60
-		local MediumEmergency = Unit(unit):HealthPercent() <= 70 and A.IsUnitFriendly(unit)
-		local SuperEmergency = Unit(unit):TimeToDieX(25) < 3 and Unit(unit):HealthPercent() <= 50 
 		local Swiftmend = A.GetToggle(2, "SwiftmendHP")
 		
-        if MediumEmergency and inCombat and A.Swiftmend:IsReady(unit) and Unit(unit):DeBuffCyclone() == 0 and IsSchoolFree() and ((Swiftmend >= 100 and Unit(unit):HealthPercent() <= 50 ) or (Swiftmend < 100 and Unit(unit):HealthPercent() <= Swiftmend)) then 
+        if Emergency and inCombat and A.Swiftmend:IsReady(unit) and Unit(unit):DeBuffCyclone() == 0 and IsSchoolFree() and ((Swiftmend >= 100 and Unit(unit):HealthPercent() <= 50 ) or (Swiftmend < 100 and Unit(unit):HealthPercent() <= Swiftmend)) then 
             if Emergency and A.IsUnitFriendly(unit) and A.Ironbark:IsReady(unit) and Unit(unit):TimeToDie() > 3 then 
 			    -- Notification
 			    Action.SendNotification("Emergency Iron Bark on : " .. UnitName(unit), A.Ironbark.ID, 2)
@@ -1276,7 +1289,7 @@ A[3] = function(icon, isMulti)
 		    local currentMembers = TeamCache.Friendly.Size
 			
             -- Innervate
-			if Unit(player):HasBuffs(A.Innervate.ID, true) == 0 then
+			if Unit(player):HasBuffs(A.Innervate.ID, true) == 0 and Player:ManaPercentageP() < 70  then
 			    -- Notification
 			    Action.SendNotification("Using Innervate Bomb Combo burst", A.Innervate.ID, 2)
                 return A.Innervate:Show(icon)
@@ -1344,22 +1357,19 @@ A[3] = function(icon, isMulti)
         end
 		
 		-- Innervate
-		if A.Innervate:IsReady(player) and inCombat and Unit(player):HasBuffs(A.Innervate.ID, true) == 0 and IsSaveManaPhase() then
+		if A.Innervate:IsReady(player) and inCombat and Unit(player):HasBuffs(A.Innervate.ID, true) == 0 and Player:ManaPercentageP() < 70 and IsSaveManaPhase() then
 		    -- Notification
 		    Action.SendNotification("Low mana : Using Innervate", A.Innervate.ID, 2)
             return A.Innervate:Show(icon)
         end	
-				
-		-- Rejuvenation
-        if A.Rejuvenation:IsReady(unit) and inCombat and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and (MaintainRejuvenation(unit) or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
-            return A.Rejuvenation:Show(icon)
-        end	
-
-        -- Rejuvenation with Germination
-        if A.Rejuvenation:IsReady(unit) and inCombat and (not IsSaveManaPhase() or A.IsInPvP) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) >= 2 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
-            return A.Rejuvenation:Show(icon)
-        end	
 		
+		-- Cenarion Ward
+        if A.CenarionWard:IsReady(unit) and inCombat and Unit(unit):GetRange() <= 40 and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and A.CenarionWard:IsSpellLearned() and A.CenarionWard:PredictHeal("Cenarion Ward", unit) then 
+		    -- Notification
+			Action.SendNotification("Cenarion Ward on : " .. UnitName(unit), A.CenarionWard.ID, 2)
+            return A.CenarionWard:Show(icon)
+        end 
+				
 		-- Swiftmend for low moderate damage
 		if A.Swiftmend:IsReady(unit) and inCombat and Unit(unit):GetRange() <= 40 and (Unit(unit):TimeToDieX(50) < 4 or A.Swiftmend:PredictHeal("Swiftmend", unit)) and Unit(unit):HealthPercent() <= 75 and Unit(unit):HasBuffs(A.Rejuvenation.ID) > 2 then		
 		    -- Notification
@@ -1368,7 +1378,6 @@ A[3] = function(icon, isMulti)
         end 		
 
 		-- PvP Overgrowth (Enemy Healer)
-		local Emergency = (Unit(unit):TimeToDieX(30) < 5 and Unit(unit):HealthPercent() <= 45)
         if A.IsInPvP and inCombat and Unit(unit):GetRange() <= 40 and A.Overgrowth:IsReady(unit) and A.Overgrowth:PredictHeal("Overgrowth", unit) then		    
 			if Emergency and A.Ironbark:IsReady(unit) and A.IsUnitFriendly(unit) then 
                 return A.Ironbark:Show(icon) 
@@ -1391,13 +1400,16 @@ A[3] = function(icon, isMulti)
                 return A.WildGrowth:Show(icon)
             end  
         end
-		
-		-- Cenarion Ward
-        if A.CenarionWard:IsReady() and inCombat and Unit(unit):GetRange() <= 40 and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 3 and A.CenarionWard:IsSpellLearned() and A.CenarionWard:PredictHeal("Cenarion Ward", unit) then 
-		    -- Notification
-			Action.SendNotification("Cenarion Ward on : " .. UnitName(unit), A.CenarionWard.ID, 2)
-            return A.CenarionWard:Show(icon)
-        end 
+
+		-- Rejuvenation
+        if A.Rejuvenation:IsReady(unit) and inCombat and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and (MaintainRejuvenation(unit) or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) <= 3 or Unit(unit):HasBuffs(A.Rejuvenation.ID, true) == 0) then             
+            return A.Rejuvenation:Show(icon)
+        end	
+
+        -- Rejuvenation with Germination
+        if A.Rejuvenation:IsReady(unit) and inCombat and (not IsSaveManaPhase() or A.IsInPvP) and A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) >= 2 and (Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) <= 3 or Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true) == 0)  then             
+            return A.Rejuvenation:Show(icon)
+        end	
 		
 		-- Regrowth without ClearCasting buff
 		if not isMoving and inCombat and A.Regrowth:IsReady(unit) and (not IsSaveManaPhase() or A.IsInPvP) and Unit(unit):GetRange() <= 40 and not isMoving and Unit(unit):HasBuffs(A.Rejuvenation.ID, true) > 0 and Unit(unit):HasBuffs(A.Regrowth.ID, true) == 0 and A.Regrowth:PredictHeal("Regrowth", unit, 5) then
