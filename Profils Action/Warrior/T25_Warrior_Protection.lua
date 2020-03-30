@@ -199,15 +199,15 @@ end
 
 local function isCurrentlyTanking()
     -- is player currently tanking any enemies within 16 yard radius
-    local IsTanking = Unit("player"):IsTankingAoE(16) or Unit("player"):IsTanking("target", 16);
+    local IsTanking = Unit(player):IsTankingAoE(16) or Unit(player):IsTanking("target", 16);
     return IsTanking;
 end
 
 local function shouldCastIp()
-    if Unit("player"):HasBuffs(A.IgnorePain.ID, true) > 0 then 
+    if Unit(player):HasBuffs(A.IgnorePain.ID, true) > 0 then 
         local castIP = tonumber((GetSpellDescription(190456):match("%d+%S+%d"):gsub("%D","")))
         local IPCap = math.floor(castIP * 1.3);
-        local currentIp = Unit("player"):HasBuffs(A.IgnorePain.ID, true)
+        local currentIp = Unit(player):HasBuffs(A.IgnorePain.ID, true)
 
         -- Dont cast IP if we are currently at 50% of IP Cap remaining
         if currentIp  < (0.5 * IPCap) then
@@ -295,34 +295,50 @@ end
 
 -- SelfDefensives
 local function SelfDefensives()
-    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
-		
-    if Unit("player"):CombatTime() == 0 then 
+    local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
+
+	
+    if Unit(player):CombatTime() == 0 then 
         return 
     end 
 	
+    -- memory_of_lucid_dreams
+    if A.MemoryofLucidDreams:AutoHeartOfAzerothP(player, true) and Action.GetToggle(1, "HeartOfAzeroth") then 
+	    local LucidDreamTTD = GetToggle(2, "LucidDreamTTD")	
+	    local LucidDreamHP = GetToggle(2, "LucidDreamHP")
+            
+        if  (    
+                ( LucidDreamHP      >= 0     or LucidDreamTTD                    >= 0                                        ) and 
+                ( LucidDreamHP      <= 0     or Unit(player):HealthPercent()     <= LucidDreamHP                             ) and 
+                ( LucidDreamTTD     <= 0     or Unit(player):TimeToDie()         <= LucidDreamTTD                            ) 
+            )                 
+        then                
+            return A.MemoryofLucidDreams
+        end 
+    end
+			
     -- ShieldBlock (any role, whenever have physical damage)
-    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and HPLoosePerSecond >= 5 and A.ShieldBlock:IsReady("player") and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit("player"):GetRealTimeDMG(3) > 0 then 
+    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and HPLoosePerSecond >= 5 and A.ShieldBlock:IsReady(player) and Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit(player):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit(player):GetRealTimeDMG(3) > 0 then 
         return A.ShieldBlock
     end 
 	
     -- LastStand
-    if A.LastStand:IsReadyByPassCastGCD("player") and (not A.GetToggle(2, "LastStandIgnoreBigDeff") or Unit("player"):HasBuffs(Temp.BigDeff) == 0) then 
+    if A.LastStand:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "LastStandIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff) == 0) then 
         local LS_HP                 = A.GetToggle(2, "LastStandHP")
         local LS_TTD                = A.GetToggle(2, "LastStandTTD")
             
         if  (    
                 ( LS_HP     >= 0     or LS_TTD                              >= 0                                        ) and 
-                ( LS_HP     <= 0     or Unit("player"):HealthPercent()     <= LS_HP                                    ) and 
-                ( LS_TTD     <= 0     or Unit("player"):TimeToDie()         <= LS_TTD                                      ) 
+                ( LS_HP     <= 0     or Unit(player):HealthPercent()     <= LS_HP                                    ) and 
+                ( LS_TTD     <= 0     or Unit(player):TimeToDie()         <= LS_TTD                                      ) 
             ) 
 		    or 
             (
                 A.GetToggle(2, "LastStandCatchKillStrike") and 
                 (
-                    ( Unit("player"):GetDMG()         >= Unit("player"):Health() and Unit("player"):HealthPercent() <= 20 ) or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):Health() or 
-                    Unit("player"):TimeToDie()         <= A.GetGCD()
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD()
                 )
             )                
         then                
@@ -332,27 +348,27 @@ local function SelfDefensives()
 		
 		
     -- ShieldWall
-    if A.ShieldWall:IsReadyByPassCastGCD("player") then 
+    if A.ShieldWall:IsReadyByPassCastGCD(player) then 
         local SW_HP                 = A.GetToggle(2, "ShieldWallHP")
         local SW_TTD                = A.GetToggle(2, "ShieldWallTTD")
             
         if  (    
                 ( SW_HP     >= 0     or SW_TTD                              >= 0                                        ) and 
-                ( SW_HP     <= 0     or Unit("player"):HealthPercent()     <= SW_HP                                    ) and 
-                ( SW_TTD     <= 0     or Unit("player"):TimeToDie()         <= SW_TTD      )  
+                ( SW_HP     <= 0     or Unit(player):HealthPercent()     <= SW_HP                                    ) and 
+                ( SW_TTD     <= 0     or Unit(player):TimeToDie()         <= SW_TTD      )  
             ) 
 			or 
             (
                 A.GetToggle(2, "ShieldWallCatchKillStrike") and 
                 (
-                    ( Unit("player"):GetDMG()         >= Unit("player"):Health() and Unit("player"):HealthPercent() <= 20 ) or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):Health() or 
-                    Unit("player"):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
                 )
             )                
         then
             -- ShieldBlock
-            if A.ShieldBlock:IsReadyByPassCastGCD("player") and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
+            if A.ShieldBlock:IsReadyByPassCastGCD(player) and Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit(player):HasBuffs(A.LastStandBuff.ID, true) == 0 then  
                 return A.ShieldBlock        -- #4
             end 
                 
@@ -364,34 +380,34 @@ local function SelfDefensives()
 
     -- RallyingCry 
 	local RallyingCry = A.GetToggle(2, "RallyingCryHP")
-    if	RallyingCry >= 0 and A.RallyingCry:IsReady("player") and 
+    if	RallyingCry >= 0 and A.RallyingCry:IsReady(player) and 
     (
         (     -- Auto 
             RallyingCry >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(20) < 5 or 
+                Unit(player):TimeToDieX(20) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) 
 		or 
         (    -- Custom
             RallyingCry < 100 and 
-            Unit("player"):HealthPercent() <= RallyingCry
+            Unit(player):HealthPercent() <= RallyingCry
         )
     ) 
     then 
@@ -400,33 +416,33 @@ local function SelfDefensives()
 	
 	-- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady(player) and 
     (
         (     -- Auto 
             AbyssalHealingPotion >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(20) < 5 or 
+                Unit(player):TimeToDieX(20) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+            Unit(player):HealthPercent() <= AbyssalHealingPotion
         )
     ) 
     then 
@@ -452,7 +468,7 @@ local function Interrupts(unit)
         return A.Stormbolt              
     end  
 
-    if useCC and A.Shockwave:IsReady("player") and MultiUnits:GetByRange(8) > 2 and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.Shockwave:IsReady(player) and MultiUnits:GetByRange(8) > 2 and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
 	    -- Notification					
         Action.SendNotification("Shockwave interrupting...", A.Shockwave.ID)
         return A.Shockwave              
@@ -506,6 +522,7 @@ A[3] = function(icon, isMulti)
 	local ChargeTime = GetToggle(2, "ChargeTime")
 	local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
 	local HeroicLeapTime = GetToggle(2, "HeroicLeapTime")	
+
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -518,7 +535,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
-            if A.AzsharasFontofPower:IsReady("player") then
+            if A.AzsharasFontofPower:IsReady(player) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
@@ -526,12 +543,7 @@ A[3] = function(icon, isMulti)
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit) then
                 return A.WorldveinResonance:Show(icon)
             end
-			
-            -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit) then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-			
+						
             -- guardian_of_azeroth
          --   if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and A.BurstIsON(unit) then
          --       return A.GuardianofAzeroth:Show(icon)
@@ -558,17 +570,12 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- thunder_clap
-            if A.ThunderClap:IsReady(unit) then
+            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 then
                 return A.ThunderClap:Show(icon)
             end
-			
-            -- memory_of_lucid_dreams,if=buff.avatar.down
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and A.BurstIsON(unit) and Action.GetToggle(1, "HeartOfAzeroth") and Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-			
+						
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and Unit("player"):HasBuffs(A.LastStandBuff.ID, true) > 0 then
+            if A.AnimaofDeath:IsReady(unit) and Unit(player):HasBuffs(A.LastStandBuff.ID, true) > 0 then
                 return A.AnimaofDeath:Show(icon)
             end
 			
@@ -578,12 +585,12 @@ A[3] = function(icon, isMulti)
             end			
 			
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ThunderClap:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ThunderClap:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
 			
             -- ravager
-            if A.Ravager:IsReady("player") then
+            if A.Ravager:IsReady(player) then
                 return A.Ravager:Show(icon)
             end
 			
@@ -598,22 +605,22 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRange(5) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
                 return A.ThunderClap:Show(icon)
             end
 			
             -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true) > 0) then
+            if A.ShieldSlam:IsReady(unit) and (Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) > 0) then
                 return A.ShieldSlam:Show(icon)
             end
 			
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0)) then
+            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
                 return A.ThunderClap:Show(icon)
             end
 			
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true) > 0) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit(player):HasBuffs(A.LastStandBuff.ID, true) > 0) then
                 return A.AnimaofDeath:Show(icon)
             end
 			
@@ -630,7 +637,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0)) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
 			
@@ -640,17 +647,17 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap
-            if A.ThunderClap:IsReady(unit) then
+            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 then
                 return A.ThunderClap:Show(icon)
             end
 						
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ShieldSlam:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ShieldSlam:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
 			
             -- ravager
-            if A.Ravager:IsReady("player") then
+            if A.Ravager:IsReady(player) then
                 return A.Ravager:Show(icon)
             end
 			
@@ -694,8 +701,8 @@ A[3] = function(icon, isMulti)
                 if Reflect_Nameplates then                         				
                     for Reflect_UnitID in pairs(Reflect_Nameplates) do    
                         local _, _, _, startCast, endCast, _, _, _, spellcastID = UnitCastingInfo(Reflect_UnitID)							
-                        if UnitIsUnit(Reflect_UnitID .. "target", "player") and TR.Lists.ReflectID[spellcastID] and (((GetTime() * 1000) - startCast) / (endCast - startCast) * 100) > SmartReflectPercent then
-                            if A.SpellReflection:IsReadyByPassCastGCD("player") then
+                        if UnitIsUnit(Reflect_UnitID .. "target", player) and TR.Lists.ReflectID[spellcastID] and (((GetTime() * 1000) - startCast) / (endCast - startCast) * 100) > SmartReflectPercent then
+                            if A.SpellReflection:IsReadyByPassCastGCD(player) then
                                 return A.SpellReflection:Show(icon)
                             end
                         end     
@@ -710,7 +717,7 @@ A[3] = function(icon, isMulti)
                     for Stormbolt_UnitID in pairs(Stormbolt_Nameplates) do    						
                         for k, v in pairs(TR.Lists.Storm_Spells_List) do
                             if (TR.Lists.Storm_Unit_List[select(6, Unit(Stormbolt_UnitID):InfoGUID())] ~= nil or UnitCastingInfo(Stormbolt_UnitID) == GetSpellInfo(v) or UnitChannelInfo(Stormbolt_UnitID) == GetSpellInfo(v)) and Unit(Stormbolt_UnitID):GetRange() <= 20 then                           
-						        if A.Stormbolt:IsSpellLearned() and A.Stormbolt:IsReadyByPassCastGCD("player") then
+						        if A.Stormbolt:IsSpellLearned() and A.Stormbolt:IsReadyByPassCastGCD(player) then
                                     return A.Stormbolt:Show(icon)
                                 end
                             end
@@ -720,7 +727,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- intercept,if=time=0
-          --  if A.Intercept:IsReady(unit) and (Unit("player"):CombatTime() == 0) then
+          --  if A.Intercept:IsReady(unit) and (Unit(player):CombatTime() == 0) then
           --      return A.Intercept:Show(icon)
           --  end
 		  
@@ -734,7 +741,7 @@ A[3] = function(icon, isMulti)
 			and combatTime > 0     
 			then 
 			    -- if not fully aggroed or we are not current target then use taunt
-			    if A.Taunt:IsReady(unit) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and Unit("player"):ThreatSituation(unit) <= 2 --and ( Unit("targettarget"):InfoGUID() ~= Unit("player"):InfoGUID() ) 
+			    if A.Taunt:IsReady(unit) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and Unit(player):ThreatSituation(unit) <= 2 --and ( Unit("targettarget"):InfoGUID() ~= Unit(player):InfoGUID() ) 
 				then 
                     return A.Taunt:Show(icon)
 				-- else if all good on current target, switch to another one we know we dont currently tank
@@ -742,7 +749,7 @@ A[3] = function(icon, isMulti)
                     local Taunt_Nameplates = MultiUnits:GetActiveUnitPlates()
                     if Taunt_Nameplates then  
                         for Taunt_UnitID in pairs(Taunt_Nameplates) do             
-                            if not UnitIsUnit("target", Taunt_UnitID) and Unit(Taunt_UnitID):CombatTime() > 0 and A.Taunt:IsReady(Taunt_UnitID) and not Unit(Taunt_UnitID):IsDummy() and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit("player"):ThreatSituation(Taunt_UnitID) <= 2 then 
+                            if not UnitIsUnit("target", Taunt_UnitID) and Unit(Taunt_UnitID):CombatTime() > 0 and A.Taunt:IsReady(Taunt_UnitID) and not Unit(Taunt_UnitID):IsDummy() and not Unit(Taunt_UnitID):IsBoss() and Unit(Taunt_UnitID):GetRange() <= 30 and not Unit(Taunt_UnitID):InLOS() and Unit(player):ThreatSituation(Taunt_UnitID) <= 2 then 
                                 return A:Show(icon, ACTION_CONST_AUTOTARGET)
                             end         
                         end 
@@ -757,29 +764,29 @@ A[3] = function(icon, isMulti)
             end	
 
             -- VictoryRush
-            if Unit("player"):HealthPercent() < 80 and A.VictoryRush:IsReady(unit) and not ShouldStop then
+            if Unit(player):HealthPercent() < 80 and A.VictoryRush:IsReady(unit) and not ShouldStop then
                 return A.VictoryRush:Show(icon)
             end
 		
 		    -- ImpendingVictory
-            if Unit("player"):HealthPercent() < 80 and A.ImpendingVictory:IsReady(unit) and not ShouldStop then
+            if Unit(player):HealthPercent() < 80 and A.ImpendingVictory:IsReady(unit) and not ShouldStop then
                 return A.ImpendingVictory:Show(icon)
             end
 			
             -- demoralizing_shout defensive smart
-            if A.DemoralizingShout:IsReady("player") and not Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 and 
+            if A.DemoralizingShout:IsReady(player) and not Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 and 
 			(
 			    -- HP lose per sec >= 10
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 
 				or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 
 			)
 			then
                 return A.DemoralizingShout:Show(icon)
             end			
 
             -- demoralizing_shout on cd
-            if A.DemoralizingShout:IsReady("player") and Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 
+            if A.DemoralizingShout:IsReady(player) and Action.GetToggle(2, "DSOnCD") and Unit(unit):GetRange() < 10 
 			then
                 return A.DemoralizingShout:Show(icon)
             end
@@ -830,7 +837,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- potion,if=buff.avatar.up|target.time_to_die<25
-            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) > 0 or Unit(unit):TimeToDie() < 25) then
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 or Unit(unit):TimeToDie() < 25) then
                 return A.PotionofUnbridledFury:Show(icon)
             end
 			
@@ -840,7 +847,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- Shockwave
-            if A.Shockwave:IsReady("player") and A.Shockwave:IsSpellLearned() then
+            if A.Shockwave:IsReady(player) and A.Shockwave:IsSpellLearned() then
                 return A.Shockwave:Show(icon)
             end
 			
@@ -853,14 +860,9 @@ A[3] = function(icon, isMulti)
             if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.RippleinSpace:Show(icon)
             end
-			
-            -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-			
+						
             -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and Unit(player):HasBuffsDown(A.AvatarBuff.ID, true) and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 then
                 return A.ConcentratedFlame:Show(icon)
             end
 						
@@ -870,7 +872,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- revenge
-            if A.Revenge:IsReady("player") and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCost() == 0) then
+            if A.Revenge:IsReady(player) and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCost() == 0) then
                 return A.Revenge:Show(icon)
             end
 			
@@ -898,12 +900,12 @@ A[3] = function(icon, isMulti)
     end 
 	
     -- Defensives trinkets
-    if Unit("player"):CombatTime() > 0 and (Unit("player"):HealthPercent() < 50 or Unit("player"):TimeToDie() < 5) then 
-        if A.Trinket1:IsReady("player") and A.Trinket1:GetItemCategory() ~= "DPS" then 
+    if Unit(player):CombatTime() > 0 and (Unit(player):HealthPercent() < 50 or Unit(player):TimeToDie() < 5) then 
+        if A.Trinket1:IsReady(player) and A.Trinket1:GetItemCategory() ~= "DPS" then 
             return A.Trinket1:Show(icon)
         end 
         
-        if A.Trinket2:IsReady("player") and A.Trinket2:GetItemCategory() ~= "DPS" then 
+        if A.Trinket2:IsReady(player) and A.Trinket2:GetItemCategory() ~= "DPS" then 
             return A.Trinket2:Show(icon)
         end
     end 
@@ -937,7 +939,7 @@ end
 --[[local function FreezingTrapUsedByEnemy()
     if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
     UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
+    Unit(player):GetDR("incapacitate") >= 50 
     then 
         local Caster = UnitCooldown:GetUnitID("arena", 3355)
         if Caster and Unit(Caster):GetRange() <= 40 then 
@@ -948,7 +950,7 @@ end
 local function ArenaRotation(icon, unit)
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
+        if unit == "arena1" and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) then 
             -- Reflect Casting BreakAble CC
             if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(unit) and EnemyTeam():IsCastingBreakAble(0.25) then 
                 return A.NetherWard:Show(icon)

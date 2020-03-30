@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.0.9 (26.03.2020)",
+    DateTime = "v4.1.1 (30.03.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -1534,11 +1534,53 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 },
             },
-            { -- [4] 4th Row
-
+            { -- [7] 
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(299374) .. " -- ",
+                    },
                 },
+            },
+            { -- [4] 4th Row
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "LucidDreamTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "LucidDreamHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
             },
             { -- [7] 
                 {
@@ -1546,12 +1588,6 @@ A.Data.ProfileUI                                     = {
                     L = {
                         ANY = " -- Defensives -- ",
                     },
-                },
-            },
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
                 },
             },
             { -- [1] 1st Row  	
