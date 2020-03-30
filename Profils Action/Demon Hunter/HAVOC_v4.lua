@@ -736,9 +736,21 @@ A[3] = function(icon, isMulti)
         if A.ArcaneTorrent:AutoRacial(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end             
-        
+ 
 		-- Dispell
+		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "Dispel") then
+			return A.ConsumeMagic:Show(icon)
+		end
+		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "MagicMovement") then
+			return A.ConsumeMagic:Show(icon)
+		end
+		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeFriendly") then
+			return A.ConsumeMagic:Show(icon)
+		end
 		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+			return A.ConsumeMagic:Show(icon)
+		end
+		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeLow") then
 			return A.ConsumeMagic:Show(icon)
 		end
 		
@@ -758,9 +770,14 @@ A[3] = function(icon, isMulti)
             -- Notification					
             Action.SendNotification("Don't take Soul Fragment !!!", A.EyesofRage.ID)
         end
+
+        -- Custom Katherine tentacle handler
+        if UnitName(unit) == "Twisted Appendage" and A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() and CanCast then
+            return A.DemonsBite:Show(icon)
+        end
 		
 		--Precombat
-        if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if Unit(unit):CombatTime() == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
 		
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= AzsharasFontofPowerPrePull) then
