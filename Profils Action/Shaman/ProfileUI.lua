@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.7 (26.03.2020)",
+    DateTime = "v4.0.8 (30.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -280,7 +280,7 @@ A.Data.ProfileUI = {
                     MIN = 5, 
                     MAX = 10,                            
                     DB = "CrashLightningRange",
-                    DBV = 5, -- Set healthpercentage @30% life. 
+                    DBV = 8, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(187874) .. " range",

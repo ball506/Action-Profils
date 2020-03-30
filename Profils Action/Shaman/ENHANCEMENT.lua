@@ -957,6 +957,11 @@ A[3] = function(icon, isMulti)
             return A.Rockbiter:Show(icon)
         end
 		
+        -- crash_lightning,force aoe
+        if A.CrashLightning:IsReady(player) and GetByRange(CrashLightningUnits, CrashLightningRange) and Player:AreaTTD(CrashLightningRange) >= CrashLightningAreaTTD then
+            return A.CrashLightning:Show(icon)
+        end	
+		
         --Asc
         if Unit(player):HasBuffs(A.AscendanceBuff.ID, true) > 0 then
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
