@@ -759,9 +759,8 @@ A[3] = function(icon, isMulti)
             end
 			
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() 
-			and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() > 0 and not Azerite:EssenceHasMajor(A.FocusedAzeriteBeam.ID) and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
-			and ((Pull > 0.1 and Pull <= 1.6) or not DBM) 
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
+			((Pull > 0.1 and Pull <= 1.6) or not DBM) 
 			then
                 return A.BestialWrath:Show(icon)
             end
@@ -1075,9 +1074,36 @@ A[3] = function(icon, isMulti)
                 if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
                     return A.TheUnboundForce:Show(icon)
                 end
+
+                -- multishot with RapidReload
+                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and				
+				(
+					-- Range by pet
+					AoEMode == "RangeByPet" and 
+					(
+						Pet:GetMultiUnitsBySpell(17253) >= 4 or -- Bite
+						Pet:GetMultiUnitsBySpell(16827) >= 4 or -- Claw
+						Pet:GetMultiUnitsBySpell(49966) >= 4 -- Smack					
+					)
+					or 
+					-- Range by nameplate
+					AoEMode == "RangeByNameplate" and
+					(					    
+						GetByRange(4, MultishotMaxAoERange) 
+					)
+					or
+					-- Range by active enemies CLEU
+					AoEMode == "RangeByCLEU" and
+					(        				
+						MultiUnits:GetActiveEnemies() >= 4					     
+					)					
+			    ) 			
+				then
+                    return A.Multishot:Show(icon)
+                end
 			
-                -- multishot,if=azerite.rapid_reload.enabled&active_enemies>2
-                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and 
+                -- multishot, NO RapidReload + Custom user settings
+                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() == 0 and				
 				(
 					-- Range by pet
 					AoEMode == "RangeByPet" and 
@@ -1097,8 +1123,8 @@ A[3] = function(icon, isMulti)
 					AoEMode == "RangeByCLEU" and
 					(        				
 						MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
-					)
-			    )	
+					)					
+			    ) 			
 				then
                     return A.Multishot:Show(icon)
                 end
