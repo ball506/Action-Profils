@@ -77,7 +77,7 @@ Action[ACTION_CONST_WARRIOR_FURY] = {
     RagingBlow                             = Action.Create({ Type = "Spell", ID = 85288      }),
     Whirlwind                              = Action.Create({ Type = "Spell", ID = 190411      }),
     Charge                                 = Action.Create({ Type = "Spell", ID = 100      }),
-    MeatCleaverBuff                        = Action.Create({ Type = "Spell", ID = 280392, Hidden = true     }),
+    MeatCleaverBuff                        = Action.Create({ Type = "Spell", ID = 85739, Hidden = true     }), --85739 -- 280392
     BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297      }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647      }),
@@ -177,17 +177,28 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-local function InMelee(unit)
+
+local function InRange(unit)
 	-- @return boolean 
 	return A.Bloodthirst:IsInRange(unit)
 end 
+InRange = A.MakeFunctionCachedDynamic(InRange)
 
-local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
 	-- @return boolean 
 	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
 	for unit in pairs(ActiveUnitPlates) do 
 		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
-			if InMelee(unit) then 
+			if InRange(unit) then 
 				c = c + 1
 			elseif range then 
 				local r = Unit(unit):GetRange()
@@ -195,13 +206,31 @@ local function GetByRange(count, range, isCheckEqual, isCheckCombat)
 					c = c + 1
 				end 
 			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
 			
-			if c >= count then 
-				return true 
-			end 
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
 		end 
+		
 	end
-end 
+	
+end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
 -- [1] CC AntiFake Rotation
@@ -364,7 +393,7 @@ local function Interrupts(unit)
 	
  	-- Stormbolt
     if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
-        return A.Stormbolt:Show(icon)                  
+        return A.Stormbolt                 
     end 
  
 	-- IntimidatingShout
@@ -713,12 +742,14 @@ A[3] = function(icon, isMulti)
 			end
 			-- Burst end
 			
+			-- here is the maintain MeatCleaverBuff for AoE 			
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and 
+            if A.Whirlwind:IsReady(player) and 
 			(
-			    GetByRange(2, 8) and Unit(player):HasBuffs(A.MeatCleaverBuff.ID, true) == 0
+			    GetByRange(2, 5) and Unit(player):HasBuffsStacks(A.MeatCleaverBuff.ID, true) == 0
 			)
-			and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) )
+			and A.LastPlayerCastName ~= A.Whirlwind:Info()
+			--and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) )
 			then
                 return A.Whirlwind:Show(icon)
             end
@@ -810,8 +841,14 @@ A[3] = function(icon, isMulti)
 			
             -- run_action_list,name=single_target
             -- siegebreaker
-            if A.Siegebreaker:IsReadyByPassCastGCD(unit) then
-                return A.Siegebreaker:Show(icon)
+            if A.Siegebreaker:IsReadyByPassCastGCD(unit) and 
+			(   
+			    GetByRange(2, 5) and Unit(player):HasBuffsStacks(A.MeatCleaverBuff.ID, true) > 0 
+				or 
+				GetByRange(2, 5, false, true)
+            )
+            then			
+				return A.Siegebreaker:Show(icon)
             end
 			
             -- rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>90)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>90))
@@ -896,7 +933,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- whirlwind
-            if A.Whirlwind:IsReady(unit) and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) ) then
+            if A.Whirlwind:IsReady(player) and A.LastPlayerCastName ~= A.Whirlwind:Info() then --and (A.LastPlayerCastName ~= A.Whirlwind:Info() and not A.RagingBlow:IsReady(unit) and not A.Bloodthirst:IsReady(unit) and (not A.Siegebreaker:IsReady(unit) or not A.Siegebreaker:IsSpellLearned()) and not A.Rampage:IsReady(unit) ) then
                 return A.Whirlwind:Show(icon)
             end
 			
