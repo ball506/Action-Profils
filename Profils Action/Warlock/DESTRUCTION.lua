@@ -1082,9 +1082,19 @@ A[3] = function(icon, isMulti)
 	            return A.MortalCoil:Show(icon)
             end 				
 
-            -- Instant Conflag on explosives orbs
-            if A.Conflagrate:IsReady(unit) and Unit(unit):IsExplosives() then 
-                return A.Conflagrate:Show(icon)
+            -- Explosives or Totems
+            if inCombat and (Unit(unit):IsExplosives() or Unit(unit):IsTotem()) and CanCast then
+                
+				-- Instant Shadowburn on explosives orbs
+                if A.Shadowburn:IsReady(unit) and IsChaosSchoolFree() then 
+                    return A.Shadowburn:Show(icon)
+                end	
+				
+                -- Instant Conflag on explosives orbs
+                if A.Conflagrate:IsReady(unit) and IsFireSchoolFree() then 
+                    return A.Conflagrate:Show(icon)
+                end				
+				
             end
 		
 			-- Interrupt
