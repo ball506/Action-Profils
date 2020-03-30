@@ -1233,7 +1233,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter,if=talent.gathering_storm.enabled
-                if A.RemorselessWinter:IsReady(player) and A.GatheringStorm:IsSpellLearned() and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and A.GatheringStorm:IsSpellLearned() and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1263,7 +1263,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter
-                if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 		    	
@@ -1290,7 +1290,7 @@ A[3] = function(icon, isMulti)
             if Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and A.Obliteration:IsSpellLearned() then
 			
                 -- remorseless_winter,if=talent.gathering_storm.enabled
-                if A.RemorselessWinter:IsReady(player) and (A.GatheringStorm:IsSpellLearned()) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and (A.GatheringStorm:IsSpellLearned()) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1370,7 +1370,7 @@ A[3] = function(icon, isMulti)
                 end	
 				
                 -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targetA.remorseless_winter>=3&!buff.rime.up)
-                if A.RemorselessWinter:IsReady(player) and CanCast and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() > 0 and GetByRange(3, 8) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0)) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and CanCast and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() > 0 and GetByRange(3, 8) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0)) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1415,7 +1415,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- remorseless_winter
-                if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
+                if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
                 end
 			
@@ -1469,7 +1469,7 @@ A[3] = function(icon, isMulti)
 			-- STANDARD ROTATION
 			
             -- remorseless_winter
-            if A.RemorselessWinter:IsReady(player) and Player:AreaTTD(20) >= 4 then
+            if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and Player:AreaTTD(20) >= 4 then
                 return A.RemorselessWinter:Show(icon)
             end
 			
