@@ -518,7 +518,7 @@ A[3] = function(icon, isMulti)
                 return A.ShadowCrash:Show(icon)
             end
             -- mind_blast,if=variable.dots_up&((raid_event.movement.in>cast_time+0.5&raid_event.movement.in<4)|!talent.shadow_word_void.enabled|buff.voidform.down|buff.voidform.stack>14&(insanity<70|charges_fractional>1.33)|buff.voidform.stack<=14&(insanity<60|charges_fractional>1.33))
-            if A.MindBlast:IsReady(unit) and (bool(VarDotsUp) and ((10000000000 > A.MindBlast:GetSpellCastTime() + 0.5 and 10000000000 < 4) or not A.ShadowWordVoid:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Player:Insanity() < 70 or A.MindBlast:ChargesFractionalP() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Player:Insanity() < 60 or A.MindBlast:ChargesFractionalP() > 1.33))) then
+            if A.MindBlast:IsReady(unit) and (bool(VarDotsUp) and ((10000000000 > A.MindBlast:GetSpellCastTime() + 0.5 and 10000000000 < 4) or not A.ShadowWordVoid:IsSpellLearned() or bool(Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Player:Insanity() < 70 or A.MindBlast:GetSpellChargesFrac() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Player:Insanity() < 60 or A.MindBlast:GetSpellChargesFrac() > 1.33))) then
                 return A.MindBlast:Show(icon)
             end
             -- void_torrent,if=dot.shadow_word_pain.remains>4&dot.vampiric_touch.remains>4&buff.voidform.up
