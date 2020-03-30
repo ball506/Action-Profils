@@ -559,3 +559,29 @@ function A:MaxDuration()
     local BaseDuration = Duration[2]
     return BaseDuration / 1000
 end
+
+-- action.foo.travel_time
+local ProjectileSpeed = TR.Enum.ProjectileSpeed
+function A:FilterProjectileSpeed(SpecID)
+    local RegisteredSpells = {}
+    local BaseProjectileSpeed = TR.Enum.ProjectileSpeed -- In case FilterTravelTime is called multiple time, we take the Enum table as base.
+    -- Fetch registered spells during the init
+	for Spec, Spells in pairs(Action[Action.PlayerSpec]) do
+    for _, Spell in pairs(Spells) do
+        local SpellID = Spell.ID
+        local ProjectileSpeedInfo = BaseProjectileSpeed[SpellID]
+        if ProjectileSpeedInfo ~= nil then
+                RegisteredSpells[SpellID] = ProjectileSpeedInfo
+            end
+        end
+    end
+    ProjectileSpeed = RegisteredSpells
+end
+
+function A:TravelTime()
+    local Speed = ProjectileSpeed[self.ID]
+    if not Speed or Speed == 0 then 
+	    return 0 
+	end
+    return ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE / (ProjectileSpeed[self.ID] or 22)
+end
