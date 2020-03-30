@@ -68,12 +68,12 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     RuneofPower                            = Action.Create({ Type = "Spell", ID = 116011 }),
     Firestarter                            = Action.Create({ Type = "Spell", ID = 205026 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
+    BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     FireBlast                              = Action.Create({ Type = "Spell", ID = 108853 }),
     BlasterMasterBuff                      = Action.Create({ Type = "Spell", ID = 274598 }),
     BlasterMaster                          = Action.Create({ Type = "Spell", ID = 274596 }),
     FlameOn                                = Action.Create({ Type = "Spell", ID = 205029 }),
-    HyperthreadWristwraps300142            = Action.Create({ Type = "Spell", ID =  }),
+    HyperthreadWristwraps                  = Action.Create({ Type = "Spell", ID = 300142 }),
     Scorch                                 = Action.Create({ Type = "Spell", ID = 2948 }),
     HeatingUpBuff                          = Action.Create({ Type = "Spell", ID = 48107 }),
     HotStreakBuff                          = Action.Create({ Type = "Spell", ID = 48108 }),
@@ -89,11 +89,9 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     PhoenixFlames                          = Action.Create({ Type = "Spell", ID = 257541 }),
     DragonsBreath                          = Action.Create({ Type = "Spell", ID = 31661 }),
     SearingTouch                           = Action.Create({ Type = "Spell", ID = 269644 }),
-    ManifestoofMadnessChapterOneBuff       = Action.Create({ Type = "Spell", ID =  }),
+    --ManifestoofMadnessChapterOneBuff       = Action.Create({ Type = "Spell", ID =  }),
     AlexstraszasFury                       = Action.Create({ Type = "Spell", ID = 235870 }),
     Kindling                               = Action.Create({ Type = "Spell", ID = 155148 }),
-    WorldveinResonanceBuff                 = Action.Create({ Type = "Spell", ID =  }),
-    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -144,6 +142,8 @@ Action[ACTION_CONST_MAGE_FIRE] = {
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+	DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon 
+	PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
 };
 
 -- To create essences use next code:
@@ -166,19 +166,17 @@ local VarPhoenixPooling = 0;
 local VarFireBlastPooling = 0;
 
 A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-  VarDisableCombustion = 0
-  VarCombustionRopCutoff = 0
-  VarCombustionOnUse = 0
-  VarFontDoubleOnUse = 0
-  VarFontofPowerPrecombatChannel = 0
-  VarOnUseCutoff = 0
-  VarHoldCombustionThreshold = 20
-  VarTimeToCombustion = 0
-  VarPhoenixPooling = 0
-  VarFireBlastPooling = 0
+    VarDisableCombustion = 0
+    VarCombustionRopCutoff = 0
+    VarCombustionOnUse = 0
+    VarFontDoubleOnUse = 0
+    VarFontofPowerPrecombatChannel = 0
+    VarOnUseCutoff = 0
+    VarHoldCombustionThreshold = 20
+    VarTimeToCombustion = 0
+    VarPhoenixPooling = 0
+    VarFireBlastPooling = 0
 end)
-
-
 
 local function num(val)
     if val then return 1 else return 0 end
@@ -187,7 +185,9 @@ end
 local function bool(val)
     return val ~= 0
 end
+
 local player = "player"
+
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------
@@ -210,9 +210,64 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
-A.PhoenixFlames:RegisterInFlight();
-A.Pyroblast:RegisterInFlight(A.CombustionBuff);
-A.Fireball:RegisterInFlight(A.CombustionBuff);
+local function InRange(unit)
+	-- @return boolean 
+	return A.Fireball:IsInRange(unit)
+end 
+InRange = A.MakeFunctionCachedDynamic(InRange)
+
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InRange(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
+			
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
+		end 
+		
+	end
+	
+end  
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
+
+---A.PhoenixFlames:RegisterInFlight();
+--A.Pyroblast:RegisterInFlight(A.CombustionBuff);
+--A.Fireball:RegisterInFlight(A.CombustionBuff);
 
 function A.Firestarter:ActiveStatus()
     return (A.Firestarter:IsSpellLearned() and (Unit(unit):HealthPercent() > 90)) and 1 or 0
@@ -229,10 +284,14 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
+	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit("player"):CombatTime() > 0
+    local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-
+    -- Blink Handler
+	local BlinkAny = A.Shimmer:IsSpellLearned() and A.Shimmer or A.Blink
+	
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -333,7 +392,7 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=charges>=1&((action.fire_blast.charges_fractional+(buff.combustion.remains-buff.blaster_master.duration)%cooldown.fire_blast.duration-(buff.combustion.remains)%(buff.blaster_master.duration-0.5))>=0|!azerite.blaster_master.enabled|!talent.flame_on.enabled|buff.combustion.remains<=buff.blaster_master.duration|buff.blaster_master.remains<0.5|equipped.hyperthread_wristwraps&cooldown.hyperthread_wristwraps_300142.remains<5)&buff.combustion.up&(!action.scorch.executing&!action.pyroblast.in_flight&buff.heating_up.up|action.scorch.executing&buff.hot_streak.down&(buff.heating_up.down|azerite.blaster_master.enabled)|azerite.blaster_master.enabled&talent.flame_on.enabled&action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
-            if A.FireBlast:IsReady(unit) and (A.FireBlast:ChargesP() >= 1 and ((A.FireBlast:ChargesFractionalP() + (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) - A.BlasterMasterBuff.ID, true:BaseDuration()) / A.FireBlast:BaseDuration() - (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) / (A.BlasterMasterBuff.ID, true:BaseDuration() - 0.5)) >= 0 or not bool(A.BlasterMaster:GetAzeriteRank()) or not A.FlameOn:IsSpellLearned() or Unit("player"):HasBuffs(A.CombustionBuff.ID, true) <= A.BlasterMasterBuff.ID, true:BaseDuration() or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5 or A.HyperthreadWristwraps:IsExists() and A.HyperthreadWristwraps300142:GetCooldown() < 5) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (not bool(action.scorch.executing) and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) or bool(action.scorch.executing) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (bool(Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) or bool(A.BlasterMaster:GetAzeriteRank())) or bool(A.BlasterMaster:GetAzeriteRank()) and A.FlameOn:IsSpellLearned() and A.Pyroblast:IsSpellInFlight() and bool(Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)))) then
+            if A.FireBlast:IsReady(unit) and (A.FireBlast:ChargesP() >= 1 and ((A.FireBlast:GetSpellChargesFrac() + (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) - A.BlasterMasterBuff:BaseDuration()) / A.FireBlast:BaseDuration() - (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) / (A.BlasterMasterBuff:BaseDuration() - 0.5)) >= 0 or not bool(A.BlasterMaster:GetAzeriteRank()) or not A.FlameOn:IsSpellLearned() or Unit("player"):HasBuffs(A.CombustionBuff.ID, true) <= A.BlasterMasterBuff:BaseDuration() or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5 or A.HyperthreadWristwraps:IsExists() and A.HyperthreadWristwraps:GetCooldown() < 5) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (not bool(action.scorch.executing) and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) or bool(action.scorch.executing) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (bool(Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) or bool(A.BlasterMaster:GetAzeriteRank())) or bool(A.BlasterMaster:GetAzeriteRank()) and A.FlameOn:IsSpellLearned() and A.Pyroblast:IsSpellInFlight() and bool(Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)))) then
                 return A.FireBlast:Show(icon)
             end
             -- rune_of_power,if=buff.combustion.down
