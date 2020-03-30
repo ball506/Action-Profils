@@ -733,29 +733,26 @@ A[3] = function(icon, isMulti)
         VarWaitingForMomentum = A.Momentum:IsSpellLearned() and Unit(player):HasBuffs(A.MomentumBuff.ID, true) == 0
 				
 		-- Purge
-        if A.ArcaneTorrent:AutoRacial(unit) then 
+        if A.ArcaneTorrent:AutoRacial(unit) and AuraIsValid(unit, "UsePurge", "Dispel") then 
             return A.ArcaneTorrent:Show(icon)
         end             
  
 		-- Dispell
-		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "Dispel") then
+		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "Dispel") then
 			return A.ConsumeMagic:Show(icon)
 		end
-		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "MagicMovement") then
+		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "MagicMovement") then
 			return A.ConsumeMagic:Show(icon)
 		end
-		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeFriendly") then
+		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
 			return A.ConsumeMagic:Show(icon)
 		end
-		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
-			return A.ConsumeMagic:Show(icon)
-		end
-		if A.ConsumeMagic:IsReady(unit) and AuraIsValid(unit, "UsePurge", "PurgeLow") then
+		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeLow") then
 			return A.ConsumeMagic:Show(icon)
 		end
 		
         -- Imprison CrowdControl PvP
-        if A.ImprisonIsReady(unit) then
+        if Action.ImprisonIsReady(unit) then
             return A.Imprison:Show(icon)
         end  
 		
@@ -775,9 +772,28 @@ A[3] = function(icon, isMulti)
         if UnitName(unit) == "Twisted Appendage" and A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() and CanCast then
             return A.DemonsBite:Show(icon)
         end
+
+        -- Explosives or Totems
+        if inCombat and (Unit(unit):IsExplosives() or Unit(unit):IsTotem()) and CanCast then
+
+			-- Annihilation
+			if A.Annihilation:IsReady(unit) then 
+                return A.Annihilation:Show(icon)
+			end
+			
+			-- ChaosStrike
+			if A.ChaosStrike:IsReady(unit) then 
+                return A.ChaosStrike:Show(icon)
+			end	
+			
+			-- Demons Bite
+			if A.DemonsBite:IsReady(unit) then 
+                return A.DemonsBite:Show(icon)
+			end			
+        end
 		
 		--Precombat
-        if Unit(unit):CombatTime() == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if inCombat and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
 		
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= AzsharasFontofPowerPrePull) then
@@ -809,27 +825,26 @@ A[3] = function(icon, isMulti)
             end	
 
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and (Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.7 or not Action.GetToggle(1, "DBM"))
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and (Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.5 or not Action.GetToggle(1, "DBM"))
 			then
 	            -- Notification					
                 Action.SendNotification("Prepull: Guardian of Azeroth", A.GuardianofAzeroth.ID) 
                 return A.GuardianofAzeroth:Show(icon)
             end			
 			
+			-- use_item,name=azsharas_font_of_power
+            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+                return A.DemonsBite:Show(icon)
+            end
+			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
             if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 6 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
-            end
-			
-			-- use_item,name=azsharas_font_of_power
-            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 0.5) or not Action.GetToggle(1, "DBM")) then
-                return A.DemonsBite:Show(icon)
-            end
-			
+            end			
         end
-		
+        		
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
@@ -1080,7 +1095,10 @@ A[3] = function(icon, isMulti)
 				    (A.EyeBeam:GetCooldown() > BladeDancePoolSeconds and SyncBladeDanceDeathSweepWithEyeBeam)
 			    )
 			    -- DISABLED NO SYNC
-			    or not SyncBladeDanceDeathSweepWithEyeBeam	
+			    or 
+				(
+				    not SyncBladeDanceDeathSweepWithEyeBeam	and A.EyeBeam:GetCooldown() > 0
+				)
 			)			
 			then
                 --(BladeDancePool and A.EyeBeam:GetCooldown() < A.BladeDance:GetCooldown() * BladeDancePoolSeconds)  
