@@ -855,7 +855,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=remains<5&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
@@ -1081,7 +1081,12 @@ A[3] = function(icon, isMulti)
 			if A.IsInPvP and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(player):HealthPercent() < MortalCoilHP then 
 	            return A.MortalCoil:Show(icon)
             end 				
-			
+
+            -- Instant Conflag on explosives orbs
+            if A.Conflagrate:IsReady(unit) and Unit(unit):IsExplosives() then 
+                return A.Conflagrate:Show(icon)
+            end
+		
 			-- Interrupt
             local Interrupt = Interrupts(unit)
             if Interrupt then 
@@ -1151,7 +1156,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
