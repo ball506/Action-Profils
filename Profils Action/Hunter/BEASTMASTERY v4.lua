@@ -521,9 +521,7 @@ local function IsSchoolFree()
 end 
 
 -- Pet error hide
-TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
-    Action.TimerSet("DISABLE_PET_ERRORS", 999, function() Pet:DisableErrors(true)  end)
-end)
+Pet:DisableErrors(true)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
