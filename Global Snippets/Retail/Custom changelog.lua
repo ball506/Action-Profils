@@ -292,6 +292,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Added Mortal Coil to spell list
+- Added Shadow Fury to spell list (Uncheck auto hide in tab3 if spell don't appear)
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Added CDs check on Summon Demonic Tyran and big cooldowns >= 2min
 - Third version of Imp Tracker system. Now really good ! NO MOAR LUA ERROR
@@ -317,6 +319,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Added Check for Immolate and Explosives orbs
+- Force Conflagrate on Explosives orbs if ready
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed the fix for Shards being capped at infinite...
 - Reworked AoE logic with Havoc
@@ -363,6 +367,9 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Readjusted WW logic
+- Siegebreaker will now only be used in AoE IF WW buff is up
+- Fixed Stormbolt error
 - Adjusted some Rage values thanks to feedback !
 - New : Smart Stormbolt for mythic + (See interrupt tab)
 - New : Blocked Spells Status Frame (see 2nd tab)
@@ -483,6 +490,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Added special Twisted Appendage tentacles rotation
+- Improved ConsumeMagic dispell (should dispell more)
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Changed priority between Eyebeam and Deathsweep (Little dps increase)
 - Added UI for BladeDance pool/sync with Eyebeam
@@ -583,6 +592,7 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- Added RapidReload check with Multishot when 4+ targets are present
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Changed priority of Barbed Shot
 - Changed default Barbed Shot refresh value from 1.8 to 2 considering feedbacks
@@ -620,8 +630,12 @@ As always, please report on Discord or message me directly if you need anything 
 	if PlayerSpec == 255 then
 	    ChangeLog = [[
 		Welcome to Taste - Survival Hunter !
+				
+        ***** TEST BUILD *****
 		
-This specialisation is currently outdated :(			
+- Fixed Wildfire Infusions talent		
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Test Release Need Feedbacks :) 
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
@@ -638,7 +652,11 @@ As always, please report on Discord or message me directly if you need anything 
 		Welcome to Taste - Arcane Mage !
 		
         ***** TEST BUILD *****
-		
+
+- Fixed most trinket error
+- Fixed Arcane Explosion not always being used
+- Reworked Burn & Conserve phase and added mana check
+- Added auto Stop Cast on Evocation if we are full mana		
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Need feedback !!
 - Reworked all the rotation
@@ -659,7 +677,23 @@ As always, please report on Discord or message me directly if you need anything 
 
 	-- MFrost
 	if PlayerSpec == 64 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
+	    ChangeLog = [[
+		Welcome to Taste - Frost Mage !
+		
+        ***** TEST BUILD *****
+
+- Fixed Ray of Frost not being properly used
+- Fixed IceLance & Flurry logic	
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Need feedback !!
+- Reworked all the rotation
+- Updated  to latest T25 APLs
+- Fixed most lua errors
+- Initial Test Release				
+
+As always, please report on Discord or message me directly if you need anything !
+
+]] 				
 	end
 
 
@@ -671,7 +705,20 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Balance Druid !
 		
-This specialisation is currently outdated :(			
+***** TEST BUILD *****
+
+- Fixed Futur Maelstrom prediction
+- Fixed Arcanic Pulsar logic
+- Reworked all UI
+- New Trinkets settings
+- New Azerite Beam settings
+- Fixed Streaking Star azerite special rotation (should not repeat two spells)
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Need feedback !!
+- Reworked all the rotation
+- Updated  to latest T25 APLs
+- Fixed most lua errors
+- Initial Test Release						
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
@@ -741,6 +788,11 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Improved burst logic
+- Reworked Regrowth usage
+- Rotation is now less manavore (less spam)
+- Removed Prehot waiting for proper fixes
+- Fixed auto DPS feral rotation
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Fixed Catweaving rotation
 - Reworked cooldowns usage
