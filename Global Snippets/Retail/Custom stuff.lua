@@ -299,6 +299,34 @@ local function removeLastChar(text)
 	return text:sub(1, -2)
 end
 
+--[[*
+  * @mixin HL.OffsetRemains
+  * @desc Apply an offset to an expiration time.
+  *
+  * @param {number} ExpirationTime - The expiration time to apply the offset on.
+  * @param {string|number} Offset - The offset to apply, can be a string for a known method or directly the offset value in seconds.
+  *
+  * @returns {number}
+  *]]
+function Action.OffsetRemains(ExpirationTime, Offset)
+    if type(Offset) == "number" then
+        ExpirationTime = ExpirationTime - Offset
+    elseif type(Offset) == "string" then
+        local CastRemains = Player:CastRemains()
+        local GCDRemains = Player:GCDRemains()
+        if Offset == "GCDRemains" then
+            ExpirationTime = ExpirationTime - GCDRemains
+        elseif Offset == "CastRemains" then
+            ExpirationTime = ExpirationTime - CastRemains
+        elseif Offset == "Auto" then
+            ExpirationTime = ExpirationTime - math.max(GCDRemains, CastRemains)
+        end
+    else
+        error("Invalid Offset.")
+    end
+    return ExpirationTime
+end
+
 --------------------------------------
 --------- Action Status Frame --------
 --------------------------------------
