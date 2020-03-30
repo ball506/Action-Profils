@@ -104,6 +104,7 @@ Action[ACTION_CONST_WARLOCK_DEMONOLOGY] = {
     SpellLock                              = Action.Create({ Type = "Spell", ID = 19647}),
     PetKick                                = Action.Create({ Type = "SpellSingleColor", ID = 119914, Color = "RED", Desc = "RED Pet Stun" }), 
 	Shadowfury                             = Action.Create({ Type = "Spell", ID = 30283      }),
+	MortalCoil                             = Action.Create({ Type = "Spell", ID = 6789     }),
     FearGreen                              = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true , Hidden = true     }),	
     Fear                                   = Action.Create({ Type = "Spell", ID = 5782       }),
 	NetherWard                             = Action.Create({ Type = "Spell", ID = 212295     }), -- Spell Reflect
