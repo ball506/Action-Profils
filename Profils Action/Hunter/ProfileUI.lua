@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.5 (26.03.2020)",
+    DateTime = "v4.1.6 (30.03.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -159,9 +159,9 @@ A.Data.ProfileUI = {
                     MULT = true,
                     DB = "BestialWrathMode",
                     DBV = {
-                        [1] = true, 
+                        [1] = false, 
                         [2] = false,
-                        [3] = false,
+                        [3] = true,
                     }, 
                     L = { 
                         ANY = A.GetSpellInfo(19574) .. " settings",
