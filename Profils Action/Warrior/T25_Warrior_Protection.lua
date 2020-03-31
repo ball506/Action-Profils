@@ -158,6 +158,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+	BuryTheHatchet                         = Action.Create({ Type = "Spell", ID = 280128, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -196,6 +197,61 @@ local player = "player"
 local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
+
+local function InRange(unit)
+	-- @return boolean 
+	return A.Devastate:IsInRange(unit)
+end 
+InRange = A.MakeFunctionCachedDynamic(InRange)
+
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InRange(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
+			
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
+		end 
+		
+	end
+	
+end  
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
 local function isCurrentlyTanking()
     -- is player currently tanking any enemies within 16 yard radius
@@ -468,7 +524,7 @@ local function Interrupts(unit)
         return A.Stormbolt              
     end  
 
-    if useCC and A.Shockwave:IsReady(player) and MultiUnits:GetByRange(8) > 2 and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.Shockwave:IsReady(player) and GetByRange(2, 8, true, false) and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
 	    -- Notification					
         Action.SendNotification("Shockwave interrupting...", A.Shockwave.ID)
         return A.Shockwave              
@@ -560,7 +616,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- devastate
-            if A.Devastate:IsReady(unit) then
+            if A.Devastate:IsReady(unit) and InRange(unit) then
                 return A.Devastate:Show(icon)
             end
 			
@@ -570,7 +626,7 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- thunder_clap
-            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 then
+            if A.ThunderClap:IsReady(player) and GetByRange(2, 8) then
                 return A.ThunderClap:Show(icon)
             end
 						
@@ -605,7 +661,7 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 and (MultiUnits:GetByRange(5) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            if A.ThunderClap:IsReady(player) and (GetByRange(2, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -615,7 +671,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
+            if A.ThunderClap:IsReady(player) and GetByRange(1, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -647,7 +703,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap
-            if A.ThunderClap:IsReady(unit) and Unit(unit):GetRange() < 6 then
+            if A.ThunderClap:IsReady(player) and GetByRange(1, 8) then
                 return A.ThunderClap:Show(icon)
             end
 						
@@ -662,7 +718,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- devastate
-            if A.Devastate:IsReady(unit) then
+            if A.Devastate:IsReady(unit) and InRange(unit) then
                 return A.Devastate:Show(icon)
             end
         end        
@@ -764,10 +820,17 @@ A[3] = function(icon, isMulti)
             end	
 
             -- VictoryRush
-            if Unit(player):HealthPercent() < 80 and A.VictoryRush:IsReady(unit) and not ShouldStop then
+            if A.VictoryRush:IsReady(unit) and not ShouldStop and
+			(
+			    Unit(player):HealthPercent() < 80 
+				or
+				-- Bury The Hatchet azerite shield
+				(A.BuryTheHatchet:GetAzeriteRank() > 0 and (Unit(player):HasBuffs(A.Victorious.ID) <= A.GetGCD() + A.GetCurrentGCD()) and Unit(player):HealthPercent() < 99)
+			)
+			then
                 return A.VictoryRush:Show(icon)
             end
-		
+			
 		    -- ImpendingVictory
             if Unit(player):HealthPercent() < 80 and A.ImpendingVictory:IsReady(unit) and not ShouldStop then
                 return A.ImpendingVictory:Show(icon)
@@ -877,7 +940,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if Aoe(unit) and MultiUnits:GetByRange(8) >= 3 and A.GetToggle(2, "AoE") then
+            if Aoe(unit) and GetByRange(3, 8) and A.GetToggle(2, "AoE") then
                 return true
             end
 			
