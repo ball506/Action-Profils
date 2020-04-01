@@ -444,7 +444,7 @@ GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 local function HandleBestialWrath()
     local choice = GetToggle(2, "BestialWrathMode")
 	local unit = "target"
-    return     (
+    return     not Player:IsMounted() and not Unit("target"):IsDead() and ( 
         (A.BurstIsON(unit) and choice[1]) or 
         (GetByRange(2, 40) and choice[2]) or
         (A.BestialWrath:IsReady(player) and choice[3])
@@ -698,7 +698,7 @@ A[3] = function(icon, isMulti)
         end
 			
 		--Precombat
-        if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" and not Player:IsMounted() and not Unit(unit):IsDead() then
             -- flask
             -- augmentation
             -- food
@@ -774,7 +774,7 @@ A[3] = function(icon, isMulti)
         end
         
 		-- Burst Phase
-		if BurstIsON(unit) and unit ~= "mouseover" and inCombat and not profileStop and CanCast then
+		if BurstIsON(unit) and unit ~= "mouseover" and inCombat and not profileStop and CanCast  then
             -- ancestral_call,if=cooldown.bestial_wrath.remains>30
             if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.BestialWrath:GetCooldown() > 30) 
 			then
@@ -892,308 +892,310 @@ A[3] = function(icon, isMulti)
        
         -- AoE Cleave
         if (isMulti or GetToggle(2, "AoE")) and CanCast and
-	        (
-                -- Range by pet
+	    (
+            -- Range by pet
+			AoEMode == "RangeByPet" and 
+			(
+			    Pet:GetMultiUnitsBySpell(17253) > 1 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) > 1 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) > 1 -- Smack					
+			)
+			or 
+			-- Range by nameplate
+			AoEMode == "RangeByNameplate" and
+			(					    
+			    GetByRange(1, 40, true)
+			)
+			or
+			-- Range by active enemies CLEU
+			AoEMode == "RangeByCLEU" and
+			(        				
+				MultiUnits:GetActiveEnemies() > 1					     
+			)
+		)
+	    then 
+		    
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
+            if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
+		    (
+		        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + A.GetPing()
+			    or 
+			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
+		   	)
+		   	then
+                return A.BarbedShot:Show(icon) 
+            end
+			
+            -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
+			(
+			-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-				    Pet:GetMultiUnitsBySpell(17253) > 1 or -- Bite
-				    Pet:GetMultiUnitsBySpell(16827) > 1 or -- Claw
-				    Pet:GetMultiUnitsBySpell(49966) > 1 -- Smack					
+					Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
 				)
 				or 
 				-- Range by nameplate
 				AoEMode == "RangeByNameplate" and
 				(					    
-				    GetByRange(1, 40, true)
+					GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
 				)
 				or
 				-- Range by active enemies CLEU
 				AoEMode == "RangeByCLEU" and
 				(        				
-					MultiUnits:GetActiveEnemies() > 1					     
+					MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
 				)
-			)
-	    then 
-		    
-                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
-                if A.BarbedShot:IsReadyByPassCastGCD(unit) and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
-			    (
-			        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + A.GetPing()
-				    or 
-				    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
-		    	)
-		    	then
+		    )	
+			then
+                return A.Multishot:Show(icon)
+            end
+			
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
+            if A.BarbedShot:IsReadyByPassCastGCD(unit) then
+                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and A.BarbedShot:GetSpellChargesFullRechargeTime() < A.GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
                     return A.BarbedShot:Show(icon) 
-                end
-			
-                -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
-				(
-					-- Range by pet
-					AoEMode == "RangeByPet" and 
-					(
-						Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
-						Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
-						Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
-					)
-					or 
-					-- Range by nameplate
-					AoEMode == "RangeByNameplate" and
-					(					    
-						GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
-					)
-					or
-					-- Range by active enemies CLEU
-					AoEMode == "RangeByCLEU" and
-					(        				
-						MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
-					)
-			    )	
-				then
-                    return A.Multishot:Show(icon)
-                end
-			
-                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
-                if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                    if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and A.BarbedShot:GetSpellChargesFullRechargeTime() < A.GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
-                        return A.BarbedShot:Show(icon) 
-                    end
-                end
-			
-                -- aspect_of_the_wild
-                if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) then
-                    return A.AspectoftheWild:Show(icon)
-                end
-		    	
-                -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
-                if A.Stampede:IsReady(unit) and 
-		    	(
-			        Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0
-				    or 
-				    Unit(unit):TimeToDie() < 15
-		    	)
-			    then
-                    return A.Stampede:Show(icon)
-                end
-			
-               -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-                if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
-			    (
-			        A.AspectoftheWild:GetCooldown() > 20 
-			    	or 
-			    	A.OneWiththePack:IsSpellLearned() 
-			    	or 
-			    	Unit(unit):TimeToDie() < 15
-		    	)
-			    then
-                    return A.BestialWrath:Show(icon)
-                end
-			
-                -- chimaera_shot
-                if A.ChimaeraShot:IsReady(unit) then
-                    return A.ChimaeraShot:Show(icon)
-                end
-			
-                -- a_murder_of_crows
-                if A.AMurderofCrows:IsReady(unit) then
-                    return A.AMurderofCrows:Show(icon)
-                end
-			
-                -- barrage
-                if A.Barrage:IsReady(unit) then
-                    return A.Barrage:Show(icon)
-                end
-			
-                -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
-                if A.KillCommand:IsReadyByPassCastGCD(unit) and 
-				(
-					(
-						-- Range by pet
-						AoEMode == "RangeByPet" and 
-						(
-							Pet:GetMultiUnitsBySpell(17253) < 4 or -- Bite
-							Pet:GetMultiUnitsBySpell(16827) < 4 or -- Claw
-							Pet:GetMultiUnitsBySpell(49966) < 4 -- Smack					
-						)
-						or 
-						-- Range by nameplate
-						AoEMode == "RangeByNameplate" and
-						(					    
-							GetByRange(4, 40, false, true) 
-						)
-						or
-						-- Range by active enemies CLEU
-						AoEMode == "RangeByCLEU" and
-						(        				
-							MultiUnits:GetActiveEnemies() < 4					     
-						)
-					) 
-				    or A.RapidReload:GetAzeriteRank() == 0
-                )				
-				then
-                    return A.KillCommand:Show(icon)
-                end
-			
-                -- dire_beast
-                if A.DireBeast:IsReady(unit) then
-                    return A.DireBeast:Show(icon)
-                end
-			
-                -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
-                if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                    if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0 and (A.BarbedShot:GetSpellChargesFrac() > 1.8 or Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and A.PrimalInstincts:GetAzeriteRank() > 0 then 
-                        return A.BarbedShot:Show(icon) 
-                    end
-                end
-			
-                -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-                if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
-		    	and (GetByRange(FocusedAzeriteBeamUnits, 30) or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
-		    	then
- 	                -- Notification					
-                    Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
-			    	return A.FocusedAzeriteBeam:Show(icon)
-                end
-			
-                -- purifying_blast
-                if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                    return A.PurifyingBlast:Show(icon)
-                end
-			
-                -- concentrated_flame
-                if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                    return A.ConcentratedFlame:Show(icon)
-                end
-			
-                -- blood_of_the_enemy
-                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
-                    return A.BloodoftheEnemy:Show(icon)
-                end
-			
-                -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-                if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
-                    return A.TheUnboundForce:Show(icon)
-                end
-
-                -- multishot with RapidReload
-                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and				
-				(
-					-- Range by pet
-					AoEMode == "RangeByPet" and 
-					(
-						Pet:GetMultiUnitsBySpell(17253) >= 4 or -- Bite
-						Pet:GetMultiUnitsBySpell(16827) >= 4 or -- Claw
-						Pet:GetMultiUnitsBySpell(49966) >= 4 -- Smack					
-					)
-					or 
-					-- Range by nameplate
-					AoEMode == "RangeByNameplate" and
-					(					    
-						GetByRange(4, MultishotMaxAoERange) 
-					)
-					or
-					-- Range by active enemies CLEU
-					AoEMode == "RangeByCLEU" and
-					(        				
-						MultiUnits:GetActiveEnemies() >= 4					     
-					)					
-			    ) 			
-				then
-                    return A.Multishot:Show(icon)
-                end
-			
-                -- multishot, NO RapidReload + Custom user settings
-                if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() == 0 and				
-				(
-					-- Range by pet
-					AoEMode == "RangeByPet" and 
-					(
-						Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
-						Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
-						Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
-					)
-					or 
-					-- Range by nameplate
-					AoEMode == "RangeByNameplate" and
-					(					    
-						GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
-					)
-					or
-					-- Range by active enemies CLEU
-					AoEMode == "RangeByCLEU" and
-					(        				
-						MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
-					)					
-			    ) 			
-				then
-                    return A.Multishot:Show(icon)
-                end
-			
-                -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-                if A.CobraShot:IsReady(unit) and 
-		    	(
-			        A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
-				   (
-					    (
-    						-- Range by pet
-					        AoEMode == "RangeByPet" and 
-					        (
-				    	        Pet:GetMultiUnitsBySpell(17253) < MultishotMinAoETargets or -- Bite
-				    	        Pet:GetMultiUnitsBySpell(16827) < MultishotMinAoETargets or -- Claw
-				   	            Pet:GetMultiUnitsBySpell(49966) < MultishotMinAoETargets -- Smack					
-					        )
-					        or 
-					        -- Range by nameplate
-					        AoEMode == "RangeByNameplate" and
-					        (					    
-				   	            GetByRange(MultishotMinAoETargets, 40, false, true)
-					        )
-					        or
-					        -- Range by active enemies CLEU
-					        AoEMode == "RangeByCLEU" and
-					        (        				
-					    	    MultiUnits:GetActiveEnemies() < MultishotMinAoETargets					     
-				    	    )
-						)	
-			    		or A.RapidReload:GetAzeriteRank() == 0
-			    	)
-		    	)
-		    	then
-                    return A.CobraShot:Show(icon)
-                end
-			
-                -- spitting_cobra
-                if A.SpittingCobra:IsReady(unit) then
-                    return A.SpittingCobra:Show(icon)
                 end
             end
 			
+            -- aspect_of_the_wild
+            if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) then
+                return A.AspectoftheWild:Show(icon)
+            end
+		    	
+            -- stampede,if=buff.aspect_of_the_wild.up&buff.bestial_wrath.up|target.time_to_die<15
+            if A.Stampede:IsReady(unit) and 
+		  	(
+		        Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0
+			    or 
+			    Unit(unit):TimeToDie() < 15
+		   	)
+		    then
+                return A.Stampede:Show(icon)
+            end
 			
-			-- SINGLE Target
-            -- call_action_list,name=st,if=active_enemies<2
-            if (isMulti or GetToggle(2, "AoE")) and
+            -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+		    (
+		        A.AspectoftheWild:GetCooldown() > 20 
+		    	or 
+		    	A.OneWiththePack:IsSpellLearned() 
+		    	or 
+		    	Unit(unit):TimeToDie() < 15
+		   	)
+		    then
+                return A.BestialWrath:Show(icon)
+            end
+			
+            -- chimaera_shot
+            if A.ChimaeraShot:IsReady(unit) then
+                return A.ChimaeraShot:Show(icon)
+            end
+			
+            -- a_murder_of_crows
+            if A.AMurderofCrows:IsReady(unit) then
+                return A.AMurderofCrows:Show(icon)
+            end
+			
+            -- barrage
+            if A.Barrage:IsReady(unit) then
+                return A.Barrage:Show(icon)
+            end
+		
+            -- kill_command,if=active_enemies<4|!azerite.rapid_reload.enabled
+            if A.KillCommand:IsReadyByPassCastGCD(unit) and 
+			(   
+			    A.RapidReload:GetAzeriteRank() > 0 and
+				(
+					-- Range by pet
+					AoEMode == "RangeByPet" and 
+					(
+						Pet:GetMultiUnitsBySpell(17253) < 4 or -- Bite
+						Pet:GetMultiUnitsBySpell(16827) < 4 or -- Claw
+						Pet:GetMultiUnitsBySpell(49966) < 4 -- Smack					
+					)
+					or 
+					-- Range by nameplate
+					AoEMode == "RangeByNameplate" and
+					(					    
+						GetByRange(4, 40, false, true) 
+					)
+					or
+					-- Range by active enemies CLEU
+					AoEMode == "RangeByCLEU" and
+					(        				
+						MultiUnits:GetActiveEnemies() < 4					     
+					)
+				) 
+			    or A.RapidReload:GetAzeriteRank() == 0
+            )				
+			then
+                return A.KillCommand:Show(icon)
+            end
+			
+            -- dire_beast
+            if A.DireBeast:IsReady(unit) then
+                return A.DireBeast:Show(icon)
+            end
+			
+            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
+            if A.BarbedShot:IsReadyByPassCastGCD(unit) then
+                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0 and (A.BarbedShot:GetSpellChargesFrac() > 1.8 or Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0) or A.AspectoftheWild:GetCooldown() < 8 - A.GetGCD() and A.PrimalInstincts:GetAzeriteRank() > 0 then 
+                    return A.BarbedShot:Show(icon) 
+                end
+            end
+			
+            -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
+		  	and (GetByRange(FocusedAzeriteBeamUnits, 30) or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
+		   	then
+ 	            -- Notification					
+                Action.SendNotification("Stop moving!! Focused Azerite Beam", A.FocusedAzeriteBeam.ID)                 
+		     	return A.FocusedAzeriteBeam:Show(icon)
+            end
+			
+            -- purifying_blast
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                return A.PurifyingBlast:Show(icon)
+            end
+			
+            -- concentrated_flame
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                return A.ConcentratedFlame:Show(icon)
+            end
+			
+            -- blood_of_the_enemy
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
+                return A.BloodoftheEnemy:Show(icon)
+            end
+			
+            -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
+                return A.TheUnboundForce:Show(icon)
+            end
+
+            -- multishot with RapidReload
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and				
 			(
-                -- Range by pet
+				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-				    Pet:GetMultiUnitsBySpell(17253) < 2 or -- Bite
-				    Pet:GetMultiUnitsBySpell(16827) < 2 or -- Claw
-				    Pet:GetMultiUnitsBySpell(49966) < 2 -- Smack					
+					Pet:GetMultiUnitsBySpell(17253) >= 4 or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= 4 or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= 4 -- Smack					
 				)
 				or 
 				-- Range by nameplate
 				AoEMode == "RangeByNameplate" and
 				(					    
-				    GetByRange(2, 40, false, true)
+					GetByRange(4, MultishotMaxAoERange) 
 				)
 				or
 				-- Range by active enemies CLEU
 				AoEMode == "RangeByCLEU" and
 				(        				
-					MultiUnits:GetActiveEnemies() < 2	
-                )					
-			) or not GetToggle(2, "AoE")
-	        then 			
+					MultiUnits:GetActiveEnemies() >= 4					     
+				)					
+			) 			
+			then
+                return A.Multishot:Show(icon)
+            end
+			
+            -- multishot, NO RapidReload + Custom user settings
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() == 0 and				
+			(
+				-- Range by pet
+				AoEMode == "RangeByPet" and 
+				(
+					Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
+				)
+				or 
+				-- Range by nameplate
+				AoEMode == "RangeByNameplate" and
+				(					    
+					GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
+				)
+				or
+				-- Range by active enemies CLEU
+				AoEMode == "RangeByCLEU" and
+				(        				
+					MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
+				)					
+			) 			
+			then
+                return A.Multishot:Show(icon)
+            end
+			
+            -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
+            if A.CobraShot:IsReady(unit) and 
+		    (
+			    A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
+			   (
+				    (
+    					-- Range by pet
+				        AoEMode == "RangeByPet" and 
+				        (
+			    	        Pet:GetMultiUnitsBySpell(17253) < MultishotMinAoETargets or -- Bite
+			    	        Pet:GetMultiUnitsBySpell(16827) < MultishotMinAoETargets or -- Claw
+			   	            Pet:GetMultiUnitsBySpell(49966) < MultishotMinAoETargets -- Smack					
+				        )
+				        or 
+				        -- Range by nameplate
+				        AoEMode == "RangeByNameplate" and
+				        (					    
+			   	            GetByRange(MultishotMinAoETargets, 40, false, true)
+				        )
+				        or
+				        -- Range by active enemies CLEU
+				        AoEMode == "RangeByCLEU" and
+				        (        				
+				    	    MultiUnits:GetActiveEnemies() < MultishotMinAoETargets					     
+			    	    )
+					)	
+			   		or A.RapidReload:GetAzeriteRank() == 0
+			   	)
+		    )
+		    then
+                return A.CobraShot:Show(icon)
+            end
+			
+            -- spitting_cobra
+            if A.SpittingCobra:IsReady(unit) then
+                return A.SpittingCobra:Show(icon)
+            end
+        end
+			
+			
+		-- SINGLE Target
+        -- call_action_list,name=st,if=active_enemies<2
+        if (isMulti or GetToggle(2, "AoE")) and
+		(
+            -- Range by pet
+			AoEMode == "RangeByPet" and 
+			(
+			    Pet:GetMultiUnitsBySpell(17253) < 2 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) < 2 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) < 2 -- Smack					
+			)
+			or 
+			-- Range by nameplate
+			AoEMode == "RangeByNameplate" and
+			(					    
+			    GetByRange(2, 40, false, true)
+			)
+			or
+			-- Range by active enemies CLEU
+			AoEMode == "RangeByCLEU" and
+			(        				
+				MultiUnits:GetActiveEnemies() < 2	
+            )					
+		) or not GetToggle(2, "AoE")
+	    then 	
+			
             -- barbed_shot,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and 
 			(
