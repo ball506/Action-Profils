@@ -738,9 +738,9 @@ A[3] = function(icon, isMulti)
         end             
  
 		-- Dispell
-		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "Dispel") then
-			return A.ConsumeMagic:Show(icon)
-		end
+		--if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "Dispel") then
+		--	return A.ConsumeMagic:Show(icon)
+		--end
 		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "MagicMovement") then
 			return A.ConsumeMagic:Show(icon)
 		end

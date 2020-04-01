@@ -927,7 +927,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
+            if A.Multishot:IsReady(unit) and (A.GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
 			(
 			-- Range by pet
 				AoEMode == "RangeByPet" and 
