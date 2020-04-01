@@ -82,6 +82,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     IgnorePain                             = Action.Create({ Type = "Spell", ID = 190456 }),
     LastStand                              = Action.Create({ Type = "Spell", ID = 12975     }),
 	ShieldWall                             = Action.Create({ Type = "Spell", ID = 871    }),
+	VictoriousBuff						   = Action.Create({ Type = "Spell", ID = 32216, Hidden = true}),
 	-- Utilities
 	RallyingCry					    	   = Action.Create({ Type = "Spell", ID = 97462    }),
     VictoryRush                            = Action.Create({ Type = "Spell", ID = 34428     }),
@@ -159,6 +160,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 	BuryTheHatchet                         = Action.Create({ Type = "Spell", ID = 280128, Hidden = true     }),	 
+	
 };
 
 -- To create essences use next code:
@@ -825,7 +827,7 @@ A[3] = function(icon, isMulti)
 			    Unit(player):HealthPercent() < 80 
 				or
 				-- Bury The Hatchet azerite shield
-				(A.BuryTheHatchet:GetAzeriteRank() > 0 and (Unit(player):HasBuffs(A.Victorious.ID) <= A.GetGCD() + A.GetCurrentGCD()) and Unit(player):HealthPercent() < 99)
+				(A.BuryTheHatchet:GetAzeriteRank() > 0 and (Unit(player):HasBuffs(A.VictoriousBuff.ID, true) <= A.GetGCD() + A.GetCurrentGCD()) and Unit(player):HealthPercent() < 99)
 			)
 			then
                 return A.VictoryRush:Show(icon)
