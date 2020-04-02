@@ -108,6 +108,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
+	FreezingTrap                           = Action.Create({ Type = "Spell", ID = 187650 }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -620,23 +621,18 @@ A[3] = function(icon, isMulti)
         if Interrupt then 
             return Interrupt:Show(icon)
         end  
-      
-
 		
-		-- Feign Death & Thing from Beyond
---[[		if UseFeignDeathOnThingFromBeyond and A.FeignDeath:IsReady(player) and Player:GetCurrentCorruption() >= 40 and inCombat then
-            local CurrentNameplates = MultiUnits:GetActiveUnitPlates()
-            if CurrentNameplates then  
-                for Currents_UnitID in pairs(CurrentNameplates) do             
-                    if Unit(Currents_UnitID):NPCID() == 160966 or Unit(Currents_UnitID):NPCID() == 161895 then 
-                        return A.FeignDeath:Show(icon)
-                    end         
-                end 
-            end		    
+		-- Feign Death Thing from Beyond
+		if A.LastPlayerCastName == A.FeignDeath:Info() then
+		    Action.TimerSet("KEEP_FEIGN_DEATH", 1, function() return A.PoolResource:Show(icon)  end)
 		end
-		]]--
 		if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and A.FeignDeath:IsReady(player) then
 		    return A.FeignDeath:Show(icon)
+		end
+		
+		-- Freezing Trap Thing from Beyond
+		if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and unit == "mouseover" and A.FreezingTrap:IsReady(player) then
+		    return A.FreezingTrap:Show(icon)
 		end
 		
         -- mendpet
@@ -953,6 +949,19 @@ A[3] = function(icon, isMulti)
                 return A.Multishot:Show(icon)
             end
 			
+            -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+		    (
+		        A.AspectoftheWild:GetCooldown() > 20 
+		    	or 
+		    	A.OneWiththePack:IsSpellLearned() 
+		    	or 
+		    	Unit(unit):TimeToDie() < 15
+		   	)
+		    then
+                return A.BestialWrath:Show(icon)
+            end	
+			
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
             if A.BarbedShot:IsReadyByPassCastGCD(unit) then
                 if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and A.BarbedShot:GetSpellChargesFullRechargeTime() < A.GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
@@ -975,20 +984,7 @@ A[3] = function(icon, isMulti)
 		    then
                 return A.Stampede:Show(icon)
             end
-			
-            -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
-		    (
-		        A.AspectoftheWild:GetCooldown() > 20 
-		    	or 
-		    	A.OneWiththePack:IsSpellLearned() 
-		    	or 
-		    	Unit(unit):TimeToDie() < 15
-		   	)
-		    then
-                return A.BestialWrath:Show(icon)
-            end
-			
+						
             -- chimaera_shot
             if A.ChimaeraShot:IsReady(unit) then
                 return A.ChimaeraShot:Show(icon)
@@ -1195,6 +1191,17 @@ A[3] = function(icon, isMulti)
             )					
 		) or not GetToggle(2, "AoE")
 	    then 	
+		
+            -- bestial_wrath,if=!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+			(
+			    Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and A.AspectoftheWild:GetCooldown() > 15 
+				or
+				Unit(unit):TimeToDie() < 15 + A.GetGCD()
+			)
+			then
+                return A.BestialWrath:Show(icon)
+            end	
 			
             -- barbed_shot,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<gcd|cooldown.bestial_wrath.remains&(full_recharge_time<gcd|azerite.primal_instincts.enabled&cooldown.aspect_of_the_wild.remains<gcd)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and 
@@ -1272,18 +1279,7 @@ A[3] = function(icon, isMulti)
 			then
                 return A.TheUnboundForce:Show(icon)
             end
-			
-            -- bestial_wrath,if=!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
-			(
-			    Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and A.AspectoftheWild:GetCooldown() > 15 
-				or
-				Unit(unit):TimeToDie() < 15 + A.GetGCD()
-			)
-			then
-                return A.BestialWrath:Show(icon)
-            end
-			
+						
             -- barbed_shot,if=azerite.dance_of_death.rank>1&buff.dance_of_death.remains<gcd&Player:CritChancePct()>40
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and (A.DanceofDeath:GetAzeriteRank() > 1 and Unit(player):HasBuffs(A.DanceofDeathBuff.ID, true) < A.GetGCD() and Player:CritChancePct() > 40) then
                 return A.BarbedShot:Show(icon)
