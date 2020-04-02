@@ -774,7 +774,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- Explosives or Totems
-        if inCombat and (Unit(unit):IsExplosives() or Unit(unit):IsTotem()) and CanCast then
+        if inCombat and (Unit(unit):IsExplosives() or Unit(unit):IsTotem()) and not Unit(unit):IsDummy() and CanCast then
 
 			-- Annihilation
 			if A.Annihilation:IsReady(unit) then 
@@ -793,7 +793,7 @@ A[3] = function(icon, isMulti)
         end
 		
 		--Precombat
-        if inCombat and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if not inCombat and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
 		
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= AzsharasFontofPowerPrePull) then

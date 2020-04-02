@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.1.5 (30.03.2020)",
+    DateTime = "v4.1.6 (02.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -390,7 +390,7 @@ A.Data.ProfileUI = {
                     DB = "BladeDancePoolSeconds",
                     DBV = 15, -- Set healthpercentage @30% life. 
 					Precision = 1,
-                    ONOFF = true,
+                    ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(188499) .. "\nPool secs",
                     },
