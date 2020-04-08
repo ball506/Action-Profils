@@ -674,7 +674,12 @@ A[3] = function(icon, isMulti)
         if not Pet:IsActive() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
 		    return A.MendPet:Show(icon)
         end
-			
+		
+	    -- dead pet ?
+        if UnitIsDeadOrGhost(pet) and A.MendPet:IsReady() and not A.LastPlayerCastName == A.MendPet:Info() then
+            return A.MendPet:Show(icon)
+        end
+		
         -- call_action_list,name=purge_dispellmagic
         if inCombat and PurgeDispellMagic(unit) then
             return true
