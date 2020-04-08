@@ -620,6 +620,11 @@ local function ExpectedCombatLength()
 end 
 ExpectedCombatLength = A.MakeFunctionCachedStatic(ExpectedCombatLength)
 
+local profileStop = false
+
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+    profileStop = false
+end)
 
 -----------------------------------------
 --                 ROTATION  
@@ -633,7 +638,6 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit(player):CombatTime() > 0
 	local combatTime = Unit(player):CombatTime()
-    local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
 	local HoABossOnly = A.GetToggle(2, "HoABossOnly")
 	local EyeBeamTTD = A.GetToggle(2, "EyeBeamTTD")
@@ -664,21 +668,21 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryPrePull = Action.GetToggle(2, "UnbridledFuryPrePull")
 	local ArcaneTorrentPrePull = Action.GetToggle(2, "ArcaneTorrentPrePull")
     local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
-	local profileStop = false
 	-- EyeBeam protection channel
 	local CanCast = true
-	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
-	local _, castStartedTime, castEndTime = Unit(player):IsCasting()
+	--local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+	--local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
 	-- Ensure all channel and cast are really safe
 	-- Double protection with check on current casts and also timestamp of the cast
-	if (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
-	    if (CurrentCastLeft > 0 or secondsLeft > 0 or isChannel) then
-		    if TMW.time < castEndTime then			
-			    CanCast = false
-	        else
-	            CanCast = true
-			end
+	-- If we got Eyebeam or Azerite Beam or Fel barrage
+	if inCombat and (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
+	    if secondsLeft + A.GetPing() > 0.5 then
+            --print("Eyebeam Channel detected : CanCast = False")		
+		    CanCast = false
+		else
+			--print("Eyebeam Channel ended : CanCast = True")	
+	        CanCast = true
 		end
 	end
 	-- Showing icon PoolResource to make sure nothing else is read by GG
@@ -717,6 +721,7 @@ A[3] = function(icon, isMulti)
 
 	-- Start Rotation
     local function EnemyRotation(unit)
+	
 		VarBladeDance = A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned()))
         VarPoolingMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and FuryDeficit > 30 and (not varWaitingForNemesis or A.Nemesis:GetCooldown() < 10)
         -- variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
@@ -731,9 +736,9 @@ A[3] = function(icon, isMulti)
         VarWaitingForDarkSlash = A.DarkSlash:IsSpellLearned() and not VarPoolingForBladeDance and not VarPoolingForMeta and A.DarkSlash:GetCooldown() == 0          
         -- variable,name=waiting_for_momentum,value=talent.momentum.enabled&!buff.momentum.up
         VarWaitingForMomentum = A.Momentum:IsSpellLearned() and Unit(player):HasBuffs(A.MomentumBuff.ID, true) == 0
-				
+			
 		-- Purge
-        if A.ArcaneTorrent:AutoRacial(unit) and AuraIsValid(unit, "UsePurge", "Dispel") then 
+        if inCombat and A.ArcaneTorrent:AutoRacial(unit) and AuraIsValid(unit, "UsePurge", "Dispel") then 
             return A.ArcaneTorrent:Show(icon)
         end             
  
@@ -741,35 +746,35 @@ A[3] = function(icon, isMulti)
 		--if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "Dispel") then
 		--	return A.ConsumeMagic:Show(icon)
 		--end
-		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "MagicMovement") then
+		if inCombat and A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "MagicMovement") then
 			return A.ConsumeMagic:Show(icon)
 		end
-		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
+		if inCombat and A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeHigh") then
 			return A.ConsumeMagic:Show(icon)
 		end
-		if A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeLow") then
+		if inCombat and A.ConsumeMagic:IsReady(unit) and not Unit(unit):IsBoss() and not IsInRaid() and AuraIsValid(unit, "UsePurge", "PurgeLow") then
 			return A.ConsumeMagic:Show(icon)
 		end
 		
         -- Imprison CrowdControl PvP
-        if Action.ImprisonIsReady(unit) then
+        if inCombat and Action.ImprisonIsReady(unit) then
             return A.Imprison:Show(icon)
         end  
 		
         -- Interrupts
         local Interrupt = Interrupts(unit)
-        if Interrupt then 
+        if inCombat and Interrupt then 
             return Interrupt:Show(icon)
         end 
 		
         -- pick_up_fragment,if=fury.deficit>=35&(!azerite.eyes_of_rage.enabled|cooldown.eye_beam.remains>1.4)
-        if FuryDeficit <= 35 and (A.EyesofRage:GetAzeriteRank() > 0 or A.EyeBeam:GetCooldown() < 1.4) then
+        if inCombat and FuryDeficit <= 35 and (A.EyesofRage:GetAzeriteRank() > 0 or A.EyeBeam:GetCooldown() < 1.4) then
             -- Notification					
             Action.SendNotification("Don't take Soul Fragment !!!", A.EyesofRage.ID)
         end
 
         -- Custom Katherine tentacle handler
-        if UnitName(unit) == "Twisted Appendage" and A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() and CanCast then
+        if inCombat and UnitName(unit) == "Twisted Appendage" and A.DemonsBite:IsReady(unit) and not A.DemonBlades:IsSpellLearned() and CanCast then
             return A.DemonsBite:Show(icon)
         end
 
@@ -793,7 +798,7 @@ A[3] = function(icon, isMulti)
         end
 		
 		--Precombat
-        if not inCombat and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if not inCombat and Unit(unit):IsExists() then
 		
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) and (Pull > 0.1 and Pull <= AzsharasFontofPowerPrePull) then
@@ -833,12 +838,12 @@ A[3] = function(icon, isMulti)
             end			
 			
 			-- use_item,name=azsharas_font_of_power
-            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and CanCast and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
                 return A.DemonsBite:Show(icon)
             end
 			
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and Unit(unit):GetRange() <= 6 and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
  	            -- Notification					
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
 				return A.EyeBeam:Show(icon)
@@ -1054,7 +1059,8 @@ A[3] = function(icon, isMulti)
 		
 		-- Demonic build
 		if A.Demonic:IsSpellLearned() and not profileStop and inCombat then
-            -- immolation_aura
+            
+			-- immolation_aura
             if A.ImmolationAura:IsReady(player) and CanCast and FuryDeficit > 20 then
                 return A.ImmolationAura:Show(icon)
             end
