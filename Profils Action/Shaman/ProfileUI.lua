@@ -672,7 +672,7 @@ A.Data.ProfileUI = {
 			{
                 {
                     E = "Checkbox", 
-                    DB = "TrinketOnlyBurst",
+                    DB = "TrinketsAoE",
                     DBV = true,
                     L = { 
                         enUS = "Trinkets\nAoE only", 
@@ -688,7 +688,7 @@ A.Data.ProfileUI = {
                 },
                 {
                     E = "Checkbox", 
-                    DB = "TrinketsAoE",
+                    DB = "TrinketOnlyBurst",
                     DBV = true,
                     L = { 
                         enUS = "Trinkets\nBurst only", 
