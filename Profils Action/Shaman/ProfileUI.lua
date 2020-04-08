@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.8 (30.03.2020)",
+    DateTime = "v4.0.9 (08.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -672,7 +672,7 @@ A.Data.ProfileUI = {
 			{
                 {
                     E = "Checkbox", 
-                    DB = "TrinketsAoE",
+                    DB = "TrinketOnlyBurst",
                     DBV = true,
                     L = { 
                         enUS = "Trinkets\nAoE only", 
@@ -683,6 +683,22 @@ A.Data.ProfileUI = {
                         enUS = "Enable this to option to trinkets for AoE usage ONLY.", 
                         ruRU = "Enable this to option to trinkets for AoE usage ONLY.", 
                         frFR = "Enable this to option to trinkets for AoE usage ONLY.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "TrinketsAoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Trinkets\nBurst only", 
+                        ruRU = "Trinkets\nBurst only", 
+                        frFR = "Trinkets\nBurst only", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to trinkets with Burst usage ONLY.", 
+                        ruRU = "Enable this to option to trinkets with Burst usage ONLY.", 
+                        frFR = "Enable this to option to trinkets with Burst usage ONLY.",  
                     }, 
                     M = {},
                 },
