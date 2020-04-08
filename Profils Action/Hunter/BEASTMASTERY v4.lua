@@ -739,11 +739,11 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth
-			and ((Pull > 0.1 and Pull < 1.5) or not DBM) 
-			then
-                return A.GuardianofAzeroth:Show(icon)
-            end
+        --    if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth
+		--	and ((Pull > 0.1 and Pull < 1.5) or not DBM) 
+		--	then
+        --        return A.GuardianofAzeroth:Show(icon)
+         --   end
 			
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth
@@ -856,7 +856,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- guardian_of_azeroth,if=cooldown.aspect_of_the_wild.remains<10|target.time_to_die>cooldown+duration|target.time_to_die<30
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth 
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HeartOfAzeroth and Unit(unit):TimeToDie() > 30
 			then
                 return A.GuardianofAzeroth:Show(icon)
             end
