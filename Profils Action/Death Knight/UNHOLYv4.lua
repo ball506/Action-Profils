@@ -1009,11 +1009,13 @@ A[3] = function(icon, isMulti)
                 end	
 				
                 -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
-                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and BloodoftheEnemySyncAoE and BurstIsON(unit) and HeartOfAzeroth and 
+                if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and BloodoftheEnemySyncAoE and HeartOfAzeroth and 
 			    (
 			        Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and Player:AreaTTD(MaxAoERange) >= BloodoftheEnemyAoETTD and MultiUnits:GetByRange(MaxAoERange) >= BloodoftheEnemyUnits
 					or
 					(A.LastPlayerCastName == A.DeathandDecay:Info() or Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0) and Unit(unit):IsDummy()
+					or 
+					Unit(unit):IsBoss()
 			    )
 			    then
                     return A.BloodoftheEnemy:Show(icon)
