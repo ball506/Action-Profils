@@ -711,7 +711,7 @@ A[3] = function(icon, isMulti)
 		local MinInterrupt = Action.GetToggle(2, "MinInterrupt")
 		local MaxInterrupt = Action.GetToggle(2, "MaxInterrupt")
 		local UseSyncCooldowns = Action.GetToggle(2, "UseSyncCooldowns")
-		
+		local TrinketOnlyBurst = Action.GetToggle(2, "TrinketOnlyBurst")
         -- variable,name=cooldown_sync,value=(talent.ascendance.enabled&(buff.ascendance.up|cooldown.ascendance.remains>50))|(!talent.ascendance.enabled&(SpiritWolvesTime>5|cooldown.SpiritWolvesTime>50))
         VarCooldownSync = (UseSyncCooldowns and 
 		                    (
@@ -876,7 +876,7 @@ A[3] = function(icon, isMulti)
         end
 		
 	   	-- Non SIMC Custom Trinket1
-	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and    
+	    if A.Trinket1:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or not A.BurstIsON(unit)) and Trinket1IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -887,7 +887,7 @@ A[3] = function(icon, isMulti)
    	    end 		
 	        	
 		-- Non SIMC Custom Trinket2
-	    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and	    
+	    if A.Trinket2:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or not A.BurstIsON(unit)) and Trinket2IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and	    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -1045,9 +1045,9 @@ A[3] = function(icon, isMulti)
         end
 			
         -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-        if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 6 and 
+        if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 10 and 
 		(
-		    GetByRange(3, 6) and 
+		    GetByRange(3, 10) and 
 			(
 			    not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) 
 				or 
@@ -1340,7 +1340,7 @@ A[3] = function(icon, isMulti)
 		
         -- call_action_list,name=filler
         -- sundering,if=raid_event.adds.in>40
-        if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 6 then
+        if A.Sundering:IsReady(unit) and Unit(unit):GetRange() < 10 then
             return A.Sundering:Show(icon)
         end
 			
