@@ -1,15 +1,15 @@
-local TMW                             = TMW
+local TMW                           = TMW
 local A                             = Action
-local Unit                             = A.Unit 
-local TeamCache                                = Action.TeamCache
-local EnemyTeam                                = Action.EnemyTeam
-local FriendlyTeam                            = Action.FriendlyTeam
-local HealingEngine                            = Action.HealingEngine
-local LoC                                     = Action.LossOfControl
-local Player                                = Action.Player 
-local MultiUnits                            = Action.MultiUnits
-local UnitCooldown                            = Action.UnitCooldown
-local RESTO                           = A[ACTION_CONST_SHAMAN_RESTORATION]
+local Unit                          = A.Unit 
+local TeamCache                     = Action.TeamCache
+local EnemyTeam                     = Action.EnemyTeam
+local FriendlyTeam                  = Action.FriendlyTeam
+local HealingEngine                 = Action.HealingEngine
+local LoC                           = Action.LossOfControl
+local Player                        = Action.Player 
+local MultiUnits                    = Action.MultiUnits
+local UnitCooldown                  = Action.UnitCooldown
+local RESTO                         = A[ACTION_CONST_SHAMAN_RESTORATION]
 
 function A:PredictHeal(NAME, UNIT, VARIATION)   
     -- Exception penalty for low level units
@@ -57,26 +57,16 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
         end
     end    
     
-    if NAME == "Regrowth" then
+    if NAME == "Riptide" then
 	    --local Regrowth = 8936
         if Unit("player"):CombatTime() == 0 then
             total = 0
         else
             local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local Regrowth = A.GetSpellDescription(8936)
-            local crit, hot = 1, 1
-            if Unit("player"):HasSpec(ACTION_CONST_SHAMAN_RESTORATION) and -- Balance
-            not UnitIsUnit("player", UNIT) then
-                crit = 2
-            end
-            if Unit("player"):HasSpec(ACTION_CONST_SHAMAN_RESTORATION) and -- Restor
-            -- Talent Soul of Forest
-            Unit(UNIT):HasBuffs(114108, true) > 0 then
-                crit = 2
-                hot = 2
-            end
+            local Riptide = A.GetSpellDescription(61295)
+
             
-            total = (Regrowth[1] * variation * crit) + (Regrowth[2] * variation * hot) + pre_heal -- + (HPS*12) - (DMG*12)
+            total = (Riptide[1] * variation) + (Riptide[2] * variation) + pre_heal -- + (HPS*12) - (DMG*12)
         end
     end
     
@@ -157,14 +147,9 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
         end
     end    
 	
-    if NAME == "Efflorescence" then 
+    if NAME == "HealingRain" then 
         local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-        local flowers = 0
-		--local Efflorescence = 207385
-        --if Efflorescence:IsAvailable() then
-        --    flowers = A.GetSpellDescription(207385)[1] * variation
-        --end
-        total = A.GetSpellDescription(145205)[1] / 1.8 * 30 + flowers + pre_heal -- + (HPS*30) - (DMG*30)
+        total = A.GetSpellDescription(73920)[1] / 1.8 * 30 + flowers + pre_heal -- + (HPS*30) - (DMG*30)
     end    
     
     if NAME == "Overgrowth" then 
@@ -210,7 +195,7 @@ function A:PredictHeal(NAME, UNIT, VARIATION)
             local Nourish = A.GetSpellDescription(289022) * variation
             local cast = Unit(unitID):CastTime(289022) + A.GetCurrentGCD() + 0.2
             local crit = 1
-            if TimeToDie(UNIT) <= cast * 2.6 then
+            if Unit(UNIT):TimeToDie() <= cast * 2.6 then
                 total = 88888888888888 -- don't heal if we can lose unit
             else
                 if 
