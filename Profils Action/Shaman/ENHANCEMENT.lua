@@ -486,9 +486,9 @@ local function SelfDefensives()
         (     -- Auto 
             HealingSurge >= 100 and 
             (
-                -- HP lose per sec >= 40
-                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 40 or 
-                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.40 or 
+                -- HP lose per sec >= 10
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
                 Unit(player):TimeToDieX(25) < 5 or 
                 (
