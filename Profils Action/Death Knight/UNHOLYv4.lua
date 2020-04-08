@@ -1020,7 +1020,7 @@ A[3] = function(icon, isMulti)
                 end					
 				
                 -- scourge_strike,if=death_and_decay.ticking&cooldown.apocalypse.remains
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and				--and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0 
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0  and				--and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
 				(    
 				    A.BloodoftheEnemy:GetAzeriteRank() > 0 and A.BloodoftheEnemy:GetCooldown() > 0 
 					or 
@@ -1157,7 +1157,13 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.DeathandDecay:GetCooldown() > 2
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
+				(
+				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 
+					or 
+					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
+				)
+			    and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD")) 
 			    then
                     return A.ScourgeStrike:Show(icon)
                 end
@@ -1189,7 +1195,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
-            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
+            if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
+			(
+			    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 
+				or 
+				Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
+			)
+			and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD")) 
 			then
                 return A.ScourgeStrike:Show(icon)
             end
