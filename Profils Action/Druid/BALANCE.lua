@@ -197,6 +197,7 @@ Action[ACTION_CONST_DRUID_BALANCE] = {
     MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 	DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon  
+	PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
 };
 
 -- To create essences use next code:
@@ -815,8 +816,14 @@ A[3] = function(icon, isMulti)
 			
 			-- starfall
 		    if A.Starfall:IsReady(unit, true) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.Starfall:AbsentImun(unit, Temp.TotalAndPhys) and 
-		    ((Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 8) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= VarSfTargets) and
-		    (Unit(unit):TimeToDie() + 1) * MultiUnits:GetActiveEnemies() > A.Starfall:GetSpellPowerCost() / 2.5)  
+		    (
+			    (
+				    Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 
+					or 
+					Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 8
+				)
+				and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= VarSfTargets) and (Unit(unit):TimeToDie() + 1) * MultiUnits:GetActiveEnemies() > A.Starfall:GetSpellPowerCost() / 2.5
+			)  
 			then
 			    return A.Starfall:Show(icon)
 		    end
@@ -989,7 +996,7 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- fury_of_elune
-		    if A.FuryofElune:IsReady(unitID) and AP_Check(A.SolarWrath) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= 2 or Unit(unitID):IsBoss()) then
+		    if A.FuryofElune:IsReady(unit) and AP_Check(A.SolarWrath) and ((A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() >= 2) or Unit(unit):IsBoss()) then
 			    return A.FuryofElune:Show(icon)
 		    end
 			
