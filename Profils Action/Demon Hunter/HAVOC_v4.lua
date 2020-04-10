@@ -673,15 +673,12 @@ A[3] = function(icon, isMulti)
 	--local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
 	--local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
-	-- Ensure all channel and cast are really safe
-	-- Double protection with check on current casts and also timestamp of the cast
 	-- If we got Eyebeam or Azerite Beam or Fel barrage
 	if inCombat and (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
-	    if secondsLeft + A.GetPing() > 0.5 then
-            --print("Eyebeam Channel detected : CanCast = False")		
+	    -- Get Remaining seconds left on current Cast
+	    if secondsLeft > 0 + A.GetPing() then
 		    CanCast = false
 		else
-			--print("Eyebeam Channel ended : CanCast = True")	
 	        CanCast = true
 		end
 	end
