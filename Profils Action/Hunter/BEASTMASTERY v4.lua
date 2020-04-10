@@ -687,7 +687,29 @@ A[3] = function(icon, isMulti)
 			
         -- use_items
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)&(target.health.pct<35|!essence.condensed_lifeforce.major)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
-        if inCombat and A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) > 0 and (A.LastPlayerCastName == A.AspectoftheWild:Info() or not A.CyclotronicBlast:IsExists() and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0) and (Unit(unit):HealthPercent() < 35 or not A.GuardianofAzeroth:IsSpellLearned()) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 or Unit(unit):TimeToDie() < 26) and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))) then
+        if inCombat and A.AshvanesRazorCoral:IsReady(unit) and 
+		(
+		    Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) > 0 and 
+			(
+			    A.LastPlayerCastName == A.AspectoftheWild:Info() 
+				or 
+				not A.CyclotronicBlast:IsExists() and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 0
+			)
+			and 
+			(
+			    Unit(unit):HealthPercent() < 35 
+			    or 
+			    not A.GuardianofAzeroth:IsSpellLearned()
+			) 
+			or 
+			(
+			    Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) == 0 
+				or 
+				Unit(unit):TimeToDie() < 26
+			)
+			and Unit(unit):TimeToDie() > (24 * num((A.CyclotronicBlast:GetCooldown() + 4 < Unit(unit):TimeToDie())))
+		)
+		then
             return A.AshvanesRazorCoral:Show(icon)
         end
 			
