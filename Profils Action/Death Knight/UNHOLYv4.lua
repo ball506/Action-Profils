@@ -746,7 +746,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- apocalypse,if=debuff.festering_wound.stack>=4
-            if A.Apocalypse:IsReady(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) >= 4 then
+            if A.Apocalypse:IsReady(unit) and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) >= 4 and A.BurstIsON(unit) then
                 return A.Apocalypse:Show(icon)
             end
 			
@@ -1022,7 +1022,7 @@ A[3] = function(icon, isMulti)
                 end					
 				
                 -- scourge_strike,if=death_and_decay.ticking&cooldown.apocalypse.remains
-                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0  and				--and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
+                if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and Unit(player):HasBuffs(A.DeathandDecayBuff.ID, true) > 0 and (A.Apocalypse:GetCooldown() > 0 or not A.BurstIsON(unit))  and				--and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 
 				(    
 				    A.BloodoftheEnemy:GetAzeriteRank() > 0 and A.BloodoftheEnemy:GetCooldown() > 0 
 					or 
@@ -1089,7 +1089,7 @@ A[3] = function(icon, isMulti)
                 end
 						
                 -- clawing_shadows,if=death_and_decay.ticking&cooldown.apocalypse.remains
-                if A.ClawingShadows:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and A.Apocalypse:GetCooldown() > 0) then
+                if A.ClawingShadows:IsReady(unit) and (Unit(unit):HasDeBuffs(A.DeathandDecay.ID, true) > 0 and (A.Apocalypse:GetCooldown() > 0 or not A.BurstIsON(unit))) then
                     return A.ClawingShadows:Show(icon)
                 end
 			
@@ -1126,7 +1126,7 @@ A[3] = function(icon, isMulti)
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
                 if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
 				(
-				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 
+				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and (A.Apocalypse:GetCooldown() > 5 or not A.BurstIsON(unit)) 
 					or 
 					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
 				)
@@ -1150,7 +1150,7 @@ A[3] = function(icon, isMulti)
 			    (
 			        Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 4 and Unit(player):HasBuffs(A.UnholyFrenzyBuff.ID, true) == 0 
 				    or 
-				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3 and A.Apocalypse:GetCooldown() < 3 
+				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3 and (A.Apocalypse:GetCooldown() < 3 or not A.BurstIsON(unit))
 			    	or 
 			    	Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1 and (A.ArmyoftheDead:GetCooldown() > 5 or GetToggle(2, "DisableAotD"))
 			    )
@@ -1161,7 +1161,7 @@ A[3] = function(icon, isMulti)
                 -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
                 if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
 				(
-				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 
+				    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and (A.Apocalypse:GetCooldown() > 5 or not A.BurstIsON(unit))
 					or 
 					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
 				)
@@ -1187,7 +1187,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- death_and_decay,if=talent.pestilence.enabled&cooldown.apocalypse.remains
-            if A.DeathandDecay:IsReady(player) and A.Pestilence:IsSpellLearned() and A.Apocalypse:GetCooldown() > 0 then
+            if A.DeathandDecay:IsReady(player) and A.Pestilence:IsSpellLearned() and (A.Apocalypse:GetCooldown() > 0 or not A.BurstIsON(unit)) then
                 return A.DeathandDecay:Show(icon)
             end
 			
@@ -1199,7 +1199,7 @@ A[3] = function(icon, isMulti)
             -- scourge_strike,if=((debuff.festering_wound.up&cooldown.apocalypse.remains>5)|debuff.festering_wound.stack>4)&(cooldown.army_of_the_dead.remains>5|death_knight.disable_aotd)
             if A.ScourgeStrike:IsReadyByPassCastGCD(unit) and 
 			(
-			    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and A.Apocalypse:GetCooldown() > 5 
+			    Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 0 and (A.Apocalypse:GetCooldown() > 5 or not A.BurstIsON(unit))
 				or 
 				Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) > 4
 			)
@@ -1228,7 +1228,7 @@ A[3] = function(icon, isMulti)
 							or 
 							Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 3
 						)
-						and A.Apocalypse:GetCooldown() < 3
+						and (A.Apocalypse:GetCooldown() < 3 or not A.BurstIsON(unit))
 					) 
 					or 
 					Unit(unit):HasDeBuffsStacks(A.FesteringWoundDebuff.ID, true) < 1
