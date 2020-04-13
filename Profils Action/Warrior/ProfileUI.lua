@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.1.2 (31.03.2020)",
+    DateTime = "v4.1.3 (12.04.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
