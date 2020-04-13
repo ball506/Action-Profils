@@ -350,6 +350,35 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- Multidot Handler UI --
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if IsInRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if IsInGroup() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if A.IsInPvP then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
 
 -- Insanity Drain 
 local function InsanityDrain()
@@ -399,6 +428,13 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryWithExecute = GetToggle(2, "UnbridledFuryWithExecute")
 	local FocusedAzeriteBeamTTD = GetToggle(2, "FocusedAzeriteBeamTTD")
 	local FocusedAzeriteBeamUnits = GetToggle(2, "FocusedAzeriteBeamUnits")
+	-- Multidots var
+	local MissingShadowWordPain = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.ShadowWordPain.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+	local MissingVampiricTouch = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.VampiricTouch.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local AppliedShadowWordPain = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.ShadowWordPain.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+ 	local AppliedVampiricTouch = MultiUnits:GetByRangeAppliedDoTs(MultiDotDistance, 5, A.VampiricTouch.ID) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
+    local ShadowWordPainToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, A.ShadowWordPain.ID, 6, 5)
+    local VampiricTouchToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 5, A.VampiricTouch.ID, 6, 5)
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	local TrinketsAoE = GetToggle(2, "TrinketsAoE")
@@ -560,7 +596,23 @@ A[3] = function(icon, isMulti)
 			then
                 return A.MemoryofLucidDreams:Show(icon)
             end
-			
+			-- racials
+            if A.BloodFury:AutoRacial(unit, nil, nil, true) then 
+                return A.BloodFury:Show(icon)
+            end 
+                
+            if A.Fireblood:AutoRacial(unit, nil, nil, true) then 
+                return A.Fireblood:Show(icon)
+            end 
+                
+            if A.AncestralCall:AutoRacial(unit, nil, nil, true) then 
+                return A.AncestralCall:Show(icon)
+            end 
+                
+            if A.Berserking:AutoRacial(unit, nil, nil, true) then 
+                return A.Berserking:Show(icon)
+            end 
+				
             -- blood_of_the_enemy
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.BloodoftheEnemy:Show(icon)
@@ -661,7 +713,23 @@ A[3] = function(icon, isMulti)
 		
         -- run_action_list,name=cleave,if=active_enemies>1
         if inCombat and GetByRange(1, 40, true) then
-					
+		   
+  		    -- Auto Multidot
+	    	if Unit(unit):TimeToDie() >= 10  
+		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and HandleMultidots() and  
+			    (
+            	    (
+				       (MissingVampiricTouch > 0 and MissingVampiricTouch < 5) 
+					   or 
+					   (VampiricTouchToRefresh > 0 and VampiricTouchToRefresh < 5) 
+					) 
+				    and Unit(unit):HasDeBuffs(A.ShadowWordPain.ID, true) > 5 and Unit(unit):HasDeBuffs(A.VampiricTouch.ID, true) > 5 
+			    ) 
+		       and MultiUnits:GetByRange(MultiDotDistance) > 1 and MultiUnits:GetByRange(MultiDotDistance) <= 5
+		    then
+		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
+		    end	
+			
 			-- void_eruption
             if A.VoidEruption:IsReady(unit, nil, nil, A.GetToggle(2, "ByPassSpells")) and Player:Insanity() >= InsanityThreshold() and not VoidFormActive and not isMoving then
                 return A.VoidEruption:Show(icon)
@@ -771,12 +839,24 @@ A[3] = function(icon, isMulti)
             end
 			
             -- mind_sear,target_if=spell_targets.mind_sear>1,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2
-            if A.MindSear:IsReady(unit) and A.MindSear:AbsentImun(unit, Temp.AttackTypes) and not isMoving and MultiUnits:GetActiveEnemies() > 2 and (VarDotsUp or Unit(unit):TimeToDie() < 6) then 
+            if A.MindSear:IsReady(unit) and not isMoving and MultiUnits:GetActiveEnemies() > 2 and 
+			(
+			    VarDotsUp 
+				or 
+				Unit(unit):TimeToDie() < 6
+			)
+			then 
                 return A.MindSear:Show(icon)         
             end             
 		
             -- mind_flay,chain=1,interrupt_immediate=1,interrupt_if=ticks<=2&(cooldown.void_bolt.up|cooldown.mind_blast.up)
-            if A.MindFlay:IsReady(unit) and A.MindFlay:AbsentImun(unit, Temp.AttackTypes) and not isMoving and MultiUnits:GetActiveEnemies() <= 2 and (VarDotsUp or Unit(unit):TimeToDie() < 6) then 
+            if A.MindFlay:IsReady(unit) and not isMoving and MultiUnits:GetActiveEnemies() <= 2 and 
+			(
+			    VarDotsUp 
+				or 
+				Unit(unit):TimeToDie() < 6
+			)
+			then 
                 return A.MindFlay:Show(icon)         
             end 	
 			
@@ -940,6 +1020,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- mind_flay,chain=1,interrupt_immediate=1,interrupt_if=ticks>=2&(cooldown.void_bolt.up|cooldown.mind_blast.up)
+			-- need proper ticks count here 
             if A.MindFlay:IsReady(unit) then
                 return A.MindFlay:Show(icon)
             end
