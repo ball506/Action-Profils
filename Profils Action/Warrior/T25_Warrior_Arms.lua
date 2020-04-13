@@ -877,7 +877,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- whirlwind,if=talent.fervor_of_battle.enabled
-                if A.Whirlwind:IsReady(unit) and (A.FervorofBattle:IsSpellLearned()) then
+                if A.Whirlwind:IsReady(unit) and InMelee(unit) and (A.FervorofBattle:IsSpellLearned()) then
                     return A.Whirlwind:Show(icon)
                 end
 				
@@ -906,7 +906,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- warbreaker,if=debuff.colossus_smash.down
-                if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0) then
+                if A.Warbreaker:IsReady(unit) and InMelee(unit) and A.BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0) then
                     return A.Warbreaker:Show(icon)
                 end
 			
@@ -979,7 +979,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- whirlwind,if=debuff.colossus_smash.up|(buff.crushing_assault.up&talent.fervor_of_battle.enabled)
-                if A.Whirlwind:IsReady(unit) and 
+                if A.Whirlwind:IsReady(unit) and InMelee(unit) and 
 				(
 				    Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 
 					or
@@ -992,7 +992,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- whirlwind,if=buff.deadly_calm.up|rage>60
-                if A.Whirlwind:IsReady(unit) and 
+                if A.Whirlwind:IsReady(unit) and InMelee(unit) and 
 				(
 				    Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) > 0 
 					or
@@ -1008,7 +1008,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- whirlwind
-                if A.Whirlwind:IsReady(unit) then
+                if A.Whirlwind:IsReady(unit) and InMelee(unit) then
                     return A.Whirlwind:Show(icon)
                 end
 			
@@ -1060,7 +1060,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- warbreaker,if=!essence.memory_of_lucid_dreams.major|(buff.memory_of_lucid_dreams.up|cooldown.memory_of_lucid_dreams.remains>10)
-                if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) and 
+                if A.Warbreaker:IsReady(unit) and InMelee(unit) and A.BurstIsON(unit) and 
 				(
 				    not Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) 
 					or
@@ -1176,7 +1176,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- warbreaker
-            if A.Warbreaker:IsReady(unit) and A.BurstIsON(unit) then
+            if A.Warbreaker:IsReady(unit) and InMelee(unit) and A.BurstIsON(unit) then
                 return A.Warbreaker:Show(icon)
             end
 			
@@ -1231,7 +1231,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- whirlwind,if=talent.fervor_of_battle.enabled&(buff.memory_of_lucid_dreams.up|debuff.colossus_smash.up|buff.deadly_calm.up)
-            if A.Whirlwind:IsReady(unit) and 
+            if A.Whirlwind:IsReady(unit) and InMelee(unit) and 
 			(
 			    A.FervorofBattle:IsSpellLearned() and 
 				(
@@ -1252,7 +1252,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- whirlwind,if=talent.fervor_of_battle.enabled&(buff.test_of_might.up|debuff.colossus_smash.down&buff.test_of_might.down&rage>60)
-            if A.Whirlwind:IsReady(unit) and 
+            if A.Whirlwind:IsReady(unit) and InMelee(unit) and 
 			(
 			    A.FervorofBattle:IsSpellLearned() and 
 				(
