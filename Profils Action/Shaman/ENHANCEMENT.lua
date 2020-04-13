@@ -876,7 +876,7 @@ A[3] = function(icon, isMulti)
         end
 		
 	   	-- Non SIMC Custom Trinket1
-	    if A.Trinket1:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or not A.BurstIsON(unit)) and Trinket1IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and    
+	    if A.Trinket1:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or (not TrinketOnlyBurst and not A.BurstIsON(unit))) and Trinket1IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -887,7 +887,7 @@ A[3] = function(icon, isMulti)
    	    end 		
 	        	
 		-- Non SIMC Custom Trinket2
-	    if A.Trinket2:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or not A.BurstIsON(unit)) and Trinket2IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and	    
+	    if A.Trinket2:IsReady(unit) and ((TrinketOnlyBurst and A.BurstIsON(unit)) or (not TrinketOnlyBurst and not A.BurstIsON(unit))) and Trinket2IsAllowed and inCombat and CanCast and Unit(unit):GetRange() < 6 and	    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -1117,6 +1117,11 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
 			
+            -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                return A.BloodoftheEnemy:Show(icon)
+            end
+			
             -- berserking,if=variable.cooldown_sync
             if A.Berserking:AutoRacial(unit) and Racial and not Unit(player):HasHeroism() and VarCooldownSync then
                 return A.Berserking:Show(icon)
@@ -1168,12 +1173,7 @@ A[3] = function(icon, isMulti)
             if A.FeralSpirit:IsReady(unit) then
                 return A.FeralSpirit:Show(icon)
             end
-			
-            -- blood_of_the_enemy,if=raid_event.adds.in>90|active_enemies>1
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and GetByRange(1, 20) then
-                return A.BloodoftheEnemy:Show(icon)
-            end
-			
+						
             -- ascendance,if=cooldown.strike.remains>0
             if A.Ascendance:IsReady(unit) and A.Ascendance:IsSpellLearned() then
                 return A.Ascendance:Show(icon)
