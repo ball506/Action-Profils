@@ -676,7 +676,7 @@ A[3] = function(icon, isMulti)
 	-- If we got Eyebeam or Azerite Beam or Fel barrage
 	if inCombat and (spellID == A.EyeBeam.ID or spellID == A.FocusedAzeriteBeam.ID or spellID == A.FelBarrage.ID) then 
 	    -- Get Remaining seconds left on current Cast
-	    if secondsLeft > 0 + A.GetPing() then
+	    if secondsLeft > 0  then
 		    CanCast = false
 		else
 	        CanCast = true
@@ -1101,6 +1101,11 @@ A[3] = function(icon, isMulti)
 			    or 
 				(
 				    not SyncBladeDanceDeathSweepWithEyeBeam	and A.EyeBeam:GetCooldown() > 0
+				)
+			    -- DISABLED EYEBEAM BY UI
+			    or 
+				(
+				    HandleEyeBeam() == false
 				)
 			)			
 			then
