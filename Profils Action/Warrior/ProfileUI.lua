@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.1.3 (12.04.2020)",
+    DateTime = "v4.1.4 (13.04.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -1662,6 +1662,18 @@ A.Data.ProfileUI                                     = {
 			{
     			{
                     E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 50,                            
+                    DB = "ShieldBlockHPLost",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(2565) .. "\n%HP lost per sec",
+                    }, 
+                    M = {},
+                },
+    			{
+                    E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
                     DB = "RallyingCryHP",
@@ -1671,7 +1683,7 @@ A.Data.ProfileUI                                     = {
                         ANY = A.GetSpellInfo(97462) .. " (%)",
                     }, 
                     M = {},
-                },
+                },	
 			},
             { -- [4] 4th Row
 
@@ -1757,7 +1769,7 @@ A.Data.ProfileUI                                     = {
                         frFR = "Enable this if you want to fill Shield Block down time with Last Stand.",
                     }, 
                     M = {},
-                }, 
+                },					
                 {
                     E = "Checkbox", 
                     DB = "UseShieldBlockDefensively",

@@ -376,7 +376,8 @@ local function SelfDefensives()
     end
 			
     -- ShieldBlock (any role, whenever have physical damage)
-    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCostCache() and HPLoosePerSecond >= 5 and A.ShieldBlock:IsReady(player) and Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit(player):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit(player):GetRealTimeDMG(3) > 0 then 
+	local ShieldBlockHPLost = GetToggle(2, "ShieldBlockHPLost")
+    if Player:Rage() >= A.ShieldBlock:GetSpellPowerCost() and HPLoosePerSecond >= ShieldBlockHPLost and A.ShieldBlock:IsReady(player) and Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) == 0 and Unit(player):HasBuffs(A.LastStandBuff.ID, true) == 0 and Unit(player):GetRealTimeDMG(3) > 0 then 
         return A.ShieldBlock
     end 
 	
