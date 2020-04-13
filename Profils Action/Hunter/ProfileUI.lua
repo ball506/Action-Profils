@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.2.1 (08.04.2020)",
+    DateTime = "v4.2.3 (13.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -188,6 +188,22 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "AspectoftheWildOnCDRapidReload",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(193530) .. "\non CD Rapid Reload", 
+                        ruRU = A.GetSpellInfo(193530) .. "\non CD Rapid Reload", 
+                        frFR = A.GetSpellInfo(193530) .. "\non CD Rapid Reload", 
+                    }, 
+                    TT = { 
+                        enUS = "Force " .. A.GetSpellInfo(193530) .. " to be used on CD in Dungeon with Rapid Reload azerite enabled.", 
+                        ruRU = "Force " .. A.GetSpellInfo(193530) .. " to be used on CD in Dungeon with Rapid Reload azerite enabled.", 
+                        frFR = "Force " .. A.GetSpellInfo(193530) .. " to be used on CD in Dungeon with Rapid Reload azerite enabled.", 
+                    }, 
+                    M = {},
+                },
             },
             { -- [7] 
                 {
@@ -278,6 +294,22 @@ A.Data.ProfileUI = {
             },
 			{
                 {
+                    E = "Checkbox", 
+                    DB = "MultiShotCheckLatency",
+                    DBV = true,
+                    L = { 
+                        enUS = "Latency Prediction", 
+                        ruRU = "Latency Prediction",
+                        frFR = "Latency Prediction", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to check for latency before refreshing buffs.", 
+                        ruRU = "Enable this to option to check for latency before refreshing buffs.", 
+                        frFR = "Enable this to option to check for latency before refreshing buffs.",  
+                    }, 
+                    M = {},
+                },
+                {
                     E = "Slider",                                                     
                     MIN = 2, 
                     MAX = 5,                            
@@ -311,6 +343,42 @@ A.Data.ProfileUI = {
                     },					
                     M = {},
                 },
+			},
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "MultiShotForceAoE",
+                    DBV = false,
+                    L = { 
+                        enUS = A.GetSpellInfo(2643) .. "\nforce in AoE", 
+                        ruRU = A.GetSpellInfo(2643) .. "\nforce in AoE", 
+                        frFR = A.GetSpellInfo(2643) .. "\nforce in AoE",  
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to option to force usage of " .. A.GetSpellInfo(2643) .. " in AoE.\nIMPORTANT: This will bypass all logic with Rapid Reload azerite!", 
+                        ruRU = "Enable this to option to force usage of " .. A.GetSpellInfo(2643) .. " in AoE.\nIMPORTANT: This will bypass all logic with Rapid Reload azerite!", 
+                        frFR = "Enable this to option to force usage of " .. A.GetSpellInfo(2643) .. " in AoE.\nIMPORTANT: This will bypass all logic with Rapid Reload azerite!", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0.25, 
+                    MAX = 5,                            
+                    DB = "BeastCleaveBuffRefresh",
+                    DBV = 1, -- Set healthpercentage @60% life. 
+					Precision = 1,
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(118455) .. "\nrefresh sec",
+                    },
+                    TT = { 
+                        enUS = "Minimum time remaining on pet buff " .. A.GetSpellInfo(118455) .. " before using " .. A.GetSpellInfo(2643) .. ".\nDefault: 1", 
+                        ruRU = "Minimum time remaining on pet buff " .. A.GetSpellInfo(118455) .. " before using " .. A.GetSpellInfo(2643) .. ".\nDefault: 1", 
+                        frFR = "Minimum time remaining on pet buff " .. A.GetSpellInfo(118455) .. " before using " .. A.GetSpellInfo(2643) .. ".\nDefault: 1", 
+                    },					
+                    M = {},
+                },
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
@@ -323,9 +391,9 @@ A.Data.ProfileUI = {
                         ANY = A.GetSpellInfo(217200) .. "\nrefresh sec",
                     },
                     TT = { 
-                        enUS = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8", 
-                        ruRU = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",  
-                        frFR = "Minimum time remaining on pet buff before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",   
+                        enUS = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8", 
+                        ruRU = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",  
+                        frFR = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",   
                     },					
                     M = {},
                 },

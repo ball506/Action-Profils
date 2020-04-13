@@ -32,6 +32,7 @@ local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local pairs                                     = pairs
 local Pet                                       = LibStub("PetLibrary")
+local InstanceInfo								= Action.InstanceInfo
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -104,7 +105,10 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
 	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
 	Smack                                  = Action.Create({ Type = "Spell", ID = 49966  }), 
 	Claw                                   = Action.Create({ Type = "Spell", ID = 16827  }), 
-	Bite                                   = Action.Create({ Type = "Spell", ID = 17253  }), 		
+	Bite                                   = Action.Create({ Type = "Spell", ID = 17253  }), 
+    SurvivaloftheFittest                   = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),
+    PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK"  }),
+    MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),	
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
@@ -190,8 +194,86 @@ local Temp = {
     TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},	
 }
+
+local GameLocale = GetLocale()    
+local PetLocalization = {
+    [GameLocale] = {},
+    ruRU = {
+	    SPIRITBEAST = "Дух зверя",
+		TENACITY = "Упорство",
+		FEROCITY = "Свирепость",
+		CUNNING = "Хитрость",
+	},
+    enGB = {
+    	SPIRITBEAST = "Spirit Beast",
+		TENACITY = "Tenacity",
+		FEROCITY = "Ferocity",
+		CUNNING = "Cunning",
+	},
+    enUS = {
+    	SPIRITBEAST = "Spirit Beast",
+		TENACITY = "Tenacity",
+		FEROCITY = "Ferocity",
+		CUNNING = "Cunning",
+	},
+    deDE = {
+	    SPIRITBEAST = "Geisterbestie",
+		TENACITY = "Hartnäckigkeit",
+		FEROCITY = "Wildheit",
+		CUNNING = "Gerissenheit",
+	},
+    esES = {
+    	SPIRITBEAST = "Bestia espíritu",
+		TENACITY = "Tenacidad",
+		FEROCITY = "Ferocidad",
+		CUNNING = "Astucia",
+	},
+    esMX = {
+	    SPIRITBEAST = "Bestia espíritu",
+		TENACITY = "Tenacidad",
+		FEROCITY = "Ferocidad",
+		CUNNING = "Astucia",
+	},
+    frFR = {
+	    SPIRITBEAST = "Esprit de bête",
+		TENACITY = "Tenacité",
+		FEROCITY = "Férocité",
+		CUNNING = "Ruse",
+	},
+    itIT = {
+	    SPIRITBEAST = "Bestia Eterea",
+		TENACITY = "Tenacia",
+		FEROCITY = "Ferocia",
+		CUNNING = "Scaltrezza",
+	},
+    ptBR = {
+    	SPIRITBEAST = "Fera Espiritual",
+		TENACITY = "Tenacidade",
+		FEROCITY = "Ferocidade",
+		CUNNING = "Astúcia",
+	},
+    koKR = {
+    	SPIRITBEAST = "야수 정령",
+		TENACITY = "끈기",
+		FEROCITY = "야성",
+		CUNNING = "교활",
+	},
+    zhCN = {
+	    SPIRITBEAST = "灵魂兽",
+		TENACITY = "坚韧",
+		FEROCITY = "狂野",
+		CUNNING = "狡诈",
+	},
+    zhTW = {
+	    SPIRITBEAST = "靈獸",
+		TENACITY = "",
+		FEROCITY = "",
+		CUNNING = "",
+	},
+}
+local LP = setmetatable(PetLocalization[GameLocale], { __index = PetLocalization.enUS })
 
 -- API - Spell
 -- Example of create:
@@ -257,9 +339,13 @@ local function SelfDefensives()
 	
     -- SpiritMend
 	local CurrentCreatureFamily = UnitCreatureFamily(pet)
+	local MainPetName = Pet:GetMainPet() and Pet:GetMainPet().name
+	local GameLocale = GetLocale()    
     local SpiritMend = GetToggle(2, "SpiritMendHP")
-	--Pet:GetMainPet()
-    if     SpiritMend >= 0 and A.SpiritMend:IsReady() and CurrentCreatureFamily == "Esprit de bête" and --and not A.AnimalCompanion:IsSpellLearned()
+
+--print(GetUnitName(pet))
+--print(MainPetName)
+    if     SpiritMend >= 0 and A.SpiritMend:IsReady() and CurrentCreatureFamily == LP.SPIRITBEAST and --GetUnitName(pet) == MainPetName and --and not A.AnimalCompanion:IsSpellLearned()
     (
         (     -- Auto 
             SpiritMend >= 100 and 
@@ -561,7 +647,11 @@ A[3] = function(icon, isMulti)
 	local MinInterrupt = GetToggle(2, "MinInterrupt")
 	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
 	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
-	local AoEMode = A.GetToggle(2, "AoEMode")
+	local AoEMode = GetToggle(2, "AoEMode")
+	local MultiShotCheckLatency = GetToggle(2, "MultiShotCheckLatency")
+	local BeastCleaveBuffRefresh = GetToggle(2, "BeastCleaveBuffRefresh")
+	local MultiShotForceAoE = GetToggle(2, "MultiShotForceAoE")	
+	local AspectoftheWildOnCDRapidReload = GetToggle(2, "AspectoftheWildOnCDRapidReload")	
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -631,18 +721,29 @@ A[3] = function(icon, isMulti)
   		local unit = "target"
    		local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
         local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
-		    
+        local currentSpec = GetSpecialization()
+        local _, currentPetSpecName = GetSpecializationInfo(GetSpecialization(), false, true)
+
 		-- Interrupt
         local Interrupt = Interrupts(unit)
         if Interrupt then 
             return Interrupt:Show(icon)
         end  
-
 		
 		-- Freezing Trap Thing from Beyond
 		if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and not A.LastPlayerCastName == A.FeignDeath:Info() and unit == "mouseover" and A.FreezingTrap:IsReady(player) then
 		    return A.FreezingTrap:Show(icon)
 		end
+			
+	    -- summon_pet if not active
+        if not Pet:IsActive() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
+		    return A.MendPet:Show(icon)
+        end
+		
+	    -- dead pet ?
+        if UnitIsDeadOrGhost(pet) and A.RevivePet:IsReady() and not A.LastPlayerCastName == A.RevivePet:Info() then
+            return A.RevivePet:Show(icon)
+        end
 		
         -- mendpet
         if A.MendPet:IsReady(player) and Pet:IsActive() and Unit(pet):HealthPercent() > 0 and
@@ -669,22 +770,27 @@ A[3] = function(icon, isMulti)
 		then
 		    return A.MendPet:Show(icon)
         end
-			
-	    -- summon_pet if not active
-        if not Pet:IsActive() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
-		    return A.MendPet:Show(icon)
-        end
-		
-	    -- dead pet ?
-        if UnitIsDeadOrGhost(pet) and A.MendPet:IsReady() and not A.LastPlayerCastName == A.MendPet:Info() then
-            return A.MendPet:Show(icon)
-        end
 		
         -- call_action_list,name=purge_dispellmagic
         if inCombat and PurgeDispellMagic(unit) then
             return true
         end
-			
+
+        -- SurvivaloftheFittest
+        if A.SurvivaloftheFittest:IsReady(player) and currentPetSpecName == LP.TENACITY and Unit(player):HasDeBuffs("Rooted") > 0 then
+            return A.SurvivaloftheFittest:Show(icon)
+        end
+
+        -- MastersCall
+        if A.MastersCall:IsReady(player) and currentPetSpecName == LP.CUNNING and Unit(player):HasDeBuffs("Rooted") > 0 then
+            return A.MastersCall:Show(icon)
+        end
+		
+        -- MastersCall mouseover
+        if A.MastersCall:IsReady("mouseover") and currentPetSpecName == LP.CUNNING and Unit("mouseover"):HasDeBuffs("Rooted") > 0 and Unit("mouseover"):GetRange() < 40 then
+            return A.MastersCall:Show(icon)
+        end	
+		
         -- use_items
         -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.up&(prev_gcd.1.aspect_of_the_wild|!equipped.cyclotronic_blast&buff.aspect_of_the_wild.up)&(target.health.pct<35|!essence.condensed_lifeforce.major)|(debuff.razor_coral_debuff.down|target.time_to_die<26)&target.time_to_die>(24*(cooldown.cyclotronic_blast.remains+4<target.time_to_die))
         if inCombat and A.AshvanesRazorCoral:IsReady(unit) and 
@@ -923,7 +1029,41 @@ A[3] = function(icon, isMulti)
 	        end
 			
         end
-       
+
+        -- aspect_of_the_wild
+        if A.AspectoftheWild:IsReady(player) and AspectoftheWildOnCDRapidReload and ((InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) or Unit(unit):IsDummy()) and A.RapidReload:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            return A.AspectoftheWild:Show(icon)
+        end
+		
+        -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
+        if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and MultiShotForceAoE and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and	
+		(
+			-- Range by pet
+			AoEMode == "RangeByPet" and 
+			(
+				Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
+				Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
+				Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
+			)
+			or 
+			-- Range by nameplate
+			AoEMode == "RangeByNameplate" and
+			(					    
+				GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
+			)
+			or
+			-- Range by active enemies CLEU
+			AoEMode == "RangeByCLEU" and
+			(        				
+				MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
+			)	
+            or
+            MultiUnits:GetByRange(MultishotMaxAoERange)	>= 	MultishotMinAoETargets	
+		) 			
+		then
+            return A.Multishot:Show(icon)
+        end
+			
         -- AoE Cleave
         if (isMulti or GetToggle(2, "AoE")) and CanCast and
 	    (
@@ -961,34 +1101,7 @@ A[3] = function(icon, isMulti)
 		   	then
                 return A.BarbedShot:Show(icon) 
             end
-			
-            -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-       --[[     if A.Multishot:IsReady(unit) and (GetGCD() - Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) > 0.25) and 
-			(
-			-- Range by pet
-				AoEMode == "RangeByPet" and 
-				(
-					Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
-					Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
-					Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
-				)
-				or 
-				-- Range by nameplate
-				AoEMode == "RangeByNameplate" and
-				(					    
-					GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
-				)
-				or
-				-- Range by active enemies CLEU
-				AoEMode == "RangeByCLEU" and
-				(        				
-					MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
-				)
-		    )	
-			then
-                return A.Multishot:Show(icon)
-            end
-			]]--
+						
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
             if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
 		    (
@@ -1010,7 +1123,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1118,21 +1231,21 @@ A[3] = function(icon, isMulti)
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-					Pet:GetMultiUnitsBySpell(17253) >= 4 or -- Bite
-					Pet:GetMultiUnitsBySpell(16827) >= 4 or -- Claw
-					Pet:GetMultiUnitsBySpell(49966) >= 4 -- Smack					
+					Pet:GetMultiUnitsBySpell(17253) >= 3 or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= 3 or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= 3 -- Smack					
 				)
 				or 
 				-- Range by nameplate
 				AoEMode == "RangeByNameplate" and
 				(					    
-					GetByRange(4, MultishotMaxAoERange) 
+					GetByRange(3, MultishotMaxAoERange) 
 				)
 				or
 				-- Range by active enemies CLEU
 				AoEMode == "RangeByCLEU" and
 				(        				
-					MultiUnits:GetActiveEnemies() >= 4					     
+					MultiUnits:GetActiveEnemies() >= 3					     
 				)					
 			) 			
 			then
@@ -1167,7 +1280,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- cobra_shot,if=cooldown.kill_command.remains>focus.time_to_max&(active_enemies<3|!azerite.rapid_reload.enabled)
-            if A.CobraShot:IsReady(unit) and 
+            if A.CobraShot:IsReady(unit) and not MultiShotForceAoE and 
 		    (
 			    A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
 			   (
@@ -1278,7 +1391,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and (A.BarbedShot:GetSpellCharges() < 1 or A.PrimalInstincts:GetAzeriteRank() == 0) then
+            if A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
+			(
+			    A.BarbedShot:GetSpellCharges() < 1 
+				or 
+				A.PrimalInstincts:GetAzeriteRank() == 0
+			)
+			then
                 return A.AspectoftheWild:Show(icon)
             end
 			
