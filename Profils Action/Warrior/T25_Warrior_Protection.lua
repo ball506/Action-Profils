@@ -628,7 +628,7 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- thunder_clap
-            if A.ThunderClap:IsReady(player) and GetByRange(2, 8) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(2, 8) then
                 return A.ThunderClap:Show(icon)
             end
 						
@@ -663,7 +663,7 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(player) and (GetByRange(2, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player) and (GetByRange(2, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -673,7 +673,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(player) and GetByRange(1, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
+            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(1, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -705,7 +705,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap
-            if A.ThunderClap:IsReady(player) and GetByRange(1, 8) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(1, 8) then
                 return A.ThunderClap:Show(icon)
             end
 						
