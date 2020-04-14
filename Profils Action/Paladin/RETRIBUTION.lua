@@ -118,9 +118,11 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     TidestormCodex                         = Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
     VialofStorms                           = Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
-    PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorPotionofUnbridledFury          = Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 169299 }), 
+    SuperiorPotionofUnbridledFury          = Create({ Type = "Potion", ID = 168489 }), 
+	PotionofFocusedResolve                 = Create({ Type = "Potion", ID = 168506 }),
+	SuperiorBattlePotionofStrength         = Create({ Type = "Potion", ID = 168500 }),
+	PotionofEmpoweredProximity             = Create({ Type = "Potion", ID = 168529 }),
     PotionTest                             = Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
     GenericTrinket1                        = Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
@@ -662,6 +664,24 @@ A[3] = function(icon, isMulti)
         -- BURST
         if A.BurstIsON(unit) and unit ~= "mouseover" then
 			
+			-- custom potion from UI
+			local PotionSelection = A.GetToggle(2, "PotionSelection")
+			-- unbridled fury
+			if PotionSelection == "UNBRIDLEDFURY" and Action.GetToggle(1, "Potion") and A.PotionofUnbridledFury:IsReady(unit) then
+			    return A.PotionofUnbridledFury:Show(icon)
+			end
+			-- PotionofFocusedResolve
+			if PotionSelection == "FOCUSEDRESOLVE" and Action.GetToggle(1, "Potion") and A.PotionofFocusedResolve:IsReady(unit) then
+			    return A.PotionofFocusedResolve:Show(icon)
+			end
+			-- SuperiorBattlePotionofStrength
+			if PotionSelection == "BATTLEPOTIONOFSTRENGTH" and Action.GetToggle(1, "Potion") and A.SuperiorBattlePotionofStrength:IsReady(unit) then
+			    return A.SuperiorBattlePotionofStrength:Show(icon)
+			end
+			-- PotionofEmpoweredProximity
+			if PotionSelection == "EMPOWEREDPROXIMITY" and Action.GetToggle(1, "Potion") and A.PotionofEmpoweredProximity:IsReady(unit) then
+			    return A.PotionofEmpoweredProximity:Show(icon)
+			end			
             -- potion,if=buff.metamorphosis.remains>25|target.time_to_die<60
             if A.PotionofUnbridledFury:IsReady(unit) and CanCast and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
 			and 

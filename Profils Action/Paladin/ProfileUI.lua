@@ -168,6 +168,37 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 				
             },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Potion Selection -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+					    { text = "UNBRIDLEDFURY", value = "UNBRIDLEDFURY" },
+                        { text = "FOCUSEDRESOLVE", value = "FOCUSEDRESOLVE" },
+                        { text = "BATTLEPOTIONOFSTRENGTH", value = "BATTLEPOTIONOFSTRENGTH" },
+                        { text = "EMPOWEREDPROXIMITY", value = "EMPOWEREDPROXIMITY" },
+                    },
+                    MULT = false,
+                    DB = "PotionSelection",
+                    DBV = "UNBRIDLEDFURY", 
+                    L = { 
+                        ANY = "Select Potion",
+                    }, 
+                    TT = { 
+                        enUS = "Select here the potion that will be used with rotation.\nYou need the potion in bag for it to works.", 
+                        ruRU = "Select here the potion that will be used with rotation.\nYou need the potion in bag for it to works.", 
+                        frFR = "Select here the potion that will be used with rotation.\nYou need the potion in bag for it to works.", 
+                    }, 
+                    M = {},
+                },           
+            }, 
             { -- [7] UnbridledFury 
                 {
                     E = "Header",
