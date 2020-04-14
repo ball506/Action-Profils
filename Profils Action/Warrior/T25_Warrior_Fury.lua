@@ -318,8 +318,6 @@ local function SelfDefensives()
                 -- HP lose per sec >= 20
                 Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
                 Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
-                -- TTD 
-                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
@@ -354,8 +352,6 @@ local function SelfDefensives()
                 -- HP lose per sec >= 20
                 Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 20 or 
                 Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.20 or 
-                -- TTD 
-                Unit(player):TimeToDieX(25) < 5 or 
                 (
                     A.IsInPvP and 
                     (
@@ -381,7 +377,7 @@ local function SelfDefensives()
     end  
 	 
 end 
-SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
@@ -419,7 +415,9 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
+--------------------------------
 --- ======= ACTION LISTS =======
+--------------------------------
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
     --------------------
@@ -617,11 +615,11 @@ A[3] = function(icon, isMulti)
 				)
 				or 
 				(
-				    A.FrothingBerserker:IsSpellLearned() 
+				    A.FrothingBerserker:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 95)
 					or 
-					A.Carnage:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() > 75) 
+					A.Carnage:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 75) 
 					or 
-					A.Massacre:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() > 85)
+					A.Massacre:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 85)
 				)
 			)
 			then
@@ -661,9 +659,9 @@ A[3] = function(icon, isMulti)
             -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<85)|(talent.frothing_berserker.enabled&rage<95)
             if A.RagingBlow:IsReady(unit) and InRange(unit) and not ShouldStop and 
 			(
-			    A.Carnage:IsSpellLearned() 
+			    (A.Carnage:IsSpellLearned() and Player:Rage() < 75) 
 				or 
-				(A.Massacre:IsSpellLearned() and Player:Rage() < 75) 
+				(A.Massacre:IsSpellLearned() and Player:Rage() < 85) 
 				or 
 				(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 95)
 			)
@@ -839,7 +837,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- whirlwind,if=spell_targets.whirlwind>1&!buff.meat_cleaver.up
-            if A.Whirlwind:IsReady(unit) and InRange(unit) and not ShouldStop and A.GetToggle(2, "AoE") and (GetByRange(1, 8, true) and Unit(player):HasBuffs(A.MeatCleaverBuff.ID, true) == 0) then
+            if A.Whirlwind:IsReady(unit) and not ShouldStop and A.GetToggle(2, "AoE") and (GetByRange(1, 8, true) and Unit(player):HasBuffs(A.MeatCleaverBuff.ID, true) == 0) then
                 return A.Whirlwind:Show(icon)
             end
  
