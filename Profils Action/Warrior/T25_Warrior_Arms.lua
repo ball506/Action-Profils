@@ -901,7 +901,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- colossus_smash,if=debuff.colossus_smash.down
-                if A.ColossusSmash:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0) then
+                if A.ColossusSmash:IsReady(unit) and InMelee(unit) and (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0) then
                     return A.ColossusSmash:Show(icon)
                 end
 			
@@ -1045,7 +1045,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- colossus_smash,if=!essence.memory_of_lucid_dreams.major|(buff.memory_of_lucid_dreams.up|cooldown.memory_of_lucid_dreams.remains>10)
-                if A.ColossusSmash:IsReady(unit) and 
+                if A.ColossusSmash:IsReady(unit) and InMelee(unit) and 
 				(
 				    not Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) 
 					or
@@ -1171,7 +1171,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- colossus_smash
-            if A.ColossusSmash:IsReady(unit) then
+            if A.ColossusSmash:IsReady(unit) and InMelee(unit) then
                 return A.ColossusSmash:Show(icon)
             end
 			
