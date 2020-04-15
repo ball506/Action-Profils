@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.6 (15.04.2020)",
+    DateTime = "v4.0.7 (15.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -1092,6 +1092,53 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
+                        ANY = " -- Essences -- ",
+                    },
+                },
+            },	
+			{
+			RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LucidDreamManaPercent",                    
+                    DBV = 85,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(299374) .. "\nMana %",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 10,                            
+                    DB = "LifeBindersInvocationUnits",                    
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(299944) .. "\nunits number",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "LifeBindersInvocationHP",                    
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(299944) .. "\n(%)",                        
+                    },                     
+                    M = {},
+                },
+			},
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
                         ANY = " -- Healing Engine -- ",
                     },
                 },
@@ -1120,7 +1167,7 @@ A.Data.ProfileUI = {
                         ruRU = "Использовать\nЗелье Маны",
 					},
         	        M = {},
-       	        },    
+       	        }, 			
         	    {	    
            	        E = "Checkbox", 
            	        DB = "StartByPreCast",
@@ -1229,11 +1276,25 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- " .. A.GetSpellInfo(20473) .." -- ",
+                        ANY = " -- " .. A.GetSpellInfo(20473) .. " -- ",
                     },
                 },
             },
             { -- [3]     
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "ForceGlimmerOnMaxUnits",
+           	        DBV = true,
+           	        L = { 
+					    enUS = "Force " .. A.GetSpellInfo(287268) .. "\non maximum units",
+                        ruRU = "Force " .. A.GetSpellInfo(287268) .. "\non maximum units",
+	                },
+           	        TT = { 
+					    enUS = "Will try to spread as much as possible your " .. A.GetSpellInfo(20473) .. " to apply up to 8 " .. A.GetSpellInfo(287268) .. " buffs.\nOnly works with Glimmer of Light azerite trait.",
+                        ruRU = "Will try to spread as much as possible your " .. A.GetSpellInfo(20473) .. " to apply up to 8 " .. A.GetSpellInfo(287268) .. " buffs.\nOnly works with Glimmer of Light azerite trait.",
+					},
+           	        M = {},
+        	    },
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
@@ -1601,6 +1662,109 @@ A.Data.ProfileUI = {
                     M = {},
                 },		
 		    },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Overlay -- ",
+                    },
+                },
+            },
+            { -- [2] 2nd Row
+                {
+                    E = "Checkbox", 
+                    DB = "UseAnnouncer",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Smart Announcer", 
+                        ruRU = "Use Smart Announcer",  
+                        frFR = "Use Smart Announcer", 
+                    }, 
+                    TT = { 
+                        enUS = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        ruRU = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                        frFR = "Will make the rotation to announce importants informations.\nUseful to get fast and clear status of what the rotation is doing and why it is doing.\nFor example :\n- Blind on enemy healer to interrupt an incoming heal.\n- Vanish to survive incoming damage.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AnnouncerInCombatOnly",
+                    DBV = true,
+                    L = { 
+                        enUS = "Only use in combat", 
+                        ruRU = "Only use in combat", 
+                        frFR = "Only use in combat",
+                    }, 
+                    TT = { 
+                        enUS = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work with precombat actions if available.\nFor example : Sap out of combat, pre potion.", 
+                        ruRU = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",
+                        frFR = "Will only use Smart Announcer while in combat.\nDisable it will make Smart Announcer work out of combat if precombat actions are available.\nFor example : Sap out of combat, pre potion.",  
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AnnouncerDelay",
+                    DBV = 2, -- 2sec
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Alerts delay (sec)",
+                    },
+                    TT = { 
+                        enUS = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        ruRU = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                        frFR = "Will force a specific delay before the alerts fade.\nDefault value : 2 seconds.", 
+                    }, 					
+                    M = {},
+                },				
+            },	
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Interrupts Settings -- ",
+                    },
+                },
+            },
+            { -- [3] 3rd Row 					
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MinInterrupt",
+                    DBV = 25, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Min interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                    }, 					
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "MaxInterrupt",
+                    DBV = 70, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = "Max interrupt %",
+                    },
+                    TT = { 
+                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
+                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
+                    }, 					
+                    M = {},
+                },
+			},
         },
     },
 	

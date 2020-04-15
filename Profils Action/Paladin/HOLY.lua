@@ -582,7 +582,9 @@ IsSaveManaPhase = A.MakeFunctionCachedStatic(IsSaveManaPhase)
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
+    local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+	local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
+	
     if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
 	    -- Notification					
         Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
@@ -613,6 +615,11 @@ local function Interrupts(unit)
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
+-- Return total active GlimmerofLight Buff for player only
+local function GlimmerofLightBuffCount()
+    return HealingEngine.GetBuffsCount(A.GlimmerofLightBuff.ID, 2, player, true)
+end
+
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
 
@@ -631,6 +638,7 @@ A[3] = function(icon, isMulti)
 	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")	
 	local Emergency = NeedEmergencyHPS()
 	local SuperEmergency = NeedUltraEmergencyHPS()	
+	local GlimmerofLightBuffCount = GlimmerofLightBuffCount()
 	-- ProfileUI vars
 	local DivineShieldHP = GetToggle(2, "DivineShieldHP")
 	local DivineShieldTTD = GetToggle(2, "DivineShieldTTD")
@@ -654,7 +662,10 @@ A[3] = function(icon, isMulti)
 	local BeaconofVirtueHP = GetToggle(2, "BeaconofVirtueHP")
 	local BeaconofVirtueTTD = GetToggle(2, "BeaconofVirtueTTD")	
 	local BeaconWorkMode = GetToggle(2, "BeaconWorkMode")	
-	
+	local LucidDreamManaPercent = GetToggle(2, "LucidDreamManaPercent")	
+	local LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits")	
+	local LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP")	
+	local ForceGlimmerOnMaxUnits = GetToggle(2, "ForceGlimmerOnMaxUnits")
 	
     --------------------
     --- DPS ROTATION ---
@@ -683,12 +694,12 @@ A[3] = function(icon, isMulti)
 		end
 		
 		-- CrusaderStrike
-		if A.CrusaderStrike:IsReady(unit) and InMelee(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
+		if A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
 			return A.CrusaderStrike:Show(icon)
 		end
 		
 		-- Consecration
-		if A.Consecration:IsReady(player) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
+		if A.Consecration:IsReady(player) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
 			return A.Consecration:Show(icon)
 		end
 		
@@ -698,7 +709,7 @@ A[3] = function(icon, isMulti)
 		end
 		
 		-- CrusaderStrike
-		if A.CrusaderStrike:IsReady(unit) and InMelee(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) > 0 then
+		if A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) > 0 then
 			return A.CrusaderStrike:Show(icon)
 		end
 
@@ -752,14 +763,16 @@ A[3] = function(icon, isMulti)
 			Unit(player):TimeToDie() < DivineShieldTTD 
         )			
 		then
+            -- Notification					
+            Action.SendNotification("Emergency " .. A.GetSpellInfo(A.DivineShield.ID), A.DivineShield.ID)
 			return A.DivineShield:Show(icon)
 		end	
 
         -- Tank Emergency
         if A.LayOnHands:IsReady(unit) and Unit(unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
             if GetLowestAlly("TANK", "HP") < LayOnHandsHP then
-				HealingEngine.SetTarget(unit)
-				--ForceHealingTarget("TANK")
+				--HealingEngine.SetTarget(unit)
+				ForceHealingTarget("TANK")
             end
 
             if Unit(unit):GUID() == GetLowestTank("GUID") and
@@ -769,18 +782,23 @@ A[3] = function(icon, isMulti)
 			    Unit(unit):TimeToDie() < LayOnHandsTTD 
             )			
 			then
+                -- Notification					
+                Action.SendNotification("Emergency " .. A.GetSpellInfo(A.LayOnHands.ID), A.LayOnHands.ID)
                 return A.LayOnHands:Show(icon)
             end
         end
 		
 		-- Custom Beacon TANK
-        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "Tanking Units" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
+        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "Tanking Units" then
             if GetLowestAlly("TANK", "HP") < 99 then
-                HealingEngine.SetTarget(unit)
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("TANK")
 			end
-			--ForceHealingTarget(BeaconWorkMode)
+			
 
-            if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() < 99 then
+            if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):HealthPercent() < 99 then
+                -- Notification					
+                Action.SendNotification("Placing " .. A.GetSpellInfo(BeaconofLight) .. " on " .. unit, A.BeaconofLight.ID)	
                 return A.BeaconofLight:Show(icon)
             end
         end
@@ -792,13 +810,14 @@ A[3] = function(icon, isMulti)
         end
 		
 		-- Custom Beacon
-        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "HPS < Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
+        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "HPS < Inc. Damage" then
             if GetLowestAlly("ALL", "HP") < 99 then
-                HealingEngine.SetTarget(unit)
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
 			end
-			--ForceHealingTarget(BeaconWorkMode)
+			
 
-            if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and Unit(unit):GetHPS() < Unit(unit):GetDMG() then
+            if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):GetHPS() < Unit(unit):GetDMG() then
                 return A.BeaconofLight:Show(icon)
             end
         end
@@ -813,26 +832,36 @@ A[3] = function(icon, isMulti)
 		    
 			-- AvengingWrath
 		    if A.AvengingWrath:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingWrath.ID), A.AvengingWrath.ID)			
                 return A.AvengingWrath:Show(icon)
             end
 			
             -- AvengingCrusader
 		    if A.AvengingCrusader:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingCrusader.ID), A.AvengingCrusader.ID)			
                 return A.AvengingCrusader:Show(icon)
             end	
 			
 		    -- HolyAvenger
 		    if A.HolyAvenger:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.HolyAvenger.ID), A.HolyAvenger.ID)
                 return A.HolyAvenger:Show(icon)
             end
 			
             -- AuraMastery
 		    if A.AuraMastery:IsReady(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-		    	return A.AuraMastery:Show(icon)
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)		    	
+				return A.AuraMastery:Show(icon)
 		    end
 			
 		    -- LifeBindersInvocation
-		    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(85, 40) >= 5 then
+		    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)			
 		    	return A.LifeBindersInvocation:Show(icon)
 		    end
 			
@@ -843,30 +872,38 @@ A[3] = function(icon, isMulti)
 	    end
 		
 		-- MemoryofLucidDreams if less than 85% mana left
-		if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * 0.85 then
+		if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * (LucidDreamManaPercent / 100) then
 			return A.MemoryofLucidDreams:Show(icon)
 		end
 		
 	    --Manuel Cooldown and Glimmer of Light
-	    if A.BurstIsON(unit) and A.GlimmerofLight:GetAzeriteRank() >= 3 and Emergency then
+	    if A.BurstIsON(unit) and A.GlimmerofLight:GetAzeriteRank() >= 2 and Emergency then
 	    	
 			-- AvengingWrath
 			if A.AvengingWrath:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingWrath.ID), A.AvengingWrath.ID)
                 return A.AvengingWrath:Show(icon)
             end
 		
 		    -- HolyAvenger
 	    	if A.HolyAvenger:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.HolyAvenger.ID), A.HolyAvenger.ID)
                 return A.HolyAvenger:Show(icon)
             end
 
             -- AuraMastery
 		    if A.AuraMastery:IsReady(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)
 		    	return A.AuraMastery:Show(icon)
 		    end
 		    
-			-- LifeBindersInvocation
-	    	if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(85, 40) >= 5 then
+		    -- LifeBindersInvocation
+		    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)
 		    	return A.LifeBindersInvocation:Show(icon)
 		    end
 		    
@@ -884,6 +921,8 @@ A[3] = function(icon, isMulti)
 		--AuraMastery settings
         if A.AuraMastery:IsReady(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
             if HealingEngine.GetBelowHealthPercentercentUnits(50, 40) > 3 then -- HP, Range
+                -- Notification					
+                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)
                 return A.AuraMastery:Show(icon)
             end
         end
@@ -908,11 +947,24 @@ A[3] = function(icon, isMulti)
 			return A.LightofDawn:Show(icon)
         end
 
+        -- Special Glimmer of Light Buff spreader
+		if A.HolyShock:IsReadyByPassCastGCD(unit) and A.GlimmerofLight:GetAzeriteRank() >= 2 and GlimmerofLightBuffCount < 8 and ForceGlimmerOnMaxUnits then
+		    if IsInGroup() or A.IsInPvP or IsInRaid() then
+                for i = 1, #getmembersAll do 
+                    if Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HealthPercent() <= HolyShockHP and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 and not Unit(getmembersAll[i].Unit):InLOS()  then 
+			            HealingEngine.SetTarget(getmembersAll[i].Unit, 0.5)    -- Add 0.5sec delay in case of emergency switch 
+                        -- Notification					
+                        Action.SendNotification("Spreading " .. A.GetSpellInfo(A.GlimmerofLightBuff.ID), A.GlimmerofLightBuff.ID)							
+                    end				
+                end	
+			end
+		end
+
 		-- Holy Shock
-        if A.HolyShock:IsReady(unit) then
+        if A.HolyShock:IsReadyByPassCastGCD(unit) then
             if GetLowestAlly("ALL", "HP") <= HolyShockHP then
-                HealingEngine.SetTarget(unit)
-				--ForceHealingTarget("ALL")
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and Unit(unit):HasDeBuffs(A.GlimmerofLightBuff.ID, true) == 0 and
@@ -920,6 +972,8 @@ A[3] = function(icon, isMulti)
 		        Unit(unit):HealthPercent() <= HolyShockHP 
 			    or 
 			    Unit(unit):TimeToDie() < HolyShockTTD 
+				or
+				ForceGlimmerOnMaxUnits
             )			
 			then
                 return A.HolyShock:Show(icon)
@@ -927,7 +981,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- Judgment Of Light
-        if (isMulti or A.GetToggle(2, "AoE")) and A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and inCombat then
+        if (isMulti or A.GetToggle(2, "AoE")) and A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and A.IsUnitEnemy(unit) then
             return A.Judgement:Show(icon)
         end
 		
@@ -941,11 +995,11 @@ A[3] = function(icon, isMulti)
 			return A.HolyPrism:Show(icon)
 		end
 		
-        --Bestow Faith
+        -- Bestow Faith
         if A.BestowFaith:IsSpellLearned() and A.BestowFaith:IsReady(unit) then
             if GetLowestAlly("TANK", "HP") <= 95 then
-                HealingEngine.SetTarget(unit)
-				--ForceHealingTarget("TANK")
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("TANK")
             end
             if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() <= 95 then
                 return A.BestowFaith:Show(icon)
@@ -955,8 +1009,8 @@ A[3] = function(icon, isMulti)
 		-- Concentrated Flame Heal
         if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) then
             if GetLowestAlly("ALL", "HP") <= 75 then
-                HealingEngine.SetTarget(unit)
-				--ForceHealingTarget("ALL")
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and Unit(unit):HealthPercent() <= 75 then
@@ -967,8 +1021,8 @@ A[3] = function(icon, isMulti)
 		-- Vitality Conduit
         if A.VitalityConduit:AutoHeartOfAzeroth(unit, true) then
             if GetLowestAlly("TANK", "HP") <= 75 then
-			    HealingEngine.SetTarget(unit)
-                --ForceHealingTarget("TANK")
+			    --HealingEngine.SetTarget(unit)
+                ForceHealingTarget("TANK")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() <= 75 then
@@ -976,10 +1030,29 @@ A[3] = function(icon, isMulti)
             end
         end
 		
+        -- Holy Light
+        if A.HolyLight:IsReady(unit) and not isMoving and Unit(player):HasBuffs(A.InfusionofLight.ID, true) > 0 then
+            if GetLowestAlly("ALL", "HP") <= HolyLightHP then
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
+            end
+
+            if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and
+            (
+		        Unit(unit):HealthPercent() <= HolyLightHP 
+			    or 
+			    Unit(unit):TimeToDie() < HolyLightTTD 
+            )			
+			then
+                return A.HolyLight:Show(icon)
+            end
+        end
+		
         -- Flash of Light
         if A.FlashofLight:IsReady(unit) and not isMoving then
             if GetLowestAlly("ALL", "HP") <= FlashofLightHP then
-                HealingEngine.SetTarget(unit)
+               -- HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and
@@ -994,14 +1067,16 @@ A[3] = function(icon, isMulti)
         end
 
         -- Crusader Strike
-        if (isMulti or A.GetToggle(2, "AoE")) and A.CrusaderStrike:IsReady(unit) and A.CrusadersMight:IsSpellLearned() and not A.HolyShock:IsReady(unit) and A.IsUnitEnemy(unit) and unit ~= "mouseover" then
+        if (isMulti or A.GetToggle(2, "AoE")) and A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and A.CrusadersMight:IsSpellLearned() and not A.HolyShock:IsReady(unit) and A.IsUnitEnemy(unit) --and unit ~= "mouseover" 
+		then
             return A.CrusaderStrike:Show(icon)
         end
 
         --Holy Light
         if A.HolyLight:IsReady(unit) and not isMoving then
             if GetLowestAlly("ALL", "HP") <= HolyLightHP then
-                HealingEngine.SetTarget(unit)
+                --HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and
@@ -1018,7 +1093,8 @@ A[3] = function(icon, isMulti)
         --Light of the Martyr
         if A.LightoftheMartyr:IsReady(unit) and isMoving and Unit(player):HealthPercent() > 75 then
             if GetLowestAlly("ALL", "HP") <= LightoftheMartyrHP then
-                HealingEngine.SetTarget(unit)
+               -- HealingEngine.SetTarget(unit)
+				ForceHealingTarget("ALL")
             end
 
             if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and
