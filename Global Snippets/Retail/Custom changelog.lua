@@ -344,10 +344,11 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Arms Warrior !
 		
-        ***** TEST BUILD *****
-		
 List of latest changes :
 
+- Fixed range check with Whirlwind and Warbreaker 
+- Added Smart reflect option 
+- Added Smart Stormbolt option
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Arms still missing some stuff but will be worked hard till its good ! (Feedback me)
 - Massive update for 8.3
@@ -363,15 +364,13 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Fury Warrior !
 		
-        ***** TEST BUILD *****
-		
 List of latest changes :
 
-- Readjusted WW logic
-- Siegebreaker will now only be used in AoE IF WW buff is up
+- Added Smart reflect option 
+- Added Smart Stormbolt option
+- Reimported discord optimized file
 - Fixed Stormbolt error
 - Adjusted some Rage values thanks to feedback !
-- New : Smart Stormbolt for mythic + (See interrupt tab)
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Better state than Arms (Need feedbacks !)
 - Massive update for 8.3
@@ -389,6 +388,10 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Added Smart reflect option 
+- Added Smart Stormbolt option
+- Added New UI for ShieldBlock
+- Fixed issue with ThunderClap and massive haste amount
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Massive 8.3 update
 - Massive UI rework
@@ -490,6 +493,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Fixed latency check for channeled spells
+- Added missing option for Eyebeam when its totally disabled
 - Added special Twisted Appendage tentacles rotation
 - Improved ConsumeMagic dispell (should dispell more)
 - New : Blocked Spells Status Frame (see 2nd tab)
@@ -592,6 +597,13 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- New Mythic+ settings ! 
+- Aspect of the wild can be forced in Keys with Rapid Reload enabled
+- New AoE optimizations ! 
+- Fixed some wrong Cobra Shot calls
+- New UI settings for Multishot
+- Pet revive and heal should work
+- Added Masters Call and Survival of the Fittest
 - Added RapidReload check with Multishot when 4+ targets are present
 - New : Blocked Spells Status Frame (see 2nd tab)
 - Changed priority of Barbed Shot
@@ -606,8 +618,6 @@ List of latest changes :
 - Added new AoE detection choice for user
 - Added Feign Death to avoid Thing from Beyond
 - Reworked AoE rotation to improve uptime on Frenzy buff
-
-IMPORTANT FOR BEASTMATERY : PLEASE ADD THE PET SPELL : CLAW, BITE OR SMACK DIRECTLY FROM PET SPELLBOOK TO YOUR SPELLBAR !
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
@@ -842,7 +852,13 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Shadow Priest !
 		
-This specialisation is currently outdated :(			
+- New Multidot UI settings
+- More improvements on AoE Cycle
+- Fixed error with mindsear
+- Fixed error with mindflay
+- Improved Shadowvoid usage
+- New reupdated all rotation to T25 APLs
+			
 
 As always, please report on Discord or message me directly if you need anything !
 ]]  
