@@ -93,6 +93,7 @@ local BlackListedTrinkets = {
 	[2] = 169314, -- Azsharas Font of Power
     [3] = 169311, -- AshvanesRazorCoral
 	[4] = 174044, -- Humming Black Dragonscale
+	[5] = 158367, -- MerekthasFang
 
 }
 
