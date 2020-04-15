@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.5 (25.03.2020)",
+    DateTime = "v4.0.6 (15.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -999,8 +999,611 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+        },	
+        [ACTION_CONST_PALADIN_HOLY] = {          
+            LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },	
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- General -- ",
+                    },
+                },
+            },
+            { -- [1]                             
+                {
+                    E = "Checkbox", 
+                    DB = "mouseover",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use\n@mouseover", 
+                        ruRU = "Использовать\n@mouseover", 
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions for @mouseover units\nExample: Resuscitate, Healing", 
+                        ruRU = "Разблокирует использование действий для @mouseover юнитов\nНапример: Воскрешение, Хилинг", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "targettarget",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use\n@targettarget", 
+                        ruRU = "Использовать\n@targettarget", 
+                    }, 
+                    TT = { 
+                        enUS = "Will unlock use actions\nfor enemy @targettarget units", 
+                        ruRU = "Разблокирует использование\nдействий для вражеских @targettarget юнитов", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "AoE",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use\nAoE", 
+                        ruRU = "Использовать\nAoE", 
+                    }, 
+                    TT = { 
+                        enUS = "Enable multiunits actions", 
+                        ruRU = "Включает действия для нескольких целей", 
+                    }, 
+                    M = {},
+                },       
+            }, 		
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Racials -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstHealing",                    
+                    DBV = 100,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Healing HP %)",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstDamaging",                    
+                    DBV = 100,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Damaging HP %)",                        
+                    },                     
+                    M = {},
+                },
+			},
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Healing Engine -- ",
+                    },
+                },
+            },	
+   	        { -- [7] 
+                {
+                    E = "Checkbox", 
+                    DB = "ManaManagement",
+                    DBV = false,
+                    L = { 
+                        enUS = "Boss Fight\nManaSave\n(PvE)", 
+                        ruRU = "Бой с Боссом\nУправление Маной\n(PvE)",
+                    }, 
+                    TT = { 
+                        enUS = "Enable to keep small mana save tricks during boss fight\nMana will keep going to save phase if Boss HP >= our Mana", 
+                        ruRU = "Включает сохранение малого количества маны с помощью некоторых манипуляций в течении боя против Босса\nМана будет переходить в фазу сохранения если ХП Босса >= нашей Маны", 
+                    }, 
+                    M = {},
+                }, 			
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "ManaPotion",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Use\nMana Potion",
+                        ruRU = "Использовать\nЗелье Маны",
+					},
+        	        M = {},
+       	        },    
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "StartByPreCast",
+           	        DBV = true,
+           	        L = { 
+					    enUS = "Begin Combat\nBy PreCast",
+                        ruRU = "Начинать Бой\nЗаранее произнося", 
+	                },
+           	        TT = { 
+					    enUS = "Will start rotation on enemy by available longer\ncasting spell depended on your spec",
+                        ruRU = "Будет начинать ротация на противнике с доступной\nдлинной произносящейся способности в зависимости от спека",
+					},
+           	        M = {},
+        	    },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {   
+                        { text = "Tanking Units", value = "Tanking Units" },                    
+                        { text = "Mostly Inc. Damage", value = "Mostly Inc. Damage" },
+                        { text = "HPS < Inc. Damage", value = "HPS < Inc. Damage" },
+                    },
+                    DB = "BeaconWorkMode",
+                    DBV = "Tanking Units",
+                    L = { 
+                        ANY = A.GetSpellInfo(53563) .. "\nMode",
+                    }, 
+                    TT = { 
+                        enUS = "These conditions will be skiped if unit will dying in emergency (critical) situation", 
+                        ruRU = "Эти условия будут пропущены если юнит будет умирать в чрезвычайной (критической) ситуациии", 
+                    },                    
+                    M = {},
+                },
+   	        },	
+		    -- Divine Shield 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(642) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "DivineShieldHP",
+                    DBV = 25,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(642) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "DivineShieldTTD",
+                    DBV = 1,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(642) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },	
+		    -- Lay on Hands 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(633) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LayOnHandsHP",
+                    DBV = 15,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(633) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "LayOnHandsTTD",
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(633) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Holy Shock 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(20473) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "HolyShockHP",
+                    DBV = 90,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(20473) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                             
+                    DB = "HolyShockTTD",
+                    DBV = 4,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(20473) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Light of Dawn  
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(85222) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LightofDawnHP",
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(85222) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                             
+                    DB = "LightofDawnTTD",
+                    DBV = 4,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(85222) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                             
+                    DB = "LightofDawnUnits",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(85222) .. " units",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Flash of Light  
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(19750) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "FlashofLightHP",
+                    DBV = 75,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(19750) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "FlashofLightTTD",
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(19750) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Holy Light 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(82326) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                             
+                    DB = "HolyLightHP",
+                    DBV = 91,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(82326) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                             
+                    DB = "HolyLightTTD",
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(82326) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Light of the Martyr  
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(183998) .." -- ",
+                    },
+                },
+            },
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LightoftheMartyrHP",
+                    DBV = 40,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(183998) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                             
+                    DB = "LightoftheMartyrTTD",
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(183998) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Light's Hammer (talent) 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(114158) .." -- ",
+                    },
+                },
+            },			
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LightsHammerHP",
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(114158) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                             
+                    DB = "LightsHammerTTD",
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(114158) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Holy Prism(talent) 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(114165) .." -- ",
+                    },
+                },
+            },			
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "HolyPrismHP",
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(114165) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "HolyPrismTTD",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(114165) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+            },		
+		    -- Beacon of Virtue(talent)
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(200025) .." -- ",
+                    },
+                },
+            },	
+            { -- [3]  
+            RowOptions = { margin = { top = 10 } },			
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BeaconofVirtueHP",
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "BeaconofVirtueTTD",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                             
+                    DB = "BeaconofVirtue",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " units",                        
+                    }, 
+                    M = {},
+                },
+            },		
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию", 
+                    }, 
+                    M = {},
+                },            
+            }, 	
+            { -- Trinkets
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },	
+            {     			
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Always", value = "Always" },
+                        { text = "Burst Synchronized", value = "BurstSync" },                    
+                    },
+                    DB = "TrinketBurstSyncUP",
+                    DBV = "Always",
+                    L = { 
+					    enUS = "Damager: How to use trinkets",
+                        ruRU = "Урон: Как использовать аксессуары", 
+					},
+                    TT = { 
+					    enUS = "Always: On cooldown\nBurst Synchronized: By Burst Mode in 'General' tab",
+                        ruRU = "Always: По доступности\nBurst Synchronized: От Режима Бурстов во вкладке 'Общее'", 
+					}, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "TrinketBurstHealing",
+                    DBV = 100,
+                    ONLYOFF = true,
+                    L = { 
+					    enUS = "Healer: Target Health (%)",
+                        ruRU = "Лекарь: Здоровье Цели (%)", 
+	                },
+                    M = {},
+                },		
+		    },
         },
     },
+	
     -- MSG Actions UI
     [7] = {
         [ACTION_CONST_PALADIN_RETRIBUTION] = { 
@@ -1042,6 +1645,44 @@ A.Data.ProfileUI = {
             ]] },
         },
         [ACTION_CONST_PALADIN_PROTECTION] = { 
+            -- MSG Action Pet Dispell
+            ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
+                return     A.DispellMagic:IsReady(unit, true) and 
+                        (
+                            ( 
+                                not Unit(thisunit):IsEnemy() and 
+                                (
+                                    (
+                                        not InPvP() and 
+                                        Env.Dispel(unit)
+                                    ) or 
+                                    (
+                                        InPvP() and 
+                                        EnemyTeam():PlayersInRange(1, 5)
+                                    ) 
+                                )
+                            ) or 
+                            ( 
+                                Unit(thisunit):IsEnemy() and 
+                                Unit(thisunit):GetRange() <= 5 and 
+                                Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"TotalImun", "DeffBuffsMagic"}, true) 
+                            )                
+                        ) 
+            ]] },
+            -- MSG Action Pet Kick
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+            -- MSG Action Fear
+            ["kick"] = { Enabled = true, Key = "Pet Kick", LUA = [[
+                return  SpellInRange(thisunit, Action[PlayerSpec].SpellLock.ID) and 
+                        select(2, CastTime(nil, thisunit)) > 0 and 
+                        Action[PlayerSpec].SpellLock:AbsentImun(thisunit, {"KickImun", "TotalImun", "DeffBuffsMagic"}, true) 
+            ]] },
+        },
+        [ACTION_CONST_PALADIN_HOLY] = { 
             -- MSG Action Pet Dispell
             ["dispell"] = { Enabled = true, Key = "PetDispell", LUA = [[
                 return     A.DispellMagic:IsReady(unit, true) and 
