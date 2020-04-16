@@ -15,6 +15,7 @@ local BurstIsON									= Action.BurstIsON
 local AuraIsValid								= Action.AuraIsValid
 local InterruptIsValid							= Action.InterruptIsValid
 local FrameHasSpell								= Action.FrameHasSpell
+local IsSpellInRange                            = A.IsSpellInRange
 local Azerite									= LibStub("AzeriteTraits")
 local Utils										= Action.Utils
 local TeamCache									= Action.TeamCache
@@ -88,7 +89,7 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
 	BestowFaith                            = Create({ Type = "Spell", ID = 223306 }),
 	AvengingCrusader                       = Create({ Type = "Spell", ID = 216331 }),
 	JudgmentOfLightHoly                    = Create({ Type = "Spell", ID = 183778 }),
-	BlessingOfSacrifice                    = Create({ Type = "Spell", ID = 6940 }),
+	BlessingofSacrifice                    = Create({ Type = "Spell", ID = 6940 }),
 	BeaconOfFaith                          = Create({ Type = "Spell", ID = 156910 }),
 	JudgementofLight                       = Create({ Type = "Spell", ID = 183778 }),
 	CrusadersMight                         = Create({ Type = "Spell", ID = 196926 }),
@@ -113,6 +114,8 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     -- Azerite
     DivineRevelations                      = Create({ Type = "Spell", ID = 275469 }),
 	GlimmerofLight                         = Create({ Type = "Spell", ID = 287268 }),
+	-- PvP
+	UltimateSacrifice                      = Create({ Type = "Spell", ID = 199452 }),
     -- Healing
     HolyLight                              = Create({ Type = "Spell", ID = 82326 }),
     LayOnHands                             = Create({ Type = "Spell", ID = 633 }),
@@ -426,6 +429,7 @@ local Temp                                     = {
     TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
     TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
     TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
 }
 
 local GetTotemInfo, IsMouseButtonDown, UnitIsUnit = GetTotemInfo, IsMouseButtonDown, UnitIsUnit
@@ -585,13 +589,13 @@ local function Interrupts(unit)
     local MinInterrupt = A.GetToggle(2, "MinInterrupt")
 	local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
 	
-    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
 	    -- Notification					
         Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
         return A.Rebuke
     end 
     
-    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
 	    -- Notification					
         Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
         return A.HammerofJustice              
@@ -620,6 +624,137 @@ local function GlimmerofLightBuffCount()
     return HealingEngine.GetBuffsCount(A.GlimmerofLightBuff.ID, 2, player, true)
 end
 
+-- Return total active Beacon of Light Buff for player only
+local function ActiveBeacon()
+    return HealingEngine.GetBuffsCount(A.BeaconofLight.ID, 2, player, true)
+end
+
+-- Return valid members that can be healed
+--@parameter IsPlayer : return only members that are real players
+local function GetValidMembers(IsPlayer)
+    local HealingEngineMembersALL = A.HealingEngine.GetMembersAll()
+	if not IsPlayer then 
+		return #HealingEngineMembersALL
+	else 
+		local total = 0 
+		if #HealingEngineMembersALL > 0 then 
+			for i = 1, #HealingEngineMembersALL do
+				if Unit(HealingEngineMembersALL[i].Unit):IsPlayer() then
+					total = total + 1
+				end
+			end 
+		end 
+		return total 
+	end 
+end
+
+local function SacrificeAble(unit)
+    -- Function to check if we can use sacriface with max profit time duration on unit
+    local dmg, u_ttd, bubble, shield = Unit(unit):GetDMG() * 0.7, Unit(unit):TimeToDie() * 0.7, Unit(player):HasBuffs(642, true), 1
+    -- -20% incoming damage
+    local shield_buff = Unit(player):HasBuffs(498, true)
+    if shield_buff > 0 then 
+        shield = dmg * ( 0.2 - (0.2 - (shield_buff * 0.2 / 8)) )
+    end
+    
+    local p_ttd, p_chp = 0, UnitHealth("player")
+    if not A.UltimateSacrifice:IsSpellLearned() or not A.IsInPvP then
+        -- Real player's ttd to lower 20% under sacriface and shield buff
+        local p_mhp = UnitHealthMax("player") * 0.2
+        if p_chp > p_mhp and dmg > 0 and u_ttd > 0 then 
+            local muliplier = 0.75
+            -- If Protection then 100% receiving damage by Sacriface
+            if Unit(player):HasSpec(66) then 
+                muliplier = 1
+            end     
+            p_ttd = math.abs(        
+                -- Current HP without 20% / incdmg by Sacriface + already exist incdmg for yourself
+                (p_chp - p_mhp) /
+                (( dmg * muliplier * (1 - (GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)/2/100)) ) + Unit(player):GetDMG() )
+            )     
+        end
+    else
+        p_ttd = math.abs(        
+            -- Current HP / incdmg by Sacriface + already exist incdmg for yourself
+            p_chp /
+            (( dmg * (1 - (GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)/2/100)) ) + Unit(player):GetDMG() )
+        )    
+    end 
+    
+    if bubble > 0 then 
+        p_ttd = p_ttd + bubble
+    end
+    
+    return p_ttd + GetCurrentGCD() >= u_ttd, p_ttd
+end
+
+-- Hand of Sacrifice
+local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)  
+    return 
+    UnitExists(unit) and 
+    UnitIsPlayer(unit) and
+    not UnitIsUnit(unit, "player") and
+    not Unit(unit):InLOS() and 
+    (UnitInRaid(unit) or UnitInParty(unit)) and
+    --Env.SpellUsable(6940) and 
+	A.BlessingofSacrifice:IsReady(unit) and
+    IsSpellInRange(6940, unit) and 
+    Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone 
+    UnitHealth("player") > UnitHealthMax("player") * 0.2 and       
+    (
+        -- MSG System TO ACTION
+        --(
+        --    Icon and 
+         --   MacroSpells(Icon, "HoS") 
+        --) or  
+        -- HoS conditions 
+        (
+           -- HoS_toggle and 
+            SacrificeAble(unit) and 
+            Unit(unit):HasBuffs(1022, true) == 0 and -- BoP
+			-- Check args
+            (
+                not IsRealDMG or
+                Unit(unit):GetRealTimeDMG() > 0
+            ) and 
+            ( 
+                not IsDeffensed or 
+                Unit(unit):HasBuffs("DeffBuffs", true) == 0
+            ) and 
+            -- Check if unit don't will be killed 
+            (
+				not Unit(player):HasSpec(65) or -- Holy
+                Unit(unit):TimeToDie() >= 4 
+            ) and 
+            -- Conditions
+            (
+                -- Check for HP arg
+                ( 
+                    hp and 
+                    UnitHealth(unit) <= UnitHealthMax(unit) * (hp / 100)
+                ) or 
+                -- Another check 
+                (
+                    Unit(unit):TimeToDie() < 14 and 
+                    (
+                        (
+                            UnitHealth(unit) <= UnitHealthMax(unit) * 0.35 and 
+                            (
+                                Unit(unit):GetHEAL()  * 1.4 < Unit(unit):GetDMG() or
+                                UnitHealth(unit) <= Unit(unit):GetDMG() * 3.5 
+                            ) 
+                        ) or 
+                        -- if unit has 35% dmg per sec 
+                        Unit(unit):GetRealTimeDMG() >= UnitHealthMax(unit) * 0.35 or 
+                        -- if unit has sustain 20% dmg per sec 
+                        Unit(unit):GetDMG() >= UnitHealthMax(unit) * 0.2
+                    )
+                )
+            )
+        )
+    )
+end 
+
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
 
@@ -639,6 +774,7 @@ A[3] = function(icon, isMulti)
 	local Emergency = NeedEmergencyHPS()
 	local SuperEmergency = NeedUltraEmergencyHPS()	
 	local GlimmerofLightBuffCount = GlimmerofLightBuffCount()
+	local ActiveBeacon = ActiveBeacon()
 	-- ProfileUI vars
 	local DivineShieldHP = GetToggle(2, "DivineShieldHP")
 	local DivineShieldTTD = GetToggle(2, "DivineShieldTTD")
@@ -666,6 +802,20 @@ A[3] = function(icon, isMulti)
 	local LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits")	
 	local LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP")	
 	local ForceGlimmerOnMaxUnits = GetToggle(2, "ForceGlimmerOnMaxUnits")
+	local AuraMasteryAoETTD = GetToggle(2, "AuraMasteryAoETTD")
+	local AuraMasteryAfter = GetToggle(2, "AuraMasteryAfter")
+	local AuraMasteryBelowHealthPercent = GetToggle(2, "AuraMasteryBelowHealthPercent")
+	local AuraMasteryLast = GetToggle(2, "AuraMasteryLast")
+	local AuraMasteryUnits = GetToggle(2, "AuraMasteryUnits")
+	
+    -- Healing Engine vars
+	local ReceivedLast5sec = LastIncDMG(player, 5)
+	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
+	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
+	local TeamCacheEnemySize = TeamCache.Enemy.Size
+	local TeamCacheFriendlySize = TeamCache.Friendly.Size
+	local TeamCacheFriendlyType = TeamCache.Friendly.Type or "none" 
+
 	
     --------------------
     --- DPS ROTATION ---
@@ -682,38 +832,8 @@ A[3] = function(icon, isMulti)
         if inCombat and Interrupt then 
             return Interrupt:Show(icon)
         end 
-        
-		-- Judgement
-		if A.Judgement:IsReady(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
-			return A.Judgement:Show(icon)
-		end
 		
-		-- HolyShock
-		if A.HolyShock:IsReady(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
-			return A.HolyShock:Show(icon)
-		end
-		
-		-- CrusaderStrike
-		if A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
-			return A.CrusaderStrike:Show(icon)
-		end
-		
-		-- Consecration
-		if A.Consecration:IsReady(player) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
-			return A.Consecration:Show(icon)
-		end
-		
-		-- Judgement
-		if A.Judgement:IsReady(unit) and InMelee(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) > 0 then
-			return A.Judgement:Show(icon)
-		end
-		
-		-- CrusaderStrike
-		if A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) > 0 then
-			return A.CrusaderStrike:Show(icon)
-		end
-
-        -- Bursting 
+         -- Bursting 
         if A.BurstIsON(unit) and InMelee(unit) then 
             
             if Unit(unit):HealthPercent() <= A.GetToggle(2, "RacialBurstDamaging") then 
@@ -744,7 +864,152 @@ A[3] = function(icon, isMulti)
             if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DEFF" then 
                 return A.Trinket2:Show(icon)
             end     
-        end  
+        end 
+		
+        -- HPvE #1 Judgment
+		if A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and
+        (
+            -- MouseOver
+            (      
+                GetToggle(2, "mouseover") and
+                A.IsUnitEnemy("mouseover") and        
+                SpellInRange("mouseover", 20271) and
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and
+                Unit("mouseover"):PT(196941, "debuff") and       				
+                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true) 
+            ) or 
+            -- Target
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame()
+                ) and       
+                A.IsUnitEnemy("target") and        
+                SpellInRange("target", 20271) and
+                Unit("target"):HasBuffs(33786, true) == 0 and 
+                Unit("target"):PT(196941, "debuff") and        
+                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true) 
+            ) or 
+            -- TargetTarget
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy("mouseover")
+                ) and
+                not A.IsUnitEnemy("target") and
+                A.IsUnitEnemy("targettarget") and
+                SpellInRange("targettarget", 20271) and
+                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
+                Unit("targettarget"):PT(196941, "debuff") and        
+                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+            ) 
+        )
+        then
+			return A.Judgement:Show(icon)
+		end
+		
+		-- HolyShock
+		if A.HolyShock:IsReady(unit) and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
+			return A.HolyShock:Show(icon)
+		end
+		
+		-- Crusader Strike
+		if A.CrusaderStrike:IsReady(unit) and A.CrusadersMight:IsSpellLearned() and
+        -- Holy Shock
+        A.HolyShock:GetCooldown() > GetCurrentGCD() and
+        (
+            -- MouseOver
+            (      
+                GetToggle(2, "mouseover") and
+                A.IsUnitEnemy("mouseover") and        
+                SpellInRange("mouseover", 35395) and
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and               
+                A.CrusaderStrike:AbsentImun("mouseover", Temp.TotalAndPhys, true)
+            ) or 
+            -- Target
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() 
+                ) and        
+                A.IsUnitEnemy("target") and        
+                SpellInRange("target", 35395) and
+                Unit("target"):HasBuffs(33786, true) == 0 and                
+                A.CrusaderStrike:AbsentImun("target", Temp.TotalAndPhys, true)  
+            ) or
+            -- TargetTarget
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy("mouseover")
+                ) and
+                not A.IsUnitEnemy("target") and
+                A.IsUnitEnemy("targettarget") and
+                SpellInRange("targettarget", 35395) and
+                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone             
+                A.CrusaderStrike:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+            ) 
+        )
+		then
+			return A.CrusaderStrike:Show(icon)
+		end
+		
+		-- Consecration
+		if A.Consecration:IsReady(player) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
+			return A.Consecration:Show(icon)
+		end
+		
+		-- HPvE #2 Judgment
+		if A.Judgement:IsReady(unit) and InMelee(unit) and 
+        (
+            -- MouseOver
+            (      
+                GetToggle(2, "mouseover") and
+                A.IsUnitEnemy("mouseover") and        
+                SpellInRange("mouseover", 20271) and
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and
+				Unit("mouseover"):HasDeBuffs(A.Judgement.ID, "player", true) <= CurrentTimeGCD() and
+                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true)  
+            ) or 
+            -- Target
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy("mouseover")
+                ) and        
+                A.IsUnitEnemy("target") and        
+                SpellInRange("target", 20271) and
+                Unit("target"):HasBuffs(33786, true) == 0 and 
+                Unit("target"):HasDeBuffs(A.Judgement.ID, "player", true) <= CurrentTimeGCD() and 
+                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true)   
+            ) or
+            -- TargetTarget
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy("mouseover")
+                ) and
+                not A.IsUnitEnemy("target") and
+                A.IsUnitEnemy("targettarget") and
+                SpellInRange("targettarget", 20271) and
+                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
+                Unit("targettarget"):HasDeBuffs(A.Judgement.ID, "player", true) <= CurrentTimeGCD() and
+                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+            ) 
+        )		
+		then
+			return A.Judgement:Show(icon)
+		end
+		
+		-- CrusaderStrike
+		if A.CrusaderStrike:IsReady(unit) and Unit(unit):GetRange() <= 8 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) > 0 then
+			return A.CrusaderStrike:Show(icon)
+		end
+ 
     end
     DamageRotation = Action.MakeFunctionCachedDynamic(DamageRotation)
 	
@@ -754,9 +1019,70 @@ A[3] = function(icon, isMulti)
     local function HealingRotation(unit)
 	    -- Current Tanks table
 	    local CurrentTanks = HealingEngine.GetMembersByMode("TANK")
+
+        -- Passive Divine Shield
+        if A.DivineShield:IsReady(player) and combatTime > 0 and
+        (
+            not Unit(player):HasSpec(65) or -- Holy
+            (
+                not UnitIsUnit("target", "player") and
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not UnitIsUnit("mouseover", "player")
+                )        
+            ) or
+            (
+                Unit("player"):TimeToDieX(10) < 3 and
+                (
+                    MultiUnits:GetByRange(10, 1) or
+                    EnemyTeam("DAMAGER"):PlayersInRange(1, 10)
+                ) and
+                Unit("player"):GetDMG() > Unit("player"):GetHPS() 
+            )
+        ) and
+        (
+            not Unit(player):HasSpec(66) or -- Protection
+            Unit(player):HasDeBuffs(31850, true) <= 0.1 -- Ardent Defender    
+        ) and
+        Unit(player):HasDeBuffs(A.Forbearance.ID, true) == 0 and -- Forbearance
+        (
+            (
+                Unit("player"):HealthPercent() < DivineShieldHP and
+                Unit("player"):TimeToDieX(20) <= GCD() * 1.5 + CurrentTimeGCD()
+            ) or
+            (
+                A.IsInPvP and
+                Unit(player):IsFocused() and
+                Unit("player"):HealthPercent() < 35 and
+                not Unit("player"):HasFlags() and
+                (
+                    Unit("player"):HealthPercent() <= 21 or
+                    (                
+                        Unit("player"):HasBuffs("DeffBuffs") == 0 and
+                        FriendlyTeam("HEALER"):GetCC() and
+                        Unit("player"):IsExecuted()
+                    ) or            
+                    (
+                        Unit("player"):UseDeff() and
+                        Unit(player):TimeToDie() <= GCD() * 3
+                    )
+                )
+            ) 
+        ) and
+        (
+            Unit("player"):HasBuffs("DeffBuffs") <= CurrentTimeGCD() or
+            Unit("player"):HealthPercent() < 15   
+        )
+		then
+            -- Notification					
+            Action.SendNotification("Emergency " .. A.GetSpellInfo(A.DivineShield.ID), A.DivineShield.ID)
+			return A.DivineShield:Show(icon)
+		end	
+
 		
 		-- DivineShield Save yourself
-		if A.DivineShield:IsReady(unit) and Unit(player):HasDeBuffs(A.Forbearance.ID, true) == 0 and
+	--[[	if A.DivineShield:IsReady(player) and Unit(player):HasDeBuffs(A.Forbearance.ID, true) == 0 and
         (
 		    Unit(player):HealthPercent() <= DivineShieldHP 
 			or 
@@ -766,10 +1092,55 @@ A[3] = function(icon, isMulti)
             -- Notification					
             Action.SendNotification("Emergency " .. A.GetSpellInfo(A.DivineShield.ID), A.DivineShield.ID)
 			return A.DivineShield:Show(icon)
-		end	
+		end	]]--
 
         -- Tank Emergency
-        if A.LayOnHands:IsReady(unit) and Unit(unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
+        -- HPvE Lay on Hands
+        if A.LayOnHands:IsReady(unit) and A.Zone ~= "arena" and not Action.InstanceInfo.isRated and combatTime > 0 and
+        (
+            -- MouseOver
+            (
+                GetToggle(2, "mouseover") and
+                UnitExists("mouseover") and 
+                A.MouseHasFrame() and                       
+                not A.IsUnitEnemy("mouseover") and 
+                Unit("mouseover"):HealthPercent() < 30 and        
+                (
+                    A.PredictHeal("LayonHands", "mouseover") or           
+                    UnitHealth("mouseover") <= UnitHealthMax("mouseover") * 0.17
+                ) and
+                UnitIsPlayer("mouseover") and  
+                SpellInRange("mouseover", 633) and 
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and
+                -- Forbearance
+                Unit("mouseover"):HasDeBuffs(A.Forbearance.ID, true) == 0 
+            ) or 
+            -- Target
+            (
+                (
+                    not GetToggle(2, "mouseover") or 
+                    not UnitExists("mouseover")
+                ) and        
+                not A.IsUnitEnemy("target") and
+                Unit("target"):HealthPercent() < 30 and 
+                (
+                    A.PredictHeal("LayonHands", "target") or            
+                    UnitHealth("target") <= UnitHealthMax("target") * 0.17
+                ) and
+                UnitIsPlayer("target") and  
+                SpellInRange("target", 633) and
+                Unit("target"):HasBuffs(33786, true) == 0 and
+                -- Forbearance
+                Unit("target"):HasDeBuffs(A.Forbearance.ID, true) == 0 
+            )
+        )
+		then
+            -- Notification					
+            Action.SendNotification("Emergency " .. A.GetSpellInfo(A.LayOnHands.ID), A.LayOnHands.ID)
+            return A.LayOnHands:Show(icon)
+        end
+
+    --[[    if A.LayOnHands:IsReady(unit) and Unit(unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
             if GetLowestAlly("TANK", "HP") < LayOnHandsHP then
 				--HealingEngine.SetTarget(unit)
 				ForceHealingTarget("TANK")
@@ -787,21 +1158,25 @@ A[3] = function(icon, isMulti)
                 return A.LayOnHands:Show(icon)
             end
         end
-		
-		-- Custom Beacon TANK
-        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "Tanking Units" then
-            if GetLowestAlly("TANK", "HP") < 99 then
-                --HealingEngine.SetTarget(unit)
-				ForceHealingTarget("TANK")
-			end
-			
-
-            if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):HealthPercent() < 99 then
+]]--
+        -- Custom Beacon TANK
+		local getmembersAll = HealingEngine.GetMembersAll()
+		if BeaconWorkMode == "Tanking Units" and not Unit(unit):IsTank() then
+            for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and not Unit(unit):InLOS() then 
+		  	        if Unit(getmembersAll[i].Unit):IsTank() then
+		                HealingEngine.SetTarget(getmembersAll[i].Unit, 1)    -- Add 1sec delay in case of emergency switch              					
+                    end					
+                end				
+            end	
+        else
+		    if BeaconWorkMode == "Tanking Units" and Unit(unit):IsTank() and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and ActiveBeacon == 0
+			then 
                 -- Notification					
-                Action.SendNotification("Placing " .. A.GetSpellInfo(BeaconofLight) .. " on " .. unit, A.BeaconofLight.ID)	
-                return A.BeaconofLight:Show(icon)
-            end
-        end
+                Action.SendNotification("Placing " .. A.GetSpellInfo(A.BeaconofLight.ID) .. " on " .. UnitName(unit), A.BeaconofLight.ID)		
+		        return A.BeaconofLight:Show(icon)
+		    end
+		end
 		
 		-- Custom Beacon
         if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "Mostly Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
@@ -823,109 +1198,346 @@ A[3] = function(icon, isMulti)
         end
 		
 		--Dispell
-		--if not Player:CanAttack(Target) and A.Cleanse:IsReady(unit) and Target:HasDispelableDebuff("Magic", "Poison", "Disease") then
-			--return A.Cleanse:Show(icon)
-		--end
+		if A.Cleanse:IsReady(unit) and AuraIsValid(unit, "UseDispel", "Dispel") then
+			return A.Cleanse:Show(icon)
+		end
 
-        --Manuel Cooldown and not Glimmer of Light
-	    if A.BurstIsON(unit) and A.GlimmerofLight:GetAzeriteRank() < 3 and Emergency then
-		    
-			-- AvengingWrath
-		    if A.AvengingWrath:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingWrath.ID), A.AvengingWrath.ID)			
-                return A.AvengingWrath:Show(icon)
-            end
-			
-            -- AvengingCrusader
-		    if A.AvengingCrusader:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingCrusader.ID), A.AvengingCrusader.ID)			
-                return A.AvengingCrusader:Show(icon)
-            end	
-			
-		    -- HolyAvenger
-		    if A.HolyAvenger:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.HolyAvenger.ID), A.HolyAvenger.ID)
-                return A.HolyAvenger:Show(icon)
-            end
-			
-            -- AuraMastery
-		    if A.AuraMastery:IsReady(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)		    	
-				return A.AuraMastery:Show(icon)
-		    end
-			
-		    -- LifeBindersInvocation
-		    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)			
-		    	return A.LifeBindersInvocation:Show(icon)
-		    end
-			
-		    -- OverchargeMana
-		    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) then
-		    	return A.OverchargeMana:Show(icon)
-		    end
+        -- HolyAvenger
+		if A.HolyAvenger:IsReady(unit) and A.BurstIsON(unit) and A.HolyAvenger:IsSpellLearned() and combatTime > 8 and
+        -- AW Original
+        Unit("player"):HasBuffs(A.AvengingWrath.ID, "player", true) == 0 and
+        (       
+            -- HealingEngine conditions for burst raid/party heal
+            (
+                GetToggle(2, "AoE") and
+                (
+                    (
+                        not GetToggle(2, "mouseover") or
+                        not A.MouseHasFrame() or
+                        not A.IsUnitEnemy("mouseover")
+                    ) and
+                    not A.IsUnitEnemy("target") 
+                ) and
+                (            
+                    (
+                        TeamCacheFriendlySize > 1 and 
+                        (
+                            AVG_DMG and
+                            ReceivedLast5sec and 
+                            AVG_HPS and
+                            (
+                                ReceivedLast5sec > AVG_DMG + AVG_HPS or
+                                AVG_DMG >= AVG_HPS * 3
+                            ) 
+                        ) and
+                        (
+                            HealingEngine.GetTimeToDieUnits(15) >= GetValidMembers(true) * 0.5 or
+                            HealingEngine.GetBelowHealthPercentercentUnits(60) >= GetValidMembers(true) * 0.5
+                        )
+                    ) or        
+                    (
+                        TeamCacheFriendlyType == "party" and
+                        HealingEngine.GetBelowHealthPercentercentUnits(40) >= 3
+                    ) or 
+                    (
+                        TeamCacheFriendlyType == "raid" and
+                        HealingEngine.GetBelowHealthPercentercentUnits(55) >= 5              
+                    )
+                )
+            ) or
+            -- MouseOver
+            (
+                GetToggle(2, "mouseover") and
+                UnitExists("mouseover") and 
+                MouseHasFrame() and               
+                not A.IsUnitEnemy("mouseover") and                 
+                UnitIsPlayer("mouseover") and
+                Unit("mouseover"):GetRange() <= 40 and
+                --oPL["PvPMouseoverCyclone"] and
+                Unit("mouseover"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
+                UnitHealth("mouseover") <= UnitHealthMax("mouseover") * 0.7 and
+                Unit("mouseover"):GetRealTimeDMG() > 0 and
+                (                          
+                    Unit("mouseover"):GetDMG() > UnitHealthMax("mouseover")*0.2 or
+                    Unit("mouseover"):GetDMG() > getHEAL("mouseover") * 1.2 or
+                    UnitHealth("mouseover") <= UnitHealthMax("mouseover")*0.25
+                ) and
+                Unit("mouseover"):TimeToDie() > 3
+            ) or 
+            -- Target
+            (
+                (
+                    not GetToggle(2, "mouseover") or 
+                    not UnitExists("mouseover") 
+                ) and       
+                not A.IsUnitEnemy("target") and
+                UnitIsPlayer("target") and
+                Unit("target"):GetRange() <= 40 and 
+                --Unit("mouseover"):HasBuffs(33786, true) and
+                Unit("target"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
+                UnitHealth("target") <= UnitHealthMax("target") * 0.7 and
+                Unit("target"):GetRealTimeDMG() > 0 and
+                (                        
+                    Unit("target"):GetDMG() > UnitHealthMax("target")*0.2 or
+                    Unit("target"):GetDMG() > getHEAL("target") * 1.2 or            
+                    UnitHealth("target") <= UnitHealthMax("target")*0.25
+                ) and        
+                Unit("target"):TimeToDie() > 3
+            ) 
+        )		
+		then
+            -- Notification					
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.HolyAvenger.ID), A.HolyAvenger.ID)
+            return A.HolyAvenger:Show(icon)
+        end
+
+		-- Avenging Wrath
+		if A.AvengingWrath:IsReady(unit) and A.BurstIsON(unit) and Unit("player"):HasBuffs({A.AvengingCrusader.ID, A.AvengingWrath.ID}, "player", true) == 0 and
+        (
+            -- HEALING
+            (
+                not A.AvengingCrusader:IsSpellLearned() and
+                A.AvengingWrath:GetCooldown() == 0 and
+                combatTime > 8 and
+                -- Holy Avenger, AW Original
+		        Unit("player"):HasBuffs({A.HolyAvenger.ID, A.AvengingWrath.ID}, "player", true) <= GetCurrentGCD() and
+                (       
+                    -- HealingEngine conditions for burst raid/party heal
+                    (
+                        GetToggle(2, "AoE") and
+                        (
+                            (
+                                not A.GetToggle(2, "mouseover") or
+                                not A.MouseHasFrame() or
+                                not A.IsUnitEnemy("mouseover")
+                            ) and
+                            not A.IsUnitEnemy("target") 
+                        ) and
+                        (
+                            (
+                                TeamCacheFriendlySize > 1 and
+                                ReceivedLast5sec > AVG_DMG + AVG_HPS 
+                                and 
+                                HealingEngine.GetTimeToDieUnits(16) >= TeamCacheFriendlySize * 0.67
+                            ) or
+                            (
+                                TeamCacheFriendlyType == "party" and
+                                HealingEngine.GetBelowHealthPercentercentUnits(45) >= 3
+                            ) or 
+                            (
+                                TeamCacheFriendlyType == "raid" and
+                                HealingEngine.GetBelowHealthPercentercentUnits(55) >= 4
+                            )  
+                        )                
+                    ) or
+                    -- MouseOver
+                    (
+                        A.GetToggle(2, "mouseover") and
+                        UnitExists("mouseover") and 
+                        A.MouseHasFrame() and               
+                        not A.IsUnitEnemy("mouseover") and                 
+                        UnitIsPlayer("mouseover") and
+                        Unit("mouseover"):GetRange() <= 40 and
+                        --Unit("mouseover"):HasBuffs(33786, true) and
+                        Unit("mouseover"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
+                        UnitHealth("mouseover") <= UnitHealthMax("mouseover") * 0.4
+                        and
+                        Unit("mouseover"):GetRealTimeDMG() > 0 and
+                        (
+                            Unit("mouseover"):GetDMG() > Unit("mouseover"):GetHEAL() * 1.2 or
+                            UnitHealth("mouseover") <= UnitHealthMax("mouseover") * 0.35 
+                        ) and
+                        Unit("mouseover"):TimeToDie() > 4
+                    ) or 
+                    -- Target
+                    (
+                        (
+                            not A.GetToggle(2, "mouseover") or 
+                            not UnitExists("mouseover") 
+                        ) and       
+                        not A.IsUnitEnemy("target") and
+                        UnitIsPlayer("target") and
+                        Unit("target"):GetRange() <= 40 and 
+                        -- Unit(unit):HasDeBuffs(33786, true) and
+                        Unit("target"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
+                        UnitHealth("target") <= UnitHealthMax("target") * 0.4 and
+                        Unit("target"):GetRealTimeDMG() >= 0 and
+                        (
+                            Unit("target"):GetDMG() > Unit("target"):GetHEAL() * 1.2 or
+                            UnitHealth("target") <= UnitHealthMax("target") * 0.35
+                        ) and
+                        Unit("target"):TimeToDie() > 4
+                    )
+                )
+            ) or
+            -- DAMAGE
+            (
+                (
+                    (
+                        A.AvengingCrusader:IsSpellLearned() and
+                        A.AvengingCrusade:GetCooldown() == 0
+                    ) or
+                    (
+                        not A.AvengingCrusader:IsSpellLearned() and
+                        A.AvengingWrath:GetCooldown() == 0
+                    )
+                ) and
+                combatTime > 0 and
+                (
+                    (
+                        A.GetToggle(2, "mouseover") and
+                        A.IsUnitEnemy("mouseover") and                
+                        Unit("mouseover"):GetLevel() == -1 and
+                        Unit("mouseover"):GetRange() <= 40
+                    ) or
+                    (
+                        A.IsUnitEnemy("target") and
+                        Unit("target"):GetLevel() == -1 and
+                        Unit("target"):GetRange() <= 40
+                    )
+                )
+            )
+        ) 
+		then
+            -- Notification					
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingWrath.ID), A.AvengingWrath.ID)			
+            return A.AvengingWrath:Show(icon)
+        end
+
+        -- Aura Mastery			
+		if A.AuraMastery:IsReady(player) and A.BurstIsON(unit) and combatTime > AuraMasteryAfter and -- AuraMasteryAfter
+		(
+   		    HealingEngine.GetTimeToDieUnits(AuraMasteryAoETTD) >= GetValidMembers(true) * 0.4 -- AuraMasteryAoETTD
+		    or
+   		    ReceivedLast5sec > AVG_DMG * AuraMasteryLast -- AuraMasteryLast
+		    or
+    	    HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= GetValidMembers(true) * 0.35 -- -- AuraMasteryBelowHealthPercent
+			or
+			HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= AuraMasteryUnits -- -- AuraMasteryBelowHealthPercent
+		) 			
+		then
+            -- Notification					
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)		    	
+			return A.AuraMastery:Show(icon)
+		end
+
+	    -- Life Binders Invocation
+	    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
+            -- Notification					
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)			
+	    	return A.LifeBindersInvocation:Show(icon)
 	    end
-		
+			
+	    -- Overcharge Mana
+	    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) then
+	    	return A.OverchargeMana:Show(icon)
+	    end
+
+        -- AvengingCrusader
+		if A.AvengingCrusader:IsReady(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
+            -- Notification					
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingCrusader.ID), A.AvengingCrusader.ID)			
+            return A.AvengingCrusader:Show(icon)
+        end	
+				
 		-- MemoryofLucidDreams if less than 85% mana left
 		if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * (LucidDreamManaPercent / 100) then
 			return A.MemoryofLucidDreams:Show(icon)
 		end
-		
-	    --Manuel Cooldown and Glimmer of Light
-	    if A.BurstIsON(unit) and A.GlimmerofLight:GetAzeriteRank() >= 2 and Emergency then
-	    	
-			-- AvengingWrath
-			if A.AvengingWrath:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AvengingWrath.ID), A.AvengingWrath.ID)
-                return A.AvengingWrath:Show(icon)
-            end
-		
-		    -- HolyAvenger
-	    	if A.HolyAvenger:IsReady(unit) and Unit(player):HasBuffs(A.AuraMastery.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.HolyAvenger.ID), A.HolyAvenger.ID)
-                return A.HolyAvenger:Show(icon)
-            end
 
-            -- AuraMastery
-		    if A.AuraMastery:IsReady(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)
-		    	return A.AuraMastery:Show(icon)
-		    end
-		    
-		    -- LifeBindersInvocation
-		    if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)
-		    	return A.LifeBindersInvocation:Show(icon)
-		    end
-		    
-			-- OverchargeMana
-		    if A.OverchargeMana:AutoHeartOfAzeroth(unit, true) then
-		    	return A.OverchargeMana:Show(icon)
-		    end
-	    end
-		
-		-- MemoryofLucidDreams if less than 85% mana left
-	--	if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * 0.85 then
-	--		return A.UnleashHeartofAzeroth:Show(icon)
-	--	end
-		
-		--AuraMastery settings
-        if A.AuraMastery:IsReady(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Unit(player):HasBuffs(A.HolyAvenger.ID, true) == 0 then
-            if HealingEngine.GetBelowHealthPercentercentUnits(50, 40) > 3 then -- HP, Range
-                -- Notification					
-                Action.SendNotification("Burst " .. A.GetSpellInfo(A.AuraMastery.ID), A.AuraMastery.ID)
-                return A.AuraMastery:Show(icon)
-            end
-        end
+        -- Blessing Of Sacrifice
+        if A.BlessingofSacrifice:IsReady(unit) and combatTime > 0 and UnitHealth("player") > UnitHealthMax("player") * 0.2 and
+        (
+            -- MouseOver
+            (
+                A.GetToggle(2, "mouseover") and        
+                A.MouseHasFrame() and                      
+                not A.IsUnitEnemy("mouseover") and                 
+                (UnitInRaid("mouseover") or UnitInParty("mouseover")) and
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and        
+                (
+                    (    
+                        not Unit("mouseover"):Role("TANK") and
+                        (
+                            HoS("mouseover", nil, nil, true, true) or
+                            (
+                                HealingEngine.IsMostlyIncDMG("mouseover") and
+                                Unit("mouseover"):GetDMG()>UnitHealthMax("mouseover")*0.3                        
+                            )
+                        )
+                    ) or 
+                    (
+                        Unit("mouseover"):Role("TANK") and
+                        -- Divine Shield
+                        Unit(player):HasBuffs(642, true) > 5 and
+                        Unit("mouseover"):GetRealTimeDMG() >= UnitHealthMax("mouseover") * 0.2
+                    )
+                )
+            ) or 
+            -- Target
+            (  
+                (
+                    not A.GetToggle(2, "mouseover") or 
+                    not UnitExists("mouseover") 
+                ) and     
+                (UnitInRaid("target") or UnitInParty("target")) and
+                not A.IsUnitEnemy("target") and                 
+                Unit("target"):HasDeBuffs(33786, true) == 0 and   
+                (
+                    (
+                        (
+                            not Unit("target"):Role("TANK") and
+                            (
+                                HoS("target", nil, nil, true, true) or
+                                (
+                                    HealingEngine.IsMostlyIncDMG("mouseover") and
+                                    Unit("target"):GetDMG() > UnitHealthMax("target")*0.3 
+                                )
+                            )                
+                        )
+                    ) or 
+                    (
+                        Unit("target"):Role("TANK") and
+                        -- Divine Shield
+                        Unit(player):HasBuffs(642, true) > 5 and
+                        Unit("target"):GetRealTimeDMG() >= UnitHealthMax("target") * 0.2
+                    )
+                )        
+            )
+        )
+      	then
+        	return A.BlessingofSacrifice:Show(icon)
+     	end
+
+  	  	-- Blessing of Freedom
+      	if A.BlessingofFreedom:IsReady(unit) and 
+
+      	(
+        	 -- MouseOver
+          	(
+             	A.GetToggle(2, "mouseover") and        
+            	A.MouseHasFrame() and                      
+            	not A.IsUnitEnemy("mouseover") and                          
+            	Unit("mouseover"):TimeToDie() > GetGCD() * 3.8 and
+              	HoF("mouseover")
+          	) 
+			or 
+         	-- Target
+          	(
+            	(
+               	    not A.GetToggle(2, "mouseover") or 
+              	    not UnitExists("mouseover") 
+             	) and       
+             	not A.IsUnitEnemy("target") and        
+             	Unit(unit):TimeToDie() > GetGCD() * 3.8 and
+             	HoF("target")
+         	)
+     	)
+      	then
+        	return A.BlessingofFreedom:Show(icon)
+     	end
+
+
 		
 		--Use Trinkets
         --if I.RevitalizingVoodooTotem:IsReady(unit) then
@@ -984,19 +1596,128 @@ A[3] = function(icon, isMulti)
         if (isMulti or A.GetToggle(2, "AoE")) and A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and A.IsUnitEnemy(unit) then
             return A.Judgement:Show(icon)
         end
-		
+
 		-- LightsHammer
-		if (isMulti or A.GetToggle(2, "AoE")) and A.LightsHammer:IsReady(unit) and HealingEngine.GetBelowHealthPercentercentUnits(75, 40) >= 5 then
+		if (isMulti or A.GetToggle(2, "AoE")) and A.LightsHammer:IsReady(unit) and A.LightsHammer:IsSpellLearned() and
+        (
+            (
+                not A.GetToggle(2, "mouseover") or
+                not A.MouseHasFrame() or
+                not A.IsUnitEnemy("mouseover")
+            ) and
+            not A.IsUnitEnemy("target") 
+        ) and
+        (            
+            (
+                TeamCacheFriendlySize > 1 and
+                (
+                    ReceivedLast5sec > AVG_DMG + AVG_HPS or
+                    AVG_DMG >= AVG_HPS * 2
+                ) and
+                (
+                    HealingEngine.GetTimeToDieUnits(15) >= ValidMembers(true) * 0.5 or
+                    HealingEngine.GetBelowHealthPercentercentUnits(50) >= ValidMembers(true) * 0.5
+                )
+            ) or        
+            (
+                TeamCacheFriendlyType == "party" and
+                HealingEngine.GetBelowHealthPercentercentUnits(50) >= 3
+            ) or 
+            (
+                TeamCacheFriendlyType == "raid" and
+                HealingEngine.GetBelowHealthPercentercentUnits(65) >= 6              
+            ) or
+            -- Master Aur
+			A.LastPlayerCastName == A.AuraMastery:Info()
+        )		
+		then
 			return A.LightsHammer:Show(icon)
 		end
 		
 		-- Holy Prism
-		if (isMulti or A.GetToggle(2, "AoE")) and A.HolyPrism:IsReady(unit) and HealingEngine.GetBelowHealthPercentercentUnits(75, 40) >= 3 then
+		if (isMulti or A.GetToggle(2, "AoE")) and A.HolyPrism:IsSpellLearned() and
+		(
+    		-- HPS
+    		-- MouseOver
+    		(
+        		A.GetToggle(2, "mouseover") and
+        		UnitExists("mouseover") and 
+        		A.MouseHasFrame() and                        
+        		not A.IsUnitEnemy("mouseover") and                 
+        		SpellInRange("mouseover", 114165) and
+        		Unit("mouseover"):HasBuffs(33786, true) == 0 and
+        		A.PredictHeal("HolyPrism", "mouseover")
+    		) or 
+    		-- Target
+    		(
+        		(
+            		not A.GetToggle(2, "mouseover") or 
+            		not UnitExists("mouseover") 
+        		) and        
+        		not A.IsUnitEnemy("target") and
+        		SpellInRange("target", 20473) and
+        		Unit(unit):HasDeBuffs(33786, true) == 0 and
+        		A.PredictHeal("HolyPrism", "target")
+    		) or
+    		-- DMG
+    		-- MouseOver
+    		(
+        		A.GetToggle(2, "mouseover") and
+        		A.IsUnitEnemy("mouseover") and
+        		SpellInRange("mouseover", 114165) and
+        		Unit("mouseover"):HasBuffs(33786, true) == 0 and
+        		(
+            		not GetToggle(2, "AoE") or
+            		HealingEngine.HealingBySpell("HolyPrismAoE", 114165) >= 2
+        		) and
+        		A.HolyPrism:AbsentImun("mouseover", Temp.TotalAndMag, true)		
+    		) or
+    		-- Target
+    		(
+        		(
+            		not A.GetToggle(2, "mouseover") or
+            		not A.MouseHasFrame() or
+            		not A.IsUnitEnemy("mouseover")
+        		) and
+        		A.IsUnitEnemy("target") and
+        		A.HolyPrism:AbsentImun("target", Temp.TotalAndMag, true)  
+    		)    
+		)
+		then		
 			return A.HolyPrism:Show(icon)
 		end
+
+        -- Bestow Faith
+        if A.BestowFaith:IsSpellLearned() and A.BestowFaith:IsReady(unit) and A.BestowFaith:IsSpellLearned() and
+        (
+            -- MouseOver
+            (
+                GetToggle(2, "mouseover") and
+                UnitExists("mouseover") and 
+                A.MouseHasFrame() and                        
+                not A.IsUnitEnemy("mouseover") and                 
+                SpellInRange("mouseover", 223306) and
+                Unit("mouseover"):HasBuffs(33786, true) == 0 and
+                A.PredictHeal("BestowFaith", "mouseover") 
+            ) or 
+            -- Target
+            (
+                (
+                    not GetToggle(2, "mouseover") or 
+                    not UnitExists("mouseover") 
+                ) and        
+                not A.IsUnitEnemy("target") and
+                SpellInRange("target", 223306) and
+                Unit("target"):HasBuffs(33786, true) == 0 and
+                A.PredictHeal("BestowFaith", "target") 
+            )
+        )
+		then
+            return A.BestowFaith:Show(icon)
+        end
 		
         -- Bestow Faith
-        if A.BestowFaith:IsSpellLearned() and A.BestowFaith:IsReady(unit) then
+   --[[     if A.BestowFaith:IsSpellLearned() and A.BestowFaith:IsReady(unit) then
             if GetLowestAlly("TANK", "HP") <= 95 then
                 --HealingEngine.SetTarget(unit)
 				ForceHealingTarget("TANK")
@@ -1004,7 +1725,7 @@ A[3] = function(icon, isMulti)
             if Unit(unit):GUID() == GetLowestAlly("TANK", "GUID") and Unit(unit):HealthPercent() <= 95 then
                 return A.BestowFaith:Show(icon)
             end
-        end
+        end ]]--
 		
 		-- Concentrated Flame Heal
         if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) then
@@ -1029,9 +1750,48 @@ A[3] = function(icon, isMulti)
                 return A.VitalityConduit:Show(icon)
             end
         end
+
+        -- HPvE #1 HolyLight
+        local InfLight = Unit(player):HasBuffs(A.InfusionofLight.ID, true)
+        local cast_t = Unit("player"):CastTime(A.InfusionofLight.ID)
+        if A.HolyLight:IsReady(unit) and
+            -- Infusion of Light
+            InfLight > 0 and
+            InfLight > cast_t + CurrentTimeGCD() + 0.1 and
+            Unit("player"):GetCurrentSpeed() == 0 and 
+            (
+                -- MouseOver
+                (
+                    GetToggle(2, "mouseover") and
+                    UnitExists("mouseover") and 
+                    A.MouseHasFrame() and                        
+                    not A.IsUnitEnemy("mouseover") and                 
+                    SpellInRange("mouseover", 82326) and
+                    Unit("mouseover"):HasBuffs(33786, true) < cast_t + CurrentTimeGCD() and
+                    A.PredictHeal("HolyLight", "mouseover") and
+                    TimeToDie("mouseover") > cast_t + CurrentTimeGCD() + 1
+                ) or 
+                -- Target
+                (
+                    (
+                        not GetToggle(2, "mouseover") or 
+                        not UnitExists("mouseover") or 
+                        A.IsUnitEnemy("mouseover")
+                    ) and        
+                    not A.IsUnitEnemy("target") and
+                    SpellInRange("target", 82326) and
+                    Unit("target"):HasBuffs(33786, true) < cast_t + CurrentTimeGCD() and
+                    A.PredictHeal("HolyLight", "target") and
+                    TimeToDie("target") > cast_t + CurrentTimeGCD() + 1
+                )
+            )
+		then
+            return A.HolyLight:Show(icon)
+        end
+
 		
         -- Holy Light
-        if A.HolyLight:IsReady(unit) and not isMoving and Unit(player):HasBuffs(A.InfusionofLight.ID, true) > 0 then
+   --[[     if A.HolyLight:IsReady(unit) and not isMoving and Unit(player):HasBuffs(A.InfusionofLight.ID, true) > 0 then
             if GetLowestAlly("ALL", "HP") <= HolyLightHP then
                 --HealingEngine.SetTarget(unit)
 				ForceHealingTarget("ALL")
@@ -1046,7 +1806,7 @@ A[3] = function(icon, isMulti)
 			then
                 return A.HolyLight:Show(icon)
             end
-        end
+        end ]]--
 		
         -- Flash of Light
         if A.FlashofLight:IsReady(unit) and not isMoving then
