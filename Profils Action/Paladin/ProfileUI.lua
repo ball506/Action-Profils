@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.7 (15.04.2020)",
+    DateTime = "v4.0.8 (15.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -36,8 +36,7 @@ A.Data.ProfileUI = {
                     },
                 },
             },			
-            { -- [1] 1st Row
-		
+            { -- [1] 1st Row		
                 {
                     E = "Checkbox", 
                     DB = "mouseover",
@@ -76,7 +75,23 @@ A.Data.ProfileUI = {
 						TabN = '@number' or nil,								
 						Print = '@string' or nil,
 					},
-                },                 
+                },  
+                {
+                    E = "Checkbox", 
+                    DB = "AllowDelayedAW",
+                    DBV = true,
+                    L = { 
+                        enUS = "Allow Delayed Avenging Wrath", 
+                        ruRU = "Разрешить отсроченный гнев отомстить", 
+                        frFR = "Autoriser Avenging Wrath en différé",
+                    }, 
+                    TT = { 
+                        enUS = "Enable this to allow Templar's Verdict to be suggested while delaying use of Avenging Wrath/Crusade/Execution Sentence.", 
+                        ruRU = "Включите этот параметр, чтобы разрешить вынесение вердикта тамплиеров при задержке использования приговора «Мстительный гнев / Крестовый поход / Исполнение».", 
+                        frFR = "Activez cette option pour permettre au verdict du templier d'être suggéré tout en retardant l'utilisation de Avenging Wrath / Crusade / Execution Sentence.",
+                    }, 
+                    M = {},
+                },				
             }, 	
             { -- [7] Spell Status Frame
                 {
@@ -1201,6 +1216,80 @@ A.Data.ProfileUI = {
                     M = {},
                 },
    	        },	
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Cooldowns -- ",
+                    },
+                },
+            },
+            -- AuraMastery
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "AuraMasteryAoETTD",
+                    DBV = 10,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31821) .. "\ngroup TTD(sec)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AuraMasteryBelowHealthPercent",
+                    DBV = 35,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31821) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 2, 
+                    MAX = 6,                            
+                    DB = "AuraMasteryLast",
+					Precision = 1,
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31821) .. "\nLast5sec DMG threshold",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 30,                            
+                    DB = "AuraMasteryAfter",
+                    DBV = 15,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31821) .. "\nmin sec in combat",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AuraMasteryUnits",
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31821) .. "\nmin units",                        
+                    }, 
+                    M = {},
+                },
+            },			
 		    -- Divine Shield 
             { -- [7] 
                 {
