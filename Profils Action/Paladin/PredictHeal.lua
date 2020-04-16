@@ -1,11 +1,56 @@
-local TMW = TMW
-local CNDT = TMW.CNDT
-local Env = CNDT.Env
+-------------------------------
+-- Holy Paladin PredictHeal --
+-------------------------------
+local TMW 									    = TMW
+local CNDT									    = TMW.CNDT
+local Env 								     	= CNDT.Env
+local A     									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local IsSpellInRange                            = A.IsSpellInRange
+local Azerite									= LibStub("AzeriteTraits")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local HealingEngine                             = Action.HealingEngine
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+local wipe                                      = wipe 
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert 
+local _G, setmetatable                          = _G, setmetatable
+local select, unpack, table, pairs              = select, unpack, table, pairs 
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
-function Env.PredictHeal(SPELLID, UNIT, VARIATION)    
+function A.PredictHeal(SPELLID, UNIT, VARIATION)    
     -- Exception penalty for low level units / friendly boss
-    local UnitLvL = Env.UNITLevel(UNIT)
-    if UnitLvL > 0 and UnitLvL < Env.UNITLevel("player") - 10 then
+    local UnitLvL = Unit(UNIT):GetLevel()
+    if UnitLvL > 0 and UnitLvL < Unit("player"):GetLevel() - 10 then
         return true, 0
     end     
     
@@ -16,10 +61,10 @@ function Env.PredictHeal(SPELLID, UNIT, VARIATION)
     local DifficultHP = UnitHealthMax(UNIT) - UnitHealth(UNIT) 
     
     -- Holy Paladin Mastery Calculate
-    if Env.UNITSpec("player", 65) then
-        local c_range, m_range = Env.UNITRange(UNIT), 40
+    if Unit("player"):HasSpec(65) then
+        local c_range, m_range = Unit(UNIT):GetRange(), 40
         local bonus = GetMasteryEffect()
-        if Env.Buffs("player", 214202, "player") > 0 then
+        if Unit(player):HasBuffs(214202, "player", true) > 0 then
             m_range = 60
         end
         
@@ -29,54 +74,54 @@ function Env.PredictHeal(SPELLID, UNIT, VARIATION)
     -- Spells
     if SPELLID == "FlashOfLight" then        
         local pre_heal = UnitGetIncomingHeals(UNIT) or 0
-        local cast = Env.CastTime(19750) + Env.CurrentTimeGCD()
-        local FlashLight = Env.GetDescription(19750)[1] * mastery * variation
+        local cast = Unit("player"):CastTime(19750) + A.GetCurrentGCD()
+        local FlashLight = A.GetSpellDescription(19750)[1] * mastery * variation
         total = FlashLight + pre_heal + (HPS*cast) -- - (DMG*cast)           
     end 
     
     -- Holy
     if SPELLID == "HolyShock" then    
-        total = Env.GetDescription(20473)[1] * mastery * variation
+        total = A.GetSpellDescription(20473)[1] * mastery * variation
     end 
     
     if SPELLID == "LightofDawn" then               
-        total = Env.GetDescription(85222)[1] * mastery * variation        
+        total = A.GetSpellDescription(85222)[1] * mastery * variation        
     end 
     
     if SPELLID == "LightofMartyr" then               
-        total = Env.GetDescription(183998)[1] * mastery * variation       
+        total = A.GetSpellDescription(183998)[1] * mastery * variation       
     end 
     
     if SPELLID == "HolyPrism" then               
-        total = Env.GetDescription(114165)[1] * mastery * variation       
+        total = A.GetSpellDescription(114165)[1] * mastery * variation       
     end 
     
     if SPELLID == "HolyPrismAoE" then               
-        total = Env.GetDescription(114165)[3] * mastery * variation       
+        total = A.GetSpellDescription(114165)[3] * mastery * variation       
     end 
     
     if SPELLID == "HolyLight" then          
         local pre_heal = UnitGetIncomingHeals(UNIT) or 0
-        local cast = Env.CastTime(82326) + Env.CurrentTimeGCD()
-        local HolyLight = Env.GetDescription(82326)[1] * mastery * variation
+        local cast = Unit("player"):CastTime(82326) + A.GetCurrentGCD()
+        local HolyLight = A.GetSpellDescription(82326)[1] * mastery * variation
         total = HolyLight + pre_heal + (HPS*cast) - (DMG*cast) 
     end 
     
     if SPELLID == "HammerofLight" then  
         local pre_heal = UnitGetIncomingHeals(UNIT) or 0        
-        local HammerofLight = Env.GetDescription(114158)[2] / 2 * mastery * 14 * variation
+        local HammerofLight = A.GetSpellDescription(114158)[2] / 2 * mastery * 14 * variation
         total = HammerofLight + pre_heal + (HPS*14) - (DMG*14)         
     end 
     
     if SPELLID == "BestowFaith" then  
-        if (CombatTime("player") == 0 or getRealTimeDMG(UNIT) == 0) and
-        Env.Zone ~= "arena" then -- exception, for arena always pre buff
+        if (Unit("player"):CombatTime() == 0 or Unit(UNIT):GetRealTimeDMG() == 0) and
+        A.Zone ~= "arena" then -- exception, for arena always pre buff
             total = 88888888888888
-        elseif CombatTime("player") == 0 and Env.Zone == "arena" then
+        elseif Unit("player"):CombatTime() == 0 and A.Zone == "arena" then
             total = 0
         else
             local pre_heal = UnitGetIncomingHeals(UNIT) or 0        
-            local BestowFaith = Env.GetDescription(223306)[1] * mastery * variation
+            local BestowFaith = A.GetSpellDescription(223306)[1] * mastery * variation
             total = BestowFaith + pre_heal + (HPS*5) -- - (DMG*5)         
         end 
     end
@@ -85,10 +130,10 @@ function Env.PredictHeal(SPELLID, UNIT, VARIATION)
     if SPELLID == "LightOfProtector" then 
         local bonus_heal = (200 - (200 / UnitHealthMax(UNIT) * UnitHealth(UNIT))) / 100 + 1
         local LightOfProtector = 0
-        if Env.TalentLearn(213652) then
-            LightOfProtector = Env.GetDescription(213652)[1] * bonus_heal * variation
+        if A.IsSpellLearned(213652) then
+            LightOfProtector = A.GetSpellDescription(213652)[1] * bonus_heal * variation
         else
-            LightOfProtector = Env.GetDescription(184092)[1] * bonus_heal * variation
+            LightOfProtector = A.GetSpellDescription(184092)[1] * bonus_heal * variation
         end        
         total = LightOfProtector
     end 
