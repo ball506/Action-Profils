@@ -474,6 +474,7 @@ local function Finishers(unit)
 	then
         return A.TemplarsVerdict
     end	
+
 end
 Finishers = A.MakeFunctionCachedDynamic(Finishers)
 
@@ -823,6 +824,11 @@ A[3] = function(icon, isMulti)
 		)
 		then
             return Finishers(unit):Show(icon)
+        end
+
+        -- templars_verdict fallback, in case the user is saving AW/Crusade/ExecutionSentence
+        if A.TemplarsVerdict:IsReadyByPassCastGCD(unit) and Player:HolyPower() >= 5 and AllowDelayedAW then
+            return A.TemplarsVerdict:Show(icon)
         end
 			
         -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
