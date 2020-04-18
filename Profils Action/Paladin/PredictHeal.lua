@@ -47,7 +47,7 @@ local select, unpack, table, pairs              = select, unpack, table, pairs
 local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
 local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
-function A.PredictHeal(SPELLID, UNIT, VARIATION)    
+function A:PredictHeal(SPELLID, UNIT, VARIATION)    
     -- Exception penalty for low level units / friendly boss
     local UnitLvL = Unit(UNIT):GetLevel()
     if UnitLvL > 0 and UnitLvL < Unit("player"):GetLevel() - 10 then
@@ -64,7 +64,7 @@ function A.PredictHeal(SPELLID, UNIT, VARIATION)
     if Unit("player"):HasSpec(65) then
         local c_range, m_range = Unit(UNIT):GetRange(), 40
         local bonus = GetMasteryEffect()
-        if Unit(player):HasBuffs(214202, "player", true) > 0 then
+        if Unit("player"):HasBuffs(214202, "player", true) > 0 then
             m_range = 60
         end
         
@@ -72,11 +72,11 @@ function A.PredictHeal(SPELLID, UNIT, VARIATION)
     end
     
     -- Spells
-    if SPELLID == "FlashOfLight" then        
+    if SPELLID == "FlashofLight" then        
         local pre_heal = UnitGetIncomingHeals(UNIT) or 0
         local cast = Unit("player"):CastTime(19750) + A.GetCurrentGCD()
         local FlashLight = A.GetSpellDescription(19750)[1] * mastery * variation
-        total = FlashLight + pre_heal + (HPS*cast) -- - (DMG*cast)           
+        total = FlashLight + pre_heal + (HPS * cast) -- - (DMG*cast)           
     end 
     
     -- Holy
