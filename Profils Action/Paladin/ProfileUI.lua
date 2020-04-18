@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.0.8 (15.04.2020)",
+    DateTime = "v4.1.3 (18.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -1067,89 +1067,18 @@ A.Data.ProfileUI = {
                         ruRU = "Включает действия для нескольких целей", 
                     }, 
                     M = {},
-                },       
-            }, 		
-            { -- [7]
+                },  
                 {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Racials -- ",
-                    },
-                },
-            },	
-			{
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "RacialBurstHealing",                    
-                    DBV = 100,
-                    ONLYON = true,
+                    E = "Checkbox", 
+                    DB = "UseRotationPassive",
+                    DBV = true,
                     L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Healing HP %)",                        
-                    },                     
+					    enUS = "Use\nPassive\nRotation",
+                        ruRU = "Включить\nПассивную\nРотацию" 
+	                },
                     M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "RacialBurstDamaging",                    
-                    DBV = 100,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Damaging HP %)",                        
-                    },                     
-                    M = {},
-                },
-			},
-            { -- [7]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Essences -- ",
-                    },
-                },
-            },	
-			{
-			RowOptions = { margin = { top = 10 } },
-                {
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 100,                            
-                    DB = "LucidDreamManaPercent",                    
-                    DBV = 85,
-                    ONLYON = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(299374) .. "\nMana %",                        
-                    },                     
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 10,                            
-                    DB = "LifeBindersInvocationUnits",                    
-                    DBV = 5,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(299944) .. "\nunits number",                        
-                    },                     
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "LifeBindersInvocationHP",                    
-                    DBV = 85,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(299944) .. "\n(%)",                        
-                    },                     
-                    M = {},
-                },
-			},
+                },  								
+            }, 	
             { -- [7]
                 {
                     E = "Header",
@@ -1162,7 +1091,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Checkbox", 
                     DB = "ManaManagement",
-                    DBV = false,
+                    DBV = true,
                     L = { 
                         enUS = "Boss Fight\nManaSave\n(PvE)", 
                         ruRU = "Бой с Боссом\nУправление Маной\n(PvE)",
@@ -1215,12 +1144,327 @@ A.Data.ProfileUI = {
                     },                    
                     M = {},
                 },
-   	        },	
+   	        },				
             { -- [7]
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- Cooldowns -- ",
+                        ANY = " -- Racials -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstHealing",                    
+                    DBV = 100,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Healing HP %)",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstDamaging",                    
+                    DBV = 100,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Damaging HP %)",                        
+                    },                     
+                    M = {},
+                },
+			},
+            { -- Trinkets
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },	
+            {     			
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Always", value = "Always" },
+                        { text = "Burst Synchronized", value = "BurstSync" },                    
+                    },
+                    DB = "TrinketBurstSyncUP",
+                    DBV = "Always",
+                    L = { 
+					    enUS = "Damager: How to use trinkets",
+                        ruRU = "Урон: Как использовать аксессуары", 
+					},
+                    TT = { 
+					    enUS = "Always: On cooldown\nBurst Synchronized: By Burst Mode in 'General' tab",
+                        ruRU = "Always: По доступности\nBurst Synchronized: От Режима Бурстов во вкладке 'Общее'", 
+					}, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "TrinketBurstHealing",
+                    DBV = 75,
+                    ONLYOFF = false,
+                    L = { 
+					    enUS = "Healer: Target Health (%)",
+                        ruRU = "Лекарь: Здоровье Цели (%)", 
+	                },
+                    M = {},
+                },		
+		    },
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Essences -- ",
+                    },
+                },
+            },	
+			{
+			RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LucidDreamManaPercent",                    
+                    DBV = 85,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(299374) .. "\nMana %",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 10,                            
+                    DB = "LifeBindersInvocationUnits",                    
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(299944) .. "\nunits number",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "LifeBindersInvocationHP",                    
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(299944) .. "\n(%)",                        
+                    },                     
+                    M = {},
+                },
+			},
+            { -- [7] Holy Avenger
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(105809) .. " -- ",
+                    },
+                }, 
+            },
+			{
+			    RowOptions = { margin = { top = -10 } },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dungeon -- ",
+                    },
+                },
+			},
+            -- Holy Avenger
+            { -- [3] 
+              	RowOptions = { margin = { top = 10 } },						
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "HolyAvengerRaidUnits",
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(105809) .. "\nmin units",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "HolyAvengerPartyUnits",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(105809) .. "\nmin units",                        
+                    }, 
+                    M = {},
+                },
+			},
+			{
+			    RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "HolyAvengerRaidHP",
+                    DBV = 55,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(105809) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "HolyAvengerPartyHP",
+                    DBV = 40,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(105809) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+			    
+            },			
+            { -- [7] Avenging Wrath
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(31884) .. " -- ",
+                    },
+                }, 
+            },
+			{
+			RowOptions = { margin = { top = -10 } },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dungeon -- ",
+                    },
+                },
+			},
+            -- Avenging Wrath
+            { -- [3] 
+              	RowOptions = { margin = { top = 10 } },						
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AvengingWrathRaidUnits",
+                    DBV = 4,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31884) .. "\nmin units",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AvengingWrathPartyUnits",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31884) .. "\nmin units",                        
+                    }, 
+                    M = {},
+                },
+			},
+			{
+			    RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AvengingWrathRaidHP",
+                    DBV = 55,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31884) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "AvengingWrathPartyHP",
+                    DBV = 45,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(31884) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+			    
+            },	
+            { -- DivineProtection
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(498) .. " -- ",
+                    },
+                },
+            },
+            -- DivineProtection
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "DivineProtectionTTD",
+                    DBV = 10,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(498) .. "\nTTD(sec)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "DivineProtectionHP",
+                    DBV = 35,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(498) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+			},			
+            { -- AuraMastery
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(31821) .. " -- ",
                     },
                 },
             },
@@ -1340,7 +1584,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 100,                            
                     DB = "LayOnHandsHP",
-                    DBV = 15,
+                    DBV = 25,
                     ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(633) .. " (%)",
@@ -1471,7 +1715,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 100,                            
                     DB = "FlashofLightHP",
-                    DBV = 75,
+                    DBV = 60,
                     ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(19750) .. " (%)",
@@ -1710,47 +1954,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },            
             }, 	
-            { -- Trinkets
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Trinkets -- ",
-                    },
-                },
-            },	
-            {     			
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "Always", value = "Always" },
-                        { text = "Burst Synchronized", value = "BurstSync" },                    
-                    },
-                    DB = "TrinketBurstSyncUP",
-                    DBV = "Always",
-                    L = { 
-					    enUS = "Damager: How to use trinkets",
-                        ruRU = "Урон: Как использовать аксессуары", 
-					},
-                    TT = { 
-					    enUS = "Always: On cooldown\nBurst Synchronized: By Burst Mode in 'General' tab",
-                        ruRU = "Always: По доступности\nBurst Synchronized: От Режима Бурстов во вкладке 'Общее'", 
-					}, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "TrinketBurstHealing",
-                    DBV = 100,
-                    ONLYOFF = true,
-                    L = { 
-					    enUS = "Healer: Target Health (%)",
-                        ruRU = "Лекарь: Здоровье Цели (%)", 
-	                },
-                    M = {},
-                },		
-		    },
             { -- [7]
                 {
                     E = "Header",
