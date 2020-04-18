@@ -1210,6 +1210,19 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = 5, 
                     MAX = 100,                            
+                    DB = "TrinketMana",
+                    DBV = 85,
+                    ONLYOFF = false,
+                    L = { 
+					    enUS = "Trinket: Mana(%)",
+                        ruRU = "Trinket: Mana(%)",
+	                },
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
                     DB = "TrinketBurstHealing",
                     DBV = 75,
                     ONLYOFF = false,
@@ -1628,6 +1641,16 @@ A.Data.ProfileUI = {
 					},
            	        M = {},
         	    },
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "HolyShockDPS",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Use " .. A.GetSpellInfo(20473) .. "\noffensive",
+                        ruRU = "Use " .. A.GetSpellInfo(20473) .. "\noffensive",
+					},
+        	        M = {},
+       	        }, 	
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
