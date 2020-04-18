@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.3 (10.04.2020)",
+    DateTime = "v4.1.4 (18.04.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -1497,6 +1497,18 @@ A.Data.ProfileUI = {
                 },
 			},
 			{
+				{
+                    E 		= "Slider", 													
+					MIN 	= -1, 
+                    MAX 	= 100,  						
+					DB 		= "RenewalHP",
+					DBV 	= 40,
+					ONOFF 	= true,
+					L 		= { 
+                        ANY	= A.GetSpellInfo(108238) .. " (%)"
+                    },
+					M 		= {},
+                },
 				{
                     E 		= "Slider", 													
 					MIN 	= -1, 
