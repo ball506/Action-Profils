@@ -57,8 +57,8 @@ function A:PredictHeal(SPELLID, UNIT, VARIATION)
     -- Header
     local variation = (VARIATION and (VARIATION / 100)) or 1        
     local total, mastery = 0, 1
-    local DMG, HPS = incdmg(UNIT), getHEAL(UNIT)      
-    local DifficultHP = UnitHealthMax(UNIT) - UnitHealth(UNIT) 
+    local DMG, HPS = Unit(UNIT):GetDMG(), Unit(UNIT):GetHEAL()      
+    local DifficultHP = Unit(UNIT):HealthMax() - Unit(UNIT):Health() 
     
     -- Holy Paladin Mastery Calculate
     if Unit("player"):HasSpec(65) then
@@ -128,7 +128,7 @@ function A:PredictHeal(SPELLID, UNIT, VARIATION)
     
     -- Protection
     if SPELLID == "LightOfProtector" then 
-        local bonus_heal = (200 - (200 / UnitHealthMax(UNIT) * UnitHealth(UNIT))) / 100 + 1
+        local bonus_heal = (200 - (200 / Unit(UNIT):HealthMax() * Unit(UNIT):Health())) / 100 + 1
         local LightOfProtector = 0
         if A.IsSpellLearned(213652) then
             LightOfProtector = A.GetSpellDescription(213652)[1] * bonus_heal * variation
