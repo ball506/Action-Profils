@@ -488,6 +488,18 @@ local function AntiFakeStun(unit)
     A.HammerofJusticeGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
+    local useKick, useCC, useRacial = A.InterruptIsValid("targettarget", "TargetMouseover")    
+    local MinInterrupt = A.GetToggle(2, "MinInterrupt")
+    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt") 
+ 
+    -- Auto targettarget ?
+    if useCC and A.HammerofJustice:IsReady("targettarget") and A.HammerofJustice:AbsentImun("targettarget", Temp.TotalAndPhysAndCCAndStun, true) and Unit("targettarget"):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+        -- Notification                    
+        Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
+        return A.HammerofJusticeGreen              
+    end 
+	
+	-- Manual Key
     if     A.HammerofJusticeGreen:IsReady(nil, nil, nil, true) and 
     (
         AntiFakeStun("mouseover") or 
@@ -503,7 +515,9 @@ A[1] = function(icon)
     )
     then 
         return A.HammerofJusticeGreen:Show(icon)         
-    end                                                                     
+    end
+    
+	
 end
 
 -- [2] Kick AntiFake Rotation
@@ -1253,14 +1267,8 @@ A[3] = function(icon, isMulti)
         LeftCtrl = IsLeftControlKeyDown();
         LeftShift = IsLeftShiftKeyDown();
         LeftAlt = IsLeftAltKeyDown();
-        
-        -- Interrupts
-        local Interrupt = Interrupts(unit)
-        if inCombat and Interrupt then 
-            return Interrupt:Show(icon)
-        end 
-        
-         -- Bursting 
+                
+        -- Bursting 
         if A.BurstIsON(unit) and InMelee(unit) then 
             
             if Unit(unit):HealthPercent() <= A.GetToggle(2, "RacialBurstDamaging") then 
