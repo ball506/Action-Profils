@@ -682,7 +682,21 @@ As always, please report on Discord or message me directly if you need anything 
 
 	-- Fire
 	if PlayerSpec == 63 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
+	    ChangeLog = [[
+		Welcome to Taste - Fire Mage !
+		
+        ***** TEST BUILD *****
+
+- Fixed FireBlast issue with double cast in a row
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Need feedback !!
+- Reworked all the rotation
+- Updated  to latest T25 APLs
+- Initial Test Release				
+
+As always, please report on Discord or message me directly if you need anything !
+
+]] 				
 	end
 
 	-- MFrost
