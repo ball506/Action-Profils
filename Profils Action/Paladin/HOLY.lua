@@ -79,7 +79,7 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     Judgement                              = Create({ Type = "Spell", ID = 275773 }),
     CrusaderStrike                         = Create({ Type = "Spell", ID = 35395 }),
     Consecration                           = Create({ Type = "Spell", ID = 26573 }),
-    LightoftheMartyr                       = Create({ Type = "Spell", ID = 183998 }),
+    LightofMartyr                          = Create({ Type = "Spell", ID = 183998 }),
     LightoftheMartyrStack                  = Create({ Type = "Spell", ID = 223316 }),
     FlashofLight                           = Create({ Type = "Spell", ID = 19750 }),
     HolyShock                              = Create({ Type = "Spell", ID = 20473 }),
@@ -1954,7 +1954,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- HPvE #1 Light of Martyr
-        if A.LightoftheMartyr:IsReady(unit) and
+        if A.LightofMartyr:IsReady(unit) and
         (
             -- MouseOver
             (
@@ -1963,7 +1963,7 @@ A[3] = function(icon, isMulti)
                 A.MouseHasFrame() and                        
                 not A.IsUnitEnemy("mouseover") and  
                 not UnitIsUnit("mouseover", "player") and        
-                A.LightoftheMartyr:IsInRange("mouseover") and
+                A.LightofMartyr:IsInRange("mouseover") and
                 Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
                 (
                     -- Divine Shield
@@ -1986,7 +1986,7 @@ A[3] = function(icon, isMulti)
                 ) and        
                 not A.IsUnitEnemy("target") and
                 not UnitIsUnit("target", "player") and
-                A.LightoftheMartyr:IsInRange("target") and
+                A.LightofMartyr:IsInRange("target") and
                 Unit("target"):HasDeBuffs(33786, true) == 0 and
                 (
                     -- Divine Shield
@@ -2003,7 +2003,7 @@ A[3] = function(icon, isMulti)
             )
         )        
         then
-            return A.LightoftheMartyr:Show(icon)
+            return A.LightofMartyr:Show(icon)
         end
                 
         -- HPvE Beacon of Virtue
@@ -2382,7 +2382,7 @@ A[3] = function(icon, isMulti)
                 (
                     (
                         A.AvengingCrusader:IsSpellLearned() and
-                        A.AvengingCrusade:GetCooldown() == 0
+                        A.AvengingCrusader:GetCooldown() == 0
                     ) or
                     (
                         not A.AvengingCrusader:IsSpellLearned() and
@@ -2714,7 +2714,7 @@ A[3] = function(icon, isMulti)
         -- Consecration
 
         -- HPvE #2 Light of Martyr
-        if A.LightoftheMartyr:IsReady(unit) and 
+        if A.LightofMartyr:IsReady(unit) and 
         (
             -- MouseOver
             (
@@ -2723,7 +2723,7 @@ A[3] = function(icon, isMulti)
               A.MouseHasFrame() and                        
                not A.IsUnitEnemy("mouseover") and  
                not UnitIsUnit("mouseover", "player") and        
-               A.LightoftheMartyr:IsInRange("mouseover") and
+               A.LightofMartyr:IsInRange("mouseover") and
                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
             (
                  -- Divine Shield
@@ -2740,7 +2740,7 @@ A[3] = function(icon, isMulti)
                ) and        
                not A.IsUnitEnemy("target") and
                not UnitIsUnit("target", "player") and
-              A.LightoftheMartyr:IsInRange("target") and
+              A.LightofMartyr:IsInRange("target") and
                Unit("target"):HasDeBuffs(33786, true) == 0 and
                (
                    -- Divine Shield
@@ -2751,7 +2751,7 @@ A[3] = function(icon, isMulti)
             )
         )
         then        
-            return A.LightoftheMartyr:Show(icon)
+            return A.LightofMartyr:Show(icon)
         end
  
         -- Consecration
@@ -2762,29 +2762,29 @@ A[3] = function(icon, isMulti)
         -- HPvE #2 Light of Dawn
         if A.LightofDawn:IsReady(unit) and 
         (            
-               -- MouseOver
-               (
-                 GetToggle(2, "Mouseover") and
+            -- MouseOver
+            (
+                GetToggle(2, "Mouseover") and
                 UnitExists("mouseover") and 
-                 A.MouseHasFrame() and                        
-                  not A.IsUnitEnemy("mouseover") and                         
-                  Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
-                   A.LightofDawn:PredictHeal("LightofDawn", "mouseover") and
-                   -- Azerite Breaking Dawn
-                   Unit("mouseover"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
+                A.MouseHasFrame() and                        
+                not A.IsUnitEnemy("mouseover") and                         
+                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
+                A.LightofDawn:PredictHeal("LightofDawn", "mouseover") and
+                -- Azerite Breaking Dawn
+                Unit("mouseover"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
             ) or 
-               -- Target
-               (
-                 (
-                      not GetToggle(2, "Mouseover") or 
-                      not UnitExists("mouseover") 
-                  ) and        
-                  not A.IsUnitEnemy("target") and        
-                 Unit("target"):HasDeBuffs(33786, true) == 0 and
-                  A.LightofDawn:PredictHeal("LightofDawn", "target") and
-                 -- Azerite Breaking Dawn
-                   Unit("target"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
-               )
+            -- Target
+            (
+                (
+                    not GetToggle(2, "Mouseover") or 
+                    not UnitExists("mouseover") 
+                ) and        
+                not A.IsUnitEnemy("target") and        
+                Unit("target"):HasDeBuffs(33786, true) == 0 and
+                A.LightofDawn:PredictHeal("LightofDawn", "target") and
+                -- Azerite Breaking Dawn
+                Unit("target"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
+            )
         )
         then        
             return A.LightofDawn:Show(icon)
