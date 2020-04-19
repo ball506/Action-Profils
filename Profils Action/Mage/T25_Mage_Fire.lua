@@ -494,7 +494,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=charges>=1&((action.fire_blast.charges_fractional+(buff.combustion.remains-buff.blaster_master.duration)%cooldown.fire_blast.duration-(buff.combustion.remains)%(buff.blaster_master.duration-0.5))>=0|!azerite.blaster_master.enabled|!talent.flame_on.enabled|buff.combustion.remains<=buff.blaster_master.duration|buff.blaster_master.remains<0.5|equipped.hyperthread_wristwraps&cooldown.hyperthread_wristwraps_300142.remains<5)&buff.combustion.up&(!Player:IsCasting() == A.Scorch:Info()&!action.pyroblast.in_flight&buff.heating_up.up|Player:IsCasting() == A.Scorch:Info()&buff.hot_streak.down&(buff.heating_up.down|azerite.blaster_master.enabled)|azerite.blaster_master.enabled&talent.flame_on.enabled&action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    A.FireBlast:GetSpellCharges() >= 1 and 
 				(
@@ -510,7 +510,7 @@ A[3] = function(icon, isMulti)
 					or 
 					A.HyperthreadWristwraps:IsExists() and A.HyperthreadWristwraps:GetCooldown() < 5
 				) 
-				and Unit(player):HasBuffs(A.CombustionBuff.ID, true) and 
+				and Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 and 
 				(
 				    not Player:IsCasting() == A.Scorch:Info() and not A.Pyroblast:IsSpellInFlight() and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0 
 					or 
@@ -536,7 +536,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&(essence.memory_of_lucid_dreams.major|!essence.memory_of_lucid_dreams.minor)&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&Player:IsCasting() == A.RuneofPower:Info()&Unit(player):IsCastingRemains(A.RuneofPower.ID)<0.6|(variable.time_to_combustion<=0|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    A.BlasterMaster:GetAzeriteRank() > 0 and 
 				(
@@ -684,7 +684,13 @@ A[3] = function(icon, isMulti)
             end
 			
             -- use_item,name=hyperthread_wristwraps,if=buff.combustion.up&action.fire_blast.charges=0&action.fire_blast.recharge_time>gcd.max
-            if A.HyperthreadWristwraps:IsReady(unit) and (Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:GetSpellChargesFullRechargeTime() > A.GetGCD()) then
+            if A.HyperthreadWristwraps:IsReady(player) and A.LastPlayerCastID == A.FireBlast.ID and 
+			(
+			    Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 
+				and A.FireBlast:GetSpellCharges() == 0 
+				and A.FireBlast:GetSpellChargesFullRechargeTime() > A.GetGCD()
+			)
+			then
                 return A.HyperthreadWristwraps:Show(icon)
             end
 			
@@ -744,7 +750,19 @@ A[3] = function(icon, isMulti)
         local function ItemsHighPriority(unit)
 		
             -- call_action_list,name=items_combustion,if=!variable.disable_combustion&(talent.rune_of_power.enabled&variable.time_to_combustion<=action.rune_of_power.cast_time|variable.time_to_combustion<=0)&!firestarter.active|buff.combustion.up
-            if ItemsCombustion(unit) and (not VarDisableCombustion and (A.RuneofPower:IsSpellLearned() and VarTimeToCombustion <= A.RuneofPower:GetSpellCastTime() or VarTimeToCombustion <= 0) and not FirestarterActiveStatus() or Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0) then
+            if ItemsCombustion(unit) and 
+			(
+			    not VarDisableCombustion and 
+				(
+				    A.RuneofPower:IsSpellLearned() and VarTimeToCombustion <= A.RuneofPower:GetSpellCastTime() 
+					or 
+					VarTimeToCombustion <= 0
+				) and 
+				not FirestarterActiveStatus() 
+				or 
+				Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0
+			)
+			then
                 return true
             end
 			
@@ -843,7 +861,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(talent.flame_patch.enabled&active_enemies>2|active_enemies>5)&(!firestarter.active&(variable.time_to_combustion>0|variable.disable_combustion))&(!buff.heating_up.react&!buff.hot_streak.react&!prev_off_gcd.fire_blast&(action.fire_blast.charges>=2|(action.phoenix_flames.charges>=1&talent.phoenix_flames.enabled)|(talent.alexstraszas_fury.enabled&cooldown.dragons_breath.ready)|(talent.searing_touch.enabled&target.health.pct<=30)))
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and 
 			(
 			    not (A.FlamePatch:IsSpellLearned() and MultiUnits:GetActiveEnemies() > 2 
 				or 
@@ -895,7 +913,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(talent.flame_patch.enabled&active_enemies>2|active_enemies>5)&(!firestarter.active&(variable.time_to_combustion>0|variable.disable_combustion))&(buff.heating_up.react&(target.health.pct>=30|!talent.searing_touch.enabled))
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    not (A.FlamePatch:IsSpellLearned() and MultiUnits:GetActiveEnemies() > 2 or MultiUnits:GetActiveEnemies() > 5) 
 				and 
@@ -922,7 +940,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(talent.flame_patch.enabled&active_enemies>2|active_enemies>5)&(!firestarter.active&(variable.time_to_combustion>0|variable.disable_combustion))&talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!Player:IsCasting() == A.Scorch:Info()|!buff.heating_up.react&!buff.hot_streak.react)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    not (A.FlamePatch:IsSpellLearned() and MultiUnits:GetActiveEnemies() > 2 
 				or 
@@ -976,7 +994,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(talent.flame_patch.enabled&active_enemies>2|active_enemies>5)&((variable.time_to_combustion>0|variable.disable_combustion)&!firestarter.active)&buff.hot_streak.down&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    (
 				    A.FlamePatch:IsSpellLearned() and MultiUnits:GetActiveEnemies() > 2 
@@ -1075,7 +1093,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=((variable.time_to_combustion>0|variable.disable_combustion)&buff.rune_of_power.down&!firestarter.active)&!talent.kindling.enabled&!variable.fire_blast_pooling&(((Player:IsCasting() == A.Fireball:Info()|Player:IsCasting() == A.Pyroblast:Info())&(buff.heating_up.react))|(talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!Player:IsCasting() == A.Scorch:Info()|!buff.hot_streak.react&!buff.heating_up.react&Player:IsCasting() == A.Scorch:Info()&!action.pyroblast.in_flight&!action.fireball.in_flight)))
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    (
 				    (
@@ -1115,7 +1133,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,if=talent.kindling.enabled&buff.heating_up.react&!firestarter.active&(variable.time_to_combustion>full_recharge_time+2+talent.kindling.enabled|variable.disable_combustion|(!talent.rune_of_power.enabled|cooldown.rune_of_power.remains>target.time_to_die&action.rune_of_power.charges<1)&variable.time_to_combustion>target.time_to_die)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID  and 
 			(
 			    A.Kindling:IsSpellLearned() and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0 and not FirestarterActiveStatus() and 
 				(
@@ -1188,7 +1206,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!variable.fire_blast_pooling&(talent.flame_patch.enabled&active_enemies>2|active_enemies>9)&((variable.time_to_combustion>0|variable.disable_combustion)&!firestarter.active)&buff.hot_streak.down&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    not bool(VarFireBlastPooling) and 
 				(
@@ -1320,17 +1338,28 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- FireBlast fallback
-			if A.FireBlast:IsReadyByPassCastGCD(unit) and A.FireBlast:GetSpellTimeSinceLastCast() > 1 and Player:IsCasting() and A.Combustion:GetCooldown() > A.FireBlast:GetSpellChargesFullRechargeTime()
-			and Unit(player):HasBuffs(A.HotStreakBuff.ID, true) == 0 
-			and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0
-			and A.FireBlast:GetSpellCharges() > 1 
-            and (Unit(player):HasBuffs(A.CombustionBuff.ID, true) == 0 or Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 and A.LastPlayerCastName == A.Pyroblast:Info()) 			
+			if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
+			(
+			    Unit(player):HasBuffs(A.CombustionBuff.ID, true) == 0 and
+				(
+					Player:IsCasting() and A.Combustion:GetCooldown() > A.FireBlast:GetSpellChargesFullRechargeTime()
+			        and Unit(player):HasBuffs(A.HotStreakBuff.ID, true) == 0 
+			        and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0
+			        and A.FireBlast:GetSpellCharges() > 1 
+				) or
+				Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 and
+				(
+				    Player:IsCasting() == A.Scorch:Info() and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) == 0
+					or
+					not Player:IsCasting() and A.LastPlayerCastID ~= A.Pyroblast.ID and Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0
+				)			    
+			)			
 			then
                 return A.FireBlast:Show(icon)
             end			
 			
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=(essence.memory_of_lucid_dreams.major|essence.memory_of_lucid_dreams.minor&azerite.blaster_master.enabled)&charges=max_charges&!buff.hot_streak.react&!(buff.heating_up.react&(buff.combustion.up&(action.fireball.in_flight|action.pyroblast.in_flight|Player:IsCasting() == A.Scorch:Info())|target.health.pct<=30&Player:IsCasting() == A.Scorch:Info()))&!(!buff.heating_up.react&!buff.hot_streak.react&buff.combustion.down&(action.fireball.in_flight|action.pyroblast.in_flight))
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    (
 				    Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) 
@@ -1341,7 +1370,7 @@ A[3] = function(icon, isMulti)
 				(
 				    Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0 and 
 					(
-					    Unit(player):HasBuffs(A.CombustionBuff.ID, true) and 
+					    Unit(player):HasBuffs(A.CombustionBuff.ID, true) > 0 and 
 						(
 						    A.Fireball:IsSpellInFlight() 
 							or 
@@ -1366,7 +1395,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- fire_blast,use_while_casting=1,use_off_gcd=1,if=firestarter.active&charges>=1&(!variable.fire_blast_pooling|buff.rune_of_power.up)&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)&(!Player:IsCasting() == A.Fireball:Info()&!action.pyroblast.in_flight&buff.heating_up.up|Player:IsCasting() == A.Fireball:Info()&buff.hot_streak.down|action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
-            if A.FireBlast:IsReadyByPassCastGCD(unit, nil, HeatingUpBuffActive(), nil) and 
+            if A.FireBlast:IsReadyByPassCastGCD(unit) and A.LastPlayerCastID ~= A.FireBlast.ID and 
 			(
 			    FirestarterActiveStatus() and A.FireBlast:GetSpellCharges() >= 1 and 
 				(
