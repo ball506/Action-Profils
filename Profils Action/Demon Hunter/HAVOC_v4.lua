@@ -858,7 +858,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- reaping_flames
-            if A.ReapingFlames:IsRacialReady(unit) and UseHeartOfAzeroth then
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit) and UseHeartOfAzeroth then
                 return A.ReapingFlames:Show(icon)
             end
             
