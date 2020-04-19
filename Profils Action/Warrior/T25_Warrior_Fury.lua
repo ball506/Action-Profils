@@ -801,6 +801,11 @@ A[3] = function(icon, isMulti)
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
+            -- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit) and UseHeartOfAzeroth then
+                return A.ReapingFlames:Show(icon)
+            end
+			
             -- concentrated_flame,if=!buff.recklessness.up&!buff.siegebreaker.up&dot.concentrated_flame_burn.remains=0
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and not ShouldStop and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffs(A.Recklessness.ID, true) == 0 and Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
