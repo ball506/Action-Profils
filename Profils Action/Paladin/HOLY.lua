@@ -133,6 +133,8 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     DivinePurpose                          = Create({ Type = "Spell", ID = 216413, Hidden = true     }),
     -- Raid
     DarkestDepths                          = Create({ Type = "Spell", ID = 292127, Hidden = true     }), -- Eternal Palace debuff heal
+	-- Misc
+	Cyclone                                = Create({ Type = "Spell", ID = 33786, Hidden = true     }), -- Cyclone 
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Create({ Type = "Spell", ID = 296320, Hidden = true     }),
@@ -447,6 +449,9 @@ local Temp                                     = {
 local GetTotemInfo, IsMouseButtonDown, UnitIsUnit = GetTotemInfo, IsMouseButtonDown, UnitIsUnit
 
 local player = "player"
+local targettarget = "targettarget"
+local target = "target"
+local mouseover = "mouseover"
 
 local function IsSchoolFree()
     return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "NATURE") == 0
@@ -463,7 +468,7 @@ local ActiveUnitPlates = MultiUnits:GetActiveUnitPlates()
 local function GetByRange(count, range, isCheckEqual, isCheckCombat)
     local c = 0 
     for unit in pairs(ActiveUnitPlates) do 
-        if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+        if (not isCheckEqual or not UnitIsUnit(target, unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
             if InMelee(unit) then 
                 c = c + 1
             elseif range then 
@@ -488,12 +493,12 @@ local function AntiFakeStun(unit)
     A.HammerofJusticeGreen:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true)          
 end 
 A[1] = function(icon)    
-    local useKick, useCC, useRacial = A.InterruptIsValid("targettarget", "TargetMouseover")    
+    local useKick, useCC, useRacial = A.InterruptIsValid(targettarget, "TargetMouseover")    
     local MinInterrupt = A.GetToggle(2, "MinInterrupt")
     local MaxInterrupt = A.GetToggle(2, "MaxInterrupt") 
  
     -- Auto targettarget ?
-    if useCC and A.HammerofJustice:IsReady("targettarget") and A.HammerofJustice:AbsentImun("targettarget", Temp.TotalAndPhysAndCCAndStun, true) and Unit("targettarget"):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useCC and A.HammerofJustice:IsReady(targettarget) and A.HammerofJustice:AbsentImun(targettarget, Temp.TotalAndPhysAndCCAndStun, true) and Unit(targettarget):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
         -- Notification                    
         Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
         return A.HammerofJusticeGreen              
@@ -502,11 +507,11 @@ A[1] = function(icon)
 	-- Manual Key
     if     A.HammerofJusticeGreen:IsReady(nil, nil, nil, true) and 
     (
-        AntiFakeStun("mouseover") or 
-        AntiFakeStun("target") or 
+        AntiFakeStun(mouseover) or 
+        AntiFakeStun(target) or 
         (
-            not A.IsUnitEnemy("mouseover") and 
-            not A.IsUnitEnemy("target") and                     
+            not A.IsUnitEnemy(mouseover) and 
+            not A.IsUnitEnemy(target) and                     
             (
                 (A.IsInPvP and EnemyTeam():PlayersInRange(1, 10)) or 
                 (not A.IsInPvP and GetByRange(1, 10))
@@ -523,10 +528,10 @@ end
 -- [2] Kick AntiFake Rotation
 A[2] = function(icon)        
     local unit
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-    elseif A.IsUnitEnemy("target") then 
-        unit = "target"
+    if A.IsUnitEnemy(mouseover) then 
+        unit = mouseover
+    elseif A.IsUnitEnemy(target) then 
+        unit = target
     end 
     
     if unit then         
@@ -680,7 +685,7 @@ local function CastStart(event, ...)
     if unitID == player and spellID then 
         local spellName = GetSpellInfo(spellID)
         if spellName and Temp.IsSpellIsCast[spellName] then 
-            Temp.LastPrimaryUnitGUID     = (IsUnitFriendly("mouseover") and UnitGUID("mouseover")) or (IsUnitFriendly("target") and UnitGUID("target")) or UnitGUID(player)
+            Temp.LastPrimaryUnitGUID     = (IsUnitFriendly(mouseover) and UnitGUID(mouseover)) or (IsUnitFriendly(target) and UnitGUID(target)) or UnitGUID(player)
             Temp.LastPrimaryUnitID        = TeamCacheFriendlyGUIDs[Temp.LastPrimaryUnitGUID]
             Temp.LastPrimarySpellName     = spellName 
             Temp.LastPrimarySpellID        = spellID
@@ -751,7 +756,7 @@ local function HoF(unit, Icon)
     (
         -- SELF
         (
-            UnitIsUnit(unit, "player") and 
+            UnitIsUnit(unit, player) and 
             (
                 Unit(unit):HasDeBuffs("Rooted") > GetCurrentGCD() + GetGCD() or 
                 (
@@ -763,12 +768,12 @@ local function HoF(unit, Icon)
         -- ANOTHER UNIT 
         (
             -- Useable conditions
-            UnitExists(unit) and 
-            not UnitIsUnit(unit, "player") and 
+            Unit(unit):IsExists() and 
+            not UnitIsUnit(unit, player) and 
             select(2, UnitClass(unit)) ~= "DRUID" and
             not Unit(unit):InLOS() and         
             A.BlessingofFreedom:IsInRange(unit)    and        
-            Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone    
+            Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone    
             (
                 -- MSG System
                -- msg or 
@@ -781,7 +786,7 @@ local function HoF(unit, Icon)
                 -- Rooted without inc dmg 
                 (
                     Unit(unit):HasDeBuffs("Rooted") > 3 and
-                    Unit(unit):GetRealTimeDMG() <= UnitHealthMax(unit) * 0.1 
+                    Unit(unit):GetRealTimeDMG() <= Unit(unit):HealthMax() * 0.1 
                 ) 
                 or 
                 -- Slowed (if we no need freedom for self)
@@ -868,14 +873,14 @@ end
 -- Hand of Sacrifice
 local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)  
     return 
-    UnitExists(unit) and 
+    Unit(unit):IsExists() and 
     Unit(unit):IsPlayer() and
-    not UnitIsUnit(unit, "player") and
+    not UnitIsUnit(unit, player) and
     not Unit(unit):InLOS() and 
     (UnitInRaid(unit) or UnitInParty(unit)) and 
     A.BlessingofSacrifice:IsReady(unit) and
     A.BlessingofSacrifice:IsInRange(unit) and 
-    Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone 
+    Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone 
     Unit(player):Health() > Unit(player):HealthMax() * 0.2 and       
     (
         -- MSG System TO ACTION
@@ -907,23 +912,23 @@ local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)
                 -- Check for HP arg
                 ( 
                     hp and 
-                    UnitHealth(unit) <= UnitHealthMax(unit) * (hp / 100)
+                    Unit(unit):Health() <= Unit(unit):HealthMax() * (hp / 100)
                 ) or 
                 -- Another check 
                 (
                     Unit(unit):TimeToDie() < 14 and 
                     (
                         (
-                            UnitHealth(unit) <= UnitHealthMax(unit) * 0.35 and 
+                            Unit(unit):Health() <= Unit(unit):HealthMax() * 0.35 and 
                             (
                                 Unit(unit):GetHEAL()  * 1.4 < Unit(unit):GetDMG() or
-                                UnitHealth(unit) <= Unit(unit):GetDMG() * 3.5 
+                                Unit(unit):Health() <= Unit(unit):GetDMG() * 3.5 
                             ) 
                         ) or 
                         -- if unit has 35% dmg per sec 
-                        Unit(unit):GetRealTimeDMG() >= UnitHealthMax(unit) * 0.35 or 
+                        Unit(unit):GetRealTimeDMG() >= Unit(unit):HealthMax() * 0.35 or 
                         -- if unit has sustain 20% dmg per sec 
-                        Unit(unit):GetDMG() >= UnitHealthMax(unit) * 0.2
+                        Unit(unit):GetDMG() >= Unit(unit):HealthMax() * 0.2
                     )
                 )
             )
@@ -936,11 +941,11 @@ local function BoP(unit, Icon)
 
     return
     A.BlessingofProtection:IsReady(unit) and 
-    UnitExists(unit) and 
+    Unit(unit):IsExists() and 
     Unit(unit):IsPlayer() and
     not Unit(unit):IsTank() and
     (
-        not UnitIsUnit(unit, "player") or
+        not UnitIsUnit(unit, player) or
         -- Divine Shield
         A.DivineShield:GetCooldown() > 5
     ) and
@@ -1085,17 +1090,10 @@ local DispelSpell = {
 
 local function Dispel(unit, Icon)    
     return 
- --   (
- --       (
- --           Icon and 
---            MacroSpells(Icon, "Dispel") 
- --       ) or 
- --       dispel_toggle
---    ) and
     (
         -- SELF 
         (
-            UnitIsUnit(unit, "player") and 
+            UnitIsUnit(unit, player) and 
             (
                 (
                     not Unit(player):HasSpec(65) and -- Holy            
@@ -1124,18 +1122,18 @@ local function Dispel(unit, Icon)
         (
             -- Useable conditions
             not A.IsInPvP and
-            UnitExists(unit) and
-            --not UnitIsUnit(unit, "player") and 
-            Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone
+            Unit(unit):IsExists() and
+            --not UnitIsUnit(unit, player) and 
+            Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
             Env.PvEDispel(unit)             
         ) or
         -- PvP: ANOTHER UNIT   
         (
             -- Useable conditions
             A.IsInPvP and
-            UnitExists(unit) and
-            --not UnitIsUnit(unit, "player") and 
-            Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone
+            Unit(unit):IsExists() and
+            --not UnitIsUnit(unit, player) and 
+            Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
             (
                 (
                     not Unit(player):HasSpec(65) and -- Holy            
@@ -1170,7 +1168,7 @@ local function Dispel(unit, Icon)
                             select(2, UnitClass(unit)) ~= "DRUID" and
                             Unit(unit):HasDeBuffs("MagicRooted") > 3 and 
                             Unit(unit):IsMelee() and
-                            Unit(unit):GetRealTimeDMG() <= UnitHealthMax(unit) * 0.1 
+                            Unit(unit):GetRealTimeDMG() <= Unit(unit):HealthMax() * 0.1 
                         )
                     )
                 ) or 
@@ -1308,11 +1306,11 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (      
                 GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.Judgement:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                Unit("mouseover"):PT(196941, "debuff") and                       
-                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true) 
+                A.IsUnitEnemy(mouseover) and        
+                A.Judgement:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                Unit(mouseover):PT(196941, "debuff", true) and                       
+                A.Judgement:AbsentImun(mouseover, Temp.TotalAndPhys, true) 
             ) or 
             -- Target
             ( 
@@ -1320,82 +1318,32 @@ A[3] = function(icon, isMulti)
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame()
                 ) and       
-                A.IsUnitEnemy("target") and        
-                A.Judgement:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and 
-                Unit("target"):PT(196941, "debuff") and        
-                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true) 
+                A.IsUnitEnemy(target) and        
+                A.Judgement:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and 
+                Unit(target):PT(196941, "debuff", true) and        
+                A.Judgement:AbsentImun(target, Temp.TotalAndPhys, true) 
             ) or 
             -- TargetTarget
             ( 
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.Judgement:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
-                Unit("targettarget"):PT(196941, "debuff") and        
-                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+                not A.IsUnitEnemy(target) and
+                A.IsUnitEnemy(targettarget) and
+                A.Judgement:IsInRange(targettarget) and
+                Unit(targettarget):HasBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                Unit(targettarget):PT(196941, "debuff", true) and        
+                A.Judgement:AbsentImun(targettarget, Temp.TotalAndPhys, true)          
             ) 
         )
         then
             return A.Judgement:Show(icon)
         end
-        
-        -- HPvE #2 Holy Shock (DMG)
-        if A.HolyShock:IsReady(unit) and HolyShockDPS and
-        (
-            -- MouseOver
-            (      
-                GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and            
-                A.Judgement:IsInRange("mouseover") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone    
-                (
-                    -- Glimmer of Light 
-                    A.GlimmerofLight:GetAzeriteRank() == 0 or
-                    -- Everyone already buffed so then we can free spend on enemy
-                    not FriendlyTeam(nil, 1):MissedBuffs(A.GlimmerofLightBuff.ID, "player")
-                ) and   
-                A.HolyShock:AbsentImun("mouseover", Temp.TotalAndMag, true)
-            ) or 
-            -- TargetTarget
-            --[[
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                SpellInRange("targettarget", 20271) and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                DeBuffs("targettarget", 275773, "player")<=GetCurrentGCD() and
-                NOMagicImun("targettarget")         
-            ) or 
-            ]]--
-            -- Target
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and        
-                A.IsUnitEnemy("target") and        
-                A.Judgement:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone         
-                A.HolyShock:AbsentImun("target", Temp.TotalAndMag, true)  
-            )
-        )        
-        then
-            return A.HolyShock:Show(icon)
-        end
-        
-        -- Crusader Strike
+
+        -- HPvE #1 Crusader Strike
         if A.CrusaderStrike:IsReady(unit) and A.CrusadersMight:IsSpellLearned() and
         -- Holy Shock
         A.HolyShock:GetCooldown() > GetCurrentGCD() and
@@ -1403,10 +1351,10 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (      
                 GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.CrusaderStrike:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone               
-                A.CrusaderStrike:AbsentImun("mouseover", Temp.TotalAndPhys, true)
+                A.IsUnitEnemy(mouseover) and        
+                A.CrusaderStrike:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone               
+                A.CrusaderStrike:AbsentImun(mouseover, Temp.TotalAndPhys, true)
             ) or 
             -- Target
             ( 
@@ -1414,76 +1362,126 @@ A[3] = function(icon, isMulti)
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() 
                 ) and        
-                A.IsUnitEnemy("target") and        
-                A.CrusaderStrike:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and                
-                A.CrusaderStrike:AbsentImun("target", Temp.TotalAndPhys, true)  
+                A.IsUnitEnemy(target) and        
+                A.CrusaderStrike:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and                
+                A.CrusaderStrike:AbsentImun(target, Temp.TotalAndPhys, true)  
             ) or
             -- TargetTarget
             ( 
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.CrusaderStrike:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone             
-                A.CrusaderStrike:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+                not A.IsUnitEnemy(target) and
+                A.IsUnitEnemy(targettarget) and
+                A.CrusaderStrike:IsInRange(targettarget) and
+                Unit(targettarget):HasBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone             
+                A.CrusaderStrike:AbsentImun(targettarget, Temp.TotalAndPhys, true)          
             ) 
         )
         then
             return A.CrusaderStrike:Show(icon)
         end
-        
+
         -- Consecration
-        if A.Consecration:IsReady(player) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
+        if A.Consecration:IsReady(player) and A.IsUnitEnemy(unit) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
             return A.Consecration:Show(icon)
         end
-        
+                        
         -- HPvE #2 Judgment
         if A.Judgement:IsReady(unit) and InMelee(unit) and 
         (
             -- MouseOver
             (      
                 GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.Judgement:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                Unit("mouseover"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and
-                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true)  
+                A.IsUnitEnemy(mouseover) and        
+                A.Judgement:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                Unit(mouseover):HasDeBuffs(A.Judgement.ID, player, true) <= GetCurrentGCD() and
+                A.Judgement:AbsentImun(mouseover, Temp.TotalAndPhys, true)  
             ) or 
             -- Target
             ( 
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and        
-                A.IsUnitEnemy("target") and        
-                A.Judgement:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and 
-                Unit("target"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and 
-                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true)   
+                A.IsUnitEnemy(target) and        
+                A.Judgement:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and 
+                Unit(target):HasDeBuffs(A.Judgement.ID, player, true) <= GetCurrentGCD() and 
+                A.Judgement:AbsentImun(target, Temp.TotalAndPhys, true)   
             ) or
             -- TargetTarget
             ( 
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.Judgement:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
-                Unit("targettarget"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and
-                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
+                not A.IsUnitEnemy(target) and
+                A.IsUnitEnemy(targettarget) and
+                A.Judgement:IsInRange(targettarget) and
+                Unit(targettarget):HasBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                Unit(targettarget):HasDeBuffs(A.Judgement.ID, player, true) <= GetCurrentGCD() and
+                A.Judgement:AbsentImun(targettarget, Temp.TotalAndPhys, true)          
             ) 
         )        
         then
             return A.Judgement:Show(icon)
+        end
+
+        -- HPvE #2 Holy Shock (DMG)
+        if A.HolyShock:IsReady(unit) and HolyShockDPS and
+        (
+            -- MouseOver
+            (      
+                GetToggle(2, "mouseover") and
+                A.IsUnitEnemy(mouseover) and            
+                A.Judgement:IsInRange(mouseover) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone    
+                (
+                    -- Glimmer of Light 
+                    A.GlimmerofLight:GetAzeriteRank() == 0 or
+                    -- Everyone already buffed so then we can free spend on enemy
+                    not FriendlyTeam(nil, 1):MissedBuffs(A.GlimmerofLightBuff.ID, player)
+                ) and   
+                A.HolyShock:AbsentImun(mouseover, Temp.TotalAndMag, true)
+            ) or 
+            -- TargetTarget
+            --[[
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy(mouseover)
+                ) and
+                not A.IsUnitEnemy(target) and
+                A.IsUnitEnemy(targettarget) and
+                SpellInRange(targettarget, 20271) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                DeBuffs(targettarget, 275773, player)<=GetCurrentGCD() and
+                NOMagicImun(targettarget)         
+            ) or 
+            ]]--
+            -- Target
+            ( 
+                (
+                    not GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not A.IsUnitEnemy(mouseover)
+                ) and        
+                A.IsUnitEnemy(target) and        
+                A.Judgement:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone         
+                A.HolyShock:AbsentImun(target, Temp.TotalAndMag, true)  
+            )
+        )        
+        then
+            return A.HolyShock:Show(icon)
         end
         
         -- HPvE #2 Crusader Strike
@@ -1492,10 +1490,10 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (      
                 GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.CrusaderStrike:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone               
-                A.CrusaderStrike:AbsentImun("mouseover", Temp.TotalAndPhys, true)
+                A.IsUnitEnemy(mouseover) and        
+                A.CrusaderStrike:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone               
+                A.CrusaderStrike:AbsentImun(mouseover, Temp.TotalAndPhys, true)
             )
             or 
             -- Target
@@ -1503,13 +1501,13 @@ A[3] = function(icon, isMulti)
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                not A.IsUnitEnemy("targettarget") and
-                A.IsUnitEnemy("target") and        
-                A.CrusaderStrike:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone                
-                A.CrusaderStrike:AbsentImun("target", Temp.TotalAndPhys, true) 
+                not A.IsUnitEnemy(targettarget) and
+                A.IsUnitEnemy(target) and        
+                A.CrusaderStrike:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone                
+                A.CrusaderStrike:AbsentImun(target, Temp.TotalAndPhys, true) 
             ) 
             or
             -- TargetTarget
@@ -1517,19 +1515,18 @@ A[3] = function(icon, isMulti)
                 (
                     not GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.CrusaderStrike:IsInRange("targettarget") and
-                Unit("targettarget"):HasDeBuffs(33786, true) == 0 and -- Cyclone             
-                A.CrusaderStrike:AbsentImun("targettarget", Temp.TotalAndPhys, true)         
+                not A.IsUnitEnemy(target) and
+                A.IsUnitEnemy(targettarget) and
+                A.CrusaderStrike:IsInRange(targettarget) and
+                Unit(targettarget):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone             
+                A.CrusaderStrike:AbsentImun(targettarget, Temp.TotalAndPhys, true)         
             )
         )
         then
             return A.CrusaderStrike:Show(icon)
         end
- 
     end
     DamageRotation = Action.MakeFunctionCachedDynamic(DamageRotation)
     
@@ -1565,21 +1562,21 @@ A[3] = function(icon, isMulti)
             (
                 GetToggle(2, "Mouseover") and        
                 A.MouseHasFrame() and                      
-                not A.IsUnitEnemy("mouseover") and                 
-                UnitIsPlayer("mouseover") and  
-                Unit("mouseover"):TimeToDie() >= 6 and
-                Dispel("mouseover")
+                not A.IsUnitEnemy(mouseover) and                 
+                Unit(mouseover):IsPlayer() and  
+                Unit(mouseover):TimeToDie() >= 6 and
+                Dispel(mouseover)
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "Mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and       
-                not A.IsUnitEnemy("target") and
-                UnitIsPlayer("target") and  
-                Unit("target"):TimeToDie() >= 6 and
-                Dispel("target")
+                not A.IsUnitEnemy(target) and
+                Unit(target):IsPlayer() and  
+                Unit(target):TimeToDie() >= 6 and
+                Dispel(target)
             )
         )
         then
@@ -1587,29 +1584,29 @@ A[3] = function(icon, isMulti)
         end
 
         -- HPvE Arcane Torrent
-        if A.ArcaneTorrent:AutoRacial(unit) and combatTime > 0 and
+        if A.ArcaneTorrent:IsRacialReady(unit) and combatTime > 0 and
         (
             -- Mouseover
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
-                A.IsUnitEnemy("mouseover") and
-                Unit("mouseover"):GetRange() <= 8 and
-                AuraIsValid("mouseover", "UsePurge", "Dispel") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 
+                Unit(mouseover):IsExists() and 
+                A.IsUnitEnemy(mouseover) and
+                Unit(mouseover):GetRange() <= 8 and
+                AuraIsValid(mouseover, "UsePurge", "Dispel") and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 
             ) or
             -- Target
             (
-                A.IsUnitEnemy("target") and
-                Unit("target"):GetRange() <= 8 and
-                AuraIsValid("target", "UsePurge", "Dispel") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 -- Cyclone
+                A.IsUnitEnemy(target) and
+                Unit(target):GetRange() <= 8 and
+                AuraIsValid(target, "UsePurge", "Dispel") and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 -- Cyclone
             ) or
             -- Mana 
             (
                 IsSaveManaPhase() and Player:Mana() <= Player:ManaMax() * 0.75 or--and
                 Player:Mana() <= Player:ManaMax() * 0.60
-                -- PowerSave("player") and
+                -- PowerSave(player) and
                 --MultiUnits:GetByRange(8) >= 1
             )
         )        
@@ -1623,25 +1620,24 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.HolyShock:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                A.HolyShock:PredictHeal("HolyShock", "mouseover") and
+                not A.IsUnitEnemy(mouseover) and                 
+                A.HolyShock:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                A.HolyShock:PredictHeal("HolyShock", mouseover) and
                 (
-                    ForceGlimmerOnMaxUnits or
                     (
                         Action.InstanceInfo.KeyStone > 0 and
                         Action.InstanceInfo.GroupSize <= 5
                     ) or 
-                    Unit("mouseover"):TimeToDie() <= GetGCD() * 2.5 or
+                    Unit(mouseover):TimeToDie() <= GetGCD() * 2.5 or
                     (
                         (
                             -- AW
                             Unit(player):HasBuffs(31884, true) < GetCurrentGCD() + GetGCD() or
                             -- Glimmer of Light
-                            Unit("mouseover"):HasBuffs(287280, player, true) <= 8.5 or
+                            Unit(mouseover):HasBuffs(287280, player, true) <= 8.5 or
                             -- Divine Purpose
                             (
                                 Unit(player):HasBuffs(216411, true) > 0 and
@@ -1660,19 +1656,19 @@ A[3] = function(icon, isMulti)
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.HolyShock:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                A.HolyShock:PredictHeal("HolyShock", "target") and
+                not A.IsUnitEnemy(target) and
+                A.HolyShock:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                A.HolyShock:PredictHeal("HolyShock", target) and
                 (
                     (
                         Action.InstanceInfo.KeyStone > 0 and
                         Action.InstanceInfo.GroupSize <= 5
                     ) 
                     or 
-                    Unit("target"):TimeToDie() <= GetGCD() * 2.5 
+                    Unit(target):TimeToDie() <= GetGCD() * 2.5 
                     or
                     (
                         (
@@ -1680,7 +1676,7 @@ A[3] = function(icon, isMulti)
                             Unit(player):HasBuffs(31884, true) < GetCurrentGCD() + GetGCD() 
                             or
                             -- Glimmer of Light
-                            Unit("target"):HasBuffs(287280, player, true) <= 8.5 
+                            Unit(target):HasBuffs(287280, player, true) <= 8.5 
                             or   
                             -- Divine Purpose
                             (
@@ -1709,38 +1705,38 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                       
-                not A.IsUnitEnemy("mouseover") and 
-                Unit("mouseover"):HealthPercent() < LayOnHandsHP and        
+                not A.IsUnitEnemy(mouseover) and 
+                Unit(mouseover):HealthPercent() < LayOnHandsHP and        
                 (
-                    A.LayonHands:PredictHeal("LayonHands", "mouseover") or           
-                    Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax() * 0.17
+                    A.LayonHands:PredictHeal("LayonHands", mouseover) or           
+                    Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.17
                 ) and
-                Unit("mouseover"):IsPlayer() and  
-                A.LayOnHands:IsInRange("mouseover") and 
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
+                Unit(mouseover):IsPlayer() and  
+                A.LayOnHands:IsInRange(mouseover) and 
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
                 -- Forbearance
-                Unit("mouseover"):HasDeBuffs(A.Forbearance.ID, true) == 0 
+                Unit(mouseover):HasDeBuffs(A.Forbearance.ID, true) == 0 
             ) 
             or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover")
+                    not Unit(mouseover):IsExists()
                 ) and        
-                not A.IsUnitEnemy("target") and
-                Unit("target"):HealthPercent() < LayOnHandsHP and 
+                not A.IsUnitEnemy(target) and
+                Unit(target):HealthPercent() < LayOnHandsHP and 
                 (
-                    A.LayonHands:PredictHeal("LayonHands", "target") or            
-                    Unit("target"):Health() <= Unit("target"):HealthMax() * 0.17
+                    A.LayonHands:PredictHeal("LayonHands", target) or            
+                    Unit(target):Health() <= Unit(target):HealthMax() * 0.17
                 ) and
-                Unit("target"):IsPlayer() and  
-                A.LayOnHands:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and
+                Unit(target):IsPlayer() and  
+                A.LayOnHands:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and
                 -- Forbearance
-                Unit("target"):HasDeBuffs(A.Forbearance.ID, true) == 0 
+                Unit(target):HasDeBuffs(A.Forbearance.ID, true) == 0 
             )
         )
         then
@@ -1754,7 +1750,7 @@ A[3] = function(icon, isMulti)
         then
             for i = 1, #getmembersAll do 
                 if Unit(getmembersAll[i].Unit):GetRange() <= 40 and not Unit(unit):InLOS() then 
-                      if A.LayOnHands:IsReady(getmembersAll[i].Unit) and (Unit(getmembersAll[i].Unit):HealthPercent() <= LayOnHandsHP or Unit(getmembersAll[i].Unit):TimeToDie() <= LayOnHandsTTD) and Unit(getmembersAll[i].Unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
+                      if not Unit(getmembersAll[i].Unit):IsPet() and A.LayOnHands:IsReady(getmembersAll[i].Unit) and (Unit(getmembersAll[i].Unit):HealthPercent() <= LayOnHandsHP or Unit(getmembersAll[i].Unit):TimeToDie() <= LayOnHandsTTD) and Unit(getmembersAll[i].Unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
                         HealingEngine.SetTarget(getmembersAll[i].Unit, 1)    -- Add 1sec delay in case of emergency switch     
                         -- Notification                    
                         Action.SendNotification("Emergency " .. A.GetSpellInfo(A.LayOnHands.ID) .. " on " .. UnitName(unit), A.LayOnHands.ID)        
@@ -1771,23 +1767,23 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "Mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                       
-                not A.IsUnitEnemy("mouseover") and 
+                not A.IsUnitEnemy(mouseover) and 
                 -- HoS
-                Unit("mouseover"):HasBuffs(6940, true) <= CurrentTimeGCD() and 
-                BoP("mouseover")
+                Unit(mouseover):HasBuffs(6940, true) <= CurrentTimeGCD() and 
+                BoP(mouseover)
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "Mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and  
+                not A.IsUnitEnemy(target) and  
                 -- HoS
-                Unit("target"):HasBuffs(6940, true) <= CurrentTimeGCD() and 
-                BoP("target")         
+                Unit(target):HasBuffs(6940, true) <= CurrentTimeGCD() and 
+                BoP(target)         
             )
         )
           then
@@ -1801,25 +1797,25 @@ A[3] = function(icon, isMulti)
             (
                 A.GetToggle(2, "mouseover") and        
                 A.MouseHasFrame() and                      
-                not A.IsUnitEnemy("mouseover") and                 
-                (UnitInRaid("mouseover") or UnitInParty("mouseover")) and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone        
+                not A.IsUnitEnemy(mouseover) and                 
+                (UnitInRaid(mouseover) or UnitInParty(mouseover)) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone        
                 (
                     (    
-                        not Unit("mouseover"):Role("TANK") and
+                        not Unit(mouseover):Role("TANK") and
                         (
-                            HoS("mouseover", nil, nil, true, true) or
+                            HoS(mouseover, nil, nil, true, true) or
                             (
-                                HealingEngine.IsMostlyIncDMG("mouseover") and
-                                Unit("mouseover"):GetDMG()>Unit("mouseover"):HealthMax()*0.3                        
+                                HealingEngine.IsMostlyIncDMG(mouseover) and
+                                Unit(mouseover):GetDMG()>Unit(mouseover):HealthMax()*0.3                        
                             )
                         )
                     ) or 
                     (
-                        Unit("mouseover"):Role("TANK") and
+                        Unit(mouseover):Role("TANK") and
                         -- Divine Shield
                         Unit(player):HasBuffs(642, true) > 5 and
-                        Unit("mouseover"):GetRealTimeDMG() >= Unit("mouseover"):HealthMax() * 0.2
+                        Unit(mouseover):GetRealTimeDMG() >= Unit(mouseover):HealthMax() * 0.2
                     )
                 )
             ) or 
@@ -1827,29 +1823,29 @@ A[3] = function(icon, isMulti)
             (  
                 (
                     not A.GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and     
-                (UnitInRaid("target") or UnitInParty("target")) and
-                not A.IsUnitEnemy("target") and                 
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone   
+                (UnitInRaid(target) or UnitInParty(target)) and
+                not A.IsUnitEnemy(target) and                 
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone   
                 (
                     (
                         (
-                            not Unit("target"):Role("TANK") and
+                            not Unit(target):Role("TANK") and
                             (
-                                HoS("target", nil, nil, true, true) or
+                                HoS(target, nil, nil, true, true) or
                                 (
-                                    HealingEngine.IsMostlyIncDMG("mouseover") and
-                                    Unit("target"):GetDMG() > Unit("target"):HealthMax()*0.3 
+                                    HealingEngine.IsMostlyIncDMG(mouseover) and
+                                    Unit(target):GetDMG() > Unit(target):HealthMax()*0.3 
                                 )
                             )                
                         )
                     ) or 
                     (
-                        Unit("target"):Role("TANK") and
+                        Unit(target):Role("TANK") and
                         -- Divine Shield
                         Unit(player):HasBuffs(642, true) > 5 and
-                        Unit("target"):GetRealTimeDMG() >= Unit("target"):HealthMax() * 0.2
+                        Unit(target):GetRealTimeDMG() >= Unit(target):HealthMax() * 0.2
                     )
                 )        
             )
@@ -1879,38 +1875,38 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.FlashofLight:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", "mouseover") and
-                Unit("mouseover"):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
+                not A.IsUnitEnemy(mouseover) and                 
+                A.FlashofLight:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
+                A.FlashofLight:PredictHeal("FlashofLight", mouseover) and
+                Unit(mouseover):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
                 (
-                    Unit("mouseover"):Role("TANK") or
-                    HealingEngine.IsMostlyIncDMG("mouseover") or
-                    Unit("mouseover"):Health() < Unit("mouseover"):HealthMax() * 0.8 --or
-                    --Unit("mouseover"):HealthPercent() < FlashofLightHP or
-                    --Unit("mouseover"):TimeToDieX(3) < FlashofLightTTD    
+                    Unit(mouseover):Role("TANK") or
+                    HealingEngine.IsMostlyIncDMG(mouseover) or
+                    Unit(mouseover):Health() < Unit(mouseover):HealthMax() * 0.8 --or
+                    --Unit(mouseover):HealthPercent() < FlashofLightHP or
+                    --Unit(mouseover):TimeToDieX(3) < FlashofLightTTD    
                 )
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.FlashofLight:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", "target") and
-                Unit("target"):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
+                not A.IsUnitEnemy(target) and
+                A.FlashofLight:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
+                A.FlashofLight:PredictHeal("FlashofLight", target) and
+                Unit(target):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
                 (
-                    Unit("target"):Role("TANK") or
-                    HealingEngine.IsMostlyIncDMG("target") or
-                    Unit("target"):Health() < Unit("target"):HealthMax() * 0.8 --or
-                    --Unit("target"):HealthPercent() < FlashofLightHP or
-                    --Unit("target"):TimeToDieX(5) < FlashofLightTTD                
+                    Unit(target):Role("TANK") or
+                    HealingEngine.IsMostlyIncDMG(target) or
+                    Unit(target):Health() < Unit(target):HealthMax() * 0.8 --or
+                    --Unit(target):HealthPercent() < FlashofLightHP or
+                    --Unit(target):TimeToDieX(5) < FlashofLightTTD                
                 )
             ) or
             -- Save us
@@ -1929,26 +1925,26 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.HolyLight:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) < HLcast_t + GetCurrentGCD() and
-                A.HolyLight:PredictHeal("HolyLight", "mouseover") and
-                Unit("mouseover"):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
+                not A.IsUnitEnemy(mouseover) and                 
+                A.HolyLight:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
+                A.HolyLight:PredictHeal("HolyLight", mouseover) and
+                Unit(mouseover):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") or 
-                    A.IsUnitEnemy("mouseover")
+                    not Unit(mouseover):IsExists() or 
+                    A.IsUnitEnemy(mouseover)
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.HolyLight:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) < HLcast_t + GetCurrentGCD() and
-                A.HolyLight:PredictHeal("HolyLight", "target") and
-                Unit("target"):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
+                not A.IsUnitEnemy(target) and
+                A.HolyLight:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
+                A.HolyLight:PredictHeal("HolyLight", target) and
+                Unit(target):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
             )
             or
             -- Save us
@@ -1967,22 +1963,22 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and  
-                not UnitIsUnit("mouseover", "player") and        
-                A.LightofMartyr:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
+                not A.IsUnitEnemy(mouseover) and  
+                not UnitIsUnit(mouseover, player) and        
+                A.LightofMartyr:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and
                 (
                     -- Divine Shield
                     Unit(player):HasBuffs(642, true) > 0 or
-                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", "mouseover")) * 3
+                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)) * 3
                 ) and        
                 (
-                    Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax()*0.18 or
+                    Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.18 or
                     (
-                        Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax()*0.25 and
-                        Unit("mouseover"):TimeToDie() <= 2
+                        Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.25 and
+                        Unit(mouseover):TimeToDie() <= 2
                     )            
                 ) 
             ) or 
@@ -1990,22 +1986,22 @@ A[3] = function(icon, isMulti)
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                not UnitIsUnit("target", "player") and
-                A.LightofMartyr:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and
+                not A.IsUnitEnemy(target) and
+                not UnitIsUnit(target, player) and
+                A.LightofMartyr:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and
                 (
                     -- Divine Shield
                     Unit(player):HasBuffs(642, true) > 0 or            
-                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", "target")) * 3
+                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", target)) * 3
                 ) and
                 (
-                    Unit("target"):Health() <= Unit("target"):HealthMax()*0.18 or
+                    Unit(target):Health() <= Unit(target):HealthMax()*0.18 or
                     (
-                        Unit("target"):Health() <= Unit("target"):HealthMax()*0.25 and
-                        Unit("target"):TimeToDie() <= 2
+                        Unit(target):Health() <= Unit(target):HealthMax()*0.25 and
+                        Unit(target):TimeToDie() <= 2
                     )  
                 ) 
             )
@@ -2020,21 +2016,21 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                SpellInRange("mouseover", 200025) and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 
+                not A.IsUnitEnemy(mouseover) and                 
+                SpellInRange(mouseover, 200025) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                SpellInRange("target", 200025) and
-                Unit("target"):HasDeBuffs(33786, true) == 0
+                not A.IsUnitEnemy(target) and
+                SpellInRange(target, 200025) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0
             )
         ) and
         (
@@ -2058,20 +2054,20 @@ A[3] = function(icon, isMulti)
               (
                  A.GetToggle(2, "mouseover") and        
                 A.MouseHasFrame() and                      
-                not A.IsUnitEnemy("mouseover") and                          
-                Unit("mouseover"):TimeToDie() > GetGCD() * 3.8 and
-                  HoF("mouseover")
+                not A.IsUnitEnemy(mouseover) and                          
+                Unit(mouseover):TimeToDie() > GetGCD() * 3.8 and
+                  HoF(mouseover)
               ) 
             or 
              -- Target
               (
                 (
                        not A.GetToggle(2, "mouseover") or 
-                      not UnitExists("mouseover") 
+                      not Unit(mouseover):IsExists() 
                  ) and       
-                 not A.IsUnitEnemy("target") and        
+                 not A.IsUnitEnemy(target) and        
                  Unit(unit):TimeToDie() > GetGCD() * 3.8 and
-                 HoF("target")
+                 HoF(target)
              )
          )
           then
@@ -2079,10 +2075,10 @@ A[3] = function(icon, isMulti)
          end
 
         -- Special Glimmer of Light Buff spreader
-        if A.GlimmerofLight:GetAzeriteRank() >= 2 and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
+        if A.GlimmerofLight:GetAzeriteRank() >= 2 and FriendlyTeam(nil, 1):MissedBuffs(A.GlimmerofLightBuff.ID, player) and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
             if IsInGroup() or A.IsInPvP or IsInRaid() then
                 for i = 1, #getmembersAll do 
-                    if A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 and not Unit(getmembersAll[i].Unit):InLOS()  then 
+                    if not Unit(getmembersAll[i].Unit):IsPet() and not A.IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 and not Unit(getmembersAll[i].Unit):InLOS()  then 
                         HealingEngine.SetTarget(getmembersAll[i].Unit, 0.5)    -- Add 0.5sec delay in case of emergency switch 
                         -- Notification                    
                         Action.SendNotification("Spreading " .. A.GetSpellInfo(A.GlimmerofLightBuff.ID), A.GlimmerofLightBuff.ID)        
@@ -2096,7 +2092,7 @@ A[3] = function(icon, isMulti)
         if BeaconWorkMode == "Tanking Units" and ActiveBeacon == 0 then
             for i = 1, #getmembersAll do 
                 if Unit(getmembersAll[i].Unit):GetRange() <= 40 then 
-                      if Unit(getmembersAll[i].Unit):IsTank() and Unit(getmembersAll[i].Unit):HasBuffs(A.BeaconofLight.ID, true) == 0  then    
+                      if not Unit(getmembersAll[i].Unit):IsPet() and Unit(getmembersAll[i].Unit):IsTank() and Unit(getmembersAll[i].Unit):HasBuffs(A.BeaconofLight.ID, true) == 0  then    
                         -- Notification                    
                         Action.SendNotification("Placing " .. A.GetSpellInfo(A.BeaconofLight.ID) .. " on " .. UnitName(unit), A.BeaconofLight.ID)
                         HealingEngine.SetTarget(getmembersAll[i].Unit)    -- Add 1sec delay in case of emergency switch                         
@@ -2107,19 +2103,15 @@ A[3] = function(icon, isMulti)
         end
         
         -- Custom Beacon MostlyIncDMG
-        if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "Mostly Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
+        if A.BeaconofLight:IsReady(unit) and not Unit(unit):IsPet() and BeaconWorkMode == "Mostly Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
             HealingEngine.SetTargetMostlyIncDMG(1)
             return A.BeaconofLight:Show(icon)
         end
         
         -- Custom Beacon
         if A.BeaconofLight:IsReady(unit) and BeaconWorkMode == "HPS < Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
-            if GetLowestAlly("ALL", "HP") < 99 then
-                --HealingEngine.SetTarget(unit)
-                ForceHealingTarget("ALL")
-            end            
-
-            if Unit(unit):GUID() == GetLowestAlly("ALL", "GUID") and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):GetHPS() < Unit(unit):GetDMG() then
+            if not Unit(unit):IsPet() and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):GetHPS() < Unit(unit):GetDMG() then
+			    HealingEngine.SetTarget(unit)
                 return A.BeaconofLight:Show(icon)
             end
         end
@@ -2136,9 +2128,9 @@ A[3] = function(icon, isMulti)
                     (
                         not GetToggle(2, "mouseover") or
                         not A.MouseHasFrame() or
-                        not A.IsUnitEnemy("mouseover")
+                        not A.IsUnitEnemy(mouseover)
                     ) and
-                    not A.IsUnitEnemy("target") 
+                    not A.IsUnitEnemy(target) 
                 ) and
                 (            
                     (
@@ -2170,41 +2162,41 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and               
-                not A.IsUnitEnemy("mouseover") and                 
-                Unit("mouseover"):IsPlayer() and
-                Unit("mouseover"):GetRange() <= 40 and
-                --Unit("mouseover"):HasDeBuffs(33786, true) and
-                Unit("mouseover"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
-                Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax() * 0.7 and
-                Unit("mouseover"):GetRealTimeDMG() > 0 and
+                not A.IsUnitEnemy(mouseover) and                 
+                Unit(mouseover):IsPlayer() and
+                Unit(mouseover):GetRange() <= 40 and
+                --Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) <= GetCurrentGCD() + GetGCD() and
+                Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.7 and
+                Unit(mouseover):GetRealTimeDMG() > 0 and
                 (                          
-                    Unit("mouseover"):GetDMG() > Unit("mouseover"):HealthMax()*0.2 or
-                    Unit("mouseover"):GetDMG() > Unit("mouseover"):GetHEAL() * 1.2 or
-                    Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax()*0.25
+                    Unit(mouseover):GetDMG() > Unit(mouseover):HealthMax()*0.2 or
+                    Unit(mouseover):GetDMG() > Unit(mouseover):GetHEAL() * 1.2 or
+                    Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.25
                 ) and
-                Unit("mouseover"):TimeToDie() > 3
+                Unit(mouseover):TimeToDie() > 3
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and       
-                not A.IsUnitEnemy("target") and
-                Unit("target"):IsPlayer() and
-                Unit("target"):GetRange() <= 40 and 
-                --Unit("mouseover"):HasDeBuffs(33786, true) and
-                Unit("target"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
-                Unit("target"):Health() <= Unit("target"):HealthMax() * 0.7 and
-                Unit("target"):GetRealTimeDMG() > 0 and
+                not A.IsUnitEnemy(target) and
+                Unit(target):IsPlayer() and
+                Unit(target):GetRange() <= 40 and 
+                --Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) <= GetCurrentGCD() + GetGCD() and
+                Unit(target):Health() <= Unit(target):HealthMax() * 0.7 and
+                Unit(target):GetRealTimeDMG() > 0 and
                 (                        
-                    Unit("target"):GetDMG() > Unit("target"):HealthMax()*0.2 or
-                    Unit("target"):GetDMG() > Unit("target"):GetHEAL() * 1.2 or            
-                    Unit("target"):Health() <= Unit("target"):HealthMax()*0.25
+                    Unit(target):GetDMG() > Unit(target):HealthMax() * 0.2 or
+                    Unit(target):GetDMG() > Unit(target):GetHEAL() * 1.2 or            
+                    Unit(target):Health() <= Unit(target):HealthMax() * 0.25
                 ) and        
-                Unit("target"):TimeToDie() > 3
+                Unit(target):TimeToDie() > 3
             ) 
         )        
         then
@@ -2222,19 +2214,19 @@ A[3] = function(icon, isMulti)
                     -- MouseOver
                     (
                         GetToggle(2, "mouseover") and
-                        UnitExists("mouseover") and 
+                        Unit(mouseover):IsExists() and 
                         A.MouseHasFrame() and                        
-                        not A.IsUnitEnemy("mouseover") and                         
-                        Unit("mouseover"):HasDeBuffs(33786, true) == 0 
+                        not A.IsUnitEnemy(mouseover) and                         
+                        Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 
                     ) or 
                     -- Target
                     (
                         (
                             not GetToggle(2, "mouseover") or 
-                            not UnitExists("mouseover")
+                            not Unit(mouseover):IsExists()
                         ) and        
-                        not A.IsUnitEnemy("target") and        
-                        Unit("target"):HasDeBuffs(33786, true) == 0
+                        not A.IsUnitEnemy(target) and        
+                        Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0
                     )
                 ) and
                 -- Azerite Breaking Dawn
@@ -2275,9 +2267,9 @@ A[3] = function(icon, isMulti)
             (
                 not A.GetToggle(2, "mouseover") or
                 not A.MouseHasFrame() or
-                not A.IsUnitEnemy("mouseover")
+                not A.IsUnitEnemy(mouseover)
             ) and
-            not A.IsUnitEnemy("target") 
+            not A.IsUnitEnemy(target) 
         ) and
         (            
             (
@@ -2324,9 +2316,9 @@ A[3] = function(icon, isMulti)
                             (
                                 not A.GetToggle(2, "mouseover") or
                                 not A.MouseHasFrame() or
-                                not A.IsUnitEnemy("mouseover")
+                                not A.IsUnitEnemy(mouseover)
                             ) and
-                            not A.IsUnitEnemy("target") 
+                            not A.IsUnitEnemy(target) 
                         ) and
                         (
                             (
@@ -2348,40 +2340,40 @@ A[3] = function(icon, isMulti)
                     -- MouseOver
                     (
                         A.GetToggle(2, "mouseover") and
-                        UnitExists("mouseover") and 
+                        Unit(mouseover):IsExists() and 
                         A.MouseHasFrame() and               
-                        not A.IsUnitEnemy("mouseover") and                 
-                        Unit("mouseover"):IsPlayer() and
-                        Unit("mouseover"):GetRange() <= 40 and
-                        --Unit("mouseover"):HasDeBuffs(33786, true) and
-                        Unit("mouseover"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
-                        Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax() * 0.4
+                        not A.IsUnitEnemy(mouseover) and                 
+                        Unit(mouseover):IsPlayer() and
+                        Unit(mouseover):GetRange() <= 40 and
+                        --Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
+                        Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) <= GetCurrentGCD() + GetGCD() and
+                        Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.4
                         and
-                        Unit("mouseover"):GetRealTimeDMG() > 0 and
+                        Unit(mouseover):GetRealTimeDMG() > 0 and
                         (
-                            Unit("mouseover"):GetDMG() > Unit("mouseover"):GetHEAL() * 1.2 or
-                            Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax() * 0.35 
+                            Unit(mouseover):GetDMG() > Unit(mouseover):GetHEAL() * 1.2 or
+                            Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.35 
                         ) and
-                        Unit("mouseover"):TimeToDie() > 4
+                        Unit(mouseover):TimeToDie() > 4
                     ) or 
                     -- Target
                     (
                         (
                             not A.GetToggle(2, "mouseover") or 
-                            not UnitExists("mouseover") 
+                            not Unit(mouseover):IsExists() 
                         ) and       
-                        not A.IsUnitEnemy("target") and
-                        Unit("target"):IsPlayer() and
-                        Unit("target"):GetRange() <= 40 and 
-                        -- Unit(unit):HasDeBuffs(33786, true) and
-                        Unit("target"):HasDeBuffs(33786, true) <= GetCurrentGCD() + GetGCD() and
-                        Unit("target"):Health() <= Unit("target"):HealthMax() * 0.4 and
-                        Unit("target"):GetRealTimeDMG() >= 0 and
+                        not A.IsUnitEnemy(target) and
+                        Unit(target):IsPlayer() and
+                        Unit(target):GetRange() <= 40 and 
+                        -- Unit(unit):HasDeBuffs(A.Cyclone.ID, true) and
+                        Unit(target):HasDeBuffs(A.Cyclone.ID, true) <= GetCurrentGCD() + GetGCD() and
+                        Unit(target):Health() <= Unit(target):HealthMax() * 0.4 and
+                        Unit(target):GetRealTimeDMG() >= 0 and
                         (
-                            Unit("target"):GetDMG() > Unit("target"):GetHEAL() * 1.2 or
-                            Unit("target"):Health() <= Unit("target"):HealthMax() * 0.35
+                            Unit(target):GetDMG() > Unit(target):GetHEAL() * 1.2 or
+                            Unit(target):Health() <= Unit(target):HealthMax() * 0.35
                         ) and
-                        Unit("target"):TimeToDie() > 4
+                        Unit(target):TimeToDie() > 4
                     )
                 )
             ) or
@@ -2401,14 +2393,14 @@ A[3] = function(icon, isMulti)
                 (
                     (
                         A.GetToggle(2, "mouseover") and
-                        A.IsUnitEnemy("mouseover") and                
-                        Unit("mouseover"):GetLevel() == -1 and
-                        Unit("mouseover"):GetRange() <= 40
+                        A.IsUnitEnemy(mouseover) and                
+                        Unit(mouseover):GetLevel() == -1 and
+                        Unit(mouseover):GetRange() <= 40
                     ) or
                     (
-                        A.IsUnitEnemy("target") and
-                        Unit("target"):GetLevel() == -1 and
-                        Unit("target"):GetRange() <= 40
+                        A.IsUnitEnemy(target) and
+                        Unit(target):GetLevel() == -1 and
+                        Unit(target):GetRange() <= 40
                     )
                 )
             )
@@ -2458,168 +2450,93 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                  
-                A.BestowFaith:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                A.BestowFaith:PredictHeal("BestowFaith", "mouseover") 
+                not A.IsUnitEnemy(mouseover) and                  
+                A.BestowFaith:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                A.BestowFaith:PredictHeal("BestowFaith", mouseover) 
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.BestowFaith:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and
-                A.BestowFaith:PredictHeal("BestowFaith", "target") 
+                not A.IsUnitEnemy(target) and
+                A.BestowFaith:IsInRange(target) and
+                Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and
+                A.BestowFaith:PredictHeal("BestowFaith", target) 
             )
         )
         then
             return A.BestowFaith:Show(icon)
         end
 		
-        -- HPvE #1 Judgment
-        if A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and
-        (
-            -- MouseOver
-            (      
-                GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.Judgement:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                Unit("mouseover"):PT(196941, "debuff") and                       
-                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true) 
-            ) or 
-            -- Target
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame()
-                ) and       
-                A.IsUnitEnemy("target") and        
-                A.Judgement:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and 
-                Unit("target"):PT(196941, "debuff") and        
-                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true) 
-            ) or 
-            -- TargetTarget
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.Judgement:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
-                Unit("targettarget"):PT(196941, "debuff") and        
-                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
-            ) 
-        )
-        then
-            return A.Judgement:Show(icon)
-        end
-
-        -- HPvE #1 Crusader Strike
-        if A.CrusaderStrike:IsReady(unit) and A.CrusadersMight:IsSpellLearned() and
-        -- Holy Shock
-        A.HolyShock:GetCooldown() > GetCurrentGCD() and
-        (
-            -- MouseOver
-            (      
-                GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.CrusaderStrike:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone               
-                A.CrusaderStrike:AbsentImun("mouseover", Temp.TotalAndPhys, true)
-            ) or 
-            -- Target
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() 
-                ) and        
-                A.IsUnitEnemy("target") and        
-                A.CrusaderStrike:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and                
-                A.CrusaderStrike:AbsentImun("target", Temp.TotalAndPhys, true)  
-            ) or
-            -- TargetTarget
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.CrusaderStrike:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone             
-                A.CrusaderStrike:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
-            ) 
-        )
-        then
-            return A.CrusaderStrike:Show(icon)
-        end
-		
+		-- Nothing to do so DPS ? Seems good idea yeah
+		-- DPS targettarget     
+    	if A.IsUnitEnemy(targettarget) then 
+       	    --unit = targettarget
+        
+        	if DamageRotation(targettarget) then 
+            	return true 
+        	end 
+    	end 
+				
         -- HPvE #2 FlashofLight
         if A.FlashofLight:IsReady(unit) and Unit(player):GetCurrentSpeed() == 0 and 
         (
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.FlashofLight:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) and
-                Unit("mouseover"):HasDeBuffs(33786, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", "mouseover") and
+                not A.IsUnitEnemy(mouseover) and                 
+                A.FlashofLight:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
+                A.FlashofLight:PredictHeal("FlashofLight", mouseover) and
                 (
                     -- Tank
                     (                
-                        Unit("mouseover"):HealthPercent() < 95 and
-                        Unit("mouseover"):Role("TANK") 
+                        Unit(mouseover):HealthPercent() < 95 and
+                        Unit(mouseover):Role("TANK") 
                     ) 
                     or
-                    Unit("mouseover"):Health() <= Unit("mouseover"):HealthMax() * 0.75 or
+                    Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.75 or
                     Player:Mana() >= Player:ManaMax() * 0.80            
                 ) and
                 (
                     TeamCacheFriendlySize <= 5 or
-                    Unit("mouseover"):Role("TANK") or
-                    Unit("mouseover"):HealthPercent() <= 40
+                    Unit(mouseover):Role("TANK") or
+                    Unit(mouseover):HealthPercent() <= 40
                 )
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.FlashofLight:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) and
-                Unit("target"):HasDeBuffs(33786, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", "target") and
+                not A.IsUnitEnemy(target) and
+                A.FlashofLight:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
+                A.FlashofLight:PredictHeal("FlashofLight", target) and
                 (
                     -- Tank
                     (                
-                        Unit("target"):HealthPercent() < 20 and
-                        Unit("target"):Role("TANK")
+                        Unit(target):HealthPercent() < 20 and
+                        Unit(target):Role("TANK")
                     ) 
                     or  
-                    Unit("target"):Health() <= Unit("target"):HealthMax() * 0.75 or
+                    Unit(target):Health() <= Unit(target):HealthMax() * 0.75 or
                     Player:Mana() >= Player:ManaMax() * 0.80            
                 ) and
                 (
                     TeamCacheFriendlySize <= 5 or
-                    Unit("target"):Role("TANK") or
-                    Unit("target"):HealthPercent() <= 40            
+                    Unit(target):Role("TANK") or
+                    Unit(target):HealthPercent() <= 40            
                 )
             )
         )
@@ -2633,33 +2550,33 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.HolyLight:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) and
-                Unit("mouseover"):HasDeBuffs(33786, true) < HLcast_t + GetCurrentGCD() and
+                not A.IsUnitEnemy(mouseover) and                 
+                A.HolyLight:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 (
-                    Unit("mouseover"):HealthPercent() < 94 or
-                    Unit("mouseover"):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
+                    Unit(mouseover):HealthPercent() < 94 or
+                    Unit(mouseover):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
                 )        
-                --PredictHeal("HolyLight", "mouseover") 
+                --PredictHeal("HolyLight", mouseover) 
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.HolyLight:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) and
-                Unit("target"):HasDeBuffs(33786, true) < HLcast_t + GetCurrentGCD() and
+                not A.IsUnitEnemy(target) and
+                A.HolyLight:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 (
-                    Unit("target"):HealthPercent() < 94 or
-                    Unit("target"):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
+                    Unit(target):HealthPercent() < 94 or
+                    Unit(target):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
                 )        
-                --PredictHeal("HolyLight", "target") 
+                --PredictHeal("HolyLight", target) 
             )
         )
         then
@@ -2673,46 +2590,46 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 A.GetToggle(2, "mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                 
-                A.HolyPrism:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                A.HolyPrism:PredictHeal("HolyPrism", "mouseover")
+                not A.IsUnitEnemy(mouseover) and                 
+                A.HolyPrism:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                A.HolyPrism:PredictHeal("HolyPrism", mouseover)
             ) or 
             -- Target
             (
                 (
                     not A.GetToggle(2, "mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and
-                A.HolyPrism:IsInRange("target") and
-                Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                A.HolyPrism:PredictHeal("HolyPrism", "target")
+                not A.IsUnitEnemy(target) and
+                A.HolyPrism:IsInRange(target) and
+                Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
+                A.HolyPrism:PredictHeal("HolyPrism", target)
             ) or
             -- DMG
             -- MouseOver
             (
                 A.GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and
-                A.HolyPrism:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
+                A.IsUnitEnemy(mouseover) and
+                A.HolyPrism:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
                 (
                     not GetToggle(2, "AoE") or
                     HealingEngine.HealingBySpell("HolyPrismAoE", 114165) >= 2
                 ) and
-                A.HolyPrism:AbsentImun("mouseover", Temp.TotalAndMag, true)        
+                A.HolyPrism:AbsentImun(mouseover, Temp.TotalAndMag, true)        
             ) or
             -- Target
             (
                 (
                     not A.GetToggle(2, "mouseover") or
                     not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
+                    not A.IsUnitEnemy(mouseover)
                 ) and
-                A.IsUnitEnemy("target") and
-                A.HolyPrism:AbsentImun("target", Temp.TotalAndMag, true)  
+                A.IsUnitEnemy(target) and
+                A.HolyPrism:AbsentImun(target, Temp.TotalAndMag, true)  
             )    
         )
         then        
@@ -2727,35 +2644,35 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                GetToggle(2, "Mouseover") and
-              UnitExists("mouseover") and 
+              Unit(mouseover):IsExists() and 
               A.MouseHasFrame() and                        
-               not A.IsUnitEnemy("mouseover") and  
-               not UnitIsUnit("mouseover", "player") and        
-               A.LightofMartyr:IsInRange("mouseover") and
-               Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
+               not A.IsUnitEnemy(mouseover) and  
+               not UnitIsUnit(mouseover, player) and        
+               A.LightofMartyr:IsInRange(mouseover) and
+               Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and
             (
                  -- Divine Shield
                  Unit(player):HasBuffs(642, true) > 0 or
-                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", "mouseover")) * 4.5
+                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)) * 4.5
                ) and        
-               A.LightofMartyr:PredictHeal("LightofMartyr", "mouseover")
+               A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)
            ) or 
            -- Target
            (
               (
                    not GetToggle(2, "Mouseover") or 
-                not UnitExists("mouseover") 
+                not Unit(mouseover):IsExists() 
                ) and        
-               not A.IsUnitEnemy("target") and
-               not UnitIsUnit("target", "player") and
-              A.LightofMartyr:IsInRange("target") and
-               Unit("target"):HasDeBuffs(33786, true) == 0 and
+               not A.IsUnitEnemy(target) and
+               not UnitIsUnit(target, player) and
+              A.LightofMartyr:IsInRange(target) and
+               Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and
                (
                    -- Divine Shield
                    Unit(player):HasBuffs(642, true) > 0 or            
-                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", "target")) * 4.5
+                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", target)) * 4.5
                ) and
-                A.LightofMartyr:PredictHeal("LightofMartyr", "target")
+                A.LightofMartyr:PredictHeal("LightofMartyr", target)
             )
         )
         then        
@@ -2763,7 +2680,7 @@ A[3] = function(icon, isMulti)
         end
  
         -- Consecration
-        if A.Consecration:IsReady(player) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
+        if A.Consecration:IsReady(player) and A.IsUnitEnemy(unit) and Unit(unit):GetRange() <= 6 and Unit(player):HasBuffs(A.AvengingCrusader.ID, true) == 0 and Consecration() <= 3 then
             return A.Consecration:Show(icon)
         end
  
@@ -2773,127 +2690,46 @@ A[3] = function(icon, isMulti)
             -- MouseOver
             (
                 GetToggle(2, "Mouseover") and
-                UnitExists("mouseover") and 
+                Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
-                not A.IsUnitEnemy("mouseover") and                         
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and
-                A.LightofDawn:PredictHeal("LightofDawn", "mouseover") and
+                not A.IsUnitEnemy(mouseover) and                         
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and
+                A.LightofDawn:PredictHeal("LightofDawn", mouseover) and
                 -- Azerite Breaking Dawn
-                Unit("mouseover"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
+                Unit(mouseover):CanInterract((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
             ) or 
             -- Target
             (
                 (
                     not GetToggle(2, "Mouseover") or 
-                    not UnitExists("mouseover") 
+                    not Unit(mouseover):IsExists() 
                 ) and        
-                not A.IsUnitEnemy("target") and        
-                Unit("target"):HasDeBuffs(33786, true) == 0 and
-                A.LightofDawn:PredictHeal("LightofDawn", "target") and
+                not A.IsUnitEnemy(target) and        
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and
+                A.LightofDawn:PredictHeal("LightofDawn", target) and
                 -- Azerite Breaking Dawn
-                Unit("target"):CanInterract( (A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
+                Unit(target):CanInterract((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
             )
         )
         then        
             return A.LightofDawn:Show(icon)
         end
-        
-		-- Nothing to do so DPS ? Seems good idea yeah
-		
-        -- HPvE #2 Judgment
-        if A.Judgement:IsReady(unit) and InMelee(unit) and 
-        (
-            -- MouseOver
-            (      
-                GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.Judgement:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone
-                Unit("mouseover"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and
-                A.Judgement:AbsentImun("mouseover", Temp.TotalAndPhys, true)  
-            ) or 
-            -- Target
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and        
-                A.IsUnitEnemy("target") and        
-                A.Judgement:IsInRange("target") and
-                Unit("target"):HasBuffs(33786, true) == 0 and 
-                Unit("target"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and 
-                A.Judgement:AbsentImun("target", Temp.TotalAndPhys, true)   
-            ) or
-            -- TargetTarget
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.Judgement:IsInRange("targettarget") and
-                Unit("targettarget"):HasBuffs(33786, true) == 0 and -- Cyclone
-                Unit("targettarget"):HasDeBuffs(A.Judgement.ID, "player", true) <= GetCurrentGCD() and
-                A.Judgement:AbsentImun("targettarget", Temp.TotalAndPhys, true)          
-            ) 
-        )        
-        then
-            return A.Judgement:Show(icon)
-        end
-        
-        -- HPvE #2 Crusader Strike
-        if A.CrusaderStrike:IsReady(unit) and 
-        (
-            -- MouseOver
-            (      
-                GetToggle(2, "mouseover") and
-                A.IsUnitEnemy("mouseover") and        
-                A.CrusaderStrike:IsInRange("mouseover") and
-                Unit("mouseover"):HasDeBuffs(33786, true) == 0 and -- Cyclone               
-                A.CrusaderStrike:AbsentImun("mouseover", Temp.TotalAndPhys, true)
-            )
-            or 
-            -- Target
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("targettarget") and
-                A.IsUnitEnemy("target") and        
-                A.CrusaderStrike:IsInRange("target") and
-                Unit("target"):HasDeBuffs(33786, true) == 0 and -- Cyclone                
-                A.CrusaderStrike:AbsentImun("target", Temp.TotalAndPhys, true) 
-            ) 
-            or
-            -- TargetTarget
-            ( 
-                (
-                    not GetToggle(2, "mouseover") or
-                    not A.MouseHasFrame() or
-                    not A.IsUnitEnemy("mouseover")
-                ) and
-                not A.IsUnitEnemy("target") and
-                A.IsUnitEnemy("targettarget") and
-                A.CrusaderStrike:IsInRange("targettarget") and
-                Unit("targettarget"):HasDeBuffs(33786, true) == 0 and -- Cyclone             
-                A.CrusaderStrike:AbsentImun("targettarget", Temp.TotalAndPhys, true)         
-            )
-        )
-        then
-            return A.CrusaderStrike:Show(icon)
-        end
-		
+        			
     end    
     HealingRotation = Action.MakeFunctionCachedDynamic(HealingRotation)
-    
+
+    -- Heal Target 
+    if A.IsUnitFriendly(target) then 
+        unit = target 
+        
+        if HealingRotation(unit) then 
+            return true 
+        end 
+    end  
+	
     -- DPS Mouseover 
-    if A.IsUnitEnemy("mouseover") then 
-        unit = "mouseover"    
+    if A.IsUnitEnemy(mouseover) then 
+        unit = mouseover    
         
         if DamageRotation(unit) then 
             return true 
@@ -2901,8 +2737,8 @@ A[3] = function(icon, isMulti)
     end 
     
     -- Heal Mouseover
-    if A.IsUnitFriendly("mouseover") then 
-        unit = "mouseover"  
+    if A.IsUnitFriendly(mouseover) then 
+        unit = mouseover  
         
         if HealingRotation(unit) then 
             return true 
@@ -2910,32 +2746,13 @@ A[3] = function(icon, isMulti)
     end  
     
     -- DPS Target     
-    if A.IsUnitEnemy("target") then 
-        unit = "target"
+    if A.IsUnitEnemy(target) then 
+        unit = target
         
         if DamageRotation(unit) then 
             return true 
         end 
-    end 
-    
-    -- Heal Target 
-    if A.IsUnitFriendly("target") then 
-        unit = "target" 
-        
-        if HealingRotation(unit) then 
-            return true 
-        end 
-    end 
-    
-    -- DPS targettarget     
-    if A.IsUnitEnemy("targettarget") then 
-        unit = "targettarget"
-        
-        if DamageRotation(unit) then 
-            return true 
-        end 
-    end 
-        
+    end         
 end 
 
 local function RotationPassive(icon)
@@ -2958,22 +2775,22 @@ local function RotationPassive(icon)
         (
             GetToggle(2, "mouseover") and
             A.MouseHasFrame() and
-            UnitExists("mouseover") and        
-            Unit("mouseover"):IsDead() and
-            Unit("mouseover"):IsPlayer() and        
-            (UnitInRaid("mouseover") or UnitInParty("mouseover")) and        
-            Unit("mouseover"):GetRange() <= 100
+            Unit(mouseover):IsExists() and        
+            Unit(mouseover):IsDead() and
+            Unit(mouseover):IsPlayer() and        
+            (UnitInRaid(mouseover) or UnitInParty(mouseover)) and        
+            Unit(mouseover):GetRange() <= 100
         ) or 
         (
             (
                 not GetToggle(2, "mouseover") or 
-                not UnitExists("mouseover") or 
-                A.IsUnitEnemy("mouseover")
+                not Unit(mouseover):IsExists() or 
+                A.IsUnitEnemy(mouseover)
             ) and
-            Unit("target"):IsDead() and
-            Unit("target"):IsPlayer() and
-            (UnitInRaid("target") or UnitInParty("target")) and
-            Unit("target"):GetRange() <= 100
+            Unit(target):IsDead() and
+            Unit(target):IsPlayer() and
+            (UnitInRaid(target) or UnitInParty(target)) and
+            Unit(target):GetRange() <= 100
         )
     )
     then
@@ -2989,22 +2806,22 @@ local function RotationPassive(icon)
         (
             GetToggle(2, "mouseover") and
             A.MouseHasFrame() and
-            UnitExists("mouseover") and        
-            Unit("mouseover"):IsDead() and
-            Unit("mouseover"):IsPlayer() and        
-            not A.IsUnitEnemy("mouseover") and         
-            A.Redemption:IsInRange("mouseover")    
+            Unit(mouseover):IsExists() and        
+            Unit(mouseover):IsDead() and
+            Unit(mouseover):IsPlayer() and        
+            not A.IsUnitEnemy(mouseover) and         
+            A.Redemption:IsInRange(mouseover)    
         ) or 
         (
             (
                 not GetToggle(2, "mouseover") or 
-                not UnitExists("mouseover") or 
-                A.IsUnitEnemy("mouseover")
+                not Unit(mouseover):IsExists() or 
+                A.IsUnitEnemy(mouseover)
             ) and
-            Unit("target"):IsDead() and
-            Unit("target"):IsPlayer() and
-            not A.IsUnitEnemy("target") and
-            A.Redemption:IsInRange("target")
+            Unit(target):IsDead() and
+            Unit(target):IsPlayer() and
+            not A.IsUnitEnemy(target) and
+            A.Redemption:IsInRange(target)
         )
     )
     then
@@ -3026,13 +2843,13 @@ local function RotationPassive(icon)
     if A.DivineShield:IsReady(player) and combatTime > 0 and
     (
         (
-            not UnitIsUnit("target", "player") and
+            not UnitIsUnit(target, player) and
              (
                 not GetToggle(2, "mouseover") 
                 or
                 not A.MouseHasFrame() 
                 or
-                not UnitIsUnit("mouseover", "player")
+                not UnitIsUnit(mouseover, player)
             )        
         ) 
         or
