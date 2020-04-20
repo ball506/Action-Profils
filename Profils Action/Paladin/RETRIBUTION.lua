@@ -536,15 +536,24 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
+	
         -- variable,name=wings_pool,value=!equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*3|cooldown.crusade.remains>gcd*3)|equipped.169314&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>gcd*6|cooldown.crusade.remains>gcd*6)
-        VarWingsPool =  (
-		                    not A.AzsharasFontofPower:IsExists() and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 or A.Crusade:GetCooldown() > A.GetGCD() * 3) 
-							or 
-							(not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 or A.Crusade:GetCooldown() > A.GetGCD() * 6)
-							or
-							A.AvengingWrath:GetCooldown() == 0 and Player:HolyPower() > 4
-						)
-					--print(VarWingsPool)
+        VarWingsPool = (   
+	                        not A.AzsharasFontofPower:IsExists() and 
+	                        (
+						        not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 3 
+							    or 
+							    A.Crusade:GetCooldown() > A.GetGCD() * 3
+						    )
+						    or A.AzsharasFontofPower:IsExists() and 
+						    (
+						        not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > A.GetGCD() * 6 
+							    or 
+							    A.Crusade:GetCooldown() > A.GetGCD() * 6
+						    )
+					    )
+  	
+		
         -- variable,name=ds_castable,value=spell_targets.divine_storm>=2&!talent.righteous_verdict.enabled|spell_targets.divine_storm>=3&talent.righteous_verdict.enabled|buff.empyrean_power.up&debuff.judgment.down&buff.divine_purpose.down&buff.avenging_wrath_autocrit.down
         VarDsCastable = (GetByRange(2, 8) and not A.RighteousVerdict:IsSpellLearned() or GetByRange(3, 8) and A.RighteousVerdict:IsSpellLearned() or Unit(player):HasBuffs(A.EmpyreanPowerBuff.ID, true) > 0 and Unit(unit):HasDeBuffs(A.JudgmentDebuff.ID, true) == 0 and Unit(player):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Unit(player):HasBuffs(A.AvengingWrathAutocritBuff.ID, true) == 0)
         -- variable,name=HoW,value=(!talent.hammer_of_wrath.enabled|target.health.pct>=20&!(buff.avenging_wrath.up|buff.crusade.up))
