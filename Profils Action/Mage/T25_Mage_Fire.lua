@@ -1366,7 +1366,7 @@ A[3] = function(icon, isMulti)
 					or
 					Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID) and A.BlasterMaster:GetAzeriteRank() > 0
 				)
-				and A.FireBlast:GetSpellCharges() == A.FireBlast:MaxCharges() and Unit(player):HasBuffs(A.HotStreakBuff.ID, true) == 0 and not 
+				and A.FireBlast:GetSpellCharges() == A.FireBlast:GetSpellChargesMax() and Unit(player):HasBuffs(A.HotStreakBuff.ID, true) == 0 and not 
 				(
 				    Unit(player):HasBuffs(A.HeatingUpBuff.ID, true) > 0 and 
 					(
