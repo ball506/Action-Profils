@@ -728,7 +728,9 @@ A[3] = function(icon, isMulti)
         -- variable,name=pooling_for_blade_dance,value=variable.blade_dance&(fury<75-talent.first_blood.enabled*20)            
         VarPoolingForBladeDance = VarBladeDance and (Fury < 75 - num(A.FirstBlood:IsSpellLearned())*20)       
         -- variable,name=pooling_for_eye_beam,value=talent.demonic.enabled&!talent.blind_fury.enabled&cooldown.eye_beam.remains<(gcd.max*2)&fury.deficit>20
-        VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and FuryDeficit > 20            
+        VarPoolingForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and FuryDeficit > 20
+		-- Low Pooling for Eye Beam
+		VarLowPoolForEyeBeam = A.Demonic:IsSpellLearned() and not A.BlindFury:IsSpellLearned() and A.EyeBeam:GetCooldown() < (A.GetGCD() * 2) and FuryDeficit > 75
         -- variable,name=waiting_for_dark_slash,value=talent.dark_slash.enabled&!variable.pooling_for_blade_dance&!variable.pooling_for_meta&cooldown.dark_slash.up
         VarWaitingForDarkSlash = A.DarkSlash:IsSpellLearned() and not VarPoolingForBladeDance and not VarPoolingForMeta and A.DarkSlash:GetCooldown() == 0          
         -- variable,name=waiting_for_momentum,value=talent.momentum.enabled&!buff.momentum.up
@@ -858,7 +860,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit) and UseHeartOfAzeroth then
+            if A.ReapingFlames:IsRacialReady(unit) and UseHeartOfAzeroth then
                 return A.ReapingFlames:Show(icon)
             end
             
@@ -1138,7 +1140,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- chaos_strike,if=!variable.pooling_for_blade_dance&!variable.pooling_for_eye_beam
-            if A.ChaosStrike:IsReady(unit) and CanCast and not VarPoolingForBladeDance and not VarPoolingForEyeBeam then
+            if A.ChaosStrike:IsReady(unit) and CanCast and not VarPoolingForBladeDance and 
+			(
+					(HandleEyeBeam() ~= false and not VarPoolingForEyeBeam)
+					or
+					(HandleEyeBeam() == false and not VarLowPoolForEyeBeam)
+			) then
                 return A.ChaosStrike:Show(icon)
             end    
             
@@ -1166,6 +1173,18 @@ A[3] = function(icon, isMulti)
         
         -- Normal build
         if not A.Demonic:IsSpellLearned() and not profileStop and inCombat then
+			-- death_sweep,if=variable.blade_dance
+            if A.DeathSweep:IsReadyByPassCastGCD(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
+                return A.DeathSweep:Show(icon)
+            end
+			
+			-- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
+            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+                -- Notification                    
+                Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)               
+                return A.EyeBeam:Show(icon)
+            end
+		
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
             if A.FelBarrage:IsReady(unit) and CanCast and 
             (
@@ -1179,26 +1198,14 @@ A[3] = function(icon, isMulti)
                 return A.FelBarrage:Show(icon)
             end
             
-            -- death_sweep,if=variable.blade_dance
-            if A.DeathSweep:IsReadyByPassCastGCD(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
-                return A.DeathSweep:Show(icon)
+			-- blade_dance,if=variable.blade_dance
+            if A.BladeDance:IsReady(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
+                return A.BladeDance:Show(icon)
             end
-            
+			
             -- immolation_aura
             if A.ImmolationAura:IsReady(player) and CanCast and FuryDeficit > 10 then
                 return A.ImmolationAura:Show(icon)
-            end
-            
-            -- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam()  then
-                -- Notification                    
-                Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)               
-                return A.EyeBeam:Show(icon)
-            end
-            
-            -- blade_dance,if=variable.blade_dance
-            if A.BladeDance:IsReady(unit) and InMelee(unit) and CanCast and not Unit(unit):IsTotem() and VarBladeDance then
-                return A.BladeDance:Show(icon)
             end
             
             -- felblade,if=fury.deficit>=40
