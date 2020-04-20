@@ -600,29 +600,24 @@ A[3] = function(icon, isMulti)
         end
     
         local function SingleTarget(unit)
-        -- siegebreaker
-            if A.Siegebreaker:IsReady(unit) and InRange(unit) and not ShouldStop then
+
+            -- furious_slash,buff/stacks.furious_slash.remains<3
+            if A.FuriousSlash:IsReady(unit) and not ShouldStop and (Unit(player):HasBuffs(A.FuriousSlashBuff.ID, true) <= 2 or Unit(player):HasBuffsStacks(A.FuriousSlashBuff.ID, true) < 3) then
+                return A.FuriousSlash:Show(icon)
+            end
+		
+            -- siegebreaker
+            if A.Siegebreaker:IsReady(unit) and InRange(unit) and (A.Recklessness:GetCooldown() > 30 or Unit(player):HasBuffs(A.Recklessness.ID, true) > 0) and not ShouldStop then
                 return A.Siegebreaker:Show(icon)
             end
 			
-            -- rampage,if=(buff.recklessness.up|buff.memory_of_lucid_dreams.up)|(talent.frothing_berserker.enabled|talent.carnage.enabled&(buff.enrage.remains<gcd|rage>75)|talent.massacre.enabled&(buff.enrage.remains<gcd|rage>85))
+            -- rampage
             if A.Rampage:IsReady(unit) and InRange(unit) and 
-			(
-			    (
-				    Unit(player):HasBuffs(A.RecklessnessBuff.ID, true) > 0 
-					or 
-					Unit(player):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0
-				)
-				or 
-				(
-				    A.FrothingBerserker:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 95)
-					or 
-					A.Carnage:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 75) 
-					or 
-					A.Massacre:IsSpellLearned() and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) < GetGCD() or Player:Rage() >= 85)
-				)
-			)
-			then
+		(((A.FrothingBerserker:IsSpellLearned() and Player:Rage() >= 95) 
+		or 
+		A.Carnage:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 75) or Player:Rage() > 90)) 
+		or 
+		A.Massacre:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 85) or Player:Rage() > 90)) then
                 return A.Rampage:Show(icon)
             end
 			
@@ -630,24 +625,14 @@ A[3] = function(icon, isMulti)
             if A.Execute:IsReady(unit) and InRange(unit) and not ShouldStop then
                 return A.Execute:Show(icon)
             end
-			
-            -- furious_slash,if=!buff.bloodlust.up&buff.furious_slash.remains<3
-            if A.FuriousSlash:IsReady(unit) and not ShouldStop and (not Unit(player):HasHeroism() and Unit(player):HasBuffs(A.FuriousSlashBuff.ID, true) < 3) then
-                return A.FuriousSlash:Show(icon)
-            end
-			
-            -- bladestorm,if=prev_gcd.1.rampage
-            if A.Bladestorm:IsReady(unit) and InRange(unit) and not ShouldStop and BurstIsON(unit) and (A.LastPlayerCastName == A.Rampage:Info()) then
-                return A.Bladestorm:Show(icon)
-            end
-			
-            -- bloodthirst,if=buff.enrage.down|azerite.cold_steel_hot_blood.rank>1
-            if A.Bloodthirst:IsReady(unit) and InRange(unit) and not ShouldStop and (Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 or A.ColdSteelHotBlood:GetAzeriteRank() > 1) then
+	
+            -- bloodthirst,azerite.cold_steel_hot_blood.rank>1
+            if A.Bloodthirst:IsReady(unit) and InRange(unit) and not ShouldStop and A.ColdSteelHotBlood:GetAzeriteRank() > 1 then
                 return A.Bloodthirst:Show(icon)
             end
 			
             -- raging_blow,if=charges=2
-            if A.RagingBlow:IsReady(unit) and InRange(unit) and not ShouldStop and (A.RagingBlow:GetSpellCharges() == 2) then
+            if A.RagingBlow:IsReady(unit) and InRange(unit) and not ShouldStop and (A.RagingBlow:GetSpellCharges() == 2) and Unit(player):HasBuffs(A.EnrageBuff.ID, true) > 0 and A.ColdSteelHotBlood:GetAzeriteRank() <= 1 then
                return A.RagingBlow:Show(icon)
             end
 			
@@ -655,17 +640,14 @@ A[3] = function(icon, isMulti)
             if A.Bloodthirst:IsReady(unit) and InRange(unit) and not ShouldStop then
                 return A.Bloodthirst:Show(icon)
             end
+
+            -- bladestorm
+            if A.Bladestorm:IsReadyByPassCastGCD(player) and not ShouldStop and Unit(player):HasBuffs(A.EnrageBuff.ID, true) > 0 and (GetByRange(3, 8, true) or Unit(unit):IsBoss()) then
+                return A.Bladestorm:Show(icon)
+            end
 			
-            -- raging_blow,if=talent.carnage.enabled|(talent.massacre.enabled&rage<85)|(talent.frothing_berserker.enabled&rage<95)
-            if A.RagingBlow:IsReady(unit) and InRange(unit) and not ShouldStop and 
-			(
-			    (A.Carnage:IsSpellLearned() and Player:Rage() < 75) 
-				or 
-				(A.Massacre:IsSpellLearned() and Player:Rage() < 85) 
-				or 
-				(A.FrothingBerserker:IsSpellLearned() and Player:Rage() < 95)
-			)
-			then
+            -- raging_blow
+            if A.RagingBlow:IsReady(unit) and InRange(unit) and not ShouldStop then
                 return A.RagingBlow:Show(icon)
             end
 			
@@ -827,10 +809,10 @@ A[3] = function(icon, isMulti)
             end
 			
             -- Reck if rage is > 90 and SiegebreakerDebuff
-            if A.Recklessness:IsReady(unit) and not ShouldStop and BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) > 1 or not A.Siegebreaker:IsSpellLearned()) and ( A.GuardianofAzeroth:GetCooldown() > 20 or not A.GuardianofAzeroth:IsSpellLearned() ) then
+            if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop and BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) > 1 or not A.Siegebreaker:IsSpellLearned()) and ( A.GuardianofAzeroth:GetCooldown() > 20 or not A.GuardianofAzeroth:IsSpellLearned() ) then
                 return A.Recklessness:Show(icon)
             end
-			
+
             -- dragonroar with aoe check or target is boss
             if A.DragonRoar:IsReadyByPassCastGCD(player) and not ShouldStop and Unit(player):HasBuffs(A.EnrageBuff.ID, true) > 0 and (GetByRange(2, 8, true) or Unit(unit):IsBoss()) then
                 return A.DragonRoar:Show(icon)
