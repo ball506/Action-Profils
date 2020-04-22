@@ -155,6 +155,8 @@ local targettarget = "targettarget"
 local target = "target"
 local mouseover = "mouseover"
 
+-- Call to avoid lua limit of 60upvalues 
+-- Call RotationsVariables in each function that need these vars
 local function RotationsVariables()
     combatTime = Unit(player):CombatTime()
     DBM = GetToggle(1 ,"DBM")
@@ -1766,7 +1768,7 @@ A[3] = function(icon, isMulti)
                 A.MouseHasFrame() and                       
                 not IsUnitEnemy(mouseover) and 
                 -- HoS
-                Unit(mouseover):HasBuffs(6940, true) <= CurrentTimeGCD() and 
+                Unit(mouseover):HasBuffs(6940, true) <= GetCurrentGCD() and 
                 BoP(mouseover)
             ) or 
             -- Target
@@ -1777,7 +1779,7 @@ A[3] = function(icon, isMulti)
                 ) and        
                 not IsUnitEnemy(target) and  
                 -- HoS
-                Unit(target):HasBuffs(6940, true) <= CurrentTimeGCD() and 
+                Unit(target):HasBuffs(6940, true) <= GetCurrentGCD() and 
                 BoP(target)         
             )
         )
@@ -2273,7 +2275,7 @@ A[3] = function(icon, isMulti)
                     )
                 ) and
                 -- Azerite Breaking Dawn
-                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, "LightofDawn", A.LightofDawn) >= 3
+                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, A.LightofDawn) >= 3
             ) or
             -- Divine Purpose
             (

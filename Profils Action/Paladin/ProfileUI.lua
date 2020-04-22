@@ -1111,7 +1111,21 @@ A.Data.ProfileUI = {
                         ruRU = "Использовать\nЗелье Маны",
 					},
         	        M = {},
-       	        }, 			
+       	        }, 	
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "MythicPlusLogic",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Smart Mythic+",
+                        ruRU = "Smart Mythic+",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+                        ruRU = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+					},
+        	        M = {},
+       	        },				
         	    {	    
            	        E = "Checkbox", 
            	        DB = "StartByPreCast",
