@@ -514,6 +514,8 @@ A[3] = function(icon, isMulti)
 	local UnbridledFuryWithExecute = A.GetToggle(2, "UnbridledFuryWithExecute")
 	local UnbridledFuryWithBloodlust = A.GetToggle(2, "UnbridledFuryWithBloodlust")
 	local UnbridledFuryHP = A.GetToggle(2, "UnbridledFuryHP")	
+	local AllowDelayedAW = A.GetToggle(2, "AllowDelayedAW")	
+	
 	-- FocusedAzeriteBeam protection channel
 	local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
 		-- @return:
