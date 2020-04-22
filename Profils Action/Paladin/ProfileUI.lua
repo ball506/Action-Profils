@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.1.6 (20.04.2020)",
+    DateTime = "v4.1.7 (22.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -1638,6 +1638,20 @@ A.Data.ProfileUI = {
            	        TT = { 
 					    enUS = "Will try to spread as much as possible your " .. A.GetSpellInfo(20473) .. " to apply up to 8 " .. A.GetSpellInfo(287268) .. " buffs.\nOnly works with Glimmer of Light azerite trait.",
                         ruRU = "Will try to spread as much as possible your " .. A.GetSpellInfo(20473) .. " to apply up to 8 " .. A.GetSpellInfo(287268) .. " buffs.\nOnly works with Glimmer of Light azerite trait.",
+					},
+           	        M = {},
+        	    },
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "GlimmerTankOOC",
+           	        DBV = true,
+           	        L = { 
+					    enUS = A.GetSpellInfo(287268) .. "\tanks out of combat",
+                        ruRU = A.GetSpellInfo(287268) .. "\tanks out of combat",
+	                },
+           	        TT = { 
+					    enUS = "Will force your " .. A.GetSpellInfo(20473) .. " to apply " .. A.GetSpellInfo(287268) .. " buffs on tank before combat start.",
+                        ruRU = "Will force your " .. A.GetSpellInfo(20473) .. " to apply " .. A.GetSpellInfo(287268) .. " buffs on tank before combat start.",
 					},
            	        M = {},
         	    },
