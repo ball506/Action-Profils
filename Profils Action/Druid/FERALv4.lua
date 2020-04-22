@@ -866,7 +866,15 @@ A[3] = function(icon)
        -- if A.TigersFury:IsReady(player) and GetByRange() then
       --      return A.TigersFury:Show(icon)
       --  end
-        
+	  
+	    -- ZakLL Maim Logic for PvP :) 
+	    if A.IsInPvP then
+	  		if A.Maim:IsReady(unit) and Unit(unit):IsControlAble("stun", 0) and Unit(unit):HasDeBuffs("Stuned") == 0 and 
+			   (A.Berserk:IsReady(player) or A.FeralFrenzy:IsReady(unit) or EnemyTeam("HEALER"):GetCC() >= A.GetGCD() * 3) and Unit(unit):HasBuffs("DeffBuffs") == 0 and Player:ComboPoints() > 3 then
+				return A.Maim:Show(icon)
+			end
+        end
+		
         -- call_action_list,name=cooldowns
         if inCombat and IsInCatForm and not Unit(unit):IsDead() and Unit(unit):GetRange() < 7 and unit ~= "mouseover" then
        
@@ -903,7 +911,12 @@ A[3] = function(icon)
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0) then
                 return A.TheUnboundForce:Show(icon)
             end
-            
+			
+             -- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit) and UseHeartOfAzeroth then
+                return A.ReapingFlames:Show(icon)
+            end
+			
             -- memory_of_lucid_dreams,if=buff.tigers_fury.up&buff.berserk.down
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.TigersFuryBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BerserkBuff.ID, true) == 0) then
                 return A.MemoryofLucidDreams:Show(icon)
