@@ -511,7 +511,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- augmentation
 			-- battle_shout
-            if A.BattleShout:IsReady(player) and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
+            if A.BattleShout:IsReady(player) and A.BattleShout:GetSpellTimeSinceLastCast() >= 60 and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
                 return A.BattleShout
             end			
             if Unit(unit):IsExists() then
@@ -537,7 +537,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- recklessness
-                if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
+                if A.Recklessness:IsReady(player) and InRange(unit) and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
                     return A.Recklessness
                 end
 				
@@ -554,7 +554,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- augmentation
             -- augmentation
-            if A.BattleShout:IsReady(player) and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
+            if A.BattleShout:IsReady(player) and A.BattleShout:GetSpellTimeSinceLastCast() >= 60 and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
                 return A.BattleShout
             end
             if Unit(unit):IsExists() then
@@ -575,7 +575,7 @@ A[3] = function(icon, isMulti)
                 end
 				
                 -- recklessness
-                if A.Recklessness:IsReady(unit) and not ShouldStop and InRange(unit) then
+                if A.Recklessness:IsReady(player) and not ShouldStop and InRange(unit) then
                     return A.Recklessness
                 end
 				
@@ -613,11 +613,12 @@ A[3] = function(icon, isMulti)
 			
             -- rampage
             if A.Rampage:IsReady(unit) and InRange(unit) and 
-		(((A.FrothingBerserker:IsSpellLearned() and Player:Rage() >= 95) 
-		or 
-		A.Carnage:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 75) or Player:Rage() > 90)) 
-		or 
-		A.Massacre:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 85) or Player:Rage() > 90)) then
+		    (((A.FrothingBerserker:IsSpellLearned() and Player:Rage() >= 95) 
+		    or 
+		    A.Carnage:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 75) or Player:Rage() > 90)) 
+		    or 
+		    A.Massacre:IsSpellLearned() and ((Unit(player):HasBuffs(A.EnrageBuff.ID, true) == 0 and Player:Rage() >= 85) or Player:Rage() > 90)) 
+			then
                 return A.Rampage:Show(icon)
             end
 			
@@ -680,7 +681,7 @@ A[3] = function(icon, isMulti)
             -- auto_attack
             -- augmentation
 			-- battle_shout
-            if A.BattleShout:IsReady(player) and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
+            if A.BattleShout:IsReady(player) and A.BattleShout:GetSpellTimeSinceLastCast() >= 60 and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
                 return A.BattleShout:Show(icon)
             end
 			
@@ -809,7 +810,21 @@ A[3] = function(icon, isMulti)
             end
 			
             -- Reck if rage is > 90 and SiegebreakerDebuff
-            if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop and BurstIsON(unit) and (Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) > 1 or not A.Siegebreaker:IsSpellLearned()) and ( A.GuardianofAzeroth:GetCooldown() > 20 or not A.GuardianofAzeroth:IsSpellLearned() ) then
+            if A.Recklessness:IsReady(player) and InRange(unit) and not ShouldStop and BurstIsON(unit) and 
+			-- Siegebreaker check don't work cause it cause infinite loop between Reck and Siege each one waiting for them to be used :)
+		--	(
+		--	    Unit(unit):HasDeBuffs(A.SiegebreakerDebuff.ID, true) > 1 
+		--		or 
+		--		not A.Siegebreaker:IsSpellLearned()
+		--	)
+		--	and 
+			-- GuardianofAzeroth check
+			(
+    			A.GuardianofAzeroth:GetCooldown() > 20 
+				or 
+				not A.GuardianofAzeroth:IsEssenceUseable()
+			)
+			then
                 return A.Recklessness:Show(icon)
             end
 
@@ -906,8 +921,7 @@ A[3] = function(icon, isMulti)
         unit = "target"
         if EnemyRotation(unit) then 
             return true
-        end 
-
+        end
     end
 end
 -- Finished
