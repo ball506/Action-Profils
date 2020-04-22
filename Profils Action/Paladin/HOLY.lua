@@ -656,7 +656,7 @@ end
 
 -- Mana Management
 local function IsSaveManaPhase()
-    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") and Unit(player):HasBuffs(A.Innervate.ID) == 0 then 
+    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") then 
         for i = 1, MAX_BOSS_FRAMES do 
             if Unit("boss" .. i):IsExists() and not Unit("boss" .. i):IsDead() and Unit(player):PowerPercent() < Unit("boss" .. i):HealthPercent() then 
                 return true 
