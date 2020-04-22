@@ -1055,6 +1055,19 @@ A[3] = function(icon, isMulti)
             end
             
         end
+
+        -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
+        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true)  and UseHeartOfAzeroth 
+		and (
+		        (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())
+		    ) then
+            return A.ConcentratedFlame:Show(icon)
+        end
+			
+		-- reaping_flames
+        if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and UseHeartOfAzeroth then
+            return A.ReapingFlames:Show(icon)
+        end
         
         -- Demonic build
         if A.Demonic:IsSpellLearned() and not profileStop and inCombat then
