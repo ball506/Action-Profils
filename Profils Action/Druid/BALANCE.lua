@@ -830,13 +830,46 @@ A[3] = function(icon, isMulti)
 			
 		    -- starsurge
 		    if A.Starsurge:IsReadyByPassCastGCD(unit) and IsSchoolArcaneUP() and A.Starsurge:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and
-		    ((A.Starlord:IsSpellLearned() and (Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 5) or not 
-		    A.Starlord:IsSpellLearned() and (Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 or (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 0 or 
-		    A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0))) and (A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() < VarSfTargets or not A.GetToggle(2, "AoE")) and 
-		    Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 and 
-		    Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and (VarAzSs == 0 or 
-		    (Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 or A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0) or 
-		    A.LastPlayerCastID ~= A.Starsurge.ID) or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)) 
+		    (
+			    (
+				    A.Starlord:IsSpellLearned() and 
+					(
+					    Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3
+						or 
+						Unit(player):HasBuffs(A.StarlordBuff.ID, true) >= 5
+					)
+					or not A.Starlord:IsSpellLearned() and 
+					(
+					    Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) < 8 
+						or 
+						(
+						    Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) > 0 
+							or 
+		                    A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) > 0
+						)
+					)
+				)
+				and	
+				(
+				    A.GetToggle(2, "AoE") and MultiUnits:GetActiveEnemies() < VarSfTargets 
+					or 
+					not A.GetToggle(2, "AoE")
+				)
+				and Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) + Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 4 
+				and Unit(player):HasBuffsStacks(A.SolarEmpowermentBuff.ID, true) < 3 and Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) < 3 and 
+				(
+				    VarAzSs == 0 
+					or 
+		            (
+				       Unit(player):HasBuffs(A.CelestialAlignmentBuff.ID, true) == 0 
+					   or 
+					   A.Incarnation:IsSpellLearned() and Unit(player):HasBuffs(A.IncarnationBuff.ID, true) == 0
+					) 
+					or 
+					A.LastPlayerCastID ~= A.Starsurge.ID
+				)
+				or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)
+			) 
 			then
 			    return A.Starsurge:Show(icon)
 		    end			
@@ -973,7 +1006,15 @@ A[3] = function(icon, isMulti)
             end
 
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 0 and ((not bool(VarAzSs) or Unit(player):HasBuffs(CaIncID, true) == 0)) and CanCast and UseHeartOfAzeroth and 
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD and Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) > 0 and 
+			(
+			    (
+				    VarAzSs == 0 
+					or 
+					Unit(player):HasBuffs(CaIncID, true) == 0
+				)
+			)
+			and CanCast and UseHeartOfAzeroth and 
 			(
 			    GetByRange(FocusedAzeriteBeamUnits, 30) 
 				or 
@@ -1006,8 +1047,20 @@ A[3] = function(icon, isMulti)
             end
 			
             -- force_of_nature,if=(variable.az_ss&!buff.ca_inc.up|!variable.az_ss&(buff.ca_inc.up|cooldown.ca_inc.remains>30))&ap_check
-            if A.ForceofNature:IsReady(unit) and ((bool(VarAzSs) and Unit(player):HasBuffs(CaIncID, true) == 0 or not bool(VarAzSs) and (Unit(player):HasBuffs(CaIncID, true) > 0 or CaInc:GetCooldown() > 30)) 
-			and AP_Check(A.ForceofNature)) 
+            if A.ForceofNature:IsReady(unit) and 
+			(
+			    (
+				    VarAzSs > 0 and Unit(player):HasBuffs(CaIncID, true) == 0 
+					or 
+					VarAzSs == 0 and 
+					(
+					    Unit(player):HasBuffs(CaIncID, true) > 0 
+						or 
+						CaInc:GetCooldown() > 30
+					)
+				) 
+			    and AP_Check(A.ForceofNature)
+			) 
 			then
                 return A.ForceofNature:Show(icon)
             end	
@@ -1035,11 +1088,20 @@ A[3] = function(icon, isMulti)
 			    and (AP_Check(A.LunarStrike) or Unit(player):HasBuffsStacks(A.LunarEmpowermentBuff.ID, true) == 3) and 
 				(
 			        (
-					    Unit(player):HasBuffs(A.WarriorofEluneBuff.ID, true) > 0 or Unit(player):HasBuffs(A.LunarEmpowermentBuff.ID, true) > 0 or MultiUnits:GetActiveEnemies() >= 2 
-						and Unit(player):HasBuffs(A.SolarEmpowermentBuff.ID, true) == 0
+					    Unit(player):HasBuffs(A.WarriorofEluneBuff.ID, true) > 0 
+						or 
+						Unit(player):HasBuffs(A.LunarEmpowermentBuff.ID, true) > 0
+						or 
+						MultiUnits:GetActiveEnemies() >= 2 and Unit(player):HasBuffs(A.SolarEmpowermentBuff.ID, true) == 0
 					) 
-					and (not bool(VarAzSs) or Unit(player):HasBuffs(CaIncID, true) == 0) 
-					or bool(VarAzSs) and Unit(player):HasBuffs(CaIncID, true) > 0 and A.LastPlayerCastID == A.SolarWrath.ID
+					and 
+					(
+					    VarAzSs == 0 
+						or 
+						Unit(player):HasBuffs(CaIncID, true) == 0
+					) 
+					or 
+					VarAzSs > 0 and Unit(player):HasBuffs(CaIncID, true) > 0 and A.LastPlayerCastID == A.SolarWrath.ID
 				)
 			) 
 			then
@@ -1049,7 +1111,11 @@ A[3] = function(icon, isMulti)
             -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
             if A.SolarWrath:IsReady(unit) and IsSchoolNatureUP() and A.SolarWrath:AbsentImun(unit, Temp.TotalAndPhys) and 
 			    (
-				    VarAzSs < 3 or Unit(player):HasBuffs(CaIncID, true) == 0 or A.LastPlayerCastID ~= A.SolarWrath.ID
+				    VarAzSs < 3 
+					or 
+					Unit(player):HasBuffs(CaIncID, true) == 0 
+					or 
+					A.LastPlayerCastID ~= A.SolarWrath.ID
 				) 
 			then
                 return A.SolarWrath:Show(icon)
@@ -1057,14 +1123,26 @@ A[3] = function(icon, isMulti)
 	
 		    --Move
 		    if A.Sunfire:IsReady(unit) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
-		    (VarAzSs == 0 or (Unit(player):HasBuffs(CaIncID, true) == 0) or 
-		     A.LastPlayerCastID ~= A.Sunfire.ID) then
+		    (
+			    VarAzSs == 0 
+				or 
+				(Unit(player):HasBuffs(CaIncID, true) == 0) 
+				or 
+		        A.LastPlayerCastID ~= A.Sunfire.ID
+			)
+			then
 			    return A.Sunfire:Show(icon)
 		    end
 		
 		    if A.Moonfire:IsReady(unit) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
-		    (VarAzSs == 0 or (Unit(player):HasBuffs(CaIncID, true) == 0) or 
-		    A.LastPlayerCastID ~= A.Moonfire.ID) then
+		    (
+			    VarAzSs == 0 
+				or 
+				(Unit(player):HasBuffs(CaIncID, true) == 0) 
+				or 
+		        A.LastPlayerCastID ~= A.Moonfire.ID
+			)
+			then
 			    return A.Moonfire:Show(icon)
 		    end
         end
