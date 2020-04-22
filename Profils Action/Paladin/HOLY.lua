@@ -127,6 +127,7 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     LayOnHands                             = Create({ Type = "Spell", ID = 633 }),
     Forbearance                            = Create({ Type = "Spell", ID = 25771 }),
     DivineProtection                       = Create({ Type = "Spell", ID = 498 }),
+    RuleofLaw                              = Create({ Type = "Spell", ID = 214202, Hidden = true     }),
     GlimmerofLightBuff                     = Create({ Type = "Spell", ID = 287280, Hidden = true     }),
     BreakingDawn                           = Create({ Type = "Spell", ID = 278594, Hidden = true     }),
     DivinePurpose                          = Create({ Type = "Spell", ID = 216413, Hidden = true     }),
@@ -1850,6 +1851,70 @@ A[3] = function(icon, isMulti)
         then
             return A.BlessingofSacrifice:Show(icon)
         end
+		
+        -- #6.3 HPvE Rule of Law
+        if A.RuleofLaw:IsReady(player) and combatTime > 0 and A.RuleofLaw:IsSpellLearned() and
+        Unit(player):HasBuffs(A.RuleofLaw.ID, true) == 0 and
+        (
+            -- MouseOver
+            (
+                MouseOver and
+                Unit(mouseover):IsExists() and 
+                A.MouseHasFrame() and                        
+                not IsUnitEnemy("mouseover") and  
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone 
+                (
+                    -- HEALING
+                    (
+                        Unit(mouseover):CanInterract(40) and        
+                        (
+                            (
+                                A.RuleofLaw:GetSpellChargesFrac() >= 2 and
+                                Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.6
+                            ) or            
+                            TimeToDie("mouseover") <= 6 or
+                            Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.35
+                        ) 
+                    ) or
+                    -- OUT OF RANGE
+                    (
+                        not Unit(mouseover):CanInterract(40) and 
+                        combatTime > 0                
+                    )
+                )        
+            ) or 
+            -- Target
+            (
+                (
+                    not MouseOver or 
+                    not Unit(mouseover):IsExists() 
+                ) and        
+                not IsUnitEnemy("target") and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and   
+                (
+                    -- HEALING
+                    (
+                        Unit(target):CanInterract(40) and                
+                        (
+                            (
+                                A.RuleofLaw:GetSpellChargesFrac() >= 2 and
+                                Unit(target):Health() <= Unit(target):HealthMax()*0.6
+                            ) or            
+                            Unit(target):TimeToDie() <= 6 or
+                            Unit(target):Health() <= Unit(target):HealthMax()*0.35
+                        ) 
+                    ) or
+                    -- OUT OF RANGE
+                    (
+                        not Unit(target):CanInterract(40) and 
+                        combatTime > 0                     
+                    )
+                )            
+            )
+        )
+        then
+            return A.RuleofLaw:Show(icon)
+        end
 
         -- Tank Emergency
         -- #7 HPvE Lay on Hands
@@ -2275,7 +2340,7 @@ A[3] = function(icon, isMulti)
                     )
                 ) and
                 -- Azerite Breaking Dawn
-                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, "Light of Dawn", A.LightofDawn) >= 3
+                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, "LightofDawn", A.LightofDawn) >= 3
             ) or
             -- Divine Purpose
             (
