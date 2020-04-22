@@ -160,7 +160,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 	BuryTheHatchet                         = Action.Create({ Type = "Spell", ID = 280128, Hidden = true     }),	 
-	
+	CracklingThunder                       = Action.Create({ Type = "Spell", ID = 203201, Hidden = true     }),	 
 };
 
 -- To create essences use next code:
@@ -555,6 +555,10 @@ local function EvaluateCycleAshvanesRazorCoral84(unit)
     return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
 end
 
+local function ThunderClapRange()
+    return A.CracklingThunder:IsSpellLearned() and 12 or 8
+end
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -629,7 +633,7 @@ A[3] = function(icon, isMulti)
         --Aoe
         local function Aoe(unit)
             -- thunder_clap
-            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(2, 8) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player, true) and GetByRange(2, ThunderClapRange()) then
                 return A.ThunderClap:Show(icon)
             end
 						
@@ -658,13 +662,18 @@ A[3] = function(icon, isMulti)
                 return A.ShieldSlam:Show(icon)
             end
 			
+            -- devastate
+            if A.Devastate:IsReady(unit) and InRange(unit) then
+                return A.Devastate:Show(icon)
+            end
+			
         end
         Aoe = A.MakeFunctionCachedDynamic(Aoe)
 		
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReadyByPassCastGCD(player) and (GetByRange(2, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player, true) and (GetByRange(2, ThunderClapRange()) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -674,7 +683,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(1, 8) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
+            if A.ThunderClap:IsReadyByPassCastGCD(player, true) and GetByRange(1, ThunderClapRange()) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
                 return A.ThunderClap:Show(icon)
             end
 			
@@ -706,7 +715,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- thunder_clap
-            if A.ThunderClap:IsReadyByPassCastGCD(player) and GetByRange(1, 8) then
+            if A.ThunderClap:IsReadyByPassCastGCD(player, true) and GetByRange(1, ThunderClapRange()) then
                 return A.ThunderClap:Show(icon)
             end
 						
@@ -943,21 +952,18 @@ A[3] = function(icon, isMulti)
             end
 			
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if Aoe(unit) and GetByRange(3, 8) and A.GetToggle(2, "AoE") then
+            if Aoe(unit) and GetByRange(3, 12) and A.GetToggle(2, "AoE") then
                 return true
             end
 			
             -- call_action_list,name=st
-            if St(unit) then
+            if St(unit) and (not GetToggle(2, "AoE") or not GetByRange(3, 12)) then
                 return true
             end
 			
         end
     end
-
     -- End on EnemyRotation()
-
-
 
     -- Defensive
     local SelfDefensive = SelfDefensives()
