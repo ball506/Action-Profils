@@ -2275,7 +2275,7 @@ A[3] = function(icon, isMulti)
                     )
                 ) and
                 -- Azerite Breaking Dawn
-                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, A.LightofDawn) >= 3
+                HealingEngine.HealingByRange((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15, "Light of Dawn", A.LightofDawn) >= 3
             ) or
             -- Divine Purpose
             (
