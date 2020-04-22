@@ -155,57 +155,57 @@ local targettarget = "targettarget"
 local target = "target"
 local mouseover = "mouseover"
 
-local RotationsVariables = {
-    DBM = GetToggle(1 ,"DBM"),
-    Potion = GetToggle(1, "Potion"),
-    Racial = GetToggle(1, "Racial"),
-    HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")    ,
-	MouseOver = GetToggle(2, "mouseover"),
+local function RotationsVariables()
+    combatTime = Unit(player):CombatTime()
+    DBM = GetToggle(1 ,"DBM")
+    Potion = GetToggle(1, "Potion")
+    Racial = GetToggle(1, "Racial")
+    HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
+	MouseOver = GetToggle(2, "mouseover")
     -- ProfileUI vars
-    LayOnHandsHP = GetToggle(2, "LayOnHandsHP"),
-    LayOnHandsTTD = GetToggle(2, "LayOnHandsTTD"),
-    HolyShockHP = GetToggle(2, "HolyShockHP"),
-    HolyShockTTD = GetToggle(2, "HolyShockTTD"),
-    LightofDawnHP = GetToggle(2, "LightofDawnHP"),
-    LightofDawnTTD = GetToggle(2, "LightofDawnTTD"),    
-    LightofDawnUnits = GetToggle(2, "LightofDawnUnits"),
-    FlashofLightHP = GetToggle(2, "FlashofLightHP"),
-    FlashofLightTTD = GetToggle(2, "FlashofLightTTD"),
-    HolyLightHP = GetToggle(2, "HolyLightHP"),
-    HolyLightTTD = GetToggle(2, "HolyLightTTD"),
-    LightoftheMartyrHP = GetToggle(2, "LightoftheMartyrHP"),
-    LightoftheMartyrTTD = GetToggle(2, "LightoftheMartyrTTD"),
-    LightsHammerHP = GetToggle(2, "LightsHammerHP"),
-    LightsHammerTTD = GetToggle(2, "LightsHammerTTD"),
-    HolyPrismHP = GetToggle(2, "HolyPrismHP"),
-    HolyPrismTTD = GetToggle(2, "HolyPrismTTD"),    
-    BeaconofVirtueHP = GetToggle(2, "BeaconofVirtueHP"),
-    BeaconofVirtueTTD = GetToggle(2, "BeaconofVirtueTTD") ,   
-    BeaconWorkMode = GetToggle(2, "BeaconWorkMode"),    
-    LucidDreamManaPercent = GetToggle(2, "LucidDreamManaPercent"),    
-    LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits") ,   
-    LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP") ,   
-    ForceGlimmerOnMaxUnits = GetToggle(2, "ForceGlimmerOnMaxUnits"),
-	GlimmerTankOOC = GetToggle(2, "GlimmerTankOOC"),
-    AuraMasteryAoETTD = GetToggle(2, "AuraMasteryAoETTD"),
-    AuraMasteryAfter = GetToggle(2, "AuraMasteryAfter"),
-    AuraMasteryBelowHealthPercent = GetToggle(2, "AuraMasteryBelowHealthPercent"),
-    AuraMasteryLast = GetToggle(2, "AuraMasteryLast"),
-    AuraMasteryUnits = GetToggle(2, "AuraMasteryUnits"),
-    StartByPreCast = GetToggle(2, "StartByPreCast"),
-    TrinketMana = GetToggle(2, "TrinketMana"), 
-    HolyShockDPS = GetToggle(2, "HolyShockDPS"),
+    LayOnHandsHP = GetToggle(2, "LayOnHandsHP")
+    LayOnHandsTTD = GetToggle(2, "LayOnHandsTTD")
+    HolyShockHP = GetToggle(2, "HolyShockHP")
+    HolyShockTTD = GetToggle(2, "HolyShockTTD")
+    LightofDawnHP = GetToggle(2, "LightofDawnHP")
+    LightofDawnTTD = GetToggle(2, "LightofDawnTTD")    
+    LightofDawnUnits = GetToggle(2, "LightofDawnUnits")
+    FlashofLightHP = GetToggle(2, "FlashofLightHP")
+    FlashofLightTTD = GetToggle(2, "FlashofLightTTD")
+    HolyLightHP = GetToggle(2, "HolyLightHP")
+    HolyLightTTD = GetToggle(2, "HolyLightTTD")
+    LightoftheMartyrHP = GetToggle(2, "LightoftheMartyrHP")
+    LightoftheMartyrTTD = GetToggle(2, "LightoftheMartyrTTD")
+    LightsHammerHP = GetToggle(2, "LightsHammerHP")
+    LightsHammerTTD = GetToggle(2, "LightsHammerTTD")
+    HolyPrismHP = GetToggle(2, "HolyPrismHP")
+    HolyPrismTTD = GetToggle(2, "HolyPrismTTD")   
+    BeaconofVirtueHP = GetToggle(2, "BeaconofVirtueHP")
+    BeaconofVirtueTTD = GetToggle(2, "BeaconofVirtueTTD")   
+    BeaconWorkMode = GetToggle(2, "BeaconWorkMode")    
+    LucidDreamManaPercent = GetToggle(2, "LucidDreamManaPercent")    
+    LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits")  
+    LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP")   
+    ForceGlimmerOnMaxUnits = GetToggle(2, "ForceGlimmerOnMaxUnits")
+	GlimmerTankOOC = GetToggle(2, "GlimmerTankOOC")
+    AuraMasteryAoETTD = GetToggle(2, "AuraMasteryAoETTD")
+    AuraMasteryAfter = GetToggle(2, "AuraMasteryAfter")
+    AuraMasteryBelowHealthPercent = GetToggle(2, "AuraMasteryBelowHealthPercent")
+    AuraMasteryLast = GetToggle(2, "AuraMasteryLast")
+    AuraMasteryUnits = GetToggle(2, "AuraMasteryUnits")
+    StartByPreCast = GetToggle(2, "StartByPreCast")
+    TrinketMana = GetToggle(2, "TrinketMana")
+    HolyShockDPS = GetToggle(2, "HolyShockDPS")
     -- Burst Settings from UI
-    AvengingWrathPartyHP = GetToggle(2, "AvengingWrathPartyHP"),
-    AvengingWrathPartyUnits = GetToggle(2, "AvengingWrathPartyUnits"),
-    AvengingWrathRaidHP = GetToggle(2, "AvengingWrathRaidHP"),
-    AvengingWrathRaidUnits = GetToggle(2, "AvengingWrathRaidUnits"),
-    HolyAvengerPartyHP = GetToggle(2, "HolyAvengerPartyHP"),
-    HolyAvengerPartyUnits = GetToggle(2, "HolyAvengerPartyUnits"),
-    HolyAvengerRaidHP = GetToggle(2, "HolyAvengerRaidHP"),
-    HolyAvengerRaidUnits = GetToggle(2, "HolyAvengerRaidUnits"),
-
-}
+    AvengingWrathPartyHP = GetToggle(2, "AvengingWrathPartyHP")
+    AvengingWrathPartyUnits = GetToggle(2, "AvengingWrathPartyUnits")
+    AvengingWrathRaidHP = GetToggle(2, "AvengingWrathRaidHP")
+    AvengingWrathRaidUnits = GetToggle(2, "AvengingWrathRaidUnits")
+    HolyAvengerPartyHP = GetToggle(2, "HolyAvengerPartyHP")
+    HolyAvengerPartyUnits = GetToggle(2, "HolyAvengerPartyUnits")
+    HolyAvengerRaidHP = GetToggle(2, "HolyAvengerRaidHP")
+    HolyAvengerRaidUnits = GetToggle(2, "HolyAvengerRaidUnits")
+end
 
 
 -- Get Lowest Tank
@@ -1333,7 +1333,8 @@ A[3] = function(icon, isMulti)
     local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
     local TeamCacheEnemySize = TeamCache.Enemy.Size
     local TeamCacheFriendlySize = TeamCache.Friendly.Size
-    local TeamCacheFriendlyType = TeamCache.Friendly.Type or "none"     
+    local TeamCacheFriendlyType = TeamCache.Friendly.Type or "none" 
+    RotationsVariables()    
     --------------------
     --- DPS ROTATION ---
     --------------------
@@ -1368,7 +1369,7 @@ A[3] = function(icon, isMulti)
         
         -- Trinkets DPS         
         local TrinketsMode = GetToggle(2, "TrinketBurstSyncUP")
-        if unit ~= targettarget and Player:ManaPercentage() <= RotationsVariables.TrinketMana and (TrinketsMode == "Always" or (TrinketsMode == "BurstSync" and BurstIsON(unit))) and inCombat and IsUnitEnemy(unit) and Unit(unit):GetRange() <= 40 then 
+        if unit ~= targettarget and Player:ManaPercentage() <= TrinketMana and (TrinketsMode == "Always" or (TrinketsMode == "BurstSync" and BurstIsON(unit))) and inCombat and IsUnitEnemy(unit) and Unit(unit):GetRange() <= 40 then 
             if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DEFF" and A.Trinket1:AbsentImun(unit, Temp.TotalAndMag) then 
                 return A.Trinket1:Show(icon)
             end 
@@ -1381,9 +1382,9 @@ A[3] = function(icon, isMulti)
         -- HPvE #1 Judgment
         if A.Judgement:IsReady(unit) and A.JudgementofLight:IsSpellLearned() and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (      
-                RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and        
                 A.Judgement:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
@@ -1393,7 +1394,7 @@ A[3] = function(icon, isMulti)
             -- Target
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame()
                 ) and       
                 IsUnitEnemy(target) and        
@@ -1405,7 +1406,7 @@ A[3] = function(icon, isMulti)
             -- TargetTarget
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1426,9 +1427,9 @@ A[3] = function(icon, isMulti)
         -- Holy Shock
         A.HolyShock:GetCooldown() >= 1.5 and -- GetCurrentGCD() and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (      
-                RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and        
                 A.CrusaderStrike:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone               
@@ -1437,7 +1438,7 @@ A[3] = function(icon, isMulti)
             -- Target
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() 
                 ) and        
                 IsUnitEnemy(target) and        
@@ -1448,7 +1449,7 @@ A[3] = function(icon, isMulti)
             -- TargetTarget
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1471,9 +1472,9 @@ A[3] = function(icon, isMulti)
         -- HPvE #2 Judgment
         if A.Judgement:IsReady(unit) and InMelee(unit) and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (      
-                RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and        
                 A.Judgement:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
@@ -1483,7 +1484,7 @@ A[3] = function(icon, isMulti)
             -- Target
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and        
@@ -1496,7 +1497,7 @@ A[3] = function(icon, isMulti)
             -- TargetTarget
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1513,11 +1514,11 @@ A[3] = function(icon, isMulti)
         end
 
         -- HPvE #2 Holy Shock (DMG)
-        if A.HolyShock:IsReady(unit) and RotationsVariables.HolyShockDPS and
+        if A.HolyShock:IsReady(unit) and HolyShockDPS and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (      
-                RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and            
                 A.Judgement:IsInRange(mouseover) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone    
@@ -1533,7 +1534,7 @@ A[3] = function(icon, isMulti)
             --[[
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1548,7 +1549,7 @@ A[3] = function(icon, isMulti)
             -- Target
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and        
@@ -1565,9 +1566,9 @@ A[3] = function(icon, isMulti)
         -- HPvE #2 Crusader Strike
         if A.CrusaderStrike:IsReady(unit) and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (      
-                RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and        
                 A.CrusaderStrike:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone               
@@ -1577,7 +1578,7 @@ A[3] = function(icon, isMulti)
             -- Target
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1591,7 +1592,7 @@ A[3] = function(icon, isMulti)
             -- TargetTarget
             ( 
                 (
-                    not RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -1622,9 +1623,9 @@ A[3] = function(icon, isMulti)
         -- #1 HPvE Dispel
         if A.Cleanse:IsReady(unit) and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and        
+                MouseOver and        
                 A.MouseHasFrame() and                      
                 not IsUnitEnemy(mouseover) and                 
                 Unit(mouseover):IsPlayer() and  
@@ -1634,7 +1635,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and       
                 not IsUnitEnemy(target) and
@@ -1652,7 +1653,7 @@ A[3] = function(icon, isMulti)
         (
             -- Mouseover
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 IsUnitEnemy(mouseover) and
                 Unit(mouseover):GetRange() <= 8 and
@@ -1679,7 +1680,7 @@ A[3] = function(icon, isMulti)
         end           
 
         -- #3 Special Glimmer of Light Buff spreader (Only Friendly and not Pet)
-        if A.GlimmerofLight:GetAzeriteRank() >= 2 and RotationsVariables.GlimmerofLightCount < 8 and RotationsVariables.ForceGlimmerOnMaxUnits then
+        if A.GlimmerofLight:GetAzeriteRank() >= 2 and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
             if (IsInGroup() or A.IsInPvP or IsInRaid()) and combatTime > 0 then
                 for i = 1, #getmembersAll do 
                     if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 then 
@@ -1693,7 +1694,7 @@ A[3] = function(icon, isMulti)
         end        
 
         -- #4 Custom Beacon TANK
-        if A.BeaconofLight:IsReady() and RotationsVariables.BeaconWorkMode == "Tanking Units" and RotationsVariables.ActiveBeaconOnTank == 0 then
+        if A.BeaconofLight:IsReady() and BeaconWorkMode == "Tanking Units" and ActiveBeaconOnTank == 0 then
             for i = 1, #CurrentTanks do 
                 if Unit(CurrentTanks[i].Unit):GetRange() <= 40 then 
                       if Unit(CurrentTanks[i].Unit):IsPlayer() and Unit(CurrentTanks[i].Unit):HasBuffs(A.BeaconofLight.ID, true) == 0  then    
@@ -1707,13 +1708,13 @@ A[3] = function(icon, isMulti)
         end
         
         -- #4.1 Custom Beacon MostlyIncDMG
-        if A.BeaconofLight:IsReady(unit) and combatTime > 0 and RotationsVariables.ActiveBeacon == 0 and not Unit(unit):IsPet() and RotationsVariables.BeaconWorkMode == "Mostly Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
+        if A.BeaconofLight:IsReady(unit) and combatTime > 0 and ActiveBeacon == 0 and not Unit(unit):IsPet() and BeaconWorkMode == "Mostly Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
             HealingEngine.SetTargetMostlyIncDMG(1)
             return A.BeaconofLight:Show(icon)
         end
         
         -- #4.2 Custom Beacon HPS < Inc. Damage
-        if A.BeaconofLight:IsReady(unit) and combatTime > 0 and RotationsVariables.ActiveBeacon == 0 and RotationsVariables.BeaconWorkMode == "HPS < Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
+        if A.BeaconofLight:IsReady(unit) and combatTime > 0 and ActiveBeacon == 0 and BeaconWorkMode == "HPS < Inc. Damage" and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 then
             if not Unit(unit):IsPet() and Unit(unit):HasBuffs(A.BeaconofLight.ID, true) == 0 and Unit(unit):GetHPS() < Unit(unit):GetDMG() then
 			    HealingEngine.SetTarget(unit)
                 return A.BeaconofLight:Show(icon)
@@ -1722,7 +1723,7 @@ A[3] = function(icon, isMulti)
 
         -- #5 Bursting Essences		        
         -- #5.1 Life Binders Invocation
-        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.LifeBindersInvocationHP, 40) >= RotationsVariables.LifeBindersInvocationUnits then
+        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
             -- Notification                    
             Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)            
             return A.LifeBindersInvocation:Show(icon)
@@ -1734,7 +1735,7 @@ A[3] = function(icon, isMulti)
         end
                 
         -- #5.3 MemoryofLucidDreams if less than 85% mana left
-        if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * (RotationsVariables.LucidDreamManaPercent / 100) then
+        if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Player:Mana() < Player:ManaMax() * (LucidDreamManaPercent / 100) then
             return A.MemoryofLucidDreams:Show(icon)
         end
 
@@ -1744,7 +1745,7 @@ A[3] = function(icon, isMulti)
         end
         
         -- #5.5 Vitality Conduit
-        if (isMulti or RotationsVariables.AoEON) then 
+        if (isMulti or AoEON) then 
             if A.VitalityConduit:AutoHeartOfAzeroth(unit, true) then 
                 return A.VitalityConduit:Show(icon)
             end
@@ -1758,9 +1759,9 @@ A[3] = function(icon, isMulti)
         -- #6.1 HPvE Blessing of Protection
         if A.BlessingofProtection:IsReady(unit) and combatTime > 0 and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                       
                 not IsUnitEnemy(mouseover) and 
@@ -1771,7 +1772,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and  
@@ -1787,9 +1788,9 @@ A[3] = function(icon, isMulti)
         -- #6.2 Blessing Of Sacrifice
         if A.BlessingofSacrifice:IsReady(unit) and combatTime > 0 and Unit(player):Health() > Unit(player):HealthMax() * 0.2 and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                A.RotationsVariables.MouseOver and        
+                MouseOver and        
                 A.MouseHasFrame() and                      
                 not IsUnitEnemy(mouseover) and                 
                 (UnitInRaid(mouseover) or UnitInParty(mouseover)) and
@@ -1816,7 +1817,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (  
                 (
-                    not A.RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and     
                 (UnitInRaid(target) or UnitInParty(target)) and
@@ -1848,17 +1849,17 @@ A[3] = function(icon, isMulti)
             return A.BlessingofSacrifice:Show(icon)
         end
 
-        -- Tank RotationsVariables.Emergency
+        -- Tank Emergency
         -- #7 HPvE Lay on Hands
         if A.LayOnHands:IsReady(unit) and Action.Zone ~= "arena" and not Action.InstanceInfo.isRated and combatTime > 0 and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                       
                 not IsUnitEnemy(mouseover) and 
-                Unit(mouseover):HealthPercent() < RotationsVariables.LayOnHandsHP and        
+                Unit(mouseover):HealthPercent() < LayOnHandsHP and        
                 (
                     A.LayonHands:PredictHeal("LayonHands", mouseover) or           
                     Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.17
@@ -1873,11 +1874,11 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists()
                 ) and        
                 not IsUnitEnemy(target) and
-                Unit(target):HealthPercent() < RotationsVariables.LayOnHandsHP and 
+                Unit(target):HealthPercent() < LayOnHandsHP and 
                 (
                     A.LayonHands:PredictHeal("LayonHands", target) or            
                     Unit(target):Health() <= Unit(target):HealthMax() * 0.17
@@ -1895,12 +1896,12 @@ A[3] = function(icon, isMulti)
             return A.LayOnHands:Show(icon)
         end
 
-        -- #7.1 RotationsVariables.Emergency Lay on Hands 
+        -- #7.1 Emergency Lay on Hands 
         if combatTime > 0 and Action.Zone ~= "arena" and not Action.InstanceInfo.isRated   -- Forbearance
         then
             for i = 1, #getmembersAll do 
                 if Unit(getmembersAll[i].Unit):GetRange() <= 40 then 
-                      if not Unit(getmembersAll[i].Unit):IsPet() and A.LayOnHands:IsReady(getmembersAll[i].Unit) and (Unit(getmembersAll[i].Unit):HealthPercent() <= RotationsVariables.LayOnHandsHP or Unit(getmembersAll[i].Unit):TimeToDie() <= RotationsVariables.LayOnHandsTTD) and Unit(getmembersAll[i].Unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
+                      if not Unit(getmembersAll[i].Unit):IsPet() and A.LayOnHands:IsReady(getmembersAll[i].Unit) and (Unit(getmembersAll[i].Unit):HealthPercent() <= LayOnHandsHP or Unit(getmembersAll[i].Unit):TimeToDie() <= LayOnHandsTTD) and Unit(getmembersAll[i].Unit):HasDeBuffs(A.Forbearance.ID, true) == 0 then
                         HealingEngine.SetTarget(getmembersAll[i].Unit, 1)    -- Add 1sec delay in case of emergency switch     
                         -- Notification                    
                         Action.SendNotification("Emergency " .. A.GetSpellInfo(A.LayOnHands.ID) .. " on " .. UnitName(getmembersAll[i].Unit), A.LayOnHands.ID)        
@@ -1930,10 +1931,10 @@ A[3] = function(icon, isMulti)
         (       
             -- HealingEngine conditions for burst raid/party heal
             (
-                RotationsVariables.AoEON and
+                AoEON and
                 (
                     (
-                        not RotationsVariables.MouseOver or
+                        not MouseOver or
                         not A.MouseHasFrame() or
                         not IsUnitEnemy(mouseover)
                     ) and
@@ -1941,14 +1942,14 @@ A[3] = function(icon, isMulti)
                 ) and
                 (            
                     (
-                        RotationsVariables.TeamCacheFriendlySize > 1 and 
+                        TeamCacheFriendlySize > 1 and 
                         (
-                            RotationsVariables.AVG_DMG and
-                            RotationsVariables.ReceivedLast5sec and 
-                            RotationsVariables.AVG_HPS and
+                            AVG_DMG and
+                            ReceivedLast5sec and 
+                            AVG_HPS and
                             (
-                                RotationsVariables.ReceivedLast5sec > RotationsVariables.AVG_DMG + RotationsVariables.AVG_HPS or
-                                RotationsVariables.AVG_DMG >= RotationsVariables.AVG_HPS * 3
+                                ReceivedLast5sec > AVG_DMG + AVG_HPS or
+                                AVG_DMG >= AVG_HPS * 3
                             ) 
                         ) and
                         (
@@ -1957,18 +1958,18 @@ A[3] = function(icon, isMulti)
                         )
                     ) or        
                     (
-                        RotationsVariables.TeamCacheFriendlyType == "party" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.HolyAvengerPartyHP) >= RotationsVariables.HolyAvengerPartyUnits  
+                        TeamCacheFriendlyType == "party" and
+                        HealingEngine.GetBelowHealthPercentercentUnits(HolyAvengerPartyHP) >= HolyAvengerPartyUnits  
                     ) or 
                     (
-                        RotationsVariables.TeamCacheFriendlyType == "raid" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.HolyAvengerRaidHP) >= RotationsVariables.HolyAvengerRaidUnits               
+                        TeamCacheFriendlyType == "raid" and
+                        HealingEngine.GetBelowHealthPercentercentUnits(HolyAvengerRaidHP) >= HolyAvengerRaidUnits               
                     )
                 )
             ) or
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and               
                 not IsUnitEnemy(mouseover) and                 
@@ -1988,7 +1989,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and       
                 not IsUnitEnemy(target) and
@@ -2024,10 +2025,10 @@ A[3] = function(icon, isMulti)
                 (       
                     -- HealingEngine conditions for burst raid/party heal
                     (
-                        RotationsVariables.AoEON and
+                        AoEON and
                         (
                             (
-                                not A.RotationsVariables.MouseOver or
+                                not MouseOver or
                                 not A.MouseHasFrame() or
                                 not IsUnitEnemy(mouseover)
                             ) and
@@ -2035,27 +2036,27 @@ A[3] = function(icon, isMulti)
                         ) and
                         (
                             (
-                                RotationsVariables.TeamCacheFriendlySize > 1 and
-                                RotationsVariables.ReceivedLast5sec > RotationsVariables.AVG_DMG + RotationsVariables.AVG_HPS 
+                                TeamCacheFriendlySize > 1 and
+                                ReceivedLast5sec > AVG_DMG + AVG_HPS 
                                 and 
-                                HealingEngine.GetTimeToDieUnits(16) >= RotationsVariables.TeamCacheFriendlySize * 0.67
+                                HealingEngine.GetTimeToDieUnits(16) >= TeamCacheFriendlySize * 0.67
                             ) 
 							or
                             (
-                                RotationsVariables.TeamCacheFriendlyType == "party" and
-                                HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.AvengingWrathPartyHP) >= RotationsVariables.AvengingWrathPartyUnits
+                                TeamCacheFriendlyType == "party" and
+                                HealingEngine.GetBelowHealthPercentercentUnits(AvengingWrathPartyHP) >= AvengingWrathPartyUnits
                             ) 
 							or 
                             (
-                                RotationsVariables.TeamCacheFriendlyType == "raid" and
-                                HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.AvengingWrathRaidHP) >= RotationsVariables.AvengingWrathRaidUnits
+                                TeamCacheFriendlyType == "raid" and
+                                HealingEngine.GetBelowHealthPercentercentUnits(AvengingWrathRaidHP) >= AvengingWrathRaidUnits
                             )  
                         )                
                     ) 
 					or
-                    -- RotationsVariables.MouseOver
+                    -- MouseOver
                     (
-                        A.RotationsVariables.MouseOver and
+                        MouseOver and
                         Unit(mouseover):IsExists() and 
                         A.MouseHasFrame() and               
                         not IsUnitEnemy(mouseover) and                 
@@ -2075,7 +2076,7 @@ A[3] = function(icon, isMulti)
                     -- Target
                     (
                         (
-                            not A.RotationsVariables.MouseOver or 
+                            not MouseOver or 
                             not Unit(mouseover):IsExists() 
                         ) and       
                         not IsUnitEnemy(target) and
@@ -2110,7 +2111,7 @@ A[3] = function(icon, isMulti)
                 combatTime > 0 and
                 (
                     (
-                        A.RotationsVariables.MouseOver and
+                        MouseOver and
                         IsUnitEnemy(mouseover) and                
                         Unit(mouseover):GetLevel() == -1 and
                         Unit(mouseover):GetRange() <= 40
@@ -2131,15 +2132,15 @@ A[3] = function(icon, isMulti)
         end		
 
         -- #9.3 Aura Mastery            
-        if A.AuraMastery:IsReady(player) and A.BurstIsON(unit) and combatTime > RotationsVariables.AuraMasteryAfter and -- RotationsVariables.AuraMasteryAfter
+        if A.AuraMastery:IsReady(player) and A.BurstIsON(unit) and combatTime > AuraMasteryAfter and -- AuraMasteryAfter
         (
-               HealingEngine.GetTimeToDieUnits(RotationsVariables.AuraMasteryAoETTD) >= GetValidMembers(true) * 0.4 -- RotationsVariables.AuraMasteryAoETTD
+               HealingEngine.GetTimeToDieUnits(AuraMasteryAoETTD) >= GetValidMembers(true) * 0.4 -- AuraMasteryAoETTD
             or
-               RotationsVariables.ReceivedLast5sec > RotationsVariables.AVG_DMG * RotationsVariables.AuraMasteryLast -- RotationsVariables.AuraMasteryLast
+               ReceivedLast5sec > AVG_DMG * AuraMasteryLast -- AuraMasteryLast
             or
-            HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.AuraMasteryBelowHealthPercent) >= GetValidMembers(true) * 0.35 -- -- RotationsVariables.AuraMasteryBelowHealthPercent
+            HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= GetValidMembers(true) * 0.35 -- -- AuraMasteryBelowHealthPercent
             or
-            HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.AuraMasteryBelowHealthPercent) >= RotationsVariables.AuraMasteryUnits -- -- RotationsVariables.AuraMasteryBelowHealthPercent
+            HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= AuraMasteryUnits -- -- AuraMasteryBelowHealthPercent
         )             
         then
             -- Notification                    
@@ -2156,9 +2157,9 @@ A[3] = function(icon, isMulti)
         -- #11 HPvE #1 Holy Shock (HPS)
         if A.HolyShock:IsReadyByPassCastGCD(unit) and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2196,7 +2197,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2235,10 +2236,10 @@ A[3] = function(icon, isMulti)
             ) 
 			or
             -- Precombat Glimmer on tanks
-			RotationsVariables.GlimmerTankOOC and
+			GlimmerTankOOC and
 			(
 			    combatTime == 0 and 
-				RotationsVariables.GlimmerofLightCount < 8 and 
+				GlimmerofLightCount < 8 and 
 				Unit(unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 and
 				Unit(unit):IsTank()
 			) 
@@ -2248,14 +2249,14 @@ A[3] = function(icon, isMulti)
         end
 
          -- #12 HPvE Light of Dawn
-        if A.LightofDawn:IsReady(player) and RotationsVariables.AoEON and
+        if A.LightofDawn:IsReady(player) and AoEON and
         (    
             (
-                RotationsVariables.TeamCacheFriendlyType ~= "none" and
+                TeamCacheFriendlyType ~= "none" and
                 (
-                    -- RotationsVariables.MouseOver
+                    -- MouseOver
                     (
-                        RotationsVariables.MouseOver and
+                        MouseOver and
                         Unit(mouseover):IsExists() and 
                         A.MouseHasFrame() and                        
                         not IsUnitEnemy(mouseover) and                         
@@ -2264,7 +2265,7 @@ A[3] = function(icon, isMulti)
                     -- Target
                     (
                         (
-                            not RotationsVariables.MouseOver or 
+                            not MouseOver or 
                             not Unit(mouseover):IsExists()
                         ) and        
                         not IsUnitEnemy(target) and        
@@ -2280,7 +2281,7 @@ A[3] = function(icon, isMulti)
                 Unit(player):HasBuffs(A.DivinePurpose.ID, true) < GetCurrentGCD() + GetGCD() + 2
             ) or
             -- Custom UI settings
-            HealingEngine.GetBelowHealthPercentercentUnits(RotationsVariables.LightofDawnHP) >= RotationsVariables.LightofDawnUnits
+            HealingEngine.GetBelowHealthPercentercentUnits(LightofDawnHP) >= LightofDawnUnits
         )
         then
             return A.LightofDawn:Show(icon)
@@ -2289,9 +2290,9 @@ A[3] = function(icon, isMulti)
         -- #13 Bestow Faith
         if A.BestowFaith:IsSpellLearned() and A.BestowFaith:IsReady(unit) and A.BestowFaith:IsSpellLearned() and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                  
@@ -2302,7 +2303,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2322,9 +2323,9 @@ A[3] = function(icon, isMulti)
         InfLight > FLcast_t + GetCurrentGCD() + 0.1 and
         Unit(player):GetCurrentSpeed() == 0 and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2336,14 +2337,14 @@ A[3] = function(icon, isMulti)
                     Unit(mouseover):IsTank() or
                     HealingEngine.IsMostlyIncDMG(mouseover) or
                     Unit(mouseover):Health() < Unit(mouseover):HealthMax() * 0.8 --or
-                    --Unit(mouseover):HealthPercent() < RotationsVariables.FlashofLightHP or
-                    --Unit(mouseover):TimeToDieX(3) < RotationsVariables.FlashofLightTTD    
+                    --Unit(mouseover):HealthPercent() < FlashofLightHP or
+                    --Unit(mouseover):TimeToDieX(3) < FlashofLightTTD    
                 )
             ) or 
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2355,14 +2356,14 @@ A[3] = function(icon, isMulti)
                     Unit(target):IsTank() or
                     HealingEngine.IsMostlyIncDMG(target) or
                     Unit(target):Health() < Unit(target):HealthMax() * 0.8 --or
-                    --Unit(target):HealthPercent() < RotationsVariables.FlashofLightHP or
-                    --Unit(target):TimeToDieX(5) < RotationsVariables.FlashofLightTTD                
+                    --Unit(target):HealthPercent() < FlashofLightHP or
+                    --Unit(target):TimeToDieX(5) < FlashofLightTTD                
                 )
             ) or
             -- Save us
             (
-                Unit(player):HealthPercent() < RotationsVariables.FlashofLightHP or
-                Unit(player):TimeToDieX(5) < RotationsVariables.FlashofLightTTD    
+                Unit(player):HealthPercent() < FlashofLightHP or
+                Unit(player):TimeToDieX(5) < FlashofLightTTD    
             )            
         )
           then
@@ -2372,9 +2373,9 @@ A[3] = function(icon, isMulti)
         -- #15 HPvE #1 Light of Martyr
         if A.LightofMartyr:IsReady(unit) and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and  
@@ -2397,7 +2398,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2425,9 +2426,9 @@ A[3] = function(icon, isMulti)
         -- #16 HPvE #1 HolyLight
         if A.HolyLight:IsReady(unit) and InfLight > 0 and InfLight > HLcast_t + GetCurrentGCD() + 0.1 and Unit(player):GetCurrentSpeed() == 0 and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2439,7 +2440,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() or 
                     IsUnitEnemy(mouseover)
                 ) and        
@@ -2452,8 +2453,8 @@ A[3] = function(icon, isMulti)
             or
             -- Save us
             (
-                Unit(player):HealthPercent() < RotationsVariables.HolyLightHP or
-                Unit(player):TimeToDieX(15) < RotationsVariables.HolyLightTTD    
+                Unit(player):HealthPercent() < HolyLightHP or
+                Unit(player):TimeToDieX(15) < HolyLightTTD    
             )    
         )
         then
@@ -2461,11 +2462,11 @@ A[3] = function(icon, isMulti)
         end
         
         -- #17 HPvE Beacon of Virtue
-        if A.BeaconofVirtue:IsReady(unit) and RotationsVariables.AoEON and A.BeaconofVirtue:IsSpellLearned() and RotationsVariables.TeamCacheFriendlyType ~= "none" and
+        if A.BeaconofVirtue:IsReady(unit) and AoEON and A.BeaconofVirtue:IsSpellLearned() and TeamCacheFriendlyType ~= "none" and
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2475,7 +2476,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2485,11 +2486,11 @@ A[3] = function(icon, isMulti)
         ) and
         (
             (
-                RotationsVariables.TeamCacheFriendlyType == "party" and
+                TeamCacheFriendlyType == "party" and
                 HealingEngine.GetBelowHealthPercentercentUnits(80) >= 3 
             ) or
             (
-                RotationsVariables.TeamCacheFriendlyType == "raid" and
+                TeamCacheFriendlyType == "raid" and
                 HealingEngine.GetBelowHealthPercentercentUnits(75) >= 4
             )
         )
@@ -2500,9 +2501,9 @@ A[3] = function(icon, isMulti)
         -- #18 Blessing of Freedom
         if A.BlessingofFreedom:IsReady(unit) and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                A.RotationsVariables.MouseOver and        
+                MouseOver and        
                 A.MouseHasFrame() and                      
                 not IsUnitEnemy(mouseover) and                          
                 Unit(mouseover):TimeToDie() > GetGCD() * 3.8 and
@@ -2512,7 +2513,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not A.RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and       
                 not IsUnitEnemy(target) and        
@@ -2525,10 +2526,10 @@ A[3] = function(icon, isMulti)
         end
         
         -- #19 LightsHammer
-        if (isMulti or A.RotationsVariables.AoEON) and A.LightsHammer:IsReady(unit) and A.LightsHammer:IsSpellLearned() and
+        if (isMulti or AoEON) and A.LightsHammer:IsReady(unit) and A.LightsHammer:IsSpellLearned() and
         (
             (
-                not A.RotationsVariables.MouseOver or
+                not MouseOver or
                 not A.MouseHasFrame() or
                 not IsUnitEnemy(mouseover)
             ) and
@@ -2536,10 +2537,10 @@ A[3] = function(icon, isMulti)
         ) and
         (            
             (
-                RotationsVariables.TeamCacheFriendlySize > 1 and
+                TeamCacheFriendlySize > 1 and
                 (
-                    RotationsVariables.ReceivedLast5sec > RotationsVariables.AVG_DMG + RotationsVariables.AVG_HPS or
-                    RotationsVariables.AVG_DMG >= RotationsVariables.AVG_HPS * 2
+                    ReceivedLast5sec > AVG_DMG + AVG_HPS or
+                    AVG_DMG >= AVG_HPS * 2
                 ) and
                 (
                     HealingEngine.GetTimeToDieUnits(15) >= ValidMembers(true) * 0.5 or
@@ -2547,11 +2548,11 @@ A[3] = function(icon, isMulti)
                 )
             ) or        
             (
-                RotationsVariables.TeamCacheFriendlyType == "party" and
+                TeamCacheFriendlyType == "party" and
                 HealingEngine.GetBelowHealthPercentercentUnits(50) >= 3
             ) or 
             (
-                RotationsVariables.TeamCacheFriendlyType == "raid" and
+                TeamCacheFriendlyType == "raid" and
                 HealingEngine.GetBelowHealthPercentercentUnits(65) >= 6              
             ) or
             -- Master Aur
@@ -2564,9 +2565,9 @@ A[3] = function(icon, isMulti)
         -- #20 HPvE #2 FlashofLight
         if A.FlashofLight:IsReady(unit) and Unit(player):GetCurrentSpeed() == 0 and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2585,7 +2586,7 @@ A[3] = function(icon, isMulti)
                     Player:Mana() >= Player:ManaMax() * 0.80            
                 ) and
                 (
-                    RotationsVariables.TeamCacheFriendlySize <= 5 or
+                    TeamCacheFriendlySize <= 5 or
                     Unit(mouseover):IsTank() or
                     Unit(mouseover):HealthPercent() <= 40
                 )
@@ -2593,7 +2594,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2612,7 +2613,7 @@ A[3] = function(icon, isMulti)
                     Player:Mana() >= Player:ManaMax() * 0.80            
                 ) and
                 (
-                    RotationsVariables.TeamCacheFriendlySize <= 5 or
+                    TeamCacheFriendlySize <= 5 or
                     Unit(target):IsTank() or
                     Unit(target):HealthPercent() <= 40            
                 )
@@ -2625,9 +2626,9 @@ A[3] = function(icon, isMulti)
         -- #21 HPvE #2 HolyLight
         if A.HolyLight:IsReady(unit) and Unit(player):GetCurrentSpeed() == 0 and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2636,14 +2637,14 @@ A[3] = function(icon, isMulti)
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 (
                     Unit(mouseover):HealthPercent() < 94 or
-                    Unit(mouseover):CombatTime() == 0 and RotationsVariables.StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
+                    Unit(mouseover):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
                 )        
                 --PredictHeal("HolyLight", mouseover) 
             ) or 
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2652,7 +2653,7 @@ A[3] = function(icon, isMulti)
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 (
                     Unit(target):HealthPercent() < 94 or
-                    Unit(target):CombatTime() == 0 and RotationsVariables.StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
+                    Unit(target):CombatTime() == 0 and StartByPreCast and not A.LastPlayerCastName == A.HolyLight:Info()
                 )        
                 --PredictHeal("HolyLight", target) 
             )
@@ -2662,12 +2663,12 @@ A[3] = function(icon, isMulti)
         end
 
         -- #22 Holy Prism
-        if (isMulti or A.RotationsVariables.AoEON) and A.HolyPrism:IsSpellLearned() and
+        if (isMulti or AoEON) and A.HolyPrism:IsSpellLearned() and
         (
             -- HPS
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                A.RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                 
@@ -2678,7 +2679,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not A.RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and
@@ -2687,14 +2688,14 @@ A[3] = function(icon, isMulti)
                 A.HolyPrism:PredictHeal("HolyPrism", target)
             ) or
             -- DMG
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                A.RotationsVariables.MouseOver and
+                MouseOver and
                 IsUnitEnemy(mouseover) and
                 A.HolyPrism:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
                 (
-                    not RotationsVariables.AoEON or
+                    not AoEON or
                     HealingEngine.HealingBySpell("HolyPrismAoE", 114165) >= 2
                 ) and
                 A.HolyPrism:AbsentImun(mouseover, Temp.TotalAndMag, true)        
@@ -2702,7 +2703,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not A.RotationsVariables.MouseOver or
+                    not MouseOver or
                     not A.MouseHasFrame() or
                     not IsUnitEnemy(mouseover)
                 ) and
@@ -2719,9 +2720,9 @@ A[3] = function(icon, isMulti)
         -- #23 HPvE #2 Light of Martyr
         if A.LightofMartyr:IsReady(unit) and 
         (
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-               RotationsVariables.MouseOver and
+               MouseOver and
               Unit(mouseover):IsExists() and 
               A.MouseHasFrame() and                        
                not IsUnitEnemy(mouseover) and  
@@ -2738,7 +2739,7 @@ A[3] = function(icon, isMulti)
            -- Target
            (
               (
-                   not RotationsVariables.MouseOver or 
+                   not MouseOver or 
                 not Unit(mouseover):IsExists() 
                ) and        
                not IsUnitEnemy(target) and
@@ -2760,9 +2761,9 @@ A[3] = function(icon, isMulti)
         -- #24 HPvE #2 Light of Dawn
         if A.LightofDawn:IsReady(unit) and 
         (            
-            -- RotationsVariables.MouseOver
+            -- MouseOver
             (
-                RotationsVariables.MouseOver and
+                MouseOver and
                 Unit(mouseover):IsExists() and 
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                         
@@ -2774,7 +2775,7 @@ A[3] = function(icon, isMulti)
             -- Target
             (
                 (
-                    not RotationsVariables.MouseOver or 
+                    not MouseOver or 
                     not Unit(mouseover):IsExists() 
                 ) and        
                 not IsUnitEnemy(target) and        
@@ -2857,13 +2858,14 @@ local function RotationPassive(icon)
     local DivineShieldTTD = GetToggle(2, "DivineShieldTTD")
     local LayOnHandsHP = GetToggle(2, "LayOnHandsHP")
     local LayOnHandsTTD = GetToggle(2, "LayOnHandsTTD")
-    
+    RotationsVariables()
+	
     -- RESS ALL PEOPLE
     if A.Absolution:IsReady(player) and combatTime == 0 and Unit(player):GetCurrentSpeed() == 0 and
     (
-        -- RotationsVariables.MouseOver
+        -- MouseOver
         (
-            RotationsVariables.MouseOver and
+            MouseOver and
             A.MouseHasFrame() and
             Unit(mouseover):IsExists() and        
             Unit(mouseover):IsDead() and
@@ -2873,7 +2875,7 @@ local function RotationPassive(icon)
         ) or 
         (
             (
-                not RotationsVariables.MouseOver or 
+                not MouseOver or 
                 not Unit(mouseover):IsExists() or 
                 IsUnitEnemy(mouseover)
             ) and
@@ -2892,9 +2894,9 @@ local function RotationPassive(icon)
     -- RESS Single
     if A.Redemption:IsReady(unit) and combatTime == 0 and Unit(player):GetCurrentSpeed() == 0 and
     (
-        -- RotationsVariables.MouseOver
+        -- MouseOver
         (
-            RotationsVariables.MouseOver and
+            MouseOver and
             A.MouseHasFrame() and
             Unit(mouseover):IsExists() and        
             Unit(mouseover):IsDead() and
@@ -2904,7 +2906,7 @@ local function RotationPassive(icon)
         ) or 
         (
             (
-                not RotationsVariables.MouseOver or 
+                not MouseOver or 
                 not Unit(mouseover):IsExists() or 
                 IsUnitEnemy(mouseover)
             ) and
@@ -2935,7 +2937,7 @@ local function RotationPassive(icon)
         (
             not UnitIsUnit(target, player) and
              (
-                not RotationsVariables.MouseOver 
+                not MouseOver 
                 or
                 not A.MouseHasFrame() 
                 or
