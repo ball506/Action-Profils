@@ -718,7 +718,7 @@ A[3] = function(icon)
             end
 			
             -- regrowth,if=talent.bloodtalons.enabled
-            if A.Regrowth:IsReady(player) and A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 then
+            if A.Regrowth:IsReady(player) and not A.LastPlayerCastName == A.Regrowth:Info() and A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 then
                 return A.Regrowth:Show(icon)
             end
 			
@@ -1164,7 +1164,7 @@ A[3] = function(icon)
         end
 
         -- regrowth,if=combo_points=5&buff.predatory_swiftness.up&talent.bloodtalons.enabled&buff.bloodtalons.down
-        if inCombat and A.Regrowth:IsReady(player) and 
+        if inCombat and A.Regrowth:IsReady(player) and not A.LastPlayerCastName == A.Regrowth:Info() and 
         (
             Player:ComboPoints() == 5 
             and
@@ -1259,12 +1259,12 @@ A[3] = function(icon)
         -- run_action_list,name=generators
 
             -- regrowth,if=talent.bloodtalons.enabled&buff.predatory_swiftness.up&buff.bloodtalons.down&combo_points=4&dot.rake.remains<4
-            if A.Regrowth:IsReady(player) and (A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 and Player:ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 4) then
+            if A.Regrowth:IsReady(player) and not A.LastPlayerCastName == A.Regrowth:Info() and (A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) > 0 and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 and Player:ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 4) then
                 return A.Regrowth:Show(icon)
             end
 			
             -- regrowth,if=talent.bloodtalons.enabled&buff.bloodtalons.down&buff.predatory_swiftness.up&talent.lunar_inspiration.enabled&dot.rake.remains<1
-            if A.Regrowth:IsReady(player) and (A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) > 0 and A.LunarInspiration:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 1) then
+            if A.Regrowth:IsReady(player) and not A.LastPlayerCastName == A.Regrowth:Info() and (A.Bloodtalons:IsSpellLearned() and Unit(player):HasBuffs(A.BloodtalonsBuff.ID, true) == 0 and Unit(player):HasBuffs(A.PredatorySwiftnessBuff.ID, true) > 0 and A.LunarInspiration:IsSpellLearned() and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 1) then
                 return A.Regrowth:Show(icon)
             end
 			
