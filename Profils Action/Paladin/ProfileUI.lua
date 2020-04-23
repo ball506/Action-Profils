@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.1.7 (22.04.2020)",
+    DateTime = "v4.1.8 (23.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -1111,21 +1111,21 @@ A.Data.ProfileUI = {
                         ruRU = "Использовать\nЗелье Маны",
 					},
         	        M = {},
-       	        }, 	
+       	        },
       	        {
          	        E = "Checkbox", 
-         	        DB = "MythicPlusLogic",
+         	        DB = "StopCastOverHeal",
          	        DBV = true,
          	        L = { 
-					    enUS = "Smart Mythic+",
-                        ruRU = "Smart Mythic+",
+					    enUS = "Stop Cast\noverhealing",
+                        ruRU = "Stop Cast\noverhealing",
 					},
           	        TT = { 
-					    enUS = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
-                        ruRU = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+					    enUS = "Enable this option to automatically stop the current cast to avoid overhealing.",
+                        ruRU = "Enable this option to automatically stop the current cast to avoid overhealing.",
 					},
         	        M = {},
-       	        },				
+       	        },	 				
         	    {	    
            	        E = "Checkbox", 
            	        DB = "StartByPreCast",
@@ -1140,6 +1140,19 @@ A.Data.ProfileUI = {
 					},
            	        M = {},
         	    },
+   	        },
+		    -- Beacon of Virtue(talent)
+			-- + Classic Beacon 
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Beacons -- ",
+                    },
+                },
+            },	
+            { -- [3]  
+                RowOptions = { margin = { top = 10 } },		
                 {
                     E = "Dropdown",                                                         
                     OT = {   
@@ -1157,8 +1170,44 @@ A.Data.ProfileUI = {
                         ruRU = "Эти условия будут пропущены если юнит будет умирать в чрезвычайной (критической) ситуациии", 
                     },                    
                     M = {},
+                },			
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "BeaconofVirtueHP",
+                    DBV = 85,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " (%)",
+                    }, 
+                    M = {},
                 },
-   	        },				
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "BeaconofVirtueTTD",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " TTD",                        
+                    }, 
+                    M = {},
+                },
+                {                    
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                             
+                    DB = "BeaconofVirtue",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(200025) .. " units",                        
+                    }, 
+                    M = {},
+                },
+            },			
             { -- [7]
                 {
                     E = "Header",
@@ -1294,6 +1343,141 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Mythic + -- ",
+                    },
+                },
+            },	
+			{
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "MythicPlusLogic",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Smart Mythic+",
+                        ruRU = "Smart Mythic+",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+                        ruRU = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+					},
+        	        M = {},
+       	        },	
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "GrievousWoundsLogic",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Grievous Wounds\nlogic",
+                        ruRU = "Grievous Wounds\nlogic",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to activate critical healing logic for friendly units that got Grievous Wounds debuff.",
+                        ruRU = "Enable this option to activate critical healing logic for friendly units that got Grievous Wounds debuff.",
+					},
+        	        M = {},
+       	        },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "GrievousWoundsMinStacks",                    
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = "Grievous Wounds\nmin stacks",                        
+                    },   
+          	        TT = { 
+					    enUS = "How many stacks of Grievous Wounds should be up on friendly unit before force targetting on this unit.\nExample: 2 means friendly unit will be urgently targetted if he got 2 stacks.", 
+                        ruRU = "How many stacks of Grievous Wounds should be up on friendly unit before force targetting on this unit.\nExample: 2 means friendly unit will be urgently targetted if he got 2 stacks.", 
+					},					
+                    M = {},
+                },				
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "StopCastQuake",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Stop Cast\nquaking",
+                        ruRU = "Stop Cast\nquaking",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically stop your current cast before Quake.",
+                        ruRU = "Enable this option to automatically stop your current cast before Quake.",
+					},
+        	        M = {},
+       	        },	
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 3,                            
+                    DB = "StopCastQuakeSec",                    
+                    DBV = 1,
+					Precision = 1,
+                    ONOFF = false,
+                    L = { 
+                        ANY = "Stop Cast\nquaking seconds",                      
+                    },
+          	        TT = { 
+					    enUS = "Define the value you want to stop your cast before next Quake hit.\nValue is in seconds.\nExample: 1 means you will stop cast at 1sec remaining on Quaking.",            
+                        ruRU = "Define the value you want to stop your cast before next Quake hit.\nValue is in seconds.\nExample: 1 means you will stop cast at 1sec remaining on Quaking.",            
+					},					
+                    M = {},
+                },
+			},
+
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+            },	
+			{	
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "BlessingofFreedomWrathion",
+         	        DBV = true,
+         	        L = { 
+					    ANY = A.GetSpellInfo(1044) .. "\non Wrathion Slow",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically use " .. A.GetSpellInfo(1044) .. " on Wrathion Slow.",
+                        ruRU = "Enable this option to automatically use " .. A.GetSpellInfo(1044) .. " on Wrathion Slow.",
+					},
+        	        M = {},
+       	        },	
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "WrathionMovementStacks",                    
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(1044) .. "\nWrathion Slow stacks",                        
+                    },                     
+                    M = {},
+                },				
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "BlessingofFreedomShadhar",
+         	        DBV = true,
+         	        L = { 
+					    ANY = A.GetSpellInfo(1044) .. "\non Shadhar Fixate",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically use " .. A.GetSpellInfo(1044) .. " on Shadhar Fixate.",
+                        ruRU = "Enable this option to automatically use " .. A.GetSpellInfo(1044) .. " on Shadhar Fixate.",
+					},
+        	        M = {},
+       	        },	
+			},
+
             { -- [7] Holy Avenger
                 {
                     E = "Header",
@@ -1452,41 +1636,6 @@ A.Data.ProfileUI = {
                 },
 			    
             },	
-            { -- DivineProtection
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- " .. A.GetSpellInfo(498) .. " -- ",
-                    },
-                },
-            },
-            -- DivineProtection
-            { -- [3]     
-                {
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 15,                            
-                    DB = "DivineProtectionTTD",
-                    DBV = 10,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(498) .. "\nTTD(sec)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 100,                            
-                    DB = "DivineProtectionHP",
-                    DBV = 35,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(498) .. "\n(%)",
-                    }, 
-                    M = {},
-                },
-			},			
             { -- AuraMastery
                 {
                     E = "Header",
@@ -1560,7 +1709,42 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },			
+            },
+            { -- DivineProtection
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(498) .. " -- ",
+                    },
+                },
+            },
+            -- DivineProtection
+            { -- [3]     
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 15,                            
+                    DB = "DivineProtectionTTD",
+                    DBV = 10,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(498) .. "\nTTD(sec)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "DivineProtectionHP",
+                    DBV = 35,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(498) .. "\n(%)",
+                    }, 
+                    M = {},
+                },
+			},						
 		    -- Divine Shield 
             { -- [7] 
                 {
@@ -1925,55 +2109,7 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },		
-		    -- Beacon of Virtue(talent)
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- " .. A.GetSpellInfo(200025) .." -- ",
-                    },
-                },
-            },	
-            { -- [3]  
-            RowOptions = { margin = { top = 10 } },			
-                {
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 100,                            
-                    DB = "BeaconofVirtueHP",
-                    DBV = 85,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(200025) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {                    
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 5,                            
-                    DB = "BeaconofVirtueTTD",
-                    DBV = 3,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(200025) .. " TTD",                        
-                    }, 
-                    M = {},
-                },
-                {                    
-                    E = "Slider",                                                     
-                    MIN = 1, 
-                    MAX = 10,                             
-                    DB = "BeaconofVirtue",
-                    DBV = 3,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetSpellInfo(200025) .. " units",                        
-                    }, 
-                    M = {},
-                },
-            },		
+            },				
             { -- [6]
                 {
                     E = "Header",

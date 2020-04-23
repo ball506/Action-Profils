@@ -31,6 +31,8 @@ local IsUnitEnemy                               = Action.IsUnitEnemy
 local IsUnitFriendly                            = Action.IsUnitFriendly
 local HealingEngine                             = Action.HealingEngine
 local ActiveUnitPlates                          = MultiUnits:GetActiveUnitPlates()
+local TeamCacheFriendly                         = TeamCache.Friendly
+local TeamCacheFriendlyIndexToPLAYERs           = TeamCacheFriendly.IndexToPLAYERs
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
 local Pet                                       = LibStub("PetLibrary")
@@ -42,13 +44,12 @@ local select, unpack, table                     = select, unpack, table
 local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
 local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 local _G, setmetatable, select, math            = _G, setmetatable, select, math 
-local huge                                      = math.huge
-local ACTION_CONST_STOPCAST                     = _G.ACTION_CONST_STOPCAST    
+local huge                                      = math.huge  
 local UIParent                                  = _G.UIParent 
 local CreateFrame                               = _G.CreateFrame
 local wipe                                      = _G.wipe
 local IsUsableSpell                             = IsUsableSpell
-local UnitPowerType                             = UnitPowerType
+local UnitPowerType                             = UnitPowerType 
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -144,6 +145,12 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     RecklessForceBuff                      = Create({ Type = "Spell", ID = 302932, Hidden = true     }),    
     PoolResource                           = Create({ Type = "Spell", ID = 209274, Hidden = true     }),
     DummyTest                              = Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon    
+	--Mythic Plus Spells 
+	Quake                                  = Create({ Type = "Spell", ID = 240447, Hidden = true     }), -- Quake (Mythic Plus Affix)
+	Burst                                  = Create({ Type = "Spell", ID = 240443, Hidden = true     }), -- Bursting (Mythic Plus Affix) Upon death the creature Bursts, inflicting damage equal to (35 / 10)% of maximum health every 1 sec.
+	GrievousWound                          = Create({ Type = "Spell", ID = 240559, Hidden = true     }), -- Grievous (Mythic Plus Affix) 2% of a player's maximum health every 3 sec
+    Slow                                   = Create({ Type = "Spell", ID = 313255, Hidden = true     }), -- Shadhar slow
+	Fixate                                 = Create({ Type = "Spell", ID = 318078, Hidden = true     }), -- Wrathion Fixate
 }
 
 -- To create essences use next code:
@@ -160,6 +167,7 @@ local mouseover = "mouseover"
 -- Call RotationsVariables in each function that need these vars
 local function RotationsVariables()
     combatTime = Unit(player):CombatTime()
+	inCombat = Unit(player):CombatTime() > 0
     DBM = GetToggle(1 ,"DBM")
     Potion = GetToggle(1, "Potion")
     Racial = GetToggle(1, "Racial")
@@ -208,6 +216,15 @@ local function RotationsVariables()
     HolyAvengerPartyUnits = GetToggle(2, "HolyAvengerPartyUnits")
     HolyAvengerRaidHP = GetToggle(2, "HolyAvengerRaidHP")
     HolyAvengerRaidUnits = GetToggle(2, "HolyAvengerRaidUnits")
+	MythicPlusLogic = GetToggle(2, "MythicPlusLogic")
+	StopCastOverHeal = GetToggle(2, "StopCastOverHeal")
+	StopCastQuake = GetToggle(2, "StopCastQuake")
+	StopCastQuakeSec = GetToggle(2, "StopCastQuakeSec")
+	GrievousWoundsLogic = GetToggle(2, "GrievousWoundsLogic")
+	GrievousWoundsMinStacks = GetToggle(2, "GrievousWoundsMinStacks")
+	BlessingofFreedomWrathion = GetToggle(2, "BlessingofFreedomWrathion")
+	WrathionMovementStacks = GetToggle(2, "WrathionMovementStacks")
+	BlessingofFreedomShadhar = GetToggle(2, "BlessingofFreedomShadhar")
 end
 
 
@@ -497,14 +514,19 @@ local function ShouldDispell(unit)
 end
 ShouldDispell = A.MakeFunctionCachedDynamic(ShouldDispell)
 
-local Temp                                     = {
+local Temp                               = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
     TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC                        = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
     TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun                 = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    TotalAndMag                                = {"TotalImun", "DamageMagicImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
     TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+	-- Anti overhealing
+	IsSpellIsCast                           = {
+        [A.FlashofLight:Info()]                 = "FlashofLight",
+        [A.HolyLight:Info()]                    = "HolyLight",        
+    }, 
 }
 
 local GetTotemInfo, IsMouseButtonDown, UnitIsUnit = GetTotemInfo, IsMouseButtonDown, UnitIsUnit
@@ -774,12 +796,12 @@ local function CastStop(event, ...)
     end 
 end 
 
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_START",            CastStart   )
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_STOP",             CastStop    )
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_FAILED",           CastStop    )
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_INTERRUPTED",      CastStop    )
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_CHANNEL_START",    CastStart   )
-Listener:Add("ACTION_EVENT_PLAYER_CAST", "UNIT_SPELLCAST_CHANNEL_STOP",     CastStop    )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_START",            CastStart   )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_STOP",             CastStop    )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_FAILED",           CastStop    )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_INTERRUPTED",      CastStop    )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_CHANNEL_START",    CastStart   )
+Listener:Add("ACTION_EVENT_HOLY_PALADIN", "UNIT_SPELLCAST_CHANNEL_STOP",     CastStop    )
 
 local function CanStopCastingOverHeal(unitID, unitGUID)
     -- @return boolean 
@@ -812,7 +834,7 @@ local function CanStopCastingOverHeal(unitID, unitGUID)
         end 
     end 
 end 
-
+print(CanStopCastingOverHeal())
 local function HoF(unit, Icon)    
     --local msg = MacroSpells(Icon, "Freedom")
     return
@@ -1261,15 +1283,18 @@ local function Dispel(unit, Icon)
     Unit(unit):HasDeBuffs(51514, true) <= GetCurrentGCD()
 end
 
+
 local function UrgentMythicPlusTargetting()
     
-	local MythicPlusLogic = GetToggle(2, "MythicPlusLogic")
     local getmembersAll = HealingEngine.GetMembersAll()
-	local inCombat = Unit(player):CombatTime() > 0
+	local BleedFriendCount = 0
+	local BleedStack = 0
+	RotationsVariables()
 	
 	if MythicPlusLogic then
+	
         -- Junkyard
-        if A.IsInInstance and inCombat and select(8, GetInstanceInfo()) == 2097 then
+        if inCombat and select(8, GetInstanceInfo()) == 2097 then
             for i = 1, #getmembersAll do
                 if Unit(getmembersAll[i].Unit):HasDeBuffs(302274, true) ~= 0 --Fulminating Zap
                         and Unit(getmembersAll[i].Unit):HealthPercent() < 80 
@@ -1278,8 +1303,9 @@ local function UrgentMythicPlusTargetting()
                 end
             end
         end
+		
         -- Waycrest Manor
-        if A.IsInInstance and inCombat and select(8, GetInstanceInfo()) == 1862 then
+        if inCombat and select(8, GetInstanceInfo()) == 1862 then
             for i = 1, #getmembersAll do
                 if Unit(getmembersAll[i].Unit):HasDeBuffs(260741, true) ~= 0 --Jagged Nettles
                         and Unit(getmembersAll[i].Unit):HealthPercent() < 95 
@@ -1288,8 +1314,9 @@ local function UrgentMythicPlusTargetting()
                 end
             end
         end
+		
         --Kings Rest
-        if A.IsInInstance and inCombat and select(8, GetInstanceInfo()) == 1762 then
+        if inCombat and select(8, GetInstanceInfo()) == 1762 then
             for i = 1, #getmembersAll do
                 if Unit(getmembersAll[i].Unit):HasDeBuffs(267626, true) ~= 0 -- Dessication
                         or Unit(getmembersAll[i].Unit):HasDeBuffs(267618, true) ~= 0 -- Drain Fluids
@@ -1303,7 +1330,88 @@ local function UrgentMythicPlusTargetting()
                 end
             end
         end
-    end
+        
+		-- Grievous Wounds
+		-- Only check on minimum Mythic +7
+        if Action.InstanceInfo.KeyStone >= 7 and GrievousWoundsLogic then
+            for i = 1, #getmembersAll do
+                if Unit(getmembersAll[i].Unit):HealthPercent() < 100 and Unit(getmembersAll[i].Unit):GetRange() <= 40 or UnitIsUnit(getmembersAll[i].Unit, "player") then
+					local CurrentBleedstack = Unit(getmembersAll[i].Unit):HasDeBuffsStacks(A.GrievousWound.ID, true)
+                    if CurrentBleedstack >= GrievousWoundsMinStacks then
+                        HealingEngine.SetTarget(getmembersAll[i].Unit) -- default 2sec delay to stay on target
+                    end
+					
+                end
+            end
+        end			
+		
+    end     
+end
+
+-- Return average DMG taken from all our current member team
+local function FriendlyTeamReceivedLast5sec()
+    local total = 0
+	local getmembersAll = HealingEngine.GetMembersAll()
+	
+    if #getmembersAll > 0 then 
+        for i = 1, #getmembersAll do
+		    -- Avoid getting pet damage
+		    if Unit(getmembersAll[i].Unit):IsPlayer() then
+                total = total + Unit(getmembersAll[i].Unit):GetLastTimeDMGX(5)
+			end
+        end
+		
+		avg = total / #getmembersAll
+    end 
+    return total
+end
+
+function FriendlyTeam:GetLastTimeDMGX(x, range)
+    -- @return number, number, number
+    -- [1] Average received damage latest 'x' seconds 
+    -- [2] Summary received damage latest 'x' seconds 
+    -- [3] Count of members valid for conditions
+    -- Nill-able: range
+    local ROLE                            = self.ROLE
+    local lastDMG, members                = 0, 0
+    local member
+    
+    if TeamCacheFriendly.Size <= 1 then 
+        if Unit("player"):Role(ROLE) then  
+            lastDMG = Unit("player"):GetLastTimeDMGX(x)
+            return lastDMG, 1     
+        end 
+        
+        return lastDMG, members
+    end         
+    
+    if ROLE and TeamCacheFriendly[ROLE] then 
+        for member in pairs(TeamCacheFriendly[ROLE]) do
+            if Unit(member):InRange() and (not range or Unit(member):GetRange() <= range) then
+                lastDMG = lastDMG + Unit(member):GetLastTimeDMGX(x)   
+                members = members + 1
+            end             
+        end             
+    else
+        for i = 1, TeamCacheFriendly.MaxSize do
+            member = TeamCacheFriendlyIndexToPLAYERs[i]                
+            if member and Unit(member):InRange() and (not range or Unit(member):GetRange() <= range) then
+                lastDMG = lastDMG + Unit(member):GetLastTimeDMGX(x)   
+                members = members + 1
+            end 
+        end  
+        
+        if TeamCacheFriendly.Type ~= "raid" then
+            lastDMG = lastDMG + Unit("player"):GetLastTimeDMGX(x)  
+            members = members + 1
+        end 
+    end      
+    
+    if lastDMG == 0 and members == 0 then 
+        return 0, lastDMG, members
+    else 
+        return lastDMG / members, lastDMG, members
+    end 
 end
 
 		
@@ -1313,15 +1421,14 @@ A[3] = function(icon, isMulti)
     --- ROTATION VAR ---
     --------------------
     local CurrentTanks = HealingEngine.GetMembersByMode("TANK")
+	local getmembersAll = HealingEngine.GetMembersAll()
     local InfLight = Unit(player):HasBuffs(A.InfusionofLight.ID, true)
     local HLcast_t = Unit(player):CastTime(A.HolyLight.ID)
     local FLcast_t = Unit(player):CastTime(A.FlashofLight.ID)
 	local inCombat = Unit(player):CombatTime() > 0
     local isMoving = Player:IsMoving()
     local isMovingFor = A.Player:IsMovingTime()
-    local inCombat = Unit(player):CombatTime() > 0
-    local combatTime = Unit(player):CombatTime()
-    local getmembersAll = HealingEngine.GetMembersAll()
+    local combatTime = Unit(player):CombatTime()    
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
 	local AoEON = GetToggle(2, "AoE")
@@ -1331,7 +1438,7 @@ A[3] = function(icon, isMulti)
     local ActiveBeacon = ActiveBeacon()
 	local ActiveBeaconOnTank = ActiveBeaconOnTank()
     -- Healing Engine vars
-    local ReceivedLast5sec = Unit(player):GetLastTimeDMGX(5) -- LastIncDMG(player, 5)
+    local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5) --Unit(player):GetLastTimeDMGX(5) -- LastIncDMG(player, 5)
     local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
     local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
     local TeamCacheEnemySize = TeamCache.Enemy.Size
@@ -1617,9 +1724,10 @@ A[3] = function(icon, isMulti)
     ---------------------
     local function HealingRotation(unit) 
 
-	
-		-- StopCast if destination is unknown as unitID 
-        if not Temp.LastPrimaryUnitID and CanStopCastingOverHeal(unit) and GetToggle(1, "StopCast") then 
+        local unitGUID = UnitGUID(unit)
+        
+        -- StopCast if destination is unknown as unitID 
+        if not Temp.LastPrimaryUnitID and StopCastOverHeal and CanStopCastingOverHeal(unit, unitGUID) then 
             return A:Show(icon, ACTION_CONST_STOPCAST)
         end 
 		
@@ -1683,8 +1791,8 @@ A[3] = function(icon, isMulti)
         end           
 
         -- #3 Special Glimmer of Light Buff spreader (Only Friendly and not Pet)
-        if A.GlimmerofLight:GetAzeriteRank() >= 2 and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
-            if (IsInGroup() or A.IsInPvP or IsInRaid()) and combatTime > 0 then
+        if A.GlimmerofLight:GetAzeriteRank() >= 1 and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
+            if (IsInGroup() or A.IsInPvP or IsInRaid()) then
                 for i = 1, #getmembersAll do 
                     if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 then 
                         HealingEngine.SetTarget(getmembersAll[i].Unit) 
@@ -2217,9 +2325,29 @@ A[3] = function(icon, isMulti)
 
         -- #10 Special Mythic + logic - Critical Healing required
 		-- Return specific units to target depending on current dungeon logic triggers
-        if UrgentMythicPlusTargetting() then
+		-- Also contain specific Affixes logic
+        if UrgentMythicPlusTargetting() and A.IsInInstance and not A.IsInPvP then
 		    return true
 		end
+		
+		-- #10.1 Special Raid logic
+		-- Wrathion and Shadhar
+        if IsInRaid() then
+            for i = 1, #getmembersAll do
+                local localClass, englishClass, classIndex = UnitClass(getmembersAll[i].Unit)
+                local thisUnit = getmembersAll[i].Unit
+                if UnitInRange(thisUnit) and A.BlessingofFreedom:IsReady() then
+                    if BlessingofFreedomShadhar and Unit(thisUnit):HasDeBuffs(A.Fixate.ID, true) ~= nil and (classIndex == 1 or classIndex == 2 or classIndex == 4 or classIndex == 5 or classIndex == 9) then						    
+				    	HealingEngine.SetTarget(thisUnit, 0.5)
+						return A.BlessingofFreedom:Show(icon)							
+                    end
+                    if BlessingofFreedomWrathion and Unit(thisUnit):HasDeBuffsStacks(A.Slow.ID, true) >= WrathionMovementStacks then						    
+						HealingEngine.SetTarget(thisUnit, 0.5)
+						return A.BlessingofFreedom:Show(icon)
+                    end
+			    end
+            end
+        end
 
         -- #11 HPvE #1 Holy Shock (HPS)
         if A.HolyShock:IsReadyByPassCastGCD(unit) and
@@ -3213,11 +3341,19 @@ local function PartyRotation(unit)
 end 
 
 A[6] = function(icon)
-    -- StopCast if destination is known as unitID 
-    if Temp.LastPrimaryUnitID and CanStopCastingOverHeal() then 
+    -- Call rotations variables
+	RotationsVariables()
+	
+    -- StopCast OverHeal
+    if Temp.LastPrimaryUnitID and CanStopCastingOverHeal() and StopCastOverHeal then 
         return A:Show(icon, ACTION_CONST_STOPCAST)
     end
-    
+
+    -- ZakLL Stop Cast M+ Quake Affix
+    if Unit(player):IsCastingRemains() > 0 and StopCastQuake and Unit(player):HasDeBuffs(A.Quake.ID) <= StopCastQuakeSec and Unit(player):HasDeBuffs(A.Quake.ID) > 0 then
+        return A:Show(icon, ACTION_CONST_STOPCAST)
+    end
+  
     if RotationPassive(icon) then 
         return true 
     end 
