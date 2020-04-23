@@ -261,7 +261,28 @@ As always, please report on Discord or message me directly if you need anything 
 	
 	-- Holy
 	if PlayerSpec == 65 then
-	    ChangeLog = "Welcome to Taste Rotations !\n\nThis spec is currently in developpement.\n\nFollow latests update on Discord."					
+	    ChangeLog = [[
+		Welcome to Taste - Holy Paladin !
+	    
+		***** TEST BUILD *****	
+		
+List of latest changes :
+
+- Lot of optimizations done
+- New mythic + logic
+- New raid logic
+- Lot of new UI settings available
+- Improved Glimmer spread
+- Added Quaking affix support
+- Added Bursting affix support
+- Fixed cooldowns logic ? 
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Fixed Auto taunt issue
+- Fixed Consecration logic
+- Added moves in ProfileUI			
+
+As always, please report on Discord or message me directly if you need anything !
+]]  				
 	end
 
 --------------------
@@ -319,6 +340,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Fixed double Immolation issue
 - Added Check for Immolate and Explosives orbs
 - Force Conflagrate on Explosives orbs if ready
 - New : Blocked Spells Status Frame (see 2nd tab)
@@ -346,6 +368,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Damn good optimization from Johan (thanks mate)
 - Fixed range check with Whirlwind and Warbreaker 
 - Added Smart reflect option 
 - Added Smart Stormbolt option
@@ -366,6 +389,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Damn good optimization from Johan (thanks mate)
 - Added Smart reflect option 
 - Added Smart Stormbolt option
 - Reimported discord optimized file
@@ -493,6 +517,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Fixed Reaping Flame Essence
 - Fixed latency check for channeled spells
 - Added missing option for Eyebeam when its totally disabled
 - Added special Twisted Appendage tentacles rotation
@@ -597,6 +622,8 @@ As always, please report on Discord or message me directly if you need anything 
 
 List of latest changes :
 
+- Added Intimidation in spell list
+- New UI settings for Blood of the Enemy
 - New Mythic+ settings ! 
 - Aspect of the wild can be forced in Keys with Rapid Reload enabled
 - New AoE optimizations ! 
@@ -756,6 +783,8 @@ As always, please report on Discord or message me directly if you need anything 
 		
         ***** TEST BUILD *****
 
+- Added Main support
+- Added fix to avoid double Regrowth
 - New : Blocked Spells Status Frame (see 2nd tab)
 - AutoWild Charge fix
 - Range Rotation option
@@ -865,7 +894,8 @@ As always, please report on Discord or message me directly if you need anything 
 	if PlayerSpec == 258 then
 	    ChangeLog = [[
 		Welcome to Taste - Shadow Priest !
-		
+
+- Fixed double vampiric Touch issue		
 - New Multidot UI settings
 - More improvements on AoE Cycle
 - Fixed error with mindsear
