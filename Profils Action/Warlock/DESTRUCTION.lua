@@ -213,6 +213,7 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	ImmolateDelay                           = 0,
 }
 local player = "player"
 local SoulShardsP = Player:SoulShardsP()
@@ -597,7 +598,15 @@ A[3] = function(icon, isMulti)
    	if SummonPet:IsReady(unit) and (not isMoving) and not ShouldStop and not Pet:IsActive() then
        	return SummonPet:Show(icon)
    	end
-
+    
+	if Temp.ImmolateDelay == 0 and A.Immolate:IsSpellInCasting() then
+        Temp.ImmolateDelay = 15
+    end
+    
+    if Temp.ImmolateDelay > 0 then
+    --    print(Temp.ImmolateDelay)
+        Temp.ImmolateDelay = Temp.ImmolateDelay - 1
+    end
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -855,7 +864,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=remains<5&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and Temp.ImmolateDelay == 0 and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
@@ -1166,12 +1175,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- immolate,cycle_targets=1,if=refreshable&(!talent.cataclysm.enabled|cooldown.cataclysm.remains>remains)
-            if A.Immolate:IsReady(unit) and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
+            if A.Immolate:IsReady(unit) and Temp.ImmolateDelay == 0 and not Unit(unit):IsExplosives() and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) <= 5 and (not A.Cataclysm:IsSpellLearned() or A.Cataclysm:GetCooldown() > Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true)) then
                 return A.Immolate:Show(icon) 
             end
 			
             -- immolate,if=talent.internal_combustion.enabled&action.chaos_bolt.in_flight&remains<duration*0.5
-            if A.Immolate:IsReady(unit) and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 6) then
+            if A.Immolate:IsReady(unit) and Temp.ImmolateDelay == 0 and IsFireSchoolFree() and A.LastPlayerCastName ~= A.Immolate:Info() and (A.InternalCombustion:IsSpellLearned() and A.ChaosBolt:IsSpellInFlight() and Unit(unit):HasDeBuffs(A.ImmolateDebuff.ID, true) < 6) then
                 return A.Immolate:Show(icon)
             end
 			
