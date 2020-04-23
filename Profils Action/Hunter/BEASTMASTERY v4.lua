@@ -109,6 +109,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     SurvivaloftheFittest                   = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),
     PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK"  }),
     MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),	
+	Intimidation                           = Action.Create({ Type = "Spell", ID = 19577  }),
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
@@ -652,6 +653,9 @@ A[3] = function(icon, isMulti)
 	local BeastCleaveBuffRefresh = GetToggle(2, "BeastCleaveBuffRefresh")
 	local MultiShotForceAoE = GetToggle(2, "MultiShotForceAoE")	
 	local AspectoftheWildOnCDRapidReload = GetToggle(2, "AspectoftheWildOnCDRapidReload")	
+	local BloodoftheEnemyAoETTD = GetToggle(2, "BloodoftheEnemyAoETTD")	
+	local BloodoftheEnemySyncAoE = GetToggle(2, "BloodoftheEnemySyncAoE")	
+	local BloodoftheEnemyUnits = GetToggle(2, "BloodoftheEnemyUnits")	
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -966,6 +970,21 @@ A[3] = function(icon, isMulti)
             if A.BagofTricks:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BagofTricks:Show(icon)
             end
+
+		    -- blood_of_the_enemy,if=(cooldown.death_and_decay.remains&spell_targets.death_and_decay>1)|(cooldown.defile.remains&spell_targets.defile>1)|(cooldown.apocalypse.remains&cooldown.death_and_decay.ready)
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and BurstIsON(unit) and HeartOfAzeroth and
+			(
+			    BloodoftheEnemySyncAoE and
+			    (
+				    Player:AreaTTD(MaxAoERange) >= BloodoftheEnemyAoETTD 
+				    and 
+				    GetByRange(BloodoftheEnemyUnits, 40)
+                )
+                or Unit(unit):IsBoss()				
+			)
+			then
+                return A.BloodoftheEnemy:Show(icon)
+            end	
 			
 			-- reaping_flames
             if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth then
@@ -1215,11 +1234,6 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
 			
-            -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and A.BurstIsON(unit) then
-                return A.BloodoftheEnemy:Show(icon)
-            end
-			
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
             if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.RecklessForceBuff.ID, true) > 0 or Unit(player):HasBuffsStacks(A.RecklessForceCounter.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
@@ -1445,18 +1459,7 @@ A[3] = function(icon, isMulti)
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and (A.DanceofDeath:GetAzeriteRank() > 1 and Unit(player):HasBuffs(A.DanceofDeathBuff.ID, true) < GetGCD() and Player:CritChancePct() > 40) then
                 return A.BarbedShot:Show(icon)
             end
-			
-            -- blood_of_the_enemy,if=buff.aspect_of_the_wild.remains>10+gcd|target.time_to_die<10+gcd
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and 
-			(
-			    Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) > 10 + GetGCD() 
-				or 
-				Unit(unit):TimeToDie() < 10 + GetGCD()
-			)
-			then
-                return A.BloodoftheEnemy:Show(icon)
-            end
-			
+						
             -- kill_command
             if A.KillCommand:IsReadyByPassCastGCD(unit) then
                 return A.KillCommand:Show(icon)
