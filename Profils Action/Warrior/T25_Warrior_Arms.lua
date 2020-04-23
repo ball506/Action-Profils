@@ -201,57 +201,57 @@ end
 InMelee = A.MakeFunctionCachedDynamic(InMelee)
 
 local function InRange(unit)
-	-- @return boolean 
-	return A.MortalStrike:IsInRange(unit)
+    -- @return boolean 
+    return A.MortalStrike:IsInRange(unit)
 end 
 InRange = A.MakeFunctionCachedDynamic(InRange)
 
 local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
-	-- @return boolean 
-	local c = 0 
-	
-	if isStrictlySuperior == nil then
-	    isStrictlySuperior = false
-	end
-
-	if isStrictlyInferior == nil then
-	    isStrictlyInferior = false
-	end	
-	
-	for unit in pairs(ActiveUnitPlates) do 
-		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
-			if InRange(unit) then 
-				c = c + 1
-			elseif range then 
-				local r = Unit(unit):GetRange()
-				if r > 0 and r <= range then 
-					c = c + 1
-				end 
-			end 
-			-- Strictly superior than >
-			if isStrictlySuperior and not isStrictlyInferior then
-			    if c > count then
-				    return true
-				end
-			end
-			
-			-- Stryctly inferior <
-			if isStrictlyInferior and not isStrictlySuperior then
-			    if c < count then
-			        return true
-				end
-			end
-			
-			-- Classic >=
-			if not isStrictlyInferior and not isStrictlySuperior then
-			    if c >= count then 
-				    return true 
-			    end 
-			end
-		end 
-		
-	end
-	
+    -- @return boolean 
+    local c = 0 
+    
+    if isStrictlySuperior == nil then
+        isStrictlySuperior = false
+    end
+    
+    if isStrictlyInferior == nil then
+        isStrictlyInferior = false
+    end    
+    
+    for unit in pairs(ActiveUnitPlates) do 
+        if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+            if InRange(unit) then 
+                c = c + 1
+            elseif range then 
+                local r = Unit(unit):GetRange()
+                if r > 0 and r <= range then 
+                    c = c + 1
+                end 
+            end 
+            -- Strictly superior than >
+            if isStrictlySuperior and not isStrictlyInferior then
+                if c > count then
+                    return true
+                end
+            end
+            
+            -- Stryctly inferior <
+            if isStrictlyInferior and not isStrictlySuperior then
+                if c < count then
+                    return true
+                end
+            end
+            
+            -- Classic >=
+            if not isStrictlyInferior and not isStrictlySuperior then
+                if c >= count then 
+                    return true 
+                end 
+            end
+        end 
+        
+    end
+    
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
@@ -753,7 +753,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- run_action_list,name=single_target        
-            if (GetByRange(2, 8, false, true) or not GetToggle(2, "AoE")) then
+            if ((A.Massacre:IsSpellLearned() and Unit(unit):HealthPercent() >= 35) or Unit(unit):HealthPercent() >= 20) and GetByRange(2, 8, false, true) then
                 
                 -- rend, ST
                 if A.Rend:IsReady(unit) and InMelee(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= 4 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0) then
@@ -775,23 +775,23 @@ A[3] = function(icon, isMulti)
                 -- ravager
                 if A.Ravager:IsReady(player) and A.Ravager:IsSpellLearned() and A.BurstIsON(unit) and 
                 A.DeadlyCalm:IsSpellLearned() and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0 and 
-				(
-				    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 and A.TestofMight:GetAzeriteRank() == 0) 
-					or 
-					Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) > 0
-				)
+                (
+                    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 and A.TestofMight:GetAzeriteRank() == 0) 
+                    or 
+                    Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) > 0
+                )
                 then
                     return A.Ravager:Show(icon)
                 end
                 
                 -- warbreaker
                 if A.Warbreaker:IsReady(unit) and InMelee(unit) and 
-				(
-				    (A.Avatar:IsSpellLearned() and not A.Avatar:IsReady(unit)) 
-					or 
-					Unit("player"):HasBuffs(A.Avatar.ID, true) > 0
-				) 				 
-				then
+                (
+                    (A.Avatar:IsSpellLearned() and not A.Avatar:IsReady(unit)) 
+                    or 
+                    Unit("player"):HasBuffs(A.Avatar.ID, true) > 0
+                )                  
+                then
                     return A.Warbreaker:Show(icon)
                 end
                 
@@ -801,29 +801,29 @@ A[3] = function(icon, isMulti)
                 end
                 
                 -- execute,if=buff.sudden_death.react
-                if Execute:IsReady(unit) and Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true) > 0 then
+                if Execute:IsReady(unit) and InMelee(unit) and Unit("player"):HasBuffsStacks(A.SuddenDeathBuff.ID, true) > 0 then
                     return Execute:Show(icon)
                 end
                 
                 -- overpower
-                if A.Overpower:IsReady(unit)
+                if A.Overpower:IsReady(unit) and InMelee(unit)
                 then
                     return A.Overpower:Show(icon)
                 end
                 
                 -- mortal_strike
-                if A.MortalStrike:IsReady(unit) then
+                if A.MortalStrike:IsReady(unit) and InMelee(unit) then
                     return A.MortalStrike:Show(icon)
                 end
                 
                 -- bladestorm
-                if A.Bladestorm:IsReady(player) and A.BurstIsON(unit) and 
+                if A.Bladestorm:IsReady(player) and InMelee(unit) and A.BurstIsON(unit) and 
                 A.DeadlyCalm:IsSpellLearned() and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0 and 
-				(
-				    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and A.TestofMight:GetAzeriteRank() == 0) 
-					or 
-					Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) > 0
-				)
+                (
+                    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) and A.TestofMight:GetAzeriteRank() == 0) 
+                    or 
+                    Unit("player"):HasBuffs(A.TestofMightBuff.ID, true) > 0
+                )
                 then
                     return A.Bladestorm:Show(icon)
                 end
@@ -835,7 +835,7 @@ A[3] = function(icon, isMulti)
                 end
                 
                 -- slam,if=!talent.fervor_of_battle.enabled
-                if A.Slam:IsReady(unit) and not A.FervorofBattle:IsSpellLearned() and ((A.TestofMight:GetAzeriteRank() > 0 and (Player:Rage() > 60 or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) or A.TestofMight:GetAzeriteRank() == 0)
+                if A.Slam:IsReady(unit) and InMelee(unit) and not A.FervorofBattle:IsSpellLearned() and ((A.TestofMight:GetAzeriteRank() > 0 and (Player:Rage() > 60 or Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) or Unit("player"):HasBuffs(A.TestofMightBuff.ID, true))) or A.TestofMight:GetAzeriteRank() == 0)
                 then
                     return A.Slam:Show(icon)
                 end
@@ -857,169 +857,164 @@ A[3] = function(icon, isMulti)
                 
                 -- warbreaker, execute
                 if A.Warbreaker:IsReady(unit) and InMelee(unit) and ((A.Avatar:IsSpellLearned() and not A.Avatar:IsReady(unit)) or Unit("player"):HasBuffs(A.Avatar.ID, true)) then
-                   return A.Warbreaker:Show(icon)
+                    return A.Warbreaker:Show(icon)
                 end
-                    
+                
                 -- ravager, execute
-                if A.Ravager:IsReady(player) and A.Ravager:IsSpellLearned() and A.BurstIsON(unit) and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0 and 
-				(
-				    Player:Rage() < 30 
-					or 
-					(A.TestofMight:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0)
-				)
+                if A.Ravager:IsReady(player) and InMelee(unit) and A.Ravager:IsSpellLearned() and A.BurstIsON(unit) and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0 and 
+                (
+                    Player:Rage() < 30 
+                    or 
+                    (A.TestofMight:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0)
+                )
                 then
                     return A.Ravager:Show(icon)
                 end
-                        
+                
                 -- bladestorm, execute
                 if A.Bladestorm:IsReady(player) and InMelee(unit) and A.BurstIsON(unit) and Unit("player"):HasBuffs(A.DeadlyCalmBuff.ID, true) == 0 and 
-				(
-				    Player:Rage() < 30 
-					or 
-					(A.TestofMight:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0)
-				)
+                (
+                    Player:Rage() < 30 
+                    or 
+                    (A.TestofMight:GetAzeriteRank() > 0 and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0)
+                )
                 then
                     return A.Bladestorm:Show(icon)
                 end
-                            
+                
                 -- deadly_calm
-                if A.DeadlyCalm:IsSpellLearned() and A.DeadlyCalm:IsReady(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 then
+                if A.DeadlyCalm:IsSpellLearned() and InMelee(unit) and A.DeadlyCalm:IsReady(unit) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 then
                     return A.DeadlyCalm:Show(icon)
                 end
-                            
+                
                 -- whirlwind,if=talent.fervor_of_battle.enabled
                 if A.Whirlwind:IsReady(unit) and InMelee(unit) and A.FervorofBattle:IsSpellLearned() and Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true) > 0
                 then
                     return A.Whirlwind:Show(icon)
                 end
-                            
+                
                 -- slam,if=buff.crushing_assault.up&buff.memory_of_lucid_dreams.down
-                if A.Slam:IsReady(unit) and not A.FervorofBattle:IsSpellLearned() and Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true) > 0 then
+                if A.Slam:IsReady(unit) and InMelee(unit) and not A.FervorofBattle:IsSpellLearned() and Unit("player"):HasBuffs(A.CrushingAssaultBuff.ID, true) > 0 then
                     return A.Slam:Show(icon)
                 end
-                            
+                
                 -- mortal_strike,if=buff.overpower.stack=2&talent.dreadnaught.enabled|buff.executioners_precision.stack=2
-                if A.MortalStrike:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.OverpowerBuff.ID, true) == 2 and A.Dreadnaught:IsSpellLearned())
+                if A.MortalStrike:IsReady(unit) and InMelee(unit) and (Unit("player"):HasBuffsStacks(A.OverpowerBuff.ID, true) == 2 and A.Dreadnaught:IsSpellLearned())
                 then
                     return A.MortalStrike:Show(icon)
                 end
-                            
-                -- execute,if=buff.memory_of_lucid_dreams.up|buff.deadly_calm.up|(buff.test_of_might.up&cooldown.memory_of_lucid_dreams.remains>94)
-                if Execute:IsReady(unit) then
-                    return Execute:Show(icon)
-                end
-                            
+
                 -- overpower
-                if A.Overpower:IsReady(unit) then
+                if A.Overpower:IsReady(unit) and InMelee(unit) then
                     return A.Overpower:Show(icon)
                 end
-                            
+                
                 -- execute
-                if Execute:IsReady(unit) then
+                if Execute:IsReady(unit) and InMelee(unit) then
                     return Execute:Show(icon)
                 end
             end
-                        
+            
             -- run_action_list,name=AOE                        
             if GetByRange(2, 8) then
-                            
+                
                 -- sweeping_strikes
-                if A.SweepingStrikes:IsReady(player)
+                if A.SweepingStrikes:IsReady(player) 
                 then
                     return A.SweepingStrikes:Show(icon)
                 end
-                            
+                
                 -- rend, AOE
                 if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= 4 and (Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) > 0) and Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) == 0)
                 then
                     return A.Rend:Show(icon)
                 end
-                            
+                
                 -- skullsplitter, AOE
                 if A.Skullsplitter:IsSpellLearned() and A.Skullsplitter:IsReady(unit) and Player:Rage() < 60 and Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) == 0 and (A.Ravager:GetCooldown() > 3 or A.Bladestorm:GetCooldown() > 3)
                 then
                     return A.Skullsplitter:Show(icon)
                 end
-                            
+                
                 -- deadly_calm, AOE
                 if A.DeadlyCalm:IsReady(unit) and Player:Rage() < 30
                 then
                     return A.DeadlyCalm:Show(icon)
                 end
-                            
+                
                 -- colossus_smash, AOE
                 if A.ColossusSmash:IsReady(unit) and (Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) > 0)
                 then
                     return A.ColossusSmash:Show(icon)
                 end
-                            
+                
                 -- warbreaker, AOE
                 if A.Warbreaker:IsReady(unit)
                 then
                     return A.Warbreaker:Show(icon)
                 end
-                            
+                
                 -- ravager, AOE
                 if A.Ravager:IsReady(player) and A.Ravager:IsSpellLearned() and
                 (
-				    Unit("player"):HasBuffs(A.DeadlyCalm.ID, true) == 0 and Unit("player"):HasBuffs(A.SweepingStrikes.ID, true) == 0
-                    or 
-                    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 3 and not (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 and A.TestofMight:GetAzeriteRank() > 0))
-				)
-                then
-                    return A.Ravager:Show(icon)
-                end
-                            
-                -- bladestorm, AOE
-                if A.Bladestorm:IsReady(player) and
-                (				
                     Unit("player"):HasBuffs(A.DeadlyCalm.ID, true) == 0 and Unit("player"):HasBuffs(A.SweepingStrikes.ID, true) == 0
                     or 
                     (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 3 and not (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 and A.TestofMight:GetAzeriteRank() > 0))
-				)
+                )
+                then
+                    return A.Ravager:Show(icon)
+                end
+                
+                -- bladestorm, AOE
+                if A.Bladestorm:IsReady(player) and
+                (                
+                    Unit("player"):HasBuffs(A.DeadlyCalm.ID, true) == 0 and Unit("player"):HasBuffs(A.SweepingStrikes.ID, true) == 0
+                    or 
+                    (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 3 and not (Unit(unit):HasDeBuffs(A.ColossusSmashDebuff.ID, true) > 0 and A.TestofMight:GetAzeriteRank() > 0))
+                )
                 then
                     return A.Bladestorm:Show(icon)
                 end
-                            
+                
                 -- cleave, AOE
                 if A.Cleave:IsReady(player) then
                     return A.Cleave:Show(icon)
                 end
-                            
+                
                 -- overpower, AOE
                 if A.Overpower:IsReady(unit)
                 then
                     return A.Overpower:Show(icon)
                 end
-                            
+                
                 -- execute, AOE
                 if Execute:IsReady(unit) and not GetByRange(5, 8) and (Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) > 0)
                 then
                     return Execute:Show(icon)
                 end
-                            
+                
                 -- mortal_strike, AOE
                 if A.MortalStrike:IsReady(unit) and not GetByRange(5, 8) and (Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true) > 0)
                 then
                     return A.MortalStrike:Show(icon)
                 end
-                            
+                
                 -- whirlwind, AOE
                 if A.Whirlwind:IsReady(unit) and GetByRange(5, 8) then
                     return A.Whirlwind:Show(icon)
                 end                            
             end    
             
-			-- End on EnemyRotation()
+            -- End on EnemyRotation()
         end
-	end	
-   
+    end    
+    
     -- Defensive
     local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
-                    
+    
     -- Mouseover
     if A.IsUnitEnemy("mouseover") then
         unit = "mouseover"
@@ -1027,18 +1022,18 @@ A[3] = function(icon, isMulti)
             return true 
         end 
     end 
-                   
+    
     -- Target  
     if A.IsUnitEnemy("target") then 
-    unit = "target"
+        unit = "target"
         if EnemyRotation(unit) then 
             return true
         end                         
     end
-      
+    
 end  -- Finished 
-			
-			
+
+
 -- [4] AoE Rotation
 A[4] = function(icon)
     return A[3](icon, true)
@@ -1099,3 +1094,4 @@ A[8] = function(icon)
     end     
     return ArenaRotation(icon, "arena3")
 end]]--
+
