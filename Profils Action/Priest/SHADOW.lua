@@ -189,6 +189,7 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	VampiricTouchDelay                      = 0,
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
@@ -489,7 +490,14 @@ A[3] = function(icon, isMulti)
     	    end
   	    end
 	end
-
+    if Temp.VampiricTouchDelay == 0 and A.VampiricTouch:IsSpellInCasting() then
+        Temp.VampiricTouchDelay = 15
+    end
+    
+    if Temp.VampiricTouchDelay > 0 then
+    --    print(Temp.ImmolateDelay)
+        Temp.VampiricTouchDelay = Temp.VampiricTouchDelay - 1
+    end
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
@@ -575,7 +583,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- vampiric_touch
-            if A.VampiricTouch:IsReady(unit) and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) == 0 then
+            if A.VampiricTouch:IsReady(unit) and Temp.VampiricTouchDelay == 0 and Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) == 0 then
                 return A.VampiricTouch:Show(icon)
             end
 			
@@ -741,7 +749,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- vampiric_touch,if=!ticking&azerite.thought_harvester.rank>=1
-            if A.VampiricTouch:IsReady(unit) and (Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) == 0 and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
+            if A.VampiricTouch:IsReady(unit) and Temp.VampiricTouchDelay == 0 and (Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) == 0 and A.ThoughtHarvester:GetAzeriteRank() >= 1) then
                 return A.VampiricTouch:Show(icon)
             end
 			
@@ -808,7 +816,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- vampiric_touch,target_if=refreshable,if=target.time_to_die>((1+3.3*spell_targets.mind_sear)*variable.vt_trait_ranks_check*(1+0.10*azerite.searing_dialogue.rank*spell_targets.mind_sear))
-            if A.VampiricTouch:IsReady(unit) then
+            if A.VampiricTouch:IsReady(unit) and Temp.VampiricTouchDelay == 0 then
                 if (Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) < 5) and 
 				(
 				    Unit(unit):TimeToDie() > ((1 + 3.3 * MultiUnits:GetByRange(40)) * VarVtTraitRanksCheck * (1 + 0.10 * A.SearingDialogue:GetAzeriteRank() * MultiUnits:GetByRange(40)))
@@ -819,7 +827,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- vampiric_touch,target_if=dot.shadow_word_pain.refreshable,if=(talent.misery.enabled&target.time_to_die>((1.0+2.0*spell_targets.mind_sear)*variable.vt_mis_trait_ranks_check*(variable.vt_mis_sd_check*spell_targets.mind_sear)))
-            if A.VampiricTouch:IsReady(unit) then
+            if A.VampiricTouch:IsReady(unit) and Temp.VampiricTouchDelay == 0 then
                 if (Unit(unit):HasDeBuffs(A.ShadowWordPainDebuff.ID, true) < 5) and 
 				(
 				    (
@@ -1009,7 +1017,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- vampiric_touch,if=refreshable&target.time_to_die>6|(talent.misery.enabled&dot.shadow_word_pain.refreshable)
-            if A.VampiricTouch:IsReady(unit) and not Player:IsCasting(A.VampiricTouch) and 
+            if A.VampiricTouch:IsReady(unit) and Temp.VampiricTouchDelay == 0 and not Player:IsCasting(A.VampiricTouch) and 
 			(
 			    Unit(unit):HasDeBuffs(A.VampiricTouchDebuff.ID, true) < 5 and Unit(unit):TimeToDie() > 6 
 				or 
