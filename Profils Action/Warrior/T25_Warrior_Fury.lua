@@ -721,12 +721,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- Victory Rush
-            if A.VictoryRush:IsReady('Melee') and Unit(player):HealthPercent() <= Action.GetToggle(2, "VictoryRush") then
+            if A.VictoryRush:IsReady(unit) and Unit(player):HealthPercent() <= Action.GetToggle(2, "VictoryRush") then
                 return A.VictoryRush:Show(icon)
             end
 			
             -- ImpendingVictory
-            if A.ImpendingVictory:IsReady("Melee") and not ShouldStop and Unit(player):HealthPercent() <= Action.GetToggle(2, "ImpendingVictory") then
+            if A.ImpendingVictory:IsReady(unit) and not ShouldStop and Unit(player):HealthPercent() <= Action.GetToggle(2, "ImpendingVictory") then
                 return A.VictoryRush:Show(icon)
             end
 			
@@ -785,7 +785,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- reaping_flames
-            if A.ReapingFlames:AutoHeartOfAzeroth(unit) and UseHeartOfAzeroth then
+            if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and UseHeartOfAzeroth then
                 return A.ReapingFlames:Show(icon)
             end
 			

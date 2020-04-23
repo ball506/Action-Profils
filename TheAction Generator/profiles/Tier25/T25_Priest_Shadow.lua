@@ -194,6 +194,7 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	VampiricTouchDelay                      = 0,
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
@@ -249,7 +250,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Cds, Cleave, CritCds, Single
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -257,8 +258,8 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- potion
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofUnbridledFury:Show(icon)
             end
             -- variable,name=mind_blast_targets,op=set,value=floor((4.5+azerite.whispers_of_the_damned.rank)%(1+0.27*azerite.searing_dialogue.rank))
             if (true) then
@@ -286,7 +287,7 @@ A[3] = function(icon, isMulti)
             end
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
-                A.AzsharasFontofPower:Show(icon)
+                return A.AzsharasFontofPower:Show(icon)
             end
             -- mind_blast,if=spell_targets.mind_sear<2|azerite.thought_harvester.rank=0
             if A.MindBlast:IsReady(unit) and inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 or A.ThoughtHarvester:GetAzeriteRank() == 0) then
@@ -532,8 +533,8 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
                     -- potion,if=buff.bloodlust.react|target.time_to_die<=80|target.health.pct<35
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent() < 35) then
-                A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit(unit):TimeToDie() <= 80 or Unit(unit):HealthPercent() < 35) then
+                A.PotionofUnbridledFury:Show(icon)
             end
             -- variable,name=dots_up,op=set,value=dot.shadow_word_pain.ticking&dot.vampiric_touch.ticking
             if (true) then
