@@ -585,18 +585,24 @@ A[3] = function(icon, isMulti)
 	local ChargeTime = GetToggle(2, "ChargeTime")
 	local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
 	local HeroicLeapTime = GetToggle(2, "HeroicLeapTime")	
-
+    ThunderClapRange()
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
 
         --Precombat
-        local function Precombat(unit)
+        if combatTime == 0 and Unit(unit):IsExists() and unit ~= "mouseover" then
             -- flask
             -- food
             -- augmentation
             -- snapshot_stats
+			
+	        -- HeroicThrow pull with option
+   	        if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
+       	        return A.HeroicThrow:Show(icon)
+            end
+
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -628,128 +634,8 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        Precombat = A.MakeFunctionCachedDynamic(Precombat)
-		
-        --Aoe
-        local function Aoe(unit)
-            -- thunder_clap
-            if A.ThunderClap:IsReady(unit) and GetByRange(2, ThunderClapRange()) then
-                return A.ThunderClap:Show(icon)
-            end
-						
-            -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and Unit(player):HasBuffs(A.LastStandBuff.ID, true) > 0 then
-                return A.AnimaofDeath:Show(icon)
-            end
-			
-            -- dragon_roar
-            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
-                return A.DragonRoar:Show(icon)
-            end			
-			
-            -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ThunderClap:GetCooldown() >= 4) then
-                return A.GrongsPrimalRage:Show(icon)
-            end
-			
-            -- ravager
-            if A.Ravager:IsReady(player) then
-                return A.Ravager:Show(icon)
-            end
-			
-            -- shield_slam
-            if A.ShieldSlam:IsReady(unit) then
-                return A.ShieldSlam:Show(icon)
-            end
-			
-            -- devastate
-            if A.Devastate:IsReady(unit) and InRange(unit) then
-                return A.Devastate:Show(icon)
-            end
-			
-        end
-        Aoe = A.MakeFunctionCachedDynamic(Aoe)
-		
-        --St
-        local function St(unit)
-		
-            -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (GetByRange(2, ThunderClapRange()) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
-                return A.ThunderClap:Show(icon)
-            end
-			
-            -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) > 0) then
-                return A.ShieldSlam:Show(icon)
-            end
-			
-            -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and GetByRange(1, ThunderClapRange()) and A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0 then
-                return A.ThunderClap:Show(icon)
-            end
-			
-            -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit(player):HasBuffs(A.LastStandBuff.ID, true) > 0) then
-                return A.AnimaofDeath:Show(icon)
-            end
-			
-            -- shield_slam
-            if A.ShieldSlam:IsReady(unit) then
-                return A.ShieldSlam:Show(icon)
-            end
-			
-            -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
-            if A.AshvanesRazorCoral:IsReady(unit) then
-                if Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 then
-                    return A.AshvanesRazorCoral:Show(icon) 
-                end
-            end
-			
-            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0)) then
-                return A.AshvanesRazorCoral:Show(icon)
-            end
-			
-            -- dragon_roar
-            if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
-                return A.DragonRoar:Show(icon)
-            end
-			
-            -- thunder_clap
-            if A.ThunderClap:IsReady(unit) and GetByRange(1, ThunderClapRange()) then
-                return A.ThunderClap:Show(icon)
-            end
-						
-            -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ShieldSlam:GetCooldown() >= 4) then
-                return A.GrongsPrimalRage:Show(icon)
-            end
-			
-            -- ravager
-            if A.Ravager:IsReady(player) then
-                return A.Ravager:Show(icon)
-            end
-			
-            -- devastate
-            if A.Devastate:IsReady(unit) and InRange(unit) then
-                return A.Devastate:Show(icon)
-            end
-        end        
-        St = A.MakeFunctionCachedDynamic(St)
-		
-        -- call precombat
-        if not inCombat and Precombat(unit) and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            return true
-        end
-
-	    -- HeroicThrow pull with option
-   	    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
-       	    return A.HeroicThrow:Show(icon)
-        end
-
-        -- In Combat
-        if inCombat and Unit(unit):IsExists() then
             
+		if inCombat and unit ~= "mouseover" then
 			-- auto_attack
             -- Intercept
             if A.Intercept:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 20 and UseCharge and isMovingFor > ChargeTime then
@@ -876,6 +762,27 @@ A[3] = function(icon, isMulti)
                 return A.Trinket2:Show(icon)
             end 
 			
+            -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
+            if A.AshvanesRazorCoral:IsReady(unit) then
+                if Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0 then
+                    return A.AshvanesRazorCoral:Show(icon) 
+                end
+            end
+			
+            -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
+            if A.AshvanesRazorCoral:IsReady(unit) and 
+		    (
+		        Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and 
+			    (
+			        A.Avatar:GetCooldown() < 5 
+				    or 
+				    Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0
+			    )
+		    )
+		    then
+                return A.AshvanesRazorCoral:Show(icon)
+            end
+		
             -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
@@ -923,7 +830,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- Shockwave
-            if A.Shockwave:IsReady(player) and A.Shockwave:IsSpellLearned() then
+            if A.Shockwave:IsReady(player) then
                 return A.Shockwave:Show(icon)
             end
 			
@@ -946,23 +853,96 @@ A[3] = function(icon, isMulti)
             if A.Avatar:IsReady(unit) and A.BurstIsON(unit) and combatTime > 3 then
                 return A.Avatar:Show(icon)
             end
-
-            -- revenge
-            if A.Revenge:IsReady(player) and (Player:Rage() > 60 and offensiveRage or A.Revenge:GetSpellPowerCost() == 0) then
-                return A.Revenge:Show(icon)
-            end
 			
             -- run_action_list,name=aoe,if=spell_targets.thunder_clap>=3
-            if Aoe(unit) and GetByRange(3, 12) and A.GetToggle(2, "AoE") then
-                return true
-            end
+            if GetByRange(2, 12) and A.GetToggle(2, "AoE") then
 			
-            -- call_action_list,name=st
-            if St(unit) and (not GetToggle(2, "AoE") or not GetByRange(3, 12)) then
-                return true
-            end
+                -- thunder_clap
+                if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) then
+                    return A.ThunderClap:Show(icon)
+                end
+				
+                -- revenge
+                if A.Revenge:IsReady(player) and (Player:Rage() > 60 or A.Revenge:GetSpellPowerCost() == 0) then
+                    return A.Revenge:Show(icon)
+                end		
 			
+                -- dragon_roar
+                if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
+                    return A.DragonRoar:Show(icon)
+                end			
+						
+                -- ravager
+                if A.Ravager:IsReady(player) then
+                    return A.Ravager:Show(icon)
+                end
+			
+                -- shield_slam
+                if A.ShieldSlam:IsReady(unit) then
+                    return A.ShieldSlam:Show(icon)
+                end
+
+            end
+		end
+		
+        -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
+        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) and (A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+            return A.ThunderClap:Show(icon)
+        end							
+
+        -- shield_slam,if=buff.shield_block.up
+        if A.ShieldSlam:IsReady(unit) and (Unit(player):HasBuffs(A.ShieldBlockBuff.ID, true) > 0) then
+            return A.ShieldSlam:Show(icon)
         end
+			
+        -- anima_of_death,if=buff.last_stand.up
+        if A.AnimaofDeath:IsReady(unit) and (Unit(player):HasBuffs(A.LastStandBuff.ID, true) > 0) then
+            return A.AnimaofDeath:Show(icon)
+        end
+			
+        -- shield_slam
+        if A.ShieldSlam:IsReady(unit) then
+            return A.ShieldSlam:Show(icon)
+        end
+		
+        -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
+        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) then
+            return A.ThunderClap:Show(icon)
+        end	
+		
+        -- revenge
+        if A.Revenge:IsReady(player) and InRange(unit) and 
+		(
+		    Player:Rage() > 60 and offensiveRage 
+			or 
+			A.Revenge:GetSpellPowerCost() == 0
+			or
+			Player:Rage() > 85
+		)
+		then
+            return A.Revenge:Show(icon)
+        end			
+			
+        -- dragon_roar
+        if A.DragonRoar:IsReady(unit) and A.BurstIsON(unit) then
+            return A.DragonRoar:Show(icon)
+        end
+									
+        -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
+        if A.GrongsPrimalRage:IsReady(unit) and (Unit(player):HasBuffs(A.AvatarBuff.ID, true) == 0 or A.ShieldSlam:GetCooldown() >= 4) then
+            return A.GrongsPrimalRage:Show(icon)
+        end
+			
+        -- ravager
+        if A.Ravager:IsReady(player) then
+            return A.Ravager:Show(icon)
+        end
+			
+        -- devastate
+        if A.Devastate:IsReady(unit) and InRange(unit) then
+            return A.Devastate:Show(icon)
+        end
+			
     end
     -- End on EnemyRotation()
 
@@ -997,7 +977,6 @@ A[3] = function(icon, isMulti)
         if EnemyRotation(unit) then 
             return true
         end 
-
     end
 end
 -- Finished
