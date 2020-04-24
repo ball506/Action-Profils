@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.2.6 (23.04.2020)",
+    DateTime = "v4.2.7 (24.04.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_DEMONHUNTER_HAVOC] = {   
@@ -970,6 +970,27 @@ A.Data.ProfileUI = {
                         enUS = "primary - is @target, @mouseover, @targettarget (these units are depend on toggles above)", 
                         ruRU = "primary - это @target, @mouseover, @targettarget (эти юниты зависят от чекбоксов наверху)", 
                     }, 
+                    M = {},
+                },
+				-- Leotheras
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "ON CD", value = "ON CD" },
+                        { text = "ON ENEMY BURST", value = "ON ENEMY BURST" },                    
+                        { text = "ON TEAM DEFF", value = "ON TEAM DEFF" },
+						{ text = "OFF", value = "OFF" },
+                    },
+                    DB = "LeotherasPvP",
+                    DBV = "ON ENEMY BURST",
+                    L = { 
+                        ANY = "PvP " .. A.GetSpellInfo(206649),
+                    }, 
+                    TT = { 
+                        enUS = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Only if melee player has damage buffs\nON COOLDOWN - means will use always on melee players\nOFF - Cut out from rotation but still allow work through Queue and MSG systems\nIf you want fully turn it OFF then you should make SetBlocker in 'Actions' tab", 
+                        ruRU = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Только если игрок ближнего боя имеет бафы на урон\nON COOLDOWN - значит будет использовано по игрокам ближнего боя по восстановлению способности\nOFF - Выключает из ротации, но при этом позволяет Очередь и MSG системам работать\nЕсли нужно полностью выключить, тогда установите блокировку во вкладке 'Действия'", 
+                        frFR = "@arena1-3, @target, @mouseover, @targettarget\nON MELEE BURST - Seulement si le joueur de mêlée a des buffs de dégâts\nON COOLDOWN - les moyens seront toujours utilisés sur les joueurs de mêlée\nOFF - Coupé de la rotation mais autorisant toujours le travail dans la file d'attente et Systèmes MSG\nSi vous souhaitez l'éteindre complètement, vous devez définir SetBlocker dans l'onglet 'Actions'", 
+                    },  
                     M = {},
                 },
             },

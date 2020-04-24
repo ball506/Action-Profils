@@ -98,6 +98,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     --PickUpFragment                         = Action.Create({ Type = "Spell", ID =  }),
     EyesofRage                             = Action.Create({ Type = "Spell", ID = 278500 }),
     Imprison                               = Action.Create({ Type = "Spell", ID = 217832}),
+	ImprisonImproved                       = Action.Create({ Type = "Spell", ID = 221527}),
     --ImprisonAntiFake                       = Action.Create({ Type = "Spell", ID = 217832, Desc = "[2] Kick", Hidden = true, QueueForbidden = true    }),
     Disrupt                                = Action.Create({ Type = "Spell", ID = 183752}),
     DisruptGreen                           = Action.Create({ Type = "SpellSingleColor", ID = 183752, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }),
@@ -108,6 +109,9 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     ManaBreak                              = Action.Create({ Type = "Spell", ID = 203704}),    -- Mana destroyer 2 :D
     RainfromAbove                          = Action.Create({ Type = "Spell", ID = 206803}), -- Better if Unit is LOS
     ReverseMagic                           = Action.Create({ Type = "Spell", ID = 205604}), -- Player + Friendly dispell and send back dispelled debuff to enemy
+	Detainment                             = Action.Create({ Type = "Spell", ID = 205596}),
+	Torment                                = Action.Create({ Type = "Spell", ID = 281854}), -- Taunt
+	Tormentor                              = Action.Create({ Type = "Spell", ID = 207029}), -- Taunt PvP replace Torment
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -1368,65 +1372,198 @@ local function FreezingTrapUsedByEnemy()
     end 
 end 
 
-local function ArenaRotation(icon, unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")   
+local function ArenaRotation(unit)
+
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "PvP")
+	local combatTime = Unit("player"):CombatTime()
+	
     if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
         -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" then 
-            -- Disrupt
-            if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
-                return A.Disrupt:Show(icon)
+        if unit == "arena1" or unit == "arena2" or unit == "arena3" then 
+
+            -- Fel Eruption
+            if A.FelEruption:IsReady(unit) and
+                A.FelEruption:IsSpellLearned() and
+                A.FelEruption:GetCooldown <= GetCurrentGCD() and
+                A.FelEruption:IsInRange(unit) and
+                A.ManaRift:IsSpellLearned() and
+                A.ManaRift:IsInRange(unit) and
+                A.ManaRift:GetCooldown() <= GetGCD() + GetCurrentGCD() and
+                Unit(unit):IsHealer() and
+                Player:Fury() >= 60 and
+                (
+                    Unit(unit):GetCurrentSpeed() > 0 or
+                    Unit(unit):InCC() == 0
+                ) and
+                Unit(unit):HasBuffs("TotalImun") == 0 and
+                Unit(unit):HasBuffs("DamageMagicImun") == 0 and
+                Unit(unit):HasBuffs("CCTotalImun") == 0 and
+                Unit(unit):HasBuffs("CCMagicImun") == 0 and
+                Unit(unit):HasBuffs("Reflect") == 0
+            then
+			    return A.FelEruption
+		    end			
+			
+            -- Mana Rift
+			if A.ManaRift:IsReady(unit) and
+                A.ManaRift:IsSpellLearned() and
+                A.ManaRift:GetCooldown() <= GetCurrentGCD() and
+                A.ManaRift:IsInRange(unit) and
+                Unit(unit):IsHealer() and
+                (
+                    (
+                       Unit(unit):GetCurrentSpeed() > 0 and
+                       Unit(unit):GetCurrentSpeed() <= 40
+                    ) or
+                    Unit(unit):HasDeBuffs("Stuned") > 1.5 or  
+                    (
+                        Unit(unit):HasDeBuffs("Rooted") > 1.5 and
+                        Unit(unit):GetRealTimeDMG() == 0
+                    ) or
+                    (
+                        select(2, Unit(unit):CastTime()) >= 1.5 and   
+                        -- MW
+                        not Unit(unit):HasSpec(270) and
+                        Unit(unit):GetCurrentSpeed() == 0
+                    )
+                ) and
+                Unit(unit):HasBuffs("TotalImun") == 0 and
+                Unit(unit):HasBuffs("DamageMagicImun") == 0 and
+                --Unit(unit):HasBuffs("CCTotalImun") == 0 and
+                --Unit(unit):HasBuffs("CCMagicImun") == 0 and
+                Unit(unit):HasBuffs("Reflect") == 0
+            then
+			    return A.ManaRift
+		    end	
+			
+            -- Imprison
+			local CurrentImprison = A.Detainment:IsSpellLearned() and A.ImprisonImproved or A.Imprison   			
+			if CurrentImprison:IsReady(unit) and
+                not UnitIsUnit(unit, "target") and
+                Unit("player"):HasBuffs(206803, true) == 0 and -- Rain from above
+                CurrentImprison:GetCooldown() == 0 and
+                CurrentImprison:IsInRange(unit) and 
+                (
+                   (
+                        (
+                            -- Detainment
+                            A.Detainment:IsSpellLearned() or
+                            Unit(unit):GetRealTimeDMG() == 0
+                        ) and
+                        Unit(unit):HasBuffs("DamageBuffs") > 4 and        
+                        Unit(unit):HasDeBuffs("Incapacitated") == 0 and
+                        Unit(unit):HasDeBuffs("Disoriented") == 0 and
+                        Unit(unit):HasDeBuffs("Stuned") == 0 and
+                        Unit(unit):HasDeBuffs("Fear") == 0
+                    ) or
+                    (
+                        (
+                            -- Sniper Shot						
+                            select(3, Unit(unit):CastTime(203155)) >= 50 or
+                            -- Chaos Bolt 
+                            select(3, Unit(unit):CastTime(116858)) >= 50 or
+                            -- Greatest Pyroblast
+                            select(3, Unit(unit):CastTime(203286)) >= 50
+                        ) and
+                        Unit(unit  .. "target"):Health()<=Unit(unit  .. "target"):HealthMax()*0.6
+                    ) or
+                    (
+                        -- Stop chain CC
+                        FriendlyTeam("HEALER"):GetCC() > 0 and
+                        FriendlyTeam("HEALER"):GetCC() < 1.8 and
+						Unit(unit):MultiCast() > 0
+                    )
+                ) and
+                Unit(unit):HasBuffs("TotalImun") == 0 and
+                Unit(unit):HasBuffs("DamageMagicImun") == 0 and
+                Unit(unit):HasBuffs("CCTotalImun") == 0 and
+                Unit(unit):HasBuffs("CCMagicImun") == 0 and
+                Unit(unit):HasBuffs("Reflect") == 0
+            then
+                return CurrentImprison
             end
-            -- PvP Manarift if debuff Imprison < ManaRift cast time (2.5sec)
-            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.Imprison.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Imprison.ID, true) <= A.ManaRift:GetSpellCastTime() then
-                return A.ManaRift:Show(icon)
-            end    
-            -- PvP Manarift if debuff FelEruption < ManaRift cast time (2.5sec)
-            if A.ManaRift:IsReady("player") and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) > 0 and Unit(unit):HasDeBuffs(A.FelEruption.ID, true) <= A.ManaRift:GetSpellCastTime() then
-                return A.ManaRift:Show(icon)
-            end                
+             
             -- Imprison Casting BreakAble CC
-            if A.ImprisonIsReady(unit) and Unit(unit):IsHealer() and not Unit(unit):InLOS() then
-                return A.Imprison:Show(icon)
-            end   
-            -- Purge
-            -- Note: Toggles  ("UseDispel", "UsePurge", "UseExpelEnrage")
-            -- Category ("Dispel", "MagicMovement", "PurgeFriendly", "PurgeHigh", "PurgeLow", "Enrage")
-            if A.ConsumeMagic:IsReady(unit) and Action.AuraIsValid(unit, "UsePurge", "PurgeHigh") then
-                return A.ConsumeMagic:Show(icon)
-            end    
+            if A.ImprisonIsReady(unit) and Unit(unit):IsHealer() then
+                return A.Imprison
+            end 
+			
         end
+		
+        -- PvP PvE Taunt Mouseover and Pets
+        if A.Torment:IsReady("mouseover") and
+        (
+            (
+                Unit("player"):HasSpec(581) and -- Vengeance
+                A.GetToggle(2, "mouseover") and
+                Action.IsUnitEnemy("mouseover") and
+                (
+                    (
+                        not A.Tormentor:IsSpellLearned() and
+                        not Unit("mouseover"):IsPlayer() and
+                        CombatTime("mouseover") > 0 and
+                        A.Torment:GetCooldown() == 0 and
+                        A.Torment:IsInRange("mouseover") and						
+                        not Unit("player"):IsTanking("mouseover") and
+                        (
+                            not Unit("mouseover"):IsExists() or
+							not Unit("mouseover"):Role("TANK")
+                        ) and
+                        (
+                            A.Zone ~= "none" or
+                            combatTime == 0            
+                        )
+                    ) or
+                    (
+                        A.Tormentor:IsSpellLearned() and
+                        Unit("mouseover"):IsPlayer() and
+                        A.Tormentor:GetCooldown() == 0 and
+                        A.Tormentor:IsInRange("mouseover")
+                    )
+                ) and
+                A.Torment:AbsentImun(unit, Temp.TotalAndPhys)
+            ) 
+			or
+            (
+                -- Pet Taunt
+                A.Zone == "arena" and
+                Unit("player"):HasSpec(577) and -- Havoc      
+                Unit("player"):HasBuffs(206803, true) == 0 and
+                (
+                    not Unit("player"):IsFocused() or
+                    Unit("player"):GetRealTimeDMG() == 0 or
+                    FriendlyTeam("HEALER"):GetCC() > 0
+                ) and
+                Unit("player"):HasDeBuffs("Rooted") > GetGCD() and
+                A.Torment:IsReady("mouseover") and
+                EnemyTeam():IsTauntPetAble(281854)				
+            )
+        )
+        then
+            return A.Torment
+        end	
+		
     end 
 end 
 
---[[local function PartyRotation(unit)
-    if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
-        return false 
-    end
-
-      -- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
-    end
-end]]-- 
-
 A[6] = function(icon)
-    return ArenaRotation(icon, "arena1")
+    local Arena = ArenaRotation("arena1")
+    if Arena then 
+        return Arena:Show(icon)
+    end 
 end
 
 A[7] = function(icon)
-    --local Party = PartyRotation("party1") 
-    if Party then 
-        return Party:Show(icon)
+    local Arena = ArenaRotation("arena2")
+    if Arena then 
+        return Arena:Show(icon)
     end 
-    return ArenaRotation(icon, "arena2")
 end
 
-A[8] = function(icon)
-    --local Party = PartyRotation("party2") 
-    if Party then 
-        return Party:Show(icon)
-    end     
-    return ArenaRotation(icon, "arena3")
+A[8] = function(icon)  
+    local Arena = ArenaRotation("arena3")
+    if Arena then 
+        return Arena:Show(icon)
+    end 
 end
 
