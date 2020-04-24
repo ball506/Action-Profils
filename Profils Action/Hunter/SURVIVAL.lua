@@ -244,9 +244,8 @@ local function CurrentMongooseBite()
 end
 
 local function InRange(unit)
-    local CurrentMongooseBite = CurrentMongooseBite()
 	-- @return boolean 
-	return CurrentMongooseBite:IsInRange(unit)
+	return A.SerpentSting:IsInRange(unit)
 end 
 InRange = A.MakeFunctionCachedDynamic(InRange)
 
