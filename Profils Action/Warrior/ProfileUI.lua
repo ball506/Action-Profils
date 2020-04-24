@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.1.8 (23.04.2020)",
+    DateTime = "v4.1.9 (24.04.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -1408,7 +1408,18 @@ A.Data.ProfileUI                                     = {
                         frFR = "Use Demoralizing Shout on cooldown", 
                     }, 
                     M = {},
-                }, 
+                },
+                {
+                    E = "Checkbox", 
+                    DB = "ReflectThingFromBeyond",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto Reflect\nThing from Beyond", 
+                        ruRU = "Auto Reflect\nThing from Beyond", 
+                        frFR = "Auto Reflect\nThing from Beyond",  
+                    }, 
+                    M = {},
+                },				
                 {
                     E = "Slider",                                                     
                     MIN = -1, 

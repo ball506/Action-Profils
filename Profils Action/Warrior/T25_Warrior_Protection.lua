@@ -161,6 +161,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 	BuryTheHatchet                         = Action.Create({ Type = "Spell", ID = 280128, Hidden = true     }),	 
 	CracklingThunder                       = Action.Create({ Type = "Spell", ID = 203201, Hidden = true     }),	 
+	GrandDelusionsDebuff                   = Action.Create({ Type = "Spell", ID = 319695, Hidden = true     }), -- Corruption pet chasing you
 };
 
 -- To create essences use next code:
@@ -592,17 +593,12 @@ A[3] = function(icon, isMulti)
     local function EnemyRotation(unit)
 
         --Precombat
-        if combatTime == 0 and Unit(unit):IsExists() and unit ~= "mouseover" then
+        if combatTime == 0 and unit ~= "mouseover" then
             -- flask
             -- food
             -- augmentation
             -- snapshot_stats
 			
-	        -- HeroicThrow pull with option
-   	        if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
-       	        return A.HeroicThrow:Show(icon)
-            end
-
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(player) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -634,9 +630,25 @@ A[3] = function(icon, isMulti)
             end
 			
         end
+
+	    -- HeroicThrow pull with option
+   	    if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 then
+       	    return A.HeroicThrow:Show(icon)
+        end
             
 		if inCombat and unit ~= "mouseover" then
 			-- auto_attack
+			
+	        -- Spell Reflect Thing from Beyond
+	        if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and Action.GetToggle(2, "ReflectThingFromBeyond") and A.SpellReflection:IsReady(player) then
+	            return A.SpellReflection:Show(icon)
+	        end
+			
+	        -- HeroicThrow pull with option
+   	        if A.HeroicThrow:IsReady(unit) and Action.GetToggle(2, "HeroicThrowPull") and Unit(unit):GetRange() > 5 and Unit(unit):GetRange() <= 30 and Unit(unit):CombatTime() == 0 and Unit(unit):IsExists() then
+       	        return A.HeroicThrow:Show(icon)
+            end
+
             -- Intercept
             if A.Intercept:IsReady(unit) and Unit(unit):GetRange() >= 8 and Unit(unit):GetRange() <= 20 and UseCharge and isMovingFor > ChargeTime then
                 return A.Intercept:Show(icon)
@@ -858,7 +870,7 @@ A[3] = function(icon, isMulti)
             if GetByRange(2, 12) and A.GetToggle(2, "AoE") then
 			
                 -- thunder_clap
-                if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) then
+                if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) and Unit(unit):GetRange() <= ThunderClapRange() then
                     return A.ThunderClap:Show(icon)
                 end
 				
@@ -886,7 +898,7 @@ A[3] = function(icon, isMulti)
 		end
 		
         -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) and (A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
+        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) and Unit(unit):GetRange() <= ThunderClapRange() and (A.UnstoppableForce:IsSpellLearned() and Unit(player):HasBuffs(A.AvatarBuff.ID, true) > 0) then
             return A.ThunderClap:Show(icon)
         end							
 
@@ -906,7 +918,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) then
+        if A.ThunderClap:IsReadyByPassCastGCD(unit, true, true, nil) and Unit(unit):GetRange() <= ThunderClapRange() then
             return A.ThunderClap:Show(icon)
         end	
 		
