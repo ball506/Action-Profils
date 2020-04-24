@@ -168,7 +168,7 @@ local mouseover = "mouseover"
 local function RotationsVariables()
     combatTime = Unit(player):CombatTime()
 	inCombat = Unit(player):CombatTime() > 0
-    DBM = GetToggle(1 ,"DBM")
+    UseDBM = GetToggle(1 ,"DBM") -- Don't call it DBM else it broke all the global DBM var used by another addons
     Potion = GetToggle(1, "Potion")
     Racial = GetToggle(1, "Racial")
     HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
@@ -834,7 +834,7 @@ local function CanStopCastingOverHeal(unitID, unitGUID)
         end 
     end 
 end 
-print(CanStopCastingOverHeal())
+
 local function HoF(unit, Icon)    
     --local msg = MacroSpells(Icon, "Freedom")
     return

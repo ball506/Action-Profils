@@ -979,8 +979,7 @@ A[3] = function(icon, isMulti)
         --if A.GetToggle(1, "StopCast") and true and ((A.GetToggle(2, "SoothingMistStopCast")[1] and not isAffectedBySoothingMist) or (A.GetToggle(2, "SoothingMistStopCast")[2] and isAffectedBySoothingMist and Unit(unit):HealthPercent() >= 100 and IsEnoughHPS(unit))) then 
         --    StopCast = true -- passing to A[6]
         --    return             
-        --end     
-        		
+        --end            		
         
         -- Purge
         if A.ArcaneTorrent:AutoRacial(unit, nil, nil, true) then 
