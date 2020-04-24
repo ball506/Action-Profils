@@ -976,7 +976,7 @@ A[3] = function(icon, isMulti)
 			(
 			    BloodoftheEnemySyncAoE and
 			    (
-				    Player:AreaTTD(MaxAoERange) >= BloodoftheEnemyAoETTD 
+				    Player:AreaTTD(40) >= BloodoftheEnemyAoETTD 
 				    and 
 				    GetByRange(BloodoftheEnemyUnits, 40)
                 )
