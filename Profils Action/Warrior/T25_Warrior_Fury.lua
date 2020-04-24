@@ -617,8 +617,6 @@ A[3] = function(icon, isMulti)
 			    A.Recklessness:GetCooldown() > 30 
 				or 
 				Unit(player):HasBuffs(A.Recklessness.ID, true) > 0 
-				or
-				not A.BurstIsON(unit)
 			) 
 			then
                 return A.Siegebreaker:Show(icon)
@@ -823,7 +821,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- Reck if rage is > 90 and SiegebreakerDebuff
-            if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop and BurstIsON(unit) then
+            if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop then
                 return A.Recklessness:Show(icon)
             end
             
