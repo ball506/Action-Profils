@@ -1384,7 +1384,7 @@ local function ArenaRotation(unit)
             -- Fel Eruption
             if A.FelEruption:IsReady(unit) and
                 A.FelEruption:IsSpellLearned() and
-                A.FelEruption:GetCooldown <= GetCurrentGCD() and
+                A.FelEruption:GetCooldown() <= GetCurrentGCD() and
                 A.FelEruption:IsInRange(unit) and
                 A.ManaRift:IsSpellLearned() and
                 A.ManaRift:IsInRange(unit) and
