@@ -1369,6 +1369,11 @@ A[3] = function(icon, isMulti)
                     return A.BloodoftheEnemy:Show(icon)
                 end	
 				
+                -- frostscythe,if=buff.killing_machine.up
+                if A.Frostscythe:IsReady(player) and GetByRange(2, 8) then
+                    return A.Frostscythe:Show(icon)
+                end
+				
                 -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targetA.remorseless_winter>=3&!buff.rime.up)
                 if A.RemorselessWinter:IsReady(player) and Unit(unit):GetRange() <= 8 and CanCast and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() > 0 and GetByRange(3, 8) and Unit(player):HasBuffs(A.RimeBuff.ID, true) == 0)) and Player:AreaTTD(20) >= 4 then
                     return A.RemorselessWinter:Show(icon)
