@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.1 (19.04.2020)",
+    DateTime = "v4.0.3 (01.05.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -739,8 +739,8 @@ A.Data.ProfileUI = {
                         ANY = "Use Priority Rotation",
                     }, 
                     TT = { 
-                        enUS = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
-                        ruRU = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)", 
+                        enUS = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)\nNOT RECOMMANDED !!!", 
+                        ruRU = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)\nNOT RECOMMANDED !!!", 
                     }, 
                     M = {},
                 },				
