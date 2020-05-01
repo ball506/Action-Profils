@@ -604,10 +604,18 @@ As always, please report on Discord or message me directly if you need anything 
 	    ChangeLog = [[
 		Welcome to Taste - Subtely Rogue !
 		
-This specialisation is currently outdated :(			
+List of latest changes :
+
+- Fixed Shuriken AoE Logics
+- Fixed burst logic
+- New : Blocked Spells Status Frame (see 2nd tab)
+- Improved Profile performance
+- Updated APLs to 8.3 (T25)
+- Update Marked For Death snipping on low health units
+- Added check on Azerite Beam essence				
 
 As always, please report on Discord or message me directly if you need anything !
-]]  
+]]
 					
 	end
 
@@ -655,11 +663,18 @@ As always, please report on Discord or message me directly if you need anything 
 	if PlayerSpec == 254 then
 	    ChangeLog = [[
 		Welcome to Taste - Marksmanship Hunter !
+				
+        ***** TEST BUILD *****
 		
-This specialisation is currently outdated :(			
+- Updated to latest T25 APLs
+- Fixed most lua errors issues
+- Fixed interrupters spells
+- Added detection AoE system like BM
+- New UI settings
+- Test Release Need Feedbacks :) 
 
 As always, please report on Discord or message me directly if you need anything !
-]]  
+]]
 					
 	end
 
