@@ -75,6 +75,7 @@ Action[ACTION_CONST_PRIEST_SHADOW] = {
     VoidTorrent                            = Action.Create({ Type = "Spell", ID = 263165 }),
     Misery                                 = Action.Create({ Type = "Spell", ID = 238558 }),
     Shadowform                             = Action.Create({ Type = "Spell", ID = 232698 }),
+	ChorusofInsanity                       = Action.Create({ Type = "Spell", ID = 278661 }),
     LegacyOfTheVoid                        = Action.Create({ Type = "Spell", ID = 193225, Hidden = true }),
     ShadowformBuff                         = Action.Create({ Type = "Spell", ID = 232698, Hidden = true }),
     VoidformBuff                           = Action.Create({ Type = "Spell", ID = 194249, Hidden = true }),
@@ -650,7 +651,7 @@ A[3] = function(icon, isMulti)
 			(
 			    Unit(player):CombatTime() <= 10 
 				or 
-				(Unit(player):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) >= 15 and VoidFormActive) 
+				(Unit(player):HasBuffsStacks(A.ChorusofInsanity.ID, true) >= 15 and VoidFormActive) 
 				or 
 				A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD() 
 				or 
@@ -683,7 +684,7 @@ A[3] = function(icon, isMulti)
             -- call_action_list,name=crit_cds,if=(buff.voidform.up&buff.chorus_of_insanity.stack>20)|azerite.chorus_of_insanity.rank=0
             if CritCd and 
 			(
-			    (VoidFormActive and Unit(player):HasBuffsStacks(A.ChorusofInsanityBuff.ID, true) > 20) 
+			    (VoidFormActive and Unit(player):HasBuffsStacks(A.ChorusofInsanity.ID, true) > 20) 
 				or 
 				A.ChorusofInsanity:GetAzeriteRank() == 0
 			)
