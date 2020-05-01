@@ -152,6 +152,8 @@ Action[ACTION_CONST_PALADIN_RETRIBUTION] = {
     ConcentratedFlameBurn                  = Create({ Type = "Spell", ID = 295368, Hidden = true}),
     RazorCoralDebuff                       = Create({ Type = "Spell", ID = 303568, Hidden = true     }),
     ConductiveInkDebuff                    = Create({ Type = "Spell", ID = 302565, Hidden = true     }),
+	CleansingLight                         = Create({ Type = "Spell", ID = 236186, Hidden = true     }), -- Talent AoE Dispell
+	
     -- Hidden Heart of Azeroth
     -- added all 3 ranks ids in case used by rotation
     VisionofPerfectionMinor                = Create({ Type = "Spell", ID = 296320, Hidden = true     }),
@@ -644,12 +646,6 @@ A[3] = function(icon, isMulti)
     	    end
   		end
 			
-   		--Dispell
-	 	if A.CleanseToxins:IsReady(player) and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
-		then
-	 		return A.CleanseToxins:Show(icon)
-    	end
-
 	   	-- Non SIMC Custom Trinket1
 	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and Unit(unit):GetRange() < 6 and    
 		(
@@ -999,19 +995,26 @@ local function PartyRotation(unit)
         return false 
     end
 
-   	--Dispell
- --	if A.CleanseToxins:IsReady(unit) and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
---	then
---	    return A.CleanseToxins
---	end
+   	-- Party Dispell
+ 	if A.CleanseToxins:IsReady(unit) and
+	(
+    	-- Poison CC 
+        Unit(unit):HasDeBuffs("Poison") > 0 
+		or
+		-- Disease 
+        Unit(unit):HasDeBuffs("Disease") > 0		
+	)
+	then
+	    return A.CleanseToxins
+	end
 
   	-- BlessingofFreedom
-    if A.BlessingofFreedom:IsReady(unit) and Unit(unit):HasDeBuffs("Rooted") > 0 and not Unit(unit):InLOS() then
+    if A.BlessingofFreedom:IsReady(unit) and Unit(unit):HasDeBuffs("Rooted") > 1 then
         return A.BlessingofFreedom
     end
 	
   	-- BlessingofProtection
-    if A.BlessingofProtection:IsReady(unit) and not Unit(unit):InLOS() and 	 
+    if A.BlessingofProtection:IsReady(unit) and 	 
 	(
 	   -- HP lose per sec >= 20
         Unit(unit):GetDMG() * 100 / Unit(unit):HealthMax() >= 30 
