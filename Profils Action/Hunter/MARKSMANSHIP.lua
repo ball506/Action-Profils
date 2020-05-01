@@ -56,6 +56,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+	BagofTricks                            = Action.Create({ Type = "Spell", ID = 312411    }),
     -- Generics
     HuntersMarkDebuff                      = Action.Create({ Type = "Spell", ID = 257284 }),
     HuntersMark                            = Action.Create({ Type = "Spell", ID = 257284 }),
@@ -93,10 +94,28 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     Multishot                              = Action.Create({ Type = "Spell", ID = 257620 }),
     CallingtheShots                        = Action.Create({ Type = "Spell", ID = 260404 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
+    -- Pet
+    CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
+    MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
+    RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
+    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "BLUE" }), -- Pet dispell/purge
+    SonicBlast                             = Action.Create({ Type = "SpellSingleColor", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
+    CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
+    Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
+	SpiritMend                             = Action.Create({ Type = "SpellSingleColor", ID = 90361, Color = "YELLOW"}), 
+	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
+	Smack                                  = Action.Create({ Type = "Spell", ID = 49966  }), 
+	Claw                                   = Action.Create({ Type = "Spell", ID = 16827  }), 
+	Bite                                   = Action.Create({ Type = "Spell", ID = 17253  }), 
+    SurvivaloftheFittest                   = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),
+    PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK"  }),
+    MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),	
+	Intimidation                           = Action.Create({ Type = "Spell", ID = 19577  }),
 	-- Utilities
     CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
 	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }),
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
+	ConcussiveShot                         = Action.Create({ Type = "Spell", ID = 5116 }),
 	-- Pet Spells
 	Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
 	SpiritMend                             = Action.Create({ Type = "SpellSingleColor", ID = 90361, Color = "YELLOW"}),
@@ -157,6 +176,7 @@ Action[ACTION_CONST_HUNTER_MARKSMANSHIP] = {
     UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
     RecklessForceCounter                   = Action.Create({ Type = "Spell", ID = 298409, Hidden = true     }),	
     GrandDelusionsDebuff                   = Action.Create({ Type = "Spell", ID = 319695, Hidden = true     }), -- Corruption pet chasing you	
+	DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
 };
 
 -- To create essences use next code:
@@ -349,6 +369,12 @@ local function Interrupts(unit)
         return A.CounterShot
     end 
 
+    if useCC and A.ConcussiveShot:IsReady(unit) and A.ConcussiveShot:AbsentImun(unit, Temp.TotalAndCC, true) then 
+	    -- Notification					
+        Action.SendNotification("Concussive Shot snare...", A.ConcussiveShot.ID)
+        return A.ConcussiveShot              
+    end    
+
     if useCC and A.BindingShot:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.BindingShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
 	    -- Notification					
         Action.SendNotification("Binding Shot interrupting...", A.BindingShot.ID)
@@ -391,7 +417,7 @@ PurgeDispellMagic = A.MakeFunctionCachedDynamic(PurgeDispellMagic)
 
 local function InRange(unit)
 	-- @return boolean 
-	return A.TrueShot:IsInRange(unit)
+	return A.Trueshot:IsInRange(unit)
 end 
 InRange = A.MakeFunctionCachedDynamic(InRange)
 
@@ -607,14 +633,14 @@ A[3] = function(icon, isMulti)
             -- snapshot_stats
 			
             -- hunters_mark
-            if A.HuntersMark:IsReady(unit) and Unit("player"):HasDebuffs(A.HuntersMarkDebuff.ID, true) == 0 and
+            if A.HuntersMark:IsReady(unit) and Unit("player"):HasDeBuffs(A.HuntersMarkDebuff.ID, true) == 0 and
 			((Pull > 0.1 and Pull < 10) or not DBM)
 			then
                 return A.HuntersMark:Show(icon)
             end
 			
             -- double_tap,precast_time=10
-            if A.DoubleTap:IsReady(unit) and
+            if A.DoubleTap:IsReady("player") and
 			((Pull > 0.1 and Pull < 9) or not DBM)
 			then
                 return A.DoubleTap:Show(icon)
@@ -674,19 +700,24 @@ A[3] = function(icon, isMulti)
 		-- Burst Phase
 		if BurstIsON(unit) and unit ~= "mouseover" and inCombat and not profileStop and CanCast  then
             
+			-- double_tap,if=cooldown.rapid_fire.remains<gcd|cooldown.rapid_fire.remains<cooldown.aimed_shot.remains|target.time_to_die<20
+            if A.DoubleTap:IsReady("player") and (A.RapidFire:GetCooldown() < A.GetGCD() or A.RapidFire:GetCooldown() < A.AimedShot:GetCooldown() or Unit(unit):TimeToDie() < 20) then
+                return A.DoubleTap:Show(icon)
+            end
+			
 			-- auto_shot
-            -- use_item,name=lurkers_insidious_gift,if=A.TrueShot:GetCooldown()<15|target.time_to_die<30
-            if A.LurkersInsidiousGift:IsReady(unit) and (A.TrueShot:GetCooldown() < 15 or Unit(unit):TimeToDie() < 30) then
+            -- use_item,name=lurkers_insidious_gift,if=A.Trueshot:GetCooldown()<15|target.time_to_die<30
+            if A.LurkersInsidiousGift:IsReady(unit) and (A.Trueshot:GetCooldown() < 15 or Unit(unit):TimeToDie() < 30) then
                 return A.LurkersInsidiousGift:Show(icon)
             end
 			
-            -- use_item,name=azsharas_font_of_power,if=(target.time_to_die>cooldown+34|target.health.pct<20|Unit(unit):TimeToDieX(20)<15)&A.TrueShot:GetCooldown()<15|target.time_to_die<35
-            if A.AzsharasFontofPower:IsReady(player) and ((Unit(unit):TimeToDie() > A.AzsharasFontofPower:GetCooldown() + 34 or Unit(unit):HealthPercent() < 20 or Unit(unit):TimeToDieX(20) < 15) and A.TrueShot:GetCooldown() < 15 or Unit(unit):TimeToDie() < 35) then
+            -- use_item,name=azsharas_font_of_power,if=(target.time_to_die>cooldown+34|target.health.pct<20|Unit(unit):TimeToDieX(20)<15)&A.Trueshot:GetCooldown()<15|target.time_to_die<35
+            if A.AzsharasFontofPower:IsReady(player) and ((Unit(unit):TimeToDie() > A.AzsharasFontofPower:GetCooldown() + 34 or Unit(unit):HealthPercent() < 20 or Unit(unit):TimeToDieX(20) < 15) and A.Trueshot:GetCooldown() < 15 or Unit(unit):TimeToDie() < 35) then
                 return A.AzsharasFontofPower:Show(icon)
             end
 			
-            -- use_item,name=lustrous_golden_plumage,if=A.TrueShot:GetCooldown()<5|target.time_to_die<20
-            if A.LustrousGoldenPlumage:IsReady(unit) and (A.TrueShot:GetCooldown() < 5 or Unit(unit):TimeToDie() < 20) then
+            -- use_item,name=lustrous_golden_plumage,if=A.Trueshot:GetCooldown()<5|target.time_to_die<20
+            if A.LustrousGoldenPlumage:IsReady(unit) and (A.Trueshot:GetCooldown() < 5 or Unit(unit):TimeToDie() < 20) then
                 return A.LustrousGoldenPlumage:Show(icon)
             end
 			
@@ -709,12 +740,7 @@ A[3] = function(icon, isMulti)
             if A.HuntersMark:IsReady(unit) and (Unit(unit):HasDeBuffs(A.HuntersMarkDebuff.ID, true) == 0 and Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) == 0) then
                 return A.HuntersMark:Show(icon)
             end
-			
-            -- double_tap,if=cooldown.rapid_fire.remains<gcd|cooldown.rapid_fire.remains<cooldown.aimed_shot.remains|target.time_to_die<20
-            if A.DoubleTap:IsReady(unit) and (A.RapidFire:GetCooldown() < A.GetGCD() or A.RapidFire:GetCooldown() < A.AimedShot:GetCooldown() or Unit(unit):TimeToDie() < 20) then
-                return A.DoubleTap:Show(icon)
-            end
-			
+						
             -- berserking,if=buff.trueshot.up&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<13
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) > 0 and (Unit(unit):TimeToDie() > 180 + A.Berserking:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
                 return A.Berserking:Show(icon)
@@ -750,8 +776,8 @@ A[3] = function(icon, isMulti)
                 return A.ReapingFlames:Show(icon)
             end
 			
-            -- worldvein_resonance,if=(A.AzsharasFontofPower:GetCooldown()>20|!equipped.azsharas_font_of_power|target.time_to_die<trinket.azsharas_font_of_power.cooldown.duration+34&target.health.pct>20)&(A.TrueShot:GetCooldown()<3|(essence.vision_of_perfection.minor&target.time_to_die>cooldown+buff.worldvein_resonance.duration))|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.AzsharasFontofPower:GetCooldown() > 20 or not A.AzsharasFontofPower:IsExists() or Unit(unit):TimeToDie() < 120 + 34 and Unit(unit):HealthPercent() > 20) and (A.TrueShot:GetCooldown() < 3 or (Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit(unit):TimeToDie() > A.WorldveinResonance:GetCooldown() + 18)) or Unit(unit):TimeToDie() < 20) then
+            -- worldvein_resonance,if=(A.AzsharasFontofPower:GetCooldown()>20|!equipped.azsharas_font_of_power|target.time_to_die<trinket.azsharas_font_of_power.cooldown.duration+34&target.health.pct>20)&(A.Trueshot:GetCooldown()<3|(essence.vision_of_perfection.minor&target.time_to_die>cooldown+buff.worldvein_resonance.duration))|target.time_to_die<20
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.AzsharasFontofPower:GetCooldown() > 20 or not A.AzsharasFontofPower:IsExists() or Unit(unit):TimeToDie() < 120 + 34 and Unit(unit):HealthPercent() > 20) and (A.Trueshot:GetCooldown() < 3 or (Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit(unit):TimeToDie() > A.WorldveinResonance:GetCooldown() + 18)) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
 			
@@ -785,12 +811,12 @@ A[3] = function(icon, isMulti)
                 return A.PotionofUnbridledFury:Show(icon)
             end
 			
-            -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>A.TrueShot:GetCooldown()+buff.trueshot.duration|(target.health.pct<20|!talent.careful_aim.enabled)&(!equipped.azsharas_font_of_power|A.AzsharasFontofPower:GetCooldown()>15))|target.time_to_die<15
+            -- trueshot,if=focus>60&(buff.precise_shots.down&cooldown.rapid_fire.remains&target.time_to_die>A.Trueshot:GetCooldown()+buff.trueshot.duration|(target.health.pct<20|!talent.careful_aim.enabled)&(!equipped.azsharas_font_of_power|A.AzsharasFontofPower:GetCooldown()>15))|target.time_to_die<15
             if A.Trueshot:IsReady(unit) and 
 			(
 			    Player:Focus() > 60 and 
 				(
-				    Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) == 0 and A.RapidFire:GetCooldown() > 0 and Unit(unit):TimeToDie() > A.TrueShot:GetCooldown() + A.TrueshotBuff:BaseDuration() 
+				    Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) == 0 and A.RapidFire:GetCooldown() > 0 and Unit(unit):TimeToDie() > A.Trueshot:GetCooldown() + A.TrueshotBuff:BaseDuration() 
 					or
 					(
 					    Unit(unit):HealthPercent() < 20 
@@ -838,8 +864,29 @@ A[3] = function(icon, isMulti)
 		-- SINGLE TARGET
 		
         -- call_action_list,name=st,if=active_enemies<3
-        if GetByRange(3, 40, false, true) then
-		
+        if inCombat and not profileStop and
+		(
+            -- Range by pet
+			AoEMode == "RangeByPet" and 
+			(
+			    Pet:GetMultiUnitsBySpell(17253) < 3 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) < 3 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) < 3 -- Smack					
+			)
+			or 
+			-- Range by nameplate
+			AoEMode == "RangeByNameplate" and
+			(					    
+			    GetByRange(3, 40, false, true)
+			)
+			or
+			-- Range by active enemies CLEU
+			AoEMode == "RangeByCLEU" and
+			(        				
+				MultiUnits:GetActiveEnemies() < 3					     
+			)
+		)
+		then
             -- explosive_shot
             if A.ExplosiveShot:IsReady(unit) then
                 return A.ExplosiveShot:Show(icon)
@@ -876,12 +923,33 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&!buff.memory_of_lucid_dreams.up
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) > 0 and Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) > 0 and not Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0) then
+            if A.ArcaneShot:IsReady(unit) and 
+			(
+			    Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) > 0 
+				and 
+				Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) > 0 
+				and
+				Unit("player"):HasBuffs(A.MemoryofLucidDreams.ID, true) == 0
+			)
+			then
                 return A.ArcaneShot:Show(icon)
             end
 			
             -- aimed_shot,if=buff.trueshot.up|(buff.double_tap.down|ca_execute)&buff.precise_shots.down|full_recharge_time<cast_time&cooldown.trueshot.remains
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) > 0 or (Unit("player"):HasBuffs(A.DoubleTapBuff.ID, true) == 0 or VarCAExecute) and Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) == 0 or A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() and A.Trueshot:GetCooldown() > 0) then
+            if A.AimedShot:IsReady(unit) and 
+			(
+			    Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) > 0 
+				or 
+				(
+				    Unit("player"):HasBuffs(A.DoubleTapBuff.ID, true) == 0 
+					or 
+					VarCAExecute
+				)
+				and Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) == 0 
+				or 
+				A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() and A.Trueshot:GetCooldown() > 0
+			)
+			then
                 return A.AimedShot:Show(icon)
             end
 			
@@ -924,8 +992,29 @@ A[3] = function(icon, isMulti)
  
         --Trickshots
         -- call_action_list,name=trickshots,if=active_enemies>2
-        if GetByRange(2, 40, true, false) then
-            
+        if inCombat and not profileStop and
+		(
+            -- Range by pet
+			AoEMode == "RangeByPet" and 
+			(
+			    Pet:GetMultiUnitsBySpell(17253) > 2 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) > 2 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) > 2 -- Smack					
+			)
+			or 
+			-- Range by nameplate
+			AoEMode == "RangeByNameplate" and
+			(					    
+			    GetByRange(2, 40, true, false)
+			)
+			or
+			-- Range by active enemies CLEU
+			AoEMode == "RangeByCLEU" and
+			(        				
+				MultiUnits:GetActiveEnemies() > 2					     
+			)
+		)
+		then            
 			-- barrage
             if A.Barrage:IsReady(unit) then
                 return A.Barrage:Show(icon)
