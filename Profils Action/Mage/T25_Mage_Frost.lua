@@ -261,11 +261,6 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
---A.FrozenOrb.EffectID = 84721
---A.Frostbolt:RegisterInFlight()
-
-TR.IFST = {}
-
 -- Variables
 TR.IFST = {
     CurrStacks = 0,
@@ -275,7 +270,7 @@ TR.IFST = {
     Direction = 0
 }
 
-A.Listener:Add("TASTE_IF_TRACKER", "PLAYER_REGEN_ENABLED", function()
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
     TR.IFST.CurrStacks = 0
     TR.IFST.CurrStacksTime = 0
     TR.IFST.OldStacks = 0
@@ -283,40 +278,35 @@ A.Listener:Add("TASTE_IF_TRACKER", "PLAYER_REGEN_ENABLED", function()
     TR.IFST.Direction = 0
 end)
 
-
-function TR.IFTracker()
-
-    if TMW.time == 0 then 
-	    return
-	end
-	
+local function IFTracker()
     local TickDiff = TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime
     local CurrStacks = TR.IFST.CurrStacks
     local CurrStacksTime = TR.IFST.CurrStacksTime
     local OldStacks = TR.IFST.OldStacks
 	
-        if (Unit(player):HasBuffs(A.IncantersFlowBuff.ID, true) > 0) then
-            if (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) ~= CurrStacks or (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) == CurrStacks and TickDiff > 1)) then
-                TR.IFST.OldStacks = CurrStacks
-                TR.IFST.OldStacksTime = CurrStacksTime
-            end
-            TR.IFST.CurrStacks = Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true)
-            TR.IFST.CurrStacksTime = TMW.time
-			
+	if Unit(player):CombatTime() == 0 then 
+	    return
+	end
+		
+    if Unit(player):HasBuffs(A.IncantersFlowBuff.ID, true) > 0 then
+        if (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) ~= CurrStacks or (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) == CurrStacks and TickDiff > 1)) then
+            TR.IFST.OldStacks = CurrStacks
+            TR.IFST.OldStacksTime = CurrStacksTime
+        end		
+        TR.IFST.CurrStacks = Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true)
+        TR.IFST.CurrStacksTime = Unit(player):CombatTime()		
         if TR.IFST.CurrStacks > TR.IFST.OldStacks then
             if TR.IFST.CurrStacks == 5 then
                 TR.IFST.Direction = 0
             else
                 TR.IFST.Direction = 1
             end
-			
         elseif TR.IFST.CurrStacks < TR.IFST.OldStacks then
             if TR.IFST.CurrStacks == 1 then
                 TR.IFST.Direction = 0
             else
                 TR.IFST.Direction = -1
             end
-			
         else
             if TR.IFST.CurrStacks == 1 then
                 TR.IFST.Direction = 1
@@ -333,17 +323,18 @@ function TR.IFTracker()
     end
 end
 
-function TR.IFTimeToX(count, direction)
+-- Implementation of IncantersFlow simc reference incanters_flow_time_to.COUNT.DIRECTION
+-- @parameter: COUNT between "1 - 5" 
+-- @parameter: DIRECTION "up", "down" or "any"
+local function IFTimeToX(count, direction)
     local low
     local high
     local buff_position
-	
     if TR.IFST.Direction == -1 or (TR.IFST.Direction == 0 and TR.IFST.CurrStacks == 0) then
-        buff_position = 10 - TR.IFST.CurrStacks + 1
+      buff_position = 10 - TR.IFST.CurrStacks + 1
     else
-        buff_position = TR.IFST.CurrStacks
+      buff_position = TR.IFST.CurrStacks
     end
-	
     if direction == "up" then
         low = count
         high = count
@@ -354,14 +345,11 @@ function TR.IFTimeToX(count, direction)
         low = count
         high = 10 - count + 1
     end
-	
     if low == buff_position or high == buff_position then
         return 0
     end
-	
     local ticks_low = (10 + low - buff_position) % 10
     local ticks_high = (10 + high - buff_position) % 10
-	
     return (TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime) + math.min(ticks_low, ticks_high) - 1
 end
 
@@ -854,12 +842,11 @@ A[3] = function(icon, isMulti)
 				or 
 				A.LastPlayerCastName == A.Flurry:Info()
 		    ) 
-			and (5 - Unit(player):HasBuffs(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < TR.IFTimeToX(5, "any")
+			and (5 - Unit(player):HasBuffs(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < IFTimeToX(5, "any")
 		)
 		then
             return A.IceLance:Show(icon)
-        end	
-		
+        end			
 		
 		-- glacial_spike,if=buff.brain_freeze.react|prev_gcd.1.ebonbolt|talent.incanters_flow.enabled&cast_time+travel_time>incanters_flow_time_to.5.up&cast_time+travel_time<incanters_flow_time_to.4.down
 	    if A.GlacialSpike:IsReady(unit) and 
@@ -868,7 +855,7 @@ A[3] = function(icon, isMulti)
 		   or  
 		   A.LastPlayerCastName == A.Ebonbolt:Info() 
 		   or 
-		   A.IncantersFlow:IsSpellLearned() and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() > TR.IFTimeToX(5, "up") and A.GlacialSpike:GetSpellCastTime() and A.GlacialSpike:TravelTime() < TR.IFTimeToX(4, "down")
+		   A.IncantersFlow:IsSpellLearned() and A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() > IFTimeToX(5, "up") and A.GlacialSpike:GetSpellCastTime() and A.GlacialSpike:TravelTime() < IFTimeToX(4, "down")
 		)
 		then
             return A.GlacialSpike:Show(icon)
