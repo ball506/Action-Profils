@@ -16,6 +16,8 @@ local IsActionInRange, GetActionInfo, PetHasActionBar, GetPetActionsUsable, GetS
 local UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura = UnitLevel, UnitPower, UnitPowerMax, UnitStagger, UnitAttackSpeed, UnitRangedDamage, UnitDamage, UnitAura
 local UnitIsPlayer, UnitExists, UnitGUID    = UnitIsPlayer, UnitExists, UnitGUID
 --local Pet                                 = LibStub("PetLibrary") Don't work. Too fast loading snippets ?
+local LibToast                              = LibStub("LibToast-1.0", true)
+local LibWindow                             = LibStub("LibWindow-1.1")
 local Unit                                  = Action.Unit 
 local huge                                  = math.huge
 local UnitBuff                              = _G.UnitBuff
@@ -28,6 +30,16 @@ local setmetatable 						    = setmetatable
 local stringformat 						    = string.format
 local tableinsert 						    = table.insert
 local tableremove							= table.remove 
+local _G = getfenv(0)
+
+local math = _G.math
+local string = _G.string
+local table = _G.table
+
+local pairs = _G.pairs
+local tonumber = _G.tonumber
+local tostring = _G.tostring
+
 -- Local Tables
 local Events = {}             -- All Events
 local CombatEvents = {}       -- Combat Log Unfiltered
@@ -557,21 +569,184 @@ if DogTag then
 end 
 
 ------------------------------------
+------- NOTIFICATIONS API V2 -------
+------------------------------------
+		
+		    -- Remap global Toaster
+		    Action.Toaster = {}
+			
+            -- Public API			
+			function Action.Toaster:SpawnPoint()
+   			    return TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.anchor.point -- /dump TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.anchor.point
+			end
+
+			function Action.Toaster:SpawnOffsetX()
+   			    return TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.anchor.x
+			end
+
+			function Action.Toaster:SpawnOffsetY()
+    			return TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.anchor.y
+			end	
+			
+            function Action.Toaster:BackgroundColors(urgency)
+                if not urgency then
+                    urgency = "*"
+                end
+                local colors = TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.background[urgency] -- TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.background["normal"]
+                return colors.r, colors.g, colors.b
+            end
+
+            function Action.Toaster:IconSize()
+                return TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.icon_size
+            end
+			
+            function Action.Toaster:TitleColors(urgency)
+                if not urgency then
+                    urgency = "*"
+                end
+                local colors = TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.title[urgency] or TMW.db.profile.ActionDB[8][Action.PlayerSpec].DEFAULT_TITLE_COLORS
+                return colors.r, colors.g, colors.b
+            end
+
+            function Action.Toaster:TextColors(urgency)
+                if not urgency then
+                    urgency = "*"
+                end
+                local colors = TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.text[urgency] --/dump TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.text["*"]
+                return colors.r, colors.g, colors.b
+            end
+			
+            function Action.Toaster:Opacity()
+                return TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.opacity
+            end
+			
+            local anchorFrame
+            -- Create anchor Frame
+            local function CreateAnchorFrame()
+                local anchorFrame = _G.CreateFrame("Frame", nil, _G.UIParent)
+                anchorFrame:SetSize(250, 50)
+                anchorFrame:SetFrameStrata("DIALOG")
+                anchorFrame:SetBackdrop({
+                    bgFile = [[Interface\FriendsFrame\UI-Toast-Background]],
+                    edgeFile = [[Interface\FriendsFrame\UI-Toast-Border]],
+                    tile = true,
+                    tileSize = 12,
+                    edgeSize = 12,
+                    insets = {
+                        left = 5,
+                        right = 5,
+                        top = 5,
+                        bottom = 5,
+                    },
+                })
+
+                local r, g, b = Action.Toaster:BackgroundColors("*")
+                anchorFrame:SetBackdropColor(r, g, b, Action.Toaster:Opacity())
+
+                anchorFrame:EnableMouse(true)
+                anchorFrame:RegisterForDrag("LeftButton")
+                anchorFrame:SetClampedToScreen(true)
+                anchorFrame:SetPoint("TOPRIGHT", _G.UIParent, "TOPRIGHT", -20, -30)
+                anchorFrame:Show()
+
+                local icon_size = Action.Toaster:IconSize()
+
+                local icon = anchorFrame:CreateTexture(nil, "BORDER")
+                icon:SetSize(icon_size, icon_size)
+                icon:SetTexture([[Interface\COMMON\help-i]])
+                icon:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 10, -10)
+
+                local title = anchorFrame:CreateFontString(nil, "BORDER", "FriendsFont_Normal")
+                title:SetJustifyH("LEFT")
+                title:SetJustifyV("MIDDLE")
+                title:SetWordWrap(true)
+                title:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", icon:GetWidth() + 15, -10)
+                title:SetPoint("RIGHT", anchorFrame, "RIGHT", -20, 10)
+                title:SetText(ADDON_NAME)
+                title:SetTextColor(Action.Toaster:TitleColors("*"))
+                title:SetWidth(anchorFrame:GetWidth() - icon:GetWidth() - 20)
+
+                local text = anchorFrame:CreateFontString(nil, "BORDER", "FriendsFont_Normal")
+                text:SetJustifyH("LEFT")
+                text:SetJustifyV("MIDDLE")
+                text:SetWordWrap(true)
+                text:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -4)
+                text:SetText(L["Drag to set the spawn point for toasts."])
+                text:SetTextColor(Action.Toaster:TextColors("*"))
+                text:SetWidth(anchorFrame:GetWidth() - icon:GetWidth() - 20)
+
+                local dismiss_button = _G.CreateFrame("Button", nil, anchorFrame)
+                dismiss_button:SetSize(18, 18)
+                dismiss_button:SetPoint("TOPRIGHT", anchorFrame, "TOPRIGHT", -4, -4)
+                dismiss_button:SetFrameStrata("DIALOG")
+                dismiss_button:SetFrameLevel(anchorFrame:GetFrameLevel() + 2)
+                dismiss_button:SetNormalTexture([[Interface\FriendsFrame\UI-Toast-CloseButton-Up]])
+                dismiss_button:SetPushedTexture([[Interface\FriendsFrame\UI-Toast-CloseButton-Down]])
+                dismiss_button:SetHighlightTexture([[Interface\FriendsFrame\UI-Toast-CloseButton-Highlight]])
+                dismiss_button:SetScript("OnClick", function()
+                    anchorFrame:Hide()
+                end)
+
+                anchorFrame:SetHeight(text:GetStringHeight() + title:GetStringHeight() + 25)
+                return anchorFrame
+            end
+-- Finally, callbackEvent on init
+TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function(callbackEvent) 
+    --Notification Frame
+	anchorFrame = CreateAnchorFrame()
+	-- Register LibWindow
+    LibWindow.RegisterConfig(anchorFrame, TMW.db.profile.ActionDB[8][Action.PlayerSpec].display.anchor)
+    LibWindow.RestorePosition(anchorFrame)
+    LibWindow.MakeDraggable(anchorFrame)
+end)			
+			
+			
+-- Using LibToast v0.1
+LibToast:Embed(Action)
+
+-- Creates a template called "UrgencyToast" which sets the text to whatever
+local function CloseToast()
+end
+
+A:RegisterToast("UrgencyToast", function(toast, message, icon)
+    local icontexture = GetSpellTexture(icon)
+    --toast:SetTitle(" ") -- Do we really need title ? Lets see later
+    toast:SetText(message)
+    toast:SetIconTexture(icontexture)
+	toast:SetUrgencyLevel("emergency") 
+	toast:SetTextFont("Fonts\\ARIALN.ttf", 25)
+	--toast:SetFormattedText("FriendsFont_Large", message)
+    --toast:MakePersistent()
+    --toast:SetPrimaryCallback(_G.OKAY, CloseToast)
+end)
+-- /run Action:SpawnToast("UrgencyToast", "Urgency!!!", 22812)
+
+------------------------------------
 --------- NOTIFICATIONS API --------
 ------------------------------------
+-- !!! DEPRECATED !!! --
 -- Return a tost notification directly in game with status information from rotation. Useful for custom events announcer    
 -- @Parameters : Message and Spell are mandatory settings. 
 -- @optional Parameters : Delay and incombat can be nil 
--- Usage : /run Action.SendNotification("test", 22812, 2, false)    
-function Action.SendNotification(message, spell, delay, incombat)
+-- @NEW : Now support differents type of notifications to differents frames with the parameter : "reason" - possible values : {Defensive, Urgency, KickCC, Lockout, General}
+-- Usage : /run Action.SendNotification("test", 22812, 2, false, "Urgency")    
+function Action.SendNotification(message, spell, delay, incombat, reason)
     local DelaySetting = Action.GetToggle(2, "AnnouncerDelay")
     local InCombatSetting = Action.GetToggle(2, "AnnouncerInCombatOnly")
     local Enabled = Action.GetToggle(2, "UseAnnouncer")
     
     if not message then
-        Action.Print("You didn't set any message for Notification.")
+        Action.Print("You didn't set any message for Notification.(Parameter #1)")
     end
-    
+	
+    if not spell then
+        Action.Print("You didn't set any spell icon for Notification.(Parameter #2)")
+    end  
+	
+	if reason == nil then
+	    reason = "General"
+	end
+	
     if not delay then
         if DelaySetting then 
             delay = DelaySetting
@@ -590,36 +765,105 @@ function Action.SendNotification(message, spell, delay, incombat)
         incombat = true
     end
     
-    -- Variables
+    -- Locals Variables
     local timer = TMW.time
-    local endtimer = timer + delay    
-    Action.NotificationMessage = ""
+    local endtimer = timer + delay 
+	-- Globals vars
     Action.NotificationIsValid = false
     Action.NotificationIsValidUntil = endtimer
-    Action.CurrentNotificationIcon = GetSpellTexture(spell)
-    -- Check if enabled
+    Action.NotificationReason = reason
+	
+	-- Globals vars by reason
+    -- @General	
+    Action.NotificationMessageGeneral = ""
+    Action.CurrentNotificationIconGeneral = GetSpellTexture(spell)
+	
+    -- @KickCC	
+    Action.NotificationMessageKickCC = ""
+    Action.CurrentNotificationIconKickCC = GetSpellTexture(spell)
+	
+    -- @Lockout	
+    Action.NotificationMessageLockout = ""
+    Action.CurrentNotificationIconLockout = GetSpellTexture(spell)
+
+    -- @Defensive	
+    Action.NotificationMessageDefensive = ""
+    Action.CurrentNotificationIconDefensive = GetSpellTexture(spell)
+	
+    -- @Urgency	
+    Action.NotificationMessageUrgency = ""
+    Action.CurrentNotificationIconUrgency = GetSpellTexture(spell)
+	
+    -- Check if overlay enabled by user
     if Enabled then
         -- Option 1 : Combat only        
         if message and spell and incombat then 
-            if (TMW.time <= endtimer) and Unit("player"):CombatTime() > 1 then 
+            if (TMW.time <= endtimer) and Unit("player"):CombatTime() > 0 then 
                 Action.NotificationIsValid = true
-                Action.NotificationMessage = message                 
+				-- KickCC reason
+				if reason == "KickCC" then
+                    Action.NotificationMessageKickCC = message 
+                -- Lockout reason					
+                elseif reason == "Lockout" then
+				    Action.NotificationMessageLockout = message
+                -- Urgency reason					
+                elseif reason == "Urgency" then
+				    Action.NotificationMessageUrgency = message
+                -- Defensive reason					
+                elseif reason == "Defensive" then
+				    Action.NotificationMessageDefensive = message
+                -- General reason					
+				else
+				    Action.NotificationMessageGeneral = message 
+				end              
             else
                 Action.NotificationIsValid = false
             end
-            -- Option 2 : Everytime
+        -- Option 2 : Everytime
         elseif message and spell and not incombat then     
             if TMW.time <= endtimer then 
                 Action.NotificationIsValid = true
-                Action.NotificationMessage = message            
+				-- KickCC reason
+				if reason == "KickCC" then
+                    Action.NotificationMessageKickCC = message 
+                -- Lockout reason					
+                elseif reason == "Lockout" then
+				    Action.NotificationMessageLockout = message
+                -- Urgency reason					
+                elseif reason == "Urgency" then
+				    Action.NotificationMessageUrgency = message
+                -- Defensive reason					
+                elseif reason == "Defensive" then
+				    Action.NotificationMessageDefensive = message
+                -- General reason					
+				else
+				    Action.NotificationMessageGeneral = message 
+				end   
             else
                 Action.NotificationIsValid = false
             end
         end
     end
-    TMW:Fire("TMW_ACTION_NOTIFICATION")    
-    return Action.NotificationMessage, Action.CurrentNotificationIcon, Action.NotificationIsValid, Action.NotificationIsValidUntil
-    
+	
+	-- Fire DogTag event
+    TMW:Fire("TMW_ACTION_NOTIFICATION")
+	
+    -- KickCC frame
+    if reason == "KickCC" then
+        return Action.NotificationMessageKickCC, Action.CurrentNotificationIconKickCC, Action.NotificationIsValid, Action.NotificationIsValidUntil
+	-- Lockout frame
+    elseif reason == "Lockout" then
+	    return Action.NotificationMessageLockout, Action.CurrentNotificationIconLockout, Action.NotificationIsValid, Action.NotificationIsValidUntil
+	-- Urgency frame
+    elseif reason == "Urgency" then
+	    return Action.NotificationMessageUrgency, Action.CurrentNotificationIconUrgency, Action.NotificationIsValid, Action.NotificationIsValidUntil
+	-- Defensive frame
+    elseif reason == "Defensive" then
+	    return Action.NotificationMessageDefensive, Action.CurrentNotificationIconDefensive, Action.NotificationIsValid, Action.NotificationIsValidUntil
+	-- General Frame
+	else
+	    return Action.NotificationMessageGeneral, Action.CurrentNotificationIconGeneral, Action.NotificationIsValid, Action.NotificationIsValidUntil
+	end
 end  			
 
 ------------------------------------
@@ -629,37 +873,186 @@ end
 TMW:RegisterCallback("TMW_ACTION_NOTIFICATION", DogTag.FireEvent, DogTag)
 
 if DogTag then
-	-- Custom Icon
-	DogTag:AddTag("TMW", "ActionNotificationIcon", {
+    
+	------------------
+	---- GENERAL -----
+	------------------
+	
+	-- Custom Icon 
+	DogTag:AddTag("TMW", "ActionNotificationIconGeneral", {
         code = function()
-			if Action.CurrentNotificationIcon and Action.NotificationIsValid then
-				return Action.CurrentNotificationIcon
+			if Action.CurrentNotificationIconGeneral and Action.NotificationIsValid then
+				return Action.CurrentNotificationIconGeneral
 			else 
 				return ""
 			end 
         end,
         ret = "string",
-        doc = "Displays Notification Icon",
+        doc = "Displays General Notification Icon",
 		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
     })
 
 	-- Custom Notifications
-	DogTag:AddTag("TMW", "ActionNotificationMessage", {
+	DogTag:AddTag("TMW", "ActionNotificationMessageGeneral", {
         code = function()
-			if Action.NotificationMessage and Action.NotificationIsValid then				
-				return Action.NotificationMessage
+			if Action.NotificationMessageGeneral and Action.NotificationIsValid then				
+				return Action.NotificationMessageGeneral
 			else 
 				return ""
 			end 
         end,
         ret = "string",
-        doc = "Displays Notification Message",
+        doc = "Displays General Notification Message",
 		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
         events = "TMW_ACTION_NOTIFICATION",
         category = "Action",
-    })			
+    })	
+
+	--------------------
+	---- KICKS & CC ----
+	--------------------
+	
+	-- Custom Icon 
+	DogTag:AddTag("TMW", "ActionNotificationIconKickCC", {
+        code = function()
+			if Action.CurrentNotificationIconKickCC and Action.NotificationIsValid then
+				return Action.CurrentNotificationIconKickCC
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays KickCC Notification Icon",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })
+
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationMessageKickCC", {
+        code = function()
+			if Action.NotificationMessageKickCC and Action.NotificationIsValid then				
+				return Action.NotificationMessageKickCC
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays KickCC Notification Message",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })	
+
+	------------------
+	---- LOCKOUT -----
+	------------------
+	
+	-- Custom Icon 
+	DogTag:AddTag("TMW", "ActionNotificationIconLockout", {
+        code = function()
+			if Action.CurrentNotificationIconLockout and Action.NotificationIsValid then
+				return Action.CurrentNotificationIconLockout
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Lockout Notification Icon",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })
+
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationMessageLockout", {
+        code = function()
+			if Action.NotificationMessageLockout and Action.NotificationIsValid then				
+				return Action.NotificationMessageLockout
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Lockout Notification Message",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })		
+
+	------------------
+	---- DEFENSIVE ----
+	------------------
+	
+	-- Custom Icon 
+	DogTag:AddTag("TMW", "ActionNotificationIconDefensive", {
+        code = function()
+			if Action.CurrentNotificationIconDefensive and Action.NotificationIsValid then
+				return Action.CurrentNotificationIconDefensive
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Defensive Notification Icon",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })
+
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationMessageDefensive", {
+        code = function()
+			if Action.NotificationMessageDefensive and Action.NotificationIsValid then				
+				return Action.NotificationMessageDefensive
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Defensive Notification Message",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })	
+	
+	------------------
+	---- URGENCY -----
+	------------------
+	
+	-- Custom Icon 
+	DogTag:AddTag("TMW", "ActionNotificationIconUrgency", {
+        code = function()
+			if Action.CurrentNotificationIconUrgency and Action.NotificationIsValid then
+				return Action.CurrentNotificationIconUrgency
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Urgency Notification Icon",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })
+
+	-- Custom Notifications
+	DogTag:AddTag("TMW", "ActionNotificationMessageUrgency", {
+        code = function()
+			if Action.NotificationMessageUrgency and Action.NotificationIsValid then				
+				return Action.NotificationMessageUrgency
+			else 
+				return ""
+			end 
+        end,
+        ret = "string",
+        doc = "Displays Urgency Notification Message",
+		example = '[ActionNotification] => "Action.SendNotification(message, spell, delay)"',
+        events = "TMW_ACTION_NOTIFICATION",
+        category = "Action",
+    })	
 	
 	-- The biggest problem of TellMeWhen what he using :setup on frames which use DogTag and it's bring an error
 	TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
