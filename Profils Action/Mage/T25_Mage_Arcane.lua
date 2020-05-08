@@ -97,6 +97,17 @@ Action[ACTION_CONST_MAGE_ARCANE] = {
     BloodoftheEnemyBuff                    = Action.Create({ Type = "Spell", ID = 297108 }),
     Shimmer                                = Action.Create({ Type = "Spell", ID = 212653     }),
 	Blink                                  = Action.Create({ Type = "Spell", ID = 1953     }),
+	IncantersFlowBuff                      = Action.Create({ Type = "Spell", ID = 116267, Hidden = true     }), -- IncantersFlowBuff
+	-- PvP
+	FrostNova                              = Action.Create({ Type = "Spell", ID = 122     }),
+	Decurse                                = Action.Create({ Type = "Spell", ID = 475     }),
+	CounterSpell                           = Action.Create({ Type = "Spell", ID = 2139     }),
+	RingofFrost                            = Action.Create({ Type = "Spell", ID = 113724     }),
+	Polymorph                              = Action.Create({ Type = "Spell", ID = 118     }),
+	Slow                                   = Action.Create({ Type = "Spell", ID = 31589     }),
+	TemporalShield                         = Action.Create({ Type = "Spell", ID = 198111     }),
+	SpellSteal                             = Action.Create({ Type = "Spell", ID = 30449     }),
+	PolymorphGreen                         = Action.Create({ Type = "Spell", ID = 118, Color = "GREEN", Desc = "GREEN" }),  -- AntiFakeCC
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -269,6 +280,237 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
+
+-- [1] CC AntiFake Rotation (FOCUS)
+A[1] = function(icon)    
+    local unit = "focus"
+    local totalPoly = Unit("player"):CastTime(118) + GetCurrentGCD()
+	local totalRoF = Unit("player"):CastTime(113724) + GetCurrentGCD()
+	
+    if A.PolymorphGreen:IsReady(nil, nil, nil, true) and 
+    (
+        IsUnitEnemy("focus") and
+        A.Polymorph:IsInRange("focus") and
+        -- Bear Form, Cat Form, Moonkin Form, Travel Form
+        Unit("focus"):HasBuffs({5487, 768, 24858, 783}, true) == 0 and
+        Unit(unit):HasBuffs("TotalImun") <= totalPoly and
+        Unit(unit):HasBuffs("CCMagicImun") <= totalPoly and
+        Unit(unit):HasBuffs("Reflect") <= totalPoly
+    )
+    then 
+        return A.PolymorphGreen:Show(icon)         
+    end     
+
+    if A.RingofFrost:IsReady(nil, nil, nil, true) and 
+    (
+        IsUnitEnemy("focus") and
+        A.RingofFrost:IsSpellLearned() and 
+        A.Polymorph:IsInRange("focus") and
+        (    
+            -- Bear Form, Cat Form, Moonkin Form, Travel Form
+            Unit("focus"):HasBuffs({5487, 768, 24858, 783}, true) > 0 or
+            Unit(unit):HasBuffs("Reflect") > 0
+        ) and
+        Unit(unit):HasBuffs("TotalImun") <= totalRoF and
+        Unit(unit):HasBuffs("CCMagicImun") <= totalRoF
+    )
+    then 
+        return A.RingofFrost:Show(icon)         
+    end   
+	
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.CounterSpell:IsReady(unit, nil, nil, true) and A.CounterSpell:AbsentImun(unit, Temp.TotalAndMag, true) then
+                return A.CounterSpell:Show(icon)                                                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.CounterSpell:IsReady(unit) and A.CounterSpell:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.CounterSpell
+    end 
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+local function SelfDefensives()
+    if Unit(player):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+		
+    -- TemporalShield
+    if A.TemporalShield:IsReady(player) and 
+    Unit(player):CombatTime() > 0 and
+    A.TemporalShield:IsSpellLearned() and
+    Unit(player):HasBuffs(198111, true)==0 and
+    (
+        (                
+            FriendlyTeam("HEALER"):GetCC() > 0 and
+            Unit(player):IsFocused() and
+            Unit(player):Health() <= Unit(player):Health()*0.7 and
+            Unit(player):TimeToDie()<13        
+        ) or    
+        Unit(player):UseDeff()
+    )
+    then 
+        return A.TemporalShield
+    end 
+   
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady(player, true) and not A.IsInPvP and A.AuraIsValid(player, "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 		
+end 
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+
+-- Variables
+TR.IFST = {
+    CurrStacks = 0,
+    CurrStacksTime = 0,
+    OldStacks = 0,
+    OldStacksTime = 0,
+    Direction = 0
+}
+
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+    TR.IFST.CurrStacks = 0
+    TR.IFST.CurrStacksTime = 0
+    TR.IFST.OldStacks = 0
+    TR.IFST.OldStacksTime = 0
+    TR.IFST.Direction = 0
+end)
+
+local function IFTracker()
+    local TickDiff = TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime
+    local CurrStacks = TR.IFST.CurrStacks
+    local CurrStacksTime = TR.IFST.CurrStacksTime
+    local OldStacks = TR.IFST.OldStacks
+	
+	if Unit(player):CombatTime() == 0 then 
+	    return
+	end
+		
+    if Unit(player):HasBuffs(A.IncantersFlowBuff.ID, true) > 0 then
+        if (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) ~= CurrStacks or (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) == CurrStacks and TickDiff > 1)) then
+            TR.IFST.OldStacks = CurrStacks
+            TR.IFST.OldStacksTime = CurrStacksTime
+        end		
+        TR.IFST.CurrStacks = Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true)
+        TR.IFST.CurrStacksTime = Unit(player):CombatTime()		
+        if TR.IFST.CurrStacks > TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 5 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = 1
+            end
+        elseif TR.IFST.CurrStacks < TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = -1
+            end
+        else
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 1
+            else
+                TR.IFST.Direction = -1
+            end
+        end
+    else
+        TR.IFST.OldStacks = 0
+        TR.IFST.OldStacksTime = 0
+        TR.IFST.CurrStacks = 0
+        TR.IFST.CurrStacksTime = 0
+        TR.IFST.Direction = 0
+    end
+end
+
+-- Implementation of IncantersFlow simc reference incanters_flow_time_to.COUNT.DIRECTION
+-- @parameter: COUNT between "1 - 5" 
+-- @parameter: DIRECTION "up", "down" or "any"
+local function IFTimeToX(count, direction)
+    local low
+    local high
+    local buff_position
+    if TR.IFST.Direction == -1 or (TR.IFST.Direction == 0 and TR.IFST.CurrStacks == 0) then
+      buff_position = 10 - TR.IFST.CurrStacks + 1
+    else
+      buff_position = TR.IFST.CurrStacks
+    end
+    if direction == "up" then
+        low = count
+        high = count
+    elseif direction == "down" then
+        low = 10 - count + 1
+        high = 10 - count + 1
+    else
+        low = count
+        high = 10 - count + 1
+    end
+    if low == buff_position or high == buff_position then
+        return 0
+    end
+    local ticks_low = (10 + low - buff_position) % 10
+    local ticks_high = (10 + high - buff_position) % 10
+    return (TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime) + math.min(ticks_low, ticks_high) - 1
+end
+
 Player.ArcaneBurnPhase = {}
 local BurnPhase = Player.ArcaneBurnPhase
 
@@ -390,7 +632,7 @@ local function Burn(unit)
     end
 	
     -- arcane_power
-    if A.ArcanePower:IsReady(player) and A.BurstIsON(unit) then
+    if A.ArcanePower:IsReady(player) and Unit(player):CombatTime() > 0 and A.BurstIsON(unit) then
         return A.ArcanePower
     end
 	
@@ -428,7 +670,7 @@ local function Burn(unit)
     --end
 	
     -- arcane_orb,if=buff.arcane_charge.stack=0|(active_enemies<3|(active_enemies<2&talent.resonance.enabled))
-    if A.ArcaneOrb:IsReady(unit) and (Player:ArcaneChargesP() == 0 or (GetByRange(3, 40, false, true) or (GetByRange(2, 40, false, true) and A.Resonance:IsSpellLearned()))) then
+    if A.ArcaneOrb:IsReady(player) and (Player:ArcaneChargesP() == 0 or (GetByRange(3, 40, false, true) or (GetByRange(2, 40, false, true) and A.Resonance:IsSpellLearned()))) then
         return A.ArcaneOrb
     end
 	
@@ -438,7 +680,7 @@ local function Burn(unit)
     end
 	
     -- arcane_explosion,if=active_enemies>=3
-    if A.ArcaneExplosion:IsReady(player) and GetByRange(3, 20) then
+    if A.ArcaneExplosion:IsReady(player) and A.GetToggle(2, "AoE") and MultiUnits:GetByRange(10) > 2 then
         return A.ArcaneExplosion
     end
 	
@@ -485,6 +727,16 @@ local function Burn(unit)
 end
 Burn = A.MakeFunctionCachedDynamic(Burn)
 
+
+local function MyDamageBuffs()
+    return 
+    Unit(player):HasBuffs({12042, 190319, 12472}, true) > 0 
+	or
+    Unit(player):HasBuffs("BurstHaste") > 0
+end
+
+
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -521,9 +773,50 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-	
-         
-		 
+        
+		-- Interrupts
+        local Interrupt = Interrupts(unit)
+        if inCombat and Interrupt then 
+            return Interrupt:Show(icon)
+        end 
+		
+        -- PvP Slow
+		if A.Slow:IsReady(unit) and Unit(unit):IsPlayer() and Unit(unit):TimeToDie() > 6 and A.Slow:GetSpellTimeSinceLastCast() > 5 and A.IsInPvP and Unit(unit):HasDeBuffs(A.Slow.ID, true) == 0 then 
+           return A.Slow:Show(icon)
+        end	
+
+        -- PvP SpellSteal Important Purje
+		if A.SpellSteal:IsReady(unit) and Unit(unit):IsPlayer() and Unit(unit):TimeToDie() > 6 and A.SpellSteal:GetSpellTimeSinceLastCast() > 2 and A.IsInPvP and Unit(unit):HasBuffs("ImportantPurje") > 2 then 
+           return A.SpellSteal:Show(icon)
+        end	
+
+        -- PvP SpellSteal Second Purje
+		if A.SpellSteal:IsReady(unit) and Unit(unit):IsPlayer() and Unit(unit):TimeToDie() > 6 and A.SpellSteal:GetSpellTimeSinceLastCast() > 2 and A.IsInPvP and Unit(unit):HasBuffs("SecondPurje") > 2 then 
+           return A.SpellSteal:Show(icon)
+        end	
+		
+        -- PvP blink_any
+        if BlinkAny:IsReady(unit) and A.LastPlayerCastName ~= BlinkAny:Info() and A.LastPlayerCastName == A.FrostNova:Info() and A.IsInPvP then
+            return BlinkAny:Show(icon)
+        end	
+		
+        -- PvP Combo Frost Nova into Blink
+		if A.FrostNova:IsReady(player) and A.IsInPvP and 
+		(
+		    Unit(player):IsFocused("MELEE") and Unit(unit):UseBurst() 
+			or 
+			Unit(player):IsExecuted()
+		)
+		and Unit(unit):GetRange() <= 12 and UnitIsUnit("targettarget", "player")
+		then 
+           return A.FrostNova:Show(icon)
+        end	
+		
+        -- PvP Force Arcane Missile
+		if A.ArcaneMissiles:IsReady(unit) and Unit(unit):IsPlayer() and A.IsInPvP and (Unit(unit):HealthPercent() < 20 or Unit(unit):TimeToDie() < 3) then 
+           return A.ArcaneMissiles:Show(icon)
+        end	
+		
         --Precombat
         if combatTime == 0 and not Player:IsMounted() and Unit(unit):IsExists() and unit ~= "mouseover" then
             -- flask
@@ -629,12 +922,12 @@ A[3] = function(icon, isMulti)
         -- Burn
         local Burn = Burn(unit)
 	    -- call_action_list,name=burn,if=burn_phase|target.time_to_die<variable.average_burn_length
-        if Burn and (BurnPhase:On() or Unit(unit):TimeToDie() < VarAverageBurnLength) then
+        if inCombat and Burn and (BurnPhase:On() or Unit(unit):TimeToDie() < VarAverageBurnLength) then
             return Burn:Show(icon)
         end
 		
         -- call_action_list,name=burn,if=(cooldown.arcane_power.remains=0&cooldown.evocation.remains<=variable.average_burn_length&(buff.arcane_charge.stack=buff.arcane_charge.max_stack|(talent.charged_up.enabled&cooldown.charged_up.remains=0&buff.arcane_charge.stack<=1)))
-        if Burn and 
+        if inCombat and Burn and 
 		(
 		    (
 			    A.ArcanePower:GetCooldown() == 0 and A.Evocation:GetCooldown() <= VarAverageBurnLength and 
@@ -650,7 +943,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- call_action_list,name=conserve,if=!burn_phase
-        if not BurnPhase:On() then
+        if inCombat and not BurnPhase:On() then
             -- mirror_image
             if A.MirrorImage:IsReady(player) and A.BurstIsON(unit) then
                 return A.MirrorImage:Show(icon)
@@ -667,7 +960,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_orb,if=buff.arcane_charge.stack<=2&(cooldown.arcane_power.remains>10|active_enemies<=2)
-            if A.ArcaneOrb:IsReady(unit) and (Player:ArcaneChargesP() <= 2 and (A.ArcanePower:GetCooldown() > 10 or GetByRange(3, 40, false, true))) then
+            if A.ArcaneOrb:IsReady(player) and (Player:ArcaneChargesP() <= 2 and (A.ArcanePower:GetCooldown() > 10 or GetByRange(3, 40, false, true))) then
                 return A.ArcaneOrb:Show(icon)
             end
 			
@@ -739,9 +1032,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- arcane_explosion,if=active_enemies>=3&(mana.pct>=variable.conserve_mana|buff.arcane_charge.stack=3)
-            if A.ArcaneExplosion:IsReady(player) and 
+            if A.ArcaneExplosion:IsReady(player) and A.GetToggle(2, "AoE") and 
 			(
-			    GetByRange(3, 20) and 
+			    MultiUnits:GetByRange(10) > 2 and 
 			    (
 			        Player:ManaPercentageP() >= VarConserveMana 
 				    or 
@@ -765,22 +1058,22 @@ A[3] = function(icon, isMulti)
 	
         -- call_action_list,name=movement
         -- blink_any,if=movement.distance>=10
-        if BlinkAny:IsReady(unit) and (Unit(unit):GetRange() >= 20) then
+        if BlinkAny:IsReady(unit) and (Unit(unit):GetRange() > 40) and not A.IsInPvP then
             return BlinkAny:Show(icon)
         end
 		
         -- presence_of_mind
-        if A.PresenceofMind:IsReady(player) and A.BurstIsON(unit) then
+        if A.PresenceofMind:IsReady(player) and inCombat and A.BurstIsON(unit) then
             return A.PresenceofMind:Show(icon)
         end
 		
         -- arcane_missiles
-        if A.ArcaneMissiles:IsReady(unit) and Unit("player"):HasBuffs(A.ClearcastingBuff.ID, true) > 0 and GetByRange(3, 40, false, true) then
+        if A.ArcaneMissiles:IsReady(unit) then
             return A.ArcaneMissiles:Show(icon)
         end
 		
         -- arcane_orb
-        if A.ArcaneOrb:IsReady(unit) then
+        if A.ArcaneOrb:IsReady(player) then
             return A.ArcaneOrb:Show(icon)
         end
 		
@@ -794,7 +1087,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 
     -- Defensive
-    --local SelfDefensive = SelfDefensives()
+    local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
         return SelfDefensive:Show(icon)
     end 
@@ -825,39 +1118,49 @@ end
  -- [5] Trinket Rotation
 -- No specialization trinket actions 
 -- Passive 
---[[local function FreezingTrapUsedByEnemy()
-    if     UnitCooldown:GetCooldown("arena", 3355) > UnitCooldown:GetMaxDuration("arena", 3355) - 2 and
-    UnitCooldown:IsSpellInFly("arena", 3355) and 
-    Unit("player"):GetDR("incapacitate") >= 50 
-    then 
-        local Caster = UnitCooldown:GetUnitID("arena", 3355)
-        if Caster and Unit(Caster):GetRange() <= 40 then 
-            return true 
-        end 
-    end 
-end 
 local function ArenaRotation(icon, unit)
-    if A.IsInPvP and (A.Zone == "pvp" or A.Zone == "arena") and not Player:IsStealthed() and not Player:IsMounted() then
-        -- Note: "arena1" is just identification of meta 6
-        if unit == "arena1" and (Unit("player"):GetDMG() == 0 or not Unit("player"):IsFocused("DAMAGER")) then 
-            -- Reflect Casting BreakAble CC
-            if A.NetherWard:IsReady() and A.NetherWard:IsSpellLearned() and Action.ShouldReflect(EnemyTeam()) and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.NetherWard:Show(icon)
-            end 
-        end
-    end 
+	
+	-- @Arena Frost Nova
+    if A.FrostNova:IsReady(player) and A.Zone == "arena" and not EnemyTeam():IsBreakAble(12) and
+    (   
+        (
+            not UnitIsUnit(unit, "target") and
+            not MyDamageBuffs() 
+        ) 
+		or    
+        (
+            Unit(unit):HasBuffs("DamageBuffs") > 0 and
+            (
+                Unit(unit):IsMelee() 
+				or
+                Unit(unit):IsHealer() 
+            )
+        )    
+    ) and
+    Unit(unit):GetRange() <= 12 and 
+    Unit(unit):GetCurrentSpeed() >= 100 and
+    Unit(unit):HasBuffs("Freedom") == 0 and 
+    Unit(unit):HasBuffs("TotalImun") == 0 and 
+    Unit(unit):HasBuffs({31224, 48707, 204018, 227847, 213610}, true) == 0
+    then
+	    return A.FrostNova:Show(icon)
+	end
+
+	
+	
 end 
+
 local function PartyRotation(unit)
     if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end
 
-  	-- SingeMagic
-    if A.SingeMagic:IsCastable() and A.SingeMagic:AbsentImun(unit, Temp.TotalAndMag) and IsSchoolFree() and Action.AuraIsValid(unit, "UseDispel", "Magic") and not Unit(unit):InLOS() then
-        return A.SingeMagic:Show(icon)
+  	-- Decurse Party1 & 2
+    if A.Decurse:IsReady(unit) and A.Decurse:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):HasDeBuffs("Curse") > 0 then
+        return A.Decurse
     end
 end 
-
+  
 A[6] = function(icon)
     return ArenaRotation(icon, "arena1")
 end
@@ -876,5 +1179,5 @@ A[8] = function(icon)
         return Party:Show(icon)
     end     
     return ArenaRotation(icon, "arena3")
-end]]--
+end
 

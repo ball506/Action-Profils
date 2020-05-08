@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.8 (20.04.2020)",
+    DateTime = "v4.1.1 (02.05.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_MAGE_FIRE] = {  
@@ -373,6 +373,38 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                    }, 
+                    M = {},
+                },            
+            }, 
             { -- [4] 4th Row
 
                 {
