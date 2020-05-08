@@ -296,6 +296,98 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
+-- Variables
+TR.IFST = {
+    CurrStacks = 0,
+    CurrStacksTime = 0,
+    OldStacks = 0,
+    OldStacksTime = 0,
+    Direction = 0
+}
+
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+    TR.IFST.CurrStacks = 0
+    TR.IFST.CurrStacksTime = 0
+    TR.IFST.OldStacks = 0
+    TR.IFST.OldStacksTime = 0
+    TR.IFST.Direction = 0
+end)
+
+local function IFTracker()
+    local TickDiff = TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime
+    local CurrStacks = TR.IFST.CurrStacks
+    local CurrStacksTime = TR.IFST.CurrStacksTime
+    local OldStacks = TR.IFST.OldStacks
+	
+	if Unit(player):CombatTime() == 0 then 
+	    return
+	end
+		
+    if Unit(player):HasBuffs(A.IncantersFlowBuff.ID, true) > 0 then
+        if (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) ~= CurrStacks or (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) == CurrStacks and TickDiff > 1)) then
+            TR.IFST.OldStacks = CurrStacks
+            TR.IFST.OldStacksTime = CurrStacksTime
+        end		
+        TR.IFST.CurrStacks = Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true)
+        TR.IFST.CurrStacksTime = Unit(player):CombatTime()		
+        if TR.IFST.CurrStacks > TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 5 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = 1
+            end
+        elseif TR.IFST.CurrStacks < TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = -1
+            end
+        else
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 1
+            else
+                TR.IFST.Direction = -1
+            end
+        end
+    else
+        TR.IFST.OldStacks = 0
+        TR.IFST.OldStacksTime = 0
+        TR.IFST.CurrStacks = 0
+        TR.IFST.CurrStacksTime = 0
+        TR.IFST.Direction = 0
+    end
+end
+
+-- Implementation of IncantersFlow simc reference incanters_flow_time_to.COUNT.DIRECTION
+-- @parameter: COUNT between "1 - 5" 
+-- @parameter: DIRECTION "up", "down" or "any"
+local function IFTimeToX(count, direction)
+    local low
+    local high
+    local buff_position
+    if TR.IFST.Direction == -1 or (TR.IFST.Direction == 0 and TR.IFST.CurrStacks == 0) then
+      buff_position = 10 - TR.IFST.CurrStacks + 1
+    else
+      buff_position = TR.IFST.CurrStacks
+    end
+    if direction == "up" then
+        low = count
+        high = count
+    elseif direction == "down" then
+        low = 10 - count + 1
+        high = 10 - count + 1
+    else
+        low = count
+        high = 10 - count + 1
+    end
+    if low == buff_position or high == buff_position then
+        return 0
+    end
+    local ticks_low = (10 + low - buff_position) % 10
+    local ticks_high = (10 + high - buff_position) % 10
+    return (TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime) + math.min(ticks_low, ticks_high) - 1
+end
+
 ---A.PhoenixFlames:RegisterInFlight();
 --A.Pyroblast:RegisterInFlight(A.CombustionBuff);
 --A.Fireball:RegisterInFlight(A.CombustionBuff);
