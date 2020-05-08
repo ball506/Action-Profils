@@ -226,6 +226,7 @@ As always, please report on Discord or message me directly if you need anything 
 		
 List of latest changes :
 
+- Fixed bug with Cleanse
 - New : Blocked Spells Status Frame (see 2nd tab)
 - New UI settings
 - Added new condition for Unbridled Fury potion
