@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.6 (23.04.2020)",
+    DateTime = "v4.1.7 (14.05.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -2042,7 +2042,154 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },    
+                {
+                    E = "Checkbox", 
+                    DB = "UseRotationPassive",
+                    DBV = true,
+                    L = { 
+					    enUS = "Use\nPassive\nRotation",
+                        ruRU = "Включить\nПассивную\nРотацию" 
+	                },
+                    M = {},
+                },  
             }, 
+            { -- [6]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Party -- ",
+                    },
+                },
+            }, 
+            { -- [7]
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "@party1", value = 1 },
+                        { text = "@party2", value = 2 },
+                    },
+                    MULT = true,
+                    DB = "PartyUnits",
+                    DBV = {
+                        [1] = true, 
+                        [2] = true,
+                    }, 
+                    L = { 
+                        ANY = "Party Units",
+                    }, 
+                    TT = { 
+                        enUS = "Enable/Disable relative party passive rotation\nExample : Pet Dispell over party members.", 
+                        ruRU = "Включить/Выключить относительно группы пассивную ротацию\nExample : Pet Dispell over party members.", 
+						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
+                    }, 
+                    M = {},
+                }, 
+                {
+                    E = "Checkbox", 
+                    DB = "SniperFriendly",
+                    DBV = true,
+                    L = { 
+					    enUS = "Predict friendly team healing sniping",
+                        ruRU = "Predict friendly team healing sniping",
+	                },
+                    M = {},
+                },  			
+                {
+                    E = "Checkbox", 
+                    DB = "AutoDispel",
+                    DBV = true,
+                    L = { 
+					    enUS = "Activate auto dispel of friendly team",
+                        ruRU = "Activate auto dispel of friendly team",
+	                },
+                    M = {},
+                },  							
+            }, 		
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Mythic + -- ",
+                    },
+                },
+            },	
+			{
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "MythicPlusLogic",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Smart Mythic+",
+                        ruRU = "Smart Mythic+",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+                        ruRU = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+					},
+        	        M = {},
+       	        },	
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "GrievousWoundsLogic",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Grievous Wounds\nlogic",
+                        ruRU = "Grievous Wounds\nlogic",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to activate critical healing logic for friendly units that got Grievous Wounds debuff.",
+                        ruRU = "Enable this option to activate critical healing logic for friendly units that got Grievous Wounds debuff.",
+					},
+        	        M = {},
+       	        },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "GrievousWoundsMinStacks",                    
+                    DBV = 2,
+                    ONOFF = false,
+                    L = { 
+                        ANY = "Grievous Wounds\nmin stacks",                        
+                    },   
+          	        TT = { 
+					    enUS = "How many stacks of Grievous Wounds should be up on friendly unit before force targetting on this unit.\nExample: 2 means friendly unit will be urgently targetted if he got 2 stacks.", 
+                        ruRU = "How many stacks of Grievous Wounds should be up on friendly unit before force targetting on this unit.\nExample: 2 means friendly unit will be urgently targetted if he got 2 stacks.", 
+					},					
+                    M = {},
+                },				
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "StopCastQuake",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Stop Cast\nquaking",
+                        ruRU = "Stop Cast\nquaking",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically stop your current cast before Quake.",
+                        ruRU = "Enable this option to automatically stop your current cast before Quake.",
+					},
+        	        M = {},
+       	        },	
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 3,                            
+                    DB = "StopCastQuakeSec",                    
+                    DBV = 1,
+					Precision = 1,
+                    ONOFF = false,
+                    L = { 
+                        ANY = "Stop Cast\nquaking seconds",                      
+                    },
+          	        TT = { 
+					    enUS = "Define the value you want to stop your cast before next Quake hit.\nValue is in seconds.\nExample: 1 means you will stop cast at 1sec remaining on Quaking.",            
+                        ruRU = "Define the value you want to stop your cast before next Quake hit.\nValue is in seconds.\nExample: 1 means you will stop cast at 1sec remaining on Quaking.",            
+					},					
+                    M = {},
+                },
+			},			
             { -- [2]
                 {
                     E = "Header",

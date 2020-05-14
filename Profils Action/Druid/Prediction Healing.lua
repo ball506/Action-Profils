@@ -11,7 +11,10 @@ local MultiUnits                            = Action.MultiUnits
 local UnitCooldown                            = Action.UnitCooldown
 local RESTO                           = A[ACTION_CONST_DRUID_RESTORATION]
 
-function A:PredictHeal(NAME, UNIT, VARIATION)   
+function A.PredictHeal(NAME, UNIT, VARIATION)  
+    if UNIT == nil then
+        UNIT = "target"	
+	end
     -- Exception penalty for low level units
     local UnitLvL = Unit(UNIT):GetLevel()
     if UnitLvL > 0 and UnitLvL < Unit("player"):GetLevel() - 10 then
