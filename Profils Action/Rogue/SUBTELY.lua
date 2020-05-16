@@ -325,6 +325,94 @@ local function UsePriorityRotation()
     return false
 end
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Kick:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+            -- Notification                    
+            Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
+            return A.Kick
+        end 
+    
+        if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+            -- Notification                    
+            Action.SendNotification("Gouge on : " .. UnitName(unit), A.Gouge.ID)
+            return A.Gouge              
+        end          
+    
+        if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+            -- Notification                    
+            Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
+            return A.CheapShot              
+        end
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        -- Notification                    
+        Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
+        return A.Kick
+    end 
+    
+    if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        -- Notification                    
+        Action.SendNotification("Gouge on : " .. UnitName(unit), A.Gouge.ID)
+        return A.Gouge              
+    end          
+    
+    if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        -- Notification                    
+        Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
+        return A.CheapShot              
+    end
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        -- Notification                    
+        Action.SendNotification("QuakingPalm on : " .. UnitName(unit), A.QuakingPalm.ID)
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        -- Notification                    
+        Action.SendNotification("Haymaker on : " .. UnitName(unit), A.Haymaker.ID)
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        -- Notification                    
+        Action.SendNotification("WarStomp on : " .. UnitName(unit), A.WarStomp.ID)
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        -- Notification                    
+        Action.SendNotification("BullRush on : " .. UnitName(unit), A.BullRush.ID)
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
