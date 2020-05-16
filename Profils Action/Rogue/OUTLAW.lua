@@ -1085,12 +1085,12 @@ A[3] = function(icon, isMulti)
             end 
 			
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&buff.adrenaline_rush.down&buff.memory_of_lucid_dreams.down&energy.time_to_max>4&rtb_buffs<5
-            if A.CyclotronicBlast:IsReady(unit) and (not Player:IsStealthed() and bool(Unit("player"):HasBuffsDown(A.AdrenalineRush.ID, true)) and bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Player:EnergyTimeToMaxPredicted() > 4 and RtB_Buffs() < 5) then
+            if A.CyclotronicBlast:IsReady(unit) and (not Player:IsStealthed() and Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true) == 0 and Player:EnergyTimeToMaxPredicted() > 4 and RtB_Buffs() < 5) then
                 return A.CyclotronicBlast:Show(icon)
             end
 			
             -- use_item,name=azsharas_font_of_power,if=!buff.adrenaline_rush.up&!buff.blade_flurry.up&cooldown.adrenaline_rush.remains<15
-            if A.AzsharasFontofPower:IsReady(unit) and 
+            if A.AzsharasFontofPower:IsReady("player") and 
             (
                 Unit("player"):HasBuffs(A.AdrenalineRush.ID, true) == 0 
                 and 
