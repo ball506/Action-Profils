@@ -277,7 +277,8 @@ local PetLocalization = {
 local LP = setmetatable(PetLocalization[GameLocale], { __index = PetLocalization.enUS })
 
 -- API - Spell v2
-Pet:AddActionsSpells(253, {
+--Pet:AddActionsSpells(253, {
+Pet:Add(253, {
 	-- number accepted
 	17253, -- Bite
 	16827, -- Claw
@@ -1092,9 +1093,9 @@ A[3] = function(icon, isMulti)
 			-- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-				Pet:GetInRange(17253) >= MultishotMinAoETargets or -- Bite
-				Pet:GetInRange(16827) >= MultishotMinAoETargets or -- Claw
-				Pet:GetInRange(49966) >= MultishotMinAoETargets -- Smack					
+				Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
+				Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
+				Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
 			)
 			or 
 			-- Range by nameplate
@@ -1121,9 +1122,9 @@ A[3] = function(icon, isMulti)
             -- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-			    Pet:GetInRange(17253) > 1 or -- Bite
-			    Pet:GetInRange(16827) > 1 or -- Claw
-			    Pet:GetInRange(49966) > 1 -- Smack					
+			    Pet:GetMultiUnitsBySpell(17253) > 1 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) > 1 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) > 1 -- Smack					
 			)
 			or 
 			-- Range by nameplate
@@ -1212,9 +1213,9 @@ A[3] = function(icon, isMulti)
 					-- Range by pet
 					--[[AoEMode == "RangeByPet" and 
 					(
-						Pet:GetInRange(17253) < 4 or -- Bite
-						Pet:GetInRange(16827) < 4 or -- Claw
-						Pet:GetInRange(49966) < 4 -- Smack					
+						Pet:GetMultiUnitsBySpell(17253) < 4 or -- Bite
+						Pet:GetMultiUnitsBySpell(16827) < 4 or -- Claw
+						Pet:GetMultiUnitsBySpell(49966) < 4 -- Smack					
 					)
 					or 
 					-- Range by nameplate
@@ -1277,9 +1278,9 @@ A[3] = function(icon, isMulti)
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-					Pet:GetInRange(17253) >= 3 or -- Bite
-					Pet:GetInRange(16827) >= 3 or -- Claw
-					Pet:GetInRange(49966) >= 3 -- Smack					
+					Pet:GetMultiUnitsBySpell(17253) >= 3 or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= 3 or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= 3 -- Smack					
 				)
 				or 
 				-- Range by nameplate
@@ -1304,9 +1305,9 @@ A[3] = function(icon, isMulti)
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-					Pet:GetInRange(17253) >= MultishotMinAoETargets or -- Bite
-					Pet:GetInRange(16827) >= MultishotMinAoETargets or -- Claw
-					Pet:GetInRange(49966) >= MultishotMinAoETargets -- Smack					
+					Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
+					Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
+					Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
 				)
 				or 
 				-- Range by nameplate
@@ -1334,9 +1335,9 @@ A[3] = function(icon, isMulti)
     					-- Range by pet
 				        AoEMode == "RangeByPet" and 
 				        (
-			    	        Pet:GetInRange(17253) < 3 or -- Bite
-			    	        Pet:GetInRange(16827) < 3 or -- Claw
-			   	            Pet:GetInRange(49966) < 3 -- Smack					
+			    	        Pet:GetMultiUnitsBySpell(17253) < 3 or -- Bite
+			    	        Pet:GetMultiUnitsBySpell(16827) < 3 or -- Claw
+			   	            Pet:GetMultiUnitsBySpell(49966) < 3 -- Smack					
 				        )
 				        or 
 				        -- Range by nameplate
@@ -1372,9 +1373,9 @@ A[3] = function(icon, isMulti)
             -- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-			    Pet:GetInRange(17253) < 2 or -- Bite
-			    Pet:GetInRange(16827) < 2 or -- Claw
-			    Pet:GetInRange(49966) < 2 -- Smack					
+			    Pet:GetMultiUnitsBySpell(17253) < 2 or -- Bite
+			    Pet:GetMultiUnitsBySpell(16827) < 2 or -- Claw
+			    Pet:GetMultiUnitsBySpell(49966) < 2 -- Smack					
 			)
 			or 
 			-- Range by nameplate
