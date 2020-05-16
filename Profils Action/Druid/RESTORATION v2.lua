@@ -605,6 +605,28 @@ local function noDamageCheck(unit)
 end
 noDamageCheck = Action.MakeFunctionCachedDynamic(noDamageCheck)
 
+-- Restor Druid 
+local function CanAoEFlourish(pHP)   
+	local total = 0
+	local getmembersAll = HealingEngine.GetMembersAll()
+	
+	for i = 1, #getmembersAll do
+		if getmembersAll[i].HP <= pHP and
+		-- Rejuvenation
+		Unit(getmembersAll[i].Unit):HasBuffs(774) > 0 and 
+		(
+			-- Wild Growth
+			Unit(getmembersAll[i].Unit):HasBuffs(48438, true) > 0 or 
+			-- Lifebloom or Regrowth or Germination
+			Unit(getmembersAll[i].Unit):HasBuffs({33763, 8936, 155777}, true) > 0 
+		)
+		then
+			total = total + 1
+		end
+	end
+	return total >= #getmembersAll * 0.3
+end
+
 -- PvE
 local function SootheAble(unit)
     -- https://questionablyepic.com/bfa-dungeon-debuffs/
@@ -1415,7 +1437,7 @@ A[3] = function(icon, isMulti)
                 A.FrenziedRegeneration:GetSpellCharges()>=2 and
                 Unit(player):Health()<=Unit(player):HealthMax()*0.9 
             ) or
-            A.PredictHeal("Frenzied Regeneration", "player")
+            A.FrenziedRegeneration:PredictHeal("Frenzied Regeneration", "player")
         )
         then
             return A.FrenziedRegeneration:Show(icon)
@@ -2025,7 +2047,7 @@ A[3] = function(icon, isMulti)
             -- Reshift to this form back
             (
                 Unit(player):HasBuffs(117679, player, true) > 0 and
-                Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) == 0
+                Unit(player):HasBuffs(A.IncarnationTreeofLife.ID, player, true) == 0
             ) or
             -- HealingEngine conditions for burst raid/party heal
             (
@@ -2082,7 +2104,7 @@ A[3] = function(icon, isMulti)
                 TeamCache.Friendly.Size > 1 and
                 combatTime > 10 and
                 ReceivedLast5sec > AVG_DMG + AVG_HPS and
-                AoEFlourish(60)
+                CanAoEFlourish(70)
             ) or
             (
                 -- Combo Tranquility + Wild Growth 
@@ -2149,7 +2171,7 @@ A[3] = function(icon, isMulti)
         if A.Innervate:IsReady(player) and 
         A.BurstIsON(unit) and
         combatTime > 20 and
-		Unit(player):Mana() < 80 and
+		Player:Mana() < 80 and
         (
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
             Player:GetStance() == 0  
@@ -2271,7 +2293,11 @@ A[3] = function(icon, isMulti)
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
         ) and
         ]]
-        Unit(player):GetCurrentSpeed() == 0 and
+        (
+		    Unit(player):GetCurrentSpeed() == 0 
+			or 
+			A.EarlySpring:IsSpellLearned() -- PvP talent instant Wild Growth
+		) and
         (
             (
                 Unit(player):HasBuffs(29166, player, true) > 0 and
@@ -2282,11 +2308,11 @@ A[3] = function(icon, isMulti)
                 (
                     (
                         TeamCache.Friendly.Size > 5 and 
-                        HealingEngine.HealingBySpell(48438, "Wild Growth") >= 4
+                        HealingEngine.HealingBySpell("Wild Growth", A.WildGrowth) >= 4
                     ) or
                     (
                         TeamCache.Friendly.Size <= 5 and 
-                        HealingEngine.HealingBySpell(48438, "Wild Growth") >= 3
+                        HealingEngine.HealingBySpell("Wild Growth", A.WildGrowth) >= 3
                     )
                 )
             ) or
@@ -2314,7 +2340,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.WildGrowth:IsSpellInRange(target) 
             )
-        ) and A.LastPlayerCastID ~= 48438 -- Wild Growth
+        ) and A.LastPlayerCastID ~= A.WildGrowth.ID -- Wild Growth
         then 
             return A.WildGrowth:Show(icon)
         end 
@@ -2353,7 +2379,7 @@ A[3] = function(icon, isMulti)
                 Unit("target"):IsPlayer() and
                 Unit(target):CanInterract(40)
             )
-        ) and A.LastPlayerCastID ~= 145205 -- Efflorescence
+        ) and A.LastPlayerCastID ~= A.Efflorescence.ID -- Efflorescence
         then 
             return A.Efflorescence:Show(icon)
         end 
@@ -2379,7 +2405,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.Swiftmend:IsSpellInRange(mouseover) and
-                A.PredictHeal("Swiftmend", "mouseover") and
+                A.Swiftmend:PredictHeal("Swiftmend", "mouseover") and
                 (
                     Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.6 or
                     (
@@ -2397,7 +2423,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.Swiftmend:IsSpellInRange(target) and
-                A.PredictHeal("Swiftmend", "target") and
+                A.Swiftmend:PredictHeal("Swiftmend", "target") and
                 (
                     Unit(target):Health() <= Unit(target):HealthMax()*0.6 or
                     (
@@ -2437,7 +2463,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.Regrowth:IsSpellInRange(mouseover) and
-                A.PredictHeal("Regrowth", "mouseover") and
+                A.Regrowth:PredictHeal("Regrowth", "mouseover") and
                 (
                     Unit(player):HasBuffs(A.ClearCasting.ID, player, true) > 0 or -- Clearcasting
                     (
@@ -2465,7 +2491,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.Regrowth:IsSpellInRange(target) and
-                A.PredictHeal("Regrowth", "target") and
+                A.Regrowth:PredictHeal("Regrowth", "target") and
                 (
                     Unit(player):HasBuffs(A.ClearCasting.ID, player, true) > 0 or -- Clearcasting
                     (
@@ -2512,7 +2538,7 @@ A[3] = function(icon, isMulti)
                 Unit(mouseover):HasDeBuffs(33786, true) and
                 Unit(mouseover):HasDeBuffs(33786, true) <= GetCurrentGCD() + 0.1 and
                 A.Overgrowth:IsSpellInRange(mouseover) and
-                A.PredictHeal("Overgrowth", "mouseover") and
+                A.Overgrowth:PredictHeal("Overgrowth", "mouseover") and
                 Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.8
             ) or 
             (
@@ -2527,7 +2553,7 @@ A[3] = function(icon, isMulti)
                 Unit(target):HasDeBuffs(33786, true) and
                 Unit(target):HasDeBuffs(33786, true) <= GetCurrentGCD() + 0.1 and
                 A.Overgrowth:IsSpellInRange(target) and
-                A.PredictHeal("Overgrowth", "target") and
+                A.Overgrowth:PredictHeal("Overgrowth", "target") and
                 Unit(target):Health() <= Unit(target):HealthMax() * 0.8
             )
         )
@@ -2557,7 +2583,7 @@ A[3] = function(icon, isMulti)
                 Unit(mouseover):HasDeBuffs(33786, true) and   
                 Unit(mouseover):HasDeBuffs(33786, true) <= Unit(player):CastTime(289022) + GetCurrentGCD() and
                 A.Nourish:IsSpellInRange(mouseover) and
-                A.PredictHeal("Nourish", "mouseover")
+                A.Nourish:PredictHeal("Nourish", "mouseover")
             ) or 
             (
                 (
@@ -2570,7 +2596,7 @@ A[3] = function(icon, isMulti)
                 Unit(target):HasDeBuffs(33786, true) and
                 Unit(target):HasDeBuffs(33786, true) <= Unit(player):CastTime(289022) + GetCurrentGCD() and
                 A.Nourish:IsSpellInRange(target) and
-                A.PredictHeal("Nourish", "target")
+                A.Nourish:PredictHeal("Nourish", "target")
             )
         ) and
         select(2, Unit(player):CastTime()) == 0 -- no casting
@@ -2598,7 +2624,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.Lifebloom:IsSpellInRange(mouseover) and
-                A.PredictHeal("Lifebloom", "mouseover") and
+                A.Lifebloom:PredictHeal("Lifebloom", "mouseover") and
                 Unit(mouseover):HasBuffs(33763, player, true) == 0 and
                 (
                     (
@@ -2625,7 +2651,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.Lifebloom:IsSpellInRange(target) and
-                A.PredictHeal("Lifebloom", "target") and
+                A.Lifebloom:PredictHeal("Lifebloom", "target") and
                 Unit(target):HasBuffs(33763, player, true) == 0 and
                 (
                     (
@@ -2669,7 +2695,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.CenarionWard:IsSpellInRange(mouseover) and
-                A.PredictHeal("Cenarion Ward", "mouseover") and
+                A.CenarionWard:PredictHeal("Cenarion Ward", "mouseover") and
                 (
             
                     (
@@ -2688,7 +2714,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.CenarionWard:IsSpellInRange(target) and
-                A.PredictHeal("Cenarion Ward", "target") and
+                A.CenarionWard:PredictHeal("Cenarion Ward", "target") and
                 (
                     (
                         HealingEngine.IsMostlyIncDMG(target) and
@@ -2728,7 +2754,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.Rejuvenation:IsSpellInRange(mouseover) and
-                A.PredictHeal("Rejuvenation", "mouseover") and
+                A.Rejuvenation:PredictHeal("Rejuvenation", "mouseover") and
                 (
                     Unit(mouseover):PT(774, nil, true) or
                     (
@@ -2746,7 +2772,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.Rejuvenation:IsSpellInRange(target) and
-                A.PredictHeal("Rejuvenation", "target") and
+                A.Rejuvenation:PredictHeal("Rejuvenation", "target") and
                 (
                     Unit(target):PT(774, nil, true) or
                     (
@@ -2781,7 +2807,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.Swiftmend:IsSpellInRange(mouseover) and
-                A.PredictHeal("Swiftmend", "mouseover") and
+                A.Swiftmend:PredictHeal("Swiftmend", "mouseover") and
                 Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.75
             ) or 
             (
@@ -2793,7 +2819,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.Swiftmend:IsSpellInRange(target) and
-                A.PredictHeal("Swiftmend", "target") and
+                A.Swiftmend:PredictHeal("Swiftmend", "target") and
                 Unit(target):Health() <= Unit(target):HealthMax()*0.75
             )
         )
@@ -2827,7 +2853,7 @@ A[3] = function(icon, isMulti)
                     Unit(player):GetCurrentSpeed() > 0 or
                     not Unit(mouseover):PT(8936, nil, true) -- Regrowth   
                 ) and
-                A.PredictHeal("Efflorescence", "mouseover")        
+                A.Efflorescence:PredictHeal("Efflorescence", "mouseover")        
             ) or 
             (
                 (
@@ -2843,9 +2869,9 @@ A[3] = function(icon, isMulti)
                     Unit(player):GetCurrentSpeed() > 0 or
                     not Unit(target):PT(8936, nil, true) -- Regrowth   
                ) and
-                A.PredictHeal("Efflorescence", "target") 
+                A.Efflorescence:PredictHeal("Efflorescence", "target") 
             ) or
-            HealingEngine.HealingByRange(40, "Efflorescence", nil, true) >= 3
+            HealingEngine.HealingByRange(40, "Efflorescence", A.Efflorescence, true) >= 3
         ) and
         A.LastPlayerCastID~=145205 -- Efflorescence
         then 
@@ -2878,7 +2904,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.Regrowth:IsSpellInRange(mouseover) and
                 Unit(mouseover):HealthPercent() <= 95 and
-                A.PredictHeal("Regrowth", "mouseover") and
+                A.Regrowth:PredictHeal("Regrowth", "mouseover") and
                 (
                     TeamCache.Friendly.Size <= 5 or
                     Unit(mouseover):Role("TANK") or
@@ -2895,7 +2921,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.Regrowth:IsSpellInRange(target) and
                 Unit(target):HealthPercent() <= 95 and
-                A.PredictHeal("Regrowth", "target") and
+                A.Regrowth:PredictHeal("Regrowth", "target") and
                 (
                     TeamCache.Friendly.Size <= 5 or
                     Unit(target):Role("TANK") or
