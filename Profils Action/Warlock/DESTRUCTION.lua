@@ -370,10 +370,45 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.PetKick:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) then 
+            return A.PetKick
+        end 
+    
+        if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+            return A.Shadowfury              
+        end          
+	
+	    if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 75) then 
+            return A.Fear              
+        end
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.PetKick:IsReady(unit) and Pet:IsActive(417) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.PetKick:IsReady(unit) and Pet:IsActive(417) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.PetKick
     end 
     
@@ -550,8 +585,8 @@ A[3] = function(icon, isMulti)
 	local MortalCoilHP = GetToggle(2, "MortalCoilHP")
 	local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
 	local Racial = Action.GetToggle(1, "Racial")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")	
+	
+		
     -- Call for Havoc debuff tracking on every unit nameplates
 	HavocDebuffTime()
     local HavocRemains = HavocDebuffTime()
@@ -1354,7 +1389,7 @@ local function ArenaRotation(icon, unit)
 		local maxkickpercent = GetToggle(2, "maxkickpercent")
 		
 	    -- Pet Kick
-        if useKick and Pet:IsActive(417) and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+        if useKick and Pet:IsActive(417) and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
             return A.PetKick:Show(icon)
         end 
    
@@ -1364,12 +1399,12 @@ local function ArenaRotation(icon, unit)
         end 
 		
 	    -- Mortal Coil PvP
-	    if useCC and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+	    if useCC and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	       return A.MortalCoil:Show(icon) 
         end 	
 	
 	    -- Fear
-	    if useCC and A.Fear:IsReady(unit) and UseFearAsInterrupt and not Unit(unit):IsTotem() and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("disorient", 50) then 
+	    if useCC and A.Fear:IsReady(unit) and UseFearAsInterrupt and not Unit(unit):IsTotem() and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("disorient", 50) then 
             return A.Fear:Show(icon)              
         end	
 		
