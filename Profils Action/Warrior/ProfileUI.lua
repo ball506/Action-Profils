@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.2.1 (24.04.2020)",
+    DateTime = "v4.2.2 (16.05.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
@@ -523,40 +523,6 @@ A.Data.ProfileUI                                     = {
             },
             { -- [3] 3rd Row 					
                 {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MinInterrupt",
-                    DBV = 25, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Min interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                    }, 					
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MaxInterrupt",
-                    DBV = 70, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Max interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                    }, 					
-                    M = {},
-                },
-                {
                     E = "Checkbox", 
                     DB = "SmartStormbolt",
                     DBV = true,
@@ -968,40 +934,6 @@ A.Data.ProfileUI                                     = {
                 },
             },
             { -- [3] 3rd Row 					
-                {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MinInterrupt",
-                    DBV = 25, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Min interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                    }, 					
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MaxInterrupt",
-                    DBV = 70, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Max interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                    }, 					
-                    M = {},
-                },
                 {
                     E = "Checkbox", 
                     DB = "SmartStormbolt",
@@ -1908,40 +1840,7 @@ A.Data.ProfileUI                                     = {
                 },
             },
             { -- [3] 3rd Row 					
-                {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MinInterrupt",
-                    DBV = 25, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Min interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        ruRU = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the minimum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                    }, 					
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 5, 
-                    MAX = 100,                            
-                    DB = "MaxInterrupt",
-                    DBV = 70, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = "Max interrupt %",
-                    },
-                    TT = { 
-                        enUS = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.",  
-                        ruRU = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                        frFR = "Set the maximum value for interrupting or ccing spells.\nTotal interrupt value will be a rand between the minimum and the maximum.", 
-                    }, 					
-                    M = {},
-                },
+               
                 {
                     E = "Checkbox", 
                     DB = "SmartStormbolt",
