@@ -559,11 +559,60 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Disrupt:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- Disrupt
+        if useKick and not notInterruptable and A.Disrupt:IsReady(unit) then 
+            return A.Disrupt:Show(icon)
+        end
+
+        -- Fel Eruption
+        if (useCC) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and GetByRange(1, 20) and A.FelEruption:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun") then 
+            -- Notification                    
+            Action.SendNotification("CC : Fel Eruption", A.FelEruption.ID)
+            return A.FelEruption              
+        end 
+    
+        -- Chaos Nova    
+        if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun") then 
+            -- Notification                    
+            Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
+            return A.ChaosNova              
+        end 
+    
+        -- Imprison    
+        if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") then 
+            -- Notification                    
+            Action.SendNotification("CC : Imprison", A.Imprison.ID)        
+            return A.Imprison              
+        end 
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
     -- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
         Action.SendNotification("Kick : Disrupt", A.Disrupt.ID)        
         return A.Disrupt
@@ -577,14 +626,14 @@ local function Interrupts(unit)
     end 
     
     -- Chaos Nova    
-    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun") then 
+    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
         -- Notification                    
         Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
         return A.ChaosNova              
     end 
     
     -- Imprison    
-    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
         Action.SendNotification("CC : Imprison", A.Imprison.ID)        
         return A.Imprison              
@@ -648,8 +697,8 @@ A[3] = function(icon, isMulti)
     local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
     local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
     local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
-    local MinInterrupt = A.GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
+    
+    
     local FelBladeRange = A.GetToggle(2, "FelBladeRange")
     local FelBladeFury = A.GetToggle(2, "FelBladeFury")    
     local FelBladeOutOfRange = A.GetToggle(2, "FelBladeOutOfRange")    
@@ -1289,7 +1338,7 @@ A[3] = function(icon, isMulti)
         -- PvP Rotation
         local function RotationPvP(unit)
             -- Disrupt
-            if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+            if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
                 return A.Disrupt:Show(icon)
             end
             
