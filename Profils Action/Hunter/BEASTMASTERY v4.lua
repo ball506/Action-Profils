@@ -110,6 +110,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK"  }),
     MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),	
 	Intimidation                           = Action.Create({ Type = "Spell", ID = 19577  }),
+	TarTrap                                = Action.Create({ Type = "Spell", ID = 187698 }),
 	-- Defensives
 	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
