@@ -424,6 +424,39 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- CounterShot
+        if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
+            return A.CounterShot:Show(icon)
+        end
+	
+        -- BindingShot
+        if useCC and A.BindingShot:IsReady(unit) and Unit(unit):IsControlAble("stun", 0) then 
+            return A.BindingShot
+   	    end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
@@ -644,8 +677,8 @@ A[3] = function(icon, isMulti)
 	local TrinketsMinTTD = GetToggle(2, "TrinketsMinTTD")
 	local TrinketsUnitsRange = GetToggle(2, "TrinketsUnitsRange")
 	local TrinketsMinUnits = GetToggle(2, "TrinketsMinUnits")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	
+	
 	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
 	local AoEMode = GetToggle(2, "AoEMode")
 	local MultiShotCheckLatency = GetToggle(2, "MultiShotCheckLatency")
