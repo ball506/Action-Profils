@@ -538,8 +538,8 @@ A[3] = function(icon, isMulti)
 	local MinFesteringWoundSoulReaper = GetToggle(2, "MinFesteringWoundSoulReaper")
 	local MinAoETargets = GetToggle(2, "MinAoETargets")
 	local MaxAoERange = GetToggle(2, "MaxAoERange")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	
+	
 	local MinRuneDeathandDecay = GetToggle(2, "MinRuneDeathandDecay")
 	local MinAreaTTDDeathandDecay = GetToggle(2, "MinAreaTTDDeathandDecay")
 	local DeathandDecayIgnoreFesteringWoundUnits = GetToggle(2, "DeathandDecayIgnoreFesteringWoundUnits")
