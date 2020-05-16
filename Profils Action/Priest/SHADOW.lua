@@ -275,11 +275,48 @@ local function ExecuteRange()
 	return 20
 end
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, nil) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+	    -- Silence
+        if useKick and A.Silence:IsReady(unit) and A.Silence:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
+   	        -- Notification					
+            Action.SendNotification("Silence interrupting...", A.Silence.ID)
+	    	return A.Silence
+        end 
+    
+	    -- Fear Disarm
+        if useCC and A.PsychicHorror:IsReady(unit) and A.PsychicHorror:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) then 
+   	        -- Notification					
+            Action.SendNotification("Psychic Horror interrupting...", A.PsychicHorror.ID)
+            return A.PsychicHorror              
+        end 
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Silence
-    if useKick and A.Silence:IsReady(unit) and A.Silence:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Silence:IsReady(unit) and A.Silence:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
    	    -- Notification					
         Action.SendNotification("Silence interrupting...", A.Silence.ID)
 		return A.Silence
@@ -443,8 +480,8 @@ A[3] = function(icon, isMulti)
 	local TrinketsMinTTD = GetToggle(2, "TrinketsMinTTD")
 	local TrinketsUnitsRange = GetToggle(2, "TrinketsUnitsRange")
 	local TrinketsMinUnits = GetToggle(2, "TrinketsMinUnits")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	
+	
 	local InsanityDrain = InsanityDrain()
     local VoidFormActive = Unit(player):HasBuffs(A.VoidformBuff.ID, true) > 0
 	-- Azerite beam protection channel
