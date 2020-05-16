@@ -379,21 +379,59 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Pummel:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- Pummel
+        if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+            return A.Pummel
+        end 
+    
+        -- Stormbolt
+        if useCC and A.Stormbolt:IsReady(unit) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun", 0) then
+            return A.Stormbolt              
+        end  
+    
+        -- IntimidatingShout
+        if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("fear", 0) then 
+            return A.IntimidatingShout              
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
     -- Pummel
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.Pummel
     end 
     
     -- Stormbolt
-    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
+    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun", 0) then
         return A.Stormbolt                 
     end 
     
     -- IntimidatingShout
-    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("fear", 0) then 
+    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("fear", 0) then 
         return A.IntimidatingShout              
     end             
     
@@ -444,8 +482,8 @@ A[3] = function(icon, isMulti)
     local BloodoftheEnemyUnits = GetToggle(2, "BloodoftheEnemyUnits")
     local MinAoETargets = GetToggle(2, "MinAoETargets")
     local MaxAoERange = GetToggle(2, "MaxAoERange")
-    local MinInterrupt = GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+    
+    
     local UseCharge = GetToggle(2, "UseCharge")
     local ChargeTime = GetToggle(2, "ChargeTime")
     local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
@@ -537,12 +575,12 @@ A[3] = function(icon, isMulti)
                 end
                 
                 -- recklessness
-                if A.Recklessness:IsReady(player) and InRange(unit) and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
+                if A.Recklessness:IsReady(player) and A.BurstIsON(unit) and InRange(unit) and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
                     return A.Recklessness
                 end
                 
                 -- charge
-                if A.Charge:IsReady(unit) and UseCharge then
+                if A.Charge:IsReady(unit) and UseCharge and isMoving >= ChargeTime then
                     return A.Charge
                 end    
                 
@@ -575,7 +613,7 @@ A[3] = function(icon, isMulti)
                 end
                 
                 -- recklessness
-                if A.Recklessness:IsReady(player) and not ShouldStop and InRange(unit) then
+                if A.Recklessness:IsReady(player) and A.BurstIsON(unit) and not ShouldStop and InRange(unit) then
                     return A.Recklessness
                 end
                 
@@ -617,6 +655,8 @@ A[3] = function(icon, isMulti)
 			    A.Recklessness:GetCooldown() > 30 
 				or 
 				Unit(player):HasBuffs(A.Recklessness.ID, true) > 0 
+				or
+				not A.BurstIsON(unit)
 			) 
 			then
                 return A.Siegebreaker:Show(icon)
@@ -821,7 +861,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- Reck if rage is > 90 and SiegebreakerDebuff
-            if A.Recklessness:IsReady(unit) and InRange(unit) and not ShouldStop then
+            if A.Recklessness:IsReady(unit) and InRange(unit) and A.BurstIsON(unit) and not ShouldStop then
                 return A.Recklessness:Show(icon)
             end
             

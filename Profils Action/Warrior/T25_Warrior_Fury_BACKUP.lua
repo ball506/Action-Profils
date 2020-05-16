@@ -387,17 +387,17 @@ local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
 	-- Pummel
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         return A.Pummel
     end 
 	
  	-- Stormbolt
-    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("stun", 0) then
+    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun", 0) then
         return A.Stormbolt                 
     end 
  
 	-- IntimidatingShout
-    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) and Unit(unit):IsControlAble("fear", 0) then 
+    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("fear", 0) then 
         return A.IntimidatingShout              
     end             
     
@@ -446,8 +446,8 @@ A[3] = function(icon, isMulti)
 	local BloodoftheEnemyUnits = GetToggle(2, "BloodoftheEnemyUnits")
 	local MinAoETargets = GetToggle(2, "MinAoETargets")
 	local MaxAoERange = GetToggle(2, "MaxAoERange")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	
+	
 	local UseCharge = GetToggle(2, "UseCharge")
 	local ChargeTime = GetToggle(2, "ChargeTime")
 	local UseHeroicLeap = GetToggle(2, "UseHeroicLeap") 
