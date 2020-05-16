@@ -1273,7 +1273,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- multishot with RapidReload
-            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and A.RapidReload:GetAzeriteRank() > 0 and				
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and				
 			(
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
