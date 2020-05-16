@@ -88,6 +88,7 @@ Action[ACTION_CONST_HUNTER_SURVIVAL] = {
     TermsofEngagement                     = Action.Create({ Type = "Spell", ID = 265895     }),
     VipersVenom                           = Action.Create({ Type = "Spell", ID = 268501     }),
     AlphaPredator                         = Action.Create({ Type = "Spell", ID = 269737     }),
+	CounterShot                           = Action.Create({ Type = "Spell", ID = 147362 }),
     -- Pet
     CallPet                               = Action.Create({ Type = "Spell", ID = 883     }),
     Intimidation                          = Action.Create({ Type = "Spell", ID = 19577     }),
@@ -298,6 +299,33 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- CounterShot
+        if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
+            return A.CounterShot:Show(icon)
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
 
 local function EvaluateTargetIfFilterKillCommand55(unit)
     return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
