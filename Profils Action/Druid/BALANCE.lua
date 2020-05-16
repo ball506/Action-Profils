@@ -475,8 +475,8 @@ A[3] = function(icon, isMulti)
     local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
     local Racial = Action.GetToggle(1, "Racial")
     local Potion = Action.GetToggle(1, "Potion") 
-    local MinInterrupt = GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = GetToggle(2, "MaxInterrupt") 
+    
+     
     local BloodoftheEnemySyncAoE = Action.GetToggle(2, "BloodoftheEnemySyncAoE")
     local BloodoftheEnemyAoETTD = Action.GetToggle(2, "BloodoftheEnemyAoETTD")
     local BloodoftheEnemyUnits = Action.GetToggle(2, "BloodoftheEnemyUnits")
