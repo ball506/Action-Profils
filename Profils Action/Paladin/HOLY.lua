@@ -572,11 +572,11 @@ local function AntiFakeStun(unit)
 end 
 A[1] = function(icon)    
     local useKick, useCC, useRacial = A.InterruptIsValid(targettarget, "TargetMouseover")    
-    local MinInterrupt = A.GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt") 
+    
+     
  
     -- Auto targettarget ?
-    if useCC and A.HammerofJustice:IsReady(targettarget) and A.HammerofJustice:AbsentImun(targettarget, Temp.TotalAndPhysAndCCAndStun, true) and Unit(targettarget):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useCC and A.HammerofJustice:IsReady(targettarget) and A.HammerofJustice:AbsentImun(targettarget, Temp.TotalAndPhysAndCCAndStun, true) then 
         -- Notification                    
         Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
         return A.HammerofJusticeGreen              
@@ -692,18 +692,53 @@ local function IsSaveManaPhase()
 end 
 IsSaveManaPhase = A.MakeFunctionCachedStatic(IsSaveManaPhase)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Rebuke:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
+            -- Notification                    
+            Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
+            return A.Rebuke
+        end 
+    
+        if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) then 
+            -- Notification                    
+            Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
+            return A.HammerofJusticeGreen              
+        end   
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local MinInterrupt = A.GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
     
-    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    
+    
+    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
         Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
         return A.Rebuke
     end 
     
-    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
         Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
         return A.HammerofJusticeGreen              
