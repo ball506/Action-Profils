@@ -361,10 +361,50 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Rebuke:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
+	        -- Notification					
+            Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
+            return A.Rebuke
+        end 
+    
+        if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
+	        -- Notification					
+            Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
+            return A.HammerofJustice              
+        end    
+	
+   	    -- Asphyxiate
+   	    if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
+   	        return A.Asphyxiate
+   	    end 
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	    -- Notification					
         Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
         return A.Rebuke
@@ -435,6 +475,12 @@ local function Finishers(unit)
 		--	then
          --       return A.DivineStorm
         --   end	
+
+    -- divine_storm,fallback
+    if A.DivineStorm:IsReadyByPassCastGCD(player) and Action.GetToggle(2, "AoE") and GetByRange(2, 8) 
+	then
+        return A.DivineStorm
+    end
 			
     -- divine_storm,if=variable.ds_castable&variable.wings_pool&((!talent.execution_sentence.enabled|(spell_targets.divine_storm>=2|cooldown.execution_sentence.remains>gcd*2))|(cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10))
     if A.DivineStorm:IsReadyByPassCastGCD(player) and Action.GetToggle(2, "AoE") and 
@@ -500,8 +546,8 @@ A[3] = function(icon, isMulti)
 	local DivineShieldHP = GetToggle(2, "DivineShieldHP")
 	local UseCavalier = GetToggle(2, "UseCavalier")
 	local CavalierTime = GetToggle(2, "CavalierTime")
-	local MinInterrupt = GetToggle(2, "MinInterrupt")
-	local MaxInterrupt = GetToggle(2, "MaxInterrupt")
+	
+	
 	local Potion = GetToggle(1, "Potion")
 	local Racial = GetToggle(1, "Racial")
 	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
@@ -598,14 +644,14 @@ A[3] = function(icon, isMulti)
 		
 		-- Rebuke
   	  	if useKick and A.Rebuke:IsReady(unit) then 
-		 	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
+		 	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
          	    return A.Rebuke:Show(icon)
         	end 
       	end 
 			
      	-- Hammer of Justice
       	if useCC and A.HammerofJustice:IsReady(unit) then 
-	  		if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
+	  		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
      	        return A.HammerofJustice:Show(icon)
      	    end 
      	end 
