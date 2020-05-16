@@ -617,8 +617,8 @@ A[3] = function(icon, isMulti)
 	local BonestormHP = A.GetToggle(2, "BonestormHP")
 	local BonestormRunicPower = A.GetToggle(2, "BonestormRunicPower")
 	local BonestormRunicPowerWithVampiricBlood = A.GetToggle(2, "BonestormRunicPowerWithVampiricBlood")
-	local MinInterrupt = A.GetToggle(2, "MinInterrupt")
-    local MaxInterrupt = A.GetToggle(2, "MaxInterrupt")
+	
+    
 	local PredictDS = PredictDS()
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
