@@ -950,6 +950,22 @@ A.Data.ProfileUI = {
                     },  
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "LeotherasPvP",
+                    DBV = true,
+                    L = { 
+                        enUS = "Use Leotheras", 
+                        ruRU = "Use Leotheras", 
+                        frFR = "Use Leotheras",
+                    }, 
+                    TT = { 
+                        enUS = "Will activate auto logic for Eye of Leotheras in PvP arena.", 
+                        ruRU = "Will activate auto logic for Eye of Leotheras in PvP arena.", 
+                        frFR = "Will activate auto logic for Eye of Leotheras in PvP arena.",  
+                    }, 
+                    M = {},
+                },
             },
         },
 		-- Vengeance Specialisation
