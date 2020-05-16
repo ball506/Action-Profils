@@ -118,6 +118,7 @@ Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
 	DeathGrip                              = Action.Create({ Type = "Spell", ID = 49576     }),
     ChainsofIce                            = Action.Create({ Type = "Spell", ID = 45524     }), -- 70% snare, 8sec
     RaiseAlly                              = Action.Create({ Type = "Spell", ID = 61999     }),	 -- Battle rez
+	DeathCaress                            = Action.Create({ Type = "Spell", ID = 195292 }),
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
@@ -493,20 +494,58 @@ local function SelfDefensives(unit)
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.MindFreeze:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- MindFreeze
+        if useKick and not notInterruptable and A.MindFreeze:IsReady(unit) then 
+            return A.MindFreeze:Show(icon)
+        end
+	
+        -- DeathGrip
+        if useCC and A.DeathGrip:IsReady(unit) and DeathGripInterrupt then 
+            return A.DeathGrip
+   	    end 
+	
+   	    -- Asphyxiate
+   	    if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
+   	        return A.Asphyxiate
+   	    end 
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
 		
     -- MindFreeze
     if useKick and A.MindFreeze:IsReady(unit) and A.MindFreeze:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
-     	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
        	    return A.MindFreeze
        	end 
    	end 
 	
     -- DeathGrip
     if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:AbsentImun(unit, Temp.TotalAndCC, true) and A.DeathGrip:IsReady(unit) and A.GetToggle(2, "DeathGripInterrupt") then 
-     	if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
        	    return A.DeathGrip
        	end 
    	end 
@@ -520,7 +559,7 @@ local function Interrupts(unit)
 	
    	-- Asphyxiate
    	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then
+ 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
    	        return A.Asphyxiate
    	    end 
    	end 
@@ -867,30 +906,48 @@ A[3] = function(icon, isMulti)
                 return A.ConcentratedFlame:Show(icon)
             end
 						
-		    -- Taunt 
-            if A.GetToggle(2, "AutoTaunt") and combatTime > 0     
-			then 
-			    -- if not fully aggroed or we are not current target then use taunt
-			    if A.DarkCommand:IsReady(unit, true, nil, nil, nil) and not Unit(unit):IsDummy() and not Unit(unit):IsBoss() and Unit(unit):GetRange() <= 30 and ( Unit("targettarget"):InfoGUID() ~= Unit(player):InfoGUID() ) then 
-                    return A.DarkCommand:Show(icon)
-				-- else if all good on current target, switch to another one we know we dont currently tank
-                else
-                    local DarkCommand_Nameplates = MultiUnits:GetActiveUnitPlates()
-                    if DarkCommand_Nameplates then  
-                        for DarkCommand_UnitID in pairs(DarkCommand_Nameplates) do             
-                            if not Unit(DarkCommand_UnitID):IsPlayer() and Unit(DarkCommand_UnitID):CombatTime() > 0 and not UnitIsUnit("target", DarkCommand_UnitID) and not Unit(DarkCommand_UnitID):IsDummy() and not Unit(DarkCommand_UnitID):IsBoss() and Unit(DarkCommand_UnitID):GetRange() <= 30 and not Unit(DarkCommand_UnitID):InLOS() and Unit(player):ThreatSituation(DarkCommand_UnitID) ~= 3 then 
-                                if A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
-							        return A:Show(icon, ACTION_CONST_AUTOTARGET)
-								elseif A.DeathGrip:IsReady(DarkCommand_UnitID, true, nil, nil, nil) and not Unit(unit):IsBoss() and not Unit(DarkCommand_UnitID):IsDummy() and not A.DarkCommand:IsReady(DarkCommand_UnitID, true, nil, nil, nil) then
-								    return A.DeathGrip:Show(icon)
-								else
-								    return true
-								end
-                            end         
-                        end 
-                    end
+        -- Taunt (Updated by KhalDrogo1988)
+        if A.GetToggle(2, "AutoTaunt") and combatTime > 0
+		then
+		    -- if not fully aggroed or we are not current target then use taunt
+		    if not Unit(unit):IsExplosives() and not Unit(unit):IsDummy() and not Unit(unit):IsPlayer() and not Unit(unit):IsTotem() and Unit(unit):GetRange() <= 30 and Unit(player):ThreatSituation(unit) ~= 3 then
+
+				if A.DarkCommand:IsReady(unit) then
+					return A.DarkCommand:Show(icon)
 				end
-            end
+
+				if A.VigilantProtector:AutoHeartOfAzeroth(unit) then 
+					return A.VigilantProtector:Show(icon)
+				end 
+	
+				if A.DeathGrip:IsReady(unit) and not Unit(unit):IsBoss() then
+					return A.DeathGrip:Show(icon)
+				end
+				
+				if A.DeathCaress:IsReady(unit) then
+					return A.DeathCaress:Show(icon)
+				end
+			-- else if all good on current target, switch to another one we know we dont currently tank
+            else
+                local DarkCommand_Nameplates = MultiUnits:GetActiveUnitPlates()
+                if DarkCommand_Nameplates then
+                    for DarkCommand_UnitID in pairs(DarkCommand_Nameplates) do
+                        if not Unit(DarkCommand_UnitID):IsPlayer() 
+						and not Unit(unit):IsExplosives()
+						and Unit(DarkCommand_UnitID):CombatTime() > 0
+						and not UnitIsUnit("target", DarkCommand_UnitID) 
+						and not Unit(DarkCommand_UnitID):IsDummy() 
+						and not Unit(DarkCommand_UnitID):IsTotem() 
+						and Unit(DarkCommand_UnitID):GetRange() <= 30 
+						and Unit(player):ThreatSituation(DarkCommand_UnitID) ~= 3 then
+							if A.DarkCommand:IsReady(unit) or A.VigilantProtector:AutoHeartOfAzeroth(unit) or A.DeathGrip:IsReady(unit) or A.DeathCaress:IsReady(unit) then
+								return A:Show(icon, ACTION_CONST_AUTOTARGET)
+							end
+						end
+                    end
+                end
+			end
+        end
 			
             -- GorefiendsGrasp
 			local currentEnemiesInMelee = MultiUnits:GetByRange(5)
