@@ -1088,7 +1088,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-        if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and MultiShotForceAoE and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and	
+        if A.Multishot:IsReady(unit) and inCombat and GetToggle(2, "AoE") and MultiShotForceAoE and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and	
 		(
 			-- Range by pet
 			AoEMode == "RangeByPet" and 
@@ -1117,7 +1117,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- AoE Cleave
-        if (isMulti or GetToggle(2, "AoE")) and CanCast and
+        if (isMulti or GetToggle(2, "AoE")) and inCombat and CanCast and
 	    (
             -- Range by pet
 			AoEMode == "RangeByPet" and 
@@ -1368,7 +1368,7 @@ A[3] = function(icon, isMulti)
 			
 		-- SINGLE Target
         -- call_action_list,name=st,if=active_enemies<2
-        if (isMulti or GetToggle(2, "AoE")) and
+        if (isMulti or GetToggle(2, "AoE")) and inCombat and
 		(
             -- Range by pet
 			AoEMode == "RangeByPet" and 
