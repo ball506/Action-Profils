@@ -427,7 +427,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
     
-    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, MinInterrupt, MaxInterrupt) then 
+    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
 	    -- Notification					
         Action.SendNotification("Counter Shot interrupting on Target ", A.CounterShot.ID)
         return A.CounterShot
@@ -1239,7 +1239,7 @@ A[3] = function(icon, isMulti)
             end
 
             -- multishot with RapidReload
-            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() > 0 and				
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and A.RapidReload:GetAzeriteRank() > 0 and				
 			(
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
@@ -1266,7 +1266,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- multishot, NO RapidReload + Custom user settings
-            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and A.RapidReload:GetAzeriteRank() == 0 and				
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and A.RapidReload:GetAzeriteRank() == 0 and				
 			(
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
