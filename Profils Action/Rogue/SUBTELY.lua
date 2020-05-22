@@ -489,7 +489,7 @@ A[3] = function(icon, isMulti)
 			(
 			    Player:EnergyTimeToMaxPredicted() > 1 and Unit(player):HasBuffs(A.SymbolsofDeath.ID, true) == 0 and 
 			    (
-			        not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() 
+			        Unit(unit):HasDeBuffs(A.ConcentratedFlameBurn.ID, true) == 0 and not A.ConcentratedFlame:IsSpellInFlight() 
 				    or 
 				    A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD()
 			    )
