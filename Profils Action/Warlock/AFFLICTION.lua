@@ -771,7 +771,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- corruption,if=buff.movement.up&!prev_gcd.1.corruption&!talent.absolute_corruption.enabled
-            if A.Corruption:IsReady(unit) and CorruptionToRefresh <= 2 and not ShouldStop and isMoving and not Unit("player"):GetSpellLastCast(A.Corruption.ID, true) and not A.AbsoluteCorruption:IsSpellLearned() and not Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) then
+            if A.Corruption:IsReady(unit) and CorruptionToRefresh <= 2 and not ShouldStop and isMoving and not Unit("player"):GetSpellLastCast(A.Corruption.ID, true) and not A.AbsoluteCorruption:IsSpellLearned() and Unit(unit):HasDeBuffs(A.CorruptionDebuff.ID, true) == 0 then
                 return A.Corruption:Show(icon)
             end
 			
