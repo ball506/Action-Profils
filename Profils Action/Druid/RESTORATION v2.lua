@@ -166,7 +166,7 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	-- Guardian
 	FrenziedRegeneration                      = Create({ Type = "Spell", ID = 22842     }),
 	Ironfur                                   = Create({ Type = "Spell", ID = 192081     }),
-	Thrash                                    = Create({ Type = "Spell", ID = 106832     }),
+	Thrash                                    = Create({ Type = "Spell", ID = 77758     }),
 	Mangle                                    = Create({ Type = "Spell", ID = 33917   }),
 	-- Feral
 	Shred                                     = Create({ Type = "Spell", ID = 5221     }),
@@ -234,12 +234,43 @@ local function RotationsVariables()
     HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
 	MouseOver = GetToggle(2, "mouseover")
     -- ProfileUI vars
-    TrinketMana = GetToggle(2, "TrinketMana")
+	UseRotationPassive = GetToggle(2, "UseRotationPassive")
+	ManaManagement = GetToggle(2, "ManaManagement")
+	ManaPotion = GetToggle(2, "ManaPotion")
+	StopCastOverHeal = GetToggle(2, "StopCastOverHeal")
+	StartByPreCast = GetToggle(2, "StartByPreCast")
+	SniperFriendly = GetToggle(2, "SniperFriendly")
+	AutoDispel = GetToggle(2, "AutoDispel")
 	MythicPlusLogic = GetToggle(2, "MythicPlusLogic")
 	StopCastOverHeal = GetToggle(2, "StopCastOverHeal")
 	StopCastQuake = GetToggle(2, "StopCastQuake")
 	StopCastQuakeSec = GetToggle(2, "StopCastQuakeSec")
-
+	RacialBurstHealing = GetToggle(2, "RacialBurstHealing")
+	RacialBurstDamaging = GetToggle(2, "RacialBurstDamaging")
+	TrinketBurstSyncUP = GetToggle(2, "TrinketBurstSyncUP")
+	TrinketMana = GetToggle(2, "TrinketMana")
+	TrinketBurstHealing = GetToggle(2, "TrinketBurstHealing")
+	LucidDreamManaPercent = GetToggle(2, "LucidDreamManaPercent")
+	LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits")
+	LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP")
+	LifebloomHP = GetToggle(2, "LifebloomHP")
+	LifebloomWorkMode = GetToggle(2, "LifebloomWorkMode")
+	TranquilityRaidHP = GetToggle(2, "TranquilityRaidHP")
+	TranquilityRaidUnits = GetToggle(2, "TranquilityRaidUnits")
+	TranquilityPartyHP = GetToggle(2, "TranquilityPartyHP")
+	TranquilityPartyUnits = GetToggle(2, "TranquilityPartyUnits")
+	FlourishHP = GetToggle(2, "FlourishHP")
+	FlourishUnits = GetToggle(2, "FlourishUnits")
+	SwiftmendHP = GetToggle(2, "SwiftmendHP")
+    WildGrowthHP = GetToggle(2, "WildGrowthHP")
+	WildGrowthUnits = GetToggle(2, "WildGrowthUnits")
+	EfflorescenceRefresh = GetToggle(2, "EfflorescenceRefresh")
+	
+	
+	
+	
+	
+	
 end
 
 local function IsSchoolFree()
@@ -392,7 +423,7 @@ end
 
 -- Mana Management
 local function IsSaveManaPhase()
-    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") and Unit(player):HasBuffs(A.Innervate.ID) == 0 then 
+    if not A.IsInPvP and A.GetToggle(2, "ManaManagement") and Unit(player):HasBuffs(A.Innervate.ID, true) == 0 then 
         for i = 1, MAX_BOSS_FRAMES do 
             if Unit("boss" .. i):IsExists() and not Unit("boss" .. i):IsDead() and Unit(player):PowerPercent() < Unit("boss" .. i):HealthPercent() then 
                 return true 
@@ -1114,12 +1145,12 @@ end
 local function CanDispel(unit)
     return
     (         
-        A.GetToggle(2, "AutoDispel") --dispel_toggle
+        A.GetToggle(2, "AutoDispel")
     ) and
     Unit(unit):IsExists() and
     --not Env.InLOS(unit) and    
     A.NaturesCure:IsSpellInRange(unit) and    
-    A.LastPlayerCastID~=88423 and
+    A.LastPlayerCastID ~= A.NaturesCure.ID and
     (
         (
             A.IsInPvP and 
@@ -1144,18 +1175,13 @@ A[3] = function(icon, isMulti)
     --------------------
     --- ROTATION VAR ---
     --------------------
+	RotationsVariables()
     local isMoving = A.Player:IsMoving()
 	local isMovingFor = A.Player:IsMovingTime()
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-	local DBM = GetToggle(1 ,"DBM")
-	local Potion = GetToggle(1, "Potion")
-	local Racial = GetToggle(1, "Racial")
-	local HeartOfAzeroth = GetToggle(1, "HeartOfAzeroth")
-	local StopCastQuake = GetToggle(2, "StopCastQuake")
-	local StopCastQuakeSec = GetToggle(2, "StopCastQuakeSec")
 	local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5)
 	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
 	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
@@ -1480,7 +1506,7 @@ A[3] = function(icon, isMulti)
 	    end
 
         -- General Thrash
-        if A.Thrash:IsReady(unit) and 
+        if A.Thrash:IsReady(player) and 
         Player:GetStance()==1 and
         A.GuardianAffinity:IsSpellLearned() and -- Guardian affility
         not (
@@ -1569,11 +1595,6 @@ A[3] = function(icon, isMulti)
         if A.Moonfire:IsReady(unit) and 
         (
             Player:GetStance()==4 or
-            (
-                Player:GetStance()==1 and
-                -- 8.2 changes (only if Guardian and in bear)
-                Unit(player):HasSpec(104)
-            )or
             (        
                 Unit(player):HasSpec(105) and -- Restor
                 Player:GetStance()==0
@@ -1581,7 +1602,7 @@ A[3] = function(icon, isMulti)
         ) and
         (
             (
-                not A.Shred:IsSpellInRange(target) and
+                --not A.Shred:IsSpellInRange(target) and
                 combatTime > 0
             )
         ) and
@@ -1630,7 +1651,7 @@ A[3] = function(icon, isMulti)
         Player:GetStance()==4 and
         (
             (
-                not A.Shred:IsSpellInRange(target) and
+                --not A.Shred:IsSpellInRange(target) and
                 combatTime > 0 
             )
         ) and
@@ -1676,7 +1697,7 @@ A[3] = function(icon, isMulti)
         Player:GetStance()==4 and
         (
             (
-                not A.Shred:IsSpellInRange(target) and
+                --not A.Shred:IsSpellInRange(target) and
                 combatTime > 0
             )
         ) and
@@ -1725,7 +1746,7 @@ A[3] = function(icon, isMulti)
         ) and
         (
             (
-                not A.Shred:IsSpellInRange(target) and
+                --not A.Shred:IsSpellInRange(target) and
                 combatTime > 0
             )
         ) and
@@ -1811,7 +1832,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- RESS ALL PEOPLE
-        if A.Revitalize:IsReady(unit) and
+        if A.Revitalize:IsReady(player) and
         Unit(player):CombatTime()==0 and
         Unit(player):GetCurrentSpeed()==0 and
         (
@@ -1898,15 +1919,9 @@ A[3] = function(icon, isMulti)
         end
 
         -- PvP Mark of the Wild (precombat)
-        if A.MarkoftheWild:IsReady(unit) and
+        if A.MarkoftheWild:IsReady(player) and
         combatTime == 0 and
-        --[[
-        (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
-            Player:GetStance() == 3 or
-            Player:GetStance() == 0  
-        ) and
-        ]]
+		A.MarkoftheWild:GetSpellTimeSinceLastCast() > 2 and
         A.MarkoftheWild:IsSpellLearned() and
         (
             -- MouseOver
@@ -1943,15 +1958,19 @@ A[3] = function(icon, isMulti)
         (
             (
                 Player:GetStance() == 0 and
-                Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) == 0 and    
-                Unit(player):HasBuffs(117679, player, true) == 0 and -- Incarnation
+                Unit(player):HasBuffs(A.IncarnationTreeofLife.ID, true) == 0 and    
+                Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) == 0 and -- Incarnation
                 EnemyTeam():IsReshiftAble() 
             ) or
             (                
                 -- Boomkin silence with roots
                 Unit(player):HasDeBuffs(78675, true) > 0 and
                 Unit(player):HasDeBuffs("Rooted") > 0
-            )
+            ) or
+			(
+			    Unit(player):IsFocused("MELEE") and
+			    Unit(player):TimeToDie() < 5
+			)
         )
 		then
 		    return A.BearForm:Show(icon)
@@ -1960,13 +1979,6 @@ A[3] = function(icon, isMulti)
         -- PvE Restor's Ironbark
         if A.Ironbark:IsReady(unit) and
         combatTime > 5 and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
-        ) and
-        ]]
         (
             -- MouseOver
             (
@@ -2007,7 +2019,13 @@ A[3] = function(icon, isMulti)
 		then
 		    return A.Ironbark:Show(icon)
         end
-
+		
+        -- Spirit of Preservation
+        if A.SpiritofPreservation:AutoHeartOfAzeroth(unit, true) and combatTime > 5 and HeartOfAzeroth
+		then
+            return A.SpiritofPreservation:Show(icon)
+        end
+			
         -- PvE Tranquility
         if A.Tranquility:IsReady(player) and
         A.BurstIsON(unit) and
@@ -2015,7 +2033,7 @@ A[3] = function(icon, isMulti)
         combatTime > 10 and
         (
             Player:GetStance() == 0 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         Unit(player):GetCurrentSpeed() == 0 and
         (        
@@ -2025,11 +2043,11 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(60) >= 3
+                HealingEngine.GetBelowHealthPercentercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(65) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(TranquilityRaidHP) >= AoEMembers(true, _, TranquilityRaidUnits)
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
         )
@@ -2042,7 +2060,7 @@ A[3] = function(icon, isMulti)
         A.BurstIsON(unit) and
         combatTime > 10 and
         A.IncarnationTreeofLife:IsSpellLearned() and
-        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) == 0 and
+        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) == 0 and
         (    
             -- Reshift to this form back
             (
@@ -2093,7 +2111,7 @@ A[3] = function(icon, isMulti)
         combatTime > 10 and
         A.Flourish:IsSpellLearned() and
         (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Player:GetStance() == 3 or
             Player:GetStance() == 0  
         ) and
@@ -2171,9 +2189,13 @@ A[3] = function(icon, isMulti)
         if A.Innervate:IsReady(player) and 
         A.BurstIsON(unit) and
         combatTime > 20 and
-		Player:Mana() < 80 and
-        (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+		-- Mana Check
+		(
+		    Player:Mana() < 85 or
+            IsSaveManaPhase()		
+        ) and
+		(
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Player:GetStance() == 0  
         ) and
         (    
@@ -2210,7 +2232,7 @@ A[3] = function(icon, isMulti)
         A.BurstIsON(unit) and
         (
             Player:GetStance() == 0 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         combatTime>0 and
         (
@@ -2247,7 +2269,7 @@ A[3] = function(icon, isMulti)
         A.BurstIsON(unit) and
         (
             Player:GetStance() == 0 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         combatTime>0 and
         (
@@ -2290,7 +2312,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         (
@@ -2349,14 +2371,19 @@ A[3] = function(icon, isMulti)
         -- PvE #1 Efflorescence (Innervate refresh)
         if A.Efflorescence:IsReady(player) and
         A.GetToggle(2, "AoE") and
+		Efflorescence() <= EfflorescenceRefresh and
         --[[
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
-        Unit(player):HasBuffs(29166, player, true) > GetCurrentGCD() + 0.2 and
+		-- Mana Check
+		(
+		    not IsSaveManaPhase() or
+            Unit(player):HasBuffs(29166, player, true) > GetCurrentGCD() + 0.2 
+		) and
         (
             -- MouseOver
             (
@@ -2391,7 +2418,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         -- Talent Soul of Forest
@@ -2442,7 +2469,7 @@ A[3] = function(icon, isMulti)
         --Note: Soul of Forest should be used if hots is not refresh able
         if A.Regrowth:IsReady(unit) and
         (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Unit(player):GetCurrentSpeed() == 0
             --[[
             (
@@ -2477,7 +2504,7 @@ A[3] = function(icon, isMulti)
                         )
                     ) or
                     (
-                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 and
+                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
                         Unit(mouseover):PT(8936, nil, true) -- Regrowth
                     )
                 )
@@ -2505,7 +2532,7 @@ A[3] = function(icon, isMulti)
                         )
                     ) or
                     (
-                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 and
+                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
                         Unit(target):PT(8936, nil, true) -- Regrowth
                     )
                 )
@@ -2520,7 +2547,7 @@ A[3] = function(icon, isMulti)
         if A.Overgrowth:IsReady(unit) and
         --[[
         (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Player:GetStance() == 3 or
             Player:GetStance() == 0 
         ) and
@@ -2565,7 +2592,7 @@ A[3] = function(icon, isMulti)
         if A.Nourish:IsReady(unit) and
         --[[
         (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Player:GetStance() == 3 or
             Player:GetStance() == 0 
         ) and
@@ -2604,7 +2631,14 @@ A[3] = function(icon, isMulti)
             return A.Nourish:Show(icon)
         end
 
-
+		-- Photosynthesis Lifebloom on player to increase healing by 20%
+        if A.Lifebloom:IsReady(player) and inCombat and Unit(player):HasBuffs(A.Lifebloom.ID, true) < 3 and A.Photosynthesis:IsSpellLearned() then		    
+		    -- Force Player target to gain 20% healing increase
+			HealingEngine.SetTarget(player)
+			-- Notification
+			Action.SendNotification("Maintaining Lifebloom on you for 20% healing increase", A.Photosynthesis.ID, 2)
+			return A.Lifebloom:Show(icon)
+		end	
 
         -- PvE Lifebloom
         if A.Lifebloom:IsReady(unit) and
@@ -2612,7 +2646,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         (
@@ -2681,7 +2715,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         combatTime > 3 and
@@ -2729,7 +2763,7 @@ A[3] = function(icon, isMulti)
         end
         
 		-- Rejuvenation Sniper
-		if (IsInGroup() or IsInRaid()) and A.GetToggle(2, "SnipeFriendly") then
+		if (IsInGroup() or IsInRaid()) and SnipeFriendly then
 		    SetFriendlyToSnipe()
 			if A.Rejuvenation:IsReady(unit) then
 			    return A.Rejuvenation:Show(icon)
@@ -2742,7 +2776,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         (
@@ -2793,7 +2827,7 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         -- Talent Soul of Forest
@@ -2832,11 +2866,17 @@ A[3] = function(icon, isMulti)
         --if we have 3+ melee units which can be healed or while run 
         if A.Efflorescence:IsReady(player) and
         A.GetToggle(2, "AoE") and
+		Efflorescence() <= EfflorescenceRefresh and
+		-- Mana Check
+		(
+		    not IsSaveManaPhase() or
+            Unit(player):HasBuffs(29166, player, true) > GetCurrentGCD() + 0.2 
+		) and
         --[[
         (
             Player:GetStance() == 0 or
             Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
         ) and
         ]]
         (
@@ -2873,16 +2913,15 @@ A[3] = function(icon, isMulti)
             ) or
             HealingEngine.HealingByRange(40, "Efflorescence", A.Efflorescence, true) >= 3
         ) and
-        A.LastPlayerCastID~=145205 -- Efflorescence
+        A.LastPlayerCastID ~= A.Efflorescence.ID -- Efflorescence
         then 
             return A.Efflorescence:Show(icon)
         end
 
-
         -- RPvE #2 Regrowth
         if A.Regrowth:IsReady(unit) and
         (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, player, true) > 0 or
+            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Unit(player):GetCurrentSpeed() == 0
             --[[
             (
@@ -3079,6 +3118,8 @@ end ]]--
 
 
 local function ArenaRotation(icon, unit)
+    RotationsVariables()
+	
     if A.IsInPvP and (A.Zone == "arena") and (unit == "arena1" or unit == "arena2" or unit == "arena3") and not Player:IsStealthed() and not Player:IsMounted() then
 
         -- EntanglingRoots Arena
@@ -3114,6 +3155,7 @@ local function ArenaRotation(icon, unit)
 end 
 
 local function PartyRotation(unit)
+    RotationsVariables()
     if (unit == "party1" and not A.GetToggle(2, "PartyUnits")[1]) or (unit == "party2" and not A.GetToggle(2, "PartyUnits")[2]) then 
         return false 
     end

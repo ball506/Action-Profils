@@ -1942,21 +1942,7 @@ A.Data.ProfileUI = {
                         ruRU = "Включает действия для нескольких целей", 
                     }, 
                     M = {},
-                },    
-                {
-                    E = "Checkbox", 
-                    DB = "ManaManagement",
-                    DBV = false,
-                    L = { 
-                        enUS = "Boss Fight\nManaSave\n(PvE)", 
-                        ruRU = "Бой с Боссом\nУправление Маной\n(PvE)",
-                    }, 
-                    TT = { 
-                        enUS = "Enable to keep small mana save tricks during boss fight\nMana will keep going to save phase if Boss HP >= our Mana", 
-                        ruRU = "Включает сохранение малого количества маны с помощью некоторых манипуляций в течении боя против Босса\nМана будет переходить в фазу сохранения если ХП Босса >= нашей Маны", 
-                    }, 
-                    M = {},
-                },    
+                },      
                 {
                     E = "Checkbox", 
                     DB = "UseRotationPassive",
@@ -1968,6 +1954,68 @@ A.Data.ProfileUI = {
                     M = {},
                 },  
             }, 
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Healing Engine -- ",
+                    },
+                },
+            },	
+   	        { -- [7] 
+                {
+                    E = "Checkbox", 
+                    DB = "ManaManagement",
+                    DBV = true,
+                    L = { 
+                        enUS = "Boss Fight\nManaSave\n(PvE)", 
+                        ruRU = "Бой с Боссом\nУправление Маной\n(PvE)",
+                    }, 
+                    TT = { 
+                        enUS = "Enable to keep small mana save tricks during boss fight\nMana will keep going to save phase if Boss HP >= our Mana", 
+                        ruRU = "Включает сохранение малого количества маны с помощью некоторых манипуляций в течении боя против Босса\nМана будет переходить в фазу сохранения если ХП Босса >= нашей Маны", 
+                    }, 
+                    M = {},
+                }, 			
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "ManaPotion",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Use\nMana Potion",
+                        ruRU = "Использовать\nЗелье Маны",
+					},
+        	        M = {},
+       	        },
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "StopCastOverHeal",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Stop Cast\noverhealing",
+                        ruRU = "Stop Cast\noverhealing",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically stop the current cast to avoid overhealing.",
+                        ruRU = "Enable this option to automatically stop the current cast to avoid overhealing.",
+					},
+        	        M = {},
+       	        },	 				
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "StartByPreCast",
+           	        DBV = true,
+           	        L = { 
+					    enUS = "Begin Combat\nBy PreHot",
+                        ruRU = "Начинать Бой\nЗаранее произнося", 
+	                },
+           	        TT = { 
+					    enUS = "Will start rotation on enemy by available longer\ncasting spell depended on your spec",
+                        ruRU = "Будет начинать ротация на противнике с доступной\nдлинной произносящейся способности в зависимости от спека",
+					},
+           	        M = {},
+        	    },
+   	        },
             { -- [6]
                 {
                     E = "Header",
@@ -2105,6 +2153,94 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},			
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Racials -- ",
+                    },
+                },
+            },	
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstHealing",                    
+                    DBV = 100,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Healing HP %)",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "RacialBurstDamaging",                    
+                    DBV = 100,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Damaging HP %)",                        
+                    },                     
+                    M = {},
+                },
+			},
+            { -- Trinkets
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Trinkets -- ",
+                    },
+                },
+            },	
+            {     			
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Always", value = "Always" },
+                        { text = "Burst Synchronized", value = "BurstSync" },                    
+                    },
+                    DB = "TrinketBurstSyncUP",
+                    DBV = "Always",
+                    L = { 
+					    enUS = "Damager: How to use trinkets",
+                        ruRU = "Урон: Как использовать аксессуары", 
+					},
+                    TT = { 
+					    enUS = "Always: On cooldown\nBurst Synchronized: By Burst Mode in 'General' tab",
+                        ruRU = "Always: По доступности\nBurst Synchronized: От Режима Бурстов во вкладке 'Общее'", 
+					}, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "TrinketMana",
+                    DBV = 85,
+                    ONLYOFF = false,
+                    L = { 
+					    enUS = "Trinket: Mana(%)",
+                        ruRU = "Trinket: Mana(%)",
+	                },
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 5, 
+                    MAX = 100,                            
+                    DB = "TrinketBurstHealing",
+                    DBV = 75,
+                    ONLYOFF = false,
+                    L = { 
+					    enUS = "Healer: Target Health (%)",
+                        ruRU = "Лекарь: Здоровье Цели (%)", 
+	                },
+                    M = {},
+                },		
+		    },
             { -- [2]
                 {
                     E = "Header",
@@ -2192,57 +2328,61 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [6]
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- HealingEngine -- ",
-                    },
-                },
-            },
             { -- [7]
                 {
-                    E = "Checkbox", 
-                    DB = "HealingEngineAutoHot",
-                    DBV = true,
-                    L = { 
-                        enUS = "HealingEngine: Auto hot", 
-                        ruRU = "HealingEngine: Авто хоты", 
-                    }, 
-                    TT = { 
-                        enUS = "HealingEngine will suggest in higher priority to\nselect member which hasn't applied 'Rejuvenation'", 
-                        ruRU = "HealingEngine will suggest in higher priority to\nselect member which hasn't applied 'Rejuvenation'", 
-                    }, 
-                    M = {},                
-                },
-            }, 
-            { -- [8]
-                {
                     E = "Header",
                     L = {
-                        enUS = " -- Rotation -- ",
-                        ruRU = " -- Ротация -- ",
+                        ANY = " -- Essences -- ",
                     },
                 },
-            }, 
-            { -- [10]
+            },	
+			{
+			RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "LucidDreamManaPercent",                    
+                    DBV = 85,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(299374) .. "\nMana %",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 10,                            
+                    DB = "LifeBindersInvocationUnits",                    
+                    DBV = 5,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(299944) .. "\nunits number",                        
+                    },                     
+                    M = {},
+                },
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
                     MAX = 100,                            
-                    DB = "SwiftmendHP",
-                    DBV = 100,
-                    ONLYON = true,
+                    DB = "LifeBindersInvocationHP",                    
+                    DBV = 85,
+                    ONOFF = false,
                     L = { 
-                        ANY = A.GetSpellInfo(18562) .. " (%)",                        
-                    }, 
-                    TT = { 
-                        enUS = "Offset Health Percent on which start casting 'Swiftmend'", 
-                        ruRU = "Значение Процента Здоровья на котором начинать произносить 'Swiftmend'", 
-                    },
+                        ANY = A.GetSpellInfo(299944) .. "\n(%)",                        
+                    },                     
                     M = {},
-                },            
-            },
+                },
+			},
+            { -- LIFEBLOOM
+                {
+                    E = "Header",
+                    L = {
+                        ANY = A.GetSpellInfo(33763),
+                    },
+                },
+            }, 
             { -- [11] 
                 {
                     E = "Slider",                                                     
@@ -2281,14 +2421,67 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             }, 
-            { -- [12]    
-                RowOptions = { margin = { top = 10 } },
+			
+			
+            { -- TRANQUILITY
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(740) .. " -- ",
+                    },
+                }, 
+            },
+			{
+			    RowOptions = { margin = { top = -10 } },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dungeon -- ",
+                    },
+                },
+			},
+            -- Tranquility
+            { -- [3] 
+              	RowOptions = { margin = { top = 10 } },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "TranquilityRaidUnits",
+                    DBV = 5,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(740) .. "\n(Total Units)",    
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "TranquilityPartyUnits",
+                    DBV = 3,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(740) .. "\n(Total Units)",    
+                    },                     
+                    M = {},
+                },
+			},
+			{
+			    RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
                     MAX = 100,                            
-                    DB = "Tranquility",
-                    DBV = 100,
+                    DB = "TranquilityRaidHP",
+                    DBV = 65,
                     ONLYON = true,
                     L = { 
                         ANY = A.GetSpellInfo(740) .. "\n(Per UnitHealth %)",                        
@@ -2298,14 +2491,22 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 41,                            
-                    DB = "TranquilityUnits",
-                    DBV = 41,
+                    MAX = 100,                            
+                    DB = "TranquilityPartyHP",
+                    DBV = 60,
                     ONLYON = true,
                     L = { 
-                        ANY = A.GetSpellInfo(740) .. "\n(Total Units)",    
+                        ANY = A.GetSpellInfo(740) .. "\n(Per UnitHealth %)",                        
                     },                     
                     M = {},
+                },			    
+            },	
+            { -- FLOURISH
+                {
+                    E = "Header",
+                    L = {
+                        ANY = A.GetSpellInfo(197721),
+                    },
                 },
             }, 
             { -- [13]    
@@ -2314,8 +2515,8 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = 0, 
                     MAX = 100,                            
-                    DB = "Flourish",                    
-                    DBV = 100,
+                    DB = "FlourishHP",                    
+                    DBV = 70,
                     ONLYON = true,
                     L = { 
                         ANY = A.GetSpellInfo(197721) .. "\n(Per UnitHealth %)",                        
@@ -2325,24 +2526,68 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 41,                            
+                    MAX = 10,                            
                     DB = "FlourishUnits",
-                    DBV = 41,
+                    DBV = 4,
                     ONLYON = true,
                     L = { 
                         ANY = A.GetSpellInfo(197721) .. "\n(Total Units)",    
                     },                     
                     M = {},
                 },
-            }, 
+            },
+            { -- EFFLORESCENCE
+                {
+                    E = "Header",
+                    L = {
+                        ANY = A.GetSpellInfo(145205),
+                    },
+                },
+            }, 		
+            { -- [10]
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 5,                            
+                    DB = "EfflorescenceRefresh",
+                    DBV = 2,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(145205) .. "\nrefresh(sec)",                        
+                    }, 
+                    TT = { 
+                        enUS = "Time remaining in seconds before refreshing " .. A.GetSpellInfo(145205), 
+                        ruRU = "Time remaining in seconds before refreshing " .. A.GetSpellInfo(145205), 
+                    },
+                    M = {},
+                },            
+            },			
+            { -- [10]
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "SwiftmendHP",
+                    DBV = 85,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(18562) .. " (%)",                        
+                    }, 
+                    TT = { 
+                        enUS = "Offset Health Percent on which start casting 'Swiftmend'", 
+                        ruRU = "Значение Процента Здоровья на котором начинать произносить 'Swiftmend'", 
+                    },
+                    M = {},
+                },            
+            },
             { -- [14]    
                 RowOptions = { margin = { top = 10 } },
                 {
                     E = "Slider",                                                     
                     MIN = 0, 
                     MAX = 100,                            
-                    DB = "WildGrowth",                    
-                    DBV = 100,
+                    DB = "WildGrowthHP",                    
+                    DBV = 93,
                     ONLYON = true,
                     L = { 
                         ANY = A.GetSpellInfo(48438) .. "\n(Per UnitHealth %)",                        
@@ -2354,68 +2599,14 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 7,                            
                     DB = "WildGrowthUnits",
-                    DBV = 7,
+                    DBV = 3,
                     ONLYON = true,
                     L = { 
                         ANY = A.GetSpellInfo(48438) .. "\n(Total Units)",    
                     },                     
                     M = {},
                 },
-            }, 
-            { -- [15]    
-                RowOptions = { margin = { top = 10 } },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "RacialBurstHealing",                    
-                    DBV = 100,
-                    ONLYON = true,
-                    L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Healing HP %)",                        
-                    },                     
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "RacialBurstDamaging",                    
-                    DBV = 100,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["RACIAL"] .. "\n(Damaging HP %)",                        
-                    },                     
-                    M = {},
-                },
-            }, 
-            { -- [16]    
-                RowOptions = { margin = { top = 10 } },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "TrinketBurstHealing",                    
-                    DBV = 50,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["TRINKET"] .. "\n(Healing HP %)",                        
-                    },                     
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = 0, 
-                    MAX = 100,                            
-                    DB = "TrinketBurstDamaging",                    
-                    DBV = 95,
-                    ONOFF = false,
-                    L = { 
-                        ANY = A.GetLocalization()["TAB"][1]["TRINKET"] .. "\n(Damaging HP %)",                        
-                    },                     
-                    M = {},
-                },
-            }, 
+            },  
             { -- [7]
                 {
                     E = "Header",
