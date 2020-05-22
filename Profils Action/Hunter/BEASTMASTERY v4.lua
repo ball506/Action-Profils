@@ -93,6 +93,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
 	ConcussiveShot                         = Action.Create({ Type = "Spell", ID = 5116 }),
+	Flare                                  = Action.Create({ Type = "Spell", ID = 1543 }),
 	AnimalCompanion                        = Action.Create({ Type = "Spell", ID = 267116 , isTalent = true, Hidden = true     }), -- Avoid error with second pet with no abilities
     -- Pet
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
@@ -1085,7 +1086,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- aspect_of_the_wild
-        if A.AspectoftheWild:IsReady(player) and AspectoftheWildOnCDRapidReload and ((InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) or Unit(unit):IsDummy()) and A.RapidReload:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+        if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and AspectoftheWildOnCDRapidReload and ((InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) or Unit(unit):IsDummy()) and A.RapidReload:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
             return A.AspectoftheWild:Show(icon)
         end
 		
@@ -1163,7 +1164,9 @@ A[3] = function(icon, isMulti)
 		    	or 
 		    	A.OneWiththePack:IsSpellLearned() 
 		    	or 
-		    	Unit(unit):TimeToDie() < 15
+		    	Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 15
+				or
+				Unit(unit):TimeToDie() > 15
 		   	)
 		    then
                 return A.BestialWrath:Show(icon)
@@ -1177,7 +1180,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(player) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1401,7 +1404,9 @@ A[3] = function(icon, isMulti)
 				or
 				Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0 and ((A.BurstIsON(unit) and A.AspectoftheWild:GetCooldown() > 15) or not A.BurstIsON(unit))			
 			    or
-				Unit(unit):TimeToDie() < 15 + GetGCD()
+		    	Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 15 + GetGCD()
+				or
+				Unit(unit):TimeToDie() > 15
 			)
 			then
                 return A.BestialWrath:Show(icon)
@@ -1440,7 +1445,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
 			(
 			    A.BarbedShot:GetSpellCharges() < 1 
 				or 
