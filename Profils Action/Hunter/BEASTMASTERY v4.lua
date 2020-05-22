@@ -97,7 +97,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
     MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
     RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
-    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "BLUE" }), -- Pet dispell/purge
+    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "LIGHT BLUE" }), -- Pet dispell/purge { Type = "SpellSingleColor", Color = "LIGHT BLUE" }
     SonicBlast                             = Action.Create({ Type = "SpellSingleColor", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
     CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
     Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
