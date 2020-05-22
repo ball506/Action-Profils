@@ -92,6 +92,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
     DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
     DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
+	ConcussiveShot                         = Action.Create({ Type = "Spell", ID = 5116 }),
 	AnimalCompanion                        = Action.Create({ Type = "Spell", ID = 267116 , isTalent = true, Hidden = true     }), -- Avoid error with second pet with no abilities
     -- Pet
     CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
