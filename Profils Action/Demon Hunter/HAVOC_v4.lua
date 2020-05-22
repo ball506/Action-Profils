@@ -1234,6 +1234,11 @@ A[3] = function(icon, isMulti)
             if A.ThrowGlaive:IsReady(unit) and CanCast and (A.DemonBlades:IsSpellLearned() or A.ThrowGlaive:GetSpellCharges() > 1) then
                 return A.ThrowGlaive:Show(icon)
             end
+			
+            -- throw_glaive,manual two charges
+            if A.ThrowGlaive:IsReady(unit) and CanCast and A.ThrowGlaive:GetSpellCharges() == 2 then
+                return A.ThrowGlaive:Show(icon)
+            end
             
         end
         
