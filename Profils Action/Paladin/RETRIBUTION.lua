@@ -669,7 +669,7 @@ A[3] = function(icon, isMulti)
    		end
 
         -- Justicars Vengeance
-        if A.JusticarsVengeance:IsReady(unit) and Unit(unit):GetRange() <= 5 then
+        if A.JusticarsVengeance:IsReady(unit) and inCombat and Unit(unit):GetRange() <= 5 then
   		    -- Regular
   		    if Unit(player):HealthPercent() <= JusticarsVengeanceHP and Unit(player):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Player:HolyPower() >= 5 then
    		        return A.JusticarsVengeance:Show(icon)
@@ -681,7 +681,7 @@ A[3] = function(icon, isMulti)
    		end
             
 		-- Word of Glory
-   		if A.WordofGlory:IsReady(player) then
+   		if A.WordofGlory:IsReady(player) and inCombat then
   		    -- Regular
     	    if Unit(player):HealthPercent() <= WordofGloryHP and Unit(player):HasBuffs(A.DivinePurposeBuff.ID, true) == 0 and Player:HolyPower() >= 3 then
    		        return A.WordofGlory:Show(icon)
@@ -693,7 +693,7 @@ A[3] = function(icon, isMulti)
   		end
 			
 	   	-- Non SIMC Custom Trinket1
-	    if A.Trinket1:IsReady(unit) and Trinket1IsAllowed and CanCast and Unit(unit):GetRange() < 6 and    
+	    if A.Trinket1:IsReady(unit) and inCombat and Trinket1IsAllowed and CanCast and Unit(unit):GetRange() < 6 and    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -705,7 +705,7 @@ A[3] = function(icon, isMulti)
 	        
 		
 		-- Non SIMC Custom Trinket2
-	    if A.Trinket2:IsReady(unit) and Trinket2IsAllowed and CanCast and Unit(unit):GetRange() < 6 and	    
+	    if A.Trinket2:IsReady(unit) and inCombat and Trinket2IsAllowed and CanCast and Unit(unit):GetRange() < 6 and	    
 		(
     		TrinketsAoE and GetByRange(TrinketsMinUnits, TrinketsUnitsRange) and Player:AreaTTD(TrinketsUnitsRange) > TrinketsMinTTD
 			or
@@ -716,7 +716,7 @@ A[3] = function(icon, isMulti)
 	    end
  
         -- BURST
-        if A.BurstIsON(unit) and unit ~= "mouseover" then
+        if A.BurstIsON(unit) and inCombat and unit ~= "mouseover" then
 			
 			-- custom potion from UI
 			local PotionSelection = A.GetToggle(2, "PotionSelection")
@@ -865,12 +865,12 @@ A[3] = function(icon, isMulti)
         -- GENERATORS
 		
         -- templars_verdict fallback, in case the user is saving AW/Crusade/ExecutionSentence
-        if A.TemplarsVerdict:IsReadyByPassCastGCD(unit) and Player:HolyPower() >= 5 and AllowDelayedAW then
+        if A.TemplarsVerdict:IsReadyByPassCastGCD(unit) and inCombat and Player:HolyPower() >= 5 and AllowDelayedAW then
             return A.TemplarsVerdict:Show(icon)
         end
 		
         -- call_action_list,name=finishers,if=holy_power>=5|buff.memory_of_lucid_dreams.up|buff.seething_rage.up|talent.inquisition.enabled&buff.inquisition.down&holy_power>=3
-        if Finishers(unit) and 
+        if Finishers(unit) and inCombat and 
 		(
 		    Player:HolyPower() >= 5 
 			or 
@@ -885,7 +885,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
-        if A.WakeofAshes:IsReady(player) and 
+        if A.WakeofAshes:IsReady(player) and inCombat and 
     	(
 			(
 			    Player:HolyPower() <= 0 
@@ -904,27 +904,27 @@ A[3] = function(icon, isMulti)
         end
 			
         -- blade_of_justice,if=holy_power<=2|(holy_power=3&(cooldown.hammer_of_wrath.remains>gcd*2|variable.HoW))
-        if A.BladeofJustice:IsReady(unit) and (Player:HolyPower() <= 2 or (Player:HolyPower() == 3 and (A.HammerofWrath:GetCooldown() > A.GetGCD() * 2 or VarHow))) then
+        if A.BladeofJustice:IsReady(unit) and inCombat and (Player:HolyPower() <= 2 or (Player:HolyPower() == 3 and (A.HammerofWrath:GetCooldown() > A.GetGCD() * 2 or VarHow))) then
             return A.BladeofJustice:Show(icon)
         end
 			
         -- judgment,if=holy_power<=2|(holy_power<=4&(cooldown.blade_of_justice.remains>gcd*2|variable.HoW))
-        if A.Judgment:IsReady(unit) and (Player:HolyPower() <= 2 or (Player:HolyPower() <= 4 and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or VarHow))) then
+        if A.Judgment:IsReady(unit) and inCombat and (Player:HolyPower() <= 2 or (Player:HolyPower() <= 4 and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or VarHow))) then
             return A.Judgment:Show(icon)
         end
 			
         -- hammer_of_wrath,if=holy_power<=4
-        if A.HammerofWrath:IsReady(unit) and (Player:HolyPower() <= 4) then
+        if A.HammerofWrath:IsReady(unit) and inCombat and (Player:HolyPower() <= 4) then
             return A.HammerofWrath:Show(icon)
         end
 			
         -- consecration,if=holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2
-        if A.Consecration:IsReady(unit) and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2) then
+        if A.Consecration:IsReady(unit) and inCombat and (Player:HolyPower() <= 2 or Player:HolyPower() <= 3 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 or Player:HolyPower() == 4 and A.BladeofJustice:GetCooldown() > A.GetGCD() * 2 and A.Judgment:GetCooldown() > A.GetGCD() * 2) then
             return A.Consecration:Show(icon)
         end
 			
         -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up
-        if Finishers(unit) and 
+        if Finishers(unit) and inCombat and 
 		(
 		    A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 
 			or 
@@ -937,7 +937,7 @@ A[3] = function(icon, isMulti)
         end
 			
         -- crusader_strike,if=cooldown.crusader_strike.charges_fractional>=1.75&(holy_power<=2|holy_power<=3&cooldown.blade_of_justice.remains>gcd*2|holy_power=4&cooldown.blade_of_justice.remains>gcd*2&cooldown.judgment.remains>gcd*2&cooldown.consecration.remains>gcd*2)
-        if A.CrusaderStrike:IsReady(unit) and 
+        if A.CrusaderStrike:IsReady(unit) and inCombat and 
 		(
 		    A.CrusaderStrike:GetSpellChargesFrac() >= 1.75 and 
 			(
@@ -953,27 +953,27 @@ A[3] = function(icon, isMulti)
         end
 			
         -- call_action_list,name=finishers
-        if Finishers(unit) then
+        if Finishers(unit) and inCombat then
             return Finishers(unit):Show(icon)
         end
 			
         -- concentrated_flame
-        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth then
+        if A.ConcentratedFlame:AutoHeartOfAzeroth(unit, true) and inCombat and HeartOfAzeroth then
             return A.ConcentratedFlame:Show(icon)
         end
 			
         -- reaping_flames
-        if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) then
+        if A.ReapingFlames:AutoHeartOfAzerothP(unit, true) and inCombat then
             return A.ReapingFlames:Show(icon)
         end
 			
         -- crusader_strike,if=holy_power<=4
-        if A.CrusaderStrike:IsReady(unit) and (Player:HolyPower() <= 4) then
+        if A.CrusaderStrike:IsReady(unit) and (Player:HolyPower() <= 4) and inCombat then
             return A.CrusaderStrike:Show(icon)
         end
 			
         -- arcane_torrent,if=holy_power<=4
-        if A.ArcaneTorrent:IsRacialReady(unit) and Racial and A.BurstIsON(unit) and Player:HolyPower() <= 4 then
+        if A.ArcaneTorrent:IsRacialReady(unit) and inCombat and Racial and A.BurstIsON(unit) and Player:HolyPower() <= 4 then
             return A.ArcaneTorrent:Show(icon)
         end
     end
