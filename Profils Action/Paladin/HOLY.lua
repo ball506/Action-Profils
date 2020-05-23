@@ -112,6 +112,7 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     BlessingofFreedom                      = Create({ Type = "Spell", ID = 1044     }),
     BlessingofFreedomYellow                = Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),    
     HammerofJustice                        = Create({ Type = "Spell", ID = 853     }),
+	HammerofJusticeFake                    = Create({ Type = "Spell", ID = 853, Texture = 291944, Desc = "MANUAL QUEUE HOJ WITH BIND ZANDALARI RACIAL"     }), -- Using Zandalari Racial to remap HoJ
     HammerofJusticeGreen                   = Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
     DivineShield                           = Create({ Type = "Spell", ID = 642     }),
     CleanseToxins                          = Create({ Type = "Spell", ID = 213644   }),
@@ -729,19 +730,17 @@ end
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    
-    
+        
     if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
-        Action.SendNotification("Rebuke interrupting on Target ", A.Rebuke.ID)
+        Action.SendNotification("Rebuke interrupting", A.Rebuke.ID)
         return A.Rebuke
     end 
     
     if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
-        Action.SendNotification("HammerofJustice interrupting...", A.HammerofJustice.ID)
-        return A.HammerofJusticeGreen              
+        Action.SendNotification("Hammer of Justice interrupting", A.HammerofJustice.ID)
+        return A.HammerofJusticeFake            
     end          
         
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -3225,7 +3224,12 @@ local function RotationPassive(icon)
         -- Notification                    
         Action.SendNotification("Emergency " .. A.GetSpellInfo(A.DivineShield.ID), A.DivineShield.ID)
         return A.DivineShield:Show(icon)
-    end    
+    end  
+
+      -- BlessingofFreedom
+    if A.BlessingofFreedom:IsReady(player) and Unit(player):HasDeBuffs("Rooted") > 0 then
+        return A.BlessingofFreedom:Show(icon)
+    end	
     
     -- Passive Divine Protection
     if A.DivineProtection:IsReady(player) and combatTime > 0 and
@@ -3336,7 +3340,7 @@ local function ArenaRotation(icon, unit)
         if unit == "arena1" and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) then 
             -- Reflect Casting BreakAble CC
             if A.HammerofJustice:IsReady() and A.HammerofJustice:IsSpellLearned() and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.HammerofJusticeGreen
+                return A.HammerofJusticeFake
             end 
         end
     end 
