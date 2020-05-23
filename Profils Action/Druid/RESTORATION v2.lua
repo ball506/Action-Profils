@@ -1539,13 +1539,13 @@ A[3] = function(icon, isMulti)
         (
             Player:GetStance()==4 or
             (
-                Player:GetStance()==0 and        
-                (
-                    (
-                        combatTime > 0 and
-                        Unit(target):GetRange() >= 25
-                    )            
-                )
+                Player:GetStance()==0 --and        
+                --(
+                --    (
+                --        combatTime > 0 and
+                --        Unit(target):GetRange() >= 25
+                --    )            
+                --)
             )    
         ) and
         (
