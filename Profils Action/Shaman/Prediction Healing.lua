@@ -1,225 +1,147 @@
-local TMW                           = TMW
-local A                             = Action
-local Unit                          = A.Unit 
-local TeamCache                     = Action.TeamCache
-local EnemyTeam                     = Action.EnemyTeam
-local FriendlyTeam                  = Action.FriendlyTeam
-local HealingEngine                 = Action.HealingEngine
-local LoC                           = Action.LossOfControl
-local Player                        = Action.Player 
-local MultiUnits                    = Action.MultiUnits
-local UnitCooldown                  = Action.UnitCooldown
-local RESTO                         = A[ACTION_CONST_SHAMAN_RESTORATION]
+-------------------------------
+-- Resto Shaman PredictHeal --
+-------------------------------
+local TMW 									    = TMW
+local CNDT									    = TMW.CNDT
+local Env 								     	= CNDT.Env
+local A     									= Action
+local Listener									= Action.Listener
+local Create									= Action.Create
+local GetToggle									= Action.GetToggle
+local SetToggle									= Action.SetToggle
+local GetGCD									= Action.GetGCD
+local GetCurrentGCD								= Action.GetCurrentGCD
+local GetPing									= Action.GetPing
+local ShouldStop								= Action.ShouldStop
+local BurstIsON									= Action.BurstIsON
+local AuraIsValid								= Action.AuraIsValid
+local InterruptIsValid							= Action.InterruptIsValid
+local FrameHasSpell								= Action.FrameHasSpell
+local IsSpellInRange                            = A.IsSpellInRange
+local Azerite									= LibStub("AzeriteTraits")
+local Utils										= Action.Utils
+local TeamCache									= Action.TeamCache
+local EnemyTeam									= Action.EnemyTeam
+local FriendlyTeam								= Action.FriendlyTeam
+local LoC										= Action.LossOfControl
+local Player									= Action.Player 
+local MultiUnits								= Action.MultiUnits
+local UnitCooldown								= Action.UnitCooldown
+local Unit										= Action.Unit 
+local IsUnitEnemy								= Action.IsUnitEnemy
+local IsUnitFriendly							= Action.IsUnitFriendly
+local HealingEngine                             = Action.HealingEngine
+local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
+local _G, setmetatable							= _G, setmetatable
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local pairs                                     = pairs
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+local wipe                                      = wipe 
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert 
+local _G, setmetatable                          = _G, setmetatable
+local select, unpack, table, pairs              = select, unpack, table, pairs 
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
 
-function A:PredictHeal(NAME, UNIT, VARIATION)   
-    -- Exception penalty for low level units
+function A:PredictHeal(SPELLID, UNIT, VARIATION)    
+    -- Exception penalty for low level units / friendly boss
     local UnitLvL = Unit(UNIT):GetLevel()
     if UnitLvL > 0 and UnitLvL < Unit("player"):GetLevel() - 10 then
         return true, 0
-    end          
+    end     
     
     -- Header
-    local variation = (VARIATION and (VARIATION / 100)) or 1    
+    local variation = (VARIATION and (VARIATION / 100)) or 1        
+    local total, mastery = 0, 1
+	local deephealing = 0
+	local UnitHP = Unit(UNIT):HealthPercent() / 100 or 0
+    local DMG, HPS = Unit(UNIT):GetDMG(), Unit(UNIT):GetHEAL()      
+    local DifficultHP = Unit(UNIT):HealthMax() - Unit(UNIT):Health() 
     
-    local total = 0
-    local DMG = Unit(UNIT):GetDMG()
-    local HPS = Unit(UNIT):GetHEAL()      
-    local DifficultHP = Unit(UNIT):HealthDeficit() 
-    
-    -- Frenzied Regeneration
-    if NAME == "Frenzied Regeneration" then
-        local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-        local multifier = 1
-        if Unit("player"):HasSpec(ACTION_CONST_SHAMAN_RESTORATION) and Unit(UNIT):HasBuffs(213680, true) > 0 then
-            multifier = 1.2
-        end
-        total = (Unit(UNIT):HealthMax() * 0.24) * multifier + (HPS * 3) + pre_heal - (DMG * 3)
+    -- Shaman Mastery Calculate Deep Healing
+    if Unit("player"):HasSpec(264) then
+        local bonus = GetMasteryEffect()        
+		mastery = bonus / 100
+		deephealing = (1 + mastery * (1 - UnitHP))
     end
     
-	-- Swiftmend
-    if NAME == "Swiftmend" then
-        total = A.GetSpellDescription(18562)[1] * variation
+    -- Healing Surge
+    if SPELLID == "HealingSurge" then        
+        local pre_heal = UnitGetIncomingHeals(UNIT) or 0
+        local cast = Unit("player"):CastTime(8004) + A.GetCurrentGCD()
+        local HealingSurge = A.GetSpellDescription(8004)[1] * deephealing * variation
+        total = HealingSurge + pre_heal + (HPS * cast) -- - (DMG*cast)           
+    end 
+ 
+    -- Healing Wave
+    if SPELLID == "HealingWave" then        
+        local pre_heal = UnitGetIncomingHeals(UNIT) or 0
+        local cast = Unit("player"):CastTime(77472) + A.GetCurrentGCD()
+        local HealingSurge = A.GetSpellDescription(77472)[1] * deephealing * variation
+        total = HealingSurge + pre_heal + (HPS * cast) -- - (DMG*cast)           
     end
-    
-	-- Rejuvenation
-    if NAME == "Rejuvenation" then       
-        if Unit("player"):CombatTime() == 0 then
-            total = 0
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local hot = 1
-            if Unit("player"):HasSpec(ACTION_CONST_SHAMAN_RESTORATION) and -- Restor
-            -- Talent Soul of Forest
-            Unit(UNIT):HasBuffs(114108, true) > 0 then               
-                hot = 2
-            end
-            total = A.GetSpellDescription(774)[1] * variation * hot + (HPS * 15) + pre_heal -- - (DMG*15)
-        end
-    end    
-    
-    if NAME == "Riptide" then
-	    --local Regrowth = 8936
-        if Unit("player"):CombatTime() == 0 then
-            total = 0
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local Riptide = A.GetSpellDescription(61295)
+ 
+    -- Riptide 
+    if SPELLID == "Riptide" then    
+	    local pre_heal = UnitGetIncomingHeals(UNIT) or 0
+        total = A.GetSpellDescription(61295)[2] * deephealing * variation
+		local Riptide = A.GetSpellDescription(61295)
+            
+        total = (Riptide[1] * variation * deephealing) + (Riptide[2] * variation * 1.7) + pre_heal
+    end 
+	
+    -- UnleashLife
+    if SPELLID == "UnleashLife" then    
+        total = A.GetSpellDescription(73685)[1] * deephealing * variation
+    end 
 
+    -- HealingStreamTotem
+    if NAME == "HealingStreamTotem" then
+        if Unit("player"):CombatTime() == 0 then
+            total = 0
+        else
+            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
+            local HealingStreamTotem = A.GetSpellDescription(5394)
             
-            total = (Riptide[1] * variation) + (Riptide[2] * variation) + pre_heal -- + (HPS*12) - (DMG*12)
+            total = (HealingStreamTotem[1] * variation * deephealing) + (HealingStreamTotem[2] * variation * 1.7) + pre_heal -- + (HPS*12) - (DMG*12)
         end
-    end
-    
-    if NAME == "Lunar Beam" then
+    end    
+	
+	-- HealingTideTotem
+    if NAME == "HealingTideTotem" then
         if Unit("player"):CombatTime() == 0 then
             total = 0
         else
             local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            total = A.GetSpellDescription(204066)[1] * variation + (HPS * 8) + pre_heal - (DMG * 8)
-        end
-    end
-    
-    if NAME == "Wild Growth" then
-	    --local WildGrowth = 48438
-        if Unit("player"):CombatTime() == 0 then
-            total = 0
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local WildGrowth = A.GetSpellDescription(48438)
-            local hot = 1        
-            if Unit("player"):HasSpec(ACTION_CONST_SHAMAN_RESTORATION) and -- Restor
-            -- Talent Soul of Forest
-			Unit(UNIT):HasBuffs(114108, true) > 0 then
-                hot = 1.75
-            end
+            local HealingTideTotem = A.GetSpellDescription(108280)
             
-            total = WildGrowth[1] * variation * hot + pre_heal + (HPS * 7) -- - (DMG*7)
+            total = (HealingTideTotem[1] * variation * deephealing) + (HealingTideTotem[2] * variation * 1.7) + pre_heal -- + (HPS*12) - (DMG*12)
         end
-    end
-    
-    if NAME == "Lifebloom" then 
-        if Unit("player"):CombatTime() == 0 then
-            total = 0
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            total = A.GetSpellDescription(33763)[1] * variation + pre_heal + (HPS * 15) -- - (DMG*15)
-        end
-    end
-    
-    if NAME == "Cenarion Ward" then 
+    end 
+	
+    -- EarthShield	
+    if SPELLID == "EarthShield" then  
         if (Unit("player"):CombatTime() == 0 or Unit(UNIT):GetRealTimeDMG() == 0) and
-        select(2, IsInInstance()) == "arena" then -- exception, for arena always pre buff
+        A.Zone ~= "arena" then -- exception, for arena always pre buff
             total = 88888888888888
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            if Unit("player"):CombatTime() == 0 then
-                total = 0
-            else
-                total = A.GetSpellDescription(102351)[1] * variation + (HPS * 8) + pre_heal -- - (DMG*8)
-            end
-            
-        end
-    end
-    
-    if NAME == "HealingTideTotem" then 
-        if Unit("player"):CombatTime() == 0 then
-            total = 88888888888888 -- don't use out of combat
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local raid_hot = 1
-            if IsInRaid() then
-                raid_hot = 2
-            end
-            total = A.GetSpellDescription(108280)[1] + (A.GetSpellDescription(108280)[2] * 5 * raid_hot) + pre_heal + (HPS * 15.1) - (DMG * 15.1)
-        end
-    end  
-	
-    if NAME == "HealingStreamTotem" then 
-        if Unit("player"):CombatTime() == 0 then
-            total = 88888888888888 -- don't use out of combat
-        else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local raid_hot = 1
-            if IsInRaid() then
-                raid_hot = 2
-            end
-            total = A.GetSpellDescription(5394)[1] + (A.GetSpellDescription(5394)[2] * 5 * raid_hot) + pre_heal + (HPS * 15.1) - (DMG * 15.1)
-        end
-    end    
-	
-    if NAME == "HealingRain" then 
-        local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-        total = A.GetSpellDescription(73920)[1] / 1.8 * 30 + flowers + pre_heal -- + (HPS*30) - (DMG*30)
-    end    
-    
-    if NAME == "Overgrowth" then 
-        if Unit("player"):CombatTime() == 0 then
-            total = 88888888888888 -- don't use out of combat
-        else
-            -- REFRESH ABLE: Wild growth and Lifebloom
-            if Unit(UNIT):HasDeBuffs(48438) < 3 and Unit(UNIT):HasDeBuffs(48438) < 3 then 
-                local SoulOfForest = Unit(UNIT):HasBuffs(114108, true) > 0
-                local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-                -- LifeBloom 15sec
-                local LB = A.GetSpellDescription(33763)[1]
-                total = A.GetSpellDescription(33763)[1]
-                -- Wild Growth 7 sec
-                local WG = A.GetSpellDescription(48438)[1]                  
-                if SoulOfForest then                    
-                    WG = WG * 1.75
-                end
-                -- Regrowth (hot) 12 sec
-                local RG = A.GetSpellDescription(8936)[2]                
-                if SoulOfForest then
-                    RG = RG * 2
-                end
-                -- Rejuvenation 15 sec
-                local RN = A.GetSpellDescription(774)[1]
-                if SoulOfForest then
-                    RN = RN * 2
-                end
-                -- Average heal dur: (15 + 15 + 12 + 7) / 4 = 12.25
-                total = pre_heal + RG + WG + LB + RN + (HPS * 12.25) - (DMG * 12.25)
-            else 
-                total = 88888888888888 -- skip
-            end
-        end
-    end
-    
-    -- 8.1 PvP
-    if NAME == "Nourish" then
-        if Unit("player"):CombatTime() == 0 then
+        elseif Unit("player"):CombatTime() == 0 and A.Zone == "arena" then
             total = 0
         else
-            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
-            local Nourish = A.GetSpellDescription(289022) * variation
-            local cast = Unit(unitID):CastTime(289022) + A.GetCurrentGCD() + 0.2
-            local crit = 1
-            if Unit(UNIT):TimeToDie() <= cast * 2.6 then
-                total = 88888888888888 -- don't heal if we can lose unit
-            else
-                if 
-                -- Rejuvenation
-                Unit(UNIT):HasBuffs(774, true) >= cast and 
-                -- Germination
-                (
-                    not RESTO.Germination:IsSpellLearned() or 
-                    Unit(UNIT):HasBuffs(155777, true) >= cast
-                ) and
-                -- Lifebloom
-				Unit(UNIT):HasBuffs(33763, true) > cast and
-                -- Wild Growth
-				Unit(UNIT):HasBuffs(48438, true) > cast and
-                -- Regrowth
-				Unit(UNIT):HasBuffs(8936, true) > cast
-                then
-                    crit = 2
-                end
-                
-                total = (Nourish[1] * crit) + (HPS * cast) + pre_heal - (DMG * cast)
-            end
-        end
-    end    
+            local pre_heal = Unit(UNIT):GetIncomingHeals() or 0        
+            local EarthShield = A.GetSpellDescription(974)[1] * deephealing * variation
+            total = EarthShield + pre_heal + (HPS*5) -- - (DMG*5)         
+        end 
+    end
+        
+    -- Racials
+    if SPELLID == "GiftofNaaru" then
+        local pre_heal = Unit(UNIT):GetIncomingHeals() or 0
+        total = UnitHealthMax("player") * 0.2 * variation + (HPS*5) + pre_heal - (DMG*5)
+    end 
     
     return DifficultHP >= total, total
 end
