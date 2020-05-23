@@ -1575,7 +1575,21 @@ A[3] = function(icon, isMulti)
             end
             
         end
-        
+ 
+        -- Sap out of combat
+        if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+            if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
+                -- Notification                    
+                Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
+                return A.Sap:Show(icon)
+            else 
+                if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
+                    -- Notification                    
+                    Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
+                    return A.Sap:Show(icon)
+                end
+            end
+        end     
         
         -- call precombat
         if not inCombat and Precombat(unit) and Unit(unit):IsExists() and unit ~= "mouseover" then 
@@ -1588,7 +1602,13 @@ A[3] = function(icon, isMulti)
             if A.Stealth:IsReady(unit) then
                 return A.Stealth:Show(icon)
             end
-            
+  
+            -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt and CanCast then 
+                return Interrupt:Show(icon)
+            end    
+  
             -- variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*7%(2*spell_haste)
             if (true) then
                 VarEnergyRegenCombined = Player:EnergyRegen() + PoisonedBleeds() * 7 / (2 * Player:SpellHaste())
