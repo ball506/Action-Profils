@@ -326,6 +326,18 @@ local function UsePriorityRotation()
     return false
 end
 
+-- cp_max_spend
+local function CPMaxSpend()
+    -- Should work for all 3 specs since they have same Deeper Stratagem Spell ID.
+    return A.DeeperStratagem:IsSpellLearned() and 6 or 5;
+end
+
+-- "cp_spend"
+local function CPSpend()
+    return mathmin(Player:ComboPoints(), CPMaxSpend());
+end
+
+
 -- TO USE AFTER NEXT ACTION UPDATE
 local function InterruptsNEW(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Kick:IsReady(unit)) -- A.Kick non GCD spell
