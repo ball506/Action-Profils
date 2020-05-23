@@ -766,13 +766,18 @@ A[3] = function(icon, isMulti)
 			(
 			    Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) > 0 and 
 				(
-				    Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and (Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 
-					or 
-					A.Obliteration:IsSpellLearned() 
-					or 
-					A.Icecap:IsSpellLearned() and A.IcyCitadel:GetAzeriteRank() == 0) 
+				    Unit(player):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and 
+					(
+					    Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 
+					    or 
+					    A.Obliteration:IsSpellLearned() 
+					    or 
+					    A.Icecap:IsSpellLearned() and A.IcyCitadel:GetAzeriteRank() == 0
+					) 
 					or 
 					Unit(player):HasBuffs(A.IcyCitadelBuff.ID, true) > 0 and A.Icecap:IsSpellLearned()
+					or
+					Unit(unit):IsBoss()
 				)
 			)
 			then
