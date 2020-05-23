@@ -72,6 +72,7 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     Stealth2                               = Action.Create({ Type = "Spell", ID = 115191     }), -- w/ Subterfuge Talent
     SymbolsofDeath                         = Action.Create({ Type = "Spell", ID = 212283     }),
     Vanish                                 = Action.Create({ Type = "Spell", ID = 1856     }),
+	Sap                                    = Action.Create({ Type = "Spell", ID = 6770       }),
     -- Talents
     Alacrity                               = Action.Create({ Type = "Spell", ID = 193539     }),
     DarkShadow                             = Action.Create({ Type = "Spell", ID = 245687     }),
@@ -374,13 +375,7 @@ local function Interrupts(unit)
         -- Notification                    
         Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
         return A.Kick
-    end 
-    
-    if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
-        -- Notification                    
-        Action.SendNotification("Gouge on : " .. UnitName(unit), A.Gouge.ID)
-        return A.Gouge              
-    end          
+    end      
     
     if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
         -- Notification                    
@@ -946,7 +941,22 @@ A[3] = function(icon, isMulti)
             end
 			
         end
-        
+  
+        -- Sap out of combat
+        if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then
+            if Unit(unit):HasDeBuffs(A.Sap.ID, true) == 0 and Unit(unit):IsControlAble("incapacitate", 75) then 
+                -- Notification                    
+                Action.SendNotification("Out of combat Sap on : " .. UnitName(unit), A.Sap.ID)
+                return A.Sap:Show(icon)
+            else 
+                if Unit(unit):HasDeBuffs(A.Sap.ID, true) > 0 and Unit(unit):HasDeBuffs(A.Sap.ID, true) <= 1 and Unit(unit):IsControlAble("incapacitate", 25) then
+                    -- Notification                    
+                    Action.SendNotification("Refreshing Sap on : " .. UnitName(unit), A.Sap.ID)
+                    return A.Sap:Show(icon)
+                end
+            end
+        end    
+  
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
 		
@@ -954,6 +964,12 @@ A[3] = function(icon, isMulti)
             if A.Stealth:IsReady(unit) and not Player:IsStealthed() then
                 return A.Stealth:Show(icon)
             end
+
+            -- Interrupt
+            local Interrupt = Interrupts(unit)
+            if Interrupt and CanCast then 
+                return Interrupt:Show(icon)
+            end    
 			
             -- call_action_list,name=cds
             if Cds(unit) and A.BurstIsON(unit) then
