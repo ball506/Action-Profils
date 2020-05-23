@@ -596,6 +596,34 @@ local function PredictDS()
     return Unit(player):HealthMax() - Unit(player):HealthPercent() >= ReceivedLast5sec or ReceivedLast5sec >= Unit(player):HealthMax() * 0.25
 end 
 
+local function TargetWithAgroExsist()
+
+        local agroLevels = {}
+        agroLevels[0] = false
+        agroLevels[1] = false
+        agroLevels[2] = false
+        agroLevels[3] = false
+
+        local DarkCommand_Nameplates = MultiUnits:GetActiveUnitPlates()
+        if DarkCommand_Nameplates then
+            for DarkCommand_UnitID in pairs(DarkCommand_Nameplates) do
+                if Unit(DarkCommand_UnitID):CombatTime() > 0
+                        and Unit(DarkCommand_UnitID):GetRange() <= 30
+                        and not Unit(DarkCommand_UnitID):IsTotem()
+                        and not Unit(DarkCommand_UnitID):IsPlayer()
+                        and not Unit(DarkCommand_UnitID):IsExplosives()
+                        and not Unit(DarkCommand_UnitID):IsDummy()
+                then
+                    if Unit(player):ThreatSituation(DarkCommand_UnitID) ~= nil then
+                        agroLevels[Unit(player):ThreatSituation(DarkCommand_UnitID)] = true
+                    end
+                end
+            end
+        end
+
+        return agroLevels
+end
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -853,6 +881,27 @@ A[3] = function(icon, isMulti)
 
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
+            
+			-- Auto taunt logic by KhalDrogo1988  (THANKS MATE)
+			if A.GetToggle(2, "AutoTaunt") and combatTime > 0 then
+                if not Unit(unit):IsBoss() and
+                    A.DarkCommand:IsReady(unit) or
+                    A.DeathGrip:IsReady(unit) or
+                    A.Asphyxiate:IsReady(unit) or
+                    A.DeathCaress:IsReady(unit)
+                then
+                    local agroLevels = TargetWithAgroExsist()
+                    if agroLevels[0] and Unit(player):ThreatSituation(unit) ~= 0 then
+                        return A:Show(icon, ACTION_CONST_AUTOTARGET)
+                    end
+                    if agroLevels[1] and Unit(player):ThreatSituation(unit) > 1 then
+                        return A:Show(icon, ACTION_CONST_AUTOTARGET)
+                    end
+                    if agroLevels[2] and Unit(player):ThreatSituation(unit) > 2 then
+                        return A:Show(icon, ACTION_CONST_AUTOTARGET)
+                    end
+                end
+ 			end
 			
 			-- Interrupt
             local Interrupt = Interrupts(unit)
@@ -865,6 +914,31 @@ A[3] = function(icon, isMulti)
             if SelfDefensive then 
                 return SelfDefensive:Show(icon)
             end 
+
+            -- Custom logic by KhalDrogo1988
+            if Unit(unit):GetRange() <= 30
+            and Unit(player):ThreatSituation(unit) ~= 3
+            and not Unit(unit):IsExplosives()
+            and not Unit(unit):IsDummy()
+            and not Unit(unit):IsPlayer()
+            and not Unit(unit):IsTotem() then
+                --  Try taunt enemy if no agro
+                if A.DarkCommand:IsReady(unit) then
+                    return A.DarkCommand:Show(icon)
+                end
+                -- Try grip emeny if no agro
+                if A.DeathGrip:IsReady(unit) then
+                    return A.DeathGrip:Show(icon)
+                end
+                -- Try CC Enemy if no agro
+                if A.Asphyxiate:IsReady(unit) then
+                    return A.Asphyxiate:Show(icon)
+                end
+
+                if A.DeathCaress:IsReady(unit) and Unit(unit):GetRange() > 5 then
+                    return A.DeathCaress:Show(icon)
+                end
+            end
 			
 			-- VigilantProtector
             if A.VigilantProtector:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
