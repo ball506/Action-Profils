@@ -112,7 +112,6 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
     BlessingofFreedom                      = Create({ Type = "Spell", ID = 1044     }),
     BlessingofFreedomYellow                = Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),    
     HammerofJustice                        = Create({ Type = "Spell", ID = 853     }),
-	HammerofJusticeFake                    = Create({ Type = "Spell", ID = 853, Texture = 291944, Desc = "MANUAL QUEUE HOJ WITH BIND ZANDALARI RACIAL"     }), -- Using Zandalari Racial to remap HoJ
     HammerofJusticeGreen                   = Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
     DivineShield                           = Create({ Type = "Spell", ID = 642     }),
     CleanseToxins                          = Create({ Type = "Spell", ID = 213644   }),
@@ -740,7 +739,7 @@ local function Interrupts(unit)
     if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
         -- Notification                    
         Action.SendNotification("Hammer of Justice interrupting", A.HammerofJustice.ID)
-        return A.HammerofJusticeFake            
+        return A.HammerofJustice            
     end          
         
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -3340,7 +3339,7 @@ local function ArenaRotation(icon, unit)
         if unit == "arena1" and (Unit(player):GetDMG() == 0 or not Unit(player):IsFocused("DAMAGER")) then 
             -- Reflect Casting BreakAble CC
             if A.HammerofJustice:IsReady() and A.HammerofJustice:IsSpellLearned() and EnemyTeam():IsCastingBreakAble(0.25) then 
-                return A.HammerofJusticeFake
+                return A.HammerofJustice
             end 
         end
     end 
