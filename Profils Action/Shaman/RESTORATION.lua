@@ -100,7 +100,7 @@ Action[ACTION_CONST_SHAMAN_RESTORATION] = {
 	EarthenWallTotem                       = Action.Create({ Type = "Spell", ID = 198838   }), -- Shield phys
 	EarthbindTotem                         = Action.Create({ Type = "Spell", ID = 2484   }), -- Slow
 	CapacitorTotem                         = Action.Create({ Type = "Spell", ID = 192058   }), -- Stun
-	TremorTotem                            = Action.Create({ Type = "Spell", ID = 8143   }), -- Antifear
+	TremorTotem                            = Action.Create({ Type = "Spell", ID = 8143   }), -- Antifear, charm, sleep
 	SkyfuryTotem                           = Action.Create({ Type = "Spell", ID = 204330   }), -- Burst
 	-- Talents
 	HighTide                               = Action.Create({ Type = "Spell", ID = 157154, Hidden = true     }),
@@ -112,6 +112,7 @@ Action[ACTION_CONST_SHAMAN_RESTORATION] = {
 	SpiritWolf                             = Action.Create({ Type = "Spell", ID = 260878, Hidden = true     }),
 	EarthShield                            = Action.Create({ Type = "Spell", ID = 974, Hidden = true     }),
 	Wellspring                             = Action.Create({ Type = "Spell", ID = 197995, Hidden = true     }),
+	Downpour                               = Action.Create({ Type = "Spell", ID = 207778, Hidden = true     }),
 	-- Defensives
 	AstralShift                            = Action.Create({ Type = "Spell", ID = 108271   }),
 	-- Utilities
@@ -126,11 +127,19 @@ Action[ACTION_CONST_SHAMAN_RESTORATION] = {
     HexGreen                               = Action.Create({ Type = "SpellSingleColor", ID = 51514, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
 	Purge                                  = Action.Create({ Type = "Spell", ID = 370   }),
 	PurifySpirit                           = Action.Create({ Type = "Spell", ID = 77130   }),
-	WaterWalking                           = Action.Create({ Type = "Spell", ID = 546   }),
-	AncestralGift                          = Action.Create({ Type = "Spell", ID = 290254, Hidden = true}), -- PvP Talent - Silence and interrupt immune
+	WaterWalking                           = Action.Create({ Type = "Spell", ID = 546   }),	
 	WindShear                              = Action.Create({ Type = "Spell", ID = 57994   }),
     WindShearAntiFake                      = Action.Create({ Type = "Spell", ID = 57994, Desc = "[2] Kick", QueueForbidden = true    }),
 	EarthElemental                         = Action.Create({ Type = "Spell", ID = 198103   }),
+	-- PvP
+	SpiritLink                             = Action.Create({ Type = "Spell", ID = 204293   }),
+	Tidebringer                            = Action.Create({ Type = "Spell", ID = 236501   }),
+	SpectralRecovery                       = Action.Create({ Type = "Spell", ID = 204261   }),
+	CleansingWaters                        = Action.Create({ Type = "Spell", ID = 290250   }),
+	AncestralGift                          = Action.Create({ Type = "Spell", ID = 290254, Hidden = true}), -- PvP Talent - Silence and interrupt immune
+	SwellingWaves                          = Action.Create({ Type = "Spell", ID = 204264   }),
+	VoodooMastery                          = Action.Create({ Type = "Spell", ID = 204268   }),
+	Electrocute                            = Action.Create({ Type = "Spell", ID = 206642   }),	
     -- Potions
     PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
     BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
@@ -693,8 +702,8 @@ function FriendlyTeam:GetLastTimeDMGX(x, range)
     local member
     
     if TeamCacheFriendly.Size <= 1 then 
-        if Unit("player"):Role(ROLE) then  
-            lastDMG = Unit("player"):GetLastTimeDMGX(x)
+        if Unit(player):Role(ROLE) then  
+            lastDMG = Unit(player):GetLastTimeDMGX(x)
             return lastDMG, 1     
         end 
         
@@ -718,7 +727,7 @@ function FriendlyTeam:GetLastTimeDMGX(x, range)
         end  
         
         if TeamCacheFriendly.Type ~= "raid" then
-            lastDMG = lastDMG + Unit("player"):GetLastTimeDMGX(x)  
+            lastDMG = lastDMG + Unit(player):GetLastTimeDMGX(x)  
             members = members + 1
         end 
     end      
@@ -730,6 +739,489 @@ function FriendlyTeam:GetLastTimeDMGX(x, range)
     end 
 end
 
+local function noDamageCheck(unit)
+    if isChecked("Dont DPS spotter") and GetObjectID(unit) == 135263 then
+        return true
+    end
+    if isCC(unit) then
+        return true
+    end
+    if isCasting(302415, unit) then
+        -- emmisary teleporting home
+        return true
+    end
+
+    if hasBuff(263246, unit) then
+        -- shields on first boss in temple
+        return true
+    end
+    if hasBuff(260189, unit) then
+        -- shields on last boss in MOTHERLODE
+        return true
+    end
+    if hasBuff(261264, unit) or hasBuff(261265, unit) or hasBuff(261266, unit) then
+        -- shields on witches in wm
+        return true
+    end
+
+    if GetObjectID(thisUnit) == 155432 then
+        --emmisaries to punt, dealt with seperately
+        return true
+    end
+    return false --catchall
+end
+noDamageCheck = Action.MakeFunctionCachedDynamic(noDamageCheck)
+
+local StunsBlackList = {
+    -- Atal'Dazar
+    [87318] = "Dazar'ai Colossus",
+    [122984] = "Dazar'ai Colossus",
+    [128455] = "T'lonja",
+    [129553] = "Dinomancer Kish'o",
+    [129552] = "Monzumi",
+    -- Freehold
+    [129602] = "Irontide Enforcer",
+    [130400] = "Irontide Crusher",
+    -- King's Rest
+    [133935] = "Animated Guardian",
+    [134174] = "Shadow-Borne Witch Doctor",
+    [134158] = "Shadow-Borne Champion",
+    [137474] = "King Timalji",
+    [137478] = "Queen Wasi",
+    [137486] = "Queen Patlaa",
+    [137487] = "Skeletal Hunting Raptor",
+    [134251] = "Seneschal M'bara",
+    [134331] = "King Rahu'ai",
+    [137484] = "King A'akul",
+    [134739] = "Purification Construct",
+    [137969] = "Interment Construct",
+    [135231] = "Spectral Brute",
+    [138489] = "Shadow of Zul",
+    -- Shrine of the Storm
+    [134144] = "Living Current",
+    [136214] = "Windspeaker Heldis",
+    [134150] = "Runecarver Sorn",
+    [136249] = "Guardian Elemental",
+    [134417] = "Deepsea Ritualist",
+    [136353] = "Colossal Tentacle",
+    [136295] = "Sunken Denizen",
+    [136297] = "Forgotten Denizen",
+    -- Siege of Boralus
+    [129369] = "Irontide Raider",
+    [129373] = "Dockhound Packmaster",
+    [128969] = "Ashvane Commander",
+    [138255] = "Ashvane Spotter",
+    [138465] = "Ashvane Cannoneer",
+    [135245] = "Bilge Rat Demolisher",
+    -- Temple of Sethraliss
+    [134991] = "Sandfury Stonefist",
+    [139422] = "Scaled Krolusk Tamer",
+    [136076] = "Agitated Nimbus",
+    [134691] = "Static-charged Dervish",
+    [139110] = "Spark Channeler",
+    [136250] = "Hoodoo Hexer",
+    [139946] = "Heart Guardian",
+    -- MOTHERLODE!!
+    [130485] = "Mechanized Peacekeeper",
+    [136139] = "Mechanized Peacekeeper",
+    [136643] = "Azerite Extractor",
+    [134012] = "Taskmaster Askari",
+    [133430] = "Venture Co. Mastermind",
+    [133463] = "Venture Co. War Machine",
+    [133436] = "Venture Co. Skyscorcher",
+    [133482] = "Crawler Mine",
+    -- Underrot
+    [131436] = "Chosen Blood Matron",
+    [133912] = "Bloodsworn Defiler",
+    [138281] = "Faceless Corruptor",
+    -- Tol Dagor
+    [130025] = "Irontide Thug",
+    -- Waycrest Manor
+    [131677] = "Heartsbane Runeweaver",
+    [135329] = "Matron Bryndle",
+    [131812] = "Heartsbane Soulcharmer",
+    [131670] = "Heartsbane Vinetwister",
+    [135365] = "Matron Alma",
+}
+
+local precast_spell_list = {
+    --spell_id	, precast_time	,	spell_name
+    { 214652, 5, 'Acidic Fragments' },
+    { 205862, 5, 'Slam' },
+    { 259832, 1.5, 'Massive Glaive - Stormbound Conqueror (Warport Wastari, Zuldazar, for testing purpose only)' },
+    { 218774, 5, 'Summon Plasma Spheres' },
+    { 206949, 5, 'Frigid Nova' },
+    { 206517, 5, 'Fel Nova' },
+    { 207720, 5, 'Witness the Void' },
+    { 206219, 5, 'Liquid Hellfire' },
+    { 211439, 5, 'Will of the Demon Within' },
+    { 209270, 5, 'Eye of Guldan' },
+    { 227071, 5, 'Flame Crash' },
+    { 233279, 5, 'Shattering Star' },
+    { 233441, 5, 'Bone Saw' },
+    { 235230, 5, 'Fel Squall' },
+    { 231854, 5, 'Unchecked Rage' },
+    { 232174, 5, 'Frosty Discharge' },
+    { 230139, 5, 'Hydra Shot' },
+    { 233264, 5, 'Embrace of the Eclipse' },
+    { 236542, 5, 'Sundering Doom' },
+    { 236544, 5, 'Doomed Sundering' },
+    { 235059, 5, 'Rupturing Singularity' },
+    { 288693, 3, 'Tormented Soul - Grave Bolt (Reaping affix)' },
+    { 262347, 5, 'Static Pulse' },
+    { 302420, 5, 'Queen\'s Decree: Hide' },
+    { 260333, 7, 'Tantrum - Underrot 2nd boss' },
+    { 255577, 5, 'Transfusion' }, -- https://www.wowhead.com/spell=255577/transfusion
+    { 259732, 5, 'Festering Harvest' }, --https://www.wowhead.com/spell=259732/festering-harvest
+    { 285388, 5, 'Vent Jets' }, --https://www.wowhead.com/spell=285388/vent-jets
+    { 291626, 3, 'Cutting Beam' }, --https://www.wowhead.com/spell=291626/cutting-beam
+    { 300207, 3, 'shock-coil' }, -- https://www.wowhead.com/spell=300207/shock-coil
+    { 297261, 5, 'rumble' }, -- https://www.wowhead.com/spell=297261/rumble
+    { 262347, 5, 'pulse' }, --https://www.wowhead.com/spell=262347/static-pulse
+}
+--end of dbm list
+
+local DebuffSniperList = {
+
+    --junkyard
+    { spellID = 298669, stacks = 0, secs = 1 }, -- Taze
+    -- Uldir
+    { spellID = 262313, stacks = 0, secs = 5 }, -- Malodorous Miasma
+    { spellID = 262314, stacks = 0, secs = 3 }, -- Putrid Paroxysm
+    { spellID = 264382, stacks = 0, secs = 1 }, -- Eye Beam
+    { spellID = 264210, stacks = 0, secs = 5 }, -- Jagged Mandible
+    { spellID = 265360, stacks = 0, secs = 5 }, -- Roiling Deceit
+    { spellID = 265129, stacks = 0, secs = 5 }, -- Omega Vector
+    { spellID = 266948, stacks = 0, secs = 5 }, -- Plague Bomb
+    { spellID = 274358, stacks = 0, secs = 5 }, -- Rupturing Blood
+    { spellID = 274019, stacks = 0, secs = 1 }, -- Mind Flay
+    { spellID = 272018, stacks = 0, secs = 1 }, -- Absorbed in Darkness
+    { spellID = 273359, stacks = 0, secs = 5 }, -- Shadow Barrage
+    -- Freehold
+    { spellID = 257437, stacks = 0, secs = 5 }, -- Poisoning Strike
+    { spellID = 267523, stacks = 0, secs = 5 }, -- Cutting Surge
+    { spellID = 256363, stacks = 0, secs = 5 }, -- Ripper Punch
+    -- Shrine of the Storm
+    { spellID = 264526, stacks = 0, secs = 5 }, -- Grasp from the Depths
+    { spellID = 264166, stacks = 0, secs = 1 }, -- Undertow
+    { spellID = 268214, stacks = 0, secs = 1 }, -- Carve Flesh
+    { spellID = 276297, stacks = 0, secs = 5 }, -- Void Seed
+    { spellID = 268322, stacks = 0, secs = 5 }, -- Touch of the Drowned
+    -- Siege of Boralus
+    { spellID = 256897, stacks = 0, secs = 5 }, -- Clamping Jaws
+    { spellID = 273470, stacks = 0, secs = 3 }, -- Gut Shot
+    { spellID = 275014, stacks = 0, secs = 5 }, -- Putrid Waters
+    -- Tol Dagor
+    { spellID = 258058, stacks = 0, secs = 1 }, -- Squeeze
+    { spellID = 260016, stacks = 0, secs = 3 }, -- Itchy Bite
+    { spellID = 260067, stacks = 0, secs = 5 }, -- Vicious Mauling
+    { spellID = 258864, stacks = 0, secs = 5 }, -- Suppression Fire
+    { spellID = 258917, stacks = 0, secs = 3 }, -- Righteous Flames
+    { spellID = 256198, stacks = 0, secs = 5 }, -- Azerite Rounds: Incendiary
+    { spellID = 256105, stacks = 0, secs = 1 }, -- Explosive Burst
+    -- Waycrest Manor
+    { spellID = 266035, stacks = 0, secs = 1 }, -- Bone Splinter
+    { spellID = 260703, stacks = 0, secs = 1 }, -- Unstable Runic Mark
+    { spellID = 260741, stacks = 0, secs = 1 }, -- Jagged Nettles
+    { spellID = 264050, stacks = 0, secs = 3 }, -- Infected Thorn
+    { spellID = 264556, stacks = 0, secs = 2 }, -- Tearing Strike
+    { spellID = 264150, stacks = 0, secs = 1 }, -- Shatter
+    { spellID = 265761, stacks = 0, secs = 1 }, -- Thorned Barrage
+    { spellID = 263905, stacks = 0, secs = 1 }, -- Marking Cleave
+    { spellID = 264153, stacks = 0, secs = 3 }, -- Spit
+    { spellID = 278456, stacks = 0, secs = 3 }, -- Infest
+    { spellID = 271178, stacks = 0, secs = 3 }, -- Ravaging Leap
+    { spellID = 265880, stacks = 0, secs = 1 }, -- Dread Mark
+    { spellID = 265882, stacks = 0, secs = 1 }, -- Lingering Dread
+    { spellID = 264378, stacks = 0, secs = 5 }, -- Fragment Soul
+    { spellID = 261438, stacks = 0, secs = 1 }, -- Wasting Strike
+    { spellID = 261440, stacks = 0, secs = 1 }, -- Virulent Pathogen
+    { spellID = 268202, stacks = 0, secs = 1 }, -- Death Lens
+    -- Atal'Dazar
+    { spellID = 253562, stacks = 0, secs = 3 }, -- Wildfire
+    { spellID = 254959, stacks = 0, secs = 2 }, -- Soulburn
+    { spellID = 255558, stacks = 0, secs = 5 }, -- Tainted Blood
+    { spellID = 255814, stacks = 0, secs = 5 }, -- Rending Maul
+    { spellID = 250372, stacks = 0, secs = 5 }, -- Lingering Nausea
+    { spellID = 250096, stacks = 0, secs = 1 }, -- Wracking Pain
+    { spellID = 256577, stacks = 0, secs = 5 }, -- Soulfeast
+    -- King's Rest
+    { spellID = 269932, stacks = 0, secs = 3 }, -- Gust Slash
+    { spellID = 265773, stacks = 0, secs = 4 }, -- Spit Gold
+    { spellID = 270084, stacks = 0, secs = 3 }, -- Axe Barrage
+    { spellID = 270865, stacks = 0, secs = 3 }, -- Hidden Blade
+    { spellID = 270289, stacks = 0, secs = 3 }, -- Purification Beam
+    { spellID = 271564, stacks = 0, secs = 3 }, -- Embalming
+    { spellID = 267618, stacks = 0, secs = 3 }, -- Drain Fluids
+    { spellID = 270487, stacks = 0, secs = 3 }, -- Severing Blade
+    { spellID = 270507, stacks = 0, secs = 5 }, -- Poison Barrage
+    { spellID = 266231, stacks = 0, secs = 3 }, -- Severing Axe
+    { spellID = 267273, stacks = 0, secs = 3 }, -- Poison Nova
+    { spellID = 268419, stacks = 0, secs = 3 }, -- Gale Slash
+    -- MOTHERLODE!!
+    { spellID = 269298, stacks = 0, secs = 1 }, -- Widowmaker
+    { spellID = 262347, stacks = 0, secs = 1 }, -- Static Pulse
+    { spellID = 263074, stacks = 0, secs = 3 }, -- Festering Bite
+    { spellID = 262270, stacks = 0, secs = 1 }, -- Caustic Compound
+    { spellID = 262794, stacks = 0, secs = 1 }, -- Energy Lash
+    { spellID = 259853, stacks = 0, secs = 3 }, -- Chemical Burn
+    { spellID = 269092, stacks = 0, secs = 1 }, -- Artillery Barrage
+    { spellID = 262348, stacks = 0, secs = 1 }, -- Mine Blast
+    { spellID = 260838, stacks = 0, secs = 1 }, -- Homing Missile
+    -- Temple of Sethraliss
+    { spellID = 263371, stacks = 0, secs = 1 }, -- Conduction
+    { spellID = 272657, stacks = 0, secs = 3 }, -- Noxious Breath
+    { spellID = 267027, stacks = 0, secs = 1 }, -- Cytotoxin
+    { spellID = 272699, stacks = 0, secs = 3 }, -- Venomous Spit
+    { spellID = 268013, stacks = 0, secs = 5 }, -- Flame Shock
+    -- Underrot
+    { spellID = 265019, stacks = 0, secs = 1 }, -- Savage Cleave
+    { spellID = 265568, stacks = 0, secs = 1 }, -- Dark Omen
+    { spellID = 260685, stacks = 0, secs = 5 }, -- Taint of G'huun
+    { spellID = 278961, stacks = 0, secs = 5 }, -- Decaying Mind
+    { spellID = 260455, stacks = 0, secs = 1 }, -- Serrated Fangs
+    { spellID = 273226, stacks = 0, secs = 1 }, -- Decaying Spores
+    { spellID = 269301, stacks = 0, secs = 5 }, -- Putrid Blood
+    -- all
+    { spellID = 302421, stacks = 0, secs = 5 }, -- Queen's Decree
+}
+
+local function SetFriendlyToSnipe()
+    local getmembersAll = A.HealingEngine.GetMembersAll()
+    for i = 1, #getmembersAll do
+        if Unit(getmembersAll[i].Unit):GetRange() <= 40 then
+            for k, v in pairs(DebuffSniperList) do
+                if Unit(getmembersAll[i].Unit):HasDeBuffs(v.spellID, true) > v.secs and Unit(getmembersAll[i].Unit):HasDeBuffsStacks(v.spellID, true) >= v.stacks and Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
+                    if A.Germination:IsSpellLearned() and Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) == 0 then
+                        if A.Rejuvenation:IsReady(getmembersAll[i].Unit) then
+                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
+                        end
+                    elseif Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
+                        if A.Rejuvenation:IsReady(getmembersAll[i].Unit) then
+                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
+                        end
+                    end
+                end
+            end
+        end
+	end
+end
+SetFriendlyToSnipe = Action.MakeFunctionCachedDynamic(SetFriendlyToSnipe)
+
+local pre_hot_list = {   --snipe list
+    --Battle of Dazar'alor
+    [283572] = { targeted = true }, --"Sacred Blade"
+    [284578] = { targeted = true }, --"Penance"
+    [286988] = { targeted = true }, --Divine Burst"
+    [282036] = { targeted = true }, --"Fireball"
+    [282182] = { targeted = false }, --"Buster Cannon"
+    --Uldir
+    [279669] = { targeted = false }, --"Bacterial Outbreak"
+    [279660] = { targeted = false }, --"Endemic Virus"
+    [274262] = { targeted = false }, --"Explosive Corruption"
+    --Reaping
+    [288693] = { targeted = true }, --"Grave Bolt",
+    --Atal'Dazar
+    [250096] = { targeted = true }, --"Wracking Pain"
+    [253562] = { targeted = true }, --"Wildfire"
+    [252781] = { targeted = true }, --"Unstable Hex"
+    [252923] = { targeted = true }, --"Venom Blast"
+    [253239] = { targeted = true }, -- Dazarai Juggernaut - Merciless Assault },
+    [256846] = { targeted = true }, --'Dinomancer Kisho - Deadeye Aim'},
+    [257407] = { targeted = true }, -- Rezan - Pursuit},
+    --Kings Rest
+    [267618] = { targeted = true }, --"Drain Fluids"
+    [267308] = { targeted = true }, --"Lighting Bolt"
+    [270493] = { targeted = true }, --"Spectral Bolt"
+    [269973] = { targeted = true }, --"Deathly Chill"
+    [270923] = { targeted = true }, --"Shadow Bolt"
+    [272388] = { targeted = true }, --"Shadow Barrage"
+    [266231] = { targeted = true }, -- Kula the Butcher - Severing Axe},
+    [270507] = { targeted = true }, --  Spectral Beastmaster - Poison Barrage},
+    [265773] = { targeted = true }, -- The Golden Serpent - Spit Gold},
+    [270506] = { targeted = true }, -- Spectral Beastmaster - Deadeye Shot},
+    [265773] = { targeted = true }, -- https://www.wowhead.com/spell=270487/severing-blade
+    [268586] = { targeted = true }, -- https://www.wowhead.com/spell=268586/blade-combo
+    --Free Hold
+    [259092] = { targeted = true }, --"Lightning Bolt"
+    [281420] = { targeted = true }, --"Water Bolt"
+    [257267] = { targeted = false }, --"Swiftwind Saber"
+    [257739] = { targeted = true }, -- Blacktooth Scrapper - Blind Rage},
+    [258338] = { targeted = true }, -- Captain Raoul - Blackout Barrel},
+    [256979] = { targeted = true }, -- Captain Eudora - Powder Shot},
+    --Siege of Boralus
+    [272588] = { targeted = true }, --"Rotting Wounds"
+    [272827] = { targeted = false }, --"Viscous Slobber"
+    [272581] = { targeted = true }, -- "Water Spray"
+    [257883] = { targeted = false }, -- "Break Water"
+    [257063] = { targeted = true }, --"Brackish Bolt"
+    [272571] = { targeted = true }, --"Choking Waters"
+    [257641] = { targeted = true }, -- Kul Tiran Marksman - Molten Slug},
+    [272874] = { targeted = true }, -- Ashvane Commander - Trample},
+    [272581] = { targeted = true }, -- Bilge Rat Tempest - Water Spray},
+    [272528] = { targeted = true }, -- Ashvane Sniper - Shoot},
+    [272542] = { targeted = true }, -- Ashvane Sniper - Ricochet},
+    -- Temple of Sethraliss
+    [263775] = { targeted = true }, --"Gust"
+    [268061] = { targeted = true }, --"Chain Lightning"
+    [272820] = { targeted = true }, --"Shock"
+    [263365] = { targeted = true }, --"https://www.wowhead.com/spell=263365/a-peal-of-thunder"
+    [268013] = { targeted = true }, --"Flame Shock"
+    [274642] = { targeted = true }, --"Lava Burst"
+    [268703] = { targeted = true }, --"Lightning Bolt"
+    [272699] = { targeted = true }, --"Venomous Spit"
+    [268703] = { targeted = true }, -- Charged Dust Devil - Lightning Bolt},
+    [272670] = { targeted = true }, -- Sandswept Marksman - Shoot},
+    [267278] = { targeted = true }, -- Static-charged Dervish - Electrocute},
+    [272820] = { targeted = true }, -- Spark Channeler - Shock},
+    [274642] = { targeted = true }, -- Hoodoo Hexer - Lava Burst},
+    [268061] = { targeted = true }, -- Plague Doctor - Chain Lightning},
+    --Shrine of the Storm
+    [265001] = { targeted = true }, --"Sea Blast"
+    [268347] = { targeted = true }, --"Void Bolt"
+    [267969] = { targeted = true }, --"Water Blast"
+    [268233] = { targeted = true }, --"Electrifying Shock"
+    [268315] = { targeted = true }, --"Lash"
+    [268177] = { targeted = true }, --"Windblast"
+    [268273] = { targeted = true }, --"Deep Smash"
+    [268317] = { targeted = true }, --"Rip Mind"
+    [265001] = { targeted = true }, --"Sea Blast"
+    [274703] = { targeted = true }, --"Void Bolt"
+    [268214] = { targeted = true }, --"Carve Flesh"
+    [264166] = { targeted = true }, -- Aqusirr - Undertow},
+    [268214] = { targeted = true }, -- Runecarver Sorn - Carve Flesh},
+    --Motherlode
+    [259856] = { targeted = true }, --"Chemical Burn"
+    [260318] = { targeted = true }, --"Alpha Cannon"
+    [262794] = { targeted = true }, --"Energy Lash"
+    [263202] = { targeted = true }, --"Rock Lance"
+    [262268] = { targeted = true }, --"Caustic Compound"
+    [263262] = { targeted = true }, --"Shale Spit"
+    [263628] = { targeted = true }, --"Charged Claw"
+    [268185] = { targeted = true }, -- Refreshment Vendor, Iced Spritzer},
+    [258674] = { targeted = true }, -- Off-Duty Laborer - Throw Wrench},
+    [276304] = { targeted = true }, -- Rowdy Reveler - Penny For Your Thoughts},
+    [263209] = { targeted = true }, -- Mine Rat - Throw Rock},
+    [263202] = { targeted = true }, -- Venture Co. Earthshaper - Rock Lance},
+    [262794] = { targeted = true }, -- Venture Co. Mastermind - Energy Lash},
+    [260669] = { targeted = true }, -- Rixxa Fluxflame - Propellant Blast},
+    [271456] = { targeted = true }, -- https://www.wowhead.com/spell=271456/drill-smash},
+    --Underrot
+    [260879] = { targeted = true }, --"Blood Bolt"
+    [265084] = { targeted = true }, --"Blood Bolt"
+    [259732] = { targeted = false }, --"Festering Harvest"
+    [266209] = { targeted = false }, --"Wicked Frenzy"
+    [265376] = { targeted = true }, -- Fanatical Headhunter - Barbed Spear},
+    [265625] = { targeted = true }, -- Befouled Spirit - Dark Omen},
+    --Tol Dagor
+    [257777] = { targeted = true }, --"Crippling Shiv"
+    [258150] = { targeted = true }, --"Salt Blast"
+    [258869] = { targeted = true }, --"Blaze"
+    [256039] = { targeted = true }, -- Overseer Korgus - Deadeye},
+    [185857] = { targeted = true }, -- Ashvane Spotter - Shoot},
+
+    --work shop_
+    [294195] = { targeted = true }, --https://www.wowhead.com/spell=294195/arcing-zap
+    [293827] = { targeted = true }, --https://www.wowhead.com/spell=293827/giga-wallop
+    [292264] = { targeted = true }, -- https://www.wowhead.com/spell=292264/giga-zap
+    --junk yard
+    [300650] = { targeted = true }, --https://www.wowhead.com/spell=300650/suffocating-smog
+    [299438] = { targeted = true }, --https://www.wowhead.com/spell=299438/sledgehammer
+    [300188] = { targeted = true }, -- https://www.wowhead.com/spell=300188/scrap-cannon#used-by-npc
+    [302682] = { targeted = true }, --https://www.wowhead.com/spell=302682/mega-taze
+
+    --Waycrest Manor
+    [260701] = { targeted = true }, --"Bramble Bolt"
+    [260700] = { targeted = true }, --"Ruinous Bolt"
+    [260699] = { targeted = true }, --"Soul Bolt"
+    [261438] = { targeted = true }, --"Wasting Strike"
+    [266225] = { targeted = true }, --Darkened Lightning"
+    [273653] = { targeted = true }, --"Shadow Claw"
+    [265881] = { targeted = true }, --"Decaying Touch"
+    [264153] = { targeted = true }, --"Spit"
+    [278444] = { targeted = true }, --"Infest"
+    [167385] = { targeted = true }, --"Infest"
+    [263891] = { targeted = true }, -- Heartsbane Vinetwister - Grasping Thorns},
+    [264510] = { targeted = true }, -- Crazed Marksman - Shoot},
+    [260699] = { targeted = true }, -- Coven Diviner - Soul Bolt},
+    [260551] = { targeted = true }, -- Soulbound Goliath - Soul Thorns},
+    [260741] = { targeted = true }, -- Heartsbane Triad - Jagged Nettles},
+    [268202] = { targeted = true } -- Gorak Tul - Death Lens},
+}
+local CC_CreatureTypeList = { "Beast", "Dragonkin" }
+local StunsBlackList = {
+    -- Atal'Dazar
+    [87318] = "Dazar'ai Colossus",
+    [122984] = "Dazar'ai Colossus",
+    [128455] = "T'lonja",
+    [129553] = "Dinomancer Kish'o",
+    [129552] = "Monzumi",
+    -- Freehold
+    [129602] = "Irontide Enforcer",
+    [130400] = "Irontide Crusher",
+    -- King's Rest
+    [133935] = "Animated Guardian",
+    [134174] = "Shadow-Borne Witch Doctor",
+    [134158] = "Shadow-Borne Champion",
+    [137474] = "King Timalji",
+    [137478] = "Queen Wasi",
+    [137486] = "Queen Patlaa",
+    [137487] = "Skeletal Hunting Raptor",
+    [134251] = "Seneschal M'bara",
+    [134331] = "King Rahu'ai",
+    [137484] = "King A'akul",
+    [134739] = "Purification Construct",
+    [137969] = "Interment Construct",
+    [135231] = "Spectral Brute",
+    [138489] = "Shadow of Zul",
+    -- Shrine of the Storm
+    [134144] = "Living Current",
+    [136214] = "Windspeaker Heldis",
+    [134150] = "Runecarver Sorn",
+    [136249] = "Guardian Elemental",
+    [134417] = "Deepsea Ritualist",
+    [136353] = "Colossal Tentacle",
+    [136295] = "Sunken Denizen",
+    [136297] = "Forgotten Denizen",
+    -- Siege of Boralus
+    [129369] = "Irontide Raider",
+    [129373] = "Dockhound Packmaster",
+    [128969] = "Ashvane Commander",
+    [138255] = "Ashvane Spotter",
+    [138465] = "Ashvane Cannoneer",
+    [135245] = "Bilge Rat Demolisher",
+    -- Temple of Sethraliss
+    [134991] = "Sandfury Stonefist",
+    [139422] = "Scaled Krolusk Tamer",
+    [136076] = "Agitated Nimbus",
+    [134691] = "Static-charged Dervish",
+    [139110] = "Spark Channeler",
+    [136250] = "Hoodoo Hexer",
+    [139946] = "Heart Guardian",
+    -- MOTHERLODE!!
+    [130485] = "Mechanized Peacekeeper",
+    [136139] = "Mechanized Peacekeeper",
+    [136643] = "Azerite Extractor",
+    [134012] = "Taskmaster Askari",
+    [133430] = "Venture Co. Mastermind",
+    [133463] = "Venture Co. War Machine",
+    [133436] = "Venture Co. Skyscorcher",
+    [133482] = "Crawler Mine",
+    -- Underrot
+    [131436] = "Chosen Blood Matron",
+    [133912] = "Bloodsworn Defiler",
+    [138281] = "Faceless Corruptor",
+    -- Tol Dagor
+    [130025] = "Irontide Thug",
+    -- Waycrest Manor
+    [131677] = "Heartsbane Runeweaver",
+    [135329] = "Matron Bryndle",
+    [131812] = "Heartsbane Soulcharmer",
+    [131670] = "Heartsbane Vinetwister",
+    [135365] = "Matron Alma",
+    --mini bosses
+    [161241] = "Voidweaver Mal'thir",
+}
 
 local DispelSpell = {
     -- DeBuffs Poison and Disease
