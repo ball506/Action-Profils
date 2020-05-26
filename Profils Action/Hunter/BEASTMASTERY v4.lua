@@ -118,39 +118,39 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
 	FreezingTrap                           = Action.Create({ Type = "Spell", ID = 187650 }),
     -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530 }), 
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611 }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314 }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555 }), 
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624 }), 
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905 }), 
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305 }), 
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576 }), 
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224 }), 
     -- Potions
-    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299 }), 
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489 }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117 }), 
     -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616 }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081 }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530 }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611 }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314 }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555 }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624 }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905 }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305 }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576 }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224 }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614 }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568 }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617 }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555 }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572 }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314 }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311 }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311 }),
     -- Misc
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
@@ -645,6 +645,10 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+local function DontWasteCDs(unit)
+    return ((Unit(unit):TimeToDie() > 10 and Unit(unit):HealthPercent() > 10) or Unit(unit):IsBoss())
+end
+
 -- Pet error hide
 Pet:DisableErrors(true)
 
@@ -932,14 +936,14 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BurstIsON(unit) and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+            if A.BurstIsON(unit) and DontWasteCDs(unit) and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
 			and ((Pull > 0.1 and Pull <= 1.2) or not DBM) 
 			then
                 return A.AspectoftheWild:Show(icon)
             end
 			
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
+            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
 			((Pull > 0.1 and Pull <= 1.6) or not DBM) 
 			then
                 return A.BestialWrath:Show(icon)
@@ -1086,7 +1090,13 @@ A[3] = function(icon, isMulti)
         end
 
         -- aspect_of_the_wild
-        if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and AspectoftheWildOnCDRapidReload and ((InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) or Unit(unit):IsDummy()) and A.RapidReload:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+        if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and AspectoftheWildOnCDRapidReload and 
+		    (
+			    (InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) 
+				or 
+				Unit(unit):IsDummy()
+			)
+			and A.RapidReload:GetAzeriteRank() > 0 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
             return A.AspectoftheWild:Show(icon)
         end
 		
@@ -1158,15 +1168,13 @@ A[3] = function(icon, isMulti)
             end
 						
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and 
 		    (
 		        ((A.BurstIsON(unit) and A.AspectoftheWild:GetCooldown() > 20) or not A.BurstIsON(unit))  
 		    	or 
 		    	A.OneWiththePack:IsSpellLearned() 
 		    	or 
 		    	Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 15
-				or
-				Unit(unit):TimeToDie() > 15
 		   	)
 		    then
                 return A.BestialWrath:Show(icon)
@@ -1180,7 +1188,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1398,15 +1406,13 @@ A[3] = function(icon, isMulti)
 	    then 	
 		
             -- bestial_wrath,if=talent.one_with_the_pack&!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and 
 			(
 			    A.OneWiththePack:IsSpellLearned() and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) < GetGCD()
 				or
 				Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0 and ((A.BurstIsON(unit) and A.AspectoftheWild:GetCooldown() > 15) or not A.BurstIsON(unit))			
 			    or
 		    	Unit(unit):IsBoss() and Unit(unit):TimeToDie() < 15 + GetGCD()
-				or
-				Unit(unit):TimeToDie() > 15
 			)
 			then
                 return A.BestialWrath:Show(icon)
@@ -1445,7 +1451,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() > 10 and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
+            if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
 			(
 			    A.BarbedShot:GetSpellCharges() < 1 
 				or 
