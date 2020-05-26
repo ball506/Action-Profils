@@ -260,7 +260,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=cost<=0
-            if A.Ironfur:IsReady(unit) and (A.Ironfur:Cost() <= 0) then
+            if A.Ironfur:IsReady(unit) and (A.Ironfur:GetSpellPowerCostCache() <= 0) then
                 return A.Ironfur:Show(icon)
             end
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
@@ -391,7 +391,7 @@ A[3] = function(icon, isMulti)
                 return A.Maul:Show(icon)
             end
             -- ironfur,if=(rage>=cost&azerite.layered_mane.enabled)|rage.deficit<10
-            if A.Ironfur:IsReady(unit) and ((Player:Rage() >= A.Ironfur:Cost() and bool(A.LayeredMane:GetAzeriteRank())) or Player:RageDeficit() < 10) then
+            if A.Ironfur:IsReady(unit) and ((Player:Rage() >= A.Ironfur:GetSpellPowerCostCache() and bool(A.LayeredMane:GetAzeriteRank())) or Player:RageDeficit() < 10) then
                 return A.Ironfur:Show(icon)
             end
             -- thrash,if=(buff.incarnation.up&active_enemies>=4)|cooldown.thrash_bear.up

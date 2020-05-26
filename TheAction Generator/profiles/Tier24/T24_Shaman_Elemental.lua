@@ -450,7 +450,7 @@ A[3] = function(icon, isMulti)
                 return A.Icefury:Show(icon)
             end
             -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:ChargesP() > num(A.EchooftheElements:IsSpellLearned())) then
+            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:GetSpellCharges() > num(A.EchooftheElements:IsSpellLearned())) then
                 return A.LavaBurst:Show(icon)
             end
             -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&buff.icefury.remains<1.1*gcd*buff.icefury.stack
@@ -599,7 +599,7 @@ A[3] = function(icon, isMulti)
                 return A.Icefury:Show(icon)
             end
             -- lava_burst,if=cooldown_react&charges>talent.echo_of_the_elements.enabled
-            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:ChargesP() > num(A.EchooftheElements:IsSpellLearned())) then
+            if A.LavaBurst:IsReady(unit) and (A.LavaBurst:GetCooldown() == 0 and A.LavaBurst:GetSpellCharges() > num(A.EchooftheElements:IsSpellLearned())) then
                 return A.LavaBurst:Show(icon)
             end
             -- frost_shock,if=talent.icefury.enabled&buff.icefury.up&buff.icefury.remains<1.1*gcd*buff.icefury.stack

@@ -523,7 +523,7 @@ A[3] = function(icon, isMulti)
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=buff.backdraft.down&!buff.memory_of_lucid_dreams.up&(soul_shard>=2.8|charges_fractional>1.9&soul_shard>=1.3)
-            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Player:SoulShardsP >= 2.8 or A.Conflagrate:ChargesFractionalP() > 1.9 and Player:SoulShardsP >= 1.3)) then
+            if A.Conflagrate:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BackdraftBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (Player:SoulShardsP >= 2.8 or A.Conflagrate:GetSpellChargesFrac() > 1.9 and Player:SoulShardsP >= 1.3)) then
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=pet.infernal.remains<5
@@ -531,7 +531,7 @@ A[3] = function(icon, isMulti)
                 return A.Conflagrate:Show(icon)
             end
             -- conflagrate,if=charges>1
-            if A.Conflagrate:IsReady(unit) and (A.Conflagrate:ChargesP() > 1) then
+            if A.Conflagrate:IsReady(unit) and (A.Conflagrate:GetSpellCharges() > 1) then
                 return A.Conflagrate:Show(icon)
             end
             -- soul_fire
@@ -656,7 +656,7 @@ end
                 return A.Conflagrate:Show(icon)
             end
             -- shadowburn,if=soul_shard<2&(!variable.pool_soul_shards|charges>1)
-            if A.Shadowburn:IsReady(unit) and (Player:SoulShardsP < 2 and (not bool(VarPoolSoulShards) or A.Shadowburn:ChargesP() > 1)) then
+            if A.Shadowburn:IsReady(unit) and (Player:SoulShardsP < 2 and (not bool(VarPoolSoulShards) or A.Shadowburn:GetSpellCharges() > 1)) then
                 return A.Shadowburn:Show(icon)
             end
             -- chaos_bolt,if=(talent.grimoire_of_supremacy.enabled|azerite.crashing_chaos.enabled)&pet.infernal.active|buff.dark_soul_instability.up|buff.reckless_force.react&buff.reckless_force.remains>cast_time
@@ -676,7 +676,7 @@ end
                 return A.ChaosBolt:Show(icon)
             end
             -- conflagrate,if=charges>1
-            if A.Conflagrate:IsReady(unit) and (A.Conflagrate:ChargesP() > 1) then
+            if A.Conflagrate:IsReady(unit) and (A.Conflagrate:GetSpellCharges() > 1) then
                 return A.Conflagrate:Show(icon)
             end
             -- incinerate

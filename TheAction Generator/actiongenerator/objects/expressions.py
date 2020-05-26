@@ -117,7 +117,7 @@ class ActionExpression(BuildExpression):
         """
         Return the arguments for the expression action.spell.full_recharge_time.
         """
-        self.method = Method('FullRechargeTimeP()')
+        self.method = Method('GetSpellChargesFullRechargeTime()')
 
     def cast_time(self):
         """
@@ -129,13 +129,13 @@ class ActionExpression(BuildExpression):
         """
         Return the arguments for the expression action.spell.charges.
         """
-        self.method = Method('ChargesP()')
+        self.method = Method('GetSpellCharges()')
 
     def charges_fractional(self):
         """
         Return the arguments for the expression action.spell.charges.
         """
-        self.method = Method('ChargesFractionalP()')
+        self.method = Method('GetSpellChargesFrac()')
 
     def cooldown(self):
         """
@@ -172,13 +172,13 @@ class ActionExpression(BuildExpression):
         """
         Return the arguments for the expression action.spell.max_charges.
         """
-        self.method = Method('MaxCharges()')
+        self.method = Method('GetSpellChargesMax()')
 
     def cost(self):
         """
         Return the arguments for the expression action.spell.cost.
         """
-        self.method = Method('Cost()')
+        self.method = Method('GetSpellPowerCostCache()')
 
     def spell_targets(self):
         """
@@ -1089,7 +1089,7 @@ class Cooldown(BuildExpression, Expires):
         """
         Return the arguments for the expression cooldown.spell.charges.
         """
-        self.method = Method('ChargesP()')
+        self.method = Method('GetSpellCharges()')
 
     def recharge_time(self):
         """
@@ -1109,7 +1109,7 @@ class Cooldown(BuildExpression, Expires):
         Return the arguments for the expression
         cooldown.spell.charges_fractional.
         """
-        self.method = Method('ChargesFractionalP()')
+        self.method = Method('GetSpellChargesFrac()')
 		
 
 class Essence(BuildExpression):

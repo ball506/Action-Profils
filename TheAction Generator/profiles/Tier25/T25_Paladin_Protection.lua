@@ -228,7 +228,7 @@ A[3] = function(icon, isMulti)
                 A.AshvanesRazorCoral:Show(icon)
             end
             -- seraphim,if=cooldown.shield_of_the_righteous.charges_fractional>=2
-            if A.Seraphim:IsReady(unit) and (A.ShieldoftheRighteous:ChargesFractionalP() >= 2) then
+            if A.Seraphim:IsReady(unit) and (A.ShieldoftheRighteous:GetSpellChargesFrac() >= 2) then
                 return A.Seraphim:Show(icon)
             end
             -- avenging_wrath,if=buff.seraphim.up|cooldown.seraphim.remains<2|!talent.seraphim.enabled
@@ -240,7 +240,7 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             -- bastion_of_light,if=cooldown.shield_of_the_righteous.charges_fractional<=0.5
-            if A.BastionofLight:IsReady(unit) and (A.ShieldoftheRighteous:ChargesFractionalP() <= 0.5) then
+            if A.BastionofLight:IsReady(unit) and (A.ShieldoftheRighteous:GetSpellChargesFrac() <= 0.5) then
                 return A.BastionofLight:Show(icon)
             end
             -- potion,if=buff.avenging_wrath.up
@@ -284,7 +284,7 @@ A[3] = function(icon, isMulti)
                 return A.WorldveinResonance:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avengers_valor.up&cooldown.shield_of_the_righteous.charges_fractional>=2.5)&(cooldown.seraphim.remains>gcd|!talent.seraphim.enabled)
-            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true) and A.ShieldoftheRighteous:ChargesFractionalP() >= 2.5) and (A.Seraphim:GetCooldown() > A.GetGCD() or not A.Seraphim:IsSpellLearned())) then
+            if A.ShieldoftheRighteous:IsReady(unit) and ((Unit("player"):HasBuffs(A.AvengersValorBuff.ID, true) and A.ShieldoftheRighteous:GetSpellChargesFrac() >= 2.5) and (A.Seraphim:GetCooldown() > A.GetGCD() or not A.Seraphim:IsSpellLearned())) then
                 return A.ShieldoftheRighteous:Show(icon)
             end
             -- shield_of_the_righteous,if=(buff.avenging_wrath.up&!talent.seraphim.enabled)|buff.seraphim.up&buff.avengers_valor.up
@@ -304,7 +304,7 @@ A[3] = function(icon, isMulti)
                 return A.Consecration:Show(icon)
             end
             -- judgment,if=(cooldown.judgment.remains<gcd&cooldown.judgment.charges_fractional>1&cooldown_react)|!talent.crusaders_judgment.enabled
-            if A.Judgment:IsReady(unit) and ((A.Judgment:GetCooldown() < A.GetGCD() and A.Judgment:ChargesFractionalP() > 1 and A.Judgment:GetCooldown() == 0) or not A.CrusadersJudgment:IsSpellLearned()) then
+            if A.Judgment:IsReady(unit) and ((A.Judgment:GetCooldown() < A.GetGCD() and A.Judgment:GetSpellChargesFrac() > 1 and A.Judgment:GetCooldown() == 0) or not A.CrusadersJudgment:IsSpellLearned()) then
                 return A.Judgment:Show(icon)
             end
             -- avengers_shield,if=cooldown_react

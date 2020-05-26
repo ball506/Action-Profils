@@ -272,7 +272,7 @@ A[3] = function(icon, isMulti)
                 return A.DragonRoar:Show(icon)
             end
             -- raging_blow,if=charges=2
-            if A.RagingBlow:IsReady(unit) and (A.RagingBlow:ChargesP() == 2) then
+            if A.RagingBlow:IsReady(unit) and (A.RagingBlow:GetSpellCharges() == 2) then
                 return A.RagingBlow:Show(icon)
             end
             -- bloodthirst

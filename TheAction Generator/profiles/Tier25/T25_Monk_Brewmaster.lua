@@ -287,15 +287,15 @@ A[3] = function(icon, isMulti)
                 return A.IronskinBrew:Show(icon)
             end
             -- ironskin_brew,if=cooldown.brews.charges_fractional>1&cooldown.black_ox_brew.remains<3&buff.ironskin_brew.remains<15
-            if A.IronskinBrew:IsReady(unit) and (A.Brews:ChargesFractionalP() > 1 and A.BlackOxBrew:GetCooldown() < 3 and Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true) < 15) then
+            if A.IronskinBrew:IsReady(unit) and (A.Brews:GetSpellChargesFrac() > 1 and A.BlackOxBrew:GetCooldown() < 3 and Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true) < 15) then
                 return A.IronskinBrew:Show(icon)
             end
             -- purifying_brew,if=stagger.pct>(6*(3-(cooldown.brews.charges_fractional)))&(stagger.last_tick_damage_1>((0.02+0.001*(3-cooldown.brews.charges_fractional))*stagger.last_tick_damage_30))
-            if A.PurifyingBrew:IsReady(unit) and (stagger.pct > (6 * (3 - (A.Brews:ChargesFractionalP()))) and (stagger.last_tick_damage_1 > ((0.02 + 0.001 * (3 - A.Brews:ChargesFractionalP())) * stagger.last_tick_damage_30))) then
+            if A.PurifyingBrew:IsReady(unit) and (stagger.pct > (6 * (3 - (A.Brews:GetSpellChargesFrac()))) and (stagger.last_tick_damage_1 > ((0.02 + 0.001 * (3 - A.Brews:GetSpellChargesFrac())) * stagger.last_tick_damage_30))) then
                 return A.PurifyingBrew:Show(icon)
             end
             -- black_ox_brew,if=cooldown.brews.charges_fractional<0.5
-            if A.BlackOxBrew:IsReady(unit) and (A.Brews:ChargesFractionalP() < 0.5) then
+            if A.BlackOxBrew:IsReady(unit) and (A.Brews:GetSpellChargesFrac() < 0.5) then
                 return A.BlackOxBrew:Show(icon)
             end
             -- black_ox_brew,if=(energy+(energy.regen*cooldown.keg_smash.remains))<40&buff.blackout_combo.down&cooldown.keg_smash.up

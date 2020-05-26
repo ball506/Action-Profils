@@ -491,7 +491,7 @@ A[3] = function(icon, isMulti)
                 -- if HR.CancelA.StarlordBuff.ID, true then return ""; end
             end
             -- starfall,if=(!solar_wrath.ap_check|(buff.starlord.stack<3|buff.starlord.remains>=8)&(target.1.time_to_die+1)*spell_targets>cost%2.5)&spell_targets>=variable.sf_targets
-            if A.Starfall:IsReady(unit) and ((not bool(solar_wrath.ap_check) or (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 8) and (target.1.time_to_die + 1) * MultiUnits:GetByRangeInCombat(40, 5, 10) > A.Starfall:Cost() / 2.5) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarSfTargets) then
+            if A.Starfall:IsReady(unit) and ((not bool(solar_wrath.ap_check) or (Unit("player"):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 or Unit("player"):HasBuffs(A.StarlordBuff.ID, true) >= 8) and (target.1.time_to_die + 1) * MultiUnits:GetByRangeInCombat(40, 5, 10) > A.Starfall:GetSpellPowerCostCache() / 2.5) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarSfTargets) then
                 return A.Starfall:Show(icon)
             end
             -- starsurge,if=((talent.starlord.enabled&(buff.starlord.stack<3|buff.starlord.remains>=5&buff.arcanic_pulsar.stack<8)|!talent.starlord.enabled&(buff.arcanic_pulsar.stack<8|buff.ca_inc.up))&buff.solar_empowerment.stack<3&buff.lunar_empowerment.stack<3&buff.reckless_force_counter.stack<19|buff.reckless_force.up)&spell_targets.starfall<variable.sf_targets&(!variable.az_ss|!buff.ca_inc.up|!prev.starsurge)|target.1.time_to_die<=execute_time*astral_power%40|!solar_wrath.ap_check
