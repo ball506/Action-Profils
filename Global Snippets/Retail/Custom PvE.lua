@@ -38,7 +38,14 @@ local ActiveMitigationSpells = {
         -- T20 ToS
         239932 -- Felclaws (KJ)
     },
-    Debuff = {},
+    Debuff = {	
+	    255434,
+		265881,
+		264556,
+		270487,
+		274358,
+		270447,
+	},
     Cast = {
         -- PR Legion
         197810, -- Wicked Slam (ARC - 3rd)
@@ -61,8 +68,20 @@ local ActiveMitigationSpells = {
         244899, -- Fiery Strike (Coven)
         245458, -- Foe Breaker (Aggramar)
         248499, -- Sweeping Scythe (Argus)
-        258039 -- Deadly Scythe (Argus)
-    },
+        258039, -- Deadly Scythe (Argus)
+        -- BFA
+		267899, -- Shrine of the Storm
+		272457, -- Underrot
+		260508, -- Waycrest Manor
+		249919, -- Atal'Dazar
+		265910, -- King's Rest
+		268586, -- King's Rest
+		262277, -- Fetid Devourer
+		265248, -- Zek'voz
+		273316, -- Zul, Reborn
+		273282, -- Mythrax the Unraveler
+	
+	},
     Channel = {}
 }
 
@@ -80,6 +99,11 @@ function Player:ActiveMitigationNeeded()
         end
         for _, Buff in pairs(ActiveMitigationSpells.Buff) do
             if Unit("target"):HasBuffs(Buff, true) > 0 then
+                return true
+            end
+        end
+        for _, Debuff in pairs(ActiveMitigationSpells.Debuff) do
+            if Unit("player"):HasDeBuffs(Debuff, true) > 0 then
                 return true
             end
         end
