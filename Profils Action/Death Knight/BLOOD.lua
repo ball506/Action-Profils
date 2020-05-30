@@ -921,6 +921,8 @@ A[3] = function(icon, isMulti)
             and not Unit(unit):IsExplosives()
             and not Unit(unit):IsDummy()
             and not Unit(unit):IsPlayer()
+			and not Unit(unit):NPCID() == 160966 -- Thing From Beyong
+			and not Unit(unit):NPCID() == 161895 -- Thing From Beyong
             and not Unit(unit):IsTotem() then
                 --  Try taunt enemy if no agro
                 if A.DarkCommand:IsReady(unit) then
