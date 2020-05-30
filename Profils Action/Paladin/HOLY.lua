@@ -151,6 +151,7 @@ Action[ACTION_CONST_PALADIN_HOLY] = {
 	GrievousWound                          = Create({ Type = "Spell", ID = 240559, Hidden = true     }), -- Grievous (Mythic Plus Affix) 2% of a player's maximum health every 3 sec
     Slow                                   = Create({ Type = "Spell", ID = 313255, Hidden = true     }), -- Shadhar slow
 	Fixate                                 = Create({ Type = "Spell", ID = 318078, Hidden = true     }), -- Wrathion Fixate
+	IneffableTruthBuff                     = Create({ Type = "Spell", ID = 316801, Hidden = true     }), -- ineffable-truth corruption buff
 }
 
 -- To create essences use next code:
@@ -2471,6 +2472,9 @@ A[3] = function(icon, isMulti)
 				Unit(unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 and
 				Unit(unit):IsTank()
 			) 
+			or
+			-- IneffableTruth Buff 
+			Unit(player):HasBuffs(A.IneffableTruthBuff.ID, player, true) > 0 
         )        
         then
             return A.HolyShock:Show(icon)
