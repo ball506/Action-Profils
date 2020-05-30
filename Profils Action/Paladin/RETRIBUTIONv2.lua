@@ -492,22 +492,22 @@ local function Finishers(unit)
     end
 			
     -- inquisition,if=buff.avenging_wrath.down&(buff.inquisition.down|buff.inquisition.remains<8&holy_power>=3|talent.execution_sentence.enabled&cooldown.execution_sentence.remains<10&buff.inquisition.remains<15|cooldown.avenging_wrath.remains<15&buff.inquisition.remains<20&holy_power>=3)
-    if A.Inquisition:IsReady(unit) and (Unit(player):HasBuffs(A.Inquisition.ID, true) == 0 and (Unit(player):HasBuffs(A.Inquisition.ID, true) == 0 or Unit(player):HasBuffs(A.Inquisition.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit(player):HasBuffs(A.Inquisition.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit(player):HasBuffs(A.Inquisition.ID, true) < 20 and Player:HolyPower() >= 3)) then
+    if A.Inquisition:IsReady(unit) and (Unit(player):HasBuffs(A.InquisitionBuff.ID, true) == 0 and (Unit(player):HasBuffs(A.InquisitionBuff.ID, true) == 0 or Unit(player):HasBuffs(A.InquisitionBuff.ID, true) < 8 and Player:HolyPower() >= 3 or A.ExecutionSentence:IsSpellLearned() and A.ExecutionSentence:GetCooldown() < 10 and Unit(player):HasBuffs(A.InquisitionBuff.ID, true) < 15 or A.AvengingWrath:GetCooldown() < 15 and Unit(player):HasBuffs(A.InquisitionBuff.ID, true) < 20 and Player:HolyPower() >= 3)) then
         return A.Inquisition
     end
 			
     -- execution_sentence,if=spell_targets.divine_storm<=2&(!talent.crusade.enabled&cooldown.avenging_wrath.remains>10|talent.crusade.enabled&buff.crusade.down&cooldown.crusade.remains>10|buff.crusade.stack>=7)
-    if A.ExecutionSentence:IsReady(unit) and (GetByRange(3, 8, false, true) and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and Unit(player):HasBuffs(A.Crusade.ID, true) == 0 and A.Crusade:GetCooldown() > 10 or Unit(player):HasBuffsStacks(A.Crusade) >= 7)) then
+    if A.ExecutionSentence:IsReady(unit) and (GetByRange(3, 8, false, true) and (not A.Crusade:IsSpellLearned() and A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and Unit(player):HasBuffs(A.CrusadeBuff.ID, true) == 0 and A.Crusade:GetCooldown() > 10 or Unit(player):HasBuffsStacks(A.CrusadeBuff.ID, true) >= 7)) then
         return A.ExecutionSentence
     end
 			
     -- divine_storm,if=variable.ds_castable&variable.wings_pool&((!talent.execution_sentence.enabled|(spell_targets.divine_storm>=2|cooldown.execution_sentence.remains>gcd*2))|(cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10))
-    if A.DivineStorm:IsReady(unit) and ((VarDsCastable) and (VarWingsPool) and ((not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 8) or A.ExecutionSentence:GetCooldown() > GetGCD() * 2)) or (A.AvengingWrath:GetCooldown() > GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit(player):HasBuffs(A.Crusade.ID, true) > 0 and Unit(player):HasBuffsStacks(A.Crusade) < 10))) then
+    if A.DivineStorm:IsReady(unit) and ((VarDsCastable) and (VarWingsPool) and ((not A.ExecutionSentence:IsSpellLearned() or (GetByRange(2, 8) or A.ExecutionSentence:GetCooldown() > GetGCD() * 2)) or (A.AvengingWrath:GetCooldown() > GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit(player):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10))) then
         return A.DivineStorm
     end
 			
     -- templars_verdict,if=variable.wings_pool&(!talent.execution_sentence.enabled|cooldown.execution_sentence.remains>gcd*2|cooldown.avenging_wrath.remains>gcd*3&cooldown.avenging_wrath.remains<10|cooldown.crusade.remains>gcd*3&cooldown.crusade.remains<10|buff.crusade.up&buff.crusade.stack<10)
-    if A.TemplarsVerdict:IsReady(unit) and ((VarWingsPool) and (not A.ExecutionSentence:IsSpellLearned() or A.ExecutionSentence:GetCooldown() > GetGCD() * 2 or A.AvengingWrath:GetCooldown() > GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit(player):HasBuffs(A.Crusade.ID, true) > 0 and Unit(player):HasBuffsStacks(A.Crusade) < 10)) then
+    if A.TemplarsVerdict:IsReady(unit) and ((VarWingsPool) and (not A.ExecutionSentence:IsSpellLearned() or A.ExecutionSentence:GetCooldown() > GetGCD() * 2 or A.AvengingWrath:GetCooldown() > GetGCD() * 3 and A.AvengingWrath:GetCooldown() < 10 or A.Crusade:GetCooldown() > GetGCD() * 3 and A.Crusade:GetCooldown() < 10 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit(player):HasBuffsStacks(A.CrusadeBuff.ID, true) < 10)) then
         return A.TemplarsVerdict
     end
 	
@@ -788,12 +788,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- blood_of_the_enemy,if=buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10
-            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 or Unit(player):HasBuffs(A.Crusade.ID, true) > 0 and Unit(player):HasBuffsStacks(A.Crusade) == 10) then
+            if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and (Unit(player):HasBuffs(A.AvengingWrathBuff.ID, true) > 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit(player):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) then
                 return A.BloodoftheEnemy:Show(icon)
             end
 			
             -- guardian_of_azeroth,if=!talent.crusade.enabled&(cooldown.avenging_wrath.remains<5&holy_power>=3&(buff.inquisition.up|!talent.inquisition.enabled)|cooldown.avenging_wrath.remains>=45)|(talent.crusade.enabled&cooldown.crusade.remains<gcd&holy_power>=4|holy_power>=3&time<10&talent.wake_of_ashes.enabled|cooldown.crusade.remains>=45)
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Player:HolyPower() >= 3 and (Unit(player):HasBuffs(A.Inquisition.ID, true) > 0 or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < PlayerGCD and Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and combatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and (not A.Crusade:IsSpellLearned() and (A.AvengingWrath:GetCooldown() < 5 and Player:HolyPower() >= 3 and (Unit(player):HasBuffs(A.InquisitionBuff.ID, true) > 0 or not A.Inquisition:IsSpellLearned()) or A.AvengingWrath:GetCooldown() >= 45) or (A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() < PlayerGCD and Player:HolyPower() >= 4 or Player:HolyPower() >= 3 and combatTime < 10 and A.WakeofAshes:IsSpellLearned() or A.Crusade:GetCooldown() >= 45)) then
                return A.GuardianofAzeroth:Show(icon)
             end
 			
@@ -803,12 +803,12 @@ A[3] = function(icon, isMulti)
             end
 			
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&(buff.avenging_wrath.down|buff.crusade.down)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and ((GetByRange(2, 8)) and (Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 or Unit(player):HasBuffs(A.Crusade.ID, true) == 0) and (A.BladeofJustice:GetCooldown() > GetGCD() * 3 and A.Judgment:GetCooldown() > GetGCD() * 3)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and ((GetByRange(2, 8)) and (Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) == 0) and (A.BladeofJustice:GetCooldown() > GetGCD() * 3 and A.Judgment:GetCooldown() > GetGCD() * 3)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
 			
             -- memory_of_lucid_dreams,if=(buff.avenging_wrath.up|buff.crusade.up&buff.crusade.stack=10)&holy_power<=3
-            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and ((Unit(player):HasBuffs(A.AvengingWrath.ID, true) > 0 or Unit(player):HasBuffs(A.Crusade.ID, true) > 0 and Unit(player):HasBuffsStacks(A.Crusade) == 10) and Player:HolyPower() <= 3) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth and ((Unit(player):HasBuffs(A.AvengingWrath.ID, true) > 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0 and Unit(player):HasBuffsStacks(A.CrusadeBuff.ID, true) == 10) and Player:HolyPower() <= 3) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
 			
@@ -823,7 +823,7 @@ A[3] = function(icon, isMulti)
             end		
 			
             -- avenging_wrath,if=(!talent.inquisition.enabled|buff.inquisition.up)&holy_power>=3
-            if A.AvengingWrath:IsReady(unit) and ((not A.Inquisition:IsSpellLearned() or Unit(player):HasBuffs(A.Inquisition.ID, true) > 0) and Player:HolyPower() >= 3) then
+            if A.AvengingWrath:IsReady(unit) and ((not A.Inquisition:IsSpellLearned() or Unit(player):HasBuffs(A.InquisitionBuff.ID, true) > 0) and Player:HolyPower() >= 3) then
                 return A.AvengingWrath:Show(icon)
             end
 			
@@ -838,7 +838,7 @@ A[3] = function(icon, isMulti)
         if Unit(unit):IsExists() and inCombat then
 		
             -- variable,name=HoW,value=(!talent.hammer_of_wrath.enabled|target.health.pct>=20&(buff.avenging_wrath.down|buff.crusade.down))
-            VarHow = ((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 or Unit(player):HasBuffs(A.Crusade.ID, true) == 0)))
+            VarHow = ((not A.HammerofWrath:IsSpellLearned() or Unit(unit):HealthPercent() >= 20 and (Unit(player):HasBuffs(A.AvengingWrath.ID, true) == 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) == 0)))
 
             if Player:HolyPower() >= 5 or (Unit(player):HasBuffs(A.MemoryofLucidDreams.ID, true) > 0 and Player:HolyPower() >= 3) then
                 if Finishers(unit) ~= nil then
@@ -872,7 +872,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- call_action_list,name=finishers,if=talent.hammer_of_wrath.enabled&target.health.pct<=20|buff.avenging_wrath.up|buff.crusade.up
-            if (A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 or Unit(player):HasBuffs(A.AvengingWrath.ID, true) > 0 or Unit(player):HasBuffs(A.Crusade.ID, true) > 0) then
+            if (A.HammerofWrath:IsSpellLearned() and Unit(unit):HealthPercent() <= 20 or Unit(player):HasBuffs(A.AvengingWrath.ID, true) > 0 or Unit(player):HasBuffs(A.CrusadeBuff.ID, true) > 0) then
                 if Finishers(unit) ~= nil then
                     return Finishers(unit):Show(icon)
                 end
@@ -888,6 +888,11 @@ A[3] = function(icon, isMulti)
                 if Finishers(unit) ~= nil then
                     return Finishers(unit):Show(icon)
                 end
+            end
+			
+			-- reaping_flames
+            if A.ReapingFlames:AutoHeartOfAzeroth(unit, true) and HeartOfAzeroth then
+                return A.ReapingFlames:Show(icon)
             end
 			
             -- concentrated_flame
