@@ -846,12 +846,12 @@ local StunsBlackList = {
 }
 
 
-TR.PriestVars = {
+local PriestVars = {
     ["TargetTargetLOS"] = {},
     ["active_enemies"] = 0,
 }
 
-TR.PriestBurstBuffs = {
+local PriestBurstBuffs = {
     [256] = 197871, -- Discipline
     --[257] = {}, -- Holy
     [258] = 194249, -- Shadow
@@ -864,7 +864,7 @@ end
 
 local function PriestBurst()
     local sf = Shadowfiend()
-    local spec_burst = (TR.PriestBurstBuffs[A.PlayerSpec] and Unit("player"):HasBuffs(TR.PriestBurstBuffs[A.PlayerSpec], "player", true)) or 0
+    local spec_burst = (PriestBurstBuffs[A.PlayerSpec] and Unit("player"):HasBuffs(PriestBurstBuffs[A.PlayerSpec], "player", true)) or 0
     local heroism = Unit("player"):HasBuffs("BurstHaste")
     return (sf > 0 and sf) or (spec_burst > 0 and spec_burst) or (heroism > 0 and heroism) or 0
 end
@@ -1140,7 +1140,7 @@ local function CanHealHolyNova()
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) and (not A.IsInPvP or not EnemyTeam():IsBreakAble(12)) then 
         local total = 0
-        local Enemies = TR.PriestVars["AoE12"] or 0
+        local Enemies = VarAoE12 or 0
         for i = 1, #members do                
             -- In range
             if Unit(members[i].Unit):GetRange() <= 12 then
@@ -1164,7 +1164,7 @@ local function CanHealHalo(VARIATION)
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) and (not A.IsInPvP or not EnemyTeam():IsBreakAble(30)) then 
         local total = 0
-        local Enemies = TR.PriestVars["AoE30"] or 0
+        local Enemies = VarAoE30 or 0
         for i = 1, #members do    
             -- In range
             if Unit(members[i].Unit):GetRange() <= 30 then
@@ -1191,54 +1191,54 @@ local function IsNotEnoughAtonementHPS(unit)
     -- NO Atonement 
     Unit(unit):HasBuffs(81749, "player", true) <= GetCurrentGCD() or 
     (
-        TR.PriestVars["AtonementHPS"] and 
-        TR.PriestVars["AtonementHPS"] > 0 and 
+        VarAtonementHPS and 
+        VarAtonementHPS > 0 and 
         (
             (
                 A.GetToggle(2, "HE_Absorb") and
-                incdmg(unit) > TR.PriestVars["AtonementHPS"] + getAbsorb(unit, 17) 
+                incdmg(unit) > VarAtonementHPS + getAbsorb(unit, 17) 
             ) or 
             (
                 not A.GetToggle(2, "HE_Absorb") and 
-                incdmg(unit) > TR.PriestVars["AtonementHPS"]
+                incdmg(unit) > VarAtonementHPS
             )
         )
     )
 end
 
 local function RefreshVars()
-    TR.PriestVars["DamageSpellRace"] = Env.SpellRace("DAMAGE")
-    TR.PriestVars["PriestBurst"] = PriestBurst()
+    PriestVars["DamageSpellRace"] = Env.SpellRace("DAMAGE")
+    PriestVars["PriestBurst"] = PriestBurst()
     -- Discipline
     if Unit(player):HasSpec(256) then 
         local CurrentSpeed = Unit("player"):GetCurrentSpeed()
         -- HealingEngine 
-        TR.PriestVars["GetMembers"] = HealingEngine.GetMembersAll()
+        VarGetMembers = HealingEngine.GetMembersAll()
         -- Penance
-        TR.PriestVars["IsChanneling"] = select(2, Unit("player"):CastTime(47540)) > select(4, GetNetStats()) / 1000
+        VarIsChanneling = select(2, Unit("player"):CastTime(47540)) > select(4, GetNetStats()) / 1000
         -- Applied Atonement Count
-        TR.PriestVars["Atonements"] = HealingEngine.GetBuffsCount(81749, GetCurrentGCD())
-        TR.PriestVars["AtonementHPS"] = Unit("player"):GetDPS() * 0.55
+        VarAtonements = HealingEngine.GetBuffsCount(81749, GetCurrentGCD())
+        VarAtonementHPS = Unit("player"):GetDPS() * 0.55
         -- Member's controllers
-        TR.PriestVars["Frequency"] = HealingEngine.GetHealthFrequency(GetGCD() * 3 + GetCurrentGCD())
+        VarFrequency = HealingEngine.GetHealthFrequency(GetGCD() * 3 + GetCurrentGCD())
         -- Enemies 
-        TR.PriestVars["AoE12"] = AoE(nil, 12)
-        TR.PriestVars["AoE30"] = (A.Halo:IsSpellLearned() and A.Halo:IsReady() and AoE(nil, 30)) or 0
+        VarAoE12 = AoE(nil, 12)
+        VarAoE30 = (A.Halo:IsSpellLearned() and A.Halo:IsReady() and AoE(nil, 30)) or 0
         -- AoE healing 
         -- Toggle dependence
-        TR.PriestVars["CanHealPWR"] = A.GetToggle(2, "AoE") and not TR.PriestVars["IsChanneling"] and (CurrentSpeed == 0 or (A.IsInPvP and A.UltimateRadiance:IsSpellLearned())) and A.PowerWordRadiance:IsReady() and CanHealPWR() 
-        TR.PriestVars["CanHealHalo"] = A.GetToggle(2, "AoE") and not TR.PriestVars["IsChanneling"] and A.Halo:IsSpellLearned() and CurrentSpeed == 0 and A.Halo:IsReady() and CanHealHalo() 
-        TR.PriestVars["CanHealShadowCovenant"] = A.GetToggle(2, "AoE") and not TR.PriestVars["IsChanneling"] and A.ShadowCovenant:IsSpellLearned() and CanHealShadowCovenant()   
+        VarCanHealPWR = A.GetToggle(2, "AoE") and not VarIsChanneling and (CurrentSpeed == 0 or (A.IsInPvP and A.UltimateRadiance:IsSpellLearned())) and A.PowerWordRadiance:IsReady() and CanHealPWR() 
+        VarCanHealHalo = A.GetToggle(2, "AoE") and not VarIsChanneling and A.Halo:IsSpellLearned() and CurrentSpeed == 0 and A.Halo:IsReady() and CanHealHalo() 
+        VarCanHealShadowCovenant = A.GetToggle(2, "AoE") and not VarIsChanneling and A.ShadowCovenant:IsSpellLearned() and CanHealShadowCovenant()   
         -- Always checking
-        TR.PriestVars["CanEvangelism"] = not TR.PriestVars["IsChanneling"] and A.Evangelism:IsSpellLearned() and A.Evangelism:IsReady() and CanEvangelism()
-        TR.PriestVars["CanHealHolyNova"] = not TR.PriestVars["IsChanneling"] and CanHealHolyNova()        
+        VarCanEvangelism = not VarIsChanneling and A.Evangelism:IsSpellLearned() and A.Evangelism:IsReady() and CanEvangelism()
+        VarCanHealHolyNova = not VarIsChanneling and CanHealHolyNova()        
     end 
 end
 
 --- TargetTarget LOS 
 A.Listener:Add('TastePriest_UI_Events', "UI_ERROR_MESSAGE", function(...)    
         if Action.GetToggle(1, "LOSCheck") and select(2, ...) == ACTION_CONST_SPELL_FAILED_LINE_OF_SIGHT and TR.CanDMG():TargetTarget() then          
-            TR.PriestVars["TargetTargetLOS"][UnitGUID("targettarget")] = TMW.time + 5
+            PriestVars["TargetTargetLOS"][UnitGUID("targettarget")] = TMW.time + 5
         end
 end)
 
@@ -1247,20 +1247,20 @@ for k, v in pairs({"PLAYER_ENTERING_WORLD", "ACTIVE_TALENT_GROUP_CHANGED", "PLAY
     A.Listener:Add('TastePriest_Var_Reset', v, function()
             RefreshVars()
             -- Discipline Resets 
-            TR.PriestVars["IsChanneling"] = false            
+            VarIsChanneling = false            
     end)
 end
-TR.PriestVars["IsChanneling"] = false    
+VarIsChanneling = false    
 
 A.Listener:Add('TastePriest_Var_Reset', 'PLAYER_REGEN_ENABLED', function()
-        if TR.PriestVars["TargetTargetLOS"] then 
-            wipe(TR.PriestVars["TargetTargetLOS"])     
+        if PriestVars["TargetTargetLOS"] then 
+            wipe(PriestVars["TargetTargetLOS"])     
         end 
 end)
 
 A.Listener:Add('TastePriest_Var_Reset', 'PLAYER_REGEN_DISABLED', function()
-        if TR.PriestVars["TargetTargetLOS"] then 
-            wipe(TR.PriestVars["TargetTargetLOS"])     
+        if PriestVars["TargetTargetLOS"] then 
+            wipe(PriestVars["TargetTargetLOS"])     
         end 
 end)
 
@@ -1333,7 +1333,7 @@ TR.CanDMG = PseudoClass({
                 end 
                 local NotInLOS = true 
                 if Action.GetToggle(1, "LOSCheck") then 
-                    local TimeLOS = TR.PriestVars["TargetTargetLOS"][UnitGUID("targettarget")] or 0
+                    local TimeLOS = PriestVars["TargetTargetLOS"][UnitGUID("targettarget")] or 0
                     NotInLOS = not TimeLOS or TMW.time - TimeLOS > 0
                 end     
                 return 
@@ -1568,7 +1568,7 @@ A[3] = function(icon, isMulti)
 
         -- General Power Word: Fortitude
         if A.PowerWordFortitude:IsReady(player) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         not Player:IsMounted() and
         Unit(player):CombatTime() == 0 and
         TMW.time - SpellLastCast("player", A.PowerWordFortitude.ID, true) > 20 and
@@ -1633,7 +1633,7 @@ A[3] = function(icon, isMulti)
         -- General Angelic Feather
         if A.AngelicFeather:IsReady(unit) and
         A.GetToggle(2, "AngelicFeather") and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         not Player:IsMounted() and
         Unit(player):CombatTime() == 0 and
         A.AngelicFeather:IsSpellLearned() and
@@ -1692,7 +1692,7 @@ A[3] = function(icon, isMulti)
         local SWPurgetheWickedSpell = A.PurgetheWicked:IsSpellLearned() and A.PurgetheWicked or A.ShadowWordPain
 		
 		if SWPurgetheWickedSpell:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         -- Check Spell Locking School
         (
             (
@@ -1729,7 +1729,7 @@ A[3] = function(icon, isMulti)
         -- DPvE Mouse SF
         if A.Shadowfiend:IsReady(unit) and
         A.BurstIsON(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         (
             TR.CanDMG(A.Shadowfiend.ID):Mouse() and 
             A.Shadowfiend:IsSpellInRange("mouseover") and 
@@ -1747,7 +1747,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Mouse Schism
         if A.Schism:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.Schism:IsSpellLearned() and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
@@ -1777,7 +1777,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Mouse Power Word: Solace
         if A.PowerWordSolace:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.PowerWordSolace:IsSpellLearned() and
         (
             TR.CanDMG(A.PowerWordSolace.ID):Mouse() and 
@@ -1808,7 +1808,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Mouse Smite
         if A.Smite:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
             TR.CanDMG(A.Smite.ID):Mouse() and 
@@ -1824,7 +1824,7 @@ A[3] = function(icon, isMulti)
 		
         -- DPvE #1 Power Word: Shield 
         if A.PowerWordShield:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         (
             Unit("player"):CombatTime() > 0 or
             (
@@ -1911,7 +1911,7 @@ A[3] = function(icon, isMulti)
         -- DPvE Power Word: Barrier
         if A.PowerWordBarrier:IsReady(player) and
         not Player:IsMounted() and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):CombatTime() > 0 and
         -- Rapture
         Unit("player"):HasBuffs(47536, "player", true) <= GetCurrentGCD() and
@@ -1943,18 +1943,18 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     (
-                        TR.PriestVars["Frequency"] and
+                        VarFrequency and
                         (
                             (
                                 TeamCache.Friendly.Size <= 5 and
                                 (
-                                    TR.PriestVars["Frequency"] >= 40 or
+                                    VarFrequency >= 40 or
                                     HealingEngine.GetBelowHealthPercentercentUnits(45) >= 3
                                 )                        
                             ) or
                             (
                                 TeamCache.Friendly.Size > 5 and
-                                TR.PriestVars["Frequency"] >= 30
+                                VarFrequency >= 30
                             )
                         )
                     ) or    
@@ -1996,7 +1996,7 @@ A[3] = function(icon, isMulti)
         -- DPvE Rapture
         if A.Rapture:IsReady(unit) and
         not Player:IsMounted() and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):CombatTime() > 0 and
         -- Luminous Barrier
         (
@@ -2081,7 +2081,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Divine Star
         if A.DivineStar:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.DivineStar:IsSpellLearned() and
         (
             -- Penance
@@ -2197,7 +2197,7 @@ A[3] = function(icon, isMulti)
                 ) and
                 -- Immediate Interruption
                 (
-                    not TR.PriestVars["IsChanneling"] or
+                    not VarIsChanneling or
                     -- Penance
                     Unit("mouseover"):TimeToDie() <= select(2, Unit("player"):CastTime(47540))
                 ) and
@@ -2239,7 +2239,7 @@ A[3] = function(icon, isMulti)
                 ) and
                 -- Immediate Interruption
                 (
-                    not TR.PriestVars["IsChanneling"] or
+                    not VarIsChanneling or
                     -- Penance
                     Unit("target"):TimeToDie() <= select(2, Unit("player"):CastTime(47540))
                 ) and
@@ -2258,7 +2258,7 @@ A[3] = function(icon, isMulti)
         -- DPvE AoE Shadow Covenant
         if A.ShadowCovenant:IsReady(unit) and 
 		A.GetToggle(2, "AoE") and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.ShadowCovenant:IsSpellLearned() and
         (
             (
@@ -2279,7 +2279,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE #1 Shadow Covenant
         if A.ShadowCovenant:IsReady(unit) and
-        TR.PriestVars["CanHealShadowCovenant"] and
+        VarCanHealShadowCovenant and
         (
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Mouse() and 
@@ -2299,12 +2299,12 @@ A[3] = function(icon, isMulti)
         -- DPvE AoE Power Word: Radiance 
         if A.PowerWordRadiance:IsReady(unit) and 
 		A.GetToggle(2, "AoE") and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         TMW.time - SpellLastCast("player", A.PowerWordRadiance.ID) > 1 and
         A.LastPlayerCastID ~= ID and
-        TR.PriestVars["Atonements"] and 
-        TR.PriestVars["Atonements"] < AoEMembers(_, 2, 5) and
+        VarAtonements and 
+        VarAtonements < AoEMembers(_, 2, 5) and
         (
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Mouse() and 
@@ -2328,7 +2328,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Power Word: Radiance 
         if A.PowerWordRadiance:IsReady(unit) and
-        TR.PriestVars["CanHealPWR"] and
+        VarCanHealPWR and
         TMW.time - SpellLastCast("player", A.PowerWordRadiance.ID) > 1 and
         A.LastPlayerCastID ~= ID and
         (
@@ -2353,7 +2353,7 @@ A[3] = function(icon, isMulti)
 		
         -- DPvE AoE Halo
         if A.Halo:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         A.Halo:IsSpellLearned() and
         (
@@ -2375,7 +2375,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Halo
         if A.Halo:IsReady(unit) and
-        TR.PriestVars["CanHealHalo"] and
+        VarCanHealHalo and
         (
             (
                 TR.CanHeal(A.Halo.ID):Mouse() --and 
@@ -2394,7 +2394,7 @@ A[3] = function(icon, isMulti)
         -- DPvE @@ Purge the Wicked
         -- Cast before use Penance to dot also nearest unit
         if A.PurgetheWicked:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and 
+        not VarIsChanneling and 
         A.PurgetheWicked:IsSpellLearned() and
         (
             TR.CanDMG(A.PurgetheWicked.ID):TargetTarget() and 
@@ -2450,7 +2450,7 @@ A[3] = function(icon, isMulti)
                 A.Penance:PredictHeal("PenanceHeal", "mouseover", 1650) and
                 (
                     HealingEngine.IsMostlyIncDMG("mouseover") or
-                    ( TR.PriestVars["Atonements"] and TR.PriestVars["Atonements"] < 2 )
+                    ( VarAtonements and VarAtonements < 2 )
                 )
             ) or 
             (
@@ -2460,7 +2460,7 @@ A[3] = function(icon, isMulti)
                 A.Penance:PredictHeal("PenanceHeal", "target", 1650) and
                 (
                     HealingEngine.IsMostlyIncDMG("target") or
-                    ( TR.PriestVars["Atonements"] and TR.PriestVars["Atonements"] < 2 )
+                    ( VarAtonements and VarAtonements < 2 )
                 )
             )
         )
@@ -2470,7 +2470,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE #1 ShadowMend (Heavy Injured)
         if A.ShadowMend:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
             (
@@ -2505,7 +2505,7 @@ A[3] = function(icon, isMulti)
         local SWPurgetheWickedSpell = A.PurgetheWicked:IsSpellLearned() and A.PurgetheWicked or A.ShadowWordPain
 		
         if SWPurgetheWickedSpell:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         -- Check Spell Locking School
         (
             (
@@ -2541,7 +2541,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE PW:F (Rebuff)
         if A.PowerWordFortitude:IsReady(player) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):CombatTime() > 0 and
         PriestBurst() <= GetCurrentGCD() and
         (
@@ -2566,7 +2566,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE #2 Power Word: Shield 
         if A.PowerWordShield:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):CombatTime() > 0 and
         (
             (
@@ -2606,7 +2606,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Shining Force
         if A.ShiningForce:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.ShiningForce:IsSpellLearned() and
         -- Leap of Faith 
         A.LastPlayerCastID ~= A.LeapofFaith.ID and 
@@ -2671,16 +2671,16 @@ A[3] = function(icon, isMulti)
 		
         -- DPvE Evangelism
         if A.Evangelism:IsReady(unit) and
-        TR.PriestVars["CanEvangelism"] and
-        TR.PriestVars["Frequency"] and
-        TR.PriestVars["Frequency"] >= 25
+        VarCanEvangelism and
+        VarFrequency and
+        VarFrequency >= 25
 		then
             return A.Evangelism:Show(icon)
         end
 
         -- DPvE #2 ShadowMend (Healing with applying Atonement)
         if A.ShadowMend:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
             (
@@ -2708,7 +2708,7 @@ A[3] = function(icon, isMulti)
         if A.Shadowfiend:IsReady(unit) and
         A.BurstIsON(unit) and
         Unit(player):HasSpec(256) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         (    
             (
                 TR.CanDMG(A.Shadowfiend.ID):Target() and
@@ -2748,7 +2748,7 @@ A[3] = function(icon, isMulti)
         local SWPurgetheWickedSpell = A.PurgetheWicked:IsSpellLearned() and A.PurgetheWicked or A.ShadowWordPain
 		
         if SWPurgetheWickedSpell:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         -- Check Spell Locking School
         (
             (
@@ -2806,7 +2806,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Schism
         if A.Schism:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.Schism:IsSpellLearned() and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
@@ -2865,7 +2865,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Power Word: Solace
         if A.PowerWordSolace:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         A.PowerWordSolace:IsSpellLearned() and
         (
             (
@@ -2936,7 +2936,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE Smite (DMG)
         if A.Smite:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
             (
@@ -2969,7 +2969,7 @@ A[3] = function(icon, isMulti)
         -- DPvE Angelic Feather
         if A.AngelicFeather:IsReady(unit) and
         A.GetToggle(2, "AngelicFeather") and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         not Player:IsMounted() and
         Unit("player"):CombatTime() > 0 and
         A.AngelicFeather:IsSpellLearned() and
@@ -3009,7 +3009,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE #3 ShadowMend (filler)
         if A.ShadowMend:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         Unit("player"):GetCurrentSpeed() == 0 and
         (
             (
@@ -3048,7 +3048,7 @@ A[3] = function(icon, isMulti)
 
         -- DPvE #3 Power Word: Shield  (filler)
         if A.PowerWordShield:IsReady(unit) and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         (
             (
                 TR.CanHeal(A.PowerWordShield.ID):Mouse() and 
@@ -3112,24 +3112,24 @@ A[3] = function(icon, isMulti)
         -- DPvE Holy Nova
         if A.HolyNova:IsReady(player) and
         A.GetToggle(2, "AoE") and
-        not TR.PriestVars["IsChanneling"] and
+        not VarIsChanneling and
         (
             -- DMG
             (
                 Unit("player"):CombatTime() > 0 and
-                TR.PriestVars["AoE12"] and 
-                TR.PriestVars["AoE12"] >= 1
+                VarAoE12 and 
+                VarAoE12 >= 1
             ) or
             -- HEAL
             (
                 TR.CanHeal(A.HolyNova.ID):Mouse() and 
                 Unit("mouseover"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("HolyNova", "mouseover", nil, TR.PriestVars["AoE12"])
+                A.HolyNova:PredictHeal("HolyNova", "mouseover", nil, VarAoE12)
             ) or 
             (
                 TR.CanHeal(A.HolyNova.ID):Target() and
                 Unit("target"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("HolyNova", "target", nil, TR.PriestVars["AoE12"])
+                A.HolyNova:PredictHeal("HolyNova", "target", nil, VarAoE12)
             )    
         )
 		then
