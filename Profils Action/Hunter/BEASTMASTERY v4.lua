@@ -936,15 +936,15 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BurstIsON(unit) and DontWasteCDs(unit) and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
-			and ((Pull > 0.1 and Pull <= 1.2) or not DBM) 
+            if A.BurstIsON(unit) and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+			and ((Pull > 0.1 and Pull <= 1.2)) 
 			then
                 return A.AspectoftheWild:Show(icon)
             end
 			
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
-			((Pull > 0.1 and Pull <= 1.6) or not DBM) 
+            if A.BestialWrath:IsReady(player) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
+			((Pull > 0.1 and Pull <= 1.6)) 
 			then
                 return A.BestialWrath:Show(icon)
             end
