@@ -875,7 +875,7 @@ A[3] = function(icon, isMulti)
 			or 
 			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 			or
-			Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + GetPing() + 0.5
+			Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + GetPing() + 1.5
 		)
 		then
             return A.BarbedShot:Show(icon) 
@@ -1122,8 +1122,6 @@ A[3] = function(icon, isMulti)
 			(        				
 				MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
 			)	
-            or
-            MultiUnits:GetByRange(MultishotMaxAoERange)	>= 	MultishotMinAoETargets	
 		) 			
 		then
             return A.Multishot:Show(icon)
@@ -1299,7 +1297,7 @@ A[3] = function(icon, isMulti)
 				-- Range by nameplate
 				AoEMode == "RangeByNameplate" and
 				(					    
-					GetByRange(3, MultishotMaxAoERange) 
+					GetByRange(MultishotMinAoETargets, MultishotMaxAoERange) 
 				)
 				or
 				-- Range by active enemies CLEU
