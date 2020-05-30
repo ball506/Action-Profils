@@ -760,6 +760,203 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
 			},	
+
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Defensives -- ",
+                    },
+                },
+            },
+			
+            { -- [1] 1st Row  	
+                {
+                    E = "Checkbox", 
+                    DB = "ArdentDefenderIgnoreBigDeff",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(31850) .. "\nSkip if " .. A.GetSpellInfo(86659) .. " used",
+                        ruRU = A.GetSpellInfo(31850) .. "\nSkip if " .. A.GetSpellInfo(86659) .. " used",  
+                        frFR = A.GetSpellInfo(31850) .. "\nSkip if " .. A.GetSpellInfo(86659) .. " used", 
+                    }, 
+                    M = {},
+                }, 		    
+                {
+                    E = "Checkbox", 
+                    DB = "ArdentDefenderCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(31850) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(31850) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(31850) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                },				
+            },
+            {			
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "ArdentDefenderTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(12975) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(12975) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "ArdentDefenderHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(12975) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(12975) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(12975) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+			
+            { -- [1] 1st Row  		    
+                {
+                    E = "Checkbox", 
+                    DB = "GuardianofAncientKingsCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(86659) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(86659) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(86659) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                },
+            },
+            {			
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "GuardianofAncientKingsTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(86659) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(86659) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(86659) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "GuardianofAncientKingsHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(86659) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(86659) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(86659) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            },			
+			{
+    			{
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 50,                            
+                    DB = "LightoftheProtectorHPLost",
+                    DBV = 3, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(184092) .. "\n%HP lost per sec",
+                    }, 
+                    M = {},
+                },
+    			{
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "LightoftheProtectorHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(184092) .. " (%)",
+                    }, 
+                    M = {},
+                },	
+	            {
+                    E = "Checkbox", 
+                    DB = "LayonHandsCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(633) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(633) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(633) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                },
+	            {
+                    E = "Checkbox", 
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(301308) .. " (%)",
+                        ruRU = A.GetSpellInfo(301308) .. " (%)",  
+                        frFR = A.GetSpellInfo(301308) .. " (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "Player percent health before using " .. A.GetSpellInfo(301308), 
+                        ruRU = "Player percent health before using " .. A.GetSpellInfo(301308), 
+                        frFR = "Player percent health before using " .. A.GetSpellInfo(301308),  
+                    },
+                    M = {},
+                },							
+			},
+            
             { -- [4] 4th Row
 
                 {
@@ -796,7 +993,21 @@ A.Data.ProfileUI = {
 						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
-                },            
+                }, 
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "AutoFreedom",
+           	        DBV = true,
+           	        L = { 
+					    enUS = "Auto " .. A.GetSpellInfo(1044),
+                        ruRU = "Auto " .. A.GetSpellInfo(1044),
+	                },
+           	        TT = { 
+					    enUS = "Will auto use " .. A.GetSpellInfo(1044) .. " on friendly party units.",
+                        ruRU = "Will auto use " .. A.GetSpellInfo(1044) .. " on friendly party units.",
+					},
+           	        M = {},
+        	    },				
             }, 			
             { -- [4] 4th Row
 
@@ -2096,7 +2307,21 @@ A.Data.ProfileUI = {
                         ruRU = "Включить/Выключить относительно группы пассивную ротацию", 
                     }, 
                     M = {},
-                },            
+                }, 
+        	    {	    
+           	        E = "Checkbox", 
+           	        DB = "AutoFreedom",
+           	        DBV = true,
+           	        L = { 
+					    enUS = "Auto " .. A.GetSpellInfo(1044),
+                        ruRU = "Auto " .. A.GetSpellInfo(1044),
+	                },
+           	        TT = { 
+					    enUS = "Will auto use " .. A.GetSpellInfo(1044) .. " on friendly party units.",
+                        ruRU = "Will auto use " .. A.GetSpellInfo(1044) .. " on friendly party units.",
+					},
+           	        M = {},
+        	    },				
             }, 	
             { -- [7]
                 {
