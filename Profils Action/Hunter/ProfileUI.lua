@@ -311,11 +311,11 @@ A.Data.ProfileUI = {
                 },
                 {
                     E = "Slider",                                                     
-                    MIN = 2, 
+                    MIN = 1, 
                     MAX = 5,                            
                     DB = "MultishotMinAoETargets",
                     DBV = 2, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
+                    ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(2643) .. "\nmin AoE units",
                     },
@@ -332,7 +332,7 @@ A.Data.ProfileUI = {
                     MAX = 40,                            
                     DB = "MultishotMaxAoERange",
                     DBV = 40, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
+                    ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(2643) .. "\nmax AoE range",
                     },
@@ -366,7 +366,7 @@ A.Data.ProfileUI = {
                     MIN = 0.25, 
                     MAX = 5,                            
                     DB = "BeastCleaveBuffRefresh",
-                    DBV = 1, -- Set healthpercentage @60% life. 
+                    DBV = 1.8, -- Set healthpercentage @60% life. 
 					Precision = 1,
                     ONOFF = true,
                     L = { 
@@ -384,7 +384,7 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 5,                            
                     DB = "BarbedShotRefreshSec",
-                    DBV = 2, -- Set healthpercentage @60% life. 
+                    DBV = 3, -- Set healthpercentage @60% life. 
 					Precision = 1,
                     ONOFF = true,
                     L = { 
