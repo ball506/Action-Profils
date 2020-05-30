@@ -561,7 +561,7 @@ local function SelfDefensives()
     not Action.InstanceInfo.isRated and
     Unit("player"):CombatTime() > 0 and
     Unit("player"):Health() <= Unit("player"):HealthMax() * 0.13 and
-	Unit("player"):HasDeBuffs(25771, true) == 0 -- Forbearance and
+	Unit("player"):HasDeBuffs(25771, true) == 0 and -- Forbearance and
     (
         Unit("player"):HasBuffs(31850, true) <= 0.1 -- Ardent Defender    
     ) 	
@@ -1423,7 +1423,7 @@ local function PartyRotation(unit)
     end
 
     -- BlessingofFreedom
-    if A.BlessingofFreedom:IsReady(unit) not UnitIsUnit("target", unit) and HoF(unit)
+    if A.BlessingofFreedom:IsReady(unit) and not UnitIsUnit("target", unit) and HoF(unit)
 	then
         return A.BlessingofFreedom
     end
