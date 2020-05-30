@@ -129,7 +129,7 @@ Action[ACTION_CONST_PRIEST_HOLY] = {
 	MassDispel                                = Create({ Type = "Spell", ID = 32375    }),
 	SpiritofRedemption                        = Create({ Type = "Spell", ID = 20711    }),	
 	-- Buffs
-	SurgeofLightBuff                          = Create({ Type = "Spell", ID = 114255, Hidden = true     })	
+	SurgeofLightBuff                          = Create({ Type = "Spell", ID = 114255, Hidden = true     }),	
     -- Items
     PotionofUnbridledFury                     = Create({ Type = "Potion",  ID = 169299 }), 
     -- Hidden 
@@ -207,8 +207,8 @@ local function RotationsVariables()
 	LucidDreamManaPercent = GetToggle(2, "LucidDreamManaPercent")
 	LifeBindersInvocationUnits = GetToggle(2, "LifeBindersInvocationUnits")
 	LifeBindersInvocationHP = GetToggle(2, "LifeBindersInvocationHP")
-
-	
+    GuardianSpiritSelfDeff = GetToggle(2, "GuardianSpiritSelfDeff")
+	GuardianSpiritTeamDeff = GetToggle(2, "GuardianSpiritTeamDeff")
 	
 	
 	
@@ -219,15 +219,15 @@ local function IsSchoolFree()
 end 
 
 -- [1] CC AntiFake Rotation
-local function AntiFakeStun(unit) 
+--local function AntiFakeStun(unit) 
 
 
        
-end 
-A[1] = function(icon)
+--end 
+--A[1] = function(icon)
 
                                         
-end
+--end
 
 -- [2] Kick AntiFake Rotation
 A[2] = function(icon)        
@@ -969,7 +969,7 @@ local function MassDispel(unit)
                             ) and 
                             Unit(unit):HasDeBuffs("Magic") > 3
                         ) or
-                        Unit(unit):DeBuffCyclone() > Unit("player"):Unit("player"):CastTime(32375)
+                        Unit(unit):DeBuffCyclone() > Unit("player"):CastTime()(32375)
                     )
                 ) or 
                 -- PvE 
@@ -1082,7 +1082,7 @@ local function RefreshVars()
         -- HealingEngine 
         VarGetMembers = HealingEngine.GetMembersAll()
         -- Symvol of Hope & Divine Hymn
-        VarIsChanneling = select(2, Unit("player"):Unit("player"):CastTime(64901)) > 0 or select(2, Unit("player"):Unit("player"):CastTime(64843)) > 0
+        VarIsChanneling = select(2, Unit("player"):CastTime()(64901)) > 0 or select(2, Unit("player"):CastTime()(64843)) > 0
         -- Apotheosis
         VarApotheosis = (A.Apotheosis:IsSpellLearned() and Unit("player"):HasBuffs(200183, "player", true)) or 0
         -- Member's controllers
@@ -1152,7 +1152,7 @@ TR.CanHeal = PseudoClass({
                 (
                     -- Mass Dispel     
                     self.SpellID == 32375 or
-                    Unit("mouseover"):DeBuffCyclone() <= self.Unit("player"):CastTime
+                    Unit("mouseover"):DeBuffCyclone() <= self.CastTime
                 )  
         end, "mouseover"),
         Target = Cache:Wrap(function(self, isPlayer)       
@@ -1167,13 +1167,13 @@ TR.CanHeal = PseudoClass({
                 (
                     -- Mass Dispel
                     self.SpellID == 32375 or
-                    Unit("target"):DeBuffCyclone() <= self.Unit("player"):CastTime                 
+                    Unit("target"):DeBuffCyclone() <= self.CastTime                 
                 )    
         end, "target"),
 })
 function TR.CanHeal:New(Spell, Refresh) 
     -- Exception Penance (this is for Cyclone prediction)
-    self.Unit("player"):CastTime = (Spell and Spell ~= 47540 and Unit("player"):Unit("player"):CastTime(Spell)) or 0
+    self.CastTime = (Spell and Spell ~= 47540 and Unit("player"):CastTime(Spell)) or 0
     self.SpellID = Spell or 0 
     self.Refresh = Refresh or 0.01
 end
@@ -1185,7 +1185,7 @@ TR.CanDMG = PseudoClass({
                 A.GetToggle(2, "mouseover") and
                 Unit("mouseover"):IsEnemy() and
                 ( not isPlayer or Unit("mouseover"):IsPlayer() ) and
-                Unit("mouseover"):DeBuffCyclone() <= self.Unit("player"):CastTime and 
+                Unit("mouseover"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
                 ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("mouseover"):WithOutKarmed() )
         end, "mouseover"),
@@ -1197,7 +1197,7 @@ TR.CanDMG = PseudoClass({
                 ) and        
                 Unit("target"):IsEnemy() and
                 ( not isPlayer or Unit("target"):IsPlayer() ) and
-                Unit("target"):DeBuffCyclone() <= self.Unit("player"):CastTime and 
+                Unit("target"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
                 ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("target"):WithOutKarmed() )  
         end, "target"),
@@ -1223,7 +1223,7 @@ TR.CanDMG = PseudoClass({
                 not Unit("target"):IsEnemy() and
                 Unit("targettarget"):IsEnemy() and
                 ( not isPlayer or UnitIsPlayer("targettarget") ) and
-                Unit("targettarget"):DeBuffCyclone() <= self.Unit("player"):CastTime and 
+                Unit("targettarget"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
                 ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("targettarget"):WithOutKarmed() )  
         end, "targettarget"),
@@ -1231,7 +1231,7 @@ TR.CanDMG = PseudoClass({
 
 function TR.CanDMG:New(Spell, Refresh) 
     -- Exception Penance (this is for Cyclone prediction)
-    self.Unit("player"):CastTime = (Spell and Spell ~= 47540 and Unit("player"):Unit("player"):CastTime(Spell)) or 0
+    self.CastTime = (Spell and Spell ~= 47540 and Unit("player"):CastTime()(Spell)) or 0
     self.SpellID = Spell or 0
     self.Refresh = Refresh or 0.01
 end
@@ -1295,7 +1295,7 @@ local function CanHealHolyWordSanctify(unit)
             -- Clear true position
             for i = 1, #members do    
                 -- In range
-                if Unit(members[i].Unit):GetRange() <= 10 and A:HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
+                if Unit(members[i].Unit):GetRange() <= 10 and A.HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
                     total = total + 1
                 end 
                 -- If we reached limit of required units
@@ -1307,7 +1307,7 @@ local function CanHealHolyWordSanctify(unit)
             -- Worn rest position 
             for i = 1, #members do    
                 -- In range (they are already into by table of members) 
-                if A:HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
+                if A.HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached limit of required units
@@ -1660,7 +1660,7 @@ A[3] = function(icon, isMulti)
         -- General Power Word: Fortitude
         if A.PowerWordFortitude:IsReady(player) and
         not VarIsChanneling and
-        not Player:Player:IsMounted() and
+        not Player:IsMounted() and
         Unit(player):CombatTime() == 0 and
         TMW.time - SpellLastCast("player", A.PowerWordFortitude.ID, true) > 20 and
         FriendlyTeam(nil, 10):MissedBuffs(A.PowerWordFortitude.ID)
@@ -1725,7 +1725,7 @@ A[3] = function(icon, isMulti)
         if A.AngelicFeather:IsReady(unit) and
         A.GetToggle(2, "AngelicFeather") and
         not VarIsChanneling and
-        not Player:Player:IsMounted() and
+        not Player:IsMounted() and
         Unit(player):CombatTime() == 0 and
         A.AngelicFeather:IsSpellLearned() and
         (
@@ -1829,7 +1829,7 @@ A[3] = function(icon, isMulti)
             A.Smite:IsSpellInRange("mouseover") and           
             (
                 not Unit("mouseover"):IsPlayer() or
-                UnitMagicImun("mouseover") <= GetCurrentGCD() + Unit("player"):CastTime(A.Smite.ID)
+                UnitMagicImun("mouseover") <= GetCurrentGCD() + Unit("player"):CastTime()(A.Smite.ID)
             )
         ) and
         -- Spirit of Redemption
@@ -1864,7 +1864,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.GuardianSpirit.ID):Mouse(true) and 
                 A.GuardianSpirit:IsSpellInRange("mouseover") and        
-                Unit("mouseover")TimeToDieX(25) <= GetGCD() * 2 and
+                Unit("mouseover"):TimeToDieX(25) <= GetGCD() * 2 and
                 Unit("mouseover"):GetRealTimeDMG() > 0 and
                 -- Check Toggle conditions by preference
                 (
@@ -1906,7 +1906,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.GuardianSpirit.ID):Target(true) and
                 A.GuardianSpirit:IsSpellInRange("target") and        
-                Unit("target")TimeToDieX(25) <= GetGCD() * 2 and
+                Unit("target"):TimeToDieX(25) <= GetGCD() * 2 and
                 Unit("target"):GetRealTimeDMG() > 0 and
                 -- Check Toggle conditions by preference
                 (
@@ -2022,7 +2022,7 @@ A[3] = function(icon, isMulti)
         Unit("player"):CombatTime() > 0 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.HolyWordSalvation.ID) == 0    
+            Unit("player"):CastTime()(A.HolyWordSalvation.ID) == 0    
         ) and
         (
             (
@@ -2231,7 +2231,7 @@ A[3] = function(icon, isMulti)
         TeamCache.Friendly.Size <= 5 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.FlashHeal.ID) == 0 or
+            Unit("player"):CastTime()(A.FlashHeal.ID) == 0 or
             -- Surge of Light
             Unit("player"):HasBuffs(114255, "player", true) > 0    
         ) and
@@ -2391,7 +2391,7 @@ A[3] = function(icon, isMulti)
         TrailofLight:IsSpellLearned() and 
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.FlashHeal.ID) == 0 or
+            Unit("player"):CastTime()(A.FlashHeal.ID) == 0 or
             -- Surge of Light
             Unit("player"):HasBuffs(114255, "player", true) > 0
         ) and
@@ -2419,7 +2419,7 @@ A[3] = function(icon, isMulti)
         not VarIsChanneling and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.PrayerofHealing.ID) == 0    
+            Unit("player"):CastTime()(A.PrayerofHealing.ID) == 0    
         ) and
         (
             (
@@ -2448,7 +2448,7 @@ A[3] = function(icon, isMulti)
         TeamCache.Friendly.Size <= 5 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.PrayerofHealing.ID) == 0    
+            Unit("player"):CastTime()(A.PrayerofHealing.ID) == 0    
         ) and
         (
             (
@@ -2475,13 +2475,13 @@ A[3] = function(icon, isMulti)
         VarApotheosis == 0 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.PrayerofMending.ID) == 0    
+            Unit("player"):CastTime()(A.PrayerofMending.ID) == 0    
         ) and
         (
             (
                 TR.CanHeal(A.PrayerofMending.ID):Mouse() and  
                 A.PrayerofMending:IsSpellInRange("mouseover") and  
-                Unit("mouseover")TimeToDieX(25) > GetGCD() * 2 and
+                Unit("mouseover"):TimeToDieX(25) > GetGCD() * 2 and
                 (
                     Unit("mouseover"):IsTank() or
                     (
@@ -2495,7 +2495,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.PrayerofMending.ID):Target() and      
                 A.PrayerofMending:IsSpellInRange("target") and  
-                Unit("target")TimeToDieX(25) > GetGCD() * 2 and
+                Unit("target"):TimeToDieX(25) > GetGCD() * 2 and
                 (
                     Unit("target"):IsTank() or
                     (
@@ -2519,7 +2519,7 @@ A[3] = function(icon, isMulti)
         TeamCache.Friendly.Size > 5 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.FlashHeal.ID) == 0 or
+            Unit("player"):CastTime()(A.FlashHeal.ID) == 0 or
             -- Surge of Light
             Unit("player"):HasBuffs(114255, "player", true) > 0    
         ) and
@@ -2556,7 +2556,7 @@ A[3] = function(icon, isMulti)
         TeamCache.Friendly.Size > 5 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.PrayerofHealing.ID) == 0    
+            Unit("player"):CastTime()(A.PrayerofHealing.ID) == 0    
         ) and
         (
             (
@@ -2607,7 +2607,7 @@ A[3] = function(icon, isMulti)
         A.BindingHeal:IsSpellLearned() and 
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.BindingHeal.ID) == 0    
+            Unit("player"):CastTime()(A.BindingHeal.ID) == 0    
         ) and
         (
             (
@@ -2638,7 +2638,7 @@ A[3] = function(icon, isMulti)
         VarApotheosis == 0 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.Heal.ID) == 0    
+            Unit("player"):CastTime()(A.Heal.ID) == 0    
         ) and
         (
             (
@@ -2682,7 +2682,7 @@ A[3] = function(icon, isMulti)
         not VarIsChanneling and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.FlashHeal.ID) == 0 or
+            Unit("player"):CastTime()(A.FlashHeal.ID) == 0 or
             -- Surge of Light
             Unit("player"):HasBuffs(114255, "player", true) > 0    
         ) and
@@ -2709,7 +2709,7 @@ A[3] = function(icon, isMulti)
         VarApotheosis == 0 and
         (
             Unit("player"):GetCurrentSpeed() == 0 or
-            Unit("player"):CastTime(A.PrayerofMending.ID) == 0    
+            Unit("player"):CastTime()(A.PrayerofMending.ID) == 0    
         ) and
         (
             (
@@ -2949,7 +2949,7 @@ A[3] = function(icon, isMulti)
                 A.Smite:IsSpellInRange("target") and                
                 (
                     not Unit("target"):IsPlayer() or
-                    UnitMagicImun("target") <= GetCurrentGCD() + Unit("player"):CastTime(A.Smite.ID)
+                    UnitMagicImun("target") <= GetCurrentGCD() + Unit("player"):CastTime()(A.Smite.ID)
                 )
             ) or
             (
@@ -2957,7 +2957,7 @@ A[3] = function(icon, isMulti)
                 A.Smite:IsSpellInRange("targettarget") and         
                 (
                     not UnitIsPlayer("targettarget") or
-                    UnitMagicImun("targettarget") <= GetCurrentGCD() + Unit("player"):CastTime(A.Smite.ID)
+                    UnitMagicImun("targettarget") <= GetCurrentGCD() + Unit("player"):CastTime()(A.Smite.ID)
                 )
             ) 
         ) and
@@ -3031,7 +3031,7 @@ A[3] = function(icon, isMulti)
             )
         ) and
         -- Spirit of Redemption -- STOP CAST
-        --Unit("player"):HasBuffs(215769) == 0
+        Unit("player"):HasBuffs(215769, true) == 0
         then
 		    return A.AngelicFeather:Show(icon)
 		end     
@@ -3122,7 +3122,7 @@ end ]]--
 local function ArenaRotation(icon, unit)
     RotationsVariables()
 	
-    if A.IsInPvP and (A.Zone == "arena") and (unit == "arena1" or unit == "arena2" or unit == "arena3") and not Player:IsStealthed() and not Player:Player:IsMounted() then
+    if A.IsInPvP and (A.Zone == "arena") and (unit == "arena1" or unit == "arena2" or unit == "arena3") and not Player:IsStealthed() and not Player:IsMounted() then
 
         -- EntanglingRoots Arena
         if A.EntanglingRoots:IsReady(unit) and 
