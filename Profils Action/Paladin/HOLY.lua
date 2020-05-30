@@ -226,6 +226,7 @@ local function RotationsVariables()
 	BlessingofFreedomWrathion = GetToggle(2, "BlessingofFreedomWrathion")
 	WrathionMovementStacks = GetToggle(2, "WrathionMovementStacks")
 	BlessingofFreedomShadhar = GetToggle(2, "BlessingofFreedomShadhar")
+	AutoFreedom = GetToggle(2, "AutoFreedom")
 end
 
 
@@ -1238,7 +1239,7 @@ local function Dispel(unit, Icon)
             (
                 not Unit(player):HasSpec(65) or -- Holy
                 (
-                    --not HoF_toggle or 
+                    not AutoFreedom or 
                     not A.BlessingofFreedom:IsReady(unit) -- Freedom
                 )
             )
@@ -1287,7 +1288,7 @@ local function Dispel(unit, Icon)
                         -- Magic Rooted (if not available freedom)
                         (                            
                             (
-                                --not HoF_toggle or 
+                                not AutoFreedom or 
                                 not A.BlessingofFreedom:IsReady(unit) -- Freedom
                             ) and 
                             select(2, UnitClass(unit)) ~= "DRUID" and
@@ -1301,7 +1302,7 @@ local function Dispel(unit, Icon)
                 (
                     not Unit(player):HasSpec(65) and -- Holy 
                     (
-                        not HoF_toggle or 
+                        not AutoFreedom or 
                         not A.BlessingofFreedom:IsReady(unit) -- Freedom
                     ) and     
                     select(2, UnitClass(unit)) ~= "DRUID" and
@@ -3354,28 +3355,33 @@ local function PartyRotation(unit)
         return false 
     end
 
-       --Dispell
- --    if A.CleanseToxins:IsReady(unit) and Action.AuraIsValid(unit, "UseDispel", "Magic") --("Poison", "Disease") 
---    then
---        return A.CleanseToxins
---    end
+    --Dispell
+	if A.CleanseToxins:IsReady(unit) and not UnitIsUnit("target", unit) and Dispel(unit)
+    then
+        return A.CleanseToxins
+    end
+	
+	-- BlessingofSacrifice
+    if A.BlessingofSacrifice:IsReady(unit) and
+    not UnitIsUnit("target", unit) and
+    (
+        -- Blessing of Sanctuary
+        BoS(unit) or
+        -- Hand of Sacriface
+        HoS(unit, 35, true, true)
+    )
+    then
+        return A.BlessingofSacrifice
+    end
 
-      -- BlessingofFreedom
-    if A.BlessingofFreedom:IsReady(unit) and Unit(unit):HasDeBuffs("Rooted") > 0 then
+    -- BlessingofFreedom
+    if A.BlessingofFreedom:IsReady(unit) not UnitIsUnit("target", unit) and HoF(unit)
+	then
         return A.BlessingofFreedom
     end
     
-      -- BlessingofProtection
-    if A.BlessingofProtection:IsReady(unit) and      
-    (
-       -- HP lose per sec >= 20
-        Unit(unit):GetDMG() * 100 / Unit(unit):HealthMax() >= 30 
-        or 
-        Unit(unit):GetRealTimeDMG() >= Unit(unit):HealthMax() * 0.30 
-        or 
-        -- TTD 
-        Unit(unit):TimeToDieX(10) < 3 
-    )
+    -- BlessingofProtection
+    if A.BlessingofProtection:IsReady(unit) and not UnitIsUnit("target", unit) and BoP(unit)
     then
         return A.BlessingofProtection
     end
