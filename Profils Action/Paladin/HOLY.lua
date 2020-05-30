@@ -3375,7 +3375,7 @@ local function PartyRotation(unit)
     end
 
     -- BlessingofFreedom
-    if A.BlessingofFreedom:IsReady(unit) not UnitIsUnit("target", unit) and HoF(unit)
+    if A.BlessingofFreedom:IsReady(unit) and not UnitIsUnit("target", unit) and HoF(unit)
 	then
         return A.BlessingofFreedom
     end
