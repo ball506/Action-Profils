@@ -80,6 +80,7 @@ Action[ACTION_CONST_SHAMAN_RESTORATION] = {
 	HealingRain                            = Action.Create({ Type = "Spell", ID = 73920   }),
 	HealingStreamTotem                     = Action.Create({ Type = "Spell", ID = 5394   }),
 	TidalWaveBuff                          = Action.Create({ Type = "Spell", ID = 53390   }),
+	FlashFloodBuff                         = Action.Create({ Type = "Spell", ID = 280615   }),
 	-- Offensive Abilities
 	FlameShock                             = Action.Create({ Type = "Spell", ID = 188838   }),
 	FlameShockDebuff                       = Action.Create({ Type = "Spell", ID = 188389   }),
@@ -240,6 +241,8 @@ local function RotationsVariables()
 	HealingRainRefresh = GetToggle(2, "HealingRainRefresh")
 	AoEON = GetToggle(2, "AoE")
 	EarthShieldWorkMode = GetToggle(2, "EarthShieldWorkMode")
+    UseSpiritWalkersGrace = GetToggle(2, "UseSpiritWalkersGrace")
+	SpiritWalkersGraceTime = GetToggle(2, "SpiritWalkersGraceTime")
 end
 
 -- [1] CC AntiFake Rotation
@@ -410,11 +413,7 @@ local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
         return 
     end 
-    
-    if CanSpiritWalkersGrace("CATCH") then 
-        return A.SpiritWalkersGrace
-    end 
-    
+        
     -- EarthShieldHP
     local EarthShield = A.GetToggle(2, "EarthShieldHP")
     if     EarthShield >= 0 and A.EarthShield:IsReady("player") and  
@@ -1320,6 +1319,12 @@ end
 
 local StopCast = false 
 
+-- Return boolean
+-- Current Group HPS > Incoming damage
+local function IsGroupEnoughHPS()
+    return ((HealingEngine.GetIncomingHPSAVG() > HealingEngine.GetIncomingDMGAVG()) or (not IsInRaid() and not IsInGroup()))
+end
+
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
     
@@ -1337,6 +1342,8 @@ A[3] = function(icon, isMulti)
     local TeamCacheFriendlySize = TeamCache.Friendly.Size
     local TeamCacheFriendlyType = TeamCache.Friendly.Type or "none" 
     RotationsVariables()    
+
+    
 
     --------------------
     --- DPS ROTATION ---
@@ -1448,7 +1455,12 @@ A[3] = function(icon, isMulti)
     --- HEAL ROTATION ---
     ---------------------  
     local function HealingRotation(unit)
- 
+	
+        local TidalWave = Unit(player):HasBuffs(A.TidalWaveBuff.ID, true)
+		local FlashFlood = Unit(player):HasBuffs(A.FlashFloodBuff.ID, true)
+		local HWcast_t = Unit(player):CastTime(A.HealingWave.ID)
+		local HScast_t = Unit(player):CastTime(A.HealingSurge.ID)
+		
         -- RESS ALL PEOPLE
         if A.AncestralVision:IsReady(player) and
         Unit(player):CombatTime()==0 and
@@ -1609,6 +1621,29 @@ A[3] = function(icon, isMulti)
         end 		
 		
         -- #9 Burst Cooldowns
+		
+        -- SpiritWalkersGrace
+        if A.SpiritWalkersGrace:IsReady(player) and
+		isMoving and
+		UseSpiritWalkersGrace and
+		isMovingFor >= SpiritWalkersGraceTime and
+		(
+            (
+                TeamCacheFriendlyType == "party" and
+                HealingEngine.GetBelowHealthPercentercentUnits(40) >= 3  
+            ) or 
+            (
+                TeamCacheFriendlyType == "raid" and
+                HealingEngine.GetBelowHealthPercentercentUnits(60) >= 4               
+            ) or
+		    CanSpiritWalkersGrace("CATCH")
+		    or
+		    not IsGroupEnoughHPS()
+		)
+		then 
+            return A.SpiritWalkersGrace:Show(icon)
+        end 	
+		
         -- #9.1 Ascendance
         if A.Ascendance:IsReady(player) and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and
         (       
@@ -1696,6 +1731,42 @@ A[3] = function(icon, isMulti)
             return A.Ascendance:Show(icon)
         end		
 
+        -- Spirit Link Totem
+        if A.SpiritLinkTotem:IsReady(player) and 
+		A.BurstIsON(unit) and 
+		combatTime > 5 and
+        (            
+            (
+                TeamCacheFriendlySize > 1 and 
+                (
+                    AVG_DMG and
+                    ReceivedLast5sec and 
+                    AVG_HPS and
+                    (
+                        ReceivedLast5sec > (AVG_DMG + AVG_HPS) * 2 or
+                        AVG_DMG >= AVG_HPS * 5
+                    ) 
+                ) and
+                (
+                    HealingEngine.GetTimeToDieUnits(5) >= GetValidMembers(true) * 0.5 or
+                    HealingEngine.GetBelowHealthPercentercentUnits(40) >= GetValidMembers(true) * 0.5
+                )
+            ) or        
+            (
+                TeamCacheFriendlyType == "party" and
+                HealingEngine.GetBelowHealthPercentercentUnits(15) >= 3  
+            ) or 
+            (
+                TeamCacheFriendlyType == "raid" and
+                HealingEngine.GetBelowHealthPercentercentUnits(30) >= 5               
+            )
+        )
+        then
+            -- Notification                    
+            Action.SendNotification("Burst " .. A.GetSpellInfo(A.SpiritLinkTotem.ID), A.SpiritLinkTotem.ID)                
+            return A.SpiritLinkTotem:Show(icon)
+        end
+		
         -- #9.3 HealingTideTotem            
         if A.HealingTideTotem:IsReady(player) and A.BurstIsON(unit) and combatTime > 5 and 
         (
@@ -1915,6 +1986,103 @@ A[3] = function(icon, isMulti)
             return A.UnleashLife:Show(icon)
         end 
 
+        -- HPvE #1 HealingWave - Low to Moderate Dungeon
+        if A.HealingWave:IsReady(unit) and Unit(player):GetCurrentSpeed() == 0 and IsInGroup() and
+		(
+		    TidalWave > 0 and TidalWave > HWcast_t + GetCurrentGCD() + 0.1
+		    or 
+			A.FlashFlood:IsSpellLearned() and FlashFlood > 0 and FlashFlood > HWcast_t + GetCurrentGCD() + 0.1
+		) and 
+        (
+            -- MouseOver
+            (
+                MouseOver and
+                Unit(mouseover):IsExists() and 
+                A.MouseHasFrame() and                        
+                not IsUnitEnemy(mouseover) and                 
+                A.HealingWave:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
+                A.HealingWave:PredictHeal("HealingWave", mouseover) and
+                Unit(mouseover):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
+            ) or 
+            -- Target
+            (
+                (
+                    not MouseOver or 
+                    not Unit(mouseover):IsExists() or 
+                    IsUnitEnemy(mouseover)
+                ) and        
+                not IsUnitEnemy(target) and
+                A.HealingWave:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
+                A.HealingWave:PredictHeal("HealingWave", target) and
+                Unit(target):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
+            )
+            or
+            -- Save us
+            (
+                Unit(player):HealthPercent() < 91 or
+                Unit(player):TimeToDieX(15) < 5    
+            )    
+        )
+        then
+            return A.HealingWave:Show(icon)
+        end	
+
+        -- HPvE #1 HealingSurge Critical Dungeon		
+        if A.HealingSurge:IsReady(unit) and 
+		IsInGroup() and
+        -- Infusion of Light
+        TidalWave > 0 and
+        TidalWave > HScast_t + GetCurrentGCD() + 0.1 and
+        Unit(player):GetCurrentSpeed() == 0 and 
+        (
+            -- MouseOver
+            (
+                MouseOver and
+                Unit(mouseover):IsExists() and 
+                A.MouseHasFrame() and                        
+                not IsUnitEnemy(mouseover) and                 
+                A.HealingSurge:IsInRange(mouseover) and
+                Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
+                A.HealingSurge:PredictHeal("HealingSurge", mouseover) and
+                Unit(mouseover):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
+                (
+                    Unit(mouseover):IsTank() or
+                    HealingEngine.IsMostlyIncDMG(mouseover) or
+                    Unit(mouseover):Health() < Unit(mouseover):HealthMax() * 0.8 --or
+                    --Unit(mouseover):HealthPercent() < FlashofLightHP or
+                    --Unit(mouseover):TimeToDieX(3) < FlashofLightTTD    
+                )
+            ) or 
+            -- Target
+            (
+                (
+                    not MouseOver or 
+                    not Unit(mouseover):IsExists() 
+                ) and        
+                not IsUnitEnemy(target) and
+                A.HealingSurge:IsInRange(target) and
+                Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
+                A.HealingSurge:PredictHeal("HealingSurge", target) and
+                Unit(target):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
+                (
+                    Unit(target):IsTank() or
+                    HealingEngine.IsMostlyIncDMG(target) or
+                    Unit(target):Health() < Unit(target):HealthMax() * 0.8 --or
+                    --Unit(target):HealthPercent() < FlashofLightHP or
+                    --Unit(target):TimeToDieX(5) < FlashofLightTTD                
+                )
+            ) or
+            -- Save us
+            (
+                Unit(player):HealthPercent() < 60 or
+                Unit(player):TimeToDieX(5) < 2    
+            )            
+        )
+        then
+            return A.HealingSurge:Show(icon)
+        end
 		
         -- RPvE #1 HealingRain 
         if A.HealingRain:IsReady(player) and
@@ -2013,10 +2181,9 @@ A[3] = function(icon, isMulti)
             return A.Wellspring:Show(icon)
         end 
 		
-        -- HPvE #1 HealingSurge Critical
-		local TidalWave = Unit(player):HasBuffs(A.TidalWaveBuff.ID, true)
-		local HScast_t = Unit(player):CastTime(A.HealingSurge.ID)
+        -- HPvE #2 HealingSurge Critical Raid
         if A.HealingSurge:IsReady(unit) and 
+		IsInRaid() and
         -- Infusion of Light
         TidalWave > 0 and
         TidalWave > HScast_t + GetCurrentGCD() + 0.1 and
@@ -2069,9 +2236,13 @@ A[3] = function(icon, isMulti)
             return A.HealingSurge:Show(icon)
         end
 		 
-        -- HPvE #1 HealingWave - Low to Moderate
-		local HWcast_t = Unit(player):CastTime(A.HealingWave.ID)
-        if A.HealingWave:IsReady(unit) and TidalWave > 0 and TidalWave > HWcast_t + GetCurrentGCD() + 0.1 and Unit(player):GetCurrentSpeed() == 0 and 
+        -- HPvE #2 HealingWave - Low to Moderate Raid		
+        if A.HealingWave:IsReady(unit) and Unit(player):GetCurrentSpeed() == 0 and IsInRaid() and
+		(
+		    TidalWave > 0 and TidalWave > HWcast_t + GetCurrentGCD() + 0.1
+		    or 
+			A.FlashFlood:IsSpellLearned() and FlashFlood > 0 and FlashFlood > HWcast_t + GetCurrentGCD() + 0.1
+		) and 
         (
             -- MouseOver
             (
