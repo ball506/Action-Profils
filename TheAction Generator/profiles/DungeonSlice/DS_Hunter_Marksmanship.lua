@@ -569,7 +569,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- trueshot,precast_time=1.5,if=active_enemies>2
-            if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
+            if A.Trueshot:IsReady(unit) and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
                 return A.Trueshot:Show(icon)
             end
             
@@ -588,7 +588,7 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- hunters_mark,if=debuff.hunters_mark.down&!buff.trueshot.up
-            if A.HuntersMark:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.HuntersMarkDebuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true))) then
+            if A.HuntersMark:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.HuntersMarkDebuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.HuntersMark:Show(icon)
             end
             
@@ -598,12 +598,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- berserking,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<13
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration() + A.BerserkingBuff.ID, true):BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration() + A.BerserkingBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
                 return A.Berserking:Show(icon)
             end
             
             -- blood_fury,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<16
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration() + A.BloodFuryBuff.ID, true):BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration() + A.BloodFuryBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
                 return A.BloodFury:Show(icon)
             end
             
@@ -618,27 +618,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- lights_judgment,if=buff.trueshot.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) then
                 return A.LightsJudgment:Show(icon)
             end
             
             -- bag_of_tricks,if=buff.trueshot.down
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true))) then
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) then
                 return A.BagofTricks:Show(icon)
             end
             
             -- reaping_flames,if=buff.trueshot.down&(target.health.pct>80|target.health.pct<=20|target.time_to_pct_20>30)
-            if A.ReapingFlames:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30)) then
+            if A.ReapingFlames:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20 or target.time_to_pct_20 > 30)) then
                 return A.ReapingFlames:Show(icon)
             end
             
             -- worldvein_resonance,if=(trinket.azsharas_font_of_power.cooldown.remains>20|!equipped.azsharas_font_of_power|target.time_to_die<trinket.azsharas_font_of_power.cooldown.duration+34&target.health.pct>20)&(cooldown.trueshot.remains_guess<3|(essence.vision_of_perfection.minor&target.time_to_die>cooldown+buff.worldvein_resonance.duration))|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((trinket.azsharas_font_of_power.cooldown.remains > 20 or not A.AzsharasFontofPower:IsExists() or Unit(unit):TimeToDie() < trinket.azsharas_font_of_power.cooldown.duration + 34 and Unit(unit):HealthPercent() > 20) and (cooldown.trueshot.remains_guess < 3 or (Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit(unit):TimeToDie() > cooldown + A.WorldveinResonanceBuff.ID, true):BaseDuration())) or Unit(unit):TimeToDie() < 20) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((trinket.azsharas_font_of_power.cooldown.remains > 20 or not A.AzsharasFontofPower:IsExists() or Unit(unit):TimeToDie() < trinket.azsharas_font_of_power.cooldown.duration + 34 and Unit(unit):HealthPercent() > 20) and (cooldown.trueshot.remains_guess < 3 or (Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit(unit):TimeToDie() > cooldown + A.WorldveinResonanceBuff.ID, true:BaseDuration())) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- guardian_of_azeroth,if=(ca_execute|target.time_to_die>cooldown+30)&(buff.trueshot.up|cooldown.trueshot.remains<16)|target.time_to_die<31
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((ca_execute or Unit(unit):TimeToDie() > cooldown + 30) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) or A.Trueshot:GetCooldown() < 16) or Unit(unit):TimeToDie() < 31) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((ca_execute or Unit(unit):TimeToDie() > cooldown + 30) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or A.Trueshot:GetCooldown() < 16) or Unit(unit):TimeToDie() < 31) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
@@ -648,17 +648,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- memory_of_lucid_dreams,if=!buff.trueshot.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- potion,if=buff.trueshot.react&buff.bloodlust.react|prev_gcd.1.trueshot&target.health.pct<20|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true)) and Unit("player"):HasHeroism() or Unit("player"):GetSpellLastCast(A.Trueshot) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true)) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true))) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true) and Unit("player"):HasHeroism() or Unit("player"):GetSpellLastCast(A.Trueshot) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
             -- trueshot,if=buff.trueshot.down&cooldown.rapid_fire.remains|target.time_to_die<15
-            if A.Trueshot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and A.RapidFire:GetCooldown() or Unit(unit):TimeToDie() < 15) then
+            if A.Trueshot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and A.RapidFire:GetCooldown() or Unit(unit):TimeToDie() < 15) then
                 return A.Trueshot:Show(icon)
             end
             
@@ -687,32 +687,32 @@ A[3] = function(icon, isMulti)
             end
             
             -- rapid_fire,if=buff.trueshot.down|focus<35|focus<60&!talent.lethal_shots.enabled|buff.in_the_rhythm.remains<execute_time
-            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) or Player:Focus() < 35 or Player:Focus() < 60 and not A.LethalShots:IsSpellLearned() or Unit("player"):HasBuffs(A.IntheRhythmBuff.ID, true)) < A.RapidFire:GetSpellCastTime()) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) or Player:Focus() < 35 or Player:Focus() < 60 and not A.LethalShots:IsSpellLearned() or Unit("player"):HasBuffs(A.IntheRhythmBuff.ID, true) < A.RapidFire:GetSpellCastTime()) then
                 return A.RapidFire:Show(icon)
             end
             
             -- blood_of_the_enemy,if=buff.trueshot.up&(buff.unerring_vision.stack>4|!azerite.unerring_vision.enabled)|target.time_to_die<11
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff.ID, true)) > 4 or not A.UnerringVision:GetAzeriteRank() > 0) or Unit(unit):TimeToDie() < 11) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.UnerringVisionBuff.ID, true) > 4 or not A.UnerringVision:GetAzeriteRank() > 0) or Unit(unit):TimeToDie() < 11) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- focused_azerite_beam,if=!buff.trueshot.up|target.time_to_die<5
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) or Unit(unit):TimeToDie() < 5) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or Unit(unit):TimeToDie() < 5) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&!buff.memory_of_lucid_dreams.up
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) and Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.ArcaneShot:Show(icon)
             end
             
             -- aimed_shot,if=buff.trueshot.up|(buff.double_tap.down|ca_execute)&buff.precise_shots.down|full_recharge_time<cast_time&cooldown.trueshot.remains
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) or (Unit("player"):HasBuffsDown(A.DoubleTapBuff.ID, true)) or ca_execute) and Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() and A.Trueshot:GetCooldown()) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or (Unit("player"):HasBuffsDown(A.DoubleTapBuff.ID, true) or ca_execute) and Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true) or A.AimedShot:GetSpellChargesFullRechargeTime() < A.AimedShot:GetSpellCastTime() and A.Trueshot:GetCooldown()) then
                 return A.AimedShot:Show(icon)
             end
             
             -- arcane_shot,if=buff.trueshot.up&buff.master_marksman.up&buff.memory_of_lucid_dreams.up
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) and Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true)) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true))) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.ArcaneShot:Show(icon)
             end
             
@@ -722,22 +722,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- purifying_blast,if=!buff.trueshot.up|target.time_to_die<8
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or Unit(unit):TimeToDie() < 8) then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- concentrated_flame,if=focus+focus.regen*gcd<focus.max&buff.trueshot.down&(!dot.concentrated_flame_burn.remains&!action.concentrated_flame.in_flight)|full_recharge_time<gcd|target.time_to_die<5
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() + Player:FocusRegen() * A.GetGCD() < Player:FocusMax() and Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight()) or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD() or Unit(unit):TimeToDie() < 5) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10|target.time_to_die<5
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true)) < 10 or Unit(unit):TimeToDie() < 5) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10 or Unit(unit):TimeToDie() < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- arcane_shot,if=buff.trueshot.down&(buff.precise_shots.up&(focus>55|buff.master_marksman.up)|focus>75|target.time_to_die<5)
-            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true)) and (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true)) and (Player:Focus() > 55 or Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true))) or Player:Focus() > 75 or Unit(unit):TimeToDie() < 5)) then
+            if A.ArcaneShot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrueshotBuff.ID, true) and (Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and (Player:Focus() > 55 or Unit("player"):HasBuffs(A.MasterMarksmanBuff.ID, true)) or Player:Focus() > 75 or Unit(unit):TimeToDie() < 5)) then
                 return A.ArcaneShot:Show(icon)
             end
             
@@ -761,27 +761,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- aimed_shot,if=buff.trick_shots.up&ca_execute&buff.double_tap.up
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true)) and ca_execute and Unit("player"):HasBuffs(A.DoubleTapBuff.ID, true))) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and ca_execute and Unit("player"):HasBuffs(A.DoubleTapBuff.ID, true)) then
                 return A.AimedShot:Show(icon)
             end
             
             -- rapid_fire,if=buff.trick_shots.up&(azerite.focused_fire.enabled|azerite.in_the_rhythm.rank>1|azerite.surging_shots.enabled|talent.streamline.enabled)
-            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true)) and (A.FocusedFire:GetAzeriteRank() > 0 or A.IntheRhythm:GetAzeriteRank() > 1 or A.SurgingShots:GetAzeriteRank() > 0 or A.Streamline:IsSpellLearned())) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (A.FocusedFire:GetAzeriteRank() > 0 or A.IntheRhythm:GetAzeriteRank() > 1 or A.SurgingShots:GetAzeriteRank() > 0 or A.Streamline:IsSpellLearned())) then
                 return A.RapidFire:Show(icon)
             end
             
             -- aimed_shot,if=buff.trick_shots.up&(buff.precise_shots.down|cooldown.aimed_shot.full_recharge_time<action.aimed_shot.cast_time|buff.trueshot.up)
-            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true)) and (Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true)) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)))) then
+            if A.AimedShot:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true) and (Unit("player"):HasBuffsDown(A.PreciseShotsBuff.ID, true) or A.AimedShot:FullRechargeTimeP() < A.AimedShot:GetSpellCastTime() or Unit("player"):HasBuffs(A.TrueshotBuff.ID, true))) then
                 return A.AimedShot:Show(icon)
             end
             
             -- rapid_fire,if=buff.trick_shots.up
-            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true))) then
+            if A.RapidFire:IsReady(unit) and (Unit("player"):HasBuffs(A.TrickShotsBuff.ID, true)) then
                 return A.RapidFire:Show(icon)
             end
             
             -- multishot,if=buff.trick_shots.down|buff.precise_shots.up&!buff.trueshot.up|focus>70
-            if A.Multishot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true)) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true)) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) or Player:Focus() > 70) then
+            if A.Multishot:IsReady(unit) and (Unit("player"):HasBuffsDown(A.TrickShotsBuff.ID, true) or Unit("player"):HasBuffs(A.PreciseShotsBuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) or Player:Focus() > 70) then
                 return A.Multishot:Show(icon)
             end
             
@@ -806,7 +806,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true)) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             
@@ -835,7 +835,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -863,27 +865,33 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=prev_gcd.1.trueshot&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true)) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and ca_execute) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Trueshot) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and ca_execute) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):TimeToDie() < 20) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
             -- use_item,name=pocketsized_computation_device,if=!buff.trueshot.up&!essence.blood_of_the_enemy.major|debuff.blood_of_the_enemy.up|target.time_to_die<5
-            if A.PocketsizedComputationDevice:IsReady(unit) and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) and not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) or Unit(unit):TimeToDie() < 5) then
+            if A.PocketsizedComputationDevice:IsReady(unit) and (not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true) and not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) or Unit(unit):TimeToDie() < 5) then
                 return A.PocketsizedComputationDevice:Show(icon)
             end
             
             -- use_items,if=prev_gcd.1.trueshot|!talent.calling_the_shots.enabled|target.time_to_die<20
             -- call_action_list,name=cds
-            local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
+            if Cds(unit) then
+                return true
+            end
             
             -- call_action_list,name=st,if=active_enemies<3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
-                local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
+                if St(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=trickshots,if=active_enemies>2
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) then
-                local ShouldReturn = Trickshots(unit); if ShouldReturn then return ShouldReturn; end
+                if Trickshots(unit) then
+                    return true
+                end
             end
             
         end

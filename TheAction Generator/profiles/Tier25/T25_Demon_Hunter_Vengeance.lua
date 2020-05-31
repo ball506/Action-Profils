@@ -437,7 +437,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true)) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             
@@ -452,12 +452,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,effect_name=cyclotronic_blast,if=buff.memory_of_lucid_dreams.down
-            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true))) then
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.CyclotronicBlast:Show(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -491,12 +491,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- spirit_bomb,if=((buff.metamorphosis.up&soul_fragments>=3)|soul_fragments>=4)
-            if A.SpiritBomb:IsReady(unit) and (((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and soul_fragments >= 3) or soul_fragments >= 4)) then
+            if A.SpiritBomb:IsReady(unit) and (((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and soul_fragments >= 3) or soul_fragments >= 4)) then
                 return A.SpiritBomb:Show(icon)
             end
             
             -- soul_cleave,if=(!talent.spirit_bomb.enabled&((buff.metamorphosis.up&soul_fragments>=3)|soul_fragments>=4))
-            if A.SoulCleave:IsReady(unit) and ((not A.SpiritBomb:IsSpellLearned() and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and soul_fragments >= 3) or soul_fragments >= 4))) then
+            if A.SoulCleave:IsReady(unit) and ((not A.SpiritBomb:IsSpellLearned() and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and soul_fragments >= 3) or soul_fragments >= 4))) then
                 return A.SoulCleave:Show(icon)
             end
             
@@ -545,7 +545,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -559,17 +561,25 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=brand,if=talent.charred_flesh.enabled
             if (A.CharredFlesh:IsSpellLearned()) then
-                local ShouldReturn = Brand(unit); if ShouldReturn then return ShouldReturn; end
+                if Brand(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=defensives
-            local ShouldReturn = Defensives(unit); if ShouldReturn then return ShouldReturn; end
+            if Defensives(unit) then
+                return true
+            end
             
             -- call_action_list,name=cooldowns
-            local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
+            if Cooldowns(unit) then
+                return true
+            end
             
             -- call_action_list,name=normal
-            local ShouldReturn = Normal(unit); if ShouldReturn then return ShouldReturn; end
+            if Normal(unit) then
+                return true
+            end
             
         end
     end

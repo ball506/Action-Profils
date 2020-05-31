@@ -84,8 +84,9 @@ class CallActionList(LuaNamed, LuaCastable):
         LuaCastable.__init__(self)
         self.action = action
         self.has_property = self.action.player.action_list_property
-        self.cast_template = ('local ShouldReturn = {}(unit); '
-                              'if ShouldReturn then return ShouldReturn; end')
+        self.cast_template = ('if {}(unit) then\n'
+                              '    return true\n' 
+                              'end')
 
     def cast(self):
         return Literal(self.lua_name() + '()')
@@ -257,7 +258,7 @@ class Spell(LuaNamed, LuaCastable):
         substring2 = "Debuff"
         substring3 = "DeBuffDebuff"		
         if re.search(substring, fullstring):			
-            string1 = f'A.{self.lua_name()}.ID, true)'
+            string1 = f'A.{self.lua_name()}.ID, true'
         elif re.search(substring2, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         else:

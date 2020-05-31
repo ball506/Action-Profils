@@ -237,7 +237,7 @@ local function EvaluateTargetIfFilterBlackoutKick152(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick165(unit)
-  return combo_strike and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true)) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
+  return combo_strike and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
 end
 
 
@@ -291,7 +291,7 @@ local function EvaluateTargetIfFilterTigerPalm542(unit)
 end
 
 local function EvaluateTargetIfTigerPalm553(unit)
-  return combo_strike and Player:ChiMax() - Player:Chi() > 3 and not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true))
+  return combo_strike and Player:ChiMax() - Player:Chi() > 3 and not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true)
 end
 
 
@@ -300,7 +300,7 @@ local function EvaluateTargetIfFilterBlackoutKick565(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick590(unit)
-  return combo_strike and ((A.TouchofDeath:GetCooldown() > 2 or VarHoldTod) and (A.RisingSunKick:GetCooldown() > 2 and A.FistsofFury:GetCooldown() > 2 or A.RisingSunKick:GetCooldown() < 3 and A.FistsofFury:GetCooldown() > 3 and Player:Chi() > 2 or A.RisingSunKick:GetCooldown() > 3 and A.FistsofFury:GetCooldown() < 3 and Player:Chi() > 4 or Player:Chi() > 5) or Unit("player"):HasBuffs(A.BokProcBuff.ID, true)))
+  return combo_strike and ((A.TouchofDeath:GetCooldown() > 2 or VarHoldTod) and (A.RisingSunKick:GetCooldown() > 2 and A.FistsofFury:GetCooldown() > 2 or A.RisingSunKick:GetCooldown() < 3 and A.FistsofFury:GetCooldown() > 3 and Player:Chi() > 2 or A.RisingSunKick:GetCooldown() > 3 and A.FistsofFury:GetCooldown() < 3 and Player:Chi() > 4 or Player:Chi() > 5) or Unit("player"):HasBuffs(A.BokProcBuff.ID, true))
 end
 
 
@@ -327,7 +327,7 @@ local function EvaluateTargetIfFilterFistoftheWhiteTiger662(unit)
 end
 
 local function EvaluateTargetIfFistoftheWhiteTiger685(unit)
-  return Player:ChiMax() - Player:Chi() >= 3 and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and Unit("player"):HasBuffsDown(A.SeethingRageBuff.ID, true)) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)
+  return Player:ChiMax() - Player:Chi() >= 3 and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Unit("player"):HasBuffsDown(A.SeethingRageBuff.ID, true) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)
 end
 
 
@@ -336,7 +336,7 @@ local function EvaluateTargetIfFilterTigerPalm691(unit)
 end
 
 local function EvaluateTargetIfTigerPalm724(unit)
-  return not combo_break and Player:ChiMax() - Player:Chi() >= 2 and (A.Serenity:IsSpellLearned() or not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) and Unit("player"):HasBuffsDown(A.SeethingRageBuff.ID, true)) and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)
+  return not combo_break and Player:ChiMax() - Player:Chi() >= 2 and (A.Serenity:IsSpellLearned() or not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) and Unit("player"):HasBuffsDown(A.SeethingRageBuff.ID, true) and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)
 end
 
 
@@ -372,7 +372,7 @@ A[3] = function(icon, isMulti)
             VarTodOnUseTrinket = num(A.CyclotronicBlast:IsExists() or A.LustrousGoldenPlumage:IsExists() or A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.RemoteGuidanceDevice:IsExists())
             
             -- variable,name=hold_tod,op=set,value=cooldown.touch_of_death.remains+9>target.time_to_die|!talent.serenity.enabled&!variable.tod_on_use_trinket&equipped.dribbling_inkpod&target.time_to_pct_30.remains<130&target.time_to_pct_30.remains>8|target.time_to_die<130&target.time_to_die>cooldown.serenity.remains&cooldown.serenity.remains>2|buff.serenity.up&target.time_to_die>11
-            VarHoldTod = num(A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() or not A.Serenity:IsSpellLearned() and not VarTodOnUseTrinket and A.DribblingInkpod:IsExists() and Unit(unit):TimeToDieX(30) < 130 and Unit(unit):TimeToDieX(30) > 8 or Unit(unit):TimeToDie() < 130 and Unit(unit):TimeToDie() > A.Serenity:GetCooldown() and A.Serenity:GetCooldown() > 2 or Unit("player"):HasBuffs(A.SerenityBuff.ID, true)) and Unit(unit):TimeToDie() > 11)
+            VarHoldTod = num(A.TouchofDeath:GetCooldown() + 9 > Unit(unit):TimeToDie() or not A.Serenity:IsSpellLearned() and not VarTodOnUseTrinket and A.DribblingInkpod:IsExists() and Unit(unit):TimeToDieX(30) < 130 and Unit(unit):TimeToDieX(30) > 8 or Unit(unit):TimeToDie() < 130 and Unit(unit):TimeToDie() > A.Serenity:GetCooldown() and A.Serenity:GetCooldown() > 2 or Unit("player"):HasBuffs(A.SerenityBuff.ID, true) and Unit(unit):TimeToDie() > 11)
             
             -- variable,name=font_of_power_precombat_channel,op=set,value=19,if=!talent.serenity.enabled&(variable.tod_on_use_trinket|equipped.ashvanes_razor_coral)
             if (not A.Serenity:IsSpellLearned() and (VarTodOnUseTrinket or A.AshvanesRazorCoral:IsExists())) then
@@ -430,12 +430,12 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down
-            if A.RushingJadeWind:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true))) then
+            if A.RushingJadeWind:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) then
                 return A.RushingJadeWind:Show(icon)
             end
             
             -- spinning_crane_kick,if=combo_strike&(((chi>3|cooldown.fists_of_fury.remains>6)&(chi>=5|cooldown.fists_of_fury.remains>2))|energy.time_to_max<=3|buff.dance_of_chiji.react)
-            if A.SpinningCraneKick:IsReady(unit) and (combo_strike and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3 or Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true)))) then
+            if A.SpinningCraneKick:IsReady(unit) and (combo_strike and (((Player:Chi() > 3 or A.FistsofFury:GetCooldown() > 6) and (Player:Chi() >= 5 or A.FistsofFury:GetCooldown() > 2)) or Player:EnergyTimeToMaxPredicted() <= 3 or Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true))) then
                 return A.SpinningCraneKick:Show(icon)
             end
             
@@ -467,7 +467,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- flying_serpent_kick,if=buff.bok_proc.down,interrupt=1
-            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):HasBuffsDown(A.BokProcBuff.ID, true))) then
+            if A.FlyingSerpentKick:IsReady(unit) and (Unit("player"):HasBuffsDown(A.BokProcBuff.ID, true)) then
                 return A.FlyingSerpentKick:Show(icon)
             end
             
@@ -482,7 +482,7 @@ A[3] = function(icon, isMulti)
         --CdSef
         local function CdSef(unit)
             -- invoke_xuen_the_white_tiger,if=buff.serenity.down|target.time_to_die<25
-            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) or Unit(unit):TimeToDie() < 25) then
+            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.InvokeXuentheWhiteTiger:Show(icon)
             end
             
@@ -507,7 +507,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- storm_earth_and_fire,,if=cooldown.storm_earth_and_fire.charges=2|dot.touch_of_death.remains|target.time_to_die<20|(buff.worldvein_resonance.remains>10|cooldown.worldvein_resonance.remains>cooldown.storm_earth_and_fire.full_recharge_time|!essence.worldvein_resonance.major)&(cooldown.touch_of_death.remains>cooldown.storm_earth_and_fire.full_recharge_time|variable.hold_tod&!equipped.dribbling_inkpod)&cooldown.fists_of_fury.remains<=9&chi>=3&cooldown.whirling_dragon_punch.remains<=13
-            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:GetSpellCharges() == 2 or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() < 20 or (Unit("player"):HasBuffs(A.WorldveinResonanceBuff.ID, true)) > 10 or A.WorldveinResonance:GetCooldown() > A.StormEarthandFire:FullRechargeTimeP() or not Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) and (A.TouchofDeath:GetCooldown() > A.StormEarthandFire:FullRechargeTimeP() or VarHoldTod and not A.DribblingInkpod:IsExists()) and A.FistsofFury:GetCooldown() <= 9 and Player:Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 13) then
+            if A.StormEarthandFire:IsReady(unit) and A.BurstIsON(unit) and (A.StormEarthandFire:GetSpellCharges() == 2 or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() < 20 or (Unit("player"):HasBuffs(A.WorldveinResonanceBuff.ID, true) > 10 or A.WorldveinResonance:GetCooldown() > A.StormEarthandFire:FullRechargeTimeP() or not Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) and (A.TouchofDeath:GetCooldown() > A.StormEarthandFire:FullRechargeTimeP() or VarHoldTod and not A.DribblingInkpod:IsExists()) and A.FistsofFury:GetCooldown() <= 9 and Player:Chi() >= 3 and A.WhirlingDragonPunch:GetCooldown() <= 13) then
                 return A.StormEarthandFire:Show(icon)
             end
             
@@ -517,7 +517,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&((cooldown.concentrated_flame.remains<=cooldown.touch_of_death.remains+1|variable.hold_tod)&(!talent.whirling_dragon_punch.enabled|cooldown.whirling_dragon_punch.remains)&cooldown.rising_sun_kick.remains&cooldown.fists_of_fury.remains&buff.storm_earth_and_fire.down|dot.touch_of_death.remains)|target.time_to_die<8
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and ((A.ConcentratedFlame:GetCooldown() <= A.TouchofDeath:GetCooldown() + 1 or VarHoldTod) and (not A.WhirlingDragonPunch:IsSpellLearned() or A.WhirlingDragonPunch:GetCooldown()) and A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true)) or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and ((A.ConcentratedFlame:GetCooldown() <= A.TouchofDeath:GetCooldown() + 1 or VarHoldTod) and (not A.WhirlingDragonPunch:IsSpellLearned() or A.WhirlingDragonPunch:GetCooldown()) and A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true) or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -596,12 +596,12 @@ A[3] = function(icon, isMulti)
         --CdSerenity
         local function CdSerenity(unit)
             -- invoke_xuen_the_white_tiger,if=buff.serenity.down|target.time_to_die<25
-            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) or Unit(unit):TimeToDie() < 25) then
+            if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.InvokeXuentheWhiteTiger:Show(icon)
             end
             
             -- guardian_of_azeroth,if=buff.serenity.down&(target.time_to_die>185|cooldown.serenity.remains<=7)|target.time_to_die<35
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (Unit(unit):TimeToDie() > 185 or A.Serenity:GetCooldown() <= 7) or Unit(unit):TimeToDie() < 35) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (Unit(unit):TimeToDie() > 185 or A.Serenity:GetCooldown() <= 7) or Unit(unit):TimeToDie() < 35) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
@@ -616,7 +616,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- arcane_torrent,if=buff.serenity.down&chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -646,7 +646,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- blood_of_the_enemy,if=buff.serenity.down&(cooldown.serenity.remains>20|cooldown.serenity.remains<2)|target.time_to_die<15
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (A.Serenity:GetCooldown() > 20 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 15) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 20 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 15) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
@@ -656,12 +656,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- worldvein_resonance,if=buff.serenity.down&(cooldown.serenity.remains>15|cooldown.serenity.remains<2)|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (A.Serenity:GetCooldown() > 15 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 20) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 15 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- concentrated_flame,if=buff.serenity.down&(cooldown.serenity.remains|cooldown.concentrated_flame.charges=2)&!dot.concentrated_flame_burn.remains&(cooldown.rising_sun_kick.remains&cooldown.fists_of_fury.remains|target.time_to_die<8)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (A.Serenity:GetCooldown() or A.ConcentratedFlame:GetSpellCharges() == 2) and not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and (A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() or Unit(unit):TimeToDie() < 8)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() or A.ConcentratedFlame:GetSpellCharges() == 2) and not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and (A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() or Unit(unit):TimeToDie() < 8)) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -671,37 +671,37 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.serenity.down
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- purifying_blast,if=buff.serenity.down
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- reaping_flames,if=buff.serenity.down
-            if A.ReapingFlames:IsReady(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.ReapingFlames:IsReady(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.ReapingFlames:Show(icon)
             end
             
             -- focused_azerite_beam,if=buff.serenity.down
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- memory_of_lucid_dreams,if=buff.serenity.down&energy<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and Player:EnergyPredicted() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:EnergyPredicted() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- ripple_in_space,if=buff.serenity.down
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.RippleInSpace:Show(icon)
             end
             
             -- bag_of_tricks,if=buff.serenity.down
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true))) then
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.BagofTricks:Show(icon)
             end
             
@@ -710,7 +710,7 @@ A[3] = function(icon, isMulti)
         --Serenity
         local function Serenity(unit)
             -- fists_of_fury,if=buff.serenity.remains<1|active_enemies>1
-            if A.FistsofFury:IsReady(unit) and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true)) < 1 or MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
+            if A.FistsofFury:IsReady(unit) and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.FistsofFury:Show(icon)
             end
             
@@ -773,7 +773,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down&active_enemies>1
-            if A.RushingJadeWind:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
+            if A.RushingJadeWind:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.RushingJadeWind:Show(icon)
             end
             
@@ -810,7 +810,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- spinning_crane_kick,if=combo_strike&buff.dance_of_chiji.react
-            if A.SpinningCraneKick:IsReady(unit) and (combo_strike and Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true))) then
+            if A.SpinningCraneKick:IsReady(unit) and (combo_strike and Unit("player"):HasBuffsStacks(A.DanceofChijiBuff.ID, true)) then
                 return A.SpinningCraneKick:Show(icon)
             end
             
@@ -842,7 +842,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -860,12 +862,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.serenity.up|buff.storm_earth_and_fire.up&dot.touch_of_death.remains|target.time_to_die<=60
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true)) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true)) and Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() <= 60) then
+            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) and Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() <= 60) then
                 return A.ProlongedPower:Show(icon)
             end
             
             -- reverse_harm,if=chi.max-chi>=2&(talent.serenity.enabled|!dot.touch_of_death.remains)&buff.serenity.down&(energy.time_to_max<1|talent.serenity.enabled&cooldown.serenity.remains<2|!talent.serenity.enabled&cooldown.touch_of_death.remains<3&!variable.hold_tod|energy.time_to_max<4&cooldown.fists_of_fury.remains<1.5)
-            if A.ReverseHarm:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 2 and (A.Serenity:IsSpellLearned() or not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) then
+            if A.ReverseHarm:IsReady(unit) and (Player:ChiMax() - Player:Chi() >= 2 and (A.Serenity:IsSpellLearned() or not Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) and Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (Player:EnergyTimeToMaxPredicted() < 1 or A.Serenity:IsSpellLearned() and A.Serenity:GetCooldown() < 2 or not A.Serenity:IsSpellLearned() and A.TouchofDeath:GetCooldown() < 3 and not VarHoldTod or Player:EnergyTimeToMaxPredicted() < 4 and A.FistsofFury:GetCooldown() < 1.5)) then
                 return A.ReverseHarm:Show(icon)
             end
             
@@ -888,27 +890,37 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=cd_serenity,if=talent.serenity.enabled
             if (A.Serenity:IsSpellLearned()) then
-                local ShouldReturn = CdSerenity(unit); if ShouldReturn then return ShouldReturn; end
+                if CdSerenity(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=cd_sef,if=!talent.serenity.enabled
             if (not A.Serenity:IsSpellLearned()) then
-                local ShouldReturn = CdSef(unit); if ShouldReturn then return ShouldReturn; end
+                if CdSef(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=serenity,if=buff.serenity.up
-            if (Unit("player"):HasBuffs(A.SerenityBuff.ID, true))) then
-                local ShouldReturn = Serenity(unit); if ShouldReturn then return ShouldReturn; end
+            if (Unit("player"):HasBuffs(A.SerenityBuff.ID, true)) then
+                if Serenity(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=st,if=active_enemies<3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
-                local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
+                if St(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=aoe,if=active_enemies>=3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
-                local ShouldReturn = Aoe(unit); if ShouldReturn then return ShouldReturn; end
+                if Aoe(unit) then
+                    return true
+                end
             end
             
         end

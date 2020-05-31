@@ -1043,7 +1043,9 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=essences,if=!stealthed.all&dot.rupture.ticking&master_assassin_remains=0
             if (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and MasterAssassinRemains == 0) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+                if Essences(unit) then
+                    return true
+                end
             end
             
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
@@ -1064,7 +1066,7 @@ A[3] = function(icon, isMulti)
             VarVendettaNightstalkerCondition = num(not A.Nightstalker:IsSpellLearned() or not A.Exsanguinate:IsSpellLearned() or A.Exsanguinate:GetCooldown() < 5 - 2 * num(A.DeeperStratagem:IsSpellLearned()))
             
             -- variable,name=variable,name=vendetta_font_condition,value=!equipped.azsharas_font_of_power|azerite.shrouded_suffocation.enabled|debuff.razor_coral_debuff.down|trinket.ashvanes_razor_coral.cooldown.remains<10&(cooldown.toxic_blade.remains<1|debuff.toxic_blade.up)
-            VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or A.ShroudedSuffocation:GetAzeriteRank() > 0 or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
+            VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or A.ShroudedSuffocation:GetAzeriteRank() > 0 or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
             
             -- vendetta,if=!stealthed.rogue&dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition
             if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthed(true, false) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and VarVendettaSubterfugeCondition and VarVendettaNightstalkerCondition and VarVendettaFontCondition) then
@@ -1145,7 +1147,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):TimeToDie() < 20) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -1160,7 +1162,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,effect_name=cyclotronic_blast,if=master_assassin_remains=0&!debuff.vendetta.up&!debuff.toxic_blade.up&buff.memory_of_lucid_dreams.down&energy<80&dot.rupture.remains>4
-            if A.CyclotronicBlast:IsReady(unit) and (MasterAssassinRemains == 0 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and Player:EnergyPredicted() < 80 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
+            if A.CyclotronicBlast:IsReady(unit) and (MasterAssassinRemains == 0 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true) and Player:EnergyPredicted() < 80 and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 4) then
                 return A.CyclotronicBlast:Show(icon)
             end
             
@@ -1203,7 +1205,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- fan_of_knives,if=variable.use_filler&(buff.hidden_blades.stack>=19|(!priority_rotation&spell_targets.fan_of_knives>=4+(azerite.double_dose.rank>2)+stealthed.rogue))
-            if A.FanofKnives:IsReady(unit) and (VarUseFiller and (Unit("player"):HasBuffsStacks(A.HiddenBladesBuff.ID, true)) >= 19 or (not priority_rotation and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 + num((A.DoubleDose:GetAzeriteRank() > 2)) + num(Unit("player"):IsStealthed(true, false))))) then
+            if A.FanofKnives:IsReady(unit) and (VarUseFiller and (Unit("player"):HasBuffsStacks(A.HiddenBladesBuff.ID, true) >= 19 or (not priority_rotation and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 + num((A.DoubleDose:GetAzeriteRank() > 2)) + num(Unit("player"):IsStealthed(true, false))))) then
                 return A.FanofKnives:Show(icon)
             end
             
@@ -1214,7 +1216,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- blindside,if=variable.use_filler&(buff.blindside.up|!talent.venom_rush.enabled&!azerite.double_dose.enabled)
-            if A.Blindside:IsReady(unit) and (VarUseFiller and (Unit("player"):HasBuffs(A.BlindsideBuff.ID, true)) or not A.VenomRush:IsSpellLearned() and not A.DoubleDose:GetAzeriteRank() > 0)) then
+            if A.Blindside:IsReady(unit) and (VarUseFiller and (Unit("player"):HasBuffs(A.BlindsideBuff.ID, true) or not A.VenomRush:IsSpellLearned() and not A.DoubleDose:GetAzeriteRank() > 0)) then
                 return A.Blindside:Show(icon)
             end
             
@@ -1270,7 +1272,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- crimson_tempest,if=spell_targets>=2&remains<2+(spell_targets>=5)&combo_points>=4
-            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true)) < 2 + num((MultiUnits:GetByRangeInCombat(40, 5, 10) >= 5)) and Player:ComboPoints() >= 4) then
+            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) < 2 + num((MultiUnits:GetByRangeInCombat(40, 5, 10) >= 5)) and Player:ComboPoints() >= 4) then
                 return A.CrimsonTempest:Show(icon)
             end
             
@@ -1286,7 +1288,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- crimson_tempest,if=spell_targets=1&combo_points>=(cp_max_spend-1)&refreshable&!exsanguinated&!debuff.toxic_blade.up&master_assassin_remains=0&!azerite.twist_the_knife.enabled&target.time_to_die-remains>4
-            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and Player:ComboPoints() >= (CPMaxSpend() - 1) and Unit("player"):HasBuffsRefreshable(A.CrimsonTempestBuff.ID, true)) and not A.Exsanguinated(Unit(unit), "CrimsonTempest") and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and MasterAssassinRemains == 0 and not A.TwisttheKnife:GetAzeriteRank() > 0 and Unit(unit):TimeToDie() - Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true)) > 4) then
+            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and Player:ComboPoints() >= (CPMaxSpend() - 1) and Unit("player"):HasBuffsRefreshable(A.CrimsonTempestBuff.ID, true) and not A.Exsanguinated(Unit(unit), "CrimsonTempest") and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) and MasterAssassinRemains == 0 and not A.TwisttheKnife:GetAzeriteRank() > 0 and Unit(unit):TimeToDie() - Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) > 4) then
                 return A.CrimsonTempest:Show(icon)
             end
             
@@ -1325,7 +1327,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true)) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             
@@ -1366,7 +1368,7 @@ A[3] = function(icon, isMulti)
             
             -- pool_resource,for_next=1
             -- garrote,if=azerite.shrouded_suffocation.enabled&buff.subterfuge.up&buff.subterfuge.remains<1.3&!ss_buffed
-            if A.Garrote:IsReady(unit) and (A.ShroudedSuffocation:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true)) and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true)) < 1.3 and not ss_buffed) then
+            if A.Garrote:IsReady(unit) and (A.ShroudedSuffocation:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3 and not ss_buffed) then
                 if A.Garrote:IsUsablePPool() then
                     return A.Garrote:Show(icon)
                 else
@@ -1395,7 +1397,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- garrote,if=talent.subterfuge.enabled&talent.exsanguinate.enabled&active_enemies=1&buff.subterfuge.remains<1.3
-            if A.Garrote:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and A.Exsanguinate:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true)) < 1.3) then
+            if A.Garrote:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and A.Exsanguinate:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3) then
                 if A.Garrote:IsUsablePPool() then
                     return A.Garrote:Show(icon)
                 else
@@ -1408,7 +1410,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -1427,19 +1431,27 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=stealthed,if=stealthed.rogue
             if (Unit("player"):IsStealthed(true, false)) then
-                local ShouldReturn = Stealthed(unit); if ShouldReturn then return ShouldReturn; end
+                if Stealthed(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=cds,if=(!talent.master_assassin.enabled|dot.garrote.ticking)
             if ((not A.MasterAssassin:IsSpellLearned() or Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true))) then
-                local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
+                if Cds(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=dot
-            local ShouldReturn = Dot(unit); if ShouldReturn then return ShouldReturn; end
+            if Dot(unit) then
+                return true
+            end
             
             -- call_action_list,name=direct
-            local ShouldReturn = Direct(unit); if ShouldReturn then return ShouldReturn; end
+            if Direct(unit) then
+                return true
+            end
             
             -- arcane_torrent,if=energy.deficit>=15+variable.energy_regen_combined
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyDeficitPredicted() >= 15 + VarEnergyRegenCombined) then

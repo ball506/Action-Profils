@@ -686,12 +686,12 @@ A[3] = function(icon, isMulti)
         --Asc
         local function Asc(unit)
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and VarFurycheckCl) then
+            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
             end
             
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
-            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and not Unit("player"):HasBuffs(A.LandslideBuff.ID, true)) and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
+            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and not Unit("player"):HasBuffs(A.LandslideBuff.ID, true) and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
                 return A.Rockbiter:Show(icon)
             end
             
@@ -736,7 +736,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.ascendance.up|!talent.ascendance.enabled&feral_spirit.remains>5|target.time_to_die<=60
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) or not A.Ascendance:IsSpellLearned() and feral_spirit.remains > 5 or Unit(unit):TimeToDie() <= 60) then
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) or not A.Ascendance:IsSpellLearned() and feral_spirit.remains > 5 or Unit(unit):TimeToDie() <= 60) then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -761,17 +761,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|(target.time_to_die<20&debuff.razor_coral_debuff.stack>2)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true)) > 2)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or (Unit(unit):TimeToDie() < 20 and Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2)) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>2&debuff.conductive_ink_debuff.down&(buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true)) > 2 and Unit(unit):HasDeBuffsDown(A.ConductiveInkDebuff.ID, true)) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true)) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6)) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 2 and Unit(unit):HasDeBuffsDown(A.ConductiveInkDebuff.ID, true) and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6)) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=(debuff.conductive_ink_debuff.up|buff.ascendance.remains>10|buff.molten_weapon.remains>10|buff.crackling_surge.remains>10|buff.icy_edge.remains>10|debuff.earthen_spike.remains>6)&target.health.pct<31
-            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true)) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true)) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6) and Unit(unit):HealthPercent() < 31) then
+            if A.AshvanesRazorCoral:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) or Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) > 10 or Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) > 10 or Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true) > 6) and Unit(unit):HealthPercent() < 31) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -793,7 +793,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true)) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true)) and VarFurycheckSs)) then
+            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) and VarFurycheckSs)) then
                 return A.Stormstrike:Show(icon)
             end
             
@@ -822,7 +822,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=raid_event.adds.in>90&!buff.ascendance.up&!buff.molten_weapon.up&!buff.icy_edge.up&!buff.crackling_surge.up&!debuff.earthen_spike.up
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true)) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true)) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true)) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 90 and not Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) and not Unit("player"):HasBuffs(A.MoltenWeaponBuff.ID, true) and not Unit("player"):HasBuffs(A.IcyEdgeBuff.ID, true) and not Unit("player"):HasBuffs(A.CracklingSurgeBuff.ID, true) and not Unit(unit):HasDeBuffs(A.EarthenSpikeDebuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
@@ -867,7 +867,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- lava_lash,if=!azerite.primal_primer.enabled&talent.hot_hand.enabled&buff.hot_hand.react
-            if A.LavaLash:IsReady(unit) and (not A.PrimalPrimer:GetAzeriteRank() > 0 and A.HotHand:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.HotHandBuff.ID, true))) then
+            if A.LavaLash:IsReady(unit) and (not A.PrimalPrimer:GetAzeriteRank() > 0 and A.HotHand:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.HotHandBuff.ID, true)) then
                 return A.LavaLash:Show(icon)
             end
             
@@ -877,7 +877,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- rockbiter,if=maelstrom<70&!buff.strength_of_earth.up
-            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 70 and not Unit("player"):HasBuffs(A.StrengthofEarthBuff.ID, true))) then
+            if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 70 and not Unit("player"):HasBuffs(A.StrengthofEarthBuff.ID, true)) then
                 return A.Rockbiter:Show(icon)
             end
             
@@ -902,7 +902,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- frostbrand,if=talent.hailstorm.enabled&buff.frostbrand.remains<4.8+gcd&variable.furyCheck_FB
-            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true)) < 4.8 + A.GetGCD() and VarFurycheckFb) then
+            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true) < 4.8 + A.GetGCD() and VarFurycheckFb) then
                 return A.Frostbrand:Show(icon)
             end
             
@@ -933,7 +933,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- stormstrike,if=buff.stormbringer.up|(active_enemies>1&buff.gathering_storms.up&variable.furyCheck_SS)
-            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true)) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true)) and VarFurycheckSs)) then
+            if A.Stormstrike:IsReady(unit) and (Unit("player"):HasBuffs(A.StormbringerBuff.ID, true) or (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffs(A.GatheringStormsBuff.ID, true) and VarFurycheckSs)) then
                 return A.Stormstrike:Show(icon)
             end
             
@@ -967,12 +967,12 @@ A[3] = function(icon, isMulti)
         --Maintenance
         local function Maintenance(unit)
             -- flametongue,if=!buff.flametongue.up
-            if A.Flametongue:IsReady(unit) and (not Unit("player"):HasBuffs(A.FlametongueBuff.ID, true))) then
+            if A.Flametongue:IsReady(unit) and (not Unit("player"):HasBuffs(A.FlametongueBuff.ID, true)) then
                 return A.Flametongue:Show(icon)
             end
             
             -- frostbrand,if=talent.hailstorm.enabled&!buff.frostbrand.up&variable.furyCheck_FB
-            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and not Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true)) and VarFurycheckFb) then
+            if A.Frostbrand:IsReady(unit) and (A.Hailstorm:IsSpellLearned() and not Unit("player"):HasBuffs(A.FrostbrandBuff.ID, true) and VarFurycheckFb) then
                 return A.Frostbrand:Show(icon)
             end
             
@@ -995,7 +995,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|time<5
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) or Unit("player"):CombatTime() < 5) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):CombatTime() < 5) then
                 return A.TheUnboundForce:Show(icon)
             end
             
@@ -1005,27 +1005,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
-            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true)) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and VarFurycheckCl) then
+            if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
             end
             
             -- fury_of_air,if=!buff.fury_of_air.up&maelstrom>=20&spell_targets.fury_of_air_damage>=(1+variable.freezerburn_enabled)
-            if A.FuryofAir:IsReady(unit) and (not Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true)) and Player:Maelstrom() >= 20 and MultiUnits:GetByRangeInCombat(5, 5, 10) >= (1 + VarFreezerburnEnabled)) then
+            if A.FuryofAir:IsReady(unit) and (not Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and Player:Maelstrom() >= 20 and MultiUnits:GetByRangeInCombat(5, 5, 10) >= (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
             
             -- fury_of_air,if=buff.fury_of_air.up&&spell_targets.fury_of_air_damage<(1+variable.freezerburn_enabled)
-            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true)) and true and MultiUnits:GetByRangeInCombat(5, 5, 10) < (1 + VarFreezerburnEnabled)) then
+            if A.FuryofAir:IsReady(unit) and (Unit("player"):HasBuffs(A.FuryofAirBuff.ID, true) and true and MultiUnits:GetByRangeInCombat(5, 5, 10) < (1 + VarFreezerburnEnabled)) then
                 return A.FuryofAir:Show(icon)
             end
             
             -- totem_mastery,if=buff.resonance_totem.remains<=2*gcd
-            if A.TotemMastery:IsReady(unit) and (Unit("player"):HasBuffs(A.ResonanceTotemBuff.ID, true)) <= 2 * A.GetGCD()) then
+            if A.TotemMastery:IsReady(unit) and (Unit("player"):HasBuffs(A.ResonanceTotemBuff.ID, true) <= 2 * A.GetGCD()) then
                 return A.TotemMastery:Show(icon)
             end
             
             -- sundering,if=active_enemies>=3&(!essence.blood_of_the_enemy.major|(essence.blood_of_the_enemy.major&(buff.seething_rage.up|cooldown.blood_of_the_enemy.remains>40)))
-            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true)) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
+            if A.Sundering:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or (Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) and (Unit("player"):HasBuffs(A.SeethingRageBuff.ID, true) or A.BloodoftheEnemy:GetCooldown() > 40)))) then
                 return A.Sundering:Show(icon)
             end
             
@@ -1045,22 +1045,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- rockbiter,if=talent.landslide.enabled&!buff.landslide.up&charges_fractional>1.7
-            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and not Unit("player"):HasBuffs(A.LandslideBuff.ID, true)) and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
+            if A.Rockbiter:IsReady(unit) and (A.Landslide:IsSpellLearned() and not Unit("player"):HasBuffs(A.LandslideBuff.ID, true) and A.Rockbiter:GetSpellChargesFrac() > 1.7) then
                 return A.Rockbiter:Show(icon)
             end
             
             -- frostbrand,if=(azerite.natural_harmony.enabled&buff.natural_harmony_frost.remains<=2*gcd)&talent.hailstorm.enabled&variable.furyCheck_FB
-            if A.Frostbrand:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFrostBuff.ID, true)) <= 2 * A.GetGCD()) and A.Hailstorm:IsSpellLearned() and VarFurycheckFb) then
+            if A.Frostbrand:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFrostBuff.ID, true) <= 2 * A.GetGCD()) and A.Hailstorm:IsSpellLearned() and VarFurycheckFb) then
                 return A.Frostbrand:Show(icon)
             end
             
             -- flametongue,if=(azerite.natural_harmony.enabled&buff.natural_harmony_fire.remains<=2*gcd)
-            if A.Flametongue:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFireBuff.ID, true)) <= 2 * A.GetGCD())) then
+            if A.Flametongue:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyFireBuff.ID, true) <= 2 * A.GetGCD())) then
                 return A.Flametongue:Show(icon)
             end
             
             -- rockbiter,if=(azerite.natural_harmony.enabled&buff.natural_harmony_nature.remains<=2*gcd)&maelstrom<70
-            if A.Rockbiter:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true)) <= 2 * A.GetGCD()) and Player:Maelstrom() < 70) then
+            if A.Rockbiter:IsReady(unit) and ((A.NaturalHarmony:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.NaturalHarmonyNatureBuff.ID, true) <= 2 * A.GetGCD()) and Player:Maelstrom() < 70) then
                 return A.Rockbiter:Show(icon)
             end
             
@@ -1069,7 +1069,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -1081,7 +1083,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- variable,name=cooldown_sync,value=(talent.ascendance.enabled&(buff.ascendance.up|cooldown.ascendance.remains>50))|(!talent.ascendance.enabled&(feral_spirit.remains>5|cooldown.feral_spirit.remains>50))
-            VarCooldownSync = num((A.Ascendance:IsSpellLearned() and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) or A.Ascendance:GetCooldown() > 50)) or (not A.Ascendance:IsSpellLearned() and (feral_spirit.remains > 5 or A.FeralSpirit:GetCooldown() > 50)))
+            VarCooldownSync = num((A.Ascendance:IsSpellLearned() and (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true) or A.Ascendance:GetCooldown() > 50)) or (not A.Ascendance:IsSpellLearned() and (feral_spirit.remains > 5 or A.FeralSpirit:GetCooldown() > 50)))
             
             -- variable,name=furyCheck_SS,value=maelstrom>=(talent.fury_of_air.enabled*(6+action.stormstrike.cost))
             VarFurycheckSs = num(Player:Maelstrom() >= (num(A.FuryofAir:IsSpellLearned()) * (6 + A.Stormstrike:GetSpellPowerCostCache())))
@@ -1130,41 +1132,59 @@ A[3] = function(icon, isMulti)
             
             -- auto_attack
             -- call_action_list,name=opener
-            local ShouldReturn = Opener(unit); if ShouldReturn then return ShouldReturn; end
+            if Opener(unit) then
+                return true
+            end
             
             -- call_action_list,name=asc,if=buff.ascendance.up
-            if (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true))) then
-                local ShouldReturn = Asc(unit); if ShouldReturn then return ShouldReturn; end
+            if (Unit("player"):HasBuffs(A.AscendanceBuff.ID, true)) then
+                if Asc(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=priority
-            local ShouldReturn = Priority(unit); if ShouldReturn then return ShouldReturn; end
+            if Priority(unit) then
+                return true
+            end
             
             -- call_action_list,name=maintenance,if=active_enemies<3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
-                local ShouldReturn = Maintenance(unit); if ShouldReturn then return ShouldReturn; end
+                if Maintenance(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=cds
-            local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
+            if Cds(unit) then
+                return true
+            end
             
             -- call_action_list,name=freezerburn_core,if=variable.freezerburn_enabled
             if (VarFreezerburnEnabled) then
-                local ShouldReturn = FreezerburnCore(unit); if ShouldReturn then return ShouldReturn; end
+                if FreezerburnCore(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=default_core,if=!variable.freezerburn_enabled
             if (not VarFreezerburnEnabled) then
-                local ShouldReturn = DefaultCore(unit); if ShouldReturn then return ShouldReturn; end
+                if DefaultCore(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=maintenance,if=active_enemies>=3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
-                local ShouldReturn = Maintenance(unit); if ShouldReturn then return ShouldReturn; end
+                if Maintenance(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=filler
-            local ShouldReturn = Filler(unit); if ShouldReturn then return ShouldReturn; end
+            if Filler(unit) then
+                return true
+            end
             
         end
     end

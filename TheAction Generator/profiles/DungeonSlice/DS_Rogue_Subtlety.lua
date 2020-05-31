@@ -409,7 +409,7 @@ local function EvaluateCycleReapingFlames220(unit)
 end
 
 local function EvaluateCycleNightblade279(unit)
-  return not VarUsePriorityRotation and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (A.NightsVengeance:GetAzeriteRank() > 0 or not A.ReplicatingShadows:GetAzeriteRank() > 0 or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
+  return not VarUsePriorityRotation and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (A.NightsVengeance:GetAzeriteRank() > 0 or not A.ReplicatingShadows:GetAzeriteRank() > 0 or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
 end
 
 local function EvaluateCycleShadowstrike422(unit)
@@ -440,7 +440,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- snapshot_stats
             -- stealth
-            if A.Stealth:IsReady(unit) and Unit("player"):HasBuffsDown(A.StealthBuff.ID, true)) then
+            if A.Stealth:IsReady(unit) and Unit("player"):HasBuffsDown(A.StealthBuff.ID, true) then
                 return A.Stealth:Show(icon)
             end
             
@@ -483,18 +483,20 @@ A[3] = function(icon, isMulti)
         --Cds
         local function Cds(unit)
             -- shadow_dance,use_off_gcd=1,if=!buff.shadow_dance.up&buff.shuriken_tornado.up&buff.shuriken_tornado.remains<=3.5
-            if A.ShadowDance:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true)) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true)) <= 3.5) then
+            if A.ShadowDance:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) <= 3.5) then
                 return A.ShadowDance:Show(icon)
             end
             
             -- symbols_of_death,use_off_gcd=1,if=buff.shuriken_tornado.up&buff.shuriken_tornado.remains<=3.5
-            if A.SymbolsofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true)) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true)) <= 3.5) then
+            if A.SymbolsofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) and Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) <= 3.5) then
                 return A.SymbolsofDeath:Show(icon)
             end
             
             -- call_action_list,name=essences,if=!stealthed.all&dot.nightblade.ticking|essence.breath_of_the_dying.major&time>=2
             if (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) or Azerite:EssenceHasMajor(A.BreathoftheDying.ID) and Unit("player"):CombatTime() >= 2) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+                if Essences(unit) then
+                    return true
+                end
             end
             
             -- pool_resource,for_next=1,if=!talent.shadow_focus.enabled
@@ -508,7 +510,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- symbols_of_death,if=dot.nightblade.ticking&!cooldown.shadow_blades.up&(!talent.shuriken_tornado.enabled|talent.shadow_focus.enabled|cooldown.shuriken_tornado.remains>2)&(!essence.blood_of_the_enemy.major|cooldown.blood_of_the_enemy.remains>2)&(azerite.nights_vengeance.rank<2|buff.nights_vengeance.up)
-            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)))) then
+            if A.SymbolsofDeath:IsReady(unit) and (Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not A.ShadowBlades:GetCooldown() == 0 and (not A.ShurikenTornado:IsSpellLearned() or A.ShadowFocus:IsSpellLearned() or A.ShurikenTornado:GetCooldown() > 2) and (not Azerite:EssenceHasMajor(A.BloodoftheEnemy.ID) or A.BloodoftheEnemy:GetCooldown() > 2) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
                 return A.SymbolsofDeath:Show(icon)
             end
             
@@ -529,52 +531,52 @@ A[3] = function(icon, isMulti)
             end
             
             -- shuriken_tornado,if=talent.shadow_focus.enabled&dot.nightblade.ticking&buff.symbols_of_death.up
-            if A.ShurikenTornado:IsReady(unit) and (A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.ShurikenTornado:IsReady(unit) and (A.ShadowFocus:IsSpellLearned() and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.ShurikenTornado:Show(icon)
             end
             
             -- shadow_dance,if=!buff.shadow_dance.up&target.time_to_die<=5+talent.subterfuge.enabled&!raid_event.adds.up
-            if A.ShadowDance:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() <= 5 + num(A.Subterfuge:IsSpellLearned()) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
+            if A.ShadowDance:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() <= 5 + num(A.Subterfuge:IsSpellLearned()) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1)) then
                 return A.ShadowDance:Show(icon)
             end
             
             -- potion,if=buff.bloodlust.react|buff.symbols_of_death.up&(buff.shadow_blades.up|cooldown.shadow_blades.remains<=10)
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) and (Unit("player"):HasBuffs(A.ShadowBladesBuff.ID, true)) or A.ShadowBlades:GetCooldown() <= 10)) then
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasHeroism() or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (Unit("player"):HasBuffs(A.ShadowBladesBuff.ID, true) or A.ShadowBlades:GetCooldown() <= 10)) then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
             -- blood_fury,if=buff.symbols_of_death.up
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking,if=buff.symbols_of_death.up
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.Berserking:Show(icon)
             end
             
             -- fireblood,if=buff.symbols_of_death.up
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call,if=buff.symbols_of_death.up
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.AncestralCall:Show(icon)
             end
             
             -- use_item,effect_name=cyclotronic_blast,if=!stealthed.all&dot.nightblade.ticking&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) and Player:EnergyDeficitPredicted() >= 30) then
+            if A.CyclotronicBlast:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Player:EnergyDeficitPredicted() >= 30) then
                 return A.CyclotronicBlast:Show(icon)
             end
             
             -- use_item,name=azsharas_font_of_power,if=!buff.shadow_dance.up&cooldown.symbols_of_death.remains<10
-            if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and A.SymbolsofDeath:GetCooldown() < 10) then
+            if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and A.SymbolsofDeath:GetCooldown() < 10) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<32&target.health.pct>=30|!debuff.conductive_ink_debuff.up&(debuff.razor_coral_debuff.stack>=25-10*debuff.blood_of_the_enemy.up|target.time_to_die<40)&buff.symbols_of_death.remains>8
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):HealthPercent() < 32 and Unit(unit):HealthPercent() >= 30 or not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true)) >= 25 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true)) or Unit(unit):TimeToDie() < 40) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) > 8) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 32 and Unit(unit):HealthPercent() >= 30 or not Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) >= 25 - 10 * num(Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true)) or Unit(unit):TimeToDie() < 40) and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) > 8) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -589,7 +591,7 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=energy.time_to_max>1&!buff.symbols_of_death.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -604,7 +606,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=(spell_targets.shuriken_storm>=2|raid_event.adds.in>60)&!cooldown.symbols_of_death.up&!buff.symbols_of_death.up&energy.deficit>=30
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60) and not A.SymbolsofDeath:GetCooldown() == 0 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) and Player:EnergyDeficitPredicted() >= 30) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60) and not A.SymbolsofDeath:GetCooldown() == 0 and not Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and Player:EnergyDeficitPredicted() >= 30) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
@@ -614,7 +616,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<10
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true)) < 10) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 10) then
                 return A.TheUnboundForce:Show(icon)
             end
             
@@ -629,7 +631,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- memory_of_lucid_dreams,if=energy<40&buff.symbols_of_death.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
@@ -650,7 +652,7 @@ A[3] = function(icon, isMulti)
         local function Finish(unit)
             -- pool_resource,for_next=1
             -- eviscerate,if=buff.nights_vengeance.up&(spell_targets.shuriken_storm<2|variable.use_priority_rotation|!talent.secret_technique.enabled|!cooldown.secret_technique.up)
-            if A.Eviscerate:IsReady(unit) and (Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)) and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or VarUsePriorityRotation or not A.SecretTechnique:IsSpellLearned() or not A.SecretTechnique:GetCooldown() == 0)) then
+            if A.Eviscerate:IsReady(unit) and (Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true) and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or VarUsePriorityRotation or not A.SecretTechnique:IsSpellLearned() or not A.SecretTechnique:GetCooldown() == 0)) then
                 if A.Eviscerate:IsUsablePPool() then
                     return A.Eviscerate:Show(icon)
                 else
@@ -659,7 +661,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- nightblade,if=(!talent.dark_shadow.enabled|!buff.shadow_dance.up)&target.time_to_die-remains>6&remains<tick_time*2
-            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true))) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:TickTime() * 2) then
+            if A.Nightblade:IsReady(unit) and ((not A.DarkShadow:IsSpellLearned() or not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true)) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) > 6 and Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) < A.NightbladeDebuff.ID, true:TickTime() * 2) then
                 return A.Nightblade:Show(icon)
             end
             
@@ -715,7 +717,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- shadow_dance,if=variable.shd_combo_points&(!talent.dark_shadow.enabled|dot.nightblade.remains>=5+talent.subterfuge.enabled)&(variable.shd_threshold|buff.symbols_of_death.remains>=1.2|spell_targets.shuriken_storm>=4&cooldown.symbols_of_death.remains>10)&(azerite.nights_vengeance.rank<2|buff.nights_vengeance.up)
-            if A.ShadowDance:IsReady(unit) and (VarShdComboPoints and (not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (VarShdThreshold or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) >= 1.2 or MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)))) then
+            if A.ShadowDance:IsReady(unit) and (VarShdComboPoints and (not A.DarkShadow:IsSpellLearned() or Unit(unit):HasDeBuffs(A.NightbladeDebuff.ID, true) >= 5 + num(A.Subterfuge:IsSpellLearned())) and (VarShdThreshold or Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) >= 1.2 or MultiUnits:GetByRangeInCombat(10, 5, 10) >= 4 and A.SymbolsofDeath:GetCooldown() > 10) and (A.NightsVengeance:GetAzeriteRank() < 2 or Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))) then
                 return A.ShadowDance:Show(icon)
             end
             
@@ -729,23 +731,29 @@ A[3] = function(icon, isMulti)
         --Stealthed
         local function Stealthed(unit)
             -- shadowstrike,if=(talent.find_weakness.enabled|spell_targets.shuriken_storm<3)&(buff.stealth.up|buff.vanish.up)
-            if A.Shadowstrike:IsReady(unit) and ((A.FindWeakness:IsSpellLearned() or MultiUnits:GetByRangeInCombat(10, 5, 10) < 3) and (Unit("player"):HasBuffs(A.StealthBuff.ID, true)) or Unit("player"):HasBuffs(A.VanishBuff.ID, true)))) then
+            if A.Shadowstrike:IsReady(unit) and ((A.FindWeakness:IsSpellLearned() or MultiUnits:GetByRangeInCombat(10, 5, 10) < 3) and (Unit("player"):HasBuffs(A.StealthBuff.ID, true) or Unit("player"):HasBuffs(A.VanishBuff.ID, true))) then
                 return A.Shadowstrike:Show(icon)
             end
             
             -- call_action_list,name=finish,if=buff.shuriken_tornado.up&combo_points.deficit<=2
-            if (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true)) and Player:ComboPointsDeficit() <= 2) then
-                local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
+            if (Unit("player"):HasBuffs(A.ShurikenTornadoBuff.ID, true) and Player:ComboPointsDeficit() <= 2) then
+                if Finish(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=finish,if=spell_targets.shuriken_storm=4&combo_points>=4
             if (MultiUnits:GetByRangeInCombat(10, 5, 10) == 4 and Player:ComboPoints() >= 4) then
-                local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
+                if Finish(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=finish,if=combo_points.deficit<=1-(talent.deeper_stratagem.enabled&(buff.vanish.up|azerite.the_first_dance.enabled&spell_targets.shuriken_storm<3&buff.nights_vengeance.up))
-            if (Player:ComboPointsDeficit() <= 1 - num((A.DeeperStratagem:IsSpellLearned() and (Unit("player"):HasBuffs(A.VanishBuff.ID, true)) or A.TheFirstDance:GetAzeriteRank() > 0 and MultiUnits:GetByRangeInCombat(10, 5, 10) < 3 and Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)))))) then
-                local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
+            if (Player:ComboPointsDeficit() <= 1 - num((A.DeeperStratagem:IsSpellLearned() and (Unit("player"):HasBuffs(A.VanishBuff.ID, true) or A.TheFirstDance:GetAzeriteRank() > 0 and MultiUnits:GetByRangeInCombat(10, 5, 10) < 3 and Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true))))) then
+                if Finish(unit) then
+                    return true
+                end
             end
             
             -- gloomblade,if=azerite.perforate.rank>=2&spell_targets.shuriken_storm<=2&position_back
@@ -765,7 +773,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- shadowstrike,if=variable.use_priority_rotation&(talent.find_weakness.enabled&debuff.find_weakness.remains<1|talent.weaponmaster.enabled&spell_targets.shuriken_storm<=4|azerite.inevitability.enabled&buff.symbols_of_death.up&spell_targets.shuriken_storm<=3+azerite.blade_in_the_shadows.enabled)
-            if A.Shadowstrike:IsReady(unit) and (VarUsePriorityRotation and (A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 or A.Weaponmaster:IsSpellLearned() and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 4 or A.Inevitability:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 3 + A.BladeIntheShadows:GetAzeriteRank() > 0)) then
+            if A.Shadowstrike:IsReady(unit) and (VarUsePriorityRotation and (A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 or A.Weaponmaster:IsSpellLearned() and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 4 or A.Inevitability:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) and MultiUnits:GetByRangeInCombat(10, 5, 10) <= 3 + A.BladeIntheShadows:GetAzeriteRank() > 0)) then
                 return A.Shadowstrike:Show(icon)
             end
             
@@ -784,7 +792,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -796,7 +806,9 @@ A[3] = function(icon, isMulti)
             end
             
             -- call_action_list,name=cds
-            local ShouldReturn = Cds(unit); if ShouldReturn then return ShouldReturn; end
+            if Cds(unit) then
+                return true
+            end
             
             -- run_action_list,name=stealthed,if=stealthed.all
             if (Unit("player"):IsStealthed(true, true)) then
@@ -813,7 +825,9 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=stealth_cds,if=variable.use_priority_rotation
             if (VarUsePriorityRotation) then
-                local ShouldReturn = StealthCds(unit); if ShouldReturn then return ShouldReturn; end
+                if StealthCds(unit) then
+                    return true
+                end
             end
             
             -- variable,name=stealth_threshold,value=25+talent.vigor.enabled*35+talent.master_of_shadows.enabled*25+talent.shadow_focus.enabled*20+talent.alacrity.enabled*10+15*(spell_targets.shuriken_storm>=3)
@@ -821,27 +835,35 @@ A[3] = function(icon, isMulti)
             
             -- call_action_list,name=stealth_cds,if=energy.deficit<=variable.stealth_threshold
             if (Player:EnergyDeficitPredicted() <= VarStealthThreshold) then
-                local ShouldReturn = StealthCds(unit); if ShouldReturn then return ShouldReturn; end
+                if StealthCds(unit) then
+                    return true
+                end
             end
             
             -- nightblade,if=azerite.nights_vengeance.enabled&!buff.nights_vengeance.up&combo_points.deficit>1&(spell_targets.shuriken_storm<2|variable.use_priority_rotation)&(cooldown.symbols_of_death.remains<=3|(azerite.nights_vengeance.rank>=2&buff.symbols_of_death.remains>3&!stealthed.all&cooldown.shadow_dance.charges_fractional>=0.9))
-            if A.Nightblade:IsReady(unit) and (A.NightsVengeance:GetAzeriteRank() > 0 and not Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true)) and Player:ComboPointsDeficit() > 1 and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or VarUsePriorityRotation) and (A.SymbolsofDeath:GetCooldown() <= 3 or (A.NightsVengeance:GetAzeriteRank() >= 2 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true)) > 3 and not Unit("player"):IsStealthed(true, true) and A.ShadowDance:GetSpellChargesFrac() >= 0.9))) then
+            if A.Nightblade:IsReady(unit) and (A.NightsVengeance:GetAzeriteRank() > 0 and not Unit("player"):HasBuffs(A.NightsVengeanceBuff.ID, true) and Player:ComboPointsDeficit() > 1 and (MultiUnits:GetByRangeInCombat(10, 5, 10) < 2 or VarUsePriorityRotation) and (A.SymbolsofDeath:GetCooldown() <= 3 or (A.NightsVengeance:GetAzeriteRank() >= 2 and Unit("player"):HasBuffs(A.SymbolsofDeathBuff.ID, true) > 3 and not Unit("player"):IsStealthed(true, true) and A.ShadowDance:GetSpellChargesFrac() >= 0.9))) then
                 return A.Nightblade:Show(icon)
             end
             
             -- call_action_list,name=finish,if=combo_points.deficit<=1|target.time_to_die<=1&combo_points>=3
             if (Player:ComboPointsDeficit() <= 1 or Unit(unit):TimeToDie() <= 1 and Player:ComboPoints() >= 3) then
-                local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
+                if Finish(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=finish,if=spell_targets.shuriken_storm=4&combo_points>=4
             if (MultiUnits:GetByRangeInCombat(10, 5, 10) == 4 and Player:ComboPoints() >= 4) then
-                local ShouldReturn = Finish(unit); if ShouldReturn then return ShouldReturn; end
+                if Finish(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=build,if=energy.deficit<=variable.stealth_threshold
             if (Player:EnergyDeficitPredicted() <= VarStealthThreshold) then
-                local ShouldReturn = Build(unit); if ShouldReturn then return ShouldReturn; end
+                if Build(unit) then
+                    return true
+                end
             end
             
             -- arcane_torrent,if=energy.deficit>=15+energy.regen

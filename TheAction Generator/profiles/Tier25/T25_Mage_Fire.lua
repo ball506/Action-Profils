@@ -411,7 +411,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- augmentation
             -- arcane_intellect
-            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true), true) then
+            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true, true) then
                 return A.ArcaneIntellect:Show(icon)
             end
             
@@ -477,17 +477,17 @@ A[3] = function(icon, isMulti)
         --ActiveTalents
         local function ActiveTalents(unit)
             -- living_bomb,if=active_enemies>1&buff.combustion.down&(variable.time_to_combustion>cooldown.living_bomb.duration|variable.time_to_combustion<=0|variable.disable_combustion)
-            if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (VarTimeToCombustion > A.LivingBomb:BaseDuration() or VarTimeToCombustion <= 0 or VarDisableCombustion)) then
+            if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and (VarTimeToCombustion > A.LivingBomb:BaseDuration() or VarTimeToCombustion <= 0 or VarDisableCombustion)) then
                 return A.LivingBomb:Show(icon)
             end
             
             -- meteor,if=!variable.disable_combustion&variable.time_to_combustion<=0|(buff.rune_of_power.up|cooldown.rune_of_power.remains>target.time_to_die&action.rune_of_power.charges<1|!talent.rune_of_power.enabled)&(cooldown.meteor.duration<variable.time_to_combustion|target.time_to_die<variable.time_to_combustion|variable.disable_combustion)
-            if A.Meteor:IsReady(unit) and (not VarDisableCombustion and VarTimeToCombustion <= 0 or (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) or A.RuneofPower:GetCooldown() > Unit(unit):TimeToDie() and A.RuneofPower:GetSpellCharges() < 1 or not A.RuneofPower:IsSpellLearned()) and (A.Meteor:BaseDuration() < VarTimeToCombustion or Unit(unit):TimeToDie() < VarTimeToCombustion or VarDisableCombustion)) then
+            if A.Meteor:IsReady(unit) and (not VarDisableCombustion and VarTimeToCombustion <= 0 or (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) or A.RuneofPower:GetCooldown() > Unit(unit):TimeToDie() and A.RuneofPower:GetSpellCharges() < 1 or not A.RuneofPower:IsSpellLearned()) and (A.Meteor:BaseDuration() < VarTimeToCombustion or Unit(unit):TimeToDie() < VarTimeToCombustion or VarDisableCombustion)) then
                 return A.Meteor:Show(icon)
             end
             
             -- dragons_breath,if=talent.alexstraszas_fury.enabled&(buff.combustion.down&!buff.hot_streak.react|buff.combustion.up&action.fire_blast.charges<action.fire_blast.max_charges&!buff.hot_streak.react)
-            if A.DragonsBreath:IsReady(unit) and (A.AlexstraszasFury:IsSpellLearned() and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and A.FireBlast:GetSpellCharges() < A.FireBlast:GetSpellChargesMax() and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)))) then
+            if A.DragonsBreath:IsReady(unit) and (A.AlexstraszasFury:IsSpellLearned() and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) or Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() < A.FireBlast:GetSpellChargesMax() and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
                 return A.DragonsBreath:Show(icon)
             end
             
@@ -496,17 +496,17 @@ A[3] = function(icon, isMulti)
         --CombustionPhase
         local function CombustionPhase(unit)
             -- lights_judgment,if=buff.combustion.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.LightsJudgment:Show(icon)
             end
             
             -- bag_of_tricks,if=buff.combustion.down
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.BagofTricks:Show(icon)
             end
             
             -- living_bomb,if=active_enemies>1&buff.combustion.down
-            if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.LivingBomb:Show(icon)
             end
             
@@ -526,25 +526,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=charges>=1&((action.fire_blast.charges_fractional+(buff.combustion.remains-buff.blaster_master.duration)%cooldown.fire_blast.duration-(buff.combustion.remains)%(buff.blaster_master.duration-0.5))>=0|!azerite.blaster_master.enabled|!talent.flame_on.enabled|buff.combustion.remains<=buff.blaster_master.duration|buff.blaster_master.remains<0.5|equipped.hyperthread_wristwraps&cooldown.hyperthread_wristwraps_300142.remains<5)&buff.combustion.up&(!action.scorch.executing&!action.pyroblast.in_flight&buff.heating_up.up|action.scorch.executing&buff.hot_streak.down&(buff.heating_up.down|azerite.blaster_master.enabled)|azerite.blaster_master.enabled&talent.flame_on.enabled&action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
-            if A.FireBlast:IsReady(unit) and (A.FireBlast:GetSpellCharges() >= 1 and ((A.FireBlast:GetSpellChargesFrac() + (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) - A.BlasterMasterBuff.ID, true):BaseDuration()) / A.FireBlast:BaseDuration() - (Unit("player"):HasBuffs(A.CombustionBuff.ID, true))) / (A.BlasterMasterBuff.ID, true):BaseDuration() - 0.5)) >= 0 or not A.BlasterMaster:GetAzeriteRank() > 0 or not A.FlameOn:IsSpellLearned() or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) <= A.BlasterMasterBuff.ID, true):BaseDuration() or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true)) < 0.5 or A.HyperthreadWristwraps:IsExists() and A.HyperthreadWristwraps300142:GetCooldown() < 5) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and (not action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) or action.scorch.executing and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) or A.BlasterMaster:GetAzeriteRank() > 0) or A.BlasterMaster:GetAzeriteRank() > 0 and A.FlameOn:IsSpellLearned() and A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)))) then
+            if A.FireBlast:IsReady(unit) and (A.FireBlast:GetSpellCharges() >= 1 and ((A.FireBlast:GetSpellChargesFrac() + (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) - A.BlasterMasterBuff.ID, true:BaseDuration()) / A.FireBlast:BaseDuration() - (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) / (A.BlasterMasterBuff.ID, true:BaseDuration() - 0.5)) >= 0 or not A.BlasterMaster:GetAzeriteRank() > 0 or not A.FlameOn:IsSpellLearned() or Unit("player"):HasBuffs(A.CombustionBuff.ID, true) <= A.BlasterMasterBuff.ID, true:BaseDuration() or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5 or A.HyperthreadWristwraps:IsExists() and A.HyperthreadWristwraps300142:GetCooldown() < 5) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (not action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) or action.scorch.executing and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true) and (Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true) or A.BlasterMaster:GetAzeriteRank() > 0) or A.BlasterMaster:GetAzeriteRank() > 0 and A.FlameOn:IsSpellLearned() and A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true) and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- rune_of_power,if=buff.rune_of_power.down&buff.combustion.down
-            if A.RuneofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.RuneofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.RuneofPower:Show(icon)
             end
             
             -- fire_blast,use_while_casting=1,if=azerite.blaster_master.enabled&(essence.memory_of_lucid_dreams.major|!essence.memory_of_lucid_dreams.minor)&talent.meteor.enabled&talent.flame_on.enabled&buff.blaster_master.down&(talent.rune_of_power.enabled&action.rune_of_power.executing&action.rune_of_power.execute_remains<0.6|(variable.time_to_combustion<=0|buff.combustion.up)&!talent.rune_of_power.enabled&!action.pyroblast.in_flight&!action.fireball.in_flight)
-            if A.FireBlast:IsReady(unit) and (A.BlasterMaster:GetAzeriteRank() > 0 and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or not Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID)) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true)) and (A.RuneofPower:IsSpellLearned() and action.rune_of_power.executing and action.rune_of_power.execute_remains < 0.6 or (VarTimeToCombustion <= 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true))) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
+            if A.FireBlast:IsReady(unit) and (A.BlasterMaster:GetAzeriteRank() > 0 and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or not Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID)) and A.Meteor:IsSpellLearned() and A.FlameOn:IsSpellLearned() and Unit("player"):HasBuffsDown(A.BlasterMasterBuff.ID, true) and (A.RuneofPower:IsSpellLearned() and action.rune_of_power.executing and action.rune_of_power.execute_remains < 0.6 or (VarTimeToCombustion <= 0 or Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and not A.RuneofPower:IsSpellLearned() and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())) then
                 return A.FireBlast:Show(icon)
             end
             
             -- call_action_list,name=active_talents
-            local ShouldReturn = ActiveTalents(unit); if ShouldReturn then return ShouldReturn; end
+            if ActiveTalents(unit) then
+                return true
+            end
             
             -- combustion,use_off_gcd=1,use_while_casting=1,if=((action.meteor.in_flight&action.meteor.in_flight_remains<=0.5)|!talent.meteor.enabled&(essence.memory_of_lucid_dreams.major|buff.hot_streak.react|action.scorch.executing&action.scorch.execute_remains<0.5|action.pyroblast.executing&action.pyroblast.execute_remains<0.5))&(buff.rune_of_power.up|!talent.rune_of_power.enabled)
-            if A.Combustion:IsReady(unit) and A.BurstIsON(unit) and (((A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) or not A.Meteor:IsSpellLearned() and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) or action.scorch.executing and action.scorch.execute_remains < 0.5 or action.pyroblast.executing and action.pyroblast.execute_remains < 0.5)) and (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) or not A.RuneofPower:IsSpellLearned())) then
+            if A.Combustion:IsReady(unit) and A.BurstIsON(unit) and (((A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) or not A.Meteor:IsSpellLearned() and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) or action.scorch.executing and action.scorch.execute_remains < 0.5 or action.pyroblast.executing and action.pyroblast.execute_remains < 0.5)) and (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) or not A.RuneofPower:IsSpellLearned())) then
                 return A.Combustion:Show(icon)
             end
             
@@ -574,22 +576,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- flamestrike,if=((talent.flame_patch.enabled&active_enemies>2)|active_enemies>6)&buff.hot_streak.react&!azerite.blaster_master.enabled
-            if A.Flamestrike:IsReady(unit) and (((A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 6) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not A.BlasterMaster:GetAzeriteRank() > 0) then
+            if A.Flamestrike:IsReady(unit) and (((A.FlamePatch:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 2) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 6) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not A.BlasterMaster:GetAzeriteRank() > 0) then
                 return A.Flamestrike:Show(icon)
             end
             
             -- pyroblast,if=buff.pyroclasm.react&buff.combustion.remains>cast_time
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true)) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) > A.Pyroblast:GetSpellCastTime()) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true) and Unit("player"):HasBuffs(A.CombustionBuff.ID, true) > A.Pyroblast:GetSpellCastTime()) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- pyroblast,if=buff.hot_streak.react
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -599,17 +601,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- scorch,if=buff.combustion.remains>cast_time&buff.combustion.up|buff.combustion.down&cooldown.combustion.remains<cast_time
-            if A.Scorch:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) > A.Scorch:GetSpellCastTime() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and A.Combustion:GetCooldown() < A.Scorch:GetSpellCastTime()) then
+            if A.Scorch:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) > A.Scorch:GetSpellCastTime() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and A.Combustion:GetCooldown() < A.Scorch:GetSpellCastTime()) then
                 return A.Scorch:Show(icon)
             end
             
             -- living_bomb,if=buff.combustion.remains<gcd.max&active_enemies>1
-            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.LivingBomb:Show(icon)
             end
             
             -- dragons_breath,if=buff.combustion.remains<gcd.max&buff.combustion.up
-            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) < A.GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true))) then
+            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) then
                 return A.DragonsBreath:Show(icon)
             end
             
@@ -628,7 +630,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=hyperthread_wristwraps,if=buff.combustion.up&action.fire_blast.charges=0&action.fire_blast.recharge_time>gcd.max
-            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > A.GetGCD()) then
+            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > A.GetGCD()) then
                 return A.HyperthreadWristwraps:Show(icon)
             end
             
@@ -638,52 +640,52 @@ A[3] = function(icon, isMulti)
             end
             
             -- cancel_buff,use_off_gcd=1,name=manifesto_of_madness_chapter_one,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 Player:CancelBuff(A.ManifestoofMadnessChapterOneBuff:Info())
             end
             
             -- use_item,use_off_gcd=1,name=azurethos_singed_plumage,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.AzurethosSingedPlumage:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.AzurethosSingedPlumage:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.AzurethosSingedPlumage:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,effect_name=gladiators_badge,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.GladiatorsBadge:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.GladiatorsBadge:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.GladiatorsBadge:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,effect_name=gladiators_medallion,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.GladiatorsMedallion:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.GladiatorsMedallion:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.GladiatorsMedallion:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=balefire_branch,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.BalefireBranch:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.BalefireBranch:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.BalefireBranch:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=shockbiters_fang,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.ShockbitersFang:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.ShockbitersFang:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.ShockbitersFang:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=tzanes_barkspines,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.TzanesBarkspines:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.TzanesBarkspines:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.TzanesBarkspines:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=ancient_knot_of_wisdom,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.AncientKnotofWisdom:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.AncientKnotofWisdom:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.AncientKnotofWisdom:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=neural_synapse_enhancer,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.NeuralSynapseEnhancer:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.NeuralSynapseEnhancer:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.NeuralSynapseEnhancer:Show(icon)
             end
             
             -- use_item,use_off_gcd=1,name=malformed_heralds_legwraps,if=buff.combustion.up|action.meteor.in_flight&action.meteor.in_flight_remains<=0.5
-            if A.MalformedHeraldsLegwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
+            if A.MalformedHeraldsLegwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) or A.Meteor:IsSpellInFlight() and action.meteor.in_flight_remains <= 0.5) then
                 return A.MalformedHeraldsLegwraps:Show(icon)
             end
             
@@ -693,7 +695,9 @@ A[3] = function(icon, isMulti)
         local function ItemsHighPriority(unit)
             -- call_action_list,name=items_combustion,if=!variable.disable_combustion&variable.time_to_combustion<=0
             if (not VarDisableCombustion and VarTimeToCombustion <= 0) then
-                local ShouldReturn = ItemsCombustion(unit); if ShouldReturn then return ShouldReturn; end
+                if ItemsCombustion(unit) then
+                    return true
+                end
             end
             
             -- use_items
@@ -733,17 +737,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=malformed_heralds_legwraps,if=variable.time_to_combustion>=55&buff.combustion.down&variable.time_to_combustion>variable.on_use_cutoff|variable.disable_combustion
-            if A.MalformedHeraldsLegwraps:IsReady(unit) and (VarTimeToCombustion >= 55 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
+            if A.MalformedHeraldsLegwraps:IsReady(unit) and (VarTimeToCombustion >= 55 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
                 return A.MalformedHeraldsLegwraps:Show(icon)
             end
             
             -- use_item,name=ancient_knot_of_wisdom,if=variable.time_to_combustion>=55&buff.combustion.down&variable.time_to_combustion>variable.on_use_cutoff|variable.disable_combustion
-            if A.AncientKnotofWisdom:IsReady(unit) and (VarTimeToCombustion >= 55 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
+            if A.AncientKnotofWisdom:IsReady(unit) and (VarTimeToCombustion >= 55 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
                 return A.AncientKnotofWisdom:Show(icon)
             end
             
             -- use_item,name=neural_synapse_enhancer,if=variable.time_to_combustion>=45&buff.combustion.down&variable.time_to_combustion>variable.on_use_cutoff|variable.disable_combustion
-            if A.NeuralSynapseEnhancer:IsReady(unit) and (VarTimeToCombustion >= 45 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
+            if A.NeuralSynapseEnhancer:IsReady(unit) and (VarTimeToCombustion >= 45 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
                 return A.NeuralSynapseEnhancer:Show(icon)
             end
             
@@ -766,45 +770,47 @@ A[3] = function(icon, isMulti)
         --RopPhase
         local function RopPhase(unit)
             -- flamestrike,if=(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&buff.hot_streak.react
-            if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
+            if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Flamestrike:Show(icon)
             end
             
             -- pyroblast,if=buff.hot_streak.react
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(!buff.heating_up.react&!buff.hot_streak.react&!prev_off_gcd.fire_blast&(action.fire_blast.charges>=2|(action.phoenix_flames.charges>=1&talent.phoenix_flames.enabled)|(talent.alexstraszas_fury.enabled&cooldown.dragons_breath.ready)|(talent.searing_touch.enabled&target.health.pct<=30)))
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not Unit("player"):PrevOffGCDP(1, A.FireBlast) and (A.FireBlast:GetSpellCharges() >= 2 or (A.PhoenixFlames:GetSpellCharges() >= 1 and A.PhoenixFlames:IsSpellLearned()) or (A.AlexstraszasFury:IsSpellLearned() and A.DragonsBreath:GetCooldown() == 0) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30)))) then
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):PrevOffGCDP(1, A.FireBlast) and (A.FireBlast:GetSpellCharges() >= 2 or (A.PhoenixFlames:GetSpellCharges() >= 1 and A.PhoenixFlames:IsSpellLearned()) or (A.AlexstraszasFury:IsSpellLearned() and A.DragonsBreath:GetCooldown() == 0) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30)))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- call_action_list,name=active_talents
-            local ShouldReturn = ActiveTalents(unit); if ShouldReturn then return ShouldReturn; end
+            if ActiveTalents(unit) then
+                return true
+            end
             
             -- pyroblast,if=buff.pyroclasm.react&cast_time<buff.pyroclasm.remains&buff.rune_of_power.remains>cast_time
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true)) and A.Pyroblast:GetSpellCastTime() < Unit("player"):HasBuffs(A.PyroclasmBuff.ID, true)) and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) > A.Pyroblast:GetSpellCastTime()) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true) and A.Pyroblast:GetSpellCastTime() < Unit("player"):HasBuffs(A.PyroclasmBuff.ID, true) and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) > A.Pyroblast:GetSpellCastTime()) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(buff.heating_up.react&(target.health.pct>=30|!talent.searing_touch.enabled))
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit(unit):HealthPercent() >= 30 or not A.SearingTouch:IsSpellLearned()))) then
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and (Unit(unit):HealthPercent() >= 30 or not A.SearingTouch:IsSpellLearned()))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!action.scorch.executing|!buff.heating_up.react&!buff.hot_streak.react)
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)))) then
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&talent.searing_touch.enabled&target.health.pct<=30&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- phoenix_flames,if=!prev_gcd.1.phoenix_flames&buff.heating_up.react
-            if A.PhoenixFlames:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.PhoenixFlames) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true))) then
+            if A.PhoenixFlames:IsReady(unit) and (not Unit("player"):GetSpellLastCast(A.PhoenixFlames) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) then
                 return A.PhoenixFlames:Show(icon)
             end
             
@@ -833,17 +839,17 @@ A[3] = function(icon, isMulti)
         --StandardRotation
         local function StandardRotation(unit)
             -- flamestrike,if=(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&buff.hot_streak.react
-            if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
+            if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Flamestrike:Show(icon)
             end
             
             -- pyroblast,if=buff.hot_streak.react&buff.hot_streak.remains<action.fireball.execute_time
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and Unit("player"):HasBuffs(A.HotStreakBuff.ID, true)) < A.Fireball:GetSpellCastTime()) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and Unit("player"):HasBuffs(A.HotStreakBuff.ID, true) < A.Fireball:GetSpellCastTime()) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- pyroblast,if=buff.hot_streak.react&(prev_gcd.1.fireball|firestarter.active|action.pyroblast.in_flight)
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and (Unit("player"):GetSpellLastCast(A.Fireball) or S.Firestarter:ActiveStatus() or A.Pyroblast:IsSpellInFlight())) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (Unit("player"):GetSpellLastCast(A.Fireball) or S.Firestarter:ActiveStatus() or A.Pyroblast:IsSpellInFlight())) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -853,32 +859,34 @@ A[3] = function(icon, isMulti)
             end
             
             -- pyroblast,if=buff.hot_streak.react&target.health.pct<=30&talent.searing_touch.enabled
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- pyroblast,if=buff.pyroclasm.react&cast_time<buff.pyroclasm.remains
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true)) and A.Pyroblast:GetSpellCastTime() < Unit("player"):HasBuffs(A.PyroclasmBuff.ID, true))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.PyroclasmBuff.ID, true) and A.Pyroblast:GetSpellCastTime() < Unit("player"):HasBuffs(A.PyroclasmBuff.ID, true)) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(buff.rune_of_power.down&!firestarter.active)&!variable.fire_blast_pooling&(((action.fireball.executing|action.pyroblast.executing)&buff.heating_up.react)|(talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!action.scorch.executing|!buff.hot_streak.react&!buff.heating_up.react&action.scorch.executing&!action.pyroblast.in_flight&!action.fireball.in_flight)))
-            if A.FireBlast:IsReady(unit) and ((Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not S.Firestarter:ActiveStatus()) and not VarFireBlastPooling and (((action.fireball.executing or action.pyroblast.executing) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true))) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())))) then
+            if A.FireBlast:IsReady(unit) and ((Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and not S.Firestarter:ActiveStatus()) and not VarFireBlastPooling and (((action.fireball.executing or action.pyroblast.executing) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&talent.searing_touch.enabled&target.health.pct<=30&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- phoenix_flames,if=(buff.heating_up.react|(!buff.hot_streak.react&(action.fire_blast.charges>0|talent.searing_touch.enabled&target.health.pct<=30)))&!variable.phoenix_pooling
-            if A.PhoenixFlames:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) or (not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and (A.FireBlast:GetSpellCharges() > 0 or A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30))) and not VarPhoenixPooling) then
+            if A.PhoenixFlames:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) or (not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (A.FireBlast:GetSpellCharges() > 0 or A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30))) and not VarPhoenixPooling) then
                 return A.PhoenixFlames:Show(icon)
             end
             
             -- call_action_list,name=active_talents
-            local ShouldReturn = ActiveTalents(unit); if ShouldReturn then return ShouldReturn; end
+            if ActiveTalents(unit) then
+                return true
+            end
             
             -- dragons_breath,if=active_enemies>1
             if A.DragonsBreath:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
@@ -886,7 +894,9 @@ A[3] = function(icon, isMulti)
             end
             
             -- call_action_list,name=items_low_priority
-            local ShouldReturn = ItemsLowPriority(unit); if ShouldReturn then return ShouldReturn; end
+            if ItemsLowPriority(unit) then
+                return true
+            end
             
             -- scorch,if=target.health.pct<=30&talent.searing_touch.enabled
             if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
@@ -912,7 +922,9 @@ A[3] = function(icon, isMulti)
         
 -- call precombat
 if not Player:AffectingCombat() and not Player:IsCasting() then
-  local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+  if Precombat(unit) then
+    return true
+end
 end
 
         -- In Combat
@@ -920,23 +932,25 @@ end
 
                     -- counterspell
             -- variable,name=time_to_combustion,op=set,value=talent.firestarter.enabled*firestarter.remains+(cooldown.combustion.remains*(1-variable.kindling_reduction*talent.kindling.enabled)-action.rune_of_power.execute_time*talent.rune_of_power.enabled)*!cooldown.combustion.ready*buff.combustion.down
-            VarTimeToCombustion = num(A.Firestarter:IsSpellLearned()) * S.Firestarter:ActiveRemains() + (A.Combustion:GetCooldown() * (1 - VarKindlingReduction * num(A.Kindling:IsSpellLearned())) - A.RuneofPower:GetSpellCastTime() * num(A.RuneofPower:IsSpellLearned())) * num(not A.Combustion:GetCooldown() == 0) * Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))
+            VarTimeToCombustion = num(A.Firestarter:IsSpellLearned()) * S.Firestarter:ActiveRemains() + (A.Combustion:GetCooldown() * (1 - VarKindlingReduction * num(A.Kindling:IsSpellLearned())) - A.RuneofPower:GetSpellCastTime() * num(A.RuneofPower:IsSpellLearned())) * num(not A.Combustion:GetCooldown() == 0) * Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)
             
             -- variable,name=time_to_combustion,op=max,value=cooldown.memory_of_lucid_dreams.remains,if=essence.memory_of_lucid_dreams.major&buff.memory_of_lucid_dreams.down&cooldown.memory_of_lucid_dreams.remains-variable.time_to_combustion<=variable.hold_combustion_threshold
-            if (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) and A.MemoryofLucidDreams:GetCooldown() - VarTimeToCombustion <= VarHoldCombustionThreshold) then
+            if (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true) and A.MemoryofLucidDreams:GetCooldown() - VarTimeToCombustion <= VarHoldCombustionThreshold) then
                 VarTimeToCombustion = math.max(VarTimeToCombustion, A.MemoryofLucidDreams:GetCooldown())
             end
             
             -- variable,name=time_to_combustion,op=max,value=cooldown.worldvein_resonance.remains,if=essence.worldvein_resonance.major&buff.worldvein_resonance.down&cooldown.worldvein_resonance.remains-variable.time_to_combustion<=variable.hold_combustion_threshold
-            if (Azerite:EssenceHasMajor(A.WorldveinResonance.ID) and Unit("player"):HasBuffsDown(A.WorldveinResonanceBuff.ID, true)) and A.WorldveinResonance:GetCooldown() - VarTimeToCombustion <= VarHoldCombustionThreshold) then
+            if (Azerite:EssenceHasMajor(A.WorldveinResonance.ID) and Unit("player"):HasBuffsDown(A.WorldveinResonanceBuff.ID, true) and A.WorldveinResonance:GetCooldown() - VarTimeToCombustion <= VarHoldCombustionThreshold) then
                 VarTimeToCombustion = math.max(VarTimeToCombustion, A.WorldveinResonance:GetCooldown())
             end
             
             -- call_action_list,name=items_high_priority
-            local ShouldReturn = ItemsHighPriority(unit); if ShouldReturn then return ShouldReturn; end
+            if ItemsHighPriority(unit) then
+                return true
+            end
             
             -- mirror_image,if=buff.combustion.down
-            if A.MirrorImage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true))) then
+            if A.MirrorImage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.MirrorImage:Show(icon)
             end
             
@@ -976,23 +990,27 @@ end
             end
             
             -- rune_of_power,if=buff.rune_of_power.down&(buff.combustion.down&(variable.time_to_combustion>full_recharge_time|variable.time_to_combustion>target.time_to_die)|variable.disable_combustion)
-            if A.RuneofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (VarTimeToCombustion > A.RuneofPower:GetSpellChargesFullRechargeTime() or VarTimeToCombustion > Unit(unit):TimeToDie()) or VarDisableCombustion)) then
+            if A.RuneofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and (VarTimeToCombustion > A.RuneofPower:GetSpellChargesFullRechargeTime() or VarTimeToCombustion > Unit(unit):TimeToDie()) or VarDisableCombustion)) then
                 return A.RuneofPower:Show(icon)
             end
             
             -- call_action_list,name=combustion_phase,if=!variable.disable_combustion&variable.time_to_combustion<=0
             if A.BurstIsON(unit) and (not VarDisableCombustion and VarTimeToCombustion <= 0) then
-                local ShouldReturn = CombustionPhase(unit); if ShouldReturn then return ShouldReturn; end
+                if CombustionPhase(unit) then
+                    return true
+                end
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(essence.memory_of_lucid_dreams.major|essence.memory_of_lucid_dreams.minor&azerite.blaster_master.enabled)&charges=max_charges&!buff.hot_streak.react&!(buff.heating_up.react&(buff.combustion.up&(action.fireball.in_flight|action.pyroblast.in_flight|action.scorch.executing)|target.health.pct<=30&action.scorch.executing))&!(!buff.heating_up.react&!buff.hot_streak.react&buff.combustion.down&(action.fireball.in_flight|action.pyroblast.in_flight))
-            if A.FireBlast:IsReady(unit) and ((Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID) and A.BlasterMaster:GetAzeriteRank() > 0) and A.FireBlast:GetSpellCharges() == A.FireBlast:GetSpellChargesMax() and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and not (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or action.scorch.executing) or Unit(unit):HealthPercent() <= 30 and action.scorch.executing)) and not (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
+            if A.FireBlast:IsReady(unit) and ((Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) or Azerite:EssenceHasMinor(A.MemoryofLucidDreams.ID) and A.BlasterMaster:GetAzeriteRank() > 0) and A.FireBlast:GetSpellCharges() == A.FireBlast:GetSpellChargesMax() and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight() or action.scorch.executing) or Unit(unit):HealthPercent() <= 30 and action.scorch.executing)) and not (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and (A.Fireball:IsSpellInFlight() or A.Pyroblast:IsSpellInFlight()))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- call_action_list,name=rop_phase,if=buff.rune_of_power.up&(variable.time_to_combustion>0|variable.disable_combustion)
-            if (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) and (VarTimeToCombustion > 0 or VarDisableCombustion)) then
-                local ShouldReturn = RopPhase(unit); if ShouldReturn then return ShouldReturn; end
+            if (Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) and (VarTimeToCombustion > 0 or VarDisableCombustion)) then
+                if RopPhase(unit) then
+                    return true
+                end
             end
             
             -- variable,name=fire_blast_pooling,value=talent.rune_of_power.enabled&cooldown.rune_of_power.remains<cooldown.fire_blast.full_recharge_time&(variable.time_to_combustion>action.rune_of_power.full_recharge_time|variable.disable_combustion)&(cooldown.rune_of_power.remains<target.time_to_die|action.rune_of_power.charges>0)|!variable.disable_combustion&variable.time_to_combustion<action.fire_blast.full_recharge_time&variable.time_to_combustion<target.time_to_die
@@ -1002,18 +1020,20 @@ end
             VarPhoenixPooling = num(A.RuneofPower:IsSpellLearned() and A.RuneofPower:GetCooldown() < A.PhoenixFlames:FullRechargeTimeP() and (VarTimeToCombustion > A.RuneofPower:GetSpellChargesFullRechargeTime() or VarDisableCombustion) and (A.RuneofPower:GetCooldown() < Unit(unit):TimeToDie() or A.RuneofPower:GetSpellCharges() > 0) or not VarDisableCombustion and VarTimeToCombustion < A.PhoenixFlames:GetSpellChargesFullRechargeTime() and VarTimeToCombustion < Unit(unit):TimeToDie())
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(!variable.fire_blast_pooling|buff.rune_of_power.up)&(variable.time_to_combustion>0|variable.disable_combustion)&(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&buff.hot_streak.down&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)
-            if A.FireBlast:IsReady(unit) and ((not VarFireBlastPooling or Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true))) and (VarTimeToCombustion > 0 or VarDisableCombustion) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) and (not A.BlasterMaster:GetAzeriteRank() > 0 or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true)) < 0.5)) then
+            if A.FireBlast:IsReady(unit) and ((not VarFireBlastPooling or Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) and (VarTimeToCombustion > 0 or VarDisableCombustion) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true) and (not A.BlasterMaster:GetAzeriteRank() > 0 or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5)) then
                 return A.FireBlast:Show(icon)
             end
             
             -- fire_blast,use_off_gcd=1,use_while_casting=1,if=firestarter.active&charges>=1&(!variable.fire_blast_pooling|buff.rune_of_power.up)&(!azerite.blaster_master.enabled|buff.blaster_master.remains<0.5)&(!action.fireball.executing&!action.pyroblast.in_flight&buff.heating_up.up|action.fireball.executing&buff.hot_streak.down|action.pyroblast.in_flight&buff.heating_up.down&buff.hot_streak.down)
-            if A.FireBlast:IsReady(unit) and (S.Firestarter:ActiveStatus() and A.FireBlast:GetSpellCharges() >= 1 and (not VarFireBlastPooling or Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true))) and (not A.BlasterMaster:GetAzeriteRank() > 0 or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true)) < 0.5) and (not action.fireball.executing and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) or action.fireball.executing and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)) or A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true)) and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true)))) then
+            if A.FireBlast:IsReady(unit) and (S.Firestarter:ActiveStatus() and A.FireBlast:GetSpellCharges() >= 1 and (not VarFireBlastPooling or Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) and (not A.BlasterMaster:GetAzeriteRank() > 0 or Unit("player"):HasBuffs(A.BlasterMasterBuff.ID, true) < 0.5) and (not action.fireball.executing and not A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) or action.fireball.executing and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true) or A.Pyroblast:IsSpellInFlight() and Unit("player"):HasBuffsDown(A.HeatingUpBuff.ID, true) and Unit("player"):HasBuffsDown(A.HotStreakBuff.ID, true))) then
                 return A.FireBlast:Show(icon)
             end
             
             -- call_action_list,name=standard_rotation,if=variable.time_to_combustion>0|variable.disable_combustion
             if (VarTimeToCombustion > 0 or VarDisableCombustion) then
-                local ShouldReturn = StandardRotation(unit); if ShouldReturn then return ShouldReturn; end
+                if StandardRotation(unit) then
+                    return true
+                end
             end
             
         end

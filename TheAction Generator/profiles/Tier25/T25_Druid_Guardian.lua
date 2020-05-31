@@ -481,7 +481,7 @@ local function EvaluateCycleMoonfire37(unit)
 end
 
 local function EvaluateCycleMoonfire50(unit)
-    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)
+    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)
 end
 
 --- ======= ACTION LISTS =======
@@ -513,7 +513,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- bear_form
-            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true)) then
+            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true) then
                 return A.BearForm:Show(icon)
             end
             
@@ -619,17 +619,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- barkskin,if=buff.bear_form.up
-            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
+            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.Barkskin:Show(icon)
             end
             
             -- lunar_beam,if=buff.bear_form.up
-            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
+            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.LunarBeam:Show(icon)
             end
             
             -- bristling_fur,if=buff.bear_form.up
-            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
+            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
                 return A.BristlingFur:Show(icon)
             end
             
@@ -639,7 +639,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=((equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>25&debuff.razor_coral_debuff.down)|debuff.razor_coral_debuff.down|(debuff.razor_coral_debuff.up&debuff.conductive_ink_debuff.up&target.time_to_pct_30<=2)|(debuff.razor_coral_debuff.up&time_to_die<=20))
-            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() > 25 and Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):TimeToDieX(30) <= 2) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true)) and Unit(unit):TimeToDie() <= 20))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() > 25 and Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):TimeToDieX(30) <= 2) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):TimeToDie() <= 20))) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -683,7 +683,7 @@ A[3] = function(icon, isMulti)
         --Multi
         local function Multi(unit)
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true))) then
+            if A.Maul:IsReady(unit) and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
                 return A.Maul:Show(icon)
             end
             
@@ -693,12 +693,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- thrash,if=(buff.incarnation.up&active_enemies>=4)|cooldown.thrash_bear.up
-            if Thrash():IsReady(unit) and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) or A.ThrashBear:GetCooldown() == 0) then
+            if Thrash():IsReady(unit) and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) or A.ThrashBear:GetCooldown() == 0) then
                 return Thrash:Show(icon)
             end
             
             -- mangle,if=buff.incarnation.up&active_enemies=3&dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Mangle:IsReady(unit) and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
             
@@ -708,7 +708,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- swipe,if=buff.incarnation.down
-            if Swipe():IsReady(unit) and (Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true))) then
+            if Swipe():IsReady(unit) and (Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true)) then
                 return Swipe:Show(icon)
             end
             
@@ -717,7 +717,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -725,19 +727,27 @@ A[3] = function(icon, isMulti)
 
                     -- auto_attack
             -- call_action_list,name=cooldowns
-            local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
+            if Cooldowns(unit) then
+                return true
+            end
             
             -- call_action_list,name=essences
-            local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            if Essences(unit) then
+                return true
+            end
             
             -- call_action_list,name=cleave,if=active_enemies<=2
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2) then
-                local ShouldReturn = Cleave(unit); if ShouldReturn then return ShouldReturn; end
+                if Cleave(unit) then
+                    return true
+                end
             end
             
             -- call_action_list,name=multi,if=active_enemies>=3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
-                local ShouldReturn = Multi(unit); if ShouldReturn then return ShouldReturn; end
+                if Multi(unit) then
+                    return true
+                end
             end
             
         end

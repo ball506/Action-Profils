@@ -586,7 +586,7 @@ local function ThunderClapRange()
 end
 
 local function EvaluateCycleAshvanesRazorCoral84(unit)
-    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true)) == 0
+    return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
 end
 
 --- ======= ACTION LISTS =======
@@ -647,7 +647,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- memory_of_lucid_dreams,if=buff.avatar.down
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
@@ -657,7 +657,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true))) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
                 return A.AnimaofDeath:Show(icon)
             end
             
@@ -672,7 +672,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.thunder_clap.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) or A.ThunderClap:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) or A.ThunderClap:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
             
@@ -682,7 +682,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true)) then
                 return A.ShieldBlock:Show(icon)
             end
             
@@ -696,22 +696,22 @@ A[3] = function(icon, isMulti)
         --St
         local function St(unit)
             -- thunder_clap,if=spell_targets.thunder_clap=2&talent.unstoppable_force.enabled&buff.avatar.up
-            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
+            if A.ThunderClap:IsReady(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) == 2 and A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) then
                 return A.ThunderClap:Show(icon)
             end
             
             -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down
-            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true))) then
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true)) then
                 return A.ShieldBlock:Show(icon)
             end
             
             -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true))) then
+            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true)) then
                 return A.ShieldSlam:Show(icon)
             end
             
             -- thunder_clap,if=(talent.unstoppable_force.enabled&buff.avatar.up)
-            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true)))) then
+            if A.ThunderClap:IsReady(unit) and ((A.UnstoppableForce:IsSpellLearned() and Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 return A.ThunderClap:Show(icon)
             end
             
@@ -721,7 +721,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true))) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
                 return A.AnimaofDeath:Show(icon)
             end
             
@@ -737,7 +737,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.stack>7&(cooldown.avatar.remains<5|buff.avatar.up)
-            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true)) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true)))) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) > 7 and (A.Avatar:GetCooldown() < 5 or Unit("player"):HasBuffs(A.AvatarBuff.ID, true))) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             
@@ -757,7 +757,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=grongs_primal_rage,if=buff.avatar.down|cooldown.shield_slam.remains>=4
-            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) or A.ShieldSlam:GetCooldown() >= 4) then
+            if A.GrongsPrimalRage:IsReady(unit) and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) or A.ShieldSlam:GetCooldown() >= 4) then
                 return A.GrongsPrimalRage:Show(icon)
             end
             
@@ -776,7 +776,9 @@ A[3] = function(icon, isMulti)
         
         -- call precombat
         if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+            if Precombat(unit) then
+            return true
+        end
         end
 
         -- In Combat
@@ -825,7 +827,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.avatar.up|target.time_to_die<25
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true)) or Unit(unit):TimeToDie() < 25) then
+            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             
@@ -850,7 +852,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) and num(not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) > 0 or A.TheCrucibleofFlame:GetAzeriteRank() < 3) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) and num(not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) > 0 or A.TheCrucibleofFlame:GetAzeriteRank() < 3) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -870,7 +872,9 @@ A[3] = function(icon, isMulti)
             end
             
             -- call_action_list,name=st
-            local ShouldReturn = St(unit); if ShouldReturn then return ShouldReturn; end
+            if St(unit) then
+                return true
+            end
             
         end
     end
