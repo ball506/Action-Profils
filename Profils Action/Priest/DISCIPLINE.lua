@@ -80,69 +80,69 @@ Action[ACTION_CONST_PRIEST_DISCIPLINE] = {
     EscapeArtist                              = Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                        = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Cooldowns
-    Rapture                                        = Create({ Type = "Spell", ID = 47536}),
-    PainSuppression                                = Create({ Type = "Spell", ID = 33206}),
-    PowerWordBarrier                            = Create({ Type = "Spell", ID = 62618}),
-    PowerWordRadiance                            = Create({ Type = "Spell", ID = 194509}),
-	Shadowfiend                                  = Create({ Type = "Spell", ID = 34433}),
+    Rapture                                   = Create({ Type = "Spell", ID = 47536}),
+    PainSuppression                           = Create({ Type = "Spell", ID = 33206}),
+    PowerWordBarrier                          = Create({ Type = "Spell", ID = 62618}),
+    PowerWordRadiance                         = Create({ Type = "Spell", ID = 194509}),
+	Shadowfiend                               = Create({ Type = "Spell", ID = 34433}),
     -- Healing   
-    PowerWordShield                                = Create({ Type = "Spell", ID = 17}),
-    ShadowMend                                    = Create({ Type = "Spell", ID = 186263}),
-    Penance                                        = Create({ Type = "Spell", ID = 47540}),
+    PowerWordShield                           = Create({ Type = "Spell", ID = 17}),
+    ShadowMend                                = Create({ Type = "Spell", ID = 186263}),
+    Penance                                   = Create({ Type = "Spell", ID = 47540}),
     -- Damage       
-    ShadowWordPain                                = Create({ Type = "Spell", ID = 589}),    
-    PenanceDMG                                    = Create({ Type = "Spell", ID = 47540, Texture = 23018}),
-    Smite                                        = Create({ Type = "Spell", ID = 585}),
-	HolyNova                                        = Create({ Type = "Spell", ID = 132157}),
+    ShadowWordPain                            = Create({ Type = "Spell", ID = 589}),    
+    PenanceDMG                                = Create({ Type = "Spell", ID = 47540, Texture = 23018}),
+    Smite                                     = Create({ Type = "Spell", ID = 585}),
+	HolyNova                                  = Create({ Type = "Spell", ID = 132157}),
     -- Utilities
-    LeapofFaith                                        = Create({ Type = "Spell", ID = 73325}),
-	Fade                                        = Create({ Type = "Spell", ID = 586}),
-	DesperatePrayer                                        = Create({ Type = "Spell", ID = 19236}),
-	PowerWordFortitude                                    = Create({ Type = "Spell", ID = 21562}),
+    LeapofFaith                               = Create({ Type = "Spell", ID = 73325}),
+	Fade                                      = Create({ Type = "Spell", ID = 586}),
+	DesperatePrayer                           = Create({ Type = "Spell", ID = 19236}),
+	PowerWordFortitude                        = Create({ Type = "Spell", ID = 21562}),
 	Purify                                    = Create({ Type = "Spell", ID = 527}),
-	DispelMagic                                    = Create({ Type = "Spell", ID = 528}),
-	MassDispel                                    = Create({ Type = "Spell", ID = 32375}),
-	MassResurrection                                    = Create({ Type = "Spell", ID = 212036}),
-	Resurrection                                    = Create({ Type = "Spell", ID = 2006}),
+	DispelMagic                               = Create({ Type = "Spell", ID = 528}),
+	MassDispel                                = Create({ Type = "Spell", ID = 32375}),
+	MassResurrection                          = Create({ Type = "Spell", ID = 212036}),
+	Resurrection                              = Create({ Type = "Spell", ID = 2006}),
     -- Buffs
-    AtonementBuff                                = Create({ Type = "Spell", ID = 81749 , Hidden = true}),
-    InnervateBuff                                = Create({ Type = "Spell", ID = 29166 , Hidden = true}),
+    AtonementBuff                             = Create({ Type = "Spell", ID = 81749 , Hidden = true}),
+    InnervateBuff                             = Create({ Type = "Spell", ID = 29166 , Hidden = true}),
     -- Debuffs
-    WeakenedSoulDebuff                            = Create({ Type = "Spell", ID = 6788, Hidden = true}),
-    PurgetheWickedDebuff                        = Create({ Type = "Spell", ID = 204213, Hidden = true}),
-    ConcentratedFlameDebuff                        = Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    WeakenedSoulDebuff                        = Create({ Type = "Spell", ID = 6788, Hidden = true}),
+    PurgetheWickedDebuff                      = Create({ Type = "Spell", ID = 204213, Hidden = true}),
+    ConcentratedFlameDebuff                   = Create({ Type = "Spell", ID = 295368, Hidden = true}),
     -- Talents
-    Castigation                                    = Create({ Type = "Spell", ID = 193134, isTalent = true}), -- Talent 1/1
-    TwistofFate                                    = Create({ Type = "Spell", ID = 265259, isTalent = true}), -- Talent 1/2
-    Schism                                        = Create({ Type = "Spell", ID = 214621, isTalent = true}), -- Talent 1/3
-    BodyandSoul                                    = Create({ Type = "Spell", ID = 64129, isTalent = true}),  -- Talent 2/1
-    Masochism                                    = Create({ Type = "Spell", ID = 193063, isTalent = true}), -- Talent 2/2
-    AngelicFeather                                = Create({ Type = "Spell", ID = 121536, isTalent = true}), -- Talent 2/3
-    ShieldDiscipline                            = Create({ Type = "Spell", ID = 197045, isTalent = true}), -- Talent 3/1
-    Mindbender                                    = Create({ Type = "Spell", ID = 123040, isTalent = true}), -- Talent 3/2
-    PowerWordSolace                                = Create({ Type = "Spell", ID = 129250, isTalent = true}), -- Talent 3/3
-    PsychicVoice                                = Create({ Type = "Spell", ID = 196704, isTalent = true}), -- Talent 4/1
-    DominantMind                                = Create({ Type = "Spell", ID = 205367, isTalent = true}), -- Talent 4/2
-    ShiningForce                                = Create({ Type = "Spell", ID = 204263, isTalent = true}), -- Talent 4/3
-    SinsoftheMany                                = Create({ Type = "Spell", ID = 280391, isTalent = true}), -- Talent 5/1
-    Contrition                                    = Create({ Type = "Spell", ID = 197419, isTalent = true}), -- Talent 5/2
-    ShadowCovenant                                = Create({ Type = "Spell", ID = 204065, isTalent = true}), -- Talent 5/3
-    PurgetheWicked                                = Create({ Type = "Spell", ID = 204197, isTalent = true}), -- Talent 6/1
-    DivineStar                                    = Create({ Type = "Spell", ID = 110744, isTalent = true}), -- Talent 6/2
-    Halo                                        = Create({ Type = "Spell", ID = 120517, isTalent = true}), -- Talent 6/3
-    Lenience                                    = Create({ Type = "Spell", ID = 238063, isTalent = true}), -- Talent 7/1
-    LuminousBarrier                                = Create({ Type = "Spell", ID = 271466, isTalent = true}), -- Talent 7/2
-    Evangelism                                    = Create({ Type = "Spell", ID = 246287, isTalent = true}), -- Talent 7/3
+	Castigation                               = Create({ Type = "Spell", ID = 193134, isTalent = true}), -- Talent 1/1
+    TwistofFate                               = Create({ Type = "Spell", ID = 265259, isTalent = true}), -- Talent 1/2
+    Schism                                    = Create({ Type = "Spell", ID = 214621, isTalent = true}), -- Talent 1/3
+    BodyandSoul                               = Create({ Type = "Spell", ID = 64129, isTalent = true}),  -- Talent 2/1
+    Masochism                                 = Create({ Type = "Spell", ID = 193063, isTalent = true}), -- Talent 2/2
+    AngelicFeather                            = Create({ Type = "Spell", ID = 121536, isTalent = true}), -- Talent 2/3
+    ShieldDiscipline                          = Create({ Type = "Spell", ID = 197045, isTalent = true}), -- Talent 3/1
+    Mindbender                                = Create({ Type = "Spell", ID = 123040, isTalent = true}), -- Talent 3/2
+    PowerWordSolace                           = Create({ Type = "Spell", ID = 129250, isTalent = true}), -- Talent 3/3
+    PsychicVoice                              = Create({ Type = "Spell", ID = 196704, isTalent = true}), -- Talent 4/1
+    DominantMind                              = Create({ Type = "Spell", ID = 205367, isTalent = true}), -- Talent 4/2
+    ShiningForce                              = Create({ Type = "Spell", ID = 204263, isTalent = true}), -- Talent 4/3
+    SinsoftheMany                             = Create({ Type = "Spell", ID = 280391, isTalent = true}), -- Talent 5/1
+    Contrition                                = Create({ Type = "Spell", ID = 197419, isTalent = true}), -- Talent 5/2
+    ShadowCovenant                            = Create({ Type = "Spell", ID = 204065, isTalent = true}), -- Talent 5/3
+    PurgetheWicked                            = Create({ Type = "Spell", ID = 204197, isTalent = true}), -- Talent 6/1
+    DivineStar                                = Create({ Type = "Spell", ID = 110744, isTalent = true}), -- Talent 6/2
+    Halo                                      = Create({ Type = "Spell", ID = 120517, isTalent = true}), -- Talent 6/3
+    Lenience                                  = Create({ Type = "Spell", ID = 238063, isTalent = true}), -- Talent 7/1
+    LuminousBarrier                           = Create({ Type = "Spell", ID = 271466, isTalent = true}), -- Talent 7/2
+    Evangelism                                = Create({ Type = "Spell", ID = 246287, isTalent = true}), -- Talent 7/3
 	-- PvP
-	UltimateRadiance                           = Create({ Type = "Spell", ID = 236499, isTalent = true}), -- PvP Talent Radiance is now Instant + 250% healing increase
-    HolyWordChastise                            = Create({ Type = "Spell",  ID = 88625 }), 
-	VoidShift                                    = Create({ Type = "Spell",  ID = 108968 }),
+	UltimateRadiance                          = Create({ Type = "Spell", ID = 236499, isTalent = true}), -- PvP Talent Radiance is now Instant + 250% healing increase
+    HolyWordChastise                          = Create({ Type = "Spell",  ID = 88625 }), 
+	VoidShift                                 = Create({ Type = "Spell",  ID = 108968 }),
     -- Items
-    PotionofUnbridledFury                        = Create({ Type = "Potion",  ID = 169299 }), 
+    PotionofUnbridledFury                     = Create({ Type = "Potion",  ID = 169299 }), 
     -- Hidden 
-    PoolResource                                = Create({ Type = "Spell", ID = 97238, Hidden = true}),
-    Channeling                                    = Create({ Type = "Spell", ID = 209274, Hidden = true}),    
-    EchoingBlades                                = Create({ Type = "Spell", ID = 287649, Hidden = true}), -- Simcraft Azerite
+    PoolResource                              = Create({ Type = "Spell", ID = 97238, Hidden = true}),
+    Channeling                                = Create({ Type = "Spell", ID = 209274, Hidden = true}),    
+    EchoingBlades                             = Create({ Type = "Spell", ID = 287649, Hidden = true}), -- Simcraft Azerite
     -- Items
     PotionofReconstitution                    = Create({ Type = "Potion", ID = 168502     }),     
     CoastalManaPotion                         = Create({ Type = "Potion", ID = 152495     }), 
@@ -2334,14 +2334,14 @@ A[3] = function(icon, isMulti)
         (
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Mouse() and 
-                SpellInRange("mouseover", ID) and
+                A.PowerWordRadiance:IsSpellInRange("mouseover") and
                 -- Atonement
                 Unit("mouseover"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
                 A.PowerWordRadiance:PredictHeal("PW:R", "mouseover")
             ) or 
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Target() and
-                SpellInRange("target", ID) and
+                A.PowerWordRadiance:IsSpellInRange("target") and
                 -- Atonement
                 Unit("target"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
                 A.PowerWordRadiance:PredictHeal("PW:R", "target")
