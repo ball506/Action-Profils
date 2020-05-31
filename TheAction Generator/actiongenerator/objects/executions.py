@@ -53,7 +53,7 @@ class Potion(Item):
     def __init__(self, action):
         super().__init__(action, action.player.potion())
         # Castable
-        self.additional_conditions = [Literal('Action.GetToggle(1, "Potion")')]
+        self.additional_conditions = [Literal('Potion')]
 
 
 class RunActionList(LuaNamed, LuaCastable):
@@ -183,7 +183,7 @@ class Spell(LuaNamed, LuaCastable):
             or f'{super().lua_name()}' == 'WorldveinResonance'		
             or f'{super().lua_name()}' == 'ConcentratedFlame'						
         ):
-            self.condition_method = Method('AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth")', type_=BOOL)
+            self.condition_method = Method('AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth', type_=BOOL)
             """
             Racials Methods exception
             """
@@ -201,7 +201,7 @@ class Spell(LuaNamed, LuaCastable):
             or f'{super().lua_name()}' == 'Shadowmeld'		
             or f'{super().lua_name()}' == 'Stoneform'				
         ):
-            self.condition_method = Method('AutoRacial(unit) and Action.GetToggle(1, "Racial")', type_=BOOL)
+            self.condition_method = Method('AutoRacial(unit) and Racial', type_=BOOL)
         elif self.action.player.spell_property(self, USABLE):
             self.condition_method = Method('IsReady(unit)', type_=BOOL)
         elif self.action.player.spell_property(self, READY):
