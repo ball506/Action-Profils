@@ -171,6 +171,27 @@ DetermineEssenceRanks = A.MakeFunctionCachedStatic(DetermineEssenceRanks)
 
 local player = "player"
 
+
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+	
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
 -- Pet Handler UI --
 local function HandlePetChoice()
     local choice = Action.GetToggle(2, "PetChoice")
@@ -311,26 +332,6 @@ local function TimeToShard()
     end
     return 1 / (0.16 / math.sqrt(ActiveAgony) * (ActiveAgony == 1 and 1.15 or 1) * ActiveAgony / AgonyTickTime())
 end
-
-local Temp = {
-    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
-	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
-	
-    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
-    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
-	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
-    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
-}
-
-local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
-
-local function IsSchoolFree()
-	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
-end 
 
 local function SelfDefensives()
     if Unit("player"):CombatTime() == 0 then 
