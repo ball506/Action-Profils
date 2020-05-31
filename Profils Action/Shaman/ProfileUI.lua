@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.4 (30.05.2020)",
+    DateTime = "v4.1.5 (31.05.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -1801,20 +1801,6 @@ A.Data.ProfileUI = {
 					},
            	        M = {},
         	    },
-        	    {	    
-           	        E = "Checkbox", 
-           	        DB = "HE_Absorb",
-           	        DBV = true,
-           	        L = { 
-					    enUS = "Calculate Absorb",
-                        ruRU = "Calculate Absorb",
-	                },
-           	        TT = { 
-					    enUS = "Will auto calculate absorb to avoid wasting of refresh spells if they got absorb superior than spell that gonna be casted",
-                        ruRU = "Will auto calculate absorb to avoid wasting of refresh spells if they got absorb superior than spell that gonna be casted",
-					},
-           	        M = {},
-        	    },
       	        {
          	        E = "Checkbox", 
          	        DB = "SpellKick",
@@ -2220,7 +2206,43 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-			},			
+			},
+            { -- HealingRain
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(79206) .. " -- ",
+                    },
+                }, 
+            },			
+            {
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "UseSpiritWalkersGrace",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Auto\n" .. A.GetSpellInfo(79206),
+                        ruRU = "Auto\n" .. A.GetSpellInfo(79206),
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically use " .. A.GetSpellInfo(79206),
+                        ruRU = "Enable this option to automatically use " .. A.GetSpellInfo(79206),
+					},
+        	        M = {},
+       	        },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "SpiritWalkersGraceTime",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(79206) .. "\nif moving for",
+                    }, 
+                    M = {},
+                },
+			},				
             { -- [6]
                 {
                     E = "Header",
