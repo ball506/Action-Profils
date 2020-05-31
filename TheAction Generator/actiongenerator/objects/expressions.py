@@ -844,7 +844,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.remains.
         """
-        self.method = Method('A.GetCurrentGCD()')
+        self.method = Method('GetCurrentGCD()')
 
     def max(self):
         """
@@ -856,7 +856,7 @@ class GCD(BuildExpression):
         """
         Return the arguments for the expression gcd.
         """
-        self.method = Method('A.GetGCD()')
+        self.method = Method('GetGCD()')
 
 
 class PMultiplier(BuildExpression):
