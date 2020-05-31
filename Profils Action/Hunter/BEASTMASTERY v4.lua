@@ -713,10 +713,10 @@ A[3] = function(icon, isMulti)
 		end
 	end
 	-- FeignDeath protection 
-   	if Unit(player):HasBuffs(A.FeignDeath.ID, true) >= 358 then
+   	if Unit(player):HasBuffs(A.FeignDeath.ID, true) >= 356 then
             CanCast = false	
 	else	
-   	    if Unit(player):HasBuffs(A.FeignDeath.ID, true) < 358 then
+   	    if Unit(player):HasBuffs(A.FeignDeath.ID, true) < 356 then
             CanCast = true	
 		end
 	end	
@@ -751,6 +751,7 @@ A[3] = function(icon, isMulti)
 		
 	-- Feign Death Thing from Beyond
 	if Unit(player):HasDeBuffs(A.GrandDelusionsDebuff.ID, true) > 0 and A.FeignDeath:IsReady(player) then
+	    StopAttack()
 	    return A.FeignDeath:Show(icon)
 	end
 
