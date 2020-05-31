@@ -185,11 +185,13 @@ CLASS_FUNCTIONS = {
         COMMON: [
         ],
         ARMS: [
-            'ArmsPreAplSetup',
+            'WARRIORArmsPreAplSetup',
         ],
         FURY: [
+            'WARRIORFuryPreAplSetup',
         ],
         PROTECTION: [
+            'WARRIORProtectionPreAplSetup',
         ],
     },
 }
