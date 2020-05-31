@@ -173,6 +173,19 @@ Action[ACTION_CONST_DEATHKNIGHT_UNHOLY] = {
 Action:CreateEssencesFor(ACTION_CONST_DEATHKNIGHT_UNHOLY)  -- where PLAYERSPEC is Constance (example: ACTION_CONST_MONK_BM)
 local A = setmetatable(Action[ACTION_CONST_DEATHKNIGHT_UNHOLY], { __index = Action })
 
+------------------------------------------
+---------------- VARIABLES ---------------
+------------------------------------------
+
+
+local function num(val)
+    if val then return 1 else return 0 end
+end
+
+local function bool(val)
+    return val ~= 0
+end
+
 -- API - Pet Tracker 
 --Pet:AddTrackers(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template table is the same with what has this library already built-in, just for example
 Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, {
@@ -193,19 +206,6 @@ Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, {
 		duration = 30,
 	},
 })
-
-------------------------------------------
----------------- VARIABLES ---------------
-------------------------------------------
-
-
-local function num(val)
-    if val then return 1 else return 0 end
-end
-
-local function bool(val)
-    return val ~= 0
-end
 
 ------------------------------------------
 -------------- COMMON PREAPL -------------
