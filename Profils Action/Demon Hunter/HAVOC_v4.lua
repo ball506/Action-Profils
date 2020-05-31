@@ -160,6 +160,7 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
     ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
     PoolResource                           = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),
     DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon
+	Quake                                  = Action.Create({ Type = "Spell", ID = 240447, Hidden = true     }), -- Quake (Mythic Plus Affix)
 }
 
 Action:CreateEssencesFor(ACTION_CONST_DEMONHUNTER_HAVOC)
@@ -679,6 +680,35 @@ A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
         profileStop = false
 end)
 
+
+local function ShouldDelayEyeBeam()
+	local CurrentChannelTime = Action.GetSpellDescription(198013)[3]
+		
+    -- Check for M+ Quake Affix
+    if Unit(player):HasDeBuffs(A.Quake.ID) > 0 and Unit(player):HasDeBuffs(A.Quake.ID) <= CurrentChannelTime + A.GetGCD() then
+        return true
+    end
+end
+
+local function ShouldDelayFelBarrage()
+	local CurrentChannelTime = Action.GetSpellDescription(258925)[3]
+		
+    -- Check for M+ Quake Affix
+    if Unit(player):HasDeBuffs(A.Quake.ID) > 0 and Unit(player):HasDeBuffs(A.Quake.ID) <= CurrentChannelTime + A.GetGCD() then
+        return true
+    end
+end
+
+local function ShouldDelayFocusedAzeriteBeam()
+    local CurrentCastTime = Unit("player"):CastTime(295258)
+	local CurrentChannelTime = Action.GetSpellDescription(295258)[2]
+		
+    -- Check for M+ Quake Affix
+    if Unit(player):HasDeBuffs(A.Quake.ID) > 0 and Unit(player):HasDeBuffs(A.Quake.ID) <= CurrentCastTime + CurrentChannelTime + A.GetGCD() then
+        return true
+    end
+end
+
 -----------------------------------------
 --                 ROTATION  
 -----------------------------------------
@@ -696,9 +726,7 @@ A[3] = function(icon, isMulti)
     local EyeBeamTTD = A.GetToggle(2, "EyeBeamTTD")
     local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
     local FocusedAzeriteBeamTTD = A.GetToggle(2, "FocusedAzeriteBeamTTD")
-    local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")
-    
-    
+    local FocusedAzeriteBeamUnits = A.GetToggle(2, "FocusedAzeriteBeamUnits")    
     local FelBladeRange = A.GetToggle(2, "FelBladeRange")
     local FelBladeFury = A.GetToggle(2, "FelBladeFury")    
     local FelBladeOutOfRange = A.GetToggle(2, "FelBladeOutOfRange")    
@@ -895,7 +923,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
                 -- Notification                    
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
                 return A.EyeBeam:Show(icon)
@@ -952,7 +980,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
+            if A.FocusedAzeriteBeam:AutoHeartOfAzeroth(unit, true) and not ShouldDelayFocusedAzeriteBeam() and CanCast and BurstIsON(unit) and UseHeartOfAzeroth 
             and (GetByRange(FocusedAzeriteBeamUnits, 20) or Unit(unit):IsBoss()) and Unit(unit):TimeToDie() >= FocusedAzeriteBeamTTD
             then
                 -- Notification                    
@@ -1132,7 +1160,7 @@ A[3] = function(icon, isMulti)
             end   
             
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and CanCast and HandleEyeBeam() and Unit(unit):GetRange() <= EyeBeamRange and 
             (
                 Unit(unit):TimeToDie() > EyeBeamTTD 
                 or 
@@ -1183,7 +1211,7 @@ A[3] = function(icon, isMulti)
             end 
             
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
-            if A.FelBarrage:IsReady(unit) and CanCast and not Unit(unit):IsTotem() and 
+            if A.FelBarrage:IsReady(unit) and not ShouldDelayFelBarrage() and CanCast and not Unit(unit):IsTotem() and 
             (
                 (
                     (A.EyeBeam:GetCooldown() > 0 or Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
@@ -1250,14 +1278,14 @@ A[3] = function(icon, isMulti)
             end
 			
 			-- eye_beam,if=active_enemies>1&(!raid_event.adds.exists|raid_event.adds.up)&!variable.waiting_for_momentum
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam()  then
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam()  then
                 -- Notification                    
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)               
                 return A.EyeBeam:Show(icon)
             end
 		
             -- fel_barrage,if=((!cooldown.eye_beam.up|buff.metamorphosis.up)&raid_event.adds.in>30)|active_enemies>desired_targets
-            if A.FelBarrage:IsReady(unit) and CanCast and 
+            if A.FelBarrage:IsReady(unit) and not ShouldDelayFelBarrage() and CanCast and 
             (
                 (
                     (A.EyeBeam:GetCooldown() > 0 or Unit(player):HasBuffs(A.MetamorphosisBuff.ID, true) > 0)
@@ -1285,7 +1313,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash) then
                 -- Notification                    
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
                 return A.EyeBeam:Show(icon)
@@ -1313,7 +1341,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and CanCast and (Unit(unit):TimeToDie() > EyeBeamTTD or Unit(unit):IsBoss()) and Unit(unit):GetRange() <= EyeBeamRange and not Unit(unit):IsTotem() and HandleEyeBeam() and A.BlindFury:IsSpellLearned() then
                 -- Notification                    
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                
                 return A.EyeBeam:Show(icon)
