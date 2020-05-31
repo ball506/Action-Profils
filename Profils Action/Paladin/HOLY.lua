@@ -1829,7 +1829,7 @@ A[3] = function(icon, isMulti)
         if A.GlimmerofLight:GetAzeriteRank() >= 1 and GlimmerofLightCount < 8 and ForceGlimmerOnMaxUnits then
             if (IsInGroup() or A.IsInPvP or IsInRaid()) then
                 for i = 1, #getmembersAll do 
-                    if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 then 
+                    if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReadyByPassCastGCD(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 and Unit(getmembersAll[i].Unit):HasBuffs(A.GlimmerofLightBuff.ID, true) == 0 then 
                         HealingEngine.SetTarget(getmembersAll[i].Unit) 
                         -- Notification                    
                         Action.SendNotification("Spreading " .. A.GetSpellInfo(A.GlimmerofLightBuff.ID), A.GlimmerofLightBuff.ID)        
@@ -1838,6 +1838,32 @@ A[3] = function(icon, isMulti)
                 end    
             end
         end        
+
+        -- #3.1 Special Holy Shock force as soon as its available MostlyIncDMG
+        if A.HolyShock:GetCooldown() == 0 then
+            for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):GetRange() <= 40 
+				then 
+                    HealingEngine.IsMostlyIncDMG(getmembersAll[i].Unit)					
+                    -- Notification                    
+                    Action.SendNotification("Forcing " .. A.GetSpellInfo(A.HolyShock.ID), A.HolyShock.ID)        
+                    return A.HolyShock:Show(icon)
+                end                
+            end    
+        end     
+
+        -- #3.2 Special Holy Shock force as soon as its available HP <= 98
+        if A.HolyShock:GetCooldown() == 0 then
+            for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):IsPlayer() and not IsUnitEnemy(getmembersAll[i].Unit) and A.HolyShock:IsReady(getmembersAll[i].Unit) and Unit(getmembersAll[i].Unit):HealthPercent() <= 98 and Unit(getmembersAll[i].Unit):GetRange() <= 40 
+				then 
+                    HealingEngine.SetTarget(getmembersAll[i].Unit)					
+                    -- Notification                    
+                    Action.SendNotification("Forcing " .. A.GetSpellInfo(A.HolyShock.ID), A.HolyShock.ID)        
+                    return A.HolyShock:Show(icon)
+                end                
+            end    
+        end  
 
         -- #4 Custom Beacon TANK
         if A.BeaconofLight:IsReady() and BeaconWorkMode == "Tanking Units" and ActiveBeaconOnTank == 0 then
@@ -2383,7 +2409,7 @@ A[3] = function(icon, isMulti)
 			    end
             end
         end
-
+		
         -- #11 HPvE #1 Holy Shock (HPS)
         if A.HolyShock:IsReadyByPassCastGCD(unit) and
         (
@@ -2569,9 +2595,9 @@ A[3] = function(icon, isMulti)
                 (
                     Unit(mouseover):IsTank() or
                     HealingEngine.IsMostlyIncDMG(mouseover) or
-                    Unit(mouseover):Health() < Unit(mouseover):HealthMax() * 0.8 --or
-                    --Unit(mouseover):HealthPercent() < FlashofLightHP or
-                    --Unit(mouseover):TimeToDieX(3) < FlashofLightTTD    
+                    Unit(mouseover):Health() < Unit(mouseover):HealthMax() * 0.8 or
+                    Unit(mouseover):HealthPercent() < FlashofLightHP or
+                    Unit(mouseover):TimeToDieX(10) < FlashofLightTTD    
                 )
             ) or 
             -- Target
@@ -2588,20 +2614,20 @@ A[3] = function(icon, isMulti)
                 (
                     Unit(target):IsTank() or
                     HealingEngine.IsMostlyIncDMG(target) or
-                    Unit(target):Health() < Unit(target):HealthMax() * 0.8 --or
-                    --Unit(target):HealthPercent() < FlashofLightHP or
-                    --Unit(target):TimeToDieX(5) < FlashofLightTTD                
+                    Unit(target):Health() < Unit(target):HealthMax() * 0.8 or
+                    Unit(target):HealthPercent() < FlashofLightHP or
+                    Unit(target):TimeToDieX(10) < FlashofLightTTD                
                 )
             ) or
             -- Save us
             (
                 Unit(player):HealthPercent() < FlashofLightHP or
-                Unit(player):TimeToDieX(5) < FlashofLightTTD    
+                Unit(player):TimeToDieX(10) < FlashofLightTTD    
             )            
         )
-          then
+        then
             return A.FlashofLight:Show(icon)
-         end
+        end
 
         -- #15 HPvE #1 Light of Martyr
         if A.LightofMartyr:IsReady(unit) and
@@ -2668,7 +2694,9 @@ A[3] = function(icon, isMulti)
                 A.HolyLight:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 A.HolyLight:PredictHeal("HolyLight", mouseover) and
-                Unit(mouseover):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
+                Unit(mouseover):TimeToDie() > HLcast_t + GetCurrentGCD() + 1 or
+                Unit(mouseover):HealthPercent() < HolyLightHP or
+                Unit(mouseover):TimeToDieX(15) < HolyLightTTD            
             ) or 
             -- Target
             (
@@ -2681,7 +2709,9 @@ A[3] = function(icon, isMulti)
                 A.HolyLight:IsInRange(target) and
                 Unit(target):HasBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
                 A.HolyLight:PredictHeal("HolyLight", target) and
-                Unit(target):TimeToDie() > HLcast_t + GetCurrentGCD() + 1
+                Unit(target):TimeToDie() > HLcast_t + GetCurrentGCD() + 1 or
+                Unit(target):HealthPercent() < HolyLightHP or
+                Unit(target):TimeToDieX(15) < HolyLightTTD            
             )
             or
             -- Save us
