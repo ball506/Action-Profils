@@ -1,1 +1,1 @@
-python -m actiongenerator -p profiles\Tier23\T23_%1_%2.simc
+python -m actiongenerator -p profiles\Tier26\T26_%1_%2.simc

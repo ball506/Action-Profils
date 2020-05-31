@@ -6,7 +6,7 @@ race=human
 role=attack
 position=ranged_back
 talents=2202012
-azerite_essences=22:3/5:3/35:3
+azerite_essences=22:3/5:3/35:3/4:3
 
 # Default consumables
 potion=unbridled_fury
@@ -33,8 +33,8 @@ actions.precombat+=/guardian_of_azeroth
 actions.precombat+=/memory_of_lucid_dreams
 actions.precombat+=/use_item,effect_name=cyclotronic_blast,if=!raid_event.invulnerable.exists&(trinket.1.has_cooldown+trinket.2.has_cooldown<2|equipped.variable_intensity_gigavolt_oscillating_reactor)
 actions.precombat+=/focused_azerite_beam,if=!raid_event.invulnerable.exists
-# Adjusts the duration and cooldown of Aspect of the Wild and Primal Instincts by the duration of an unhasted GCD when they're used precombat. As AotW has a 1.3s GCD and affects itself this is 1.1s.
-actions.precombat+=/aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
+# Adjusts the duration and cooldown of Aspect of the Wild and Primal Instincts by the duration of an unhasted GCD when they're used precombat. Because Aspect of the Wild reduces GCD by 200ms, this is 1.3 seconds. 
+actions.precombat+=/aspect_of_the_wild,precast_time=1.3,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
 # Adjusts the duration and cooldown of Bestial Wrath and Haze of Rage by the duration of an unhasted GCD when they're used precombat.
 actions.precombat+=/bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
 actions.precombat+=/potion,dynamic_prepot=1
@@ -108,24 +108,24 @@ neck=heart_of_azeroth,id=158075,bonus_id=4929/5814/4936/1630,azerite_level=80
 shoulders=epaulettes_of_arcing_power,id=169074,bonus_id=1532/4819/4775,azerite_powers=211/366/18/13
 back=ashjrakamas_shroud_of_resolve,id=169223,bonus_id=6286
 chest=last_vestige_of_neltharion,id=174147,bonus_id=4824/1517/4775,azerite_powers=366/211/30/14/13
-wrists=arcglass_bindings,id=159380,ilevel=465
+wrists=arcglass_bindings,id=159380,bonus_id=1637
 hands=egoannihilating_grips,id=174162,bonus_id=4824/1517
 waist=watchers_scheming_girdle,id=174158,bonus_id=4824/1517/6547
 legs=greaves_of_forbidden_magics,id=174155,bonus_id=4824/1517/6465/6482
 feet=greaves_of_the_twilight_drake,id=174160,bonus_id=4824/1517
-finger1=ichorspine_loop,id=174532,bonus_id=4824/1517/6465/6476,enchant=accord_of_critical_strike
-finger2=ring_of_collective_consciousness,id=174530,bonus_id=4824/1517/6465/6482,enchant=accord_of_critical_strike
+finger1=logic_loop_of_division,id=169157,bonus_id=1522/4778/6465/6482,enchant=accord_of_critical_strike
+finger2=overclocking_bit_band,id=169159,bonus_id=1522/4778/6465/6482,enchant=accord_of_critical_strike
 trinket1=ashvanes_razor_coral,id=169311,bonus_id=4800/1517
 trinket2=vitacharged_titanshard,id=174500,bonus_id=4824/1517
 main_hand=whispering_eldritch_bow,id=172193,bonus_id=4824/1517/6568,enchant=galeforce_striking
 
 # Gear Summary
-# gear_ilvl=478.20
+# gear_ilvl=476.87
 # gear_agility=9726
-# gear_stamina=19971
-# gear_crit_rating=1913
-# gear_haste_rating=1134
-# gear_mastery_rating=1069
+# gear_stamina=19809
+# gear_crit_rating=1731
+# gear_haste_rating=1487
+# gear_mastery_rating=863
 # gear_versatility_rating=326
 # gear_corruption=97
 # gear_corruption_resistance=50
