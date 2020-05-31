@@ -680,7 +680,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- dark_transformation,if=!raid_event.adds.exists|raid_event.adds.in>15
-            if A.DarkTransformation:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15) then
+            if A.DarkTransformation:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 15) then
                 return A.DarkTransformation:Show(icon)
             end
             
@@ -706,7 +706,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- soul_reaper,if=(!raid_event.adds.exists|raid_event.adds.in>20)&rune<=(1-buff.unholy_frenzy.up)
-            if A.SoulReaper:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 20) and Player:Rune() <= (1 - num(Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)))) then
+            if A.SoulReaper:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 20) and Player:Rune() <= (1 - num(Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)))) then
                 return A.SoulReaper:Show(icon)
             end
             
@@ -912,7 +912,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=ramping_amplitude_gigavolt_engine,if=cooldown.apocalypse.remains<2|talent.army_of_the_damned.enabled|raid_event.adds.in<5
-            if A.RampingAmplitudeGigavoltEngine:IsReady(unit) and (A.Apocalypse:GetCooldown() < 2 or A.ArmyoftheDamned:IsSpellLearned() or 10000000000 < 5) then
+            if A.RampingAmplitudeGigavoltEngine:IsReady(unit) and (A.Apocalypse:GetCooldown() < 2 or A.ArmyoftheDamned:IsSpellLearned() or IncomingAddsIn < 5) then
                 return A.RampingAmplitudeGigavoltEngine:Show(icon)
             end
             

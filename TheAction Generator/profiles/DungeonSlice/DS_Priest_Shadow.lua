@@ -536,17 +536,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=manifesto_of_madness,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.ManifestoofMadness:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.ManifestoofMadness:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.ManifestoofMadness:Show(icon)
             end
             
             -- focused_azerite_beam,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast,if=spell_targets.mind_sear>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -624,7 +624,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- dark_void,if=raid_event.adds.in>10&(dot.shadow_word_pain.refreshable|target.time_to_die>30)
-            if A.DarkVoid:IsReady(unit) and (10000000000 > 10 and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) or Unit(unit):TimeToDie() > 30)) then
+            if A.DarkVoid:IsReady(unit) and (IncomingAddsIn > 10 and (Unit(unit):HasDeBuffsRefreshable(A.ShadowWordPainDebuff.ID, true) or Unit(unit):TimeToDie() > 30)) then
                 return A.DarkVoid:Show(icon)
             end
             
@@ -640,7 +640,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- shadow_crash,if=(raid_event.adds.in>5&raid_event.adds.duration<2)|raid_event.adds.duration>2
-            if A.ShadowCrash:IsReady(unit) and ((10000000000 > 5 and raid_event.adds.duration < 2) or raid_event.adds.duration > 2) then
+            if A.ShadowCrash:IsReady(unit) and ((IncomingAddsIn > 5 and raid_event.adds.duration < 2) or raid_event.adds.duration > 2) then
                 return A.ShadowCrash:Show(icon)
             end
             
@@ -742,7 +742,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- dark_void,if=raid_event.adds.in>10
-            if A.DarkVoid:IsReady(unit) and (10000000000 > 10) then
+            if A.DarkVoid:IsReady(unit) and (IncomingAddsIn > 10) then
                 return A.DarkVoid:Show(icon)
             end
             
@@ -757,12 +757,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- shadow_crash,if=raid_event.adds.in>5&raid_event.adds.duration<20
-            if A.ShadowCrash:IsReady(unit) and (10000000000 > 5 and raid_event.adds.duration < 20) then
+            if A.ShadowCrash:IsReady(unit) and (IncomingAddsIn > 5 and raid_event.adds.duration < 20) then
                 return A.ShadowCrash:Show(icon)
             end
             
             -- mind_blast,if=variable.dots_up&((raid_event.movement.in>cast_time+0.5&raid_event.movement.in<4)|!talent.shadow_word_void.enabled|buff.voidform.down|buff.voidform.stack>14&(insanity<70|charges_fractional>1.33)|buff.voidform.stack<=14&(insanity<60|charges_fractional>1.33))
-            if A.MindBlast:IsReady(unit) and (VarDotsUp and ((10000000000 > A.MindBlast:GetSpellCastTime() + 0.5 and 10000000000 < 4) or not A.ShadowWordVoid:IsSpellLearned() or Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Player:Insanity() < 70 or A.MindBlast:GetSpellChargesFrac() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Player:Insanity() < 60 or A.MindBlast:GetSpellChargesFrac() > 1.33))) then
+            if A.MindBlast:IsReady(unit) and (VarDotsUp and ((IncomingAddsIn > A.MindBlast:GetSpellCastTime() + 0.5 and IncomingAddsIn < 4) or not A.ShadowWordVoid:IsSpellLearned() or Unit("player"):HasBuffsDown(A.VoidformBuff.ID, true) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 14 and (Player:Insanity() < 70 or A.MindBlast:GetSpellChargesFrac() > 1.33) or Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) <= 14 and (Player:Insanity() < 60 or A.MindBlast:GetSpellChargesFrac() > 1.33))) then
                 return A.MindBlast:Show(icon)
             end
             

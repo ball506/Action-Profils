@@ -489,7 +489,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- lights_judgment,if=spell_targets.lights_judgment>=2|(!raid_event.adds.exists|raid_event.adds.in>75)
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2 or (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 75)) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2 or (not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 75)) then
                 return A.LightsJudgment:Show(icon)
             end
             
@@ -529,7 +529,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)&!(buff.avenging_wrath.up|buff.crusade.up)&(cooldown.blade_of_justice.remains>gcd*3&cooldown.judgment.remains>gcd*3)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 30 or MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) and not (Unit("player"):HasBuffs(A.AvengingWrathBuff.ID, true) or Unit("player"):HasBuffs(A.CrusadeBuff.ID, true)) and (A.BladeofJustice:GetCooldown() > A.GetGCD() * 3 and A.Judgment:GetCooldown() > A.GetGCD() * 3)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
@@ -539,7 +539,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- purifying_blast,if=(!raid_event.adds.exists|raid_event.adds.in>30|spell_targets.divine_storm>=2)
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 30 or MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2)) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 30 or MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2)) then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -603,7 +603,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- wake_of_ashes,if=(!raid_event.adds.exists|raid_event.adds.in>15|spell_targets.wake_of_ashes>=2)&(holy_power<=0|holy_power=1&cooldown.blade_of_justice.remains>gcd)&(cooldown.avenging_wrath.remains>10|talent.crusade.enabled&cooldown.crusade.remains>10)
-            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15 or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
+            if A.WakeofAshes:IsReady(unit) and ((not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 15 or MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and (Player:HolyPower() <= 0 or Player:HolyPower() == 1 and A.BladeofJustice:GetCooldown() > A.GetGCD()) and (A.AvengingWrath:GetCooldown() > 10 or A.Crusade:IsSpellLearned() and A.Crusade:GetCooldown() > 10)) then
                 return A.WakeofAshes:Show(icon)
             end
             

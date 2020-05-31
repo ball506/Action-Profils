@@ -45,7 +45,7 @@ OPENER = 'opener'
 AUTOCHECK = 'autocheck'
 ANYCASTER = 'anycaster'
 
-MAX_INT = 10 ** 10
+MAX_INT = 'IncomingAddsIn'
 
 # Miscellaneous
 # =============

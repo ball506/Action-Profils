@@ -734,7 +734,7 @@ local function APL()
             end
             
             -- focused_azerite_beam,if=raid_event.adds.in>90&focus<focus.max-25|(active_enemies>1&!talent.birds_of_prey.enabled|active_enemies>2)&(buff.blur_of_talons.up&buff.blur_of_talons.remains>3*gcd|!buff.blur_of_talons.up)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (10000000000 > 90 and Player:Focus() < Player:FocusMax() - 25 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) > 3 * A.GetGCD() or not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true))) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (IncomingAddsIn > 90 and Player:Focus() < Player:FocusMax() - 25 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) > 3 * A.GetGCD() or not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true))) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             

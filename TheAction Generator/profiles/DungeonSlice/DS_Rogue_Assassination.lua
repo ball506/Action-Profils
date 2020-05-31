@@ -1008,7 +1008,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- marked_for_death,precombat_seconds=5,if=raid_event.adds.in>15
-            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 15) then
+            if A.MarkedForDeath:IsReady(unit) and (IncomingAddsIn > 15) then
                 return A.MarkedForDeath:Show(icon)
             end
             
@@ -1055,7 +1055,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- marked_for_death,if=raid_event.adds.in>30-raid_event.adds.duration&combo_points.deficit>=cp_max_spend
-            if A.MarkedForDeath:IsReady(unit) and (10000000000 > 30 - raid_event.adds.duration and Player:ComboPointsDeficit() >= CPMaxSpend()) then
+            if A.MarkedForDeath:IsReady(unit) and (IncomingAddsIn > 30 - raid_event.adds.duration and Player:ComboPointsDeficit() >= CPMaxSpend()) then
                 return A.MarkedForDeath:Show(icon)
             end
             
@@ -1088,7 +1088,7 @@ A[3] = function(icon, isMulti)
             
             -- pool_resource,for_next=1,extra_amount=45
             -- vanish,if=talent.subterfuge.enabled&!stealthed.rogue&cooldown.garrote.up&(variable.ss_vanish_condition|!azerite.shrouded_suffocation.enabled&(dot.garrote.refreshable|debuff.vendetta.up&dot.garrote.pmultiplier<=1))&combo_points.deficit>=((1+2*azerite.shrouded_suffocation.enabled)*spell_targets.fan_of_knives)>?4&raid_event.adds.in>12
-            if A.Vanish:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and not Unit("player"):IsStealthed(true, false) and A.Garrote:GetCooldown() == 0 and (VarSsVanishCondition or not A.ShroudedSuffocation:GetAzeriteRank() > 0 and (Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) and Player:ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank() > 0) * MultiUnits:GetByRangeInCombat(10, 5, 10)) > ?4) and 10000000000 > 12) then
+            if A.Vanish:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and not Unit("player"):IsStealthed(true, false) and A.Garrote:GetCooldown() == 0 and (VarSsVanishCondition or not A.ShroudedSuffocation:GetAzeriteRank() > 0 and (Unit(unit):HasDeBuffsRefreshable(A.GarroteDebuff.ID, true) or Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1)) and Player:ComboPointsDeficit() >= num(((1 + 2 * A.ShroudedSuffocation:GetAzeriteRank() > 0) * MultiUnits:GetByRangeInCombat(10, 5, 10)) > ?4) and IncomingAddsIn > 12) then
                 if A.Vanish:IsUsablePPool(45) then
                     return A.Vanish:Show(icon)
                 else
@@ -1245,7 +1245,7 @@ A[3] = function(icon, isMulti)
             VarSkipRupture = num(Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) or MasterAssassinRemains > 0) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 2)
             
             -- garrote,if=talent.exsanguinate.enabled&!exsanguinated.garrote&dot.garrote.pmultiplier<=1&cooldown.exsanguinate.remains<2&spell_targets.fan_of_knives=1&raid_event.adds.in>6&dot.garrote.remains*0.5<target.time_to_die
-            if A.Garrote:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and not A.Exsanguinated(Unit(unit), "Garrote") and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 and A.Exsanguinate:GetCooldown() < 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 1 and 10000000000 > 6 and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) * 0.5 < Unit(unit):TimeToDie()) then
+            if A.Garrote:IsReady(unit) and (A.Exsanguinate:IsSpellLearned() and not A.Exsanguinated(Unit(unit), "Garrote") and A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1 and A.Exsanguinate:GetCooldown() < 2 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 1 and IncomingAddsIn > 6 and Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) * 0.5 < Unit(unit):TimeToDie()) then
                 return A.Garrote:Show(icon)
             end
             
@@ -1317,12 +1317,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60&energy<70
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60 and Player:EnergyPredicted() < 70) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or IncomingAddsIn > 60 and Player:EnergyPredicted() < 70) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast,if=spell_targets.fan_of_knives>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             

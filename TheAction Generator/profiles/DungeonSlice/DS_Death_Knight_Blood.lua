@@ -658,7 +658,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- anima_of_death,if=buff.vampiric_blood.up&(raid_event.adds.exists|raid_event.adds.in>15)
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.VampiricBloodBuff.ID, true) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15)) then
+            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.VampiricBloodBuff.ID, true) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 15)) then
                 return A.AnimaofDeath:Show(icon)
             end
             
@@ -837,7 +837,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=merekthas_fang,if=(cooldown.dancing_rune_weapon.remains&!buff.dancing_rune_weapon.up&rune.time_to_4>3)&!raid_event.adds.exists|raid_event.adds.in>15
-            if A.MerekthasFang:IsReady(unit) and ((A.DancingRuneWeapon:GetCooldown() and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) and Player:RuneTimeToX(4) > 3) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or 10000000000 > 15) then
+            if A.MerekthasFang:IsReady(unit) and ((A.DancingRuneWeapon:GetCooldown() and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) and Player:RuneTimeToX(4) > 3) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) or IncomingAddsIn > 15) then
                 return A.MerekthasFang:Show(icon)
             end
             

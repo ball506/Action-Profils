@@ -611,7 +611,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- heroic_leap,if=(raid_event.movement.distance>25&raid_event.movement.in>45)
-            if A.HeroicLeap:IsReady(unit) and ((raid_event.movement.distance > 25 and 10000000000 > 45)) then
+            if A.HeroicLeap:IsReady(unit) and ((raid_event.movement.distance > 25 and IncomingAddsIn > 45)) then
                 return A.HeroicLeap:Show(icon)
             end
             

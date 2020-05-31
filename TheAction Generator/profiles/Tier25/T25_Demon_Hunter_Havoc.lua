@@ -737,7 +737,7 @@ local function EvaluateTargetIfFilterNemesis37(unit)
 end
 
 local function EvaluateTargetIfNemesis52(unit)
-  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffsDown(A.NemesisDebuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 60)
+  return (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffsDown(A.NemesisDebuff.ID, true) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or IncomingAddsIn > 60)
 end
 
 
@@ -868,17 +868,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(20, 5, 10) > 1) or 10000000000 > 25) then
+            if A.EyeBeam:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(20, 5, 10) > 1) or IncomingAddsIn > 25) then
                 return A.EyeBeam:Show(icon)
             end
             
             -- fel_barrage,if=(buff.metamorphosis.up&raid_event.adds.in>30)|active_enemies>desired_targets
-            if A.FelBarrage:IsReady(unit) and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and 10000000000 > 30) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.FelBarrage:IsReady(unit) and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and IncomingAddsIn > 30) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.FelBarrage:Show(icon)
             end
             
             -- blade_dance,if=variable.blade_dance&!cooldown.metamorphosis.ready&(cooldown.eye_beam.remains>(5-azerite.revolving_blades.rank*3)|(raid_event.adds.in>cooldown&raid_event.adds.in<25))
-            if A.BladeDance:IsReady(unit) and (VarBladeDance and not A.Metamorphosis:GetCooldown() == 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3) or (10000000000 > cooldown and 10000000000 < 25))) then
+            if A.BladeDance:IsReady(unit) and (VarBladeDance and not A.Metamorphosis:GetCooldown() == 0 and (A.EyeBeam:GetCooldown() > (5 - A.RevolvingBlades:GetAzeriteRank() * 3) or (IncomingAddsIn > cooldown and IncomingAddsIn < 25))) then
                 return A.BladeDance:Show(icon)
             end
             
@@ -903,7 +903,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- fel_rush,if=talent.demon_blades.enabled&!cooldown.eye_beam.ready&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10))
-            if A.FelRush:IsReady(unit) and (A.DemonBlades:IsSpellLearned() and not A.EyeBeam:GetCooldown() == 0 and (A.FelRush:GetSpellCharges() == 2 or (10000000000 > 10 and 10000000000 > 10))) then
+            if A.FelRush:IsReady(unit) and (A.DemonBlades:IsSpellLearned() and not A.EyeBeam:GetCooldown() == 0 and (A.FelRush:GetSpellCharges() == 2 or (IncomingAddsIn > 10 and IncomingAddsIn > 10))) then
                 return A.FelRush:Show(icon)
             end
             
@@ -938,7 +938,7 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
             -- variable,name=fel_barrage_sync,if=talent.fel_barrage.enabled,value=cooldown.fel_barrage.ready&(((!talent.demonic.enabled|buff.metamorphosis.up)&!variable.waiting_for_momentum&raid_event.adds.in>30)|active_enemies>desired_targets)
             if (A.FelBarrage:IsSpellLearned()) then
-                VarFelBarrageSync = num(A.FelBarrage:GetCooldown() == 0 and (((not A.Demonic:IsSpellLearned() or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and not VarWaitingForMomentum and 10000000000 > 30) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1))
+                VarFelBarrageSync = num(A.FelBarrage:GetCooldown() == 0 and (((not A.Demonic:IsSpellLearned() or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and not VarWaitingForMomentum and IncomingAddsIn > 30) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1))
             end
             
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
@@ -962,12 +962,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2 or IncomingAddsIn > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -1012,12 +1012,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fel_rush,if=(variable.waiting_for_momentum|talent.fel_mastery.enabled)&(charges=2|(raid_event.movement.in>10&raid_event.adds.in>10))
-            if A.FelRush:IsReady(unit) and ((VarWaitingForMomentum or A.FelMastery:IsSpellLearned()) and (A.FelRush:GetSpellCharges() == 2 or (10000000000 > 10 and 10000000000 > 10))) then
+            if A.FelRush:IsReady(unit) and ((VarWaitingForMomentum or A.FelMastery:IsSpellLearned()) and (A.FelRush:GetSpellCharges() == 2 or (IncomingAddsIn > 10 and IncomingAddsIn > 10))) then
                 return A.FelRush:Show(icon)
             end
             
             -- fel_barrage,if=!variable.waiting_for_momentum&(active_enemies>desired_targets|raid_event.adds.in>30)
-            if A.FelBarrage:IsReady(unit) and (not VarWaitingForMomentum and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or 10000000000 > 30)) then
+            if A.FelBarrage:IsReady(unit) and (not VarWaitingForMomentum and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or IncomingAddsIn > 30)) then
                 return A.FelBarrage:Show(icon)
             end
             
@@ -1047,7 +1047,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=!talent.blind_fury.enabled&!variable.waiting_for_dark_slash&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash and 10000000000 > cooldown) then
+            if A.EyeBeam:IsReady(unit) and (not A.BlindFury:IsSpellLearned() and not VarWaitingForDarkSlash and IncomingAddsIn > cooldown) then
                 return A.EyeBeam:Show(icon)
             end
             
@@ -1062,7 +1062,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- eye_beam,if=talent.blind_fury.enabled&raid_event.adds.in>cooldown
-            if A.EyeBeam:IsReady(unit) and (A.BlindFury:IsSpellLearned() and 10000000000 > cooldown) then
+            if A.EyeBeam:IsReady(unit) and (A.BlindFury:IsSpellLearned() and IncomingAddsIn > cooldown) then
                 return A.EyeBeam:Show(icon)
             end
             
@@ -1072,7 +1072,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- fel_rush,if=!talent.momentum.enabled&raid_event.movement.in>charges*10&talent.demon_blades.enabled
-            if A.FelRush:IsReady(unit) and (not A.Momentum:IsSpellLearned() and 10000000000 > A.FelRush:GetSpellCharges() * 10 and A.DemonBlades:IsSpellLearned()) then
+            if A.FelRush:IsReady(unit) and (not A.Momentum:IsSpellLearned() and IncomingAddsIn > A.FelRush:GetSpellCharges() * 10 and A.DemonBlades:IsSpellLearned()) then
                 return A.FelRush:Show(icon)
             end
             

@@ -659,7 +659,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- thorns,if=active_enemies>desired_targets|raid_event.adds.in>45
-            if A.Thorns:IsReady(unit) and (MultiUnits:GetByRangeInCombat(30, 5, 10) > 1 or 10000000000 > 45) then
+            if A.Thorns:IsReady(unit) and (MultiUnits:GetByRangeInCombat(30, 5, 10) > 1 or IncomingAddsIn > 45) then
                 return A.Thorns:Show(icon)
             end
             
@@ -684,12 +684,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=active_enemies>desired_targets|(raid_event.adds.in>90&energy.deficit>=50)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 or (10000000000 > 90 and Player:EnergyDeficitPredicted() >= 50)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 or (IncomingAddsIn > 90 and Player:EnergyDeficitPredicted() >= 50)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast,if=active_enemies>desired_targets|raid_event.adds.in>60
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 or 10000000000 > 60) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 or IncomingAddsIn > 60) then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -885,7 +885,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- brutal_slash,if=(buff.tigers_fury.up&(raid_event.adds.in>(1+max_charges-charges_fractional)*recharge_time))&(spell_targets.brutal_slash*action.brutal_slash.damage%action.brutal_slash.cost)>(action.shred.damage%action.shred.cost)
-            if A.BrutalSlash:IsReady(unit) and ((Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (10000000000 > (1 + A.BrutalSlash:GetSpellChargesMax() - A.BrutalSlash:GetSpellChargesFrac()) * A.BrutalSlash:RechargeP())) and (MultiUnits:GetByRangeInCombat(8, 5, 10) * action.brutal_slash.damage / A.BrutalSlash:GetSpellPowerCostCache()) > (action.shred.damage / A.Shred:GetSpellPowerCostCache())) then
+            if A.BrutalSlash:IsReady(unit) and ((Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true) and (IncomingAddsIn > (1 + A.BrutalSlash:GetSpellChargesMax() - A.BrutalSlash:GetSpellChargesFrac()) * A.BrutalSlash:RechargeP())) and (MultiUnits:GetByRangeInCombat(8, 5, 10) * action.brutal_slash.damage / A.BrutalSlash:GetSpellPowerCostCache()) > (action.shred.damage / A.Shred:GetSpellPowerCostCache())) then
                 return A.BrutalSlash:Show(icon)
             end
             
