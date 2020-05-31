@@ -166,6 +166,9 @@ Action[ACTION_CONST_DEMONHUNTER_HAVOC] = {
 Action:CreateEssencesFor(ACTION_CONST_DEMONHUNTER_HAVOC)
 local A = setmetatable(Action[ACTION_CONST_DEMONHUNTER_HAVOC], { __index = Action })
 
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+        profileStop = false
+end)
 
 local player                                    = "player"
 local PartyUnits
@@ -675,11 +678,6 @@ end
 ExpectedCombatLength = A.MakeFunctionCachedStatic(ExpectedCombatLength)
 
 local profileStop = false
-
-A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
-        profileStop = false
-end)
-
 
 local function ShouldDelayEyeBeam()
 	local CurrentChannelTime = Action.GetSpellDescription(198013)[3]
