@@ -1515,6 +1515,30 @@ A.Data.ProfileUI                                     = {
         	        M = {},
        	        },	
             }, 	
+            { -- Renew
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(139) .. " -- ",
+                    },
+                }, 
+            },
+			{
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "RenewRefresh",
+         	        DBV = false,
+         	        L = { 
+					    enUS = A.GetSpellInfo(139) .. " Force Refresh",
+                        ruRU = A.GetSpellInfo(139) .. " Force Refresh",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to automatically force " .. A.GetSpellInfo(139) .. " refreshment on every units.",
+                        ruRU = "Enable this option to automatically force " .. A.GetSpellInfo(139) .. " refreshment on every units.",
+					},
+        	        M = {},
+       	        },		
+            }, 	
             { -- Angelic Feather
                 {
                     E = "Header",
