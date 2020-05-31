@@ -22,9 +22,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     MAGE: {
-        ARCANE: 'battle_potion_of_intellect',
-        FIRE:   'battle_potion_of_intellect',
-        FROST:  'battle_potion_of_intellect',
+        ARCANE: 'potion_of_spectral_intellect',
+        FIRE:   'potion_of_spectral_intellect',
+        FROST:  'potion_of_spectral_intellect',
     }
 }
 
@@ -226,16 +226,15 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     MAGE: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         ARCANE: [
-            'ArcanePreAplSetup',
+            'MAGEArcanePreAplSetup',
         ],
         FIRE: [
-            'FirePreAplSetup',
+            'MAGEFirePreAplSetup',
         ],
         FROST: [
-            'FrostPreAplSetup',
+            'MAGEFrostPreAplSetup',
         ],
     },
 }

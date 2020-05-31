@@ -24,9 +24,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     DRUID: {
-        BALANCE:    'battle_potion_of_intellect',
-        FERAL:      'battle_potion_of_agility',
-        GUARDIAN:   'battle_potion_of_agility',
+        BALANCE:    'potion_of_spectral_intellect',
+        FERAL:      'potion_of_spectral_agility',
+        GUARDIAN:   'potion_of_spectral_agility',
     }
 }
 
@@ -244,17 +244,15 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DRUID: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         BALANCE: [
-            'FutureAstralPower',
+            'DRUIDBalancePreAplSetup',
         ],
         FERAL: [
-            'FeralPreAplSetup',
+            'DRUIDFeralPreAplSetup',
         ],
         GUARDIAN: [
-            'Swipe',
-            'Thrash',
+            'DRUIDGuardianPreAplSetup',
         ],
     },
 }

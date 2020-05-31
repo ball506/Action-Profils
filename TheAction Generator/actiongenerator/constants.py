@@ -136,7 +136,7 @@ FUNCTION_OPERATORS = ['abs', 'floor', 'ceil']
 TYPE_CONVERSION = {
     NUM: {
         NUM: '{}',
-        BOOL: 'bool({})',
+        BOOL: '{}',
     },
     BOOL: {
         NUM: 'num({})',

@@ -166,8 +166,9 @@ local function bool(val)
 end
 
 ------------------------------------------
--------------- COMMON PREAPL -------------
+--------- GUARDIAN PRE APL SETUP ---------
 ------------------------------------------
+
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
 	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
@@ -187,22 +188,289 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+local function GetStance()
+    -- @return number (1 - Bear, 2 - Cat, 3 - Travel)
+    return Player:GetStance()
+end 
+
 local function Swipe()
-  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
-    return A.SwipeCat;
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 then
+    return A.SwipeCat
   else
-    return A.SwipeBear;
+    return A.SwipeBear
   end
 end
 
 local function Thrash()
-  if Unit("player"):HasBuffs(A.CatForm.ID, true) then
-    return A.ThrashCat;
+  if Unit("player"):HasBuffs(A.CatForm.ID, true) > 0 then
+    return A.ThrashCat
   else
-    return A.ThrashBear;
+    return A.ThrashBear
   end
 end
 
+-- SelfDefensives
+local function SelfDefensives()
+    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
+		
+    if Unit("player"):CombatTime() == 0 then 
+        return 
+    end 
+
+		
+    -- Emergency Ironfur
+        local Ironfur = Action.GetToggle(2, "IronfurHP")
+        if     Ironfur >= 0 and A.Ironfur:IsReady("player") and
+        (
+            (   -- Auto 
+                Ironfur >= 100 and 
+                (
+                    -- HP lose per sec >= 2
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 2 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.02 or 
+                    -- TTD 
+                    Unit("player"):TimeToDieX(25) < 5 or 
+                    (
+                        A.IsInPvP and 
+                        (
+                            Unit("player"):UseDeff() or 
+                            (
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) 
+            ) or 
+            (    -- Custom
+                Ironfur < 100 and 
+                Unit("player"):HealthPercent() <= Ironfur
+            )
+        ) 
+        then 
+            return A.Ironfur
+        end  		
+
+        -- Emergency FrenziedRegeneration
+        local FrenziedRegeneration = Action.GetToggle(2, "FrenziedRegenerationHP")
+        if     FrenziedRegeneration >= 0 and A.FrenziedRegeneration:IsReady("player") and Unit("player"):HasBuffs(A.FrenziedRegeneration.ID, true) == 0 and
+        (
+            (   -- Auto 
+                FrenziedRegeneration >= 100 and 
+                (
+                    -- HP lose per sec >= 5
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
+                    -- TTD 
+                    Unit("player"):TimeToDieX(25) < 5 or 
+					-- Custom logic with current HPS and DMG
+					Unit("player"):HealthPercent() <= 85 or
+					Unit("player"):GetHEAL() * 2 < Unit("player"):GetDMG() or
+                    (
+                        A.IsInPvP and 
+                        (
+                            Unit("player"):UseDeff() or 
+                            (
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) 
+            ) or 
+            (    -- Custom
+                FrenziedRegeneration < 100 and 
+                Unit("player"):HealthPercent() <= FrenziedRegeneration
+            )
+        ) 
+        then 
+            return A.FrenziedRegeneration
+        end  		
+		
+        -- Emergency Barkskin
+        local Barkskin = Action.GetToggle(2, "BarkskinHP")
+        if     Barkskin >= 0 and A.Barkskin:IsReady("player") and 
+        (
+            (   -- Auto 
+                Barkskin >= 100 and 
+                (
+                    -- HP lose per sec >= 10
+                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
+                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
+                    -- TTD 
+                    Unit("player"):TimeToDieX(25) < 5 or 
+					-- Custom logic with current HPS and DMG
+					Unit("player"):HealthPercent() <= 65 or
+                    (
+                        A.IsInPvP and 
+                        (
+                            Unit("player"):UseDeff() or 
+                            (
+                                Unit("player", 5):HasFlags() and 
+                                Unit("player"):GetRealTimeDMG() > 0 and 
+                                Unit("player"):IsFocused() 
+                            )
+                        )
+                    )
+                ) 
+            ) or 
+            (    -- Custom
+                Barkskin < 100 and 
+                Unit("player"):HealthPercent() <= Barkskin
+            )
+        ) 
+    then 
+        return A.Barkskin
+    end  
+	
+    -- Survival Instincts
+    local SurvivalInstincts = Action.GetToggle(2, "SurvivalInstinctsHP")
+    if     SurvivalInstincts >= 0 and A.SurvivalInstincts:IsReady("player") and Unit("player"):HasBuffs(A.SurvivalInstincts.ID, true) == 0 and
+    (
+        (   -- Auto 
+            SurvivalInstincts >= 100 and 
+            (
+                -- HP lose per sec >= 15
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+				-- Custom logic with current HPS and DMG
+				Unit("player"):HealthPercent() <= 45 or
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) 
+        ) or 
+        (    -- Custom
+            SurvivalInstincts < 100 and 
+            Unit("player"):HealthPercent() <= SurvivalInstincts
+        )
+    ) 
+    then 
+        return A.SurvivalInstincts
+    end
+	
+		    -- HealingPotion
+    local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    (
+        (     -- Auto 
+            AbyssalHealingPotion >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                -- TTD 
+                Unit("player"):TimeToDieX(25) < 5 or 
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit("player"):UseDeff() or 
+                        (
+                            Unit("player", 5):HasFlags() and 
+                            Unit("player"):GetRealTimeDMG() > 0 and 
+                            Unit("player"):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            AbyssalHealingPotion < 100 and 
+            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+        )
+    ) 
+    then 
+        return A.AbyssalHealingPotion
+    end 
+	
+end 
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
+		
+    -- SkullBash
+    if useKick and A.SkullBash:IsReady(unit) then 
+     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+       	    return A.SkullBash
+       	end 
+   	end 
+	
+   	 -- MightyBash
+   	if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
+ 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+   	        return A.MightyBash
+   	    end 
+   	end 
+
+ 	 -- IncapacitatingRoar
+   	if useCC and EnemiesCasting >= 3 and (not A.MightyBash:IsSpellLearned() or not A.MightyBash:IsReady(unit)) and A.IncapacitatingRoar:IsReady(unit) then 
+ 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+   	        return A.IncapacitatingRoar
+   	    end 
+  	end 		
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+-- Multidot Handler UI --
+local function HandleMultidots()
+    local choice = Action.GetToggle(2, "AutoDotSelection")
+       
+    if choice == "In Raid" then
+		if IsInRaid() then
+    		return true
+		else
+		    return false
+		end
+    elseif choice == "In Dungeon" then 
+		if IsInGroup() then
+    		return true
+		else
+		    return false
+		end
+	elseif choice == "In PvP" then 	
+		if A.IsInPvP then 
+    		return true
+		else
+		    return false
+		end		
+    elseif choice == "Everywhere" then 
+        return true
+    else
+		return false
+    end
+	--print(choice)
+end
 
 local function EvaluateCyclePulverize26(unit)
     return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == dot.thrash_bear.max_stacks
@@ -213,7 +481,7 @@ local function EvaluateCycleMoonfire37(unit)
 end
 
 local function EvaluateCycleMoonfire50(unit)
-    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)
+    return Unit("player"):HasBuffs(A.GalacticGuardianBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true)
 end
 
 --- ======= ACTION LISTS =======
@@ -232,7 +500,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Cleave, Cooldowns, Essences, Multi
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -243,14 +511,17 @@ A[3] = function(icon, isMulti)
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+            
             -- bear_form
-            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true) then
+            if A.BearForm:IsReady(unit) and Unit("player"):HasBuffsDown(A.BearFormBuff.ID, true)) then
                 return A.BearForm:Show(icon)
             end
+            
             -- potion
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofSpectralAgility:Show(icon)
             end
+            
         end
         
         --Cleave
@@ -259,10 +530,12 @@ A[3] = function(icon, isMulti)
             if A.Maul:IsReady(unit) and (Player:RageDeficit() <= 10) then
                 return A.Maul:Show(icon)
             end
+            
             -- ironfur,if=cost<=0
             if A.Ironfur:IsReady(unit) and (A.Ironfur:GetSpellPowerCostCache() <= 0) then
                 return A.Ironfur:Show(icon)
             end
+            
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
                 if Action.Utils.CastTargetIf(A.Pulverize, 40, "min", EvaluateCyclePulverize26) then
@@ -279,6 +552,7 @@ A[3] = function(icon, isMulti)
             if A.Mangle:IsReady(unit) and (Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
+            
             -- moonfire,target_if=buff.galactic_guardian.up&active_enemies=1|dot.moonfire.refreshable
             if A.Moonfire:IsReady(unit) then
                 if Action.Utils.CastTargetIf(A.Moonfire, 40, "min", EvaluateCycleMoonfire50) then
@@ -289,154 +563,183 @@ A[3] = function(icon, isMulti)
             if A.Maul:IsReady(unit) then
                 return A.Maul:Show(icon)
             end
+            
             -- thrash
             if Thrash():IsReady(unit) then
                 return Thrash:Show(icon)
             end
+            
             -- swipe
             if Swipe():IsReady(unit) then
                 return Swipe:Show(icon)
             end
+            
         end
         
         --Cooldowns
         local function Cooldowns(unit)
             -- potion
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofSpectralAgility:Show(icon)
             end
+            
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
+            
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
+            
             -- arcane_torrent
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
+            
             -- lights_judgment
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
             end
+            
             -- fireblood
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
+            
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            
             -- bag_of_tricks
             if A.BagofTricks:IsReady(unit) then
                 return A.BagofTricks:Show(icon)
             end
+            
             -- barkskin,if=buff.bear_form.up
-            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+            if A.Barkskin:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
                 return A.Barkskin:Show(icon)
             end
+            
             -- lunar_beam,if=buff.bear_form.up
-            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+            if A.LunarBeam:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
                 return A.LunarBeam:Show(icon)
             end
+            
             -- bristling_fur,if=buff.bear_form.up
-            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true)) then
+            if A.BristlingFur:IsReady(unit) and (Unit("player"):HasBuffs(A.BearFormBuff.ID, true))) then
                 return A.BristlingFur:Show(icon)
             end
+            
             -- incarnation,if=(dot.moonfire.ticking|active_enemies>1)&dot.thrash_bear.ticking
             if A.Incarnation:IsReady(unit) and ((Unit(unit):HasDeBuffs(A.MoonfireDebuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Incarnation:Show(icon)
             end
+            
             -- use_item,name=ashvanes_razor_coral,if=((equipped.cyclotronic_blast&cooldown.cyclotronic_blast.remains>25&debuff.razor_coral_debuff.down)|debuff.razor_coral_debuff.down|(debuff.razor_coral_debuff.up&debuff.conductive_ink_debuff.up&target.time_to_pct_30<=2)|(debuff.razor_coral_debuff.up&time_to_die<=20))
-            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() > 25 and bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) or bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):TimeToDieX(30) <= 2) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true) and Unit(unit):TimeToDie() <= 20))) then
-                A.AshvanesRazorCoral:Show(icon)
+            if A.AshvanesRazorCoral:IsReady(unit) and (((A.CyclotronicBlast:IsExists() and A.CyclotronicBlast:GetCooldown() > 25 and Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true))) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true)) and Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):TimeToDieX(30) <= 2) or (Unit(unit):HasDeBuffs(A.RazorCoralDebuff.ID, true)) and Unit(unit):TimeToDie() <= 20))) then
+                return A.AshvanesRazorCoral:Show(icon)
             end
+            
             -- use_item,effect_name=cyclotronic_blast
             if A.CyclotronicBlast:IsReady(unit) then
-                A.CyclotronicBlast:Show(icon)
+                return A.CyclotronicBlast:Show(icon)
             end
+            
             -- use_items
         end
         
         --Essences
         local function Essences(unit)
             -- concentrated_flame,if=essence.the_crucible_of_flame.major&((!dot.concentrated_flame_burn.ticking&!action.concentrated_flame_missile.in_flight)^time_to_die<=7)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID)) and ({}^time_to_die <= 7)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID) and ({}^time_to_die <= 7)) then
                 return A.ConcentratedFlame:Show(icon)
             end
+            
             -- anima_of_death,if=essence.anima_of_life_and_death.major
-            if A.AnimaofDeath:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID))) then
+            if A.AnimaofDeath:IsReady(unit) and (Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID)) then
                 return A.AnimaofDeath:Show(icon)
             end
+            
             -- memory_of_lucid_dreams,if=essence.memory_of_lucid_dreams.major
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID))) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+            
             -- worldvein_resonance,if=essence.worldvein_resonance.major
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.WorldveinResonance.ID))) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) then
                 return A.WorldveinResonance:Show(icon)
             end
+            
             -- ripple_in_space,if=essence.ripple_in_space.major
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Azerite:EssenceHasMajor(A.RippleInSpace.ID))) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.RippleInSpace.ID)) then
                 return A.RippleInSpace:Show(icon)
             end
+            
         end
         
         --Multi
         local function Multi(unit)
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
-            if A.Maul:IsReady(unit) and (bool(Azerite:EssenceHasMajor(A.ConflictandStrife.ID)) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
+            if A.Maul:IsReady(unit) and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true))) then
                 return A.Maul:Show(icon)
             end
+            
             -- ironfur,if=(rage>=cost&azerite.layered_mane.enabled)|rage.deficit<10
-            if A.Ironfur:IsReady(unit) and ((Player:Rage() >= A.Ironfur:GetSpellPowerCostCache() and bool(A.LayeredMane:GetAzeriteRank())) or Player:RageDeficit() < 10) then
+            if A.Ironfur:IsReady(unit) and ((Player:Rage() >= A.Ironfur:GetSpellPowerCostCache() and A.LayeredMane:GetAzeriteRank() > 0) or Player:RageDeficit() < 10) then
                 return A.Ironfur:Show(icon)
             end
+            
             -- thrash,if=(buff.incarnation.up&active_enemies>=4)|cooldown.thrash_bear.up
-            if Thrash():IsReady(unit) and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) or A.ThrashBear:GetCooldown() == 0) then
+            if Thrash():IsReady(unit) and ((Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) >= 4) or A.ThrashBear:GetCooldown() == 0) then
                 return Thrash:Show(icon)
             end
+            
             -- mangle,if=buff.incarnation.up&active_enemies=3&dot.thrash_bear.ticking
-            if A.Mangle:IsReady(unit) and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
+            if A.Mangle:IsReady(unit) and (Unit("player"):HasBuffs(A.IncarnationBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 3 and Unit(unit):HasDeBuffs(A.ThrashBearDebuff.ID, true)) then
                 return A.Mangle:Show(icon)
             end
+            
             -- moonfire,if=dot.moonfire.refreshable&active_enemies<=4
             if A.Moonfire:IsReady(unit) and (Unit(unit):HasDeBuffsRefreshable(A.MoonfireDebuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) <= 4) then
                 return A.Moonfire:Show(icon)
             end
+            
             -- swipe,if=buff.incarnation.down
-            if Swipe():IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true))) then
+            if Swipe():IsReady(unit) and (Unit("player"):HasBuffsDown(A.IncarnationBuff.ID, true))) then
                 return Swipe:Show(icon)
             end
+            
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
+
                     -- auto_attack
             -- call_action_list,name=cooldowns
-            if (true) then
-                local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
+            
             -- call_action_list,name=essences
-            if (true) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            
             -- call_action_list,name=cleave,if=active_enemies<=2
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2) then
                 local ShouldReturn = Cleave(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
             -- call_action_list,name=multi,if=active_enemies>=3
             if (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3) then
                 local ShouldReturn = Multi(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
         end
     end
 

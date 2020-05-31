@@ -657,7 +657,7 @@ class Aura(Expires):
             self.args = []
         else:
             self.method = Method(f'Has{self.simc.lua_name()}sDown')
-
+            """self.method = Method(f'Has{self.simc.lua_name()}(A.{self.spell.lua_name()}.ID, true) == 0')"""
     def stack(self):
         """
         Return the arguments for the expression {aura}.spell.stack.
@@ -955,7 +955,7 @@ class Azerite(BuildExpression):
         """
         Return the arguments for the expression azerite.spell.enabled.
         """
-        self.method = Method('GetAzeriteRank()')
+        self.method = Method('GetAzeriteRank() > 0')
 
 
 class Talent(BuildExpression):
@@ -1146,7 +1146,7 @@ class Essence(BuildExpression):
         """
         Return the arguments for the expression essence.spell.rank.
         """
-        self.method = Method('GetRank()')
+        self.method = Method('GetAzeriteRank()')
 
 class RaidEvent(BuildExpression):
     """

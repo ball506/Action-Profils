@@ -20,8 +20,8 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     DEMONHUNTER: {
-        HAVOC:      'battle_potion_of_agility',
-        VENGEANCE:  'battle_potion_of_agility',
+        HAVOC:      'potion_of_spectral_agility',
+        VENGEANCE:  'potion_of_spectral_agility',
     }
 }
 
@@ -118,14 +118,12 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DEMONHUNTER: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         HAVOC: [
-            'IsInMeleeRange',
-            'IsMetaExtendedByDemonic',
-            'MetamorphosisCooldownAdjusted',
+            'DHHavocPreAplSetup',
         ],
         VENGEANCE: [
+		    'DHVengeancePreAplSetup',
         ],
     },
 }

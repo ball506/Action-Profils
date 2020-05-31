@@ -24,9 +24,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     DEATHKNIGHT: {
-        BLOOD:  'battle_potion_of_strength',
-        FROST:  'battle_potion_of_strength',
-        UNHOLY: 'battle_potion_of_strength',
+        BLOOD:  'potion_of_spectral_strength',
+        FROST:  'potion_of_spectral_strength',
+        UNHOLY: 'potion_of_spectral_strength',
     },
 }
 
@@ -178,13 +178,15 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     DEATHKNIGHT: {
         COMMON: [
-            'CommonPreAplSetup',
         ],
         BLOOD: [
+		    'DKBloodPreAplSetup',
         ],
         FROST: [
+		    'DKFrostPreAplSetup',
         ],
         UNHOLY: [
+		    'DKUnholyPreAplSetup',
         ],
     },
 }

@@ -154,8 +154,9 @@ local function bool(val)
 end
 
 ------------------------------------------
--------------- COMMON PREAPL -------------
+-------- VENGEANCE PRE APL SETUP ---------
 ------------------------------------------
+
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
 	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
@@ -167,6 +168,7 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+    AuraTaunt                               = {A.Torment.ID},
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
@@ -175,6 +177,178 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Disrupt:IsReady(unit)) -- A.Kick non GCD spell
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
+	
+	if castDoneTime > 0 then    
+	
+	    -- Sigil of Chains (Snare)
+	    if useCC and A.SigilofChains:IsReady("player") and A.SigilofChains:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):GetRange() > 5 then 
+            return A.SigilofChains              
+        end 
+	
+	    -- Sigil of Misery (Disorient)
+	    if useCC and A.SigilofMisery:IsReady("player") and EnemiesCasting > 1 and A.SigilofMisery:AbsentImun(unit, Temp.TotalAndCC, true) then 
+            return A.SigilofMisery              
+        end 
+	
+	    -- Sigil of Silence (Silence)
+	    if useKick and (not A.Disrupt:IsReady(unit) or EnemiesCasting > 1) and A.SigilofSilence:IsReady("player") and A.SigilofSilence:AbsentImun(unit, Temp.TotalAndCC, true) then 
+            return A.SigilofSilence              
+        end 
+
+	    -- Imprison    
+        if useCC and A.Imprison:IsReady(unit) and not A.Disrupt:IsReady(unit) then        
+	    	return A.Imprison              
+        end 
+	
+        -- Chaos Nova    
+        if useCC and A.ChaosNova:IsReady(unit) and EnemiesCasting > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) then 
+            return A.ChaosNova              
+        end 
+	
+	    -- Disrupt
+        if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
+            return A.Disrupt
+        end 	
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
+	
+	-- Sigil of Chains (Snare)
+	if useCC and A.SigilofChains:IsReady("player") and A.SigilofChains:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):GetRange() > 5 then 
+        return A.SigilofChains              
+    end 
+	
+	-- Sigil of Misery (Disorient)
+	if useCC and A.SigilofMisery:IsReady("player") and EnemiesCasting > 1 and A.SigilofMisery:AbsentImun(unit, Temp.TotalAndCC, true) then 
+        return A.SigilofMisery              
+    end 
+	
+	-- Sigil of Silence (Silence)
+	if useKick and (not A.Disrupt:IsReady(unit) or EnemiesCasting > 1) and A.SigilofSilence:IsReady("player") and Unit(unit):CanInterrupt(true, nil, 25, 70) and A.SigilofSilence:AbsentImun(unit, Temp.TotalAndCC, true) then 
+        return A.SigilofSilence              
+    end 
+
+	-- Imprison    
+    if useCC and A.Imprison:IsReady(unit) and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then        
+		return A.Imprison              
+    end 
+	
+    -- Chaos Nova    
+    if useCC and A.ChaosNova:IsReady(unit) and EnemiesCasting > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) then 
+        return A.ChaosNova              
+    end 
+	
+	-- Disrupt
+    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.Disrupt
+    end 	
+	    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+
+-- Soul Fragments function taking into consideration aura lag
+local function UpdateSoulFragments()
+    SoulFragments = Unit("player"):HasBuffsStacks(A.SoulFragments.ID, true)
+		
+    -- Casting Spirit Bomb or Soul Cleave immediately updates the buff
+    if Unit("player"):GetSpellLastCast(A.SpiritBomb.ID, true) < A.GetGCD()
+    or Unit("player"):GetSpellLastCast(A.SoulCleave.ID, true) < A.GetGCD() then
+        SoulFragmentsAdjusted = 0
+        return;
+    end
+
+    -- Check if we have cast Fracture or Shear within the last GCD and haven't "snapshot" yet
+    if SoulFragmentsAdjusted == 0 then
+        if A.Fracture:IsSpellLearned() then
+            if Unit("player"):GetSpellLastCast(A.Fracture.ID, true) < A.GetGCD() and A.Fracture:GetSpellTimeSinceLastCast() ~= LastSoulFragmentAdjustment then
+                SoulFragmentsAdjusted = math.min(SoulFragments + 2, 5)
+                LastSoulFragmentAdjustment = A.Fracture:GetSpellTimeSinceLastCast()
+            end
+        else
+            if A.Shear:GetSpellTimeSinceLastCast() < A.GetGCD() and A.Fracture.Shear ~= LastSoulFragmentAdjustment then
+                SoulFragmentsAdjusted = math.min(SoulFragments + 1, 5)
+                LastSoulFragmentAdjustment = A.Shear:GetSpellTimeSinceLastCast()
+            end
+        end
+    else
+        -- If we have a soul fragement "snapshot", see if we should invalidate it based on time
+        if A.Fracture:IsSpellLearned() then
+            if A.Fracture:GetSpellTimeSinceLastCast() >= A.GetGCD() then
+                SoulFragmentsAdjusted = 0
+            end
+        else
+            if A.Shear:GetSpellTimeSinceLastCast() >= A.GetGCD() then
+                SoulFragmentsAdjusted = 0
+            end
+        end
+    end
+
+    -- If we have a higher Soul Fragment "snapshot", use it instead
+    if SoulFragmentsAdjusted > SoulFragments then
+        SoulFragments = SoulFragmentsAdjusted
+    elseif SoulFragmentsAdjusted > 0 then
+        -- Otherwise, the "snapshot" is invalid, so reset it if it has a value
+        -- Relevant in cases where we use a generator two GCDs in a row
+        SoulFragmentsAdjusted = 0
+    end
+end
+
+-- Melee Is In Range w/ Movement Handlers
+local function UpdateIsInMeleeRange()
+    if A.Felblade:GetSpellTimeSinceLastCast() < A.GetGCD()
+    or A.InfernalStrike:GetSpellTimeSinceLastCast() < A.GetGCD() then
+        IsInMeleeRange = true;
+        IsInAoERange = true;
+        return;
+    end
+			
+    local IsInMeleeRange = Unit("target"):GetRange() <= 5
+    local IsInAoERange = IsInMeleeRange or MultiUnits:GetByRange(8, 5, 10) > 0;
+end
+
+-- Current HPS > Incoming damage
+local function IsInDanger(unit)
+    return Unit("player"):GetHPS() < Unit("player"):GetDMG()
+end
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -192,7 +366,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Brand, Cooldowns, Defensives, Normal
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -200,13 +374,15 @@ A[3] = function(icon, isMulti)
             -- food
             -- snapshot_stats
             -- potion
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofSpectralAgility:Show(icon)
             end
+            
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
-                A.AzsharasFontofPower:Show(icon)
+                return A.AzsharasFontofPower:Show(icon)
             end
+            
         end
         
         --Brand
@@ -215,62 +391,76 @@ A[3] = function(icon, isMulti)
             if A.SigilofFlame:IsReady(unit) and (A.FieryBrand:GetCooldown() < 2) then
                 return A.SigilofFlame:Show(icon)
             end
+            
             -- infernal_strike,if=cooldown.fiery_brand.remains=0
             if A.InfernalStrike:IsReady(unit) and (A.FieryBrand:GetCooldown() == 0) then
                 return A.InfernalStrike:Show(icon)
             end
+            
             -- fiery_brand
             if A.FieryBrand:IsReady(unit) then
                 return A.FieryBrand:Show(icon)
             end
+            
             -- immolation_aura,if=dot.fiery_brand.ticking
             if A.ImmolationAura:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.ImmolationAura:Show(icon)
             end
+            
             -- fel_devastation,if=dot.fiery_brand.ticking
             if A.FelDevastation:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.FelDevastation:Show(icon)
             end
+            
             -- infernal_strike,if=dot.fiery_brand.ticking
             if A.InfernalStrike:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.InfernalStrike:Show(icon)
             end
+            
             -- sigil_of_flame,if=dot.fiery_brand.ticking
             if A.SigilofFlame:IsReady(unit) and (Unit(unit):HasDeBuffs(A.FieryBrandDebuff.ID, true)) then
                 return A.SigilofFlame:Show(icon)
             end
+            
         end
         
         --Cooldowns
         local function Cooldowns(unit)
             -- potion
-            if A.BattlePotionofAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofAgility:Show(icon)
+            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofSpectralAgility:Show(icon)
             end
+            
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
+            
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true)) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
+            
             -- memory_of_lucid_dreams
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+            
             -- heart_essence
             if A.HeartEssence:IsReady(unit) then
                 return A.HeartEssence:Show(icon)
             end
+            
             -- use_item,effect_name=cyclotronic_blast,if=buff.memory_of_lucid_dreams.down
-            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true))) then
-                A.CyclotronicBlast:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true))) then
+                return A.CyclotronicBlast:Show(icon)
             end
+            
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
-                A.AshvanesRazorCoral:Show(icon)
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
+                return A.AshvanesRazorCoral:Show(icon)
             end
+            
             -- use_items
         end
         
@@ -280,93 +470,107 @@ A[3] = function(icon, isMulti)
             if A.DemonSpikes:IsReady(unit) then
                 return A.DemonSpikes:Show(icon)
             end
+            
             -- metamorphosis
             if A.Metamorphosis:IsReady(unit) then
                 return A.Metamorphosis:Show(icon)
             end
+            
             -- fiery_brand
             if A.FieryBrand:IsReady(unit) then
                 return A.FieryBrand:Show(icon)
             end
+            
         end
         
         --Normal
         local function Normal(unit)
             -- infernal_strike,if=(!talent.flame_crash.enabled|(dot.sigil_of_flame.remains<3&!action.infernal_strike.sigil_placed))
-            if A.InfernalStrike:IsReady(unit) and ((not A.FlameCrash:IsSpellLearned() or (Unit(unit):HasDeBuffs(A.SigilofFlameDebuff.ID, true) < 3 and not bool(action.infernal_strike.sigil_placed)))) then
+            if A.InfernalStrike:IsReady(unit) and ((not A.FlameCrash:IsSpellLearned() or (Unit(unit):HasDeBuffs(A.SigilofFlameDebuff.ID, true) < 3 and not action.infernal_strike.sigil_placed))) then
                 return A.InfernalStrike:Show(icon)
             end
+            
             -- spirit_bomb,if=((buff.metamorphosis.up&soul_fragments>=3)|soul_fragments>=4)
-            if A.SpiritBomb:IsReady(unit) and (((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and soul_fragments >= 3) or soul_fragments >= 4)) then
+            if A.SpiritBomb:IsReady(unit) and (((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and soul_fragments >= 3) or soul_fragments >= 4)) then
                 return A.SpiritBomb:Show(icon)
             end
+            
             -- soul_cleave,if=(!talent.spirit_bomb.enabled&((buff.metamorphosis.up&soul_fragments>=3)|soul_fragments>=4))
-            if A.SoulCleave:IsReady(unit) and ((not A.SpiritBomb:IsSpellLearned() and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true) and soul_fragments >= 3) or soul_fragments >= 4))) then
+            if A.SoulCleave:IsReady(unit) and ((not A.SpiritBomb:IsSpellLearned() and ((Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and soul_fragments >= 3) or soul_fragments >= 4))) then
                 return A.SoulCleave:Show(icon)
             end
+            
             -- soul_cleave,if=talent.spirit_bomb.enabled&soul_fragments=0
             if A.SoulCleave:IsReady(unit) and (A.SpiritBomb:IsSpellLearned() and soul_fragments == 0) then
                 return A.SoulCleave:Show(icon)
             end
+            
             -- immolation_aura,if=pain<=90
             if A.ImmolationAura:IsReady(unit) and (Player:Pain() <= 90) then
                 return A.ImmolationAura:Show(icon)
             end
+            
             -- felblade,if=pain<=70
             if A.Felblade:IsReady(unit) and (Player:Pain() <= 70) then
                 return A.Felblade:Show(icon)
             end
+            
             -- fracture,if=soul_fragments<=3
             if A.Fracture:IsReady(unit) and (soul_fragments <= 3) then
                 return A.Fracture:Show(icon)
             end
+            
             -- fel_devastation
             if A.FelDevastation:IsReady(unit) then
                 return A.FelDevastation:Show(icon)
             end
+            
             -- sigil_of_flame
             if A.SigilofFlame:IsReady(unit) then
                 return A.SigilofFlame:Show(icon)
             end
+            
             -- shear
             if A.Shear:IsReady(unit) then
                 return A.Shear:Show(icon)
             end
+            
             -- throw_glaive
             if A.ThrowGlaive:IsReady(unit) then
                 return A.ThrowGlaive:Show(icon)
             end
+            
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
+
                     -- auto_attack
             -- consume_magic
             if A.ConsumeMagic:IsReady(unit) then
                 return A.ConsumeMagic:Show(icon)
             end
+            
             -- call_action_list,name=brand,if=talent.charred_flesh.enabled
             if (A.CharredFlesh:IsSpellLearned()) then
                 local ShouldReturn = Brand(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
             -- call_action_list,name=defensives
-            if (true) then
-                local ShouldReturn = Defensives(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Defensives(unit); if ShouldReturn then return ShouldReturn; end
+            
             -- call_action_list,name=cooldowns
-            if (true) then
-                local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Cooldowns(unit); if ShouldReturn then return ShouldReturn; end
+            
             -- call_action_list,name=normal
-            if (true) then
-                local ShouldReturn = Normal(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Normal(unit); if ShouldReturn then return ShouldReturn; end
+            
         end
     end
 

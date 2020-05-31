@@ -22,8 +22,8 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     SHAMAN: {
-        ELEMENTAL:      'battle_potion_of_intellect',
-        ENHANCEMENT:    'battle_potion_of_agility',
+        ELEMENTAL:      'potion_of_spectral_intellect',
+        ENHANCEMENT:    'potion_of_spectral_agility',
     }
 }
 
@@ -155,11 +155,13 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     SHAMAN: {
         COMMON: [
-        'CommonPreAplSetup',
+
         ],
         ELEMENTAL: [
+        'SHAMANElementalPreAPLSetup',
         ],
         ENHANCEMENT: [
+        'SHAMANEnhancementPreAPLSetup',
         ],
     },
 }

@@ -24,9 +24,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     HUNTER: {
-        BEAST_MASTERY:  'battle_potion_of_agility',
-        MARKSMANSHIP:   'battle_potion_of_agility',
-        SURVIVAL:       'battle_potion_of_agility',
+        BEAST_MASTERY:  'potion_of_spectral_agility',
+        MARKSMANSHIP:   'potion_of_spectral_agility',
+        SURVIVAL:       'potion_of_spectral_agility',
     }
 }
 
@@ -209,11 +209,13 @@ CLASS_FUNCTIONS = {
         'CommonPreAplSetup',
         ],
         BEAST_MASTERY: [
+            'HUNTERBeastmasteryPreAPLSetup',	
         ],
         MARKSMANSHIP: [
+            'HUNTERMarkmanshipPreAPLSetup',		
         ],
         SURVIVAL: [
-            'SurvivalPreAPLSetup',
+            'HUNTERSurvivalPreAPLSetup',
         ],
     },
 }

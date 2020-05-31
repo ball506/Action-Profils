@@ -23,7 +23,7 @@ class Item(LuaNamed, LuaCastable):
         # Castable
         LuaCastable.__init__(self)
         self.condition_method = Method('IsReady(unit)', type_=BOOL)
-        self.cast_method = Method('')
+        self.cast_method = Method('return ')
         # Item
         self.action = action
         self.iid = ''
@@ -131,8 +131,8 @@ class CancelBuff(LuaNamed, LuaCastable):
         super().__init__(simc)
         # Castble
         LuaCastable.__init__(self)
-        self.cast_method = Method('HR.Cancel')
-        self.cast_template = '-- if {} then return ""; end'
+        self.cast_method = Method('')
+        self.cast_template = 'Player:CancelBuff(A.{}Buff:Info())'
         # Main
         self.action = action
         self.buff = Spell(action, simc, type_=BUFF)
@@ -141,8 +141,8 @@ class CancelBuff(LuaNamed, LuaCastable):
         """
         Print the lua expression for the buff to cancel.
         """
-        return self.buff.print_lua()
-
+        """return self.buff.print_lua()"""
+        return f'{super().lua_name()}'
 
 class Spell(LuaNamed, LuaCastable):
     """
@@ -217,7 +217,7 @@ class Spell(LuaNamed, LuaCastable):
                 self.add_auto_check(DEBUFF)
             if self.action.player.spell_property(self, OPENER):
                 self.additional_conditions.append(
-                    Literal('inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem()')
+                    Literal('inCombat and Unit(unit):IsExists() and unit ~= "mouseover"')
                 )
 
     def add_auto_check(self, type_, method=None):
@@ -257,7 +257,7 @@ class Spell(LuaNamed, LuaCastable):
         substring2 = "Debuff"
         substring3 = "DeBuffDebuff"		
         if re.search(substring, fullstring):			
-            string1 = f'A.{self.lua_name()}.ID, true'
+            string1 = f'A.{self.lua_name()}.ID, true)'
         elif re.search(substring2, fullstring):			
             string1 = f'A.{self.lua_name()}.ID, true'
         else:

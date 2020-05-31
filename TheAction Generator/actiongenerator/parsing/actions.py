@@ -329,16 +329,16 @@ class Action(Decorable):
         exec_else = self.print_exec_else()
         if condition.print_lua() == '':
             lua_string += ('\n'
-                        f'if (true) then\n'
-                        f'{indent(exec_cast)}\n'
+                        f'{exec_cast}\n'
                         f'{exec_else}'
-                        f'end')
+                        )
         else:
             lua_string += ('\n'
                         f'if {condition.print_lua()} then\n'
                         f'{indent(exec_cast)}\n'
                         f'{exec_else}'
-                        f'end')
+                        f'end'
+                        '\n')
         return lua_string
 
 
@@ -410,7 +410,7 @@ class PrecombatAction(Action):
         exec_cast = self.execution().object_().print_cast()
         lua_string += (
             '\n'
-            f'if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then \n'
+            f'if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then \n'
             f'    {exec_cast}\n'
             f'end')
         return indent(indent(lua_string))

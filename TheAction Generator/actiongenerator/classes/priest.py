@@ -23,8 +23,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     PRIEST: {
-        SHADOW: 'battle_potion_of_intellect',
-        HOLY: 'battle_potion_of_intellect',
+        SHADOW: 'potion_of_spectral_intellect',
+        HOLY: 'potion_of_spectral_intellect',
+        DISCIPLINE: 'potion_of_spectral_intellect',
     }
 }
 
@@ -145,11 +146,9 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     PRIEST: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         SHADOW: [
-            'InsanityThreshold',
-            'ExecuteRange'
+            'PRIESTShadowPreAplSetup',
         ],
     },
 }

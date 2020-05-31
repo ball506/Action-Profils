@@ -190,8 +190,9 @@ local function bool(val)
 end
 
 ------------------------------------------
--------------- COMMON PREAPL -------------
+--------- ARCANE PRE APL SETUP -----------
 ------------------------------------------
+
 local Temp = {
     TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
 	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
@@ -208,53 +209,380 @@ local Temp = {
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
 
 local function IsSchoolFree()
-	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "ARCANE") == 0
 end 
+
+local function InRange(unit)
+	-- @return boolean 
+	return A.ArcaneBlast:IsInRange(unit)
+end 
+InRange = A.MakeFunctionCachedDynamic(InRange)
+
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
+	-- @return boolean 
+	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
+	for unit in pairs(ActiveUnitPlates) do 
+		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
+			if InRange(unit) then 
+				c = c + 1
+			elseif range then 
+				local r = Unit(unit):GetRange()
+				if r > 0 and r <= range then 
+					c = c + 1
+				end 
+			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
+			
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
+		end 
+		
+	end
+	
+end  
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
+
+
+-- [1] CC AntiFake Rotation (FOCUS)
+A[1] = function(icon)    
+    local unit = "focus"
+    local totalPoly = Unit("player"):CastTime(118) + GetCurrentGCD()
+	local totalRoF = Unit("player"):CastTime(113724) + GetCurrentGCD()
+	
+    if A.PolymorphGreen:IsReady(nil, nil, nil, true) and 
+    (
+        IsUnitEnemy("focus") and
+        A.Polymorph:IsInRange("focus") and
+        -- Bear Form, Cat Form, Moonkin Form, Travel Form
+        Unit("focus"):HasBuffs({5487, 768, 24858, 783}, true) == 0 and
+        Unit(unit):HasBuffs("TotalImun") <= totalPoly and
+        Unit(unit):HasBuffs("CCMagicImun") <= totalPoly and
+        Unit(unit):HasBuffs("Reflect") <= totalPoly
+    )
+    then 
+        return A.PolymorphGreen:Show(icon)         
+    end     
+
+    if A.RingofFrost:IsReady(nil, nil, nil, true) and 
+    (
+        IsUnitEnemy("focus") and
+        A.RingofFrost:IsSpellLearned() and 
+        A.Polymorph:IsInRange("focus") and
+        (    
+            -- Bear Form, Cat Form, Moonkin Form, Travel Form
+            Unit("focus"):HasBuffs({5487, 768, 24858, 783}, true) > 0 or
+            Unit(unit):HasBuffs("Reflect") > 0
+        ) and
+        Unit(unit):HasBuffs("TotalImun") <= totalRoF and
+        Unit(unit):HasBuffs("CCMagicImun") <= totalRoF
+    )
+    then 
+        return A.RingofFrost:Show(icon)         
+    end   
+	
+end
+
+-- [2] Kick AntiFake Rotation
+A[2] = function(icon)        
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end 
+    
+    if unit then         
+        local castLeft, _, _, _, notKickAble = Unit(unit):IsCastingRemains()
+        if castLeft > 0 then             
+            if not notKickAble and A.CounterSpell:IsReady(unit, nil, nil, true) and A.CounterSpell:AbsentImun(unit, Temp.TotalAndMag, true) then
+                return A.CounterSpell:Show(icon)                                                  
+            end 
+            
+            -- Racials 
+            if A.QuakingPalm:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.QuakingPalm:Show(icon)
+            end 
+            
+            if A.Haymaker:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.Haymaker:Show(icon)
+            end 
+            
+            if A.WarStomp:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.WarStomp:Show(icon)
+            end 
+            
+            if A.BullRush:IsRacialReadyP(unit, nil, nil, true) then 
+                return A.BullRush:Show(icon)
+            end                         
+        end 
+    end                                                                                 
+end
+
+-- TO USE AFTER NEXT ACTION UPDATE
+local function InterruptsNEW(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterSpell:IsReady(unit)) -- A.Kick non GCD spell
+    
+	if castDoneTime > 0 then
+        -- CounterSpell
+        if useKick and not notInterruptable and A.CounterSpell:IsReady(unit) then 
+            return A.CounterSpell:Show(icon)
+        end
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
+local function Interrupts(unit)
+    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    
+    if useKick and A.CounterSpell:IsReady(unit) and A.CounterSpell:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        return A.CounterSpell
+    end 
+    
+    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+        return A.QuakingPalm
+    end 
+    
+    if useRacial and A.Haymaker:AutoRacial(unit) then 
+        return A.Haymaker
+    end 
+    
+    if useRacial and A.WarStomp:AutoRacial(unit) then 
+        return A.WarStomp
+    end 
+    
+    if useRacial and A.BullRush:AutoRacial(unit) then 
+        return A.BullRush
+    end      
+end 
+Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
+
+local function SelfDefensives()
+    if Unit(player):CombatTime() == 0 then 
+        return 
+    end 
+    
+    local unit
+    if A.IsUnitEnemy("mouseover") then 
+        unit = "mouseover"
+    elseif A.IsUnitEnemy("target") then 
+        unit = "target"
+    end  
+		
+    -- TemporalShield
+    if A.TemporalShield:IsReady(player) and 
+    Unit(player):CombatTime() > 0 and
+    A.TemporalShield:IsSpellLearned() and
+    Unit(player):HasBuffs(198111, true)==0 and
+    (
+        (                
+            FriendlyTeam("HEALER"):GetCC() > 0 and
+            Unit(player):IsFocused() and
+            Unit(player):Health() <= Unit(player):Health()*0.7 and
+            Unit(player):TimeToDie()<13        
+        ) or    
+        Unit(player):UseDeff()
+    )
+    then 
+        return A.TemporalShield
+    end 
+   
+    -- Stoneform on self dispel (only PvE)
+    if A.Stoneform:IsRacialReady(player, true) and not A.IsInPvP and A.AuraIsValid(player, "UseDispel", "Dispel") then 
+        return A.Stoneform
+    end 		
+end 
+SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
+
+
+-- Variables
+TR.IFST = {
+    CurrStacks = 0,
+    CurrStacksTime = 0,
+    OldStacks = 0,
+    OldStacksTime = 0,
+    Direction = 0
+}
+
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+    TR.IFST.CurrStacks = 0
+    TR.IFST.CurrStacksTime = 0
+    TR.IFST.OldStacks = 0
+    TR.IFST.OldStacksTime = 0
+    TR.IFST.Direction = 0
+end)
+
+local function IFTracker()
+    local TickDiff = TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime
+    local CurrStacks = TR.IFST.CurrStacks
+    local CurrStacksTime = TR.IFST.CurrStacksTime
+    local OldStacks = TR.IFST.OldStacks
+	
+	if Unit(player):CombatTime() == 0 then 
+	    return
+	end
+		
+    if Unit(player):HasBuffs(A.IncantersFlowBuff.ID, true) > 0 then
+        if (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) ~= CurrStacks or (Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true) == CurrStacks and TickDiff > 1)) then
+            TR.IFST.OldStacks = CurrStacks
+            TR.IFST.OldStacksTime = CurrStacksTime
+        end		
+        TR.IFST.CurrStacks = Unit(player):HasBuffsStacks(A.IncantersFlowBuff.ID, true)
+        TR.IFST.CurrStacksTime = Unit(player):CombatTime()		
+        if TR.IFST.CurrStacks > TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 5 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = 1
+            end
+        elseif TR.IFST.CurrStacks < TR.IFST.OldStacks then
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 0
+            else
+                TR.IFST.Direction = -1
+            end
+        else
+            if TR.IFST.CurrStacks == 1 then
+                TR.IFST.Direction = 1
+            else
+                TR.IFST.Direction = -1
+            end
+        end
+    else
+        TR.IFST.OldStacks = 0
+        TR.IFST.OldStacksTime = 0
+        TR.IFST.CurrStacks = 0
+        TR.IFST.CurrStacksTime = 0
+        TR.IFST.Direction = 0
+    end
+end
+
+-- Implementation of IncantersFlow simc reference incanters_flow_time_to.COUNT.DIRECTION
+-- @parameter: COUNT between "1 - 5" 
+-- @parameter: DIRECTION "up", "down" or "any"
+local function IFTimeToX(count, direction)
+    local low
+    local high
+    local buff_position
+    if TR.IFST.Direction == -1 or (TR.IFST.Direction == 0 and TR.IFST.CurrStacks == 0) then
+      buff_position = 10 - TR.IFST.CurrStacks + 1
+    else
+      buff_position = TR.IFST.CurrStacks
+    end
+    if direction == "up" then
+        low = count
+        high = count
+    elseif direction == "down" then
+        low = 10 - count + 1
+        high = 10 - count + 1
+    else
+        low = count
+        high = 10 - count + 1
+    end
+    if low == buff_position or high == buff_position then
+        return 0
+    end
+    local ticks_low = (10 + low - buff_position) % 10
+    local ticks_high = (10 + high - buff_position) % 10
+    return (TR.IFST.CurrStacksTime - TR.IFST.OldStacksTime) + math.min(ticks_low, ticks_high) - 1
+end
 
 Player.ArcaneBurnPhase = {}
 local BurnPhase = Player.ArcaneBurnPhase
 
 function BurnPhase:Reset()
-  self.state = false
-  self.last_start = HL.GetTime()
-  self.last_stop = HL.GetTime()
+    self.state = false
+    self.last_start = TMW.time
+    self.last_stop = TMW.time
 end
 BurnPhase:Reset()
 
 function BurnPhase:Start()
-  if Player:AffectingCombat() then
-    self.state = true
-    self.last_start = HL.GetTime()
-  end
+    if Unit("player"):CombatTime() > 0 then
+        self.state = true
+        self.last_start = TMW.time
+    end
 end
 
 function BurnPhase:Stop()
-  self.state = false
-  self.last_stop = HL.GetTime()
+    self.state = false
+    self.last_stop = TMW.time
 end
 
 function BurnPhase:On()
-  return self.state or (not Player:AffectingCombat() and Player:IsCasting() and ((A.ArcanePower:CooldownRemainsP() == 0 and A.Evocation:CooldownRemainsP() <= VarAverageBurnLength and (Player:ArcaneChargesP() == Player:ArcaneChargesMax() or (A.ChargedUp:IsSpellLearned() and A.ChargedUp:CooldownRemainsP() == 0)))))
+    return self.state or 
+	(
+	    Unit("player"):CombatTime() == 0 and 
+	    (
+		    (
+			    A.ArcanePower:GetCooldown() == 0 and A.Evocation:GetCooldown() <= VarAverageBurnLength and 
+				(
+				    Player:ArcaneChargesP() == Player:ArcaneChargesMax() 
+					or 
+					(A.ChargedUp:IsSpellLearned() and A.ChargedUp:GetCooldown() == 0)
+				)
+			)
+		)
+	)	
 end
 
 function BurnPhase:Duration()
-  return self.state and (HL.GetTime() - self.last_start) or 0
+    return self.state and (TMW.time - self.last_start) or 0
 end
 
-HL:RegisterForEvent(function()
-  BurnPhase:Reset()
-end, "PLAYER_REGEN_DISABLED")
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_DISABLED", function()
+    BurnPhase:Reset()
+end)
 
-local function PresenceOfMindMax ()
-  return 2
+local function PresenceOfMindMax()
+    return 2
 end
 
-local function ArcaneMissilesProcMax ()
-  return 3
+local function ArcaneMissilesProcMax()
+    return 3
 end
 
 function Player:ArcaneChargesP()
-  return math.min(self:ArcaneCharges() + num(self:IsCasting(A.ArcaneBlast)),4)
+    return math.min(self:ArcaneCharges() + num(Unit("player"):IsCasting(A.ArcaneBlast)), 4)
 end
 
 --- ======= ACTION LISTS =======
@@ -273,49 +601,54 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Burn, Conserve, Essences, Movement
+
         --Precombat
         local function Precombat(unit)
             -- flask
             -- food
             -- augmentation
             -- arcane_intellect
-            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true, true) then
+            if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true), true) then
                 return A.ArcaneIntellect:Show(icon)
             end
+            
             -- arcane_familiar
-            if A.ArcaneFamiliar:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneFamiliarBuff.ID, true) then
+            if A.ArcaneFamiliar:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneFamiliarBuff.ID, true)) then
                 return A.ArcaneFamiliar:Show(icon)
             end
+            
             -- variable,name=conserve_mana,op=set,value=60+20*azerite.equipoise.enabled
-            if (true) then
-                VarConserveMana = 60 + 20 * A.Equipoise:GetAzeriteRank()
-            end
+            VarConserveMana = 60 + 20 * A.Equipoise:GetAzeriteRank() > 0
+            
             -- variable,name=font_double_on_use,op=set,value=equipped.azsharas_font_of_power&(equipped.manifesto_of_madness|equipped.gladiators_badge|equipped.gladiators_medallion|equipped.ignition_mages_fuse|equipped.tzanes_barkspines|equipped.azurethos_singed_plumage|equipped.ancient_knot_of_wisdom|equipped.shockbiters_fang|equipped.neural_synapse_enhancer|equipped.balefire_branch)
-            if (true) then
-                VarFontDoubleOnUse = num(A.AzsharasFontofPower:IsExists() and (A.ManifestoofMadness:IsExists() or A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.IgnitionMagesFuse:IsExists() or A.TzanesBarkspines:IsExists() or A.AzurethosSingedPlumage:IsExists() or A.AncientKnotofWisdom:IsExists() or A.ShockbitersFang:IsExists() or A.NeuralSynapseEnhancer:IsExists() or A.BalefireBranch:IsExists()))
-            end
+            VarFontDoubleOnUse = num(A.AzsharasFontofPower:IsExists() and (A.ManifestoofMadness:IsExists() or A.GladiatorsBadge:IsExists() or A.GladiatorsMedallion:IsExists() or A.IgnitionMagesFuse:IsExists() or A.TzanesBarkspines:IsExists() or A.AzurethosSingedPlumage:IsExists() or A.AncientKnotofWisdom:IsExists() or A.ShockbitersFang:IsExists() or A.NeuralSynapseEnhancer:IsExists() or A.BalefireBranch:IsExists()))
+            
             -- variable,name=font_of_power_precombat_channel,op=set,value=12,if=variable.font_double_on_use&variable.font_of_power_precombat_channel=0
-            if (bool(VarFontDoubleOnUse) and VarFontofPowerPrecombatChannel == 0) then
+            if (VarFontDoubleOnUse and VarFontofPowerPrecombatChannel == 0) then
                 VarFontofPowerPrecombatChannel = 12
             end
+            
             -- snapshot_stats
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
-                A.AzsharasFontofPower:Show(icon)
+                return A.AzsharasFontofPower:Show(icon)
             end
+            
             -- mirror_image
             if A.MirrorImage:IsReady(unit) and A.BurstIsON(unit) then
                 return A.MirrorImage:Show(icon)
             end
+            
             -- potion
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
+                return A.PotionofSpectralIntellect:Show(icon)
             end
+            
             -- arcane_blast
             if A.ArcaneBlast:IsReady(unit) then
                 return A.ArcaneBlast:Show(icon)
             end
+            
         end
         
         --Burn
@@ -324,103 +657,126 @@ A[3] = function(icon, isMulti)
             if (not BurnPhase:On()) then
                 VarTotalBurns = VarTotalBurns + 1
             end
+            
             -- start_burn_phase,if=!burn_phase
             if (not BurnPhase:On()) then
                 BurnPhase:Start
             end
+            
             -- stop_burn_phase,if=burn_phase&prev_gcd.1.evocation&target.time_to_die>variable.average_burn_length&burn_phase_duration>0
             if (BurnPhase:On() and Unit("player"):GetSpellLastCast(A.Evocation) and Unit(unit):TimeToDie() > VarAverageBurnLength and BurnPhase:Duration() > 0) then
                 BurnPhase:Stop
             end
+            
             -- charged_up,if=buff.arcane_charge.stack<=1
             if A.ChargedUp:IsReady(unit) and (Unit("player"):ArcaneChargesP <= 1) then
                 return A.ChargedUp:Show(icon)
             end
+            
             -- mirror_image
             if A.MirrorImage:IsReady(unit) and A.BurstIsON(unit) then
                 return A.MirrorImage:Show(icon)
             end
+            
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
+            
             -- arcane_blast,if=buff.rule_of_threes.up&talent.overpowered.enabled&active_enemies<3
-            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true) and A.Overpowered:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
+            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true)) and A.Overpowered:IsSpellLearned() and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneBlast:Show(icon)
             end
+            
             -- lights_judgment,if=buff.arcane_power.down
-            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.LightsJudgment:Show(icon)
             end
+            
             -- bag_of_tricks,if=buff.arcane_power.down
-            if A.BagofTricks:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.BagofTricks:Show(icon)
             end
+            
             -- rune_of_power,if=!buff.arcane_power.up&(mana.pct>=50|cooldown.arcane_power.remains=0)&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
-            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and (Player:ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
+            if A.RuneofPower:IsReady(unit) and (not Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true)) and (Player:ManaPercentageP() >= 50 or A.ArcanePower:GetCooldown() == 0) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
                 return A.RuneofPower:Show(icon)
             end
+            
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
+            
             -- arcane_power
             if A.ArcanePower:IsReady(unit) and A.BurstIsON(unit) then
                 return A.ArcanePower:Show(icon)
             end
+            
             -- use_items,if=buff.arcane_power.up|target.time_to_die<cooldown.arcane_power.remains
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
+            
             -- fireblood
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
+            
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            
             -- presence_of_mind,if=(talent.rune_of_power.enabled&buff.rune_of_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time)|buff.arcane_power.remains<=buff.presence_of_mind.max_stack*action.arcane_blast.execute_time
-            if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
+            if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) and ((A.RuneofPower:IsSpellLearned() and Unit("player"):HasBuffs(A.RuneofPowerBuff.ID, true)) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) or Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true)) <= PresenceOfMindMax * A.ArcaneBlast:GetSpellCastTime()) then
                 return A.PresenceofMind:Show(icon)
             end
+            
             -- potion,if=buff.arcane_power.up&((!essence.condensed_lifeforce.major|essence.condensed_lifeforce.rank<2)&(buff.berserking.up|buff.blood_fury.up|!(race.troll|race.orc))|buff.guardian_of_azeroth.up)|target.time_to_die<cooldown.arcane_power.remains
-            if A.BattlePotionofIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true) and ((not bool(Azerite:EssenceHasMajor(A.CondensedLifeforce.ID)) or A.CondensedLifeforce:GetRank() < 2) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc"))) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true)) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
-                A.BattlePotionofIntellect:Show(icon)
+            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.ArcanePowerBuff.ID, true)) and ((not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) or A.CondensedLifeforce:GetAzeriteRank() < 2) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true)) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true)) or not (Unit("player"):IsRace("Troll") or Unit("player"):IsRace("Orc"))) or Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true))) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+                return A.PotionofSpectralIntellect:Show(icon)
             end
+            
             -- arcane_orb,if=buff.arcane_charge.stack=0|(active_enemies<3|(active_enemies<2&talent.resonance.enabled))
             if A.ArcaneOrb:IsReady(unit) and (Unit("player"):ArcaneChargesP == 0 or (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 or (MultiUnits:GetByRangeInCombat(40, 5, 10) < 2 and A.Resonance:IsSpellLearned()))) then
                 return A.ArcaneOrb:Show(icon)
             end
+            
             -- arcane_barrage,if=active_enemies>=3&(buff.arcane_charge.stack=buff.arcane_charge.max_stack)
             if A.ArcaneBarrage:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 3 and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax)) then
                 return A.ArcaneBarrage:Show(icon)
             end
+            
             -- arcane_explosion,if=active_enemies>=3
             if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3) then
                 return A.ArcaneExplosion:Show(icon)
             end
+            
             -- arcane_missiles,if=buff.clearcasting.react&active_enemies<3&(talent.amplification.enabled|(!talent.overpowered.enabled&azerite.arcane_pummeling.rank>=2)|buff.arcane_power.down),chain=1
-            if A.ArcaneMissiles:IsReady(unit) and (bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and (A.Amplification:IsSpellLearned() or (not A.Overpowered:IsSpellLearned() and A.ArcanePummeling:GetAzeriteRank() >= 2) or bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)))) then
+            if A.ArcaneMissiles:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3 and (A.Amplification:IsSpellLearned() or (not A.Overpowered:IsSpellLearned() and A.ArcanePummeling:GetAzeriteRank() >= 2) or Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)))) then
                 return A.ArcaneMissiles:Show(icon)
             end
+            
             -- arcane_blast,if=active_enemies<3
             if A.ArcaneBlast:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneBlast:Show(icon)
             end
+            
             -- variable,name=average_burn_length,op=set,value=(variable.average_burn_length*variable.total_burns-variable.average_burn_length+(burn_phase_duration))%variable.total_burns
-            if (true) then
-                VarAverageBurnLength = (VarAverageBurnLength * VarTotalBurns - VarAverageBurnLength + (BurnPhase:Duration())) / VarTotalBurns
-            end
+            VarAverageBurnLength = (VarAverageBurnLength * VarTotalBurns - VarAverageBurnLength + (BurnPhase:Duration())) / VarTotalBurns
+            
             -- evocation,interrupt_if=mana.pct>=85,interrupt_immediate=1
             if A.Evocation:IsReady(unit) then
                 return A.Evocation:Show(icon)
             end
+            
             -- arcane_barrage
             if A.ArcaneBarrage:IsReady(unit) then
                 return A.ArcaneBarrage:Show(icon)
             end
+            
         end
         
         --Conserve
@@ -429,102 +785,126 @@ A[3] = function(icon, isMulti)
             if A.MirrorImage:IsReady(unit) and A.BurstIsON(unit) then
                 return A.MirrorImage:Show(icon)
             end
+            
             -- charged_up,if=buff.arcane_charge.stack=0
             if A.ChargedUp:IsReady(unit) and (Unit("player"):ArcaneChargesP == 0) then
                 return A.ChargedUp:Show(icon)
             end
+            
             -- nether_tempest,if=(refreshable|!ticking)&buff.arcane_charge.stack=buff.arcane_charge.max_stack&buff.rune_of_power.down&buff.arcane_power.down
-            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.NetherTempest:IsReady(unit) and ((Unit(unit):HasDeBuffsRefreshable(A.NetherTempestDebuff.ID, true) or not Unit(unit):HasDeBuffs(A.NetherTempestDebuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.NetherTempest:Show(icon)
             end
+            
             -- arcane_orb,if=buff.arcane_charge.stack<=2&(cooldown.arcane_power.remains>10|active_enemies<=2)
             if A.ArcaneOrb:IsReady(unit) and (Unit("player"):ArcaneChargesP <= 2 and (A.ArcanePower:GetCooldown() > 10 or MultiUnits:GetByRangeInCombat(40, 5, 10) <= 2)) then
                 return A.ArcaneOrb:Show(icon)
             end
+            
             -- arcane_blast,if=buff.rule_of_threes.up&buff.arcane_charge.stack>3
-            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true) and Unit("player"):ArcaneChargesP > 3) then
+            if A.ArcaneBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RuleofThreesBuff.ID, true)) and Unit("player"):ArcaneChargesP > 3) then
                 return A.ArcaneBlast:Show(icon)
             end
+            
             -- use_item,name=tidestorm_codex,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-            if A.TidestormCodex:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
-                A.TidestormCodex:Show(icon)
+            if A.TidestormCodex:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
+                return A.TidestormCodex:Show(icon)
             end
+            
             -- use_item,effect_name=cyclotronic_blast,if=buff.rune_of_power.down&!buff.arcane_power.react&cooldown.arcane_power.remains>20
-            if A.CyclotronicBlast:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not bool(Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
-                A.CyclotronicBlast:Show(icon)
+            if A.CyclotronicBlast:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and not Unit("player"):HasBuffsStacks(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() > 20) then
+                return A.CyclotronicBlast:Show(icon)
             end
+            
             -- rune_of_power,if=buff.arcane_charge.stack=buff.arcane_charge.max_stack&(full_recharge_time<=execute_time|full_recharge_time<=cooldown.arcane_power.remains|target.time_to_die<=cooldown.arcane_power.remains)
             if A.RuneofPower:IsReady(unit) and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (A.RuneofPower:GetSpellChargesFullRechargeTime() <= A.RuneofPower:GetSpellCastTime() or A.RuneofPower:GetSpellChargesFullRechargeTime() <= A.ArcanePower:GetCooldown() or Unit(unit):TimeToDie() <= A.ArcanePower:GetCooldown())) then
                 return A.RuneofPower:Show(icon)
             end
+            
             -- arcane_missiles,if=mana.pct<=95&buff.clearcasting.react&active_enemies<3,chain=1
-            if A.ArcaneMissiles:IsReady(unit) and (Player:ManaPercentageP() <= 95 and bool(Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
+            if A.ArcaneMissiles:IsReady(unit) and (Player:ManaPercentageP() <= 95 and Unit("player"):HasBuffsStacks(A.ClearcastingBuff.ID, true)) and MultiUnits:GetByRangeInCombat(40, 5, 10) < 3) then
                 return A.ArcaneMissiles:Show(icon)
             end
+            
             -- arcane_barrage,if=((buff.arcane_charge.stack=buff.arcane_charge.max_stack)&((mana.pct<=variable.conserve_mana)|(talent.rune_of_power.enabled&cooldown.arcane_power.remains>cooldown.rune_of_power.full_recharge_time&mana.pct<=variable.conserve_mana+25))|(talent.arcane_orb.enabled&cooldown.arcane_orb.remains<=gcd&cooldown.arcane_power.remains>10))|mana.pct<=(variable.conserve_mana-10)
             if A.ArcaneBarrage:IsReady(unit) and (((Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax) and ((Player:ManaPercentageP() <= VarConserveMana) or (A.RuneofPower:IsSpellLearned() and A.ArcanePower:GetCooldown() > A.RuneofPower:FullRechargeTimeP() and Player:ManaPercentageP() <= VarConserveMana + 25)) or (A.ArcaneOrb:IsSpellLearned() and A.ArcaneOrb:GetCooldown() <= A.GetGCD() and A.ArcanePower:GetCooldown() > 10)) or Player:ManaPercentageP() <= (VarConserveMana - 10)) then
                 return A.ArcaneBarrage:Show(icon)
             end
+            
             -- supernova,if=mana.pct<=95
             if A.Supernova:IsReady(unit) and (Player:ManaPercentageP() <= 95) then
                 return A.Supernova:Show(icon)
             end
+            
             -- arcane_explosion,if=active_enemies>=3&(mana.pct>=variable.conserve_mana|buff.arcane_charge.stack=3)
             if A.ArcaneExplosion:IsReady(unit) and (MultiUnits:GetByRangeInCombat(10, 5, 10) >= 3 and (Player:ManaPercentageP() >= VarConserveMana or Unit("player"):ArcaneChargesP == 3)) then
                 return A.ArcaneExplosion:Show(icon)
             end
+            
             -- arcane_blast
             if A.ArcaneBlast:IsReady(unit) then
                 return A.ArcaneBlast:Show(icon)
             end
+            
             -- arcane_barrage
             if A.ArcaneBarrage:IsReady(unit) then
                 return A.ArcaneBarrage:Show(icon)
             end
+            
         end
         
         --Essences
         local function Essences(unit)
             -- blood_of_the_enemy,if=burn_phase&buff.arcane_power.down&buff.rune_of_power.down&buff.arcane_charge.stack=buff.arcane_charge.max_stack|time_to_die<cooldown.arcane_power.remains
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (BurnPhase:On() and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.BloodoftheEnemy:Show(icon)
             end
+            
             -- concentrated_flame,line_cd=6,if=buff.rune_of_power.down&buff.arcane_power.down&(!burn_phase|time_to_die<cooldown.arcane_power.remains)&mana.time_to_max>=execute_time
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ConcentratedFlame:GetSpellCastTime()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ConcentratedFlame:GetSpellCastTime()) then
                 return A.ConcentratedFlame:Show(icon)
             end
+            
             -- reaping_flames,if=buff.rune_of_power.down&buff.arcane_power.down&(!burn_phase|time_to_die<cooldown.arcane_power.remains)&mana.time_to_max>=execute_time
-            if A.ReapingFlames:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ReapingFlames:GetSpellCastTime()) then
+            if A.ReapingFlames:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (not BurnPhase:On() or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) and Player:ManaTimeToMaxPredicted() >= A.ReapingFlames:GetSpellCastTime()) then
                 return A.ReapingFlames:Show(icon)
             end
+            
             -- focused_azerite_beam,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
+            
             -- guardian_of_azeroth,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.GuardianofAzeroth:Show(icon)
             end
+            
             -- purifying_blast,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.PurifyingBlast:Show(icon)
             end
+            
             -- ripple_in_space,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.RippleInSpace:Show(icon)
             end
+            
             -- the_unbound_force,if=buff.rune_of_power.down&buff.arcane_power.down
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true))) then
                 return A.TheUnboundForce:Show(icon)
             end
+            
             -- memory_of_lucid_dreams,if=!burn_phase&buff.arcane_power.down&cooldown.arcane_power.remains&buff.arcane_charge.stack=buff.arcane_charge.max_stack&(!talent.rune_of_power.enabled|action.rune_of_power.charges)|time_to_die<cooldown.arcane_power.remains
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(A.ArcanePower:GetCooldown()) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (not A.RuneofPower:IsSpellLearned() or bool(A.RuneofPower:GetSpellCharges())) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not BurnPhase:On() and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and A.ArcanePower:GetCooldown() and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax and (not A.RuneofPower:IsSpellLearned() or A.RuneofPower:GetSpellCharges()) or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
+            
             -- worldvein_resonance,if=burn_phase&buff.arcane_power.down&buff.rune_of_power.down&buff.arcane_charge.stack=buff.arcane_charge.max_stack|time_to_die<cooldown.arcane_power.remains
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (BurnPhase:On() and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (BurnPhase:On() and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.WorldveinResonance:Show(icon)
             end
+            
         end
         
         --Movement
@@ -533,22 +913,27 @@ A[3] = function(icon, isMulti)
             if A.BlinkAny:IsReady(unit) and (Unit(unit):GetRange() >= 10) then
                 return A.BlinkAny:Show(icon)
             end
+            
             -- presence_of_mind
             if A.PresenceofMind:IsReady(unit) and A.BurstIsON(unit) then
                 return A.PresenceofMind:Show(icon)
             end
+            
             -- arcane_missiles
             if A.ArcaneMissiles:IsReady(unit) then
                 return A.ArcaneMissiles:Show(icon)
             end
+            
             -- arcane_orb
             if A.ArcaneOrb:IsReady(unit) then
                 return A.ArcaneOrb:Show(icon)
             end
+            
             -- supernova
             if A.Supernova:IsReady(unit) then
                 return A.Supernova:Show(icon)
             end
+            
         end
         
 -- call precombat
@@ -557,32 +942,35 @@ if not Player:AffectingCombat() and not Player:IsCasting() then
 end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
+
                     -- counterspell
             -- call_action_list,name=essences
-            if (true) then
-                local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Essences(unit); if ShouldReturn then return ShouldReturn; end
+            
             -- use_item,name=azsharas_font_of_power,if=buff.rune_of_power.down&buff.arcane_power.down&(cooldown.arcane_power.remains<=4+10*variable.font_double_on_use&cooldown.evocation.remains<=variable.average_burn_length+4+10*variable.font_double_on_use|time_to_die<cooldown.arcane_power.remains)
-            if A.AzsharasFontofPower:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and bool(Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (A.ArcanePower:GetCooldown() <= 4 + 10 * VarFontDoubleOnUse and A.Evocation:GetCooldown() <= VarAverageBurnLength + 4 + 10 * VarFontDoubleOnUse or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown())) then
-                A.AzsharasFontofPower:Show(icon)
+            if A.AzsharasFontofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true)) and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true)) and (A.ArcanePower:GetCooldown() <= 4 + 10 * VarFontDoubleOnUse and A.Evocation:GetCooldown() <= VarAverageBurnLength + 4 + 10 * VarFontDoubleOnUse or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown())) then
+                return A.AzsharasFontofPower:Show(icon)
             end
+            
             -- call_action_list,name=burn,if=burn_phase|target.time_to_die<variable.average_burn_length
             if A.BurstIsON(unit) and (BurnPhase:On() or Unit(unit):TimeToDie() < VarAverageBurnLength) then
                 local ShouldReturn = Burn(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
             -- call_action_list,name=burn,if=(cooldown.arcane_power.remains=0&cooldown.evocation.remains<=variable.average_burn_length&(buff.arcane_charge.stack=buff.arcane_charge.max_stack|(talent.charged_up.enabled&cooldown.charged_up.remains=0&buff.arcane_charge.stack<=1)))
             if A.BurstIsON(unit) and ((A.ArcanePower:GetCooldown() == 0 and A.Evocation:GetCooldown() <= VarAverageBurnLength and (Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or (A.ChargedUp:IsSpellLearned() and A.ChargedUp:GetCooldown() == 0 and Unit("player"):ArcaneChargesP <= 1)))) then
                 local ShouldReturn = Burn(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
             -- call_action_list,name=conserve,if=!burn_phase
             if (not BurnPhase:On()) then
                 local ShouldReturn = Conserve(unit); if ShouldReturn then return ShouldReturn; end
             end
+            
             -- call_action_list,name=movement
-            if (true) then
-                local ShouldReturn = Movement(unit); if ShouldReturn then return ShouldReturn; end
-            end
+            local ShouldReturn = Movement(unit); if ShouldReturn then return ShouldReturn; end
+            
         end
     end
 

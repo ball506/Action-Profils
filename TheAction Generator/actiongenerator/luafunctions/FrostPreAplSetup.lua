@@ -1,2 +1,0 @@
---A.FrozenOrb.EffectID = 84721
---A.Frostbolt:RegisterInFlight()

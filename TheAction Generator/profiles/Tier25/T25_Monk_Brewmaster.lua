@@ -206,7 +206,7 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat
+
         --Precombat
         local function Precombat(unit)
             -- flask
@@ -215,161 +215,198 @@ A[3] = function(icon, isMulti)
             -- snapshot_stats
             -- potion
             if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.ProlongedPower:Show(icon)
+                return A.ProlongedPower:Show(icon)
             end
+            
             -- chi_burst
             if A.ChiBurst:IsReady(unit) then
                 return A.ChiBurst:Show(icon)
             end
+            
             -- chi_wave
             if A.ChiWave:IsReady(unit) then
                 return A.ChiWave:Show(icon)
             end
+            
         end
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
+        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() and not Unit(unit):IsTotem() then
+        if inCombat and Unit(unit):IsExists() then
+
                     -- auto_attack
             -- gift_of_the_ox,if=health<health.max*0.65
             -- dampen_harm,if=incoming_damage_1500ms&buff.fortifying_brew.down
-            if A.DampenHarm:IsReady(unit) and (bool(incoming_damage_1500ms) and bool(Unit("player"):HasBuffsDown(A.FortifyingBrewBuff.ID, true))) then
+            if A.DampenHarm:IsReady(unit) and (incoming_damage_1500ms and Unit("player"):HasBuffsDown(A.FortifyingBrewBuff.ID, true))) then
                 return A.DampenHarm:Show(icon)
             end
+            
             -- fortifying_brew,if=incoming_damage_1500ms&(buff.dampen_harm.down|buff.diffuse_magic.down)
-            if A.FortifyingBrew:IsReady(unit) and (bool(incoming_damage_1500ms) and (bool(Unit("player"):HasBuffsDown(A.DampenHarmBuff.ID, true)) or bool(Unit("player"):HasBuffsDown(A.DiffuseMagicBuff.ID, true)))) then
+            if A.FortifyingBrew:IsReady(unit) and (incoming_damage_1500ms and (Unit("player"):HasBuffsDown(A.DampenHarmBuff.ID, true)) or Unit("player"):HasBuffsDown(A.DiffuseMagicBuff.ID, true)))) then
                 return A.FortifyingBrew:Show(icon)
             end
+            
             -- use_item,name=ashvanes_razor_coral,if=debuff.razor_coral_debuff.down|debuff.conductive_ink_debuff.up&target.health.pct<31|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (bool(Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
-                A.AshvanesRazorCoral:Show(icon)
+            if A.AshvanesRazorCoral:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true)) or Unit(unit):HasDeBuffs(A.ConductiveInkDebuff.ID, true)) and Unit(unit):HealthPercent() < 31 or Unit(unit):TimeToDie() < 20) then
+                return A.AshvanesRazorCoral:Show(icon)
             end
+            
             -- use_items
             -- potion
             if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                A.ProlongedPower:Show(icon)
+                return A.ProlongedPower:Show(icon)
             end
+            
             -- blood_fury
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
+            
             -- berserking
             if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
+            
             -- lights_judgment
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) then
                 return A.LightsJudgment:Show(icon)
             end
+            
             -- fireblood
             if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
+            
             -- ancestral_call
             if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
+            
             -- bag_of_tricks
             if A.BagofTricks:IsReady(unit) then
                 return A.BagofTricks:Show(icon)
             end
+            
             -- invoke_niuzao_the_black_ox,if=target.time_to_die>25
             if A.InvokeNiuzaotheBlackOx:IsReady(unit) and A.BurstIsON(unit) and (Unit(unit):TimeToDie() > 25) then
                 return A.InvokeNiuzaotheBlackOx:Show(icon)
             end
+            
             -- ironskin_brew,if=buff.blackout_combo.down&incoming_damage_1999ms>(health.max*0.1+stagger.last_tick_damage_4)&buff.elusive_brawler.stack<2&!buff.ironskin_brew.up
-            if A.IronskinBrew:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and incoming_damage_1999ms > (health.max * 0.1 + stagger.last_tick_damage_4) and Unit("player"):HasBuffsStacks(A.ElusiveBrawlerBuff.ID, true) < 2 and not Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true)) then
+            if A.IronskinBrew:IsReady(unit) and (Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and incoming_damage_1999ms > (health.max * 0.1 + stagger.last_tick_damage_4) and Unit("player"):HasBuffsStacks(A.ElusiveBrawlerBuff.ID, true)) < 2 and not Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true))) then
                 return A.IronskinBrew:Show(icon)
             end
+            
             -- ironskin_brew,if=cooldown.brews.charges_fractional>1&cooldown.black_ox_brew.remains<3&buff.ironskin_brew.remains<15
-            if A.IronskinBrew:IsReady(unit) and (A.Brews:GetSpellChargesFrac() > 1 and A.BlackOxBrew:GetCooldown() < 3 and Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true) < 15) then
+            if A.IronskinBrew:IsReady(unit) and (A.Brews:GetSpellChargesFrac() > 1 and A.BlackOxBrew:GetCooldown() < 3 and Unit("player"):HasBuffs(A.IronskinBrewBuff.ID, true)) < 15) then
                 return A.IronskinBrew:Show(icon)
             end
+            
             -- purifying_brew,if=stagger.pct>(6*(3-(cooldown.brews.charges_fractional)))&(stagger.last_tick_damage_1>((0.02+0.001*(3-cooldown.brews.charges_fractional))*stagger.last_tick_damage_30))
             if A.PurifyingBrew:IsReady(unit) and (stagger.pct > (6 * (3 - (A.Brews:GetSpellChargesFrac()))) and (stagger.last_tick_damage_1 > ((0.02 + 0.001 * (3 - A.Brews:GetSpellChargesFrac())) * stagger.last_tick_damage_30))) then
                 return A.PurifyingBrew:Show(icon)
             end
+            
             -- black_ox_brew,if=cooldown.brews.charges_fractional<0.5
             if A.BlackOxBrew:IsReady(unit) and (A.Brews:GetSpellChargesFrac() < 0.5) then
                 return A.BlackOxBrew:Show(icon)
             end
+            
             -- black_ox_brew,if=(energy+(energy.regen*cooldown.keg_smash.remains))<40&buff.blackout_combo.down&cooldown.keg_smash.up
-            if A.BlackOxBrew:IsReady(unit) and ((Player:EnergyPredicted() + (Player:EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
+            if A.BlackOxBrew:IsReady(unit) and ((Player:EnergyPredicted() + (Player:EnergyRegen() * A.KegSmash:GetCooldown())) < 40 and Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and A.KegSmash:GetCooldown() == 0) then
                 return A.BlackOxBrew:Show(icon)
             end
+            
             -- keg_smash,if=spell_targets>=2
             if A.KegSmash:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.KegSmash:Show(icon)
             end
+            
             -- tiger_palm,if=talent.rushing_jade_wind.enabled&buff.blackout_combo.up&buff.rushing_jade_wind.up
-            if A.TigerPalm:IsReady(unit) and (A.RushingJadeWind:IsSpellLearned() and Unit("player"):HasBuffs(A.BlackoutComboBuff.ID, true) and Unit("player"):HasBuffs(A.RushingJadeWindBuff.ID, true)) then
+            if A.TigerPalm:IsReady(unit) and (A.RushingJadeWind:IsSpellLearned() and Unit("player"):HasBuffs(A.BlackoutComboBuff.ID, true)) and Unit("player"):HasBuffs(A.RushingJadeWindBuff.ID, true))) then
                 return A.TigerPalm:Show(icon)
             end
+            
             -- tiger_palm,if=(talent.invoke_niuzao_the_black_ox.enabled|talent.special_delivery.enabled)&buff.blackout_combo.up
-            if A.TigerPalm:IsReady(unit) and ((A.InvokeNiuzaotheBlackOx:IsSpellLearned() or A.SpecialDelivery:IsSpellLearned()) and Unit("player"):HasBuffs(A.BlackoutComboBuff.ID, true)) then
+            if A.TigerPalm:IsReady(unit) and ((A.InvokeNiuzaotheBlackOx:IsSpellLearned() or A.SpecialDelivery:IsSpellLearned()) and Unit("player"):HasBuffs(A.BlackoutComboBuff.ID, true))) then
                 return A.TigerPalm:Show(icon)
             end
+            
             -- expel_harm,if=buff.gift_of_the_ox.stack>4
-            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true) > 4) then
+            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true)) > 4) then
                 return A.ExpelHarm:Show(icon)
             end
+            
             -- blackout_strike
             if A.BlackoutStrike:IsReady(unit) then
                 return A.BlackoutStrike:Show(icon)
             end
+            
             -- keg_smash
             if A.KegSmash:IsReady(unit) then
                 return A.KegSmash:Show(icon)
             end
+            
             -- concentrated_flame,if=dot.concentrated_flame.remains=0
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
+            
             -- heart_essence,if=!essence.the_crucible_of_flame.major
-            if A.HeartEssence:IsReady(unit) and (not bool(Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID))) then
+            if A.HeartEssence:IsReady(unit) and (not Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID)) then
                 return A.HeartEssence:Show(icon)
             end
+            
             -- expel_harm,if=buff.gift_of_the_ox.stack>=3
-            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true) >= 3) then
+            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true)) >= 3) then
                 return A.ExpelHarm:Show(icon)
             end
+            
             -- rushing_jade_wind,if=buff.rushing_jade_wind.down
-            if A.RushingJadeWind:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true))) then
+            if A.RushingJadeWind:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RushingJadeWindBuff.ID, true))) then
                 return A.RushingJadeWind:Show(icon)
             end
+            
             -- breath_of_fire,if=buff.blackout_combo.down&(buff.bloodlust.down|(buff.bloodlust.up&&dot.breath_of_fire_dot.refreshable))
-            if A.BreathofFire:IsReady(unit) and (bool(Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and (Unit("player"):HasNotHeroism or (Unit("player"):HasHeroism and true and Unit(unit):HasDeBuffsRefreshable(A.BreathofFireDotDebuff.ID, true)))) then
+            if A.BreathofFire:IsReady(unit) and (Unit("player"):HasBuffsDown(A.BlackoutComboBuff.ID, true)) and (Unit("player"):HasNotHeroism or (Unit("player"):HasHeroism and true and Unit(unit):HasDeBuffsRefreshable(A.BreathofFireDotDebuff.ID, true)))) then
                 return A.BreathofFire:Show(icon)
             end
+            
             -- chi_burst
             if A.ChiBurst:IsReady(unit) then
                 return A.ChiBurst:Show(icon)
             end
+            
             -- chi_wave
             if A.ChiWave:IsReady(unit) then
                 return A.ChiWave:Show(icon)
             end
+            
             -- expel_harm,if=buff.gift_of_the_ox.stack>=2
-            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true) >= 2) then
+            if A.ExpelHarm:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.GiftoftheOxBuff.ID, true)) >= 2) then
                 return A.ExpelHarm:Show(icon)
             end
+            
             -- tiger_palm,if=!talent.blackout_combo.enabled&cooldown.keg_smash.remains>gcd&(energy+(energy.regen*(cooldown.keg_smash.remains+gcd)))>=65
             if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Player:EnergyPredicted() + (Player:EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
                 return A.TigerPalm:Show(icon)
             end
+            
             -- arcane_torrent,if=energy<31
             if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyPredicted() < 31) then
                 return A.ArcaneTorrent:Show(icon)
             end
+            
             -- rushing_jade_wind
             if A.RushingJadeWind:IsReady(unit) then
                 return A.RushingJadeWind:Show(icon)
             end
+            
         end
     end
 

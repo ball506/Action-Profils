@@ -24,9 +24,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     WARLOCK: {
-        AFFLICTION:     'battle_potion_of_intellect',
-        DEMONOLOGY:     'battle_potion_of_intellect',
-        DESTRUCTION:    'battle_potion_of_intellect',
+        AFFLICTION:     'potion_of_spectral_intellect',
+        DEMONOLOGY:     'potion_of_spectral_intellect',
+        DESTRUCTION:    'potion_of_spectral_intellect',
     }
 }
 
@@ -212,16 +212,15 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     WARLOCK: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         AFFLICTION: [
-            'AfflictionPreAplSetup',
+            'WARLOCKAfflictionPreAplSetup',
         ],
         DEMONOLOGY: [
-            'FutureShard',
+            'WARLOCKDemonologyPreAplSetup',
         ],
         DESTRUCTION: [
-            'FutureShard',
+            'WARLOCKDestructionPreAplSetup',
         ],
     },
 }

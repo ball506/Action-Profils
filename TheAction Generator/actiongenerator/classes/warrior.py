@@ -22,9 +22,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     WARRIOR: {
-        ARMS: 'battle_potion_of_strength',
-        FURY: 'battle_potion_of_strength',
-        PROTECTION: 'battle_potion_of_strength',
+        ARMS: 'potion_of_spectral_strength',
+        FURY: 'potion_of_spectral_strength',
+        PROTECTION: 'potion_of_spectral_strength',
     }
 }
 
@@ -183,7 +183,6 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     WARRIOR: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         ARMS: [
             'ArmsPreAplSetup',

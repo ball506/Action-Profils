@@ -30,8 +30,8 @@ ACTION_LIST_INFO = {
 
 DEFAULT_POTION = {
     PALADIN: {
-        PROTECTION:     'battle_potion_of_stamina',
-        RETRIBUTION:    'battle_potion_of_strength',
+        PROTECTION:     'potion_of_spectral_stamina',
+        RETRIBUTION:    'potion_of_spectral_strength',
     }
 }
 
@@ -126,11 +126,13 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     PALADIN: {
         COMMON: [
-        'CommonPreAplSetup',
+
         ],
         PROTECTION: [
+        'PALADINProtectionPreAplSetup',
         ],
         RETRIBUTION: [
+        'PALADINRetributionPreAplSetup',
         ],
     },
 }

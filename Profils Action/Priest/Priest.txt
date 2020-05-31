@@ -63,7 +63,7 @@ local Cache = {
 function Env.Toggle(name)
     local statement
     if name == "MOUSEOVER" then                 
-        if MouseOver_Toggle then 
+        if A.GetToggle(2, "mouseover") then 
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw enable " .. ptgroup .. " 2")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 1")
@@ -74,12 +74,12 @@ function Env.Toggle(name)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 2")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
         end    
-        MouseOver_Toggle = not MouseOver_Toggle
-        statement = MouseOver_Toggle        
+        A.GetToggle(2, "mouseover") = not A.GetToggle(2, "mouseover")
+        statement = A.GetToggle(2, "mouseover")        
     end 
     
     if name == "TARGETTARGET" then         
-        if TargetTarget_Toggle then 
+        if A.GetToggle(2, "targettarget") then 
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw enable " .. ptgroup .. " 4")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 3")
@@ -90,12 +90,12 @@ function Env.Toggle(name)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 4")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
         end    
-        TargetTarget_Toggle = not TargetTarget_Toggle
-        statement = TargetTarget_Toggle        
+        A.GetToggle(2, "targettarget") = not A.GetToggle(2, "targettarget")
+        statement = A.GetToggle(2, "targettarget")        
     end 
     
     if name == "AOE" then         
-        if AoE_Toggle then 
+        if A.GetToggle(2, "AoE") then 
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw enable " .. ptgroup .. " 6")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 5")
@@ -106,12 +106,12 @@ function Env.Toggle(name)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 6")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
         end   
-        AoE_Toggle = not AoE_Toggle
-        statement = AoE_Toggle        
+        A.GetToggle(2, "AoE") = not A.GetToggle(2, "AoE")
+        statement = A.GetToggle(2, "AoE")        
     end 
     
     if name == "BURST" then         
-        if Burst_Toggle then 
+        if A.BurstIsON(unit) then 
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw enable " .. ptgroup .. " 8")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 7")
@@ -122,8 +122,8 @@ function Env.Toggle(name)
             DEFAULT_CHAT_FRAME.editBox:SetText("/tmw disable " .. ptgroup .. " 8")
             ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
         end
-        Burst_Toggle = not Burst_Toggle
-        statement = Burst_Toggle        
+        A.BurstIsON(unit) = not A.BurstIsON(unit)
+        statement = A.BurstIsON(unit)        
     end 
     
     if name == "SELFDEFF" then         
@@ -543,39 +543,39 @@ end
 
 --- ============================ CONTENT ============================
 --- Unit to heal conditions
-Env.CanHeal = PseudoClass({
+TR.CanHeal = PseudoClass({
         Mouse = Cache:Wrap(function(self, isPlayer)       
                 return 
-                MouseOver_Toggle and
-                MouseHasFrame() and
-                UnitExists("mouseover") and
-                not Env.Unit("mouseover"):IsEnemy() and
-                ( not isPlayer or UnitIsPlayer("mouseover") ) and
+                A.GetToggle(2, "mouseover") and
+                A.MouseHasFrame() and
+                Unit("mouseover"):IsExists() and
+                not Unit("mouseover"):IsEnemy() and
+                ( not isPlayer or Unit("mouseover"):IsPlayer() ) and
                 (
                     -- Mass Dispel     
                     self.SpellID == 32375 or
-                    Env.Unit("mouseover"):DeBuffCyclone() <= self.CastTime
+                    Unit("mouseover"):DeBuffCyclone() <= self.CastTime
                 )  
         end, "mouseover"),
         Target = Cache:Wrap(function(self, isPlayer)       
                 return 
                 (
-                    not MouseOver_Toggle or 
-                    not UnitExists("mouseover") or 
-                    Env.Unit("mouseover"):IsEnemy()
+                    not A.GetToggle(2, "mouseover") or 
+                    not Unit("mouseover"):IsExists() or 
+                    Unit("mouseover"):IsEnemy()
                 ) and        
-                not Env.Unit("target"):IsEnemy() and
-                ( not isPlayer or UnitIsPlayer("target") ) and
+                not Unit("target"):IsEnemy() and
+                ( not isPlayer or Unit("target"):IsPlayer() ) and
                 (
                     -- Mass Dispel
                     self.SpellID == 32375 or
-                    Env.Unit("target"):DeBuffCyclone() <= self.CastTime                 
+                    Unit("target"):DeBuffCyclone() <= self.CastTime                 
                 )    
         end, "target"),
 })
 function Env.CanHeal:New(Spell, Refresh) 
     -- Exception Penance (this is for Cyclone prediction)
-    self.CastTime = (Spell and Spell ~= 47540 and Env.CastTime(Spell)) or 0
+    self.CastTime = (Spell and Spell ~= 47540 and Unit("player"):CastTime(Spell)) or 0
     self.SpellID = Spell or 0 
     self.Refresh = Refresh or 0.01
 end
@@ -584,27 +584,27 @@ end
 Env.CanDMG = PseudoClass({
         Mouse = Cache:Wrap(function (self, isPlayer)       
                 return 
-                MouseOver_Toggle and
-                Env.Unit("mouseover"):IsEnemy() and
-                ( not isPlayer or UnitIsPlayer("mouseover") ) and
-                Env.Unit("mouseover"):DeBuffCyclone() <= self.CastTime and 
+                A.GetToggle(2, "mouseover") and
+                Unit("mouseover"):IsEnemy() and
+                ( not isPlayer or Unit("mouseover"):IsPlayer() ) and
+                Unit("mouseover"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
-                ( self.SpellID == 107079 or self.SpellID == 232633 or not Env.InPvP() or Env.Unit("mouseover"):WithOutKarmed() )
+                ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("mouseover"):WithOutKarmed() )
         end, "mouseover"),
         Target = Cache:Wrap(function (self, isPlayer)       
                 return 
                 (
-                    not MouseOver_Toggle or
-                    not MouseHasFrame()
+                    not A.GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame()
                 ) and        
-                Env.Unit("target"):IsEnemy() and
-                ( not isPlayer or UnitIsPlayer("target") ) and
-                Env.Unit("target"):DeBuffCyclone() <= self.CastTime and 
+                Unit("target"):IsEnemy() and
+                ( not isPlayer or Unit("target"):IsPlayer() ) and
+                Unit("target"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
-                ( self.SpellID == 107079 or self.SpellID == 232633 or not Env.InPvP() or Env.Unit("target"):WithOutKarmed() )  
+                ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("target"):WithOutKarmed() )  
         end, "target"),
         TargetTarget = Cache:Wrap(function (self, isPlayer)   
-                if not TargetTarget_Toggle then 
+                if not A.GetToggle(2, "targettarget") then 
                     return false 
                 end 
                 local NotInLOS = true 
@@ -614,26 +614,26 @@ Env.CanDMG = PseudoClass({
                 end     
                 return 
                 (
-                    not MouseOver_Toggle or
-                    not MouseHasFrame() or
-                    not Env.Unit("mouseover"):IsEnemy()
+                    not A.GetToggle(2, "mouseover") or
+                    not A.MouseHasFrame() or
+                    not Unit("mouseover"):IsEnemy()
                 ) and
                 -- LOS Checking
                 NotInLOS and 
                 -- Exception to don't pull by mistake mob
-                CombatTime("targettarget") > 0 and
-                not Env.Unit("target"):IsEnemy() and
-                Env.Unit("targettarget"):IsEnemy() and
+                Unit("targettarget"):CombatTime() > 0 and
+                not Unit("target"):IsEnemy() and
+                Unit("targettarget"):IsEnemy() and
                 ( not isPlayer or UnitIsPlayer("targettarget") ) and
-                Env.Unit("targettarget"):DeBuffCyclone() <= self.CastTime and 
+                Unit("targettarget"):DeBuffCyclone() <= self.CastTime and 
                 -- 107079 Pandaren Kick, 232633 Arcane Torrent 
-                ( self.SpellID == 107079 or self.SpellID == 232633 or not Env.InPvP() or Env.Unit("targettarget"):WithOutKarmed() )  
+                ( self.SpellID == 107079 or self.SpellID == 232633 or not A.IsInPvP or Unit("targettarget"):WithOutKarmed() )  
         end, "targettarget"),
 })
 
 function Env.CanDMG:New(Spell, Refresh) 
     -- Exception Penance (this is for Cyclone prediction)
-    self.CastTime = (Spell and Spell ~= 47540 and Env.CastTime(Spell)) or 0
+    self.CastTime = (Spell and Spell ~= 47540 and Unit("player"):CastTime(Spell)) or 0
     self.SpellID = Spell or 0
     self.Refresh = Refresh or 0.01
 end
@@ -654,13 +654,13 @@ function Env.RefreshoPR()
     Env.oPR["pBurst"] = Env.pBurst()
     -- Discipline
     if Env.UNITSpec("player", 256) then 
-        local CurrentSpeed = Env.UNITCurrentSpeed("player")
+        local CurrentSpeed = Env.Unit("player"):GetCurrentSpeed()
         -- HealingEngine 
-        Env.oPR["GetMembers"] = GetMembers()
+        A.HealingEngine.GetMembersAll() = HealingEngine.GetMembersAll()
         -- Penance
-        Env.oPR["IsChanneling"] = select(2, Env.CastTime(47540)) > select(4, GetNetStats()) / 1000
+        Env.oPR["IsChanneling"] = select(2, Unit("player"):CastTime(47540)) > select(4, GetNetStats()) / 1000
         -- Applied Atonement Count
-        Env.oPR["Atonements"] = AoEBuffsExist(81749, Env.CurrentTimeGCD())
+        Env.oPR["Atonements"] = HealingEngine.GetBuffsCount(81749, Env.CurrentTimeGCD())
         Env.oPR["AtonementHPS"] = getDPS("player") * 0.55
         -- Member's controllers
         Env.oPR["Frequency"] = FrequencyAHP(Env.GCD() * 3 + Env.CurrentTimeGCD())
@@ -669,20 +669,20 @@ function Env.RefreshoPR()
         Env.oPR["AoE30"] = (Env.TalentLearn(120517) and Env.SpellUsable(120517) and AoE(nil, 30)) or 0
         -- AoE healing 
         -- Toggle dependence
-        Env.oPR["CanHealPWR"] = AoE_Toggle and not Env.oPR["IsChanneling"] and (CurrentSpeed == 0 or (Env.InPvP() and Env.PvPTalentLearn(236499))) and Env.SpellUsable(194509) and Env.CanHealPWR() 
-        Env.oPR["CanHealHalo"] = AoE_Toggle and not Env.oPR["IsChanneling"] and Env.TalentLearn(120517) and CurrentSpeed == 0 and Env.SpellUsable(120517) and Env.CanHealHalo() 
-        Env.oPR["CanHealShadowCovenant"] = AoE_Toggle and not Env.oPR["IsChanneling"] and Env.TalentLearn(204065) and Env.SpellUsable(204065) and Env.CanHealShadowCovenant()   
+        Env.oPR["CanHealPWR"] = A.GetToggle(2, "AoE") and not Env.oPR["IsChanneling"] and (CurrentSpeed == 0 or (A.IsInPvP and Env.PvPTalentLearn(236499))) and Env.SpellUsable(194509) and Env.CanHealPWR() 
+        Env.oPR["CanHealHalo"] = A.GetToggle(2, "AoE") and not Env.oPR["IsChanneling"] and Env.TalentLearn(120517) and CurrentSpeed == 0 and Env.SpellUsable(120517) and Env.CanHealHalo() 
+        Env.oPR["CanHealShadowCovenant"] = A.GetToggle(2, "AoE") and not Env.oPR["IsChanneling"] and A.ShadowCovenant:IsSpellLearned() and Env.SpellUsable(204065) and Env.CanHealShadowCovenant()   
         -- Always checking
         Env.oPR["CanEvangelism"] = not Env.oPR["IsChanneling"] and Env.TalentLearn(246287) and Env.SpellUsable(246287) and Env.CanEvangelism()
         Env.oPR["CanHealHolyNova"] = not Env.oPR["IsChanneling"] and Env.CanHealHolyNova()        
     end 
     -- Holy 
     if Env.UNITSpec("player", 257) then 
-        local CurrentSpeed = Env.UNITCurrentSpeed("player")
+        local CurrentSpeed = Env.Unit("player"):GetCurrentSpeed()
         -- HealingEngine 
-        Env.oPR["GetMembers"] = GetMembers()
+        A.HealingEngine.GetMembersAll() = HealingEngine.GetMembersAll()
         -- Symvol of Hope & Divine Hymn
-        Env.oPR["IsChanneling"] = select(2, Env.CastTime(64901)) > 0 or select(2, Env.CastTime(64843)) > 0
+        Env.oPR["IsChanneling"] = select(2, Unit("player"):CastTime(64901)) > 0 or select(2, Unit("player"):CastTime(64843)) > 0
         -- Apotheosis
         Env.oPR["Apotheosis"] = (Env.TalentLearn(200183) and Env.Unit("player"):HasBuffs(200183, "player")) or 0
         -- Member's controllers
@@ -690,12 +690,12 @@ function Env.RefreshoPR()
         -- Enemies >= 2
         Env.oPR["AoE12"] = AoE(2, 12)
         -- AoE healing 
-        Env.oPR["CanHealHalo"] = AoE_Toggle and not Env.oPR["IsChanneling"] and Env.TalentLearn(120517) and CurrentSpeed == 0 and Env.SpellUsable(120517) and Env.CanHealHaloHOLY() 
+        Env.oPR["CanHealHalo"] = A.GetToggle(2, "AoE") and not Env.oPR["IsChanneling"] and Env.TalentLearn(120517) and CurrentSpeed == 0 and Env.SpellUsable(120517) and Env.CanHealHaloHOLY() 
     end 
     -- Shadow 
     if Env.UNITSpec("player", 258) then         
         -- Void Torrent
-        Env.oPR["IsChanneling"] = select(2, Env.CastTime(263165)) > 0
+        Env.oPR["IsChanneling"] = select(2, Unit("player"):CastTime(263165)) > 0
         -- Enemies 
         Env.oPR["active_enemies"] = active_enemies() or 0
         Env.oPR["MultiDots"] = MultiDots(40, 34914, 10, 1)
@@ -706,7 +706,7 @@ function Env.RefreshoPR()
         -- PvP 
         Env.oPR["BreakAbleCC-Condition"] = 
         not BreakAbleCheckCC_Toggle or
-        not Env.InPvP() or
+        not A.IsInPvP or
         Zone ~= "pvp" or
         not Env.EnemyTeam("HEALER", 1):IsBreakAble(40)    
     end 
@@ -757,12 +757,12 @@ function Env.MassDispel(unit)
             (
                 -- PvP 
                 (
-                    Env.InPvP() and 
+                    A.IsInPvP and 
                     Env.Unit(unit):HasBuffs("ImportantPurje") > 3
                 ) or
                 -- PvE 
                 (
-                    not Env.InPvP() and 
+                    not A.IsInPvP and 
                     (
                         Env.UNITPW("player") > 50 or 
                         -- Inervate
@@ -780,7 +780,7 @@ function Env.MassDispel(unit)
             (
                 -- PvP 
                 (
-                    Env.InPvP() and 
+                    A.IsInPvP and 
                     (
                         -- Mind Control (exactly Buff)
                         Env.Unit(unit):HasBuffs(605) > 0 or 
@@ -792,12 +792,12 @@ function Env.MassDispel(unit)
                             ) and 
                             Env.Unit(unit):HasDeBuffs("Magic") > 3
                         ) or
-                        Env.Unit(unit):DeBuffCyclone() > Env.CastTime(32375)
+                        Env.Unit(unit):DeBuffCyclone() > Unit("player"):CastTime(32375)
                     )
                 ) or 
                 -- PvE 
                 (
-                    not Env.InPvP() and
+                    not A.IsInPvP and
                     (
                         Env.UNITPW("player") > 60 or 
                         -- Inervate
@@ -824,7 +824,7 @@ function Env.Dispel(unit, ICON)
     Env.Unit(unit):DeBuffCyclone() == 0 and
     (
         (
-            Env.InPvP() and 
+            A.IsInPvP and 
             (                             
                 Env.Unit(unit):HasDeBuffs("Magic") > 2 or
                 (
@@ -835,7 +835,7 @@ function Env.Dispel(unit, ICON)
             ) 
         ) or 
         (
-            not Env.InPvP() and 
+            not A.IsInPvP and 
             Env.PvEDispel(unit)
         )
     )
@@ -854,7 +854,7 @@ function Env.Purje(unit, ICON)
     Env.Unit(unit):DeBuffCyclone() == 0 and    
     (
         (
-            Env.InPvP() and 
+            A.IsInPvP and 
             (                             
                 -- Friendly Mind Control (this is a BUFF type)
                 (
@@ -874,7 +874,7 @@ function Env.Purje(unit, ICON)
             ) 
         ) or 
         (
-            not Env.InPvP() and 
+            not A.IsInPvP and 
             Env.Unit(unit):IsEnemy() and 
             Env.Unit(unit):HasBuffs("PvEPurje") > Env.CurrentTimeGCD()
         )
@@ -1002,7 +1002,7 @@ end
 
 function Env.PvPSpellKick(unitID)
     for k, v in pairs(Env.GetAuraList("AllPvPKickCasts")) do
-        if select(2, Env.CastTime(v, unitID)) > Env.CurrentTimeGCD() then 
+        if select(2, Unit("player"):CastTime(v, unitID)) > Env.CurrentTimeGCD() then 
             return true 
         end 
     end 
@@ -1057,7 +1057,7 @@ end
 --- AOE ( 2+ units minimum )
 --- Only players for Rapture
 function Env.CanRaptureAoE(hp) 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
         local valid = AoEMembers(true, 2, math.floor((10 - (Env.GCD() + Env.CurrentTimeGCD())) / (Env.GCD() + Env.CurrentTimeGCD())))
@@ -1082,12 +1082,12 @@ function Env.CanRaptureAoE(hp)
 end 
 
 function Env.CanHealPenanceDMG()
-    local members = Env.oPR["GetMembers"]
+    local members = A.HealingEngine.GetMembersAll()
     if tableexist(members) and #members > 1 then 
         local total, totalamount = 0, 0
         for i = 1, #members do
             -- Applied Atonement while channeling Penance and predicted for PenanceDMG        
-            if Env.Unit(members[i].Unit):HasBuffs(81749, "player") > Env.CastTime(47540) then
+            if Env.Unit(members[i].Unit):HasBuffs(81749, "player") > Unit("player"):CastTime(47540) then
                 local predicted, amount = Env.PredictHeal("PenanceDMG", members[i].Unit)
                 if predicted then 
                     total = total + 1
@@ -1105,7 +1105,7 @@ function Env.CanHealPenanceDMG()
 end 
 
 function Env.CanHealShadowCovenant()
-    local members, validmembers = Env.oPR["GetMembers"], AoEMembers(nil, 3, 4)
+    local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(nil, 3, 4)
     local total = 0
     if tableexist(members) and validmembers > 1 then 
         for i = 1, #members do            
@@ -1123,7 +1123,7 @@ end
 
 -- Only players for Evangelism and if we reached near max possible count Atonements buffs
 function Env.CanEvangelism()
-    local members, validmembers = Env.oPR["GetMembers"], AoEMembers(true, 1, 5)
+    local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(true, 1, 5)
     local total = 0
     if tableexist(members) and validmembers >= 2 then 
         for i = 1, #members do
@@ -1145,13 +1145,13 @@ function Env.CanHealPWR()
     if Env.Zone == "none" then 
         return true 
     else
-        local members, validmembers = Env.oPR["GetMembers"], AoEMembers(nil, 2, 4)
+        local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(nil, 2, 4)
         local total = 0
         if tableexist(members) and validmembers > 1 then 
             for i = 1, #members do
                 -- Spell PWR in range and NO Atonement and predicted for PWR
                 -- Env.SpellInRange(members[i].Unit, 194509) and -- its already in range by "members" 40yards
-                if Env.Unit(members[i].Unit):HasBuffs(81749, "player") <= Env.CastTime(194509) + Env.CurrentTimeGCD() and Env.PredictHeal("PW:R", members[i].Unit) then
+                if Env.Unit(members[i].Unit):HasBuffs(81749, "player") <= Unit("player"):CastTime(194509) + Env.CurrentTimeGCD() and Env.PredictHeal("PW:R", members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached count of units depend on valid in range units                 
@@ -1167,8 +1167,8 @@ end
 --- AoE ( no units limit - limit by ShadowMend )
 --- When cast Holy Nova for profit heal 
 function Env.CanHealHolyNova() 
-    local members = Env.oPR["GetMembers"]    
-    if tableexist(members) and (not Env.InPvP() or not Env.EnemyTeam():IsBreakAble(12)) then 
+    local members = A.HealingEngine.GetMembersAll()    
+    if tableexist(members) and (not A.IsInPvP or not Env.EnemyTeam():IsBreakAble(12)) then 
         local total = 0
         local Enemies = Env.oPR["AoE12"] or 0
         for i = 1, #members do                
@@ -1191,8 +1191,8 @@ function Env.CanHealHolyNova()
 end 
 
 function Env.CanHealHalo(VARIATION) 
-    local members = Env.oPR["GetMembers"]    
-    if tableexist(members) and (not Env.InPvP() or not Env.EnemyTeam():IsBreakAble(30)) then 
+    local members = A.HealingEngine.GetMembersAll()    
+    if tableexist(members) and (not A.IsInPvP or not Env.EnemyTeam():IsBreakAble(30)) then 
         local total = 0
         local Enemies = Env.oPR["AoE30"] or 0
         for i = 1, #members do    
@@ -1233,7 +1233,7 @@ end
 --- Condition if we can heal previous unit 
 function Env.PredictTrailOfLight(SpellName) 
     if #TrailOfLightGUID > 1 then
-        local members = Env.oPR["GetMembers"]
+        local members = A.HealingEngine.GetMembersAll()
         for i = 1, #members do 
             if Env.UnitIsTrailOfLight(members[i].Unit) then
                 if not Env.UNITDead(members[i].Unit) and Env.PredictHeal(SpellName, members[i].Unit, 35) and Env.Unit(members[i].Unit):DeBuffCyclone() <= 1 then 
@@ -1249,7 +1249,7 @@ end
 --- AoE ( 2+ units minimum )
 --- Holy Word: Sanctify 
 function Env.CanHealHolyWordSanctify(unit) 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0
         local units = AoEMembers(nil, 2, 5)
@@ -1287,7 +1287,7 @@ end
 
 --- Circle of Healing 
 function Env.CanHealCircleOfHealing(unit) 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0
         local units = AoEMembers(nil, 2, 4)
@@ -1325,7 +1325,7 @@ end
 
 --- Prayer Of Mending (fixed >= 2 units)
 function Env.CanHealPrayerOfMending(unit) 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0                
         if UnitIsUnit("player", unit) then 
@@ -1359,8 +1359,8 @@ end
 
 --- Halo 
 function Env.CanHealHaloHOLY(VARIATION) 
-    local members = Env.oPR["GetMembers"] 
-    if tableexist(members) and (not Env.InPvP() or not Env.EnemyTeam():IsBreakAble(30)) then 
+    local members = A.HealingEngine.GetMembersAll() 
+    if tableexist(members) and (not A.IsInPvP or not Env.EnemyTeam():IsBreakAble(30)) then 
         local total = 0
         local units = AoEMembers(nil, 2, 4)
         if units < 2 then 
@@ -1382,7 +1382,7 @@ end
 
 --- Prayer Of Healing
 function Env.CanHealPrayerOfHealing() 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
         local units = AoEMembers(nil, 2, 4)
@@ -1406,7 +1406,7 @@ end
 
 --- Binding Heal ( fixed 2+ units )
 function Env.CanHealBindingHeal(unit) 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
         -- Worn rest position 
@@ -1426,7 +1426,7 @@ end
 
 --- Divine Star
 function Env.CanHealDivineStarHOLY() 
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
         local units = AoEMembers(nil, 2, 3)
@@ -1450,8 +1450,8 @@ end
 
 --- Holy Nova (if in range 1+ or self)
 function Env.CanHealHolyNovaHOLY() 
-    local members = Env.oPR["GetMembers"]    
-    if tableexist(members) and (not Env.InPvP() or not Env.EnemyTeam():IsBreakAble(12)) then    
+    local members = A.HealingEngine.GetMembersAll()    
+    if tableexist(members) and (not A.IsInPvP or not Env.EnemyTeam():IsBreakAble(12)) then    
         for i = 1, #members do                
             -- In range
             if Env.Unit(members[i].Unit):GetRange() <= 12 and Env.PredictHeal("HolyNova", members[i].Unit) then
@@ -1464,7 +1464,7 @@ end
 
 --- Symbol of Hope
 function Env.CanSymbolOfHope(offset)
-    local members = Env.oPR["GetMembers"]    
+    local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then    
         for i = 1, #members do                
             -- In range
@@ -1500,11 +1500,11 @@ function Env.PurifyDisease(unit, ICON)
     Env.Unit(unit):DeBuffCyclone() == 0 and
     (
         (
-            Env.InPvP() and                                      
+            A.IsInPvP and                                      
             Env.Unit(unit):HasDeBuffs("Disease") > 2             
         ) or 
         (
-            not Env.InPvP() and 
+            not A.IsInPvP and 
             Env.PvEDispel(unit)
         )
     )
@@ -1525,13 +1525,13 @@ function Env.CanVoidShift(unit)
         (
             TimeToDieX(unit, 15) <= Env.GCD() * 2 and
             Env.UNITHP(unit) < 40 and
-            Env.UNITHP("player") >= Env.UNITHP(unit) * 2           
+            Env.Unit("player"):HealthPercent() >= Env.UNITHP(unit) * 2           
         ) or 
         (
             -- Surrendered To Madness
             Env.Unit("player"):HasDeBuffs(263406, "player") > 14 - Env.GCD() and
-            Env.UNITHP("player") <= 15 and 
-            Env.UNITHP(unit) >= Env.UNITHP("player") * 4 and 
+            Env.Unit("player"):HealthPercent() <= 15 and 
+            Env.UNITHP(unit) >= Env.Unit("player"):HealthPercent() * 4 and 
             not Env.Unit(unit):IsFocused()
         )
     )

@@ -22,9 +22,9 @@ CLASS_SPECS = {
 
 DEFAULT_POTION = {
     ROGUE: {
-        ASSASSINATION:  'prolonged_power',
-        OUTLAW:         'prolonged_power',
-        SUBTLETY:       'prolonged_power',
+        ASSASSINATION:  'potion_of_spectral_agility',
+        OUTLAW:         'potion_of_spectral_agility',
+        SUBTLETY:       'potion_of_spectral_agility',
     }
 }
 
@@ -167,15 +167,15 @@ ITEM_INFO = {
 CLASS_FUNCTIONS = {
     ROGUE: {
         COMMON: [
-        'CommonPreAplSetup',
         ],
         ASSASSINATION: [
-        'AssassinationPreAplSetup',
+        'ROGUEAssassinationPreAplSetup',
         ],
         OUTLAW: [
-        'RogueOutlawPreApl'
+        'ROGUEOutlawPreAplSetup',
         ],
         SUBTLETY: [
+		'ROGUESubtelyPreAplSetup',
         ],
     },
 }

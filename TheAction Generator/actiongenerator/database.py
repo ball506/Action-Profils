@@ -112,6 +112,14 @@ ITEM_INFO = {
     'battle_potion_of_agility': 163223,
     'battle_potion_of_strength': 163224,
     'potion_of_rising_death': 152559,
+    """ Shadowlands Alchemy """
+    'potion_of_spectral_stamina': 171274,
+    'potion_of_spectral_strength': 171275,
+    'potion_of_spectral_intellect': 171273,
+    'potion_of_spectral_agility': 171270,
+
+
+
 }
 for class_ in CLASSES:
     ITEM_INFO.update(class_.ITEM_INFO)
