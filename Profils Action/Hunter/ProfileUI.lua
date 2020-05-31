@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.3.0 (30.05.2020)",
+    DateTime = "v4.3.1 (31.05.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -295,7 +295,7 @@ A.Data.ProfileUI = {
 			{
                 {
                     E = "Checkbox", 
-                    DB = "MultiShotCheckLatency",
+                    DB = "CheckLatency",
                     DBV = true,
                     L = { 
                         enUS = "Latency Prediction", 
@@ -384,16 +384,16 @@ A.Data.ProfileUI = {
                     MIN = 1, 
                     MAX = 5,                            
                     DB = "BarbedShotRefreshSec",
-                    DBV = 3, -- Set healthpercentage @60% life. 
+                    DBV = 2, -- Set healthpercentage @60% life. 
 					Precision = 1,
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(217200) .. "\nrefresh sec",
                     },
                     TT = { 
-                        enUS = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8", 
-                        ruRU = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",  
-                        frFR = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 1.8",   
+                        enUS = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 2\nIMPORTANT !!! This value can really change your DPS so play with setting to get the most optimized one.", 
+                        ruRU = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 2\nIMPORTANT !!! This value can really change your DPS so play with setting to get the most optimized one.",
+                        frFR = "Minimum time remaining on pet buff Frenzy before using " .. A.GetSpellInfo(217200) .. ".\nDefault: 2\nIMPORTANT !!! This value can really change your DPS so play with setting to get the most optimized one.",  
                     },					
                     M = {},
                 },

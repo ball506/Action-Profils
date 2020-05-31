@@ -689,7 +689,7 @@ A[3] = function(icon, isMulti)
 	
 	local UseFeignDeathOnThingFromBeyond = GetToggle(2, "UseFeignDeathOnThingFromBeyond")
 	local AoEMode = GetToggle(2, "AoEMode")
-	local MultiShotCheckLatency = GetToggle(2, "MultiShotCheckLatency")
+	local CheckLatency = GetToggle(2, "CheckLatency")
 	local BeastCleaveBuffRefresh = GetToggle(2, "BeastCleaveBuffRefresh")
 	local MultiShotForceAoE = GetToggle(2, "MultiShotForceAoE")	
 	local AspectoftheWildOnCDRapidReload = GetToggle(2, "AspectoftheWildOnCDRapidReload")	
@@ -872,11 +872,11 @@ A[3] = function(icon, isMulti)
         -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
         if inCombat and A.BarbedShot:IsReadyByPassCastGCD(unit) and A.BestialWrath:GetCooldown() > 0 and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
 		(
-			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + GetPing()
+			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0))
 			or 
 			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 			or
-			Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + GetPing() + 1.5
+			Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + (CheckLatency and GetPing() or 0) + 0.5
 		)
 		then
             return A.BarbedShot:Show(icon) 
@@ -1102,7 +1102,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- multishot,if=gcd.max-pet.turtle.buff.beast_cleave.remains>0.25
-        if A.Multishot:IsReady(unit) and inCombat and GetToggle(2, "AoE") and MultiShotForceAoE and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and	
+        if A.Multishot:IsReady(unit) and inCombat and GetToggle(2, "AoE") and MultiShotForceAoE and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (CheckLatency and GetPing() or 0)) and	
 		(
 			-- Range by pet
 			AoEMode == "RangeByPet" and 
@@ -1156,11 +1156,11 @@ A[3] = function(icon, isMulti)
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
             if A.BarbedShot:IsReadyByPassCastGCD(unit) and A.BestialWrath:GetCooldown() > 0 and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
 		    (
-		        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= BarbedShotRefreshSec + A.GetPing()
+		        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0))
 			    or 
 			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 				or
-			    Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + GetPing() + 0.5
+			    Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + (CheckLatency and GetPing() or 0) + 0.5
 		   	)
 		   	then
                 return A.BarbedShot:Show(icon) 
@@ -1181,7 +1181,7 @@ A[3] = function(icon, isMulti)
 			
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
             if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) < BarbedShotRefreshSec + A.GetPing() and A.BarbedShot:GetSpellChargesFullRechargeTime() < GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
+                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) < (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0)) and A.BarbedShot:GetSpellChargesFullRechargeTime() < GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
                     return A.BarbedShot:Show(icon) 
                 end
             end
@@ -1312,7 +1312,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- multishot, NO RapidReload + Custom user settings
-            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (MultiShotCheckLatency and GetPing() or 0)) and A.RapidReload:GetAzeriteRank() == 0 and				
+            if A.Multishot:IsReady(unit) and GetToggle(2, "AoE") and Unit(pet):HasBuffs(A.BeastCleaveBuff.ID, true) <= (BeastCleaveBuffRefresh + (CheckLatency and GetPing() or 0)) and A.RapidReload:GetAzeriteRank() == 0 and				
 			(
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
