@@ -173,9 +173,28 @@ local function bool(val)
 end
 
 local player = "player"
+
 ------------------------------------------
------------- ELEMENTAL PREAPL ------------
+-------------- COMMON PREAPL -------------
 ------------------------------------------
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+    TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+    TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+    return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
 
 -- API - Tracker
 -- Initialize Tracker 
@@ -363,70 +382,6 @@ local function ExpectedCombatLength()
     return BossTTD
 end 
 ExpectedCombatLength = A.MakeFunctionCachedStatic(ExpectedCombatLength)
-
-------------------------------------------
--------------- COMMON PREAPL -------------
-------------------------------------------
-local Temp = {
-    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
-    TotalAndCC                              = {"TotalImun", "CCTotalImun"},
-    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
-    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
-    TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
-    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
-}
-
-local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
-
-local function IsSchoolFree()
-    return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
-end 
-
-
-local function EvaluateCycleFlameShock47(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and (MultiUnits:GetActiveEnemies() < (5 - num(not A.TotemMastery:IsSpellLearned())) or not A.StormElemental:IsSpellLearned() and (A.FireElemental:GetCooldown() > (120 + 14 * Player:SpellHaste()) or A.FireElemental:GetCooldown() < (24 - 14 * Player:SpellHaste()))) and (not A.StormElemental:IsSpellLearned() or A.StormElemental:GetCooldown() < 120 or MultiUnits:GetActiveEnemies() == 3 and Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14)
-end
-
-local function EvaluateCycleFlameShock148(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock163(unit)
-    return (not Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 or not Unit("player"):HasHeroism()) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock362(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock483(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock528(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock545(unit)
-    return (not Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 2 * A.GetGCD() or Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) <= A.GetGCD() or A.Ascendance:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FlameShockDebuff.ID, true) < (A.Ascendance:GetCooldown() + 15) and A.Ascendance:GetCooldown() < 4 and (not A.StormElemental:IsSpellLearned() or A.StormElemental:IsSpellLearned() and A.StormElemental:GetCooldown() < 120)) and (Unit("player"):HasBuffsStacks(A.WindGustBuff.ID, true) < 14 or A.IgneousPotential:GetAzeriteRank() >= 2 or Unit("player"):HasBuffs(A.LavaSurgeBuff.ID, true) > 0 or not Unit("player"):HasHeroism()) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock774(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and MultiUnits:GetActiveEnemies() > 1 and Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock895(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true) and not Unit("player"):HasBuffs(A.SurgeofPowerBuff.ID, true)
-end
-
-local function EvaluateCycleFlameShock946(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.FlameShockDebuff.ID, true)
-end
-
 
 local function SelfDefensives()
     if Unit("player"):CombatTime() == 0 then 
