@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.2.6 (30.05.2020)",
+    DateTime = "v4.2.7 (31.05.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -760,7 +760,67 @@ A.Data.ProfileUI = {
                     M = {},
                 }, 
 			},	
-
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "SmartHoJ",
+                    DBV = true,
+                    L = { 
+                        enUS = "Smart " .. A.GetSpellInfo(853), 
+                        ruRU = "Smart " .. A.GetSpellInfo(853), 
+                        frFR = "Smart " .. A.GetSpellInfo(853), 
+                    }, 
+                    TT = { 
+                        enUS = "[BETA] Activate the smart " .. A.GetSpellInfo(853) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        ruRU = "[BETA] Activate the smart " .. A.GetSpellInfo(853) .. " system working with special list for all Battle For Azeroth Mythic dungeon.", 
+                        frFR = "[BETA] Activate the smart " .. A.GetSpellInfo(853) .. " system working with special list for all Battle For Azeroth Mythic dungeon.",   
+                    }, 
+                    M = {},
+                },				
+                {
+                    E = "Checkbox", 
+                    DB = "UseCavalier",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(190784), 
+                        ruRU = "Авто " .. A.GetSpellInfo(190784), 
+                        frFR = "Auto " .. A.GetSpellInfo(190784), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(190784), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(190784), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(190784), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "CavalierTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(190784) .. " if moving for",
+                        ruRU = A.GetSpellInfo(190784) .. " если переехать",
+                        frFR = A.GetSpellInfo(190784) .. " si vous bougez pendant",
+                    },
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(190784) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(190784) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(190784) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },	
+			},
             { -- [7] 
                 {
                     E = "Header",
@@ -771,6 +831,7 @@ A.Data.ProfileUI = {
             },
 			
             { -- [1] 1st Row  	
+			LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },
                 {
                     E = "Checkbox", 
                     DB = "ArdentDefenderIgnoreBigDeff",
@@ -799,8 +860,10 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },
-            {			
+            {	
+            LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },			
                 {
+				RowOptions = { margin = { top = 10 } },
                     E         = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 20,                            
@@ -820,6 +883,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
                 {
+				RowOptions = { margin = { top = 10 } },
                     E         = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 100,                            
@@ -840,7 +904,8 @@ A.Data.ProfileUI = {
                 }, 
             }, 
 			
-            { -- [1] 1st Row  		    
+            { -- [1] 1st Row  	
+            LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },			
                 {
                     E = "Checkbox", 
                     DB = "GuardianofAncientKingsCatchKillStrike",
@@ -858,8 +923,10 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
-            {			
+            {	
+            LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },			
                 {
+				RowOptions = { margin = { top = 10 } },
                     E         = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 20,                            
@@ -879,6 +946,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
                 {
+				RowOptions = { margin = { top = 10 } },
                     E         = "Slider",                                                     
                     MIN     = -1, 
                     MAX     = 100,                            
@@ -899,12 +967,14 @@ A.Data.ProfileUI = {
                 }, 
             },			
 			{
+			LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },
     			{
+				RowOptions = { margin = { top = 10 } },
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 50,                            
+                    MAX = 70,                            
                     DB = "LightoftheProtectorHPLost",
-                    DBV = 3, -- Set healthpercentage @30% life. 
+                    DBV = 15, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(184092) .. "\n%HP lost per sec",
@@ -912,6 +982,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
     			{
+				RowOptions = { margin = { top = 10 } },
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
@@ -922,7 +993,23 @@ A.Data.ProfileUI = {
                         ANY = A.GetSpellInfo(184092) .. " (%)",
                     }, 
                     M = {},
-                },	
+                },
+    			{
+				RowOptions = { margin = { top = 10 } },
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "HandoftheProtectorHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(213652) .. " (%)",
+                    }, 
+                    M = {},
+                },		
+            },
+            {
+            LayoutOptions = { gutter = 5, padding = { left = 10, right = 10 } },			
 	            {
                     E = "Checkbox", 
                     DB = "LayonHandsCatchKillStrike",
@@ -938,25 +1025,84 @@ A.Data.ProfileUI = {
                         frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
                     },
                     M = {},
-                },
-	            {
-                    E = "Checkbox", 
-                    DB = "AbyssalHealingPotionHP",
-                    DBV = true,
+                },	
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ArdentDefenderHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
                     L = { 
-                        enUS = A.GetSpellInfo(301308) .. " (%)",
-                        ruRU = A.GetSpellInfo(301308) .. " (%)",  
-                        frFR = A.GetSpellInfo(301308) .. " (%)", 
+                        ANY = A.GetSpellInfo(31850) .. " (%)",
                     }, 
-                    TT = { 
-                        enUS = "Player percent health before using " .. A.GetSpellInfo(301308), 
-                        ruRU = "Player percent health before using " .. A.GetSpellInfo(301308), 
-                        frFR = "Player percent health before using " .. A.GetSpellInfo(301308),  
-                    },
                     M = {},
-                },							
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "AbyssalHealingPotionHP",
+                    DBV = 30, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(301308) .. " (%)",
+                    }, 
+                    M = {},
+                },
 			},
-            
+            { -- [3] 3rd Row 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "ShieldoftheRighteousHPLost",
+                    DBV = 60, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(53600) .. " (%) lost/sec",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "LightoftheProtectorHPLost",
+                    DBV = 60, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(184092) .. " (%) lost/sec",
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "LightoftheProtectorHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(184092) .. " (%)",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "GuardianofAncientKingsHP",
+                    DBV = 30, -- Set healthpercentage @30% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(86659) .. " (%)",
+                    }, 
+                    M = {},
+                },
+            },				         
             { -- [4] 4th Row
 
                 {
@@ -1008,73 +1154,7 @@ A.Data.ProfileUI = {
 					},
            	        M = {},
         	    },				
-            }, 			
-            { -- [4] 4th Row
-
-                {
-                    E = "LayoutSpace",                                                                         
-                },
-            },
-            { -- [7] 
-                {
-                    E = "Header",
-                    L = {
-                        ANY = " -- Defensives -- ",
-                    },
-                },
-            },
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "ArdentDefenderHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(31850) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "AbyssalHealingPotionHP",
-                    DBV = 100, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(301308) .. " (%)",
-                    }, 
-                    M = {},
-                },
-            },
-            { -- [3] 3rd Row 
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "LightoftheProtectorHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(184092) .. " (%)",
-                    }, 
-                    M = {},
-                },
-                {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "GuardianofAncientKingsHP",
-                    DBV = 100, -- Set healthpercentage @30% life. 
-                    ONOFF = true,
-                    L = { 
-                        ANY = A.GetSpellInfo(86659) .. " (%)",
-                    }, 
-                    M = {},
-                },
-            },
+            }, 			            
             { -- [3] 3rd Row 
                 {
                     E = "Checkbox", 
