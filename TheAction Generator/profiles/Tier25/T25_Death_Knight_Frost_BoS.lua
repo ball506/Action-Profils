@@ -1,163 +1,165 @@
---- ====================== ACTION HEADER ============================ ---
-local Action                                 = Action
-local TeamCache                              = Action.TeamCache
-local EnemyTeam                              = Action.EnemyTeam
-local FriendlyTeam                           = Action.FriendlyTeam
---local HealingEngine                        = Action.HealingEngine
-local LoC                                    = Action.LossOfControl
-local Player                                 = Action.Player
-local MultiUnits                             = Action.MultiUnits
-local UnitCooldown                           = Action.UnitCooldown
-local Unit                                   = Action.Unit
-local Pet                                    = LibStub("PetLibrary")
-local Azerite                                = LibStub("AzeriteTraits")
-local setmetatable                           = setmetatable
+-------------------------------
+-- Taste TMW Action Rotation --
+-------------------------------
+local TMW                                       = TMW
+local CNDT                                      = TMW.CNDT
+local Env                                       = CNDT.Env
+local Action                                    = Action
+local Listener                                  = Action.Listener
+local Create                                    = Create
+local GetToggle                                 = Action.GetToggle
+local SetToggle                                 = Action.SetToggle
+local GetGCD                                    = Action.GetGCD
+local GetCurrentGCD                             = Action.GetCurrentGCD
+local GetPing                                   = Action.GetPing
+local ShouldStop                                = Action.ShouldStop
+local BurstIsON                                 = Action.BurstIsON
+local AuraIsValid                               = Action.AuraIsValid
+local InterruptIsValid                          = Action.InterruptIsValid
+local FrameHasSpell                             = Action.FrameHasSpell
+local Azerite                                   = LibStub("AzeriteTraits")
+local Utils                                     = Action.Utils
+local TeamCache                                 = Action.TeamCache
+local EnemyTeam                                 = Action.EnemyTeam
+local FriendlyTeam                              = Action.FriendlyTeam
+local LoC                                       = Action.LossOfControl
+local Player                                    = Action.Player
+local MultiUnits                                = Action.MultiUnits
+local UnitCooldown                              = Action.UnitCooldown
+local Unit                                      = Action.Unit
+local IsUnitEnemy                               = Action.IsUnitEnemy
+local IsUnitFriendly                            = Action.IsUnitFriendly
+local HealingEngine                             = Action.HealingEngine
+local ActiveUnitPlates                          = MultiUnits:GetActiveUnitPlates()
+local TeamCacheFriendly                         = TeamCache.Friendly
+local TeamCacheFriendlyIndexToPLAYERs           = TeamCacheFriendly.IndexToPLAYERs
+local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
+local TR                                        = Action.TasteRotation
+local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert
+local select, unpack, table                     = select, unpack, table
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
+local _G, setmetatable, select, math            = _G, setmetatable, select, math
+local huge                                      = math.huge
+local UIParent                                  = _G.UIParent
+local CreateFrame                               = _G.CreateFrame
+local wipe                                      = _G.wipe
+local IsUsableSpell                             = IsUsableSpell
+local UnitPowerType                             = UnitPowerType
 
---- ============================ CONTENT ===========================
---- ======= APL LOCALS =======
--- luacheck: max_line_length 9999
+--- ============================ CONTENT =========================== ---
+--- ======================= SPELLS DECLARATION ===================== ---
 
--- Spells
 Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     -- Racial
-    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
-    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
-    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
-    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
-    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
-    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
-    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
-    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
-    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
-    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
-    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
-    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    ArcaneTorrent                          = Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
-    RemorselessWinter                      = Action.Create({ Type = "Spell", ID = 196770 }),
-    GatheringStorm                         = Action.Create({ Type = "Spell", ID = 194912 }),
-    FrozenTempest                          = Action.Create({ Type = "Spell", ID =  }),
-    RimeBuff                               = Action.Create({ Type = "Spell", ID =  }),
-    GlacialAdvance                         = Action.Create({ Type = "Spell", ID = 194913 }),
-    Frostscythe                            = Action.Create({ Type = "Spell", ID = 207230 }),
-    FrostStrike                            = Action.Create({ Type = "Spell", ID = 49143 }),
-    RazoriceDebuff                         = Action.Create({ Type = "Spell", ID = 51714 }),
-    HowlingBlast                           = Action.Create({ Type = "Spell", ID = 49184 }),
-    KillingMachineBuff                     = Action.Create({ Type = "Spell", ID = 51124 }),
-    RunicAttenuation                       = Action.Create({ Type = "Spell", ID = 207104 }),
-    Obliterate                             = Action.Create({ Type = "Spell", ID = 49020 }),
-    HornofWinter                           = Action.Create({ Type = "Spell", ID = 57330 }),
-    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613 }),
-    PillarofFrost                          = Action.Create({ Type = "Spell", ID = 51271 }),
-    ChainsofIce                            = Action.Create({ Type = "Spell", ID = 45524 }),
-    ColdHeartBuff                          = Action.Create({ Type = "Spell", ID =  }),
-    SeethingRageBuff                       = Action.Create({ Type = "Spell", ID =  }),
-    PillarofFrostBuff                      = Action.Create({ Type = "Spell", ID =  }),
-    FrostwyrmsFury                         = Action.Create({ Type = "Spell", ID = 279302 }),
-    IcyCitadel                             = Action.Create({ Type = "Spell", ID =  }),
-    BreathofSindragosaBuff                 = Action.Create({ Type = "Spell", ID = 155166 }),
-    Icecap                                 = Action.Create({ Type = "Spell", ID = 207126 }),
-    UnholyStrengthBuff                     = Action.Create({ Type = "Spell", ID = 53365 }),
-    IcyCitadelBuff                         = Action.Create({ Type = "Spell", ID =  }),
-    EmpoweredRuneWeapon                    = Action.Create({ Type = "Spell", ID =  }),
-    BreathofSindragosa                     = Action.Create({ Type = "Spell", ID = 152279 }),
-    EmpowerRuneWeapon                      = Action.Create({ Type = "Spell", ID = 47568 }),
-    EmpowerRuneWeaponBuff                  = Action.Create({ Type = "Spell", ID =  }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
-    Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
-    ArcanePulse                            = Action.Create({ Type = "Spell", ID =  }),
-    LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
-    BagofTricks                            = Action.Create({ Type = "Spell", ID =  }),
-    ColdHeart                              = Action.Create({ Type = "Spell", ID =  }),
-    Obliteration                           = Action.Create({ Type = "Spell", ID = 281238 }),
-    ChillStreak                            = Action.Create({ Type = "Spell", ID =  }),
-    ReapingFlames                          = Action.Create({ Type = "Spell", ID =  }),
-    FrozenPulseBuff                        = Action.Create({ Type = "Spell", ID =  }),
-    FrozenPulse                            = Action.Create({ Type = "Spell", ID = 194909 }),
-    FrostFeverDebuff                       = Action.Create({ Type = "Spell", ID =  }),
-    IcyTalonsBuff                          = Action.Create({ Type = "Spell", ID = 194879 })
+    RemorselessWinter                      = Create({ Type = "Spell", ID = 196770 }),
+    GatheringStorm                         = Create({ Type = "Spell", ID = 194912 }),
+    FrozenTempest                          = Create({ Type = "Spell", ID =  }),
+    RimeBuff                               = Create({ Type = "Spell", ID =  }),
+    GlacialAdvance                         = Create({ Type = "Spell", ID = 194913 }),
+    Frostscythe                            = Create({ Type = "Spell", ID = 207230 }),
+    FrostStrike                            = Create({ Type = "Spell", ID = 49143 }),
+    RazoriceDebuff                         = Create({ Type = "Spell", ID = 51714 }),
+    HowlingBlast                           = Create({ Type = "Spell", ID = 49184 }),
+    KillingMachineBuff                     = Create({ Type = "Spell", ID = 51124 }),
+    RunicAttenuation                       = Create({ Type = "Spell", ID = 207104 }),
+    Obliterate                             = Create({ Type = "Spell", ID = 49020 }),
+    HornofWinter                           = Create({ Type = "Spell", ID = 57330 }),
+    ArcaneTorrent                          = Create({ Type = "Spell", ID = 50613 }),
+    PillarofFrost                          = Create({ Type = "Spell", ID = 51271 }),
+    ChainsofIce                            = Create({ Type = "Spell", ID = 45524 }),
+    ColdHeartBuff                          = Create({ Type = "Spell", ID =  }),
+    SeethingRageBuff                       = Create({ Type = "Spell", ID =  }),
+    PillarofFrostBuff                      = Create({ Type = "Spell", ID =  }),
+    FrostwyrmsFury                         = Create({ Type = "Spell", ID = 279302 }),
+    IcyCitadel                             = Create({ Type = "Spell", ID =  }),
+    BreathofSindragosaBuff                 = Create({ Type = "Spell", ID = 155166 }),
+    Icecap                                 = Create({ Type = "Spell", ID = 207126 }),
+    UnholyStrengthBuff                     = Create({ Type = "Spell", ID = 53365 }),
+    IcyCitadelBuff                         = Create({ Type = "Spell", ID =  }),
+    EmpoweredRuneWeapon                    = Create({ Type = "Spell", ID =  }),
+    BreathofSindragosa                     = Create({ Type = "Spell", ID = 152279 }),
+    EmpowerRuneWeapon                      = Create({ Type = "Spell", ID = 47568 }),
+    EmpowerRuneWeaponBuff                  = Create({ Type = "Spell", ID =  }),
+    BloodFury                              = Create({ Type = "Spell", ID = 20572 }),
+    Berserking                             = Create({ Type = "Spell", ID = 26297 }),
+    ArcanePulse                            = Create({ Type = "Spell", ID =  }),
+    LightsJudgment                         = Create({ Type = "Spell", ID = 255647 }),
+    AncestralCall                          = Create({ Type = "Spell", ID = 274738 }),
+    Fireblood                              = Create({ Type = "Spell", ID = 265221 }),
+    BagofTricks                            = Create({ Type = "Spell", ID =  }),
+    ColdHeart                              = Create({ Type = "Spell", ID =  }),
+    Obliteration                           = Create({ Type = "Spell", ID = 281238 }),
+    ChillStreak                            = Create({ Type = "Spell", ID =  }),
+    ReapingFlames                          = Create({ Type = "Spell", ID =  }),
+    FrozenPulseBuff                        = Create({ Type = "Spell", ID =  }),
+    FrozenPulse                            = Create({ Type = "Spell", ID = 194909 }),
+    FrostFeverDebuff                       = Create({ Type = "Spell", ID =  }),
+    IcyTalonsBuff                          = Create({ Type = "Spell", ID = 194879 })
     -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    TrinketTest                            = Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
+    TrinketTest2                           = Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
+    RotcrustedVoodooDoll                   = Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
+    ShiverVenomRelic                       = Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
+    AquipotentNautilus                     = Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
+    TidestormCodex                         = Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
+    VialofStorms                           = Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
     -- Potions
-    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
+    PotionTest                             = Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
     -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    GenericTrinket1                        = Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
+    GenericTrinket2                        = Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
+    TrinketTest                            = Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
+    TrinketTest2                           = Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
+    ShiverVenomRelic                       = Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
+    AquipotentNautilus                     = Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
+    TidestormCodex                         = Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
+    VialofStorms                           = Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+    GalecallersBoon                        = Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
+    InvocationOfYulon                      = Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
+    ComputationDevice                      = Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
+    VigorTrinket                           = Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
+    FontOfPower                            = Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
+    RazorCoral                             = Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
     -- Misc
-    Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
-    TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
-    StopCast                               = Action.Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
-    CyclotronicBlast                       = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
-    ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
-    RazorCoralDebuff                       = Action.Create({ Type = "Spell", ID = 303568, Hidden = true     }),
-    ConductiveInkDebuff                    = Action.Create({ Type = "Spell", ID = 302565, Hidden = true     }),
-    -- Hidden Heart of Azeroth
-    -- added all 3 ranks ids in case used by rotation
-    VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
-    VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
-    VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
+    Channeling                             = Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
+    TargetEnemy                            = Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
+    StopCast                               = Create({ Type = "Spell", ID = 61721, Hidden = true     }),		-- spell_magic_polymorphrabbit
+    CyclotronicBlast                       = Create({ Type = "Spell", ID = 293491, Hidden = true}),
+    ConcentratedFlameBurn                  = Create({ Type = "Spell", ID = 295368, Hidden = true}),
+    RazorCoralDebuff                       = Create({ Type = "Spell", ID = 303568, Hidden = true     }),
+    ConductiveInkDebuff                    = Create({ Type = "Spell", ID = 302565, Hidden = true     }),
 };
 
 -- To create essences use next code:
