@@ -792,14 +792,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -808,6 +814,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -856,6 +863,7 @@ A[3] = function(icon, isMulti)
         
         --Build
         local function Build(unit)
+        
             -- pistol_shot,if=(talent.quick_draw.enabled|azerite.keep_your_wits_about_you.rank<2)&buff.opportunity.up&(buff.keep_your_wits_about_you.stack<14|energy<45)
             if A.PistolShot:IsReady(unit) and ((A.QuickDraw:IsSpellLearned() or A.KeepYourWitsAboutYou:GetAzeriteRank() < 2) and Unit("player"):HasBuffs(A.OpportunityBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.KeepYourWitsAboutYouBuff.ID, true) < 14 or Player:EnergyPredicted() < 45)) then
                 return A.PistolShot:Show(icon)
@@ -875,6 +883,7 @@ A[3] = function(icon, isMulti)
         
         --Cds
         local function Cds(unit)
+        
             -- call_action_list,name=essences,if=!stealthed.all
             if (not Unit("player"):IsStealthed(true, true)) then
                 if Essences(unit) then
@@ -973,6 +982,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- concentrated_flame,if=energy.time_to_max>1&!buff.blade_flurry.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and not Unit("player"):HasBuffs(A.BladeFlurryBuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
@@ -1033,6 +1043,7 @@ A[3] = function(icon, isMulti)
         
         --Finish
         local function Finish(unit)
+        
             -- between_the_eyes,if=variable.bte_condition
             if A.BetweentheEyes:IsReady(unit) and (VarBteCondition) then
                 return A.BetweentheEyes:Show(icon)
@@ -1062,6 +1073,7 @@ A[3] = function(icon, isMulti)
         
         --Stealth
         local function Stealth(unit)
+        
             -- cheap_shot,target_if=min:debuff.prey_on_the_weak.remains,if=talent.prey_on_the_weak.enabled&!target.is_boss
             if A.CheapShot:IsReady(unit) then
                 if Action.Utils.CastTargetIf(A.CheapShot, 40, "min", EvaluateTargetIfFilterCheapShot246, EvaluateTargetIfCheapShot255) then 
@@ -1077,10 +1089,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

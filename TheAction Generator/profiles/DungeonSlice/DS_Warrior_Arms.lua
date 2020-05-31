@@ -458,6 +458,7 @@ local function APL()
   UpdateExecuteID()
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -491,6 +492,7 @@ local function APL()
         
         --Execute
         local function Execute(unit)
+        
             -- skullsplitter,if=rage<60&buff.deadly_calm.down&buff.memory_of_lucid_dreams.down
             if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true) and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.Skullsplitter:Show(icon)
@@ -555,6 +557,7 @@ local function APL()
         
         --FiveUnit(unit)
         local function FiveUnit(unit)(unit)
+        
             -- skullsplitter,if=rage<60&(!talent.deadly_calm.enabled|buff.deadly_calm.down)
             if A.Skullsplitter:IsReady(unit) and (Player:Rage() < 60 and (not A.DeadlyCalm:IsSpellLearned() or Unit("player"):HasBuffsDown(A.DeadlyCalmBuff.ID, true))) then
                 return A.Skullsplitter:Show(icon)
@@ -624,6 +627,7 @@ local function APL()
         
         --Hac
         local function Hac(unit)
+        
             -- rend,if=remains<=duration*0.3&(!raid_event.adds.up|buff.sweeping_strikes.up)
             if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and (not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) or Unit("player"):HasBuffs(A.SweepingStrikesBuff.ID, true))) then
                 return A.Rend:Show(icon)
@@ -703,6 +707,7 @@ local function APL()
         
         --SingleUnit(unit)
         local function SingleUnit(unit)(unit)
+        
             -- rend,if=remains<=duration*0.3&debuff.colossus_smash.down
             if A.Rend:IsReady(unit) and (Unit(unit):HasDeBuffs(A.RendDebuff.ID, true) <= A.RendDebuff.ID, true:BaseDuration() * 0.3 and Unit(unit):HasDeBuffsDown(A.ColossusSmashDebuff.ID, true)) then
                 return A.Rend:Show(icon)
@@ -782,10 +787,8 @@ local function APL()
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
   if Everyone.TargetIsValid() then
             -- charge

@@ -458,14 +458,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -474,6 +480,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -522,6 +529,7 @@ A[3] = function(icon, isMulti)
         
         --Cds
         local function Cds(unit)
+        
             -- memory_of_lucid_dreams,if=(buff.voidform.stack>20&insanity<=50)|(current_insanity_drain*((gcd.max*2)+action.mind_blast.cast_time))>insanity
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((Unit("player"):HasBuffsStacks(A.VoidformBuff.ID, true) > 20 and Player:Insanity() <= 50) or (current_insanity_drain * ((A.GetGCD() * 2) + A.MindBlast:GetSpellCastTime())) > Player:Insanity()) then
                 return A.MemoryofLucidDreams:Show(icon)
@@ -584,6 +592,7 @@ A[3] = function(icon, isMulti)
         
         --Cleave
         local function Cleave(unit)
+        
             -- void_eruption
             if A.VoidEruption:IsReady(unit) then
                 return A.VoidEruption:Show(icon)
@@ -689,6 +698,7 @@ A[3] = function(icon, isMulti)
         
         --CritCds
         local function CritCds(unit)
+        
             -- use_item,name=azsharas_font_of_power
             if A.AzsharasFontofPower:IsReady(unit) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -708,6 +718,7 @@ A[3] = function(icon, isMulti)
         
         --Single
         local function Single(unit)
+        
             -- void_eruption
             if A.VoidEruption:IsReady(unit) then
                 return A.VoidEruption:Show(icon)
@@ -797,10 +808,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

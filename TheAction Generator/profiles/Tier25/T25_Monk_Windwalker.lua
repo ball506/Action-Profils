@@ -345,14 +345,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -361,6 +367,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -410,6 +417,7 @@ A[3] = function(icon, isMulti)
         
         --Aoe
         local function Aoe(unit)
+        
             -- whirling_dragon_punch
             if A.WhirlingDragonPunch:IsReady(unit) then
                 return A.WhirlingDragonPunch:Show(icon)
@@ -483,6 +491,7 @@ A[3] = function(icon, isMulti)
         
         --CdSef
         local function CdSef(unit)
+        
             -- invoke_xuen_the_white_tiger,if=buff.serenity.down|target.time_to_die<25
             if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.InvokeXuentheWhiteTiger:Show(icon)
@@ -602,6 +611,7 @@ A[3] = function(icon, isMulti)
         
         --CdSerenity
         local function CdSerenity(unit)
+        
             -- invoke_xuen_the_white_tiger,if=buff.serenity.down|target.time_to_die<25
             if A.InvokeXuentheWhiteTiger:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.InvokeXuentheWhiteTiger:Show(icon)
@@ -716,6 +726,7 @@ A[3] = function(icon, isMulti)
         
         --Serenity
         local function Serenity(unit)
+        
             -- fists_of_fury,if=buff.serenity.remains<1|active_enemies>1
             if A.FistsofFury:IsReady(unit) and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) < 1 or MultiUnits:GetByRangeInCombat(8, 5, 10) > 1) then
                 return A.FistsofFury:Show(icon)
@@ -763,6 +774,7 @@ A[3] = function(icon, isMulti)
         
         --St
         local function St(unit)
+        
             -- whirling_dragon_punch
             if A.WhirlingDragonPunch:IsReady(unit) then
                 return A.WhirlingDragonPunch:Show(icon)
@@ -848,10 +860,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

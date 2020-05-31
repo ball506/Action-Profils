@@ -984,14 +984,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -1000,6 +1006,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -1038,6 +1045,7 @@ A[3] = function(icon, isMulti)
         
         --Cds
         local function Cds(unit)
+        
             -- use_item,name=azsharas_font_of_power,if=!stealthed.all&master_assassin_remains=0&(cooldown.vendetta.remains<?(cooldown.toxic_blade.remains*equipped.ashvanes_razor_coral))<10+10*equipped.ashvanes_razor_coral&!debuff.vendetta.up&!debuff.toxic_blade.up
             if A.AzsharasFontofPower:IsReady(unit) and (not Unit("player"):IsStealthed(true, true) and MasterAssassinRemains == 0 and num((A.Vendetta:GetCooldown() < ?{})) < 10 + 10 * num(A.AshvanesRazorCoral:IsExists()) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -1193,6 +1201,7 @@ A[3] = function(icon, isMulti)
         
         --Direct
         local function Direct(unit)
+        
             -- envenom,if=combo_points>=4+talent.deeper_stratagem.enabled&(debuff.vendetta.up|debuff.toxic_blade.up|energy.deficit<=25+variable.energy_regen_combined|!variable.single_target)&(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)
             if A.Envenom:IsReady(unit) and (Player:ComboPoints() >= 4 + num(A.DeeperStratagem:IsSpellLearned()) and (Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) or Player:EnergyDeficitPredicted() <= 25 + VarEnergyRegenCombined or not VarSingleUnit(unit)) and (not A.Exsanguinate:IsSpellLearned() or A.Exsanguinate:GetCooldown() > 2)) then
                 return A.Envenom:Show(icon)
@@ -1237,6 +1246,7 @@ A[3] = function(icon, isMulti)
         
         --Dot
         local function Dot(unit)
+        
             -- variable,name=skip_cycle_garrote,value=priority_rotation&spell_targets.fan_of_knives>3&(dot.garrote.remains<cooldown.garrote.duration|poisoned_bleeds>5)
             VarSkipCycleGarrote = num(priority_rotation and MultiUnits:GetByRangeInCombat(10, 5, 10) > 3 and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < A.Garrote:BaseDuration() or PoisonedBleeds() > 5))
             
@@ -1298,6 +1308,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- concentrated_flame,if=energy.time_to_max>1&!debuff.vendetta.up&(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyTimeToMaxPredicted() > 1 and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
@@ -1363,6 +1374,7 @@ A[3] = function(icon, isMulti)
         
         --Stealthed
         local function Stealthed(unit)
+        
             -- rupture,if=talent.nightstalker.enabled&combo_points>=4&target.time_to_die-remains>6
             if A.Rupture:IsReady(unit) and (A.Nightstalker:IsSpellLearned() and Player:ComboPoints() >= 4 and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) > 6) then
                 return A.Rupture:Show(icon)
@@ -1411,10 +1423,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

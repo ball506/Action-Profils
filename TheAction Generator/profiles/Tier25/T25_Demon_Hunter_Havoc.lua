@@ -750,14 +750,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -766,6 +772,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -789,6 +796,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldown
         local function Cooldown(unit)
+        
             -- metamorphosis,if=!(talent.demonic.enabled|variable.pooling_for_meta|variable.waiting_for_nemesis)|target.time_to_die<25
             if A.Metamorphosis:IsReady(unit) and (not (A.Demonic:IsSpellLearned() or VarPoolingForMeta or VarWaitingForNemesis) or Unit(unit):TimeToDie() < 25) then
                 return A.Metamorphosis:Show(icon)
@@ -845,6 +853,7 @@ A[3] = function(icon, isMulti)
         
         --DarkSlash
         local function DarkSlash(unit)
+        
             -- dark_slash,if=fury>=80&(!variable.blade_dance|!cooldown.blade_dance.ready)
             if A.DarkSlash:IsReady(unit) and (Player:Fury() >= 80 and (not VarBladeDance or not A.BladeDance:GetCooldown() == 0)) then
                 return A.DarkSlash:Show(icon)
@@ -864,6 +873,7 @@ A[3] = function(icon, isMulti)
         
         --Demonic
         local function Demonic(unit)
+        
             -- death_sweep,if=variable.blade_dance
             if A.DeathSweep:IsReady(unit) and (VarBladeDance) then
                 return A.DeathSweep:Show(icon)
@@ -938,6 +948,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- variable,name=fel_barrage_sync,if=talent.fel_barrage.enabled,value=cooldown.fel_barrage.ready&(((!talent.demonic.enabled|buff.metamorphosis.up)&!variable.waiting_for_momentum&raid_event.adds.in>30)|active_enemies>desired_targets)
             if (A.FelBarrage:IsSpellLearned()) then
                 VarFelBarrageSync = num(A.FelBarrage:GetCooldown() == 0 and (((not A.Demonic:IsSpellLearned() or Unit("player"):HasBuffs(A.MetamorphosisBuff.ID, true)) and not VarWaitingForMomentum and IncomingAddsIn > 30) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 1))
@@ -1008,6 +1019,7 @@ A[3] = function(icon, isMulti)
         
         --Normal
         local function Normal(unit)
+        
             -- vengeful_retreat,if=talent.momentum.enabled&buff.prepared.down&time>1
             if A.VengefulRetreat:IsReady(unit) and (A.Momentum:IsSpellLearned() and Unit("player"):HasBuffsDown(A.PreparedBuff.ID, true) and Unit("player"):CombatTime() > 1) then
                 return A.VengefulRetreat:Show(icon)
@@ -1102,10 +1114,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

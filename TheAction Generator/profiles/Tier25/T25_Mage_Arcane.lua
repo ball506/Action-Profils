@@ -590,14 +590,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -606,6 +612,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -655,6 +662,7 @@ A[3] = function(icon, isMulti)
         
         --Burn
         local function Burn(unit)
+        
             -- variable,name=total_burns,op=add,value=1,if=!burn_phase
             if (not BurnPhase:On()) then
                 VarTotalBurns = VarTotalBurns + 1
@@ -783,6 +791,7 @@ A[3] = function(icon, isMulti)
         
         --Conserve
         local function Conserve(unit)
+        
             -- mirror_image
             if A.MirrorImage:IsReady(unit) and A.BurstIsON(unit) then
                 return A.MirrorImage:Show(icon)
@@ -857,6 +866,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- blood_of_the_enemy,if=burn_phase&buff.arcane_power.down&buff.rune_of_power.down&buff.arcane_charge.stack=buff.arcane_charge.max_stack|time_to_die<cooldown.arcane_power.remains
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (BurnPhase:On() and Unit("player"):HasBuffsDown(A.ArcanePowerBuff.ID, true) and Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and Unit("player"):ArcaneChargesP == Unit("player"):ArcaneChargesMax or Unit(unit):TimeToDie() < A.ArcanePower:GetCooldown()) then
                 return A.BloodoftheEnemy:Show(icon)
@@ -911,6 +921,7 @@ A[3] = function(icon, isMulti)
         
         --Movement
         local function Movement(unit)
+        
             -- blink_any,if=movement.distance>=10
             if A.BlinkAny:IsReady(unit) and (Unit(unit):GetRange() >= 10) then
                 return A.BlinkAny:Show(icon)

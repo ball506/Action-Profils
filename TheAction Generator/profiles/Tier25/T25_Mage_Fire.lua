@@ -393,14 +393,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -409,6 +415,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -478,6 +485,7 @@ A[3] = function(icon, isMulti)
         
         --ActiveTalents
         local function ActiveTalents(unit)
+        
             -- living_bomb,if=active_enemies>1&buff.combustion.down&(variable.time_to_combustion>cooldown.living_bomb.duration|variable.time_to_combustion<=0|variable.disable_combustion)
             if A.LivingBomb:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 and Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true) and (VarTimeToCombustion > A.LivingBomb:BaseDuration() or VarTimeToCombustion <= 0 or VarDisableCombustion)) then
                 return A.LivingBomb:Show(icon)
@@ -497,6 +505,7 @@ A[3] = function(icon, isMulti)
         
         --CombustionPhase
         local function CombustionPhase(unit)
+        
             -- lights_judgment,if=buff.combustion.down
             if A.LightsJudgment:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.CombustionBuff.ID, true)) then
                 return A.LightsJudgment:Show(icon)
@@ -626,6 +635,7 @@ A[3] = function(icon, isMulti)
         
         --ItemsCombustion
         local function ItemsCombustion(unit)
+        
             -- use_item,name=ignition_mages_fuse
             if A.IgnitionMagesFuse:IsReady(unit) then
                 return A.IgnitionMagesFuse:Show(icon)
@@ -695,6 +705,7 @@ A[3] = function(icon, isMulti)
         
         --ItemsHighPriority
         local function ItemsHighPriority(unit)
+        
             -- call_action_list,name=items_combustion,if=!variable.disable_combustion&variable.time_to_combustion<=0
             if (not VarDisableCombustion and VarTimeToCombustion <= 0) then
                 if ItemsCombustion(unit) then
@@ -757,6 +768,7 @@ A[3] = function(icon, isMulti)
         
         --ItemsLowPriority
         local function ItemsLowPriority(unit)
+        
             -- use_item,name=tidestorm_codex,if=variable.time_to_combustion>variable.on_use_cutoff|variable.disable_combustion
             if A.TidestormCodex:IsReady(unit) and (VarTimeToCombustion > VarOnUseCutoff or VarDisableCombustion) then
                 return A.TidestormCodex:Show(icon)
@@ -771,6 +783,7 @@ A[3] = function(icon, isMulti)
         
         --RopPhase
         local function RopPhase(unit)
+        
             -- flamestrike,if=(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&buff.hot_streak.react
             if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Flamestrike:Show(icon)
@@ -840,6 +853,7 @@ A[3] = function(icon, isMulti)
         
         --StandardRotation
         local function StandardRotation(unit)
+        
             -- flamestrike,if=(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&buff.hot_streak.react
             if A.Flamestrike:IsReady(unit) and ((MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true)) then
                 return A.Flamestrike:Show(icon)

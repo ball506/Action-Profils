@@ -489,14 +489,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -505,6 +511,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -528,6 +535,7 @@ A[3] = function(icon, isMulti)
         
         --Cleave
         local function Cleave(unit)
+        
             -- maul,if=rage.deficit<=10
             if A.Maul:IsReady(unit) and (Player:RageDeficit() <= 10) then
                 return A.Maul:Show(icon)
@@ -580,6 +588,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldowns
         local function Cooldowns(unit)
+        
             -- potion
             if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.PotionofSpectralAgility:Show(icon)
@@ -655,6 +664,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- concentrated_flame,if=essence.the_crucible_of_flame.major&((!dot.concentrated_flame_burn.ticking&!action.concentrated_flame_missile.in_flight)^time_to_die<=7)
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID) and ({}^time_to_die <= 7)) then
                 return A.ConcentratedFlame:Show(icon)
@@ -684,6 +694,7 @@ A[3] = function(icon, isMulti)
         
         --Multi
         local function Multi(unit)
+        
             -- maul,if=essence.conflict_and_strife.major&!buff.sharpened_claws.up
             if A.Maul:IsReady(unit) and (Azerite:EssenceHasMajor(A.ConflictandStrife.ID) and not Unit("player"):HasBuffs(A.SharpenedClawsBuff.ID, true)) then
                 return A.Maul:Show(icon)
@@ -718,10 +729,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

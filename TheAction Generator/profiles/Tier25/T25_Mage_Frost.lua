@@ -383,14 +383,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -399,6 +405,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -437,6 +444,7 @@ A[3] = function(icon, isMulti)
         
         --Aoe
         local function Aoe(unit)
+        
             -- frozen_orb
             if A.FrozenOrb:IsReady(unit) then
                 return A.FrozenOrb:Show(icon)
@@ -521,6 +529,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldowns
         local function Cooldowns(unit)
+        
             -- guardian_of_azeroth
             if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
                 return A.GuardianofAzeroth:Show(icon)
@@ -593,6 +602,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- focused_azerite_beam,if=buff.rune_of_power.down|active_enemies>3
             if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) or MultiUnits:GetByRangeInCombat(40, 5, 10) > 3) then
                 return A.FocusedAzeriteBeam:Show(icon)
@@ -642,6 +652,7 @@ A[3] = function(icon, isMulti)
         
         --Movement
         local function Movement(unit)
+        
             -- blink_any,if=movement.distance>10
             if A.BlinkAny:IsReady(unit) and (Unit(unit):GetRange() > 10) then
                 return A.BlinkAny:Show(icon)
@@ -656,6 +667,7 @@ A[3] = function(icon, isMulti)
         
         --Single
         local function Single(unit)
+        
             -- ice_nova,if=cooldown.ice_nova.ready&debuff.winters_chill.up
             if A.IceNova:IsReady(unit) and (A.IceNova:GetCooldown() == 0 and Unit(unit):HasDeBuffs(A.WintersChillDebuff.ID, true)) then
                 return A.IceNova:Show(icon)
@@ -740,6 +752,7 @@ A[3] = function(icon, isMulti)
         
         --TalentRop
         local function TalentRop(unit)
+        
             -- rune_of_power,if=buff.rune_of_power.down&talent.glacial_spike.enabled&buff.icicles.stack=5&(buff.brain_freeze.react|talent.ebonbolt.enabled&cooldown.ebonbolt.remains<cast_time)
             if A.RuneofPower:IsReady(unit) and (Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and A.GlacialSpike:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true) == 5 and (Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true) or A.Ebonbolt:IsSpellLearned() and A.Ebonbolt:GetCooldown() < A.RuneofPower:GetSpellCastTime())) then
                 return A.RuneofPower:Show(icon)

@@ -645,14 +645,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -661,6 +667,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -682,6 +689,7 @@ A[3] = function(icon, isMulti)
         
         --Aoe
         local function Aoe(unit)
+        
             -- remorseless_winter,if=talent.gathering_storm.enabled|(azerite.frozen_tempest.rank&spell_targets.remorseless_winter>=3&!buff.rime.up)
             if A.RemorselessWinter:IsReady(unit) and (A.GatheringStorm:IsSpellLearned() or (A.FrozenTempest:GetAzeriteRank() and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 3 and not Unit("player"):HasBuffs(A.RimeBuff.ID, true))) then
                 return A.RemorselessWinter:Show(icon)
@@ -780,6 +788,7 @@ A[3] = function(icon, isMulti)
         
         --BosPooling
         local function BosPooling(unit)
+        
             -- howling_blast,if=buff.rime.up
             if A.HowlingBlast:IsReady(unit) and (Unit("player"):HasBuffs(A.RimeBuff.ID, true)) then
                 return A.HowlingBlast:Show(icon)
@@ -853,6 +862,7 @@ A[3] = function(icon, isMulti)
         
         --BosTicking
         local function BosTicking(unit)
+        
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&runic_power<=32&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
                 if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate236) then
@@ -925,6 +935,7 @@ A[3] = function(icon, isMulti)
         
         --ColdHeart
         local function ColdHeart(unit)
+        
             -- chains_of_ice,if=buff.cold_heart.stack>5&target.1.time_to_die<gcd
             if A.ChainsofIce:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.ColdHeartBuff.ID, true) > 5 and target.1.time_to_die < A.GetGCD()) then
                 return A.ChainsofIce:Show(icon)
@@ -969,6 +980,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldowns
         local function Cooldowns(unit)
+        
             -- use_item,name=azsharas_font_of_power,if=(cooldown.empowered_rune_weapon.ready&!variable.other_on_use_equipped)|(cooldown.pillar_of_frost.remains<=10&variable.other_on_use_equipped)
             if A.AzsharasFontofPower:IsReady(unit) and ((A.EmpoweredRuneWeapon:GetCooldown() == 0 and not VarOtherOnUseEquipped) or (A.PillarofFrost:GetCooldown() <= 10 and VarOtherOnUseEquipped)) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -1111,6 +1123,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)
             if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or A.Obliteration:IsSpellLearned() or A.Icecap:IsSpellLearned() and not A.IcyCitadel:GetAzeriteRank() > 0) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) and A.Icecap:IsSpellLearned())) then
                 return A.BloodoftheEnemy:Show(icon)
@@ -1170,6 +1183,7 @@ A[3] = function(icon, isMulti)
         
         --Obliteration
         local function Obliteration(unit)
+        
             -- remorseless_winter,if=talent.gathering_storm.enabled
             if A.RemorselessWinter:IsReady(unit) and (A.GatheringStorm:IsSpellLearned()) then
                 return A.RemorselessWinter:Show(icon)
@@ -1243,6 +1257,7 @@ A[3] = function(icon, isMulti)
         
         --Standard
         local function Standard(unit)
+        
             -- remorseless_winter
             if A.RemorselessWinter:IsReady(unit) then
                 return A.RemorselessWinter:Show(icon)
@@ -1302,10 +1317,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

@@ -56,22 +56,22 @@ local UnitPowerType                             = UnitPowerType
 
 Action[ACTION_CONST_DEATHKNIGHT_BLOOD] = {
     -- Racial
-    ArcaneTorrent                          = Action.Create({ Type = "Spell", ID = 50613     }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572      }),
-    Fireblood                              = Action.Create({ Type = "Spell", ID = 265221     }),
-    AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738     }),
-    Berserking                             = Action.Create({ Type = "Spell", ID = 26297    }),
-    ArcanePulse                            = Action.Create({ Type = "Spell", ID = 260364    }),
-    QuakingPalm                            = Action.Create({ Type = "Spell", ID = 107079     }),
-    Haymaker                               = Action.Create({ Type = "Spell", ID = 287712     }), 
-    WarStomp                               = Action.Create({ Type = "Spell", ID = 20549     }),
-    BullRush                               = Action.Create({ Type = "Spell", ID = 255654     }),  
-    GiftofNaaru                            = Action.Create({ Type = "Spell", ID = 59544    }),
-    Shadowmeld                             = Action.Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
-    Stoneform                              = Action.Create({ Type = "Spell", ID = 20594    }), 
-    WilloftheForsaken                      = Action.Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
-    EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
-    EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
+    ArcaneTorrent                          = Create({ Type = "Spell", ID = 50613     }),
+    BloodFury                              = Create({ Type = "Spell", ID = 20572      }),
+    Fireblood                              = Create({ Type = "Spell", ID = 265221     }),
+    AncestralCall                          = Create({ Type = "Spell", ID = 274738     }),
+    Berserking                             = Create({ Type = "Spell", ID = 26297    }),
+    ArcanePulse                            = Create({ Type = "Spell", ID = 260364    }),
+    QuakingPalm                            = Create({ Type = "Spell", ID = 107079     }),
+    Haymaker                               = Create({ Type = "Spell", ID = 287712     }), 
+    WarStomp                               = Create({ Type = "Spell", ID = 20549     }),
+    BullRush                               = Create({ Type = "Spell", ID = 255654     }),  
+    GiftofNaaru                            = Create({ Type = "Spell", ID = 59544    }),
+    Shadowmeld                             = Create({ Type = "Spell", ID = 58984    }), -- usable in Action Core 
+    Stoneform                              = Create({ Type = "Spell", ID = 20594    }), 
+    WilloftheForsaken                      = Create({ Type = "Spell", ID = 7744        }), -- not usable in APL but user can Queue it   
+    EscapeArtist                           = Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
+    EveryManforHimself                     = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
     DancingRuneWeaponBuff                  = Create({ Type = "Spell", ID = 81256 }),
     AnimaofDeath                           = Create({ Type = "Spell", ID =  }),
@@ -615,14 +615,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -631,6 +637,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -654,6 +661,7 @@ A[3] = function(icon, isMulti)
         
         --Essences
         local function Essences(unit)
+        
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains<2&!buff.dancing_rune_weapon.up
             if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) < 2 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.ConcentratedFlame:Show(icon)
@@ -683,6 +691,7 @@ A[3] = function(icon, isMulti)
         
         --Standard
         local function Standard(unit)
+        
             -- death_strike,if=runic_power.deficit<=10
             if A.DeathStrike:IsReady(unit) and (Player:RunicPowerDeficit() <= 10) then
                 return A.DeathStrike:Show(icon)
@@ -777,10 +786,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

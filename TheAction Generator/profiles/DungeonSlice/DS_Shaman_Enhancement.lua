@@ -648,14 +648,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -664,6 +670,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -687,6 +694,7 @@ A[3] = function(icon, isMulti)
         
         --Asc
         local function Asc(unit)
+        
             -- crash_lightning,if=!buff.crash_lightning.up&active_enemies>1&variable.furyCheck_CL
             if A.CrashLightning:IsReady(unit) and (not Unit("player"):HasBuffs(A.CrashLightningBuff.ID, true) and MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
@@ -706,6 +714,7 @@ A[3] = function(icon, isMulti)
         
         --Cds
         local function Cds(unit)
+        
             -- bloodlust,if=azerite.ancestral_resonance.enabled
             -- worldvein_resonance
             if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
@@ -783,6 +792,7 @@ A[3] = function(icon, isMulti)
         
         --DefaultCore
         local function DefaultCore(unit)
+        
             -- earthen_spike,if=variable.furyCheck_ES
             if A.EarthenSpike:IsReady(unit) and (VarFurycheckEs) then
                 return A.EarthenSpike:Show(icon)
@@ -818,6 +828,7 @@ A[3] = function(icon, isMulti)
         
         --Filler
         local function Filler(unit)
+        
             -- sundering,if=raid_event.adds.in>40
             if A.Sundering:IsReady(unit) and (IncomingAddsIn > 40) then
                 return A.Sundering:Show(icon)
@@ -917,6 +928,7 @@ A[3] = function(icon, isMulti)
         
         --FreezerburnCore
         local function FreezerburnCore(unit)
+        
             -- lava_lash,target_if=max:debuff.primal_primer.stack,if=azerite.primal_primer.rank>=2&debuff.primal_primer.stack=10&variable.furyCheck_LL&variable.CLPool_LL
             if A.LavaLash:IsReady(unit) then
                 if Action.Utils.CastTargetIf(A.LavaLash, 40, "max", EvaluateTargetIfFilterLavaLash285, EvaluateTargetIfLavaLash300) then 
@@ -968,6 +980,7 @@ A[3] = function(icon, isMulti)
         
         --Maintenance
         local function Maintenance(unit)
+        
             -- flametongue,if=!buff.flametongue.up
             if A.Flametongue:IsReady(unit) and (not Unit("player"):HasBuffs(A.FlametongueBuff.ID, true)) then
                 return A.Flametongue:Show(icon)
@@ -982,6 +995,7 @@ A[3] = function(icon, isMulti)
         
         --Opener
         local function Opener(unit)
+        
             -- rockbiter,if=maelstrom<15&time<gcd
             if A.Rockbiter:IsReady(unit) and (Player:Maelstrom() < 15 and Unit("player"):CombatTime() < A.GetGCD()) then
                 return A.Rockbiter:Show(icon)
@@ -991,6 +1005,7 @@ A[3] = function(icon, isMulti)
         
         --Priority
         local function Priority(unit)
+        
             -- crash_lightning,if=active_enemies>=(8-(talent.forceful_winds.enabled*3))&variable.freezerburn_enabled&variable.furyCheck_CL
             if A.CrashLightning:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) >= (8 - (num(A.ForcefulWinds:IsSpellLearned()) * 3)) and VarFreezerburnEnabled and VarFurycheckCl) then
                 return A.CrashLightning:Show(icon)
@@ -1070,10 +1085,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

@@ -520,14 +520,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -536,6 +542,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -589,6 +596,7 @@ A[3] = function(icon, isMulti)
         
         --Cds
         local function Cds(unit)
+        
             -- hunters_mark,if=debuff.hunters_mark.down&!buff.trueshot.up
             if A.HuntersMark:IsReady(unit) and (Unit(unit):HasDeBuffsDown(A.HuntersMarkDebuff.ID, true) and not Unit("player"):HasBuffs(A.TrueshotBuff.ID, true)) then
                 return A.HuntersMark:Show(icon)
@@ -668,6 +676,7 @@ A[3] = function(icon, isMulti)
         
         --St
         local function St(unit)
+        
             -- explosive_shot
             if A.ExplosiveShot:IsReady(unit) then
                 return A.ExplosiveShot:Show(icon)
@@ -752,6 +761,7 @@ A[3] = function(icon, isMulti)
         
         --Trickshots
         local function Trickshots(unit)
+        
             -- barrage
             if A.Barrage:IsReady(unit) then
                 return A.Barrage:Show(icon)
@@ -836,10 +846,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

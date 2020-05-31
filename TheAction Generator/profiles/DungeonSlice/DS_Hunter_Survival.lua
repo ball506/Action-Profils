@@ -465,6 +465,7 @@ local function APL()
   S.MongooseBite = CurrentMongooseBite()
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -513,6 +514,7 @@ local function APL()
         
         --Apst
         local function Apst(unit)
+        
             -- mongoose_bite,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
             if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD())) then
                 return A.MongooseBite:Show(icon)
@@ -589,6 +591,7 @@ local function APL()
         
         --Apwfi
         local function Apwfi(unit)
+        
             -- mongoose_bite,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
             if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < A.GetGCD()) then
                 return A.MongooseBite:Show(icon)
@@ -685,6 +688,7 @@ local function APL()
         
         --Cds
         local function Cds(unit)
+        
             -- blood_fury,if=cooldown.coordinated_assault.remains>30
             if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
                 return A.BloodFury:Show(icon)
@@ -804,6 +808,7 @@ local function APL()
         
         --Cleave
         local function Cleave(unit)
+        
             -- variable,name=carve_cdr,op=setif,value=active_enemies,value_else=5,condition=active_enemies<5
             if  then
                 if Action.Utils.CastTargetIf(VarCarveCdr, 8, "min", EvaluateCycleCarveCdr564) then
@@ -926,6 +931,7 @@ local function APL()
         
         --St
         local function St(unit)
+        
             -- harpoon,if=talent.terms_of_engagement.enabled
             if A.Harpoon:IsReady(unit) and (A.TermsofEngagement:IsSpellLearned()) then
                 return A.Harpoon:Show(icon)
@@ -1006,6 +1012,7 @@ local function APL()
         
         --Wfi
         local function Wfi(unit)
+        
             -- harpoon,if=focus+cast_regen<focus.max&talent.terms_of_engagement.enabled
             if A.Harpoon:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.Harpoon:GetSpellCastTime) < Player:FocusMax() and A.TermsofEngagement:IsSpellLearned()) then
                 return A.Harpoon:Show(icon)
@@ -1107,10 +1114,8 @@ local function APL()
   if Everyone.TargetIsValid() then
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
             -- auto_attack
             -- use_items

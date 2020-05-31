@@ -583,14 +583,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -599,6 +605,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -645,6 +652,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldowns
         local function Cooldowns(unit)
+        
             -- berserk,if=energy>=30&(cooldown.tigers_fury.remains>5|buff.tigers_fury.up)
             if A.Berserk:IsReady(unit) and A.BurstIsON(unit) and (Player:EnergyPredicted() >= 30 and (A.TigersFury:GetCooldown() > 5 or Unit("player"):HasBuffs(A.TigersFuryBuff.ID, true))) then
                 return A.Berserk:Show(icon)
@@ -761,6 +769,7 @@ A[3] = function(icon, isMulti)
         
         --Finishers
         local function Finishers(unit)
+        
             -- pool_resource,for_next=1
             -- savage_roar,if=buff.savage_roar.down
             if A.SavageRoar:IsReady(unit) and (Unit("player"):HasBuffsDown(A.SavageRoarBuff.ID, true)) then
@@ -822,6 +831,7 @@ A[3] = function(icon, isMulti)
         
         --Generators
         local function Generators(unit)
+        
             -- regrowth,if=talent.bloodtalons.enabled&buff.predatory_swiftness.up&buff.bloodtalons.down&combo_points=4&dot.rake.remains<4
             if A.Regrowth:IsReady(unit) and (A.Bloodtalons:IsSpellLearned() and Unit("player"):HasBuffs(A.PredatorySwiftnessBuff.ID, true) and Unit("player"):HasBuffsDown(A.BloodtalonsBuff.ID, true) and Player:ComboPoints() == 4 and Unit(unit):HasDeBuffs(A.RakeDebuff.ID, true) < 4) then
                 return A.Regrowth:Show(icon)
@@ -931,6 +941,7 @@ A[3] = function(icon, isMulti)
         
         --Opener
         local function Opener(unit)
+        
             -- tigers_fury
             if A.TigersFury:IsReady(unit) then
                 return A.TigersFury:Show(icon)
@@ -959,10 +970,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

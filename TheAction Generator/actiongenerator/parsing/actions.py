@@ -60,7 +60,7 @@ class ActionList:
         actions = self.print_actions_lua()
         function_name = self.name.print_lua()
         return (f'--{function_name}\n'
-                f'local function {function_name}(unit)\n'
+                f'local function {function_name}(unit)\n\n'
                 f'{actions}\n'
                 f'end\n')
 
@@ -410,7 +410,7 @@ class PrecombatAction(Action):
         exec_cast = self.execution().object_().print_cast()
         lua_string += (
             '\n'
-            f'if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then \n'
-            f'    {exec_cast}\n'
-            f'end')
+            'if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then \n'
+            '    return true\n'
+            'end')
         return indent(indent(lua_string))

@@ -355,14 +355,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -371,6 +377,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- augmentation
             -- food
@@ -389,6 +396,7 @@ A[3] = function(icon, isMulti)
         
         --Brand
         local function Brand(unit)
+        
             -- sigil_of_flame,if=cooldown.fiery_brand.remains<2
             if A.SigilofFlame:IsReady(unit) and (A.FieryBrand:GetCooldown() < 2) then
                 return A.SigilofFlame:Show(icon)
@@ -428,6 +436,7 @@ A[3] = function(icon, isMulti)
         
         --Cooldowns
         local function Cooldowns(unit)
+        
             -- potion
             if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
                 return A.PotionofSpectralAgility:Show(icon)
@@ -468,6 +477,7 @@ A[3] = function(icon, isMulti)
         
         --Defensives
         local function Defensives(unit)
+        
             -- demon_spikes
             if A.DemonSpikes:IsReady(unit) then
                 return A.DemonSpikes:Show(icon)
@@ -487,6 +497,7 @@ A[3] = function(icon, isMulti)
         
         --Normal
         local function Normal(unit)
+        
             -- infernal_strike,if=(!talent.flame_crash.enabled|(dot.sigil_of_flame.remains<3&!action.infernal_strike.sigil_placed))
             if A.InfernalStrike:IsReady(unit) and ((not A.FlameCrash:IsSpellLearned() or (Unit(unit):HasDeBuffs(A.SigilofFlameDebuff.ID, true) < 3 and not action.infernal_strike.sigil_placed))) then
                 return A.InfernalStrike:Show(icon)
@@ -546,10 +557,8 @@ A[3] = function(icon, isMulti)
         
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
-            if Precombat(unit) then
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
             return true
-        end
         end
 
         -- In Combat

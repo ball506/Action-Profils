@@ -806,14 +806,20 @@ end
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
+
     --------------------
     --- ROTATION VAR ---
     --------------------
     local isMoving = A.Player:IsMoving()
-    local inCombat = Unit("player"):CombatTime() > 0
+    local isMovingFor = A.Player:IsMovingTime()
+    local inCombat = Unit(player):CombatTime() > 0
+    local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
     local Pull = Action.BossMods_Pulling()
-    local unit = "player"
+    local DBM = Action.GetToggle(1, "DBM")
+    local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
+    local Racial = Action.GetToggle(1, "Racial")
+    local Potion = Action.GetToggle(1, "Potion")
 
     ------------------------------------------------------
     ---------------- ENEMY UNIT ROTATION -----------------
@@ -822,6 +828,7 @@ A[3] = function(icon, isMulti)
 
         --Precombat
         local function Precombat(unit)
+        
             -- flask
             -- food
             -- augmentation
@@ -850,6 +857,7 @@ A[3] = function(icon, isMulti)
         
         --BuildAShard
         local function BuildAShard(unit)
+        
             -- memory_of_lucid_dreams,if=soul_shard<2
             if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:SoulShardsP < 2) then
                 return A.MemoryofLucidDreams:Show(icon)
@@ -869,6 +877,7 @@ A[3] = function(icon, isMulti)
         
         --Implosion
         local function Implosion(unit)
+        
             -- implosion,if=(buff.wild_imps.stack>=6&(soul_shard<3|prev_gcd.1.call_dreadstalkers|buff.wild_imps.stack>=9|prev_gcd.1.bilescourge_bombers|(!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan))&!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&buff.demonic_power.down)|(time_to_die<3&buff.wild_imps.stack>0)|(prev_gcd.2.call_dreadstalkers&buff.wild_imps.stack>2&!talent.demonic_calling.enabled)
             if A.Implosion:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 6 and (Player:SoulShardsP < 3 or Unit("player"):GetSpellLastCast(A.CallDreadstalkers) or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 9 or Unit("player"):GetSpellLastCast(A.BilescourgeBombers) or (not Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):GetSpellLastCast(A.HandofGuldan))) and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true)) or (Unit(unit):TimeToDie() < 3 and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 0) or (Unit("player"):GetSpellLastCast(A.CallDreadstalkers) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 2 and not A.DemonicCalling:IsSpellLearned())) then
                 return A.Implosion:Show(icon)
@@ -959,6 +968,7 @@ A[3] = function(icon, isMulti)
         
         --NetherPortal
         local function NetherPortal(unit)
+        
             -- call_action_list,name=nether_portal_building,if=cooldown.nether_portal.remains<20
             if (A.NetherPortal:GetCooldown() < 20) then
                 if NetherPortalBuilding(unit) then
@@ -977,6 +987,7 @@ A[3] = function(icon, isMulti)
         
         --NetherPortalActive
         local function NetherPortalActive(unit)
+        
             -- bilescourge_bombers
             if A.BilescourgeBombers:IsReady(unit) then
                 return A.BilescourgeBombers:Show(icon)
@@ -1033,6 +1044,7 @@ A[3] = function(icon, isMulti)
         
         --NetherPortalBuilding
         local function NetherPortalBuilding(unit)
+        
             -- use_item,name=azsharas_font_of_power,if=cooldown.nether_portal.remains<=5*spell_haste
             if A.AzsharasFontofPower:IsReady(unit) and (A.NetherPortal:GetCooldown() <= 5 * Player:SpellHaste()) then
                 return A.AzsharasFontofPower:Show(icon)
@@ -1077,6 +1089,7 @@ A[3] = function(icon, isMulti)
         
         --Opener
         local function Opener(unit)
+        
             -- hand_of_guldan,line_cd=30,if=azerite.explosive_potential.enabled
             if A.HandofGuldan:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() > 0) then
                 return A.HandofGuldan:Show(icon)
