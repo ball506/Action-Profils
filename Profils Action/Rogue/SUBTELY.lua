@@ -218,6 +218,36 @@ A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
   VarStealthThreshold = false
 end)
 
+local function num(val)
+    if val then return 1 else return 0 end
+end
+
+local function bool(val)
+    return val ~= 0
+end
+
+------------------------------------------
+-------------- COMMON PREAPL -------------
+------------------------------------------
+local Temp = {
+    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
+	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
+    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
+    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
+    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
+    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
+    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
+	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
+    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
+    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+}
+
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+
+local function IsSchoolFree()
+	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
+end 
+
 local function InRange(unit)
 	-- @return boolean 
 	return A.Backstab:IsInRange(unit)
@@ -272,36 +302,6 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 	
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
-
-local function num(val)
-    if val then return 1 else return 0 end
-end
-
-local function bool(val)
-    return val ~= 0
-end
-
-------------------------------------------
--------------- COMMON PREAPL -------------
-------------------------------------------
-local Temp = {
-    TotalAndPhys                            = {"TotalImun", "DamagePhysImun"},
-	TotalAndCC                              = {"TotalImun", "CCTotalImun"},
-    TotalAndPhysKick                        = {"TotalImun", "DamagePhysImun", "KickImun"},
-    TotalAndPhysAndCC                       = {"TotalImun", "DamagePhysImun", "CCTotalImun"},
-    TotalAndPhysAndStun                     = {"TotalImun", "DamagePhysImun", "StunImun"},
-    TotalAndPhysAndCCAndStun                = {"TotalImun", "DamagePhysImun", "CCTotalImun", "StunImun"},
-    TotalAndMag                             = {"TotalImun", "DamageMagicImun"},
-	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
-    DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
-    DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
-}
-
-local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
-
-local function IsSchoolFree()
-	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
-end 
 
 local function UsePriorityRotation()
     local UsePriorityRotation = A.GetToggle(2, "UsePriorityRotation")
