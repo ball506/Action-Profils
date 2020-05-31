@@ -200,7 +200,7 @@ end
 function Unit:HasDeBuffsDown(spell, byID)
 	local unitID = self.UnitID
 	
-    return (self(unitID):HasDeBuffs(spell, byID) == 0 and true) or false
+    return self(unitID):HasDeBuffs(spell, byID) == 0
 end
 
 ------------------------------------
@@ -209,7 +209,7 @@ end
 function Unit:HasBuffsDown(spell, byID)
     local unitID = self.UnitID
 	
-    return (self(unitID):HasBuffs(spell, byID) == 0 and true) or false
+    return self(unitID):HasBuffs(spell, byID) == 0
 end
 
 ------------------------------------
@@ -218,7 +218,7 @@ end
 function Unit:HasDeBuffsRefreshable(spell, byID)
     local unitID = self.UnitID
 	
-    return (self(unitID):HasDeBuffs(spell, byID) < 5 or self(unitID):HasDeBuffsDown(spell, byID) and true) or false
+    return self(unitID):HasDeBuffs(spell, byID) < 5
 end
 
 -------------------------------------------------------------------------------
