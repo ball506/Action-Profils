@@ -948,14 +948,7 @@ A[3] = function(icon, isMulti)
 			and ((Pull > 0.1 and Pull < 1) or not DBM) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end	
-			
-            -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if HandleAspectoftheWild() and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
-			and ((Pull > 0.1 and Pull <= 1.2)) 
-			then
-                return A.AspectoftheWild:Show(icon)
-            end
-			
+						
             -- bestial_wrath,precast_time=1.5,if=azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
             if A.BestialWrath:IsReady(player) and HandleBestialWrath() and not inCombat and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) == 0 and 
 			((Pull > 0.1 and Pull <= 1.6)) 
@@ -1104,7 +1097,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- aspect_of_the_wild
-        if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and AspectoftheWildOnCDRapidReload and 
+        if A.AspectoftheWild:IsReady(player) and combatTime > 2 and ((AspectoftheWildTTD > 0 and Unit(unit):TimeToDie() >= AspectoftheWildTTD) or Unit(unit):TimeToDie() >= 0) and AspectoftheWildOnCDRapidReload and 
 		    (
 			    (InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) 
 				or 
@@ -1180,7 +1173,7 @@ A[3] = function(icon, isMulti)
             end
 						
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(player) and Unit(unit):TimeToDie() >= BestialWrathTTD and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and ((BestialWrathTTD > 0 and Unit(unit):TimeToDie() >= BestialWrathTTD) or Unit(unit):TimeToDie() >= 0) and HandleBestialWrath() and 
 		    (
 		        ((A.BurstIsON(unit) and A.AspectoftheWild:GetCooldown() > 20) or not A.BurstIsON(unit))  
 		    	or 
@@ -1200,7 +1193,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and HandleAspectoftheWild() and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and ((AspectoftheWildTTD > 0 and Unit(unit):TimeToDie() >= AspectoftheWildTTD) or Unit(unit):TimeToDie() >= 0) and HandleAspectoftheWild() and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1418,7 +1411,7 @@ A[3] = function(icon, isMulti)
 	    then 	
 		
             -- bestial_wrath,if=talent.one_with_the_pack&!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(player) and Unit(unit):TimeToDie() >= BestialWrathTTD and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and ((BestialWrathTTD > 0 and Unit(unit):TimeToDie() >= BestialWrathTTD) or Unit(unit):TimeToDie() >= 0) and HandleBestialWrath() and 
 			(
 			    A.OneWiththePack:IsSpellLearned() and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) < GetGCD()
 				or
@@ -1463,7 +1456,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and HandleAspectoftheWild() and 
+            if A.AspectoftheWild:IsReady(player) and ((AspectoftheWildTTD > 0 and Unit(unit):TimeToDie() >= AspectoftheWildTTD) or Unit(unit):TimeToDie() >= 0) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and HandleAspectoftheWild() and 
 			(
 			    A.BarbedShot:GetSpellCharges() < 1 
 				or 
