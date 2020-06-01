@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.3.1 (31.05.2020)",
+    DateTime = "v4.3.2 (01.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_HUNTER_BEASTMASTERY] = { 
@@ -150,29 +150,6 @@ A.Data.ProfileUI = {
                 },
             },
             { -- [5] 5th Row     
-                {
-                    E = "Dropdown",                                                         
-                    OT = {
-                        { text = "Burst Only", value = 1 },
-                        { text = "Aoe Only", value = 2 },
-                        { text = "Everytime", value = 3 },
-                    },
-                    MULT = true,
-                    DB = "BestialWrathMode",
-                    DBV = {
-                        [1] = false, 
-                        [2] = false,
-                        [3] = true,
-                    }, 
-                    L = { 
-                        ANY = A.GetSpellInfo(19574) .. " settings",
-                    }, 
-                    TT = { 
-                        enUS = "Customize your " .. A.GetSpellInfo(19574) .. " options.\nMultiple checks possible.", 
-                        ruRU = "Настройте параметры " .. A.GetSpellInfo(19574) .. ".\nМножественные проверки возможны.", 
-                    }, 
-                    M = {},
-                },
                 {
                     E = "Checkbox", 
                     DB = "UseFeignDeathOnThingFromBeyond",
@@ -396,6 +373,96 @@ A.Data.ProfileUI = {
                         ruRU = "Минимальное время, оставшееся на любителях безумия до использования " .. A.GetSpellInfo(217200) .. ".\nDefault: 2\nВАЖНЫЙ !!! Это значение может реально изменить ваш DPS, поэтому поиграйте с настройками, чтобы получить наиболее оптимизированный.",
                         frFR = "Temps minimum restant sur Frenzy buff animal avant d'utiliser " .. A.GetSpellInfo(217200) .. ".\nDefault: 2\nIMPORTANT !!! Cette valeur peut vraiment changer votre DPS, alors jouez avec le réglage pour obtenir le plus optimisé.",  
                     },					
+                    M = {},
+                },
+			},
+            -- Bestial Wrath
+            -- Aspect of the WIld
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(19574) .. " -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(193530) .. " -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "BestialWrathTTD",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(19574) .. " TTD",
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "AspectoftheWildTTD",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(193530) .. " TTD",
+                    }, 
+                    M = {},
+                },
+			},
+			{
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Burst Only", value = 1 },
+                        { text = "Aoe Only", value = 2 },
+                        { text = "Everytime", value = 3 },
+                    },
+                    MULT = true,
+                    DB = "BestialWrathMode",
+                    DBV = {
+                        [1] = false, 
+                        [2] = false,
+                        [3] = true,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(19574) .. " settings",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(19574) .. " options.\nMultiple checks possible.", 
+                        ruRU = "Настройте параметры " .. A.GetSpellInfo(19574) .. ".\nМножественные проверки возможны.", 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "Burst Only", value = 1 },
+                        { text = "Aoe Only", value = 2 },
+                        { text = "Everytime", value = 3 },
+                    },
+                    MULT = true,
+                    DB = "AspectoftheWildMode",
+                    DBV = {
+                        [1] = true, 
+                        [2] = false,
+                        [3] = false,
+                    }, 
+                    L = { 
+                        ANY = A.GetSpellInfo(193530) .. " settings",
+                    }, 
+                    TT = { 
+                        enUS = "Customize your " .. A.GetSpellInfo(193530) .. " options.\nMultiple checks possible.", 
+                        ruRU = "Настройте параметры " .. A.GetSpellInfo(193530) .. ".\nМножественные проверки возможны.", 
+                    }, 
                     M = {},
                 },
 			},

@@ -696,6 +696,8 @@ A[3] = function(icon, isMulti)
 	local BloodoftheEnemyAoETTD = GetToggle(2, "BloodoftheEnemyAoETTD")	
 	local BloodoftheEnemySyncAoE = GetToggle(2, "BloodoftheEnemySyncAoE")	
 	local BloodoftheEnemyUnits = GetToggle(2, "BloodoftheEnemyUnits")	
+	local BestialWrathTTD = GetToggle(2, "BestialWrathTTD")
+	local AspectoftheWildTTD = GetToggle(2, "AspectoftheWildTTD")
 	-- Azerite beam protection channel
 	local CanCast = true
 	local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
@@ -1091,7 +1093,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- aspect_of_the_wild
-        if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and AspectoftheWildOnCDRapidReload and 
+        if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and AspectoftheWildOnCDRapidReload and 
 		    (
 			    (InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) 
 				or 
@@ -1167,7 +1169,7 @@ A[3] = function(icon, isMulti)
             end
 						
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
-            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and Unit(unit):TimeToDie() >= BestialWrathTTD and HandleBestialWrath() and 
 		    (
 		        ((A.BurstIsON(unit) and A.AspectoftheWild:GetCooldown() > 20) or not A.BurstIsON(unit))  
 		    	or 
@@ -1187,7 +1189,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1405,7 +1407,7 @@ A[3] = function(icon, isMulti)
 	    then 	
 		
             -- bestial_wrath,if=talent.one_with_the_pack&!buff.bestial_wrath.up&cooldown.aspect_of_the_wild.remains>15|target.time_to_die<15+gcd
-            if A.BestialWrath:IsReady(player) and DontWasteCDs(unit) and HandleBestialWrath() and 
+            if A.BestialWrath:IsReady(player) and Unit(unit):TimeToDie() >= BestialWrathTTD and HandleBestialWrath() and 
 			(
 			    A.OneWiththePack:IsSpellLearned() and Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) < GetGCD()
 				or
@@ -1450,7 +1452,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(player) and DontWasteCDs(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
 			(
 			    A.BarbedShot:GetSpellCharges() < 1 
 				or 
