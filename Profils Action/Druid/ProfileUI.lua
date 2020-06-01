@@ -2058,17 +2058,7 @@ A.Data.ProfileUI = {
 						frFR = "Active/Désactive la rotation spécifique aux alliés pour les personnes dans le groupe.\nExemple : Dispell automatique sur les membres du groupe.",
                     }, 
                     M = {},
-                }, 
-                {
-                    E = "Checkbox", 
-                    DB = "SniperFriendly",
-                    DBV = true,
-                    L = { 
-					    enUS = "Predict friendly team healing sniping",
-                        ruRU = "Predict friendly team healing sniping",
-	                },
-                    M = {},
-                },  			
+                }, 			
                 {
                     E = "Checkbox", 
                     DB = "AutoDispel",
@@ -2102,7 +2092,21 @@ A.Data.ProfileUI = {
                         ruRU = "Enable this option to activate critical healing logic depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
 					},
         	        M = {},
-       	        },	
+       	        },
+      	        {
+         	        E = "Checkbox", 
+         	        DB = "SnipeFriendly",
+         	        DBV = true,
+         	        L = { 
+					    enUS = "Snipe Friendly",
+                        ruRU = "Snipe Friendly",
+					},
+          	        TT = { 
+					    enUS = "Enable this option to predict critical healing and instant target unit depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+                        ruRU = "Enable this option to predict critical healing and instant target unit depending of the current dungeon.\nExample:Fulminating Zap in Junkyard",
+					},
+        	        M = {},
+       	        },					
       	        {
          	        E = "Checkbox", 
          	        DB = "GrievousWoundsLogic",
@@ -2387,6 +2391,36 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
+            { -- [7]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Incoming burst Macro -- ",
+                    },
+                },
+            },	
+            {			
+                {
+                    E         = "Button",
+                    H         = 35,
+                    OnClick = function(self, button, down)     
+                        if button == "LeftButton" then 
+                            --Action.QueueBase("BreathofSindragosa")
+							Action.CraftMacro("QB:BurstHeal", [[#showtip ]] .. Action[ACTION_CONST_DRUID_RESTORATION].Rejuvenation:Info() .. "\n" .. [[/run Action.QueueBase("BurstHealing")]], 1, true, true) 
+                        else                
+                            Action.CraftMacro("QB:BurstHeal", [[#showtip ]] .. Action[ACTION_CONST_DRUID_RESTORATION].Rejuvenation:Info() .. "\n" .. [[/run Action.QueueBase("BurstHealing")]], 1, true, true) 
+                        end 
+                    end, 
+                    L = { 
+                        ANY = "Burst\nMacro Creator",
+                    }, 
+                    TT = { 
+                        enUS = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
+                        ruRU = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
+                        frFR = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
+                    },                           
+                },
+            },				
             { -- LIFEBLOOM
                 {
                     E = "Header",
