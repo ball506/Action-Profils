@@ -3405,7 +3405,8 @@ function Action.QueueBase(name)
                 for i = 1, #HealingEngineMembersALL do
                     if A.Rejuvenation:IsReadyByPassCastGCD(HealingEngineMembersALL[i].Unit) and Unit(HealingEngineMembersALL[i].Unit):GetRange() < 40 and Unit(HealingEngineMembersALL[i].Unit):IsPlayer() and Unit(HealingEngineMembersALL[i].Unit):HasBuffs(A.Rejuvenation.ID, true, player) < GetGCD() + 0.1 then
                         A.HealingEngine.SetTarget(HealingEngineMembersALL[i].Unit)
-                        A.Rejuvenation:SetQueue(QB.target)        -- #0
+                        --A.Rejuvenation:SetQueue(QB.target)        -- #0
+						A.Rejuvenation:SetQueue(HealingEngineMembersALL[i].Unit)
 			            VarPoolForHealingBurst = true
 			            -- Notification					
 	                    Action.SendNotification("Force Spreading " .. A.GetSpellInfo(A.Rejuvenation.ID), A.Rejuvenation.ID)	
@@ -3427,10 +3428,10 @@ function Action.QueueBase(name)
 		
 		-- Notification if all good		
 		if HasEnoughRejuvenationApplied() then
-			-- Notification					
+			-- Notification		
+            VarPoolForHealingBurst = false			
 	        Action.SendNotification("Spreading done !", A.Rejuvenation.ID)	
-		end
+		end		
 		
-		VarPoolForHealingBurst = false
     end 		
 end 
