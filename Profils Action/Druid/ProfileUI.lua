@@ -19,7 +19,7 @@ local EnemyTeam										= A.EnemyTeam
 local FriendlyTeam									= A.FriendlyTeam
 local TeamCache										= A.TeamCache
 local InstanceInfo									= A.InstanceInfo
-local TR                                            = Action.TasteRotation
+local TR                                            = A.TasteRotation
 local select, setmetatable							= select, setmetatable
 	
 
@@ -958,18 +958,18 @@ A.Data.ProfileUI = {
                 },
 			},
 			
-			{ -- [4]
+            { -- [7] Multidots settings
                 {
-                    E		= "Header",
-					L		= { 
-                        ANY = " -- MultiDot -- ",
+                    E = "Header",
+                    L = {
+                        ANY = " -- Multidots settings -- ",
                     },
                 },
             },
 			{
                 {
                     E = "Checkbox", 
-                    DB = "MultiDot",
+                    DB = "AutoDot",
                     DBV = true,
                     L = { 
                         enUS = "Enable auto Multidots", 
@@ -985,11 +985,11 @@ A.Data.ProfileUI = {
                 },
 				{
                     E 		= "Slider", 													
-					MIN 	= 15, 
-					MAX 	= 40,							
+					MIN 	= 1, 
+					MAX 	= 30,							
 					DB 		= "MultiDotDistance",
-					DBV 	= 25,
-					ONLYOFF = true,
+					DBV 	= 40,
+					ONLYOFF = false,
 					L 		= { 
                         enUS = "Multidots Range", 
                         ruRU = "Сфера Multidots", 
@@ -999,9 +999,32 @@ A.Data.ProfileUI = {
                         enUS = "Choose the range where you want to automatically multidots units.", 
                         ruRU = "Выберите диапазон, в котором вы хотите автоматически многоточечные единицы.", 
 						frFR = "Choisissez la portée dans laquelle vous souhaitez multidoter automatiquement les unités.", 
-                    },
+                    }, 
 					M 		= {},
                 },
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "In Raid", value = "In Raid" },
+                        { text = "In Dungeon", value = "In Dungeon" },
+						{ text = "In PvP", value = "In PvP" },
+                        { text = "Everywhere", value = "Everywhere" },
+                    },
+                    MULT = false,
+                    DB = "AutoDotSelection",
+                    DBV = "In Raid", 
+                    L = { 
+                        enUS = "Multidots where", 
+                        ruRU = "Multidots где", 
+                        frFR = "Multidots où", 
+                    }, 
+                    TT = { 
+                        enUS = "Choose where you want to automatically multidots units.", 
+                        ruRU = "Выберите, где вы хотите автоматически многоточечные единицы.", 
+						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
+                    }, 
+                    M = {},
+                },				
 			},
             -- Blood of the enemy
             { -- [7] 
@@ -2395,7 +2418,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Header",
                     L = {
-                        ANY = " -- Incoming burst Macro -- ",
+                        ANY = " -- Force Spread Macro -- ",
                     },
                 },
             },	
@@ -2405,19 +2428,18 @@ A.Data.ProfileUI = {
                     H         = 35,
                     OnClick = function(self, button, down)     
                         if button == "LeftButton" then 
-                            --Action.QueueBase("BreathofSindragosa")
-							Action.CraftMacro("QB:BurstHeal", [[#showtip ]] .. Action[ACTION_CONST_DRUID_RESTORATION].Rejuvenation:Info() .. "\n" .. [[/run Action.QueueBase("BurstHealing")]], 1, true, true) 
+							TR.ToggleForceRejuvenation()
                         else                
-                            Action.CraftMacro("QB:BurstHeal", [[#showtip ]] .. Action[ACTION_CONST_DRUID_RESTORATION].Rejuvenation:Info() .. "\n" .. [[/run Action.QueueBase("BurstHealing")]], 1, true, true) 
+                            Action.CraftMacro("QB:BurstHeal", [[#showtip ]] .. Action[ACTION_CONST_DRUID_RESTORATION].Rejuvenation:Info() .. "\n" .. [[/run Action.TasteRotation.ToggleForceRejuvenation(state)]], 1, true, true) 
                         end 
                     end, 
                     L = { 
                         ANY = "Burst\nMacro Creator",
                     }, 
                     TT = { 
-                        enUS = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
-                        ruRU = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
-                        frFR = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just SPAM this macro MULTIPLE times.", 
+                        enUS = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just press once to spread Rejuvenation on max units and press again to stop.", 
+                        ruRU = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just press once to spread Rejuvenation on max units and press again to stop.", 
+                        frFR = "Click this button to create the special " .. A.GetSpellInfo(774) .. " macro.\n@USAGE: Create the macro and add it to your spellbar or keybind it. Then if you know some big damage are incoming, just press once to spread Rejuvenation on max units and press again to stop.", 
                     },                           
                 },
             },				
@@ -2449,20 +2471,18 @@ A.Data.ProfileUI = {
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "Always", value = "Always" },
                         { text = "Auto", value = "Auto" },    
                         { text = "Tanking Units", value = "Tanking Units" },                    
                         { text = "Mostly Inc. Damage", value = "Mostly Inc. Damage" },
-                        { text = "HPS < Inc. Damage", value = "HPS < Inc. Damage" },
                     },
                     DB = "LifebloomWorkMode",
-                    DBV = "Tanking Units",
+                    DBV = "Auto",
                     L = { 
                         ANY = A.GetSpellInfo(33763) .. " Work Mode",
                     }, 
                     TT = { 
-                        enUS = "These conditions will be skiped if unit will dying in emergency (critical) situation", 
-                        ruRU = "Эти условия будут пропущены если юнит будет умирать в чрезвычайной (критической) ситуациии", 
+                        enUS = "These conditions will activate differents logic behind.\nAuto: Fully automated settings, priorise Photosynthesis on you if talent is learned.\nTanking Units: Will make sure Lifebloom is always present on tanks.\nMostly Inc. Damage: Friendly unit taking the more damage in the current situation.", 
+                        ruRU = "These conditions will activate differents logic behind.\nAuto: Fully automated settings, priorise Photosynthesis on you if talent is learned.\nTanking Units: Will make sure Lifebloom is always present on tanks.\nMostly Inc. Damage: Friendly unit taking the more damage in the current situation.",
                     },                    
                     M = {},
                 },
