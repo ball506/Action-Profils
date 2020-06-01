@@ -1494,7 +1494,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- avengers_shield,if=cooldown_react
-            if A.AvengersShield:IsReady(unit) and (A.AvengersShield:GetCooldown() == 0) then
+            if A.AvengersShield:IsReadyByPassCastGCD(unit) then
                 return A.AvengersShield:Show(icon)
             end
 			
@@ -1549,7 +1549,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- hammer_of_the_righteous
-            if A.HammeroftheRighteous:IsReady(unit) then
+            if A.HammeroftheRighteous:IsReady(unit) and A.AvengersShield:GetCooldown() > 0 then
                 return A.HammeroftheRighteous:Show(icon)
             end
 			
