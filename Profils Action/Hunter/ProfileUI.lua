@@ -346,7 +346,7 @@ A.Data.ProfileUI = {
                     DB = "BeastCleaveBuffRefresh",
                     DBV = 1.8, -- Set healthpercentage @60% life. 
 					Precision = 1,
-                    ONOFF = true,
+                    ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(118455) .. "\nrefresh sec",
                     },
@@ -360,11 +360,11 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 5,                            
+                    MAX = 10,                            
                     DB = "BarbedShotRefreshSec",
                     DBV = 2, -- Set healthpercentage @60% life. 
 					Precision = 1,
-                    ONOFF = true,
+                    ONOFF = false,
                     L = { 
                         ANY = A.GetSpellInfo(217200) .. "\nrefresh sec",
                     },
@@ -395,7 +395,7 @@ A.Data.ProfileUI = {
 			{
                 {
                     E = "Slider",                                                     
-                    MIN = 1, 
+                    MIN = -1, 
                     MAX = 10,                            
                     DB = "BestialWrathTTD",
                     DBV = 3, -- Set healthpercentage @60% life. 
@@ -407,7 +407,7 @@ A.Data.ProfileUI = {
                 },
                 {
                     E = "Slider",                                                     
-                    MIN = 1, 
+                    MIN = -1, 
                     MAX = 10,                            
                     DB = "AspectoftheWildTTD",
                     DBV = 3, -- Set healthpercentage @60% life. 

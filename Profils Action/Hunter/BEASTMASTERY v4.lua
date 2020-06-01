@@ -576,6 +576,17 @@ local function HandleBestialWrath()
     )	
 end
 
+-- AspectoftheWild Handler UI --
+local function HandleAspectoftheWild()
+    local choice = GetToggle(2, "AspectoftheWildMode")
+	local unit = "target"
+    return     not Player:IsMounted() and not Unit("target"):IsDead() and ( 
+        (A.BurstIsON(unit) and choice[1]) or 
+        (GetByRange(2, 40) and choice[2]) or
+        (A.AspectoftheWild:IsReady(player) and choice[3])
+    )	
+end
+
 -- [1] CC AntiFake Rotation
 --[[local function AntiFakeStun(unit) 
     return 
@@ -939,7 +950,7 @@ A[3] = function(icon, isMulti)
             end	
 			
             -- aspect_of_the_wild,precast_time=1.1,if=!azerite.primal_instincts.enabled&!essence.essence_of_the_focusing_iris.major&(equipped.azsharas_font_of_power|!equipped.cyclotronic_blast)
-            if A.BurstIsON(unit) and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
+            if HandleAspectoftheWild() and not inCombat and A.AspectoftheWild:IsReady(player) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and (A.PrimalInstincts:GetAzeriteRank() == 0 and not A.FocusedAzeriteBeam:IsSpellLearned() and (A.AzsharasFontofPower:IsExists() or not A.CyclotronicBlast:IsExists()))
 			and ((Pull > 0.1 and Pull <= 1.2)) 
 			then
                 return A.AspectoftheWild:Show(icon)
@@ -1189,7 +1200,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and A.BurstIsON(unit) and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and HandleAspectoftheWild() and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 then
                 return A.AspectoftheWild:Show(icon)
             end
 		    	
@@ -1452,7 +1463,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- aspect_of_the_wild,if=cooldown.barbed_shot.charges<1|!azerite.primal_instincts.enabled
-            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and A.BurstIsON(unit) and 
+            if A.AspectoftheWild:IsReady(player) and Unit(unit):TimeToDie() >= AspectoftheWildTTD and Unit(player):HasBuffs(A.AspectoftheWildBuff.ID, true) == 0 and HandleAspectoftheWild() and 
 			(
 			    A.BarbedShot:GetSpellCharges() < 1 
 				or 
