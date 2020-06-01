@@ -89,6 +89,7 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
     WordofGlory                            = Action.Create({ Type = "Spell", ID = 210191     }),
     BlessingofFreedom                      = Action.Create({ Type = "Spell", ID = 1044     }),
     BlessingofFreedomYellow                = Action.Create({ Type = "Spell", ID = 1044, Color = "YELLOW", Desc = "YELLOW Color for Party Blessing"     }),	
+	BlessingofSanctuary                    = Action.Create({ Type = "Spell", ID = 210256     }),
     HammerofJustice                        = Action.Create({ Type = "Spell", ID = 853     }),
 	HammerofJusticeGreen                   = Action.Create({ Type = "SpellSingleColor", ID = 853, Color = "GREEN", Desc = "[1] CC", QueueForbidden = true }),
 	DivineShield                           = Action.Create({ Type = "Spell", ID = 642     }),
@@ -167,6 +168,7 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
 	BuryTheHatchet                         = Action.Create({ Type = "Spell", ID = 280128, Hidden = true     }),	 
 	CracklingThunder                       = Action.Create({ Type = "Spell", ID = 203201, Hidden = true     }),	 
 	GrandDelusionsDebuff                   = Action.Create({ Type = "Spell", ID = 319695, Hidden = true     }), -- Corruption pet chasing you
+	Cyclone                                = Action.Create({ Type = "Spell", ID = 33786, Hidden = true   }), -- Debuff check
 };
 
 -- To create essences use next code:
