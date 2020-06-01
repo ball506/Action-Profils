@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.5 (31.05.2020)",
+    DateTime = "v4.1.6 (01.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -2072,7 +2072,6 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },
-			
             { -- HealingTideTotem
                 {
                     E = "Header",
@@ -2080,34 +2079,77 @@ A.Data.ProfileUI = {
                         ANY = " -- " .. A.GetSpellInfo(108280) .. " -- ",
                     },
                 }, 
-            },			
-            {
+            },
+			{
+			    RowOptions = { margin = { top = -10 } },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dungeon -- ",
+                    },
+                },
+			},
+            -- HealingTideTotem
+            { -- [3] 
+              	RowOptions = { margin = { top = 10 } },		
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 100,                            
-                    DB = "HealingTideTotemHP",
-                    DBV = 55,
-                    ONOFF = false,
+                    MAX = 10,                            
+                    DB = "HealingTideTotemRaidUnits",
+                    DBV = 5,
+                    ONLYON = true,
                     L = { 
-                        ANY = A.GetSpellInfo(108280) .. "\n(%)",
-                    }, 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Total Units)",    
+                    },                     
                     M = {},
                 },
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
                     MAX = 10,                            
-                    DB = "HealingTideTotemUnits",
+                    DB = "HealingTideTotemPartyUnits",
                     DBV = 3,
-                    ONOFF = false,
+                    ONLYON = true,
                     L = { 
-                        ANY = A.GetSpellInfo(108280) .. "\nunits",
-                    }, 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Total Units)",    
+                    },                     
                     M = {},
                 },
 			},
-			
+			{
+			    RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "HealingTideTotemRaidHP",
+                    DBV = 65,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "HealingTideTotemPartyHP",
+                    DBV = 60,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                    },                     
+                    M = {},
+                },			    
+            },							
             { -- EarthShield
                 {
                     E = "Header",
@@ -2120,11 +2162,9 @@ A.Data.ProfileUI = {
                 {
                     E = "Dropdown",                                                         
                     OT = {
-                        { text = "Always", value = "Always" },
                         { text = "Auto", value = "Auto" },    
                         { text = "Tanking Units", value = "Tanking Units" },                    
                         { text = "Mostly Inc. Damage", value = "Mostly Inc. Damage" },
-                        { text = "HPS < Inc. Damage", value = "HPS < Inc. Damage" },
                     },
                     DB = "EarthShieldWorkMode",
                     DBV = "Tanking Units",
@@ -2207,7 +2247,7 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-            { -- HealingRain
+            { -- SpiritWalkersGrace
                 {
                     E = "Header",
                     L = {

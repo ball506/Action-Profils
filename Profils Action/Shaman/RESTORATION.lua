@@ -245,6 +245,10 @@ local function RotationsVariables()
 	EarthShieldWorkMode = GetToggle(2, "EarthShieldWorkMode")
     UseSpiritWalkersGrace = GetToggle(2, "UseSpiritWalkersGrace")
 	SpiritWalkersGraceTime = GetToggle(2, "SpiritWalkersGraceTime")
+	HealingTideTotemRaidUnits = GetToggle(2, "HealingTideTotemRaidUnits")
+	HealingTideTotemPartyUnits = GetToggle(2, "HealingTideTotemPartyUnits")
+	HealingTideTotemRaidHP = GetToggle(2, "HealingTideTotemRaidHP")
+	HealingTideTotemPartyHP = GetToggle(2, "HealingTideTotemPartyHP")
 end
 
 -- [1] CC AntiFake Rotation
@@ -416,27 +420,6 @@ local function SelfDefensives()
         return 
     end 
         
-    -- EarthShieldHP
-    local EarthShield = A.GetToggle(2, "EarthShieldHP")
-    if     EarthShield >= 0 and A.EarthShield:IsReady("player") and  
-    (
-        (     -- Auto 
-            EarthShield >= 100 and 
-            (
-                Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 3 
-                or A.IsInPvP and Unit("player"):HasBuffsStacks(A.EarthShield.ID, true) <= 2
-            ) 
-        ) or 
-        (    -- Custom
-            EarthShield < 100 and 
-            Unit("player"):HasBuffs(A.EarthShield.ID, true) <= 5 and 
-            Unit("player"):HealthPercent() <= EarthShield
-        )
-    ) 
-    then 
-        return A.EarthShield
-    end
-        
     -- Abyssal Healing Potion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
     if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
@@ -542,48 +525,6 @@ local function Interrupts(unit)
 	
 end 
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
-local function CanHealingTideTotem()
-    if A.HealingTideTotem:IsReady("player", true, nil, nil) and IsSchoolFree() then 
-        local HealingTideTotemHP = GetToggle(2, "HealingTideTotemHP")
-        local HealingTideTotemUnits = GetToggle(2, "HealingTideTotemUnits") 
-        
-        -- Auto Counter
-        if HealingTideTotemUnits > 40 then 
-            HealingTideTotemUnits = HealingEngineGetMinimumUnits(1)
-            -- Reduce size in raid by 20%
-            if HealingTideTotemUnits > 5 then 
-                HealingTideTotemUnits = HealingTideTotemUnits - (#HealingEngineMembersALL * 0.2)
-            end 
-            -- If user typed counter higher than max available members 
-        elseif HealingTideTotemUnits >= TeamCacheFriendly.Size then 
-            HealingTideTotemUnits = TeamCacheFriendly.Size
-        end 
-        
-        if HealingTideTotemUnits < 3 and not A.IsInPvP then 
-            return false 
-        end 
-        
-        local counter = 0 
-        for i = 1, #HealingEngineMembersALL do 
-            -- Auto HP 
-            if HealingTideTotemHP >= 100 and A.HealingTideTotem:PredictHeal("HealingTideTotem", HealingEngineMembersALL[i].Unit, 400) then 
-                counter = counter + 1
-            end 
-            
-            -- Custom HP 
-            if HealingTideTotemHP < 100 and HealingEngineMembersALL[i].HP <= HealingTideTotemHP then 
-                counter = counter + 1
-            end 
-            
-            if counter >= HealingTideTotemUnits then 
-                return true 
-            end 
-        end 
-    end 
-    return false 
-end 
-CanHealingTideTotem = A.MakeFunctionCachedStatic(CanHealingTideTotem)
 
 local function CanHealingStreamTotem()
     if A.HealingStreamTotem:IsReady(unit, true, nil, nil) and IsSchoolFree() then 
@@ -1569,7 +1510,7 @@ A[3] = function(icon, isMulti)
         if not A.IsInPvP and A.EarthShield:IsReady() and EarthShieldWorkMode == "Tanking Units" and A.LastPlayerCastID ~= A.EarthShield.ID and ActiveEarthShieldOnTank() == 0 then
             for i = 1, #CurrentTanks do 
                 if Unit(CurrentTanks[i].Unit):GetRange() <= 40 then 
-                      if Unit(CurrentTanks[i].Unit):IsPlayer() and Unit(CurrentTanks[i].Unit):HasBuffs(A.EarthShield.ID, true) < 2 then    
+                      if Unit(CurrentTanks[i].Unit):IsPlayer() and Unit(CurrentTanks[i].Unit):HasBuffsStacks(A.EarthShield.ID, true) < 2 then    
                         -- Notification                    
                         Action.SendNotification("Placing " .. A.GetSpellInfo(A.EarthShield.ID) .. " on " .. UnitName(CurrentTanks[i].Unit), A.EarthShield.ID)
                         HealingEngine.SetTarget(CurrentTanks[i].Unit)    -- Add 1sec delay in case of emergency switch                         
@@ -1579,19 +1520,70 @@ A[3] = function(icon, isMulti)
             end    
         end
 
+        -- EarthShield force on MostlyIncDMG
+        if inCombat and 
+		A.EarthShield:IsReady()  
+		then  
+		    if EarthShieldWorkMode == "Mostly Inc. Damage"  then
+                HealingEngine.SetTargetMostlyIncDMG(1)   -- Add 1sec delay in case of emergency switch				 
+			    -- Notification
+				if Unit(unit):HasBuffsStacks(A.EarthShield.ID, true) <= 2 then 
+			        Action.SendNotification("Refreshing " .. A.GetSpellInfo(A.EarthShield.ID) .. " on : " .. UnitName(unit), A.EarthShield.ID)			
+				    return A.EarthShield:Show(icon)	
+                end					
+			end
+		end
+
         -- Priority Earth Shield
-		local HealingEngineMembersALL = A.HealingEngine.GetMembersAll()
-        if A.EarthShield:IsReady() and ActiveEarthShield() == 0 and A.LastPlayerCastID ~= A.EarthShield.ID then
-            for i = 1, #HealingEngineMembersALL do 
-                if Unit(HealingEngineMembersALL[i].Unit):GetRange() <= 40 then 
-                      if Unit(HealingEngineMembersALL[i].Unit):IsPlayer() and Unit(HealingEngineMembersALL[i].Unit):HasBuffs(A.EarthShield.ID, true) < 2 then    
-                        -- Notification                    
-                        Action.SendNotification("Placing " .. A.GetSpellInfo(A.EarthShield.ID) .. " on " .. UnitName(HealingEngineMembersALL[i].Unit), A.EarthShield.ID)
-                        HealingEngine.SetTarget(HealingEngineMembersALL[i].Unit)    -- Add 1sec delay in case of emergency switch                         
-                        return A.EarthShield:Show(icon)                        
-                    end                    
-                end                
-            end    
+        if CanCast and A.EarthShield:IsReady(unit) and 
+		EarthShieldWorkMode == "Auto" and 
+        (
+            -- MouseOver
+            (
+                A.GetToggle(2, "mouseover") and
+                Unit(mouseover):IsExists() and 
+                A.MouseHasFrame() and
+                not Unit(mouseover):IsDead() and                
+                not IsUnitEnemy(mouseover) and                 
+                A.EarthShield:IsSpellInRange(mouseover) and
+                --A.EarthShield:PredictHeal("EarthShield", "mouseover") and
+                Unit(mouseover):HasBuffs(A.EarthShield.ID, player, true) == 0 and
+                (
+                    (
+                        HealingEngine.IsMostlyIncDMG(mouseover) and
+                        Unit(mouseover):GetRealTimeDMG() > 0
+                    ) or
+                    Unit(mouseover):Role("TANK") or
+                    combatTime == 0 or
+                    -- EarthShield Tracker (is not applied for any one unit)
+                    A.HealingEngine.GetBuffsCount(A.EarthShield.ID, 0, player, true) == 0 
+                )
+            ) or 
+            (
+                (
+                    not A.GetToggle(2, "mouseover") or 
+                    not Unit(mouseover):IsExists() or 
+                    IsUnitEnemy(mouseover)
+                ) and
+                not Unit(target):IsDead() and
+                not IsUnitEnemy(target) and
+                A.EarthShield:IsSpellInRange(target) and
+                --A.EarthShield:PredictHeal("EarthShield", "target") and
+                Unit(target):HasBuffs(A.EarthShield.ID, player, true) == 0 and
+                (
+                    (
+                        HealingEngine.IsMostlyIncDMG(target) and
+                        Unit(target):GetRealTimeDMG() > 0
+                    ) or
+                    Unit(target):Role("TANK") or
+                    combatTime == 0 or
+                    -- EarthShield Tracker (is not applied for any one unit)
+                    A.HealingEngine.GetBuffsCount(A.EarthShield.ID, 0, player, true) == 0 
+                )
+            )
+        )
+        then 
+            return A.EarthShield:Show(icon)
         end
 
         -- #1 RPvE Dispel
@@ -1666,15 +1658,20 @@ A[3] = function(icon, isMulti)
 		(
             (
                 TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(40) >= 3  
+                HealingEngine.GetBelowHealthPercentercentUnits(25) >= 3  
             ) or 
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(60) >= 4               
+                HealingEngine.GetBelowHealthPercentercentUnits(35) >= 4               
             ) or
-		    CanSpiritWalkersGrace("CATCH")
-		    or
-		    not IsGroupEnoughHPS()
+			A.IsInPvP and Unit(player):IsFocused("MELEE") and
+			(
+		        CanSpiritWalkersGrace("CATCH")
+			    or 
+			    CanSpiritWalkersGrace()
+			    or
+			    Unit(player):HasBuffs(A.Ascendance.ID, true) > 3
+			)
 		)
 		then 
             return A.SpiritWalkersGrace:Show(icon)
@@ -1713,11 +1710,11 @@ A[3] = function(icon, isMulti)
                     ) or        
                     (
                         TeamCacheFriendlyType == "party" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(40) >= 3  
+                        HealingEngine.GetBelowHealthPercentercentUnits(20) >= 3  
                     ) or 
                     (
                         TeamCacheFriendlyType == "raid" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(55) >= 5               
+                        HealingEngine.GetBelowHealthPercentercentUnits(30) >= 5               
                     )
                 )
             ) or
@@ -1794,7 +1791,7 @@ A[3] = function(icon, isMulti)
             ) or 
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(30) >= 5               
+                HealingEngine.GetBelowHealthPercentercentUnits(15) >= 5               
             )
         )
         then
@@ -1804,16 +1801,24 @@ A[3] = function(icon, isMulti)
         end
 		
         -- #9.3 HealingTideTotem            
-        if A.HealingTideTotem:IsReady(player) and A.BurstIsON(unit) and combatTime > 5 and 
-        (
-               HealingEngine.GetTimeToDieUnits(3) >= GetValidMembers(true) * 0.4 
-            or
-               ReceivedLast5sec > AVG_DMG * 5 
-            or
-            HealingEngine.GetBelowHealthPercentercentUnits(25) >= GetValidMembers(true) * 0.35 -- 
-            or
-            HealingEngine.GetBelowHealthPercentercentUnits(15) >= 5 -- 
-        )             
+        if A.HealingTideTotem:IsReady(player) and 
+		A.BurstIsON(unit) and 
+		combatTime > 5 and 
+        (        
+            (
+                TeamCache.Friendly.Size <= 2 and
+                HealingEngine.GetBelowHealthPercentercentUnits(45) >= 2
+            ) or
+            (
+                TeamCache.Friendly.Size <= 5 and
+                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemPartyHP) >= HealingTideTotemPartyUnits
+            ) or
+            (
+                TeamCache.Friendly.Size > 5 and      
+                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemRaidHP) >= AoEMembers(true, _, HealingTideTotemRaidUnits)
+            ) or     
+            HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
+        )          
         then
             -- Notification                    
             Action.SendNotification("Burst " .. A.GetSpellInfo(A.HealingTideTotem.ID), A.HealingTideTotem.ID)                
