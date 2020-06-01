@@ -997,7 +997,7 @@ local function SacrificeAble(unit)
 end
 
 -- Hand of Sacrifice
-local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)  
+local function HoS(unit, hp, IsRealDMG, IsDeffensed)  
     return 
     Unit(unit):IsExists() and 
     Unit(unit):IsPlayer() and
@@ -2033,7 +2033,7 @@ A[3] = function(icon, isMulti)
                     (    
                         not Unit(mouseover):IsTank() and
                         (
-                            HoS(mouseover, nil, nil, true, true) or
+                            HoS(mouseover, nil, true, true) or
                             (
                                 HealingEngine.IsMostlyIncDMG(mouseover) and
                                 Unit(mouseover):GetDMG()>Unit(mouseover):HealthMax()*0.3                        
@@ -2062,7 +2062,7 @@ A[3] = function(icon, isMulti)
                         (
                             not Unit(target):IsTank() and
                             (
-                                HoS(target, nil, nil, true, true) or
+                                HoS(target, nil, true, true) or
                                 (
                                     HealingEngine.IsMostlyIncDMG(mouseover) and
                                     Unit(target):GetDMG() > Unit(target):HealthMax()*0.3 
