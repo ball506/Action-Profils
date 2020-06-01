@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.9 (23.05.2020)",
+    DateTime = "v4.2.1 (01.06.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -827,7 +827,19 @@ A.Data.ProfileUI = {
                         ANY = "Enable multiunits actions",
 					}, 
 					M 		= {},
-                },			
+                },		
+                {
+					E 		= "Checkbox", 
+					DB 		= "AutoMoonkinForm",
+					DBV 	= true,
+					L 		= { 
+                        ANY	= "Auto " .. A.GetSpellInfo(24858),
+                    }, 
+                    TT 		= { 
+                        ANY = "Auto use " .. A.GetSpellInfo(24858),
+					}, 
+					M 		= {},
+                },					
             },
             { -- [7] Spell Status Frame
                 {

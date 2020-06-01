@@ -450,6 +450,26 @@ local function SelfDefensives()
 end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+local function IsInHumanForm()
+    return Player:GetStance() == 0
+end
+
+local function IsInBearForm()
+    return Player:GetStance() == 1
+end
+
+local function IsInCatForm()
+    return Player:GetStance() == 2
+end
+
+local function IsInTravelForm()
+    return Player:GetStance() == 3
+end
+
+local function IsInMoonkinForm()
+    return Player:GetStance() == 4
+end
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -721,19 +741,14 @@ A[3] = function(icon, isMulti)
 				return A.PocketsizedComputationDevice:Show(icon)
 			end
 		end
-		
-        -- moonkin_form
-        if A.MoonkinForm:IsReady(player) and not Unit(player):HasBuffs(A.MoonkinForm.ID, true) and A.GetToggle(2, "ShowMoonkinFormOOC") then
-            return A.MoonkinForm:Show(icon)
-        end
         
         -- call precombat
-        if not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" and not Unit(unit):IsTotem() then 
-            local ShouldReturn = Precombat(unit); if ShouldReturn then return ShouldReturn; end
+        if Precombat(unit) and not inCombat and Unit(unit):IsExists() and unit ~= "mouseover" then 
+            return true
         end
 
         -- In Combat
-        if inCombat and Unit(unit):IsExists() then
+        if inCombat and Unit(unit):IsExists() and IsInMoonkinForm() then
 		    
 			-- Rotation Vars
 			-- variable,name=az_ss,value=azerite.streaking_stars.rank
@@ -1166,6 +1181,11 @@ A[3] = function(icon, isMulti)
         if A.RemoveCorruption:IsReady(unit) and A.RemoveCorruption:AbsentImun(unit) and A.AuraIsValid(unit, "UseDispel", "Dispel") then 
             return A.RemoveCorruption:Show(icon)
         end 
+    end
+		
+    -- moonkin_form
+    if A.MoonkinForm:IsReady(player) and not IsInMoonkinForm() and A.GetToggle(2, "AutoMoonkinForm") then
+        return A.MoonkinForm:Show(icon)
     end
 	
     -- Defensive
