@@ -1013,7 +1013,7 @@ local function SacrificeAble(unit)
 end
 
 -- Hand of Sacrifice
-local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)  
+local function HoS(unit, hp, IsRealDMG, IsDeffensed)  
     return 
     Unit(unit):IsExists() and 
     Unit(unit):IsPlayer() and
