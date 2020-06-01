@@ -1062,6 +1062,68 @@ local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)
     )
 end 
 
+-- Blessing of Sanctuary
+local function BoS(unit)    
+    return
+    A.BlessingofSanctuary:IsSpellLearned() and 
+    A.BlessingofSanctuary:IsReady() and 
+    UnitExists(unit) and      
+    A.BlessingofSanctuary:IsSpellInRange(unit) and     
+    Unit(unit):HasDeBuffs(33786, true) == 0 and -- Cyclone
+    (
+        (
+            --MacroSpells(Icon, "HoS") and 
+            (
+                Unit(unit):HasDeBuffs("Stuned") > 1.5 or 
+                Unit(unit):HasDeBuffs("Fear") > 1.5 or 
+                (
+                    Unit(unit):HasDeBuffs("Silenced") > 1.5 and 
+                    Unit(unit):HasDeBuffs(78675, true) == 0 -- Solar Beam
+                )
+            )
+        ) or 
+        (
+            HoS_toggle and 
+            (
+                Unit(unit):HasDeBuffs({115080, 79140}, true) == 0 or -- Touch of Death, Vendetta
+                not BlessingofProtection:IsReady() or -- BoP
+                Unit(unit):HasDeBuffs(25771, true) > 1 -- Forbearance
+            ) and 
+            (
+                (
+                    (
+                        Unit(unit):HasDeBuffs(5246, true) > 3.5 and -- Intimidating Shout                
+                        not Unit(unit):IsFocused() 
+                    ) or 
+                    (
+                        Unit(unit):HasDeBuffs("PhysStuned") > 3.5 and 
+                        (
+                            Unit(unit):HasBuffs("DamageBuffs") > 3 or 
+                            (
+                                Unit(unit):HasDeBuffs(76577, true) > 0 and -- Smoke Bomb
+                                Unit(unit):IsFocused("MELEE")
+                            )
+                        )
+                    ) or             
+                    (
+                        Unit(unit):Role("HEALER") and 
+                        (
+                            Unit(unit):HasDeBuffs("Stuned") > 3.5 or
+                            Unit(unit):HasDeBuffs("Fear") > 3.5 or 
+                            (
+                                Unit(unit):HasDeBuffs("Silenced") > 3.5 and 
+                                Unit(unit):HasDeBuffs(78675, true) == 0 -- Solar Beam
+                            ) 
+                        )  
+                    ) 
+                ) and 
+                -- Hex, Polly, Repentance, Blind, Wyvern Sting, Ring of Frost, Paralysis, Freezing Trap, Mind Control
+                Unit(unit):HasDeBuffs({51514, 118, 20066, 2094, 19386, 82691, 115078, 3355, 605}, true) <= GetCurrentGCD() 
+            )
+        ) 
+    )
+end
+
 local function BoP(unit, Icon)
     local id = 1022
 

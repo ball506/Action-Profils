@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.2.7 (31.05.2020)",
+    DateTime = "v4.2.8 (01.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
