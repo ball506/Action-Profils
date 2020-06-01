@@ -1,37 +1,55 @@
 -------------------------------
 -- Taste TMW Action Rotation --
 -------------------------------
-local Action									= Action
-local Listener									= Action.Listener
-local Create									= Action.Create
-local GetToggle									= Action.GetToggle
-local SetToggle									= Action.SetToggle
-local GetGCD									= Action.GetGCD
-local GetCurrentGCD								= Action.GetCurrentGCD
-local GetPing									= Action.GetPing
-local ShouldStop								= Action.ShouldStop
-local BurstIsON									= Action.BurstIsON
-local AuraIsValid								= Action.AuraIsValid
-local InterruptIsValid							= Action.InterruptIsValid
-local FrameHasSpell								= Action.FrameHasSpell
-local Azerite									= LibStub("AzeriteTraits")
-local Utils										= Action.Utils
-local TeamCache									= Action.TeamCache
-local EnemyTeam									= Action.EnemyTeam
-local FriendlyTeam								= Action.FriendlyTeam
-local LoC										= Action.LossOfControl
-local Player									= Action.Player 
-local MultiUnits								= Action.MultiUnits
-local UnitCooldown								= Action.UnitCooldown
-local Unit										= Action.Unit 
-local IsUnitEnemy								= Action.IsUnitEnemy
-local IsUnitFriendly							= Action.IsUnitFriendly
-local ActiveUnitPlates							= MultiUnits:GetActiveUnitPlates()
-local _G, setmetatable							= _G, setmetatable
+local TMW                                       = TMW
+local CNDT                                      = TMW.CNDT
+local Env                                       = CNDT.Env
+local Action                                    = Action
+local Listener                                  = Action.Listener
+local Create                                    = Action.Create
+local GetToggle                                 = Action.GetToggle
+local SetToggle                                 = Action.SetToggle
+local GetGCD                                    = Action.GetGCD
+local GetCurrentGCD                             = Action.GetCurrentGCD
+local GetPing                                   = Action.GetPing
+local ShouldStop                                = Action.ShouldStop
+local BurstIsON                                 = Action.BurstIsON
+local AuraIsValid                               = Action.AuraIsValid
+local InterruptIsValid                          = Action.InterruptIsValid
+local FrameHasSpell                             = Action.FrameHasSpell
+local Azerite                                   = LibStub("AzeriteTraits")
+local Utils                                     = Action.Utils
+local TeamCache                                 = Action.TeamCache
+local EnemyTeam                                 = Action.EnemyTeam
+local FriendlyTeam                              = Action.FriendlyTeam
+local LoC                                       = Action.LossOfControl
+local Player                                    = Action.Player 
+local MultiUnits                                = Action.MultiUnits
+local UnitCooldown                              = Action.UnitCooldown
+local Unit                                      = Action.Unit 
+local IsUnitEnemy                               = Action.IsUnitEnemy
+local IsUnitFriendly                            = Action.IsUnitFriendly
+local HealingEngine                             = Action.HealingEngine
+local ActiveUnitPlates                          = MultiUnits:GetActiveUnitPlates()
+local TeamCacheFriendly                         = TeamCache.Friendly
+local TeamCacheFriendlyIndexToPLAYERs           = TeamCacheFriendly.IndexToPLAYERs
 local IsIndoors, UnitIsUnit                     = IsIndoors, UnitIsUnit
 local TR                                        = Action.TasteRotation
-local pairs                                     = pairs
 local Pet                                       = LibStub("PetLibrary")
+local next, pairs, type, print                  = next, pairs, type, print 
+local math_floor                                = math.floor
+local math_ceil                                 = math.ceil
+local tinsert                                   = table.insert 
+local select, unpack, table                     = select, unpack, table 
+local CombatLogGetCurrentEventInfo              = _G.CombatLogGetCurrentEventInfo
+local UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower = UnitGUID, UnitIsUnit, UnitDamage, UnitAttackSpeed, UnitAttackPower
+local _G, setmetatable, select, math            = _G, setmetatable, select, math 
+local huge                                      = math.huge  
+local UIParent                                  = _G.UIParent 
+local CreateFrame                               = _G.CreateFrame
+local wipe                                      = _G.wipe
+local IsUsableSpell                             = IsUsableSpell
+local UnitPowerType                             = UnitPowerType 
 
 --- ============================ CONTENT ===========================
 --- ======= APL LOCALS =======
@@ -73,6 +91,8 @@ Action[ACTION_CONST_PALADIN_PROTECTION] = {
     HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554     }),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932     }),
     ConcentratedFlameBurn                  = Action.Create({ Type = "Spell", ID = 295368     }),
+    -- PvP
+    UltimateSacrifice                      = Action.Create({ Type = "Spell", ID = 199452 }),
     -- Buffs 
     ShieldoftheRighteousBuff               = Action.Create({ Type = "Spell", ID = 132403     }),	
     AvengersValorBuff                      = Action.Create({ Type = "Spell", ID = 197561     }),
@@ -951,6 +971,46 @@ local function HoF(unit)
     Unit(unit):HasDeBuffs("Fear") <= GetCurrentGCD() and 
     Unit(unit):HasDeBuffs("Stuned") <= GetCurrentGCD()  
 end    
+
+local function SacrificeAble(unit)
+    -- Function to check if we can use sacriface with max profit time duration on unit
+    local dmg, u_ttd, bubble, shield = Unit(unit):GetDMG() * 0.7, Unit(unit):TimeToDie() * 0.7, Unit(player):HasBuffs(642, true), 1
+    -- -20% incoming damage
+    local shield_buff = Unit(player):HasBuffs(498, true)
+    if shield_buff > 0 then 
+        shield = dmg * ( 0.2 - (0.2 - (shield_buff * 0.2 / 8)) )
+    end
+    
+    local p_ttd, p_chp = 0, Unit(player):Health()
+    if not A.UltimateSacrifice:IsSpellLearned() or not A.IsInPvP then
+        -- Real player's ttd to lower 20% under sacriface and shield buff
+        local p_mhp = Unit(player):HealthMax() * 0.2
+        if p_chp > p_mhp and dmg > 0 and u_ttd > 0 then 
+            local muliplier = 0.75
+            -- If Protection then 100% receiving damage by Sacriface
+            if Unit(player):HasSpec(66) then 
+                muliplier = 1
+            end     
+            p_ttd = math.abs(        
+                -- Current HP without 20% / incdmg by Sacriface + already exist incdmg for yourself
+                (p_chp - p_mhp) /
+                (( dmg * muliplier * (1 - (GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)/2/100)) ) + Unit(player):GetDMG() )
+            )     
+        end
+    else
+        p_ttd = math.abs(        
+            -- Current HP / incdmg by Sacriface + already exist incdmg for yourself
+            p_chp /
+            (( dmg * (1 - (GetCombatRatingBonus(CR_VERSATILITY_DAMAGE_DONE)/2/100)) ) + Unit(player):GetDMG() )
+        )    
+    end 
+    
+    if bubble > 0 then 
+        p_ttd = p_ttd + bubble
+    end
+    
+    return p_ttd + GetCurrentGCD() >= u_ttd, p_ttd
+end
 
 -- Hand of Sacrifice
 local function HoS(unit, Icon, hp, IsRealDMG, IsDeffensed)  
