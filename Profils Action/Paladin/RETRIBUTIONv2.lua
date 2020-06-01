@@ -862,7 +862,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- hammer_of_wrath,if=holy_power<=4
-            if A.HammerofWrath:IsReady(unit) and (Player:HolyPower() <= 4) then
+            if A.HammerofWrath:IsReadyByPassCastGCD(unit) and (Player:HolyPower() <= 4) then
                 return A.HammerofWrath:Show(icon)
             end
 			
