@@ -1405,6 +1405,8 @@ A[3] = function(icon, isMulti)
                 if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and A.BloodoftheEnemy:AbsentImun(unit, Temp.TotalAndMag) and BloodoftheEnemySyncAoE and BurstIsON(unit) and HeartOfAzeroth and 
 			    (
 			        Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 and Player:AreaTTD(MaxAoERange) >= BloodoftheEnemyAoETTD and MultiUnits:GetByRange(MaxAoERange) >= BloodoftheEnemyUnits
+					or
+					Unit(unit):IsBoss()
 				
 			    )
 			    then
