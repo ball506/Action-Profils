@@ -1185,7 +1185,7 @@ local function HasEnoughRejuvenationApplied()
 	    -- Raid or Battlegrounds
        (
             TeamCache.Friendly.Size > 5 and      
-            currentRejuvenation >= TeamCache.Friendly.Size * 0.33
+            currentRejuvenation >= TeamCache.Friendly.Size * 0.47
         )
 end
 
@@ -1235,13 +1235,30 @@ local function MaintainRejuvenation()
 			            HealingEngine.SetTarget(totalMembers[i].Unit)                  					
 			        end
 			        -- Notification					
-                    Action.SendNotification("Maintaining minimum rejuvenations : " .. RejuvenationCount .. "/" .. round((currentMembers * 0.3), 0), A.Rejuvenation.ID) 					
+                    Action.SendNotification("Maintaining minimum " .. A.GetSpellInfo(22812) .. " : " .. RejuvenationCount .. "/" .. round((currentMembers * 0.3), 0), A.Rejuvenation.ID) 					
                 end				
             end
         end			
     end 
 end
 MaintainRejuvenation = Action.MakeFunctionCachedDynamic(MaintainRejuvenation)
+
+local isForcedRejuvenation = false
+local toStr = Action.toStr
+
+function TR.ToggleForceRejuvenation(state)
+    -- Note: For button use in UI 
+    if state ~= nil then 
+        isForcedRejuvenation = state
+    else
+        isForcedRejuvenation = not isForcedRejuvenation
+    end  
+	Action.Print("Force Rejuvenation: " .. toStr(isForcedRejuvenation))
+	if isForcedRejuvenation then
+        -- Notification					
+        Action.SendNotification("Spreading maximum : " .. A.GetSpellInfo(A.Rejuvenation.ID), A.Rejuvenation.ID)
+	end
+end
 
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -1259,7 +1276,26 @@ A[3] = function(icon, isMulti)
 	local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5)
 	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
 	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
-
+    
+	    -- EyeBeam protection channel
+    local CanCast = true
+    --local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
+    --local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
+    local secondsLeft, percentLeft, spellID, spellName, notInterruptable, isChannel = Unit(player):IsCastingRemains()
+    -- If we got Eyebeam or Azerite Beam or Fel barrage
+    if inCombat and (spellID == A.Tranquility.ID) then 
+        -- Get Remaining seconds left on current Cast
+        if secondsLeft > 0 + A.GetPing() then
+            CanCast = false
+        else
+            CanCast = true
+        end
+    end
+    -- Showing icon PoolResource to make sure nothing else is read by GG
+    if not CanCast then
+        return A.PoolResource:Show(icon)
+    end
+	
     --------------------
     --- DPS ROTATION ---
     --------------------
@@ -1610,6 +1646,8 @@ A[3] = function(icon, isMulti)
 
         -- General Sunfire
         if A.Sunfire:IsReady(unit) and 
+		CanCast and	
+		not IsSaveManaPhase() and
         (
             Player:GetStance()==4 or
             (
@@ -1666,7 +1704,9 @@ A[3] = function(icon, isMulti)
 	    end
 
         -- General Moonfire
-        if A.Moonfire:IsReady(unit) and 
+        if A.Moonfire:IsReady(unit) and
+        CanCast and		
+		not IsSaveManaPhase() and
         (
             Player:GetStance()==4 or
             (        
@@ -1814,6 +1854,7 @@ A[3] = function(icon, isMulti)
 
         -- General Solaw Wrath - 5176
         if A.SolarWrath:IsReady(unit) and 
+		CanCast and	
         (
             Player:GetStance()==4 or
             Player:GetStance()==0
@@ -2095,10 +2136,32 @@ A[3] = function(icon, isMulti)
         end
 		
         -- Spirit of Preservation
-        if A.SpiritofPreservation:AutoHeartOfAzeroth(unit, true) and combatTime > 5 and HeartOfAzeroth
+        if A.SpiritofPreservation:AutoHeartOfAzeroth(unit, true) and combatTime > 5 and CanCast and	 HeartOfAzeroth
 		then
             return A.SpiritofPreservation:Show(icon)
         end
+        
+		-- Special Macro to force Rejuvenation on maximum units
+	    local HealingEngineQueueOrder = HealingEngine.Data.QueueOrder -- this is very useful @table which resets every full enumeration-loop (see example of use below)
+        if CanCast and isForcedRejuvenation then
+	    HealingEngine.SetPerformByProfileHP(
+		    function(member, memberhp, membermhp, DMG)
+			    if not HealingEngineQueueOrder.useRejuv and Unit(member):HasBuffs(A.Rejuvenation.ID, player, true) < 1 then 
+				    HealingEngineQueueOrder.useRejuv = true -- that will skips check :HasBuffs(18, true) for other members and save performance because you can use shield only on one unit per GCD but loop refrehes every ~0.3 sec
+				    memberhp = memberhp - 20
+				    if memberhp < 40 then 
+					    memberhp = 40 
+				    end 
+			    end 
+			
+			    return memberhp
+		    end)
+		end
+        -- Macro Forced Rejuvenation
+        if CanCast and isForcedRejuvenation and A.Rejuvenation:IsReadyByPassCastGCD(unit) and Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then  
+            return A.Rejuvenation:Show(icon)
+        end 
+
 			
         -- PvE Tranquility
         if A.Tranquility:IsReady(player) and
@@ -2130,7 +2193,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- RPvE Incarnation
-        if A.IncarnationTreeofLife:IsReady(player) and 
+        if CanCast and A.IncarnationTreeofLife:IsReady(player) and 
         A.BurstIsON(unit) and
         combatTime > 10 and
         A.IncarnationTreeofLife:IsSpellLearned() and
@@ -2180,10 +2243,10 @@ A[3] = function(icon, isMulti)
         end
 
         -- PvE Flourish
-        if A.Flourish:IsReady(player) and
+        if CanCast and A.Flourish:IsReady(player) and
         A.BurstIsON(unit) and
-        combatTime > 10 and
 		HasEnoughRejuvenationApplied() and
+        combatTime > 10 and
         A.Flourish:IsSpellLearned() and
         (
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
@@ -2199,9 +2262,25 @@ A[3] = function(icon, isMulti)
                 ReceivedLast5sec > AVG_DMG + AVG_HPS and
                 CanAoEFlourish(70)
             ) or
+		    -- Raid, Party conditions
+            (        
+                (
+                    TeamCache.Friendly.Size <= 2 and
+                    HealingEngine.GetBelowHealthPercentercentUnits(45) >= 2
+                ) or
+                (
+                    TeamCache.Friendly.Size <= 5 and
+                    HealingEngine.GetBelowHealthPercentercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
+                ) or
+                (
+                    TeamCache.Friendly.Size > 5 and      
+                    HealingEngine.GetBelowHealthPercentercentUnits(TranquilityRaidHP) >= AoEMembers(true, _, TranquilityRaidUnits)
+                ) or     
+                HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
+            ) or
             (
                 -- Combo Tranquility + Wild Growth 
-                A.Tranquility:GetCooldown() >= 161 and
+                A.Tranquility:GetSpellTimeSinceLastCast() < 3 and
                 A.LastPlayerCastID == 48438
             ) or
             (
@@ -2261,7 +2340,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- RPvE Innervate
-        if A.Innervate:IsReady(player) and 
+        if CanCast and A.Innervate:IsReady(player) and 
         A.BurstIsON(unit) and
         combatTime > 20 and
 		-- Mana Check
@@ -2303,7 +2382,7 @@ A[3] = function(icon, isMulti)
         end
 
         -- Trinket1 
-        if A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DPS" and
+        if CanCast and A.Trinket1:IsReady(unit) and A.Trinket1:GetItemCategory() ~= "DPS" and
         A.BurstIsON(unit) and
         (
             Player:GetStance() == 0 or
@@ -2340,7 +2419,7 @@ A[3] = function(icon, isMulti)
         end 
 
         -- Trinket2
-        if A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DPS" and
+        if CanCast and A.Trinket2:IsReady(unit) and A.Trinket2:GetItemCategory() ~= "DPS" and
         A.BurstIsON(unit) and
         (
             Player:GetStance() == 0 or
@@ -2377,19 +2456,12 @@ A[3] = function(icon, isMulti)
         end 
 
         -- PvE Wild Growth
-        if A.WildGrowth:IsReady(unit) and
+        if CanCast and A.WildGrowth:IsReady(unit) and
         A.GetToggle(2, "AoE") and
         (
             TeamCache.Friendly.Type == "raid" or
             TeamCache.Friendly.Type == "party"
         ) and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
         (
 		    Unit(player):GetCurrentSpeed() == 0 
 			or 
@@ -2397,8 +2469,8 @@ A[3] = function(icon, isMulti)
 		) and
         (
             (
-                Unit(player):HasBuffs(29166, player, true) > 0 and
-                Unit(player):HasBuffs(29166, player, true) > Unit(player):CastTime(48438) + GetCurrentGCD()
+                Unit(player):HasBuffs(29166, true) > 0 and
+                Unit(player):HasBuffs(29166, true) > Unit(player):CastTime(48438) + GetCurrentGCD()
             ) or
             (
                 TeamCache.Friendly.Size and 
@@ -2444,17 +2516,10 @@ A[3] = function(icon, isMulti)
 
 
         -- PvE #1 Efflorescence (Innervate refresh)
-        if A.Efflorescence:IsReady(player) and
+        if CanCast and A.Efflorescence:IsReady(player) and
         A.GetToggle(2, "AoE") and
 		Efflorescence() <= EfflorescenceRefresh and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
 		-- Mana Check
 		(
 		    not IsSaveManaPhase() or
@@ -2490,15 +2555,8 @@ A[3] = function(icon, isMulti)
 
 
         -- RPvE #1 Swiftmend
-        if A.Swiftmend:IsReady(unit) and
+        if CanCast and A.Swiftmend:IsReady(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
         -- Talent Soul of Forest
         Unit(player):HasBuffs(114108, player, true) == 0 and
         (
@@ -2545,20 +2603,11 @@ A[3] = function(icon, isMulti)
 
         -- RPvE #1 Regrowth (Clearcasting, Soul of Forest, Incarnation)
         --Note: Soul of Forest should be used if hots is not refresh able
-        if A.Regrowth:IsReady(unit) and
+        if CanCast and A.Regrowth:IsReady(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > Unit("player"):CastTime(A.Regrowth.ID) and
         (
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Unit(player):GetCurrentSpeed() == 0
-            --[[
-            (
-                Unit(player):GetCurrentSpeed() == 0 and
-                (
-                    Player:GetStance() == 3 or
-                    Player:GetStance() == 0  
-                )
-            )
-        ]]
         ) and
         (
             -- MouseOver
@@ -2582,8 +2631,13 @@ A[3] = function(icon, isMulti)
                             not Unit(mouseover):PT(114108, nil, true)
                         )
                     ) or
+					Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
                     (
-                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
+                        A.IsInPvP and
+                        (						
+						Unit(mouseover):HealthPercent() < 40 or
+						Unit(mouseover):TimeToDie() < 3 
+						) or
                         Unit(mouseover):PT(8936, nil, true) -- Regrowth
                     )
                 )
@@ -2610,10 +2664,15 @@ A[3] = function(icon, isMulti)
                             not Unit(target):PT(114108, nil, true)
                         )
                     ) or
+					Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
                     (
-                        Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 and
+                        A.IsInPvP and
+                        (						
+						Unit(target):HealthPercent() < 40 or
+						Unit(target):TimeToDie() < 3 
+						) or
                         Unit(target):PT(8936, nil, true) -- Regrowth
-                    )
+                    ) 
                 )
             )
         ) and
@@ -2623,14 +2682,7 @@ A[3] = function(icon, isMulti)
         end 
 
         -- RPvP Overgrowth
-        if A.Overgrowth:IsReady(unit) and
-        --[[
-        (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
-            Player:GetStance() == 3 or
-            Player:GetStance() == 0 
-        ) and
-        ]]
+        if CanCast and A.Overgrowth:IsReady(unit) and
         A.Overgrowth:IsSpellLearned() and -- Overgrowth
         (
             -- MouseOver
@@ -2668,15 +2720,8 @@ A[3] = function(icon, isMulti)
         end
 
         -- RPvP Nourish
-        if A.Nourish:IsReady(unit) and
+        if CanCast and A.Nourish:IsReady(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
-        --[[
-        (
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
-            Player:GetStance() == 3 or
-            Player:GetStance() == 0 
-        ) and
-        ]]
         A.Nourish:IsSpellLearned() and
         Unit(player):GetCurrentSpeed() == 0 and
         (
@@ -2712,7 +2757,12 @@ A[3] = function(icon, isMulti)
         end
 
 		-- Photosynthesis Lifebloom on player to increase healing by 20%
-        if A.Lifebloom:IsReady(player) and inCombat and Unit(player):HasBuffs(A.Lifebloom.ID, true) < 3 and A.Photosynthesis:IsSpellLearned() then		    
+        if CanCast and A.Lifebloom:IsReady(player) and 
+		LifebloomWorkMode == "Auto" and
+		inCombat and 
+		Unit(player):HasBuffs(A.Lifebloom.ID, true) < 3 and 
+		A.Photosynthesis:IsSpellLearned() 
+		then		    
 		    -- Force Player target to gain 20% healing increase
 			HealingEngine.SetTarget(player)
 			-- Notification
@@ -2720,15 +2770,47 @@ A[3] = function(icon, isMulti)
 			return A.Lifebloom:Show(icon)
 		end	
 
-        -- PvE Lifebloom
-        if A.Lifebloom:IsReady(unit) and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
+        -- Lifebloom force on tanks
+        if inCombat and 
+		A.Lifebloom:IsReady() and 
+		IsSchoolFree() and 
+		LifebloomWorkMode == "Tanking Units" and 
+		not Unit(unit):IsTank() 
+		then		
+            for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and not Unit(unit):InLOS() then 
+			        if Unit(getmembersAll[i].Unit):IsTank() then
+			            HealingEngine.SetTarget(getmembersAll[i].Unit, 1)    -- Add 1sec delay in case of emergency switch              					
+                    end					
+                end				
+            end	
+			if Unit(unit):IsTank() and Unit(unit):HasBuffs(A.Lifebloom.ID, true) <= 2 -- <= 2 will trigger the bloom effect while refreshing in the same time
+			then 
+			    -- Notification
+			    Action.SendNotification("Refreshing Lifebloom on : " .. UnitName(unit), A.Lifebloom.ID)			
+			    return A.Lifebloom:Show(icon)
+			end
+		end
+
+        -- Lifebloom force on MostlyIncDMG
+        if inCombat and 
+		not A.Photosynthesis:IsSpellLearned() and 
+		A.Lifebloom:IsReady()  
+		then  
+		    if LifebloomWorkMode == "Mostly Inc. Damage"  then
+                HealingEngine.SetTargetMostlyIncDMG(1)   -- Add 1sec delay in case of emergency switch				 
+			    -- Notification
+				if Unit(unit):HasBuffs(A.Lifebloom.ID, true) <= 2 then 
+			        Action.SendNotification("Refreshing Lifebloom on : " .. UnitName(unit), A.Lifebloom.ID)			
+				    return A.Lifebloom:Show(icon)	
+                end					
+			end
+		end
+
+        -- PvE Lifebloom Auto no Photosynthesis
+        if CanCast and A.Lifebloom:IsReady(unit) and 
+		LifebloomWorkMode == "Auto" and 
+		not A.Photosynthesis:IsSpellLearned() and
         (
             -- MouseOver
             (
@@ -2748,12 +2830,7 @@ A[3] = function(icon, isMulti)
                     Unit(mouseover):Role("TANK") or
                     combatTime == 0 or
                     -- Lifebloom Tracker (is not applied for any one unit)
-                    A.HealingEngine.GetBuffsCount(33763, 0, player, true) == 0 or
-                    -- Photosynthesis
-                    (
-                        A.Photosynthesis:IsSpellLearned() and
-                        UnitIsUnit(mouseover, player)
-                    )
+                    A.HealingEngine.GetBuffsCount(33763, 0, player, true) == 0 
                 )
             ) or 
             (
@@ -2775,12 +2852,7 @@ A[3] = function(icon, isMulti)
                     Unit(target):Role("TANK") or
                     combatTime == 0 or
                     -- Lifebloom Tracker (is not applied for any one unit)
-                    A.HealingEngine.GetBuffsCount(33763, 0, player, true) == 0 or
-                    -- Photosynthesis
-                    (
-                        A.Photosynthesis:IsSpellLearned() and
-                        UnitIsUnit(target, player)
-                    )
+                    A.HealingEngine.GetBuffsCount(33763, 0, player, true) == 0 
                 )
             )
         )
@@ -2790,14 +2862,7 @@ A[3] = function(icon, isMulti)
 
 
         -- PvE Cenarion Ward
-        if A.CenarionWard:IsReady(unit) and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
+        if CanCast and A.CenarionWard:IsReady(unit) and
         combatTime > 3 and
         A.CenarionWard:IsSpellLearned() and
         (
@@ -2843,7 +2908,7 @@ A[3] = function(icon, isMulti)
         end
         
 		-- Rejuvenation Sniper
-		if (IsInGroup() or IsInRaid()) and SnipeFriendly then
+		if CanCast and (IsInGroup() or IsInRaid()) and SnipeFriendly then
 		    SetFriendlyToSnipe()
 			if A.Rejuvenation:IsReady(unit) then
 			    return A.Rejuvenation:Show(icon)
@@ -2851,7 +2916,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- PvE Rejuvenation
-        if A.Rejuvenation:IsReadyByPassCastGCD(unit) and
+        if CanCast and A.Rejuvenation:IsReadyByPassCastGCD(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) <= 2 and
 		(
 		    A.Germination:IsSpellLearned() and 
@@ -2860,13 +2925,6 @@ A[3] = function(icon, isMulti)
 			) 
 			or not A.Germination:IsSpellLearned() 
 		) and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
         (
             -- MouseOver
             (
@@ -2902,8 +2960,9 @@ A[3] = function(icon, isMulti)
                         Unit(target):PT(155777, nil, true)
                     )
                 )
-            ) or
-            MaintainRejuvenation(unit)
+            ) 
+			--or
+            --MaintainRejuvenation()
             or
             HealingEngine.IsMostlyIncDMG(unit)			
         )
@@ -2913,15 +2972,8 @@ A[3] = function(icon, isMulti)
 
 
         -- RPvE #2 Swiftmend
-        if A.Swiftmend:IsReady(unit) and
+        if CanCast and A.Swiftmend:IsReady(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
         -- Talent Soul of Forest
         Unit(player):HasBuffs(114108, player, true) == 0 and
         (
@@ -2956,7 +3008,7 @@ A[3] = function(icon, isMulti)
 
         -- PvE #2 Efflorescence
         --if we have 3+ melee units which can be healed or while run 
-        if A.Efflorescence:IsReady(player) and
+        if CanCast and A.Efflorescence:IsReady(player) and
         A.GetToggle(2, "AoE") and
 		Efflorescence() <= EfflorescenceRefresh and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
@@ -2965,13 +3017,6 @@ A[3] = function(icon, isMulti)
 		    not IsSaveManaPhase() or
             Unit(player):HasBuffs(29166, player, true) > GetCurrentGCD() + 0.2 
 		) and
-        --[[
-        (
-            Player:GetStance() == 0 or
-            Player:GetStance() == 3 or
-            Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0
-        ) and
-        ]]
         (
             -- MouseOver
             (
@@ -3016,16 +3061,7 @@ A[3] = function(icon, isMulti)
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > Unit("player"):CastTime(A.Regrowth.ID) and
         (
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
-            Unit(player):GetCurrentSpeed() == 0
-            --[[
-            (
-                (
-                    Player:GetStance() == 3 or
-                    Player:GetStance() == 0 
-                ) and
-                Unit(player):GetCurrentSpeed() == 0
-            )  
-        ]]   
+            Unit(player):GetCurrentSpeed() == 0  
         ) and
         (
             -- MouseOver
@@ -3152,7 +3188,7 @@ local function RotationPassive(icon)
             --deff_toggle and
             Unit(player):GetDMG()>0 and        
             (
-                Unit(player):Health()<=Unit(player):HealthMax()*0.21 or
+                Unit(player):Health() <= Unit(player):HealthMax()*0.21 or
                 (
                     A.IsInPvP and
                     Unit(player):UseDeff() and
@@ -3390,6 +3426,32 @@ local QB = {
 function Action.QueueBase(name)
          	
     if name == "BurstHealing" then 	
+
+		-- Note: Only for non GGL profiles and Action initializated
+		-- Argument 'func' must be function which will return number (health percent), this function accepts same arguments what will has PerformByProfileHP and fires for each member through enumeration-loop, at the end of loop all members will be sorted by default (refference to A.HealingEngine.SortMembers)
+		-- [1] member is @string refference for unitID 
+		-- [2] memberhp is @number refference for health percent of member 
+		-- [3] membermhp is @number refference for max health non-percent of member 
+		-- [4] DMG is @number refference for Unit(member):GetRealTimeDMG() indicates for real time incoming damage, it has limit 15% of the max health per second and can't be higher
+		-- Usage: 
+		local HealingEngineQueueOrder = HealingEngine.Data.QueueOrder -- this is very useful @table which resets every full enumeration-loop (see example of use below)
+		HealingEngine.SetPerformByProfileHP(
+			function(member, memberhp, membermhp, DMG)
+				if not HealingEngineQueueOrder.useRejuv and Unit(member):HasBuffs(A.Rejuvenation.ID, true) < 1 then 
+					HealingEngineQueueOrder.useRejuv = true -- that will skips check :HasBuffs(18, true) for other members and save performance because you can use shield only on one unit per GCD but loop refrehes every ~0.3 sec
+					--memberhp = memberhp - 20
+					if memberhp < 100 then 
+						memberhp = 100 
+					end 
+				end 
+				
+				return memberhp
+			end)
+
+	    -- Rejuvenation
+        if A.Rejuvenation:IsReadyByPassCastGCDP("target") then  
+            A.Rejuvenation:SetQueue(QB.target)        -- #1
+        end 
         
 		-- Check valid 
         --if QB.IsQueuedObjects(A.WildGrowth, A.Lifebloom) or QB.IsUnavailableObjects(A.Lifebloom) then 
