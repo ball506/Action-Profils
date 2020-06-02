@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {      
-    DateTime = "v4.2.8 (01.06.2020)",
+    DateTime = "v4.2.9 (02.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_PALADIN_RETRIBUTION] = {          
@@ -1102,7 +1102,55 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
-            },				         
+            },
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(299374) .. " -- ",
+                    },
+                },
+            },
+            { -- [4] 4th Row
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "LucidDreamTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "LucidDreamHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            },			
             { -- [4] 4th Row
 
                 {

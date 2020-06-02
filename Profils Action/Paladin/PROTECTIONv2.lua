@@ -1494,7 +1494,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- avengers_shield,if=cooldown_react
-            if A.AvengersShield:IsReadyByPassCastGCD(unit) then
+            if A.AvengersShield:IsReady(unit) then
                 return A.AvengersShield:Show(icon)
             end
 			
