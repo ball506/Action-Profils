@@ -249,6 +249,8 @@ local function RotationsVariables()
 	HealingTideTotemPartyUnits = GetToggle(2, "HealingTideTotemPartyUnits")
 	HealingTideTotemRaidHP = GetToggle(2, "HealingTideTotemRaidHP")
 	HealingTideTotemPartyHP = GetToggle(2, "HealingTideTotemPartyHP")
+	UseGhostWolf = GetToggle(2, "UseGhostWolf")
+	GhostWolfTime = GetToggle(2, "GhostWolfTime")
 end
 
 -- [1] CC AntiFake Rotation
@@ -466,7 +468,7 @@ local function SelfDefensives()
                 Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
                 Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit("player"):TimeToDieX(15) < 3 or 
                 (
                     A.IsInPvP and 
                     (
@@ -475,7 +477,8 @@ local function SelfDefensives()
                             Unit("player", 5):HasFlags() and 
                             Unit("player"):GetRealTimeDMG() > 0 and 
                             Unit("player"):IsFocused() 
-                        )
+                        ) or
+						Unit(player):IsExecuted()
                     )
                 )
             ) and 
@@ -532,7 +535,7 @@ local function CanHealingStreamTotem()
         local HealingStreamTotemUnits = GetToggle(2, "HealingStreamTotemUnits") 
         
         -- Auto Counter
-        if HealingStreamTotemUnits > 40 then 
+        if HealingStreamTotemUnits >= 5 then 
             HealingStreamTotemUnits = HealingEngineGetMinimumUnits(1)
             -- Reduce size in raid by 35%
             if HealingStreamTotemUnits > 5 then 
@@ -1782,7 +1785,7 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     HealingEngine.GetTimeToDieUnits(5) >= GetValidMembers(true) * 0.5 or
-                    HealingEngine.GetBelowHealthPercentercentUnits(40) >= GetValidMembers(true) * 0.5
+                    HealingEngine.GetBelowHealthPercentercentUnits(25) >= GetValidMembers(true) * 0.5
                 )
             ) or        
             (
@@ -1792,7 +1795,8 @@ A[3] = function(icon, isMulti)
             (
                 TeamCacheFriendlyType == "raid" and
                 HealingEngine.GetBelowHealthPercentercentUnits(15) >= 5               
-            )
+            ) or
+			A.HealingEngine.GetTimeToFullDie() < 3
         )
         then
             -- Notification                    
@@ -1801,7 +1805,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- #9.3 HealingTideTotem            
-        if A.HealingTideTotem:IsReady(player) and 
+        if A.HealingTideTotem:IsReady(player) and
 		A.BurstIsON(unit) and 
 		combatTime > 5 and 
         (        
@@ -1817,7 +1821,9 @@ A[3] = function(icon, isMulti)
                 TeamCache.Friendly.Size > 5 and      
                 HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemRaidHP) >= AoEMembers(true, _, HealingTideTotemRaidUnits)
             ) or     
-            HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
+            HealingEngine.GetHealthFrequency(GetGCD()*2) > 35
+			or
+			A.HealingEngine.GetTimeToFullDie() < 4
         )          
         then
             -- Notification                    
@@ -1850,8 +1856,8 @@ A[3] = function(icon, isMulti)
                             Unit(player):HasBuffs(A.Ascendance.ID, true) < GetCurrentGCD() + GetGCD() or
                             -- CloudburstTotem snipe 
                             (
-                                Unit(player):HasBuffs(A.CloudburstTotem.ID, true) > 0 and
-                                Unit(player):HasBuffs(A.CloudburstTotem.ID, true) < GetCurrentGCD() + GetGCD()
+                                CloudburstTotemDuration() > 0 and
+                                CloudburstTotemDuration() < GetCurrentGCD() + GetGCD()
                             )
                         ) and 
                         (                                   
@@ -1886,8 +1892,8 @@ A[3] = function(icon, isMulti)
                             Unit(player):HasBuffs(A.Ascendance.ID, true) < GetCurrentGCD() + GetGCD() or
                             -- CloudburstTotem snipe 
                             (
-                                Unit(player):HasBuffs(A.CloudburstTotem.ID, true) > 0 and
-                                Unit(player):HasBuffs(A.CloudburstTotem.ID, true) < GetCurrentGCD() + GetGCD()
+                                CloudburstTotemDuration() > 0 and
+                                CloudburstTotemDuration() < GetCurrentGCD() + GetGCD() * 2
                             )
                         ) and 
                         (                                   
@@ -1907,6 +1913,8 @@ A[3] = function(icon, isMulti)
 		-- RPvE #1 Healing Stream Totem Maintain
         --if we have 3+ melee units which can be healed or while run 
         if A.HealingStreamTotem:IsReady(player) and
+		not A.CloudburstTotem:IsSpellLearned() and
+		HealingStreamTotemDuration() < GetGCD() + 0.1 and 
         A.GetToggle(2, "AoE") and
 		-- Mana Check
 		(
@@ -1946,6 +1954,8 @@ A[3] = function(icon, isMulti)
                 A.HealingStreamTotem:PredictHeal("HealingStreamTotem", "target") 
             ) or
             HealingEngine.HealingByRange(40, "Riptide", A.Riptide, true) >= 3
+			or     
+            HealingEngine.GetHealthFrequency(GetGCD()*2) > 15
         ) and
         A.LastPlayerCastID ~= A.HealingStreamTotem.ID
         then 
@@ -1954,26 +1964,27 @@ A[3] = function(icon, isMulti)
 
         -- RPvE #1 Cloudburst Totem Recall
 		if A.CloudburstTotem:IsSpellLearned() and A.CloudburstTotem:IsReady(player) and
-		CloudburstTotemDuration() > GetGCD() + GetCurrentGCD() and
-		CloudburstTotemDuration() < 10 and
+		CloudburstTotemDuration() < 5 and
 		combatTime > 3 and
 		(        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(75) >= 2
+                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(75) >= 3
+                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 3
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(80) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(85) >= AoEMembers(true, _, 5)
             ) or     
-            HealingEngine.GetHealthFrequency(GetGCD()*3) > 25
+			-- Big damage
+            HealingEngine.GetHealthFrequency(GetGCD()*2) > 25
 			or
-			HealingEngine.GetHealthAVG() < 85
-        )
+			HealingEngine.GetHealthAVG() < 92
+        ) and
+        A.LastPlayerCastID ~= A.CloudburstTotem.ID
         then 
             return A.CloudburstTotem:Show(icon)
         end 		
@@ -1981,11 +1992,25 @@ A[3] = function(icon, isMulti)
         -- RPvE #2 Cloudburst Totem Call
 		if A.CloudburstTotem:IsSpellLearned() and A.CloudburstTotem:IsReady(player) and
 		CloudburstTotemDuration() == 0 and
-		combatTime > 3  and
-		(
-		    HealingEngine.GetHealthAVG() < 95 or
-		    HealingEngine.GetHealthFrequency(GetGCD()*3) > 10 
-		)		
+		combatTime > 2  and
+		(        
+            (
+                TeamCache.Friendly.Size <= 2 and
+                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 2
+            ) or
+            (
+                TeamCache.Friendly.Size <= 5 and
+                HealingEngine.GetBelowHealthPercentercentUnits(92) >= 3
+            ) or
+            (
+                TeamCache.Friendly.Size > 5 and      
+                HealingEngine.GetBelowHealthPercentercentUnits(94) >= AoEMembers(true, _, 5)
+            ) or
+			HealingEngine.GetHealthFrequency(GetGCD()*2) > 5
+			or
+			HealingEngine.GetHealthAVG() < 95
+        )	and
+        A.LastPlayerCastID ~= A.CloudburstTotem.ID
         then 
             return A.CloudburstTotem:Show(icon)
         end 		
@@ -2022,7 +2047,8 @@ A[3] = function(icon, isMulti)
                     Unit(target):Health() <= Unit(target):HealthMax()*0.95
                 )
             )
-        )
+        ) and
+        A.LastPlayerCastID ~= A.UnleashLife.ID
         then 
             return A.UnleashLife:Show(icon)
         end 
@@ -2048,14 +2074,14 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(70) >= 4 and
+                HealingEngine.GetBelowHealthPercentercentUnits(80) >= 4 and
 				Unit(player):HasBuffs(A.TidalWaveBuff.ID, true) == 0
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= AoEMembers(true, _, 4)
+                HealingEngine.GetBelowHealthPercentercentUnits(92) >= AoEMembers(true, _, 4)
             ) or     
-            HealingEngine.GetHealthFrequency(GetGCD()*4) > 15
+            HealingEngine.GetHealthFrequency(GetGCD()*2) > 10
         )
         then 
             return A.ChainHeal:Show(icon)
@@ -2333,6 +2359,12 @@ A[3] = function(icon, isMulti)
 	   
 	   
     end 
+
+		
+    -- GhostWolf if out of range 
+    if A.GhostWolf:IsReady(player) and Unit(player):HasBuffs(A.GhostWolf.ID, true) == 0 and isMovingFor > GhostWolfTime and UseGhostWolf then
+        return A.GhostWolf:Show(icon)
+    end	
     
     -- Defensive
     local SelfDefensive = SelfDefensives()
@@ -2365,7 +2397,15 @@ A[3] = function(icon, isMulti)
             return true 
         end 
     end 
-    
+
+    if IsUnitEnemy("targettarget") then 
+        unit = "targettarget"
+        
+        if DamageRotation(unit) then 
+            return true 
+        end 
+    end    
+   
     if IsUnitFriendly("target") then 
         unit = "target"
         

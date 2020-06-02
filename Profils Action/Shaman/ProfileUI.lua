@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.6 (01.06.2020)",
+    DateTime = "v4.1.7 (02.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -2037,7 +2037,51 @@ A.Data.ProfileUI = {
                     M = {},
                 },
 			},
-			
+            { -- [7] 
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Utilities -- ",
+                    },
+                },
+            },
+			{
+                {
+                    E = "Checkbox", 
+                    DB = "UseGhostWolf",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(2645), 
+                        ruRU = "Авто " .. A.GetSpellInfo(2645), 
+                        frFR = "Auto " .. A.GetSpellInfo(2645), 
+                    }, 
+                    TT = { 
+                        enUS = "Automatically use " .. A.GetSpellInfo(2645), 
+                        ruRU = "Автоматически использовать " .. A.GetSpellInfo(2645), 
+                        frFR = "Utiliser automatiquement " .. A.GetSpellInfo(2645), 
+                    }, 
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 7,                            
+                    DB = "GhostWolfTime",
+                    DBV = 3, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(2645) .. " if moving for",
+                        ruRU = A.GetSpellInfo(2645) .. " если переехать",
+                        frFR = A.GetSpellInfo(2645) .. " si vous bougez pendant",
+                    },
+                    TT = { 
+                        enUS = "If " .. A.GetSpellInfo(2645) .. " is talented and ready, will use it if moving for set value.", 
+                        ruRU = "Если " .. A.GetSpellInfo(2645) .. " изучен и готов, будет использовать его при переходе на заданное значение.", 
+                        frFR = "Si " .. A.GetSpellInfo(2645) .. " est prêt, l'utilisera s'il se déplace pour la valeur définie.", 
+                    }, 
+                    M = {},
+                },	
+			},			
             { -- [7] 
                 {
                     E = "Header",
@@ -2203,7 +2247,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 1, 
-                    MAX = 10,                            
+                    MAX = 5,                            
                     DB = "HealingStreamTotemUnits",
                     DBV = 3,
                     ONOFF = false,
