@@ -619,7 +619,7 @@ A[3] = function(icon, isMulti)
 		local function Pandemic(unit)
 		    --sunfire
 		    if A.Sunfire:IsReady(unit) then
-			    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) <= SunfireRefresh and A.LastPlayerCastID ~= A.Sunfire.ID and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Sunfire)
+			    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) <= SunfireRefresh and A.LastPlayerCastID ~= A.Sunfire.ID and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Sunfire)
 				and (
 				        VarAzSs == 0 or
 				        (
@@ -634,6 +634,7 @@ A[3] = function(icon, isMulti)
 		        or  (
 				        Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) <= 10
 					) 
+				or isMoving
 				then
 				    return A.Sunfire:Show(icon)
                 end	
@@ -641,7 +642,7 @@ A[3] = function(icon, isMulti)
 			
 		    --moonfire
 		    if A.Moonfire:IsReady(unit) then
-			    if Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= MoonfireRefresh and A.LastPlayerCastID ~= A.Moonfire.ID and IsSchoolNatureUP() and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Moonfire)
+			    if Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= MoonfireRefresh and A.LastPlayerCastID ~= A.Moonfire.ID and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.Moonfire)
 				and (
 				        VarAzSs == 0 or
 				        (
@@ -656,6 +657,7 @@ A[3] = function(icon, isMulti)
 		        or  (
 				        Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 10
 					) 
+				or isMoving
 				then
 				    return A.Moonfire:Show(icon)
                 end	
@@ -883,8 +885,10 @@ A[3] = function(icon, isMulti)
 					or 
 					A.LastPlayerCastID ~= A.Starsurge.ID
 				)
-				or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 or not AP_Check(A.SolarWrath)
-			) 
+				or Unit(unit):TimeToDie() <= A.Starsurge:GetSpellCastTime() * FutureAstralPower() / 40 
+				or not AP_Check(A.SolarWrath)
+				or isMoving
+			) 			 
 			then
 			    return A.Starsurge:Show(icon)
 		    end			
