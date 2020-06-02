@@ -890,21 +890,29 @@ local DebuffSniperList = {
     { spellID = 302421, stacks = 0, secs = 5 }, -- Queen's Decree
 }
 
+local NeedSnipe = false
 local function SetFriendlyToSnipe()
     local getmembersAll = A.HealingEngine.GetMembersAll()
     for i = 1, #getmembersAll do
         if Unit(getmembersAll[i].Unit):GetRange() <= 40 then
             for k, v in pairs(DebuffSniperList) do
-                if Unit(getmembersAll[i].Unit):HasDeBuffs(v.spellID, true) > v.secs and Unit(getmembersAll[i].Unit):HasDeBuffsStacks(v.spellID, true) >= v.stacks and Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
-                    if A.Germination:IsSpellLearned() and Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) == 0 then
-                        if A.Rejuvenation:IsReadyByPassCastGCD(getmembersAll[i].Unit) then
-                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
-                        end
-                    elseif Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
-                        if A.Rejuvenation:IsReadyByPassCastGCD(getmembersAll[i].Unit) then
-                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
-                        end
-                    end
+                if Unit(getmembersAll[i].Unit):HasDeBuffs(v.spellID, true) > v.secs and 
+				    --Unit(getmembersAll[i].Unit):HasDeBuffsStacks(v.spellID, true) >= v.stacks and 
+				    Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) > 0 and
+					-- Germination
+					(
+					    A.Germination:IsSpellLearned() and 
+						Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) > 0 
+						or 
+						not A.Germination:IsSpellLearned()
+					)					
+				then
+					-- Notification					
+                    Action.SendNotification("Healing snipe on " .. UnitName(getmembersAll[i].Unit), A.Regrowth.ID)
+	    			-- Global var
+					NeedSnipe = true
+					-- Force target
+                    A.HealingEngine.SetTarget(getmembersAll[i].Unit, 3)
                 end
             end
         end
@@ -912,146 +920,182 @@ local function SetFriendlyToSnipe()
 end
 SetFriendlyToSnipe = Action.MakeFunctionCachedDynamic(SetFriendlyToSnipe)
 
-local pre_hot_list = {   --snipe list
+local PredictHoTsList = {   --snipe list
     --Battle of Dazar'alor
-    [283572] = { targeted = true }, --"Sacred Blade"
-    [284578] = { targeted = true }, --"Penance"
-    [286988] = { targeted = true }, --Divine Burst"
-    [282036] = { targeted = true }, --"Fireball"
-    [282182] = { targeted = false }, --"Buster Cannon"
+	{ spellID = 283572, targeted = true }, --"Sacred Blade"
+	{ spellID = 284578, targeted = true }, --"Penance"
+	{ spellID = 286988, targeted = true }, --Divine Burst"
+	{ spellID = 282036, targeted = true }, --"Fireball"
+	{ spellID = 282182, targeted = false }, --"Buster Cannon"
     --Uldir
-    [279669] = { targeted = false }, --"Bacterial Outbreak"
-    [279660] = { targeted = false }, --"Endemic Virus"
-    [274262] = { targeted = false }, --"Explosive Corruption"
+	{ spellID = 279669, targeted = false }, --"Bacterial Outbreak"
+	{ spellID = 279660, targeted = false }, --"Endemic Virus"
+	{ spellID = 274262, targeted = false }, --"Explosive Corruption"
     --Reaping
-    [288693] = { targeted = true }, --"Grave Bolt",
+	{ spellID = 288693, targeted = true }, --"Grave Bolt",
     --Atal'Dazar
-    [250096] = { targeted = true }, --"Wracking Pain"
-    [253562] = { targeted = true }, --"Wildfire"
-    [252781] = { targeted = true }, --"Unstable Hex"
-    [252923] = { targeted = true }, --"Venom Blast"
-    [253239] = { targeted = true }, -- Dazarai Juggernaut - Merciless Assault },
-    [256846] = { targeted = true }, --'Dinomancer Kisho - Deadeye Aim'},
-    [257407] = { targeted = true }, -- Rezan - Pursuit},
+	{ spellID = 250096, targeted = true }, --"Wracking Pain"
+	{ spellID = 253562, targeted = true }, --"Wildfire"
+	{ spellID = 252781, targeted = true }, --"Unstable Hex"
+	{ spellID = 252923, targeted = true }, --"Venom Blast"
+	{ spellID = 253239, targeted = true }, -- Dazarai Juggernaut - Merciless Assault },
+	{ spellID = 256846, targeted = true }, --'Dinomancer Kisho - Deadeye Aim'},
+	{ spellID = 257407, targeted = true }, -- Rezan - Pursuit},
     --Kings Rest
-    [267618] = { targeted = true }, --"Drain Fluids"
-    [267308] = { targeted = true }, --"Lighting Bolt"
-    [270493] = { targeted = true }, --"Spectral Bolt"
-    [269973] = { targeted = true }, --"Deathly Chill"
-    [270923] = { targeted = true }, --"Shadow Bolt"
-    [272388] = { targeted = true }, --"Shadow Barrage"
-    [266231] = { targeted = true }, -- Kula the Butcher - Severing Axe},
-    [270507] = { targeted = true }, --  Spectral Beastmaster - Poison Barrage},
-    [265773] = { targeted = true }, -- The Golden Serpent - Spit Gold},
-    [270506] = { targeted = true }, -- Spectral Beastmaster - Deadeye Shot},
-    [265773] = { targeted = true }, -- https://www.wowhead.com/spell=270487/severing-blade
-    [268586] = { targeted = true }, -- https://www.wowhead.com/spell=268586/blade-combo
+	{ spellID = 267618, targeted = true }, --"Drain Fluids"
+	{ spellID = 267308, targeted = true }, --"Lighting Bolt"
+	{ spellID = 270493, targeted = true }, --"Spectral Bolt"
+	{ spellID = 269973, targeted = true }, --"Deathly Chill"
+	{ spellID = 270923, targeted = true }, --"Shadow Bolt"
+	{ spellID = 272388, targeted = true }, --"Shadow Barrage"
+	{ spellID = 266231, targeted = true }, -- Kula the Butcher - Severing Axe},
+	{ spellID = 270507, targeted = true }, --  Spectral Beastmaster - Poison Barrage},
+	{ spellID = 265773, targeted = true }, -- The Golden Serpent - Spit Gold},
+	{ spellID = 270506, targeted = true }, -- Spectral Beastmaster - Deadeye Shot},
+	{ spellID = 265773, targeted = true }, -- https://www.wowhead.com/spell=270487/severing-blade
+	{ spellID = 268586, targeted = true }, -- https://www.wowhead.com/spell=268586/blade-combo
     --Free Hold
-    [259092] = { targeted = true }, --"Lightning Bolt"
-    [281420] = { targeted = true }, --"Water Bolt"
-    [257267] = { targeted = false }, --"Swiftwind Saber"
-    [257739] = { targeted = true }, -- Blacktooth Scrapper - Blind Rage},
-    [258338] = { targeted = true }, -- Captain Raoul - Blackout Barrel},
-    [256979] = { targeted = true }, -- Captain Eudora - Powder Shot},
+	{ spellID = 259092, targeted = true }, --"Lightning Bolt"
+	{ spellID = 281420, targeted = true }, --"Water Bolt"
+	{ spellID = 257267, targeted = false }, --"Swiftwind Saber"
+	{ spellID = 257739, targeted = true }, -- Blacktooth Scrapper - Blind Rage},
+	{ spellID = 258338, targeted = true }, -- Captain Raoul - Blackout Barrel},
+	{ spellID = 256979, targeted = true }, -- Captain Eudora - Powder Shot},
     --Siege of Boralus
-    [272588] = { targeted = true }, --"Rotting Wounds"
-    [272827] = { targeted = false }, --"Viscous Slobber"
-    [272581] = { targeted = true }, -- "Water Spray"
-    [257883] = { targeted = false }, -- "Break Water"
-    [257063] = { targeted = true }, --"Brackish Bolt"
-    [272571] = { targeted = true }, --"Choking Waters"
-    [257641] = { targeted = true }, -- Kul Tiran Marksman - Molten Slug},
-    [272874] = { targeted = true }, -- Ashvane Commander - Trample},
-    [272581] = { targeted = true }, -- Bilge Rat Tempest - Water Spray},
-    [272528] = { targeted = true }, -- Ashvane Sniper - Shoot},
-    [272542] = { targeted = true }, -- Ashvane Sniper - Ricochet},
+	{ spellID = 272588, targeted = true }, --"Rotting Wounds"
+	{ spellID = 272827, targeted = false }, --"Viscous Slobber"
+	{ spellID = 272581, targeted = true }, -- "Water Spray"
+	{ spellID = 257883, targeted = false }, -- "Break Water"
+	{ spellID = 257063, targeted = true }, --"Brackish Bolt"
+	{ spellID = 272571, targeted = true }, --"Choking Waters"
+	{ spellID = 257641, targeted = true }, -- Kul Tiran Marksman - Molten Slug},
+	{ spellID = 272874, targeted = true }, -- Ashvane Commander - Trample},
+	{ spellID = 272581, targeted = true }, -- Bilge Rat Tempest - Water Spray},
+	{ spellID = 272528, targeted = true }, -- Ashvane Sniper - Shoot},
+	{ spellID = 272542, targeted = true }, -- Ashvane Sniper - Ricochet},
     -- Temple of Sethraliss
-    [263775] = { targeted = true }, --"Gust"
-    [268061] = { targeted = true }, --"Chain Lightning"
-    [272820] = { targeted = true }, --"Shock"
-    [263365] = { targeted = true }, --"https://www.wowhead.com/spell=263365/a-peal-of-thunder"
-    [268013] = { targeted = true }, --"Flame Shock"
-    [274642] = { targeted = true }, --"Lava Burst"
-    [268703] = { targeted = true }, --"Lightning Bolt"
-    [272699] = { targeted = true }, --"Venomous Spit"
-    [268703] = { targeted = true }, -- Charged Dust Devil - Lightning Bolt},
-    [272670] = { targeted = true }, -- Sandswept Marksman - Shoot},
-    [267278] = { targeted = true }, -- Static-charged Dervish - Electrocute},
-    [272820] = { targeted = true }, -- Spark Channeler - Shock},
-    [274642] = { targeted = true }, -- Hoodoo Hexer - Lava Burst},
-    [268061] = { targeted = true }, -- Plague Doctor - Chain Lightning},
+	{ spellID = 263775, targeted = true }, --"Gust"
+	{ spellID = 268061, targeted = true }, --"Chain Lightning"
+	{ spellID = 272820, targeted = true }, --"Shock"
+	{ spellID = 263365, targeted = true }, --"https://www.wowhead.com/spell=263365/a-peal-of-thunder"
+	{ spellID = 268013, targeted = true }, --"Flame Shock"
+	{ spellID = 274642, targeted = true }, --"Lava Burst"
+	{ spellID = 268703, targeted = true }, --"Lightning Bolt"
+	{ spellID = 272699, targeted = true }, --"Venomous Spit"
+	{ spellID = 268703, targeted = true }, -- Charged Dust Devil - Lightning Bolt},
+	{ spellID = 272670, targeted = true }, -- Sandswept Marksman - Shoot},
+	{ spellID = 267278, targeted = true }, -- Static-charged Dervish - Electrocute},
+	{ spellID = 272820, targeted = true }, -- Spark Channeler - Shock},
+	{ spellID = 274642, targeted = true }, -- Hoodoo Hexer - Lava Burst},
+	{ spellID = 268061, targeted = true }, -- Plague Doctor - Chain Lightning},
     --Shrine of the Storm
-    [265001] = { targeted = true }, --"Sea Blast"
-    [268347] = { targeted = true }, --"Void Bolt"
-    [267969] = { targeted = true }, --"Water Blast"
-    [268233] = { targeted = true }, --"Electrifying Shock"
-    [268315] = { targeted = true }, --"Lash"
-    [268177] = { targeted = true }, --"Windblast"
-    [268273] = { targeted = true }, --"Deep Smash"
-    [268317] = { targeted = true }, --"Rip Mind"
-    [265001] = { targeted = true }, --"Sea Blast"
-    [274703] = { targeted = true }, --"Void Bolt"
-    [268214] = { targeted = true }, --"Carve Flesh"
-    [264166] = { targeted = true }, -- Aqusirr - Undertow},
-    [268214] = { targeted = true }, -- Runecarver Sorn - Carve Flesh},
+	{ spellID = 265001, targeted = true }, --"Sea Blast"
+	{ spellID = 268347, targeted = true }, --"Void Bolt"
+	{ spellID = 267969, targeted = true }, --"Water Blast"
+	{ spellID = 268233, targeted = true }, --"Electrifying Shock"
+	{ spellID = 268315, targeted = true }, --"Lash"
+	{ spellID = 268177, targeted = true }, --"Windblast"
+	{ spellID = 268273, targeted = true }, --"Deep Smash"
+	{ spellID = 268317, targeted = true }, --"Rip Mind"
+	{ spellID = 265001, targeted = true }, --"Sea Blast"
+	{ spellID = 274703, targeted = true }, --"Void Bolt"
+	{ spellID = 268214, targeted = true }, --"Carve Flesh"
+	{ spellID = 264166, targeted = true }, -- Aqusirr - Undertow},
+	{ spellID = 268214, targeted = true }, -- Runecarver Sorn - Carve Flesh},
     --Motherlode
-    [259856] = { targeted = true }, --"Chemical Burn"
-    [260318] = { targeted = true }, --"Alpha Cannon"
-    [262794] = { targeted = true }, --"Energy Lash"
-    [263202] = { targeted = true }, --"Rock Lance"
-    [262268] = { targeted = true }, --"Caustic Compound"
-    [263262] = { targeted = true }, --"Shale Spit"
-    [263628] = { targeted = true }, --"Charged Claw"
-    [268185] = { targeted = true }, -- Refreshment Vendor, Iced Spritzer},
-    [258674] = { targeted = true }, -- Off-Duty Laborer - Throw Wrench},
-    [276304] = { targeted = true }, -- Rowdy Reveler - Penny For Your Thoughts},
-    [263209] = { targeted = true }, -- Mine Rat - Throw Rock},
-    [263202] = { targeted = true }, -- Venture Co. Earthshaper - Rock Lance},
-    [262794] = { targeted = true }, -- Venture Co. Mastermind - Energy Lash},
-    [260669] = { targeted = true }, -- Rixxa Fluxflame - Propellant Blast},
-    [271456] = { targeted = true }, -- https://www.wowhead.com/spell=271456/drill-smash},
+	{ spellID = 259856, targeted = true }, --"Chemical Burn"
+	{ spellID = 260318, targeted = true }, --"Alpha Cannon"
+	{ spellID = 262794, targeted = true }, --"Energy Lash"
+	{ spellID = 263202, targeted = true }, --"Rock Lance"
+	{ spellID = 262268, targeted = true }, --"Caustic Compound"
+	{ spellID = 263262, targeted = true }, --"Shale Spit"
+	{ spellID = 263628, targeted = true }, --"Charged Claw"
+	{ spellID = 268185, targeted = true }, -- Refreshment Vendor, Iced Spritzer},
+	{ spellID = 258674, targeted = true }, -- Off-Duty Laborer - Throw Wrench},
+	{ spellID = 276304, targeted = true }, -- Rowdy Reveler - Penny For Your Thoughts},
+	{ spellID = 263209, targeted = true }, -- Mine Rat - Throw Rock},
+	{ spellID = 263202, targeted = true }, -- Venture Co. Earthshaper - Rock Lance},
+	{ spellID = 262794, targeted = true }, -- Venture Co. Mastermind - Energy Lash},
+	{ spellID = 260669, targeted = true }, -- Rixxa Fluxflame - Propellant Blast},
+	{ spellID = 271456, targeted = true }, -- https://www.wowhead.com/spell=271456/drill-smash},
     --Underrot
-    [260879] = { targeted = true }, --"Blood Bolt"
-    [265084] = { targeted = true }, --"Blood Bolt"
-    [259732] = { targeted = false }, --"Festering Harvest"
-    [266209] = { targeted = false }, --"Wicked Frenzy"
-    [265376] = { targeted = true }, -- Fanatical Headhunter - Barbed Spear},
-    [265625] = { targeted = true }, -- Befouled Spirit - Dark Omen},
+	{ spellID = 260879, targeted = true }, --"Blood Bolt"
+	{ spellID = 265084, targeted = true }, --"Blood Bolt"
+	{ spellID = 259732, targeted = false }, --"Festering Harvest"
+	{ spellID = 266209, targeted = false }, --"Wicked Frenzy"
+	{ spellID = 265376, targeted = true }, -- Fanatical Headhunter - Barbed Spear},
+	{ spellID = 265625, targeted = true }, -- Befouled Spirit - Dark Omen},
     --Tol Dagor
-    [257777] = { targeted = true }, --"Crippling Shiv"
-    [258150] = { targeted = true }, --"Salt Blast"
-    [258869] = { targeted = true }, --"Blaze"
-    [256039] = { targeted = true }, -- Overseer Korgus - Deadeye},
-    [185857] = { targeted = true }, -- Ashvane Spotter - Shoot},
+	{ spellID = 257777, targeted = true }, --"Crippling Shiv"
+	{ spellID = 258150, targeted = true }, --"Salt Blast"
+	{ spellID = 258869, targeted = true }, --"Blaze"
+	{ spellID = 256039, targeted = true }, -- Overseer Korgus - Deadeye},
+	{ spellID = 185857, targeted = true }, -- Ashvane Spotter - Shoot},
 
     --work shop_
-    [294195] = { targeted = true }, --https://www.wowhead.com/spell=294195/arcing-zap
-    [293827] = { targeted = true }, --https://www.wowhead.com/spell=293827/giga-wallop
-    [292264] = { targeted = true }, -- https://www.wowhead.com/spell=292264/giga-zap
+	{ spellID = 294195, targeted = true }, --https://www.wowhead.com/spell=294195/arcing-zap
+	{ spellID = 293827, targeted = true }, --https://www.wowhead.com/spell=293827/giga-wallop
+	{ spellID = 292264, targeted = true }, -- https://www.wowhead.com/spell=292264/giga-zap
     --junk yard
-    [300650] = { targeted = true }, --https://www.wowhead.com/spell=300650/suffocating-smog
-    [299438] = { targeted = true }, --https://www.wowhead.com/spell=299438/sledgehammer
-    [300188] = { targeted = true }, -- https://www.wowhead.com/spell=300188/scrap-cannon#used-by-npc
-    [302682] = { targeted = true }, --https://www.wowhead.com/spell=302682/mega-taze
+	{ spellID = 300650, targeted = true }, --https://www.wowhead.com/spell=300650/suffocating-smog
+	{ spellID = 299438, targeted = true }, --https://www.wowhead.com/spell=299438/sledgehammer
+	{ spellID = 300188, targeted = true }, -- https://www.wowhead.com/spell=300188/scrap-cannon#used-by-npc
+	{ spellID = 302682, targeted = true }, --https://www.wowhead.com/spell=302682/mega-taze
 
     --Waycrest Manor
-    [260701] = { targeted = true }, --"Bramble Bolt"
-    [260700] = { targeted = true }, --"Ruinous Bolt"
-    [260699] = { targeted = true }, --"Soul Bolt"
-    [261438] = { targeted = true }, --"Wasting Strike"
-    [266225] = { targeted = true }, --Darkened Lightning"
-    [273653] = { targeted = true }, --"Shadow Claw"
-    [265881] = { targeted = true }, --"Decaying Touch"
-    [264153] = { targeted = true }, --"Spit"
-    [278444] = { targeted = true }, --"Infest"
-    [167385] = { targeted = true }, --"Infest"
-    [263891] = { targeted = true }, -- Heartsbane Vinetwister - Grasping Thorns},
-    [264510] = { targeted = true }, -- Crazed Marksman - Shoot},
-    [260699] = { targeted = true }, -- Coven Diviner - Soul Bolt},
-    [260551] = { targeted = true }, -- Soulbound Goliath - Soul Thorns},
-    [260741] = { targeted = true }, -- Heartsbane Triad - Jagged Nettles},
-    [268202] = { targeted = true } -- Gorak Tul - Death Lens},
+	{ spellID = 260701, targeted = true }, --"Bramble Bolt"
+	{ spellID = 260700, targeted = true }, --"Ruinous Bolt"
+	{ spellID = 260699, targeted = true }, --"Soul Bolt"
+	{ spellID = 261438, targeted = true }, --"Wasting Strike"
+	{ spellID = 266225, targeted = true }, --Darkened Lightning"
+	{ spellID = 273653, targeted = true }, --"Shadow Claw"
+	{ spellID = 265881, targeted = true }, --"Decaying Touch"
+	{ spellID = 264153, targeted = true }, --"Spit"
+	{ spellID = 278444, targeted = true }, --"Infest"
+	{ spellID = 167385, targeted = true }, --"Infest"
+	{ spellID = 263891, targeted = true }, -- Heartsbane Vinetwister - Grasping Thorns},
+	{ spellID = 264510, targeted = true }, -- Crazed Marksman - Shoot},
+	{ spellID = 260699, targeted = true }, -- Coven Diviner - Soul Bolt},
+	{ spellID = 260551, targeted = true }, -- Soulbound Goliath - Soul Thorns},
+	{ spellID = 260741, targeted = true }, -- Heartsbane Triad - Jagged Nettles},
+	{ spellID = 268202, targeted = true } -- Gorak Tul - Death Lens},
 }
+
+
+local NeedPreHot = false
+local function SetFriendlyToPreHot()
+    local getmembersAll = A.HealingEngine.GetMembersAll()
+	local _, EVENT, _, SourceGUID, _,_,_, DestGUID, _, _, _, SPELLID  = CombatLogGetCurrentEventInfo()
+	
+    for i = 1, #getmembersAll do
+        if Unit(getmembersAll[i].Unit):GetRange() <= 40 then
+            for k, v in pairs(PredictHoTsList) do
+			    -- Detected inc damage to pre hot
+                if EVENT == "SPELL_CAST_START" and DestGUID == getmembersAll[i].GUID and SPELLID == v.spellID and
+				    Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 and
+					-- Germination
+					(
+					    (
+						    A.Germination:IsSpellLearned() and 
+						    Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) == 0 
+						)
+						or 
+						not A.Germination:IsSpellLearned()
+					)					
+				then
+				    -- Notification					
+                    Action.SendNotification("Big damage incoming : Prehot on " .. UnitName(getmembersAll[i].Unit), A.Rejuvenation.ID)
+	    			-- Global var
+					NeedPreHot = true
+					-- Force target
+                    A.HealingEngine.SetTarget(getmembersAll[i].Unit, 3)
+                end
+            end
+        end
+	end
+end
+SetFriendlyToPreHot = Action.MakeFunctionCachedDynamic(SetFriendlyToPreHot)
+
 local CC_CreatureTypeList = { "Beast", "Dragonkin" }
 local StunsBlackList = {
     -- Atal'Dazar
@@ -1276,8 +1320,12 @@ A[3] = function(icon, isMulti)
 	local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5)
 	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
 	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
-    
-	    -- EyeBeam protection channel
+	
+	-- Smart Targeting functions
+    SetFriendlyToSnipe()
+	SetFriendlyToPreHot()
+	
+	-- EyeBeam protection channel
     local CanCast = true
     --local TotalCast, CurrentCastLeft, CurrentCastDone = Unit(player):CastTime()
     --local castName, castStartTime, castEndTime, notInterruptable, spellID, isChannel = Unit(player):IsCasting()
@@ -2187,6 +2235,8 @@ A[3] = function(icon, isMulti)
                 HealingEngine.GetBelowHealthPercentercentUnits(TranquilityRaidHP) >= AoEMembers(true, _, TranquilityRaidUnits)
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
+			or
+			HealingEngine.GetTimeToFullDie() < 3
         )
 		then
 		    return A.Tranquility:Show(icon)
@@ -2635,11 +2685,16 @@ A[3] = function(icon, isMulti)
                     (
                         A.IsInPvP and
                         (						
-						Unit(mouseover):HealthPercent() < 40 or
-						Unit(mouseover):TimeToDie() < 3 
+						    Unit(mouseover):HealthPercent() < 40 or
+						    Unit(mouseover):TimeToDie() < 3 
 						) or
                         Unit(mouseover):PT(8936, nil, true) -- Regrowth
-                    )
+                    ) or
+					not IsInRaid() and
+					(
+						Unit(mouseover):HealthPercent() < 40 or
+						Unit(mouseover):TimeToDie() < 3 					    
+					)
                 )
             ) or 
             (
@@ -2668,13 +2723,23 @@ A[3] = function(icon, isMulti)
                     (
                         A.IsInPvP and
                         (						
-						Unit(target):HealthPercent() < 40 or
-						Unit(target):TimeToDie() < 3 
+						    Unit(target):HealthPercent() < 40 or
+						    Unit(target):TimeToDie() < 3 
 						) or
                         Unit(target):PT(8936, nil, true) -- Regrowth
                     ) 
                 )
-            )
+            ) or
+			TeamCache.Friendly.Size <= 5 and
+			(
+				Unit(target):HealthPercent() < 60 or
+				Unit(target):TimeToDie() < 2 					    
+			) or
+			NeedSnipe and 
+			(
+			    Unit(unit):HealthPercent() < 60 or
+				Unit(unit):TimeToDie() < 2
+			)
         ) and
         select(2, Unit(player):CastTime()) == 0 -- no casting
         then 
@@ -2901,18 +2966,11 @@ A[3] = function(icon, isMulti)
                     ) or
                     Unit(target):Role("TANK")
                 )
-            )
+            ) or
+			NeedPreHot
         )
         then 
             return A.CenarionWard:Show(icon)
-        end
-        
-		-- Rejuvenation Sniper
-		if CanCast and (IsInGroup() or IsInRaid()) and SnipeFriendly then
-		    SetFriendlyToSnipe()
-			if A.Rejuvenation:IsReady(unit) then
-			    return A.Rejuvenation:Show(icon)
-			end
         end
 		
         -- PvE Rejuvenation
@@ -2960,16 +3018,16 @@ A[3] = function(icon, isMulti)
                         Unit(target):PT(155777, nil, true)
                     )
                 )
-            ) 
-			--or
-            --MaintainRejuvenation()
+            ) or
+            -- Smart prehot
+			NeedPreHot
             or
+			-- MostlyIncDMG
             HealingEngine.IsMostlyIncDMG(unit)			
         )
         then 
             return A.Rejuvenation:Show(icon)
         end
-
 
         -- RPvE #2 Swiftmend
         if CanCast and A.Swiftmend:IsReady(unit) and
@@ -2999,7 +3057,8 @@ A[3] = function(icon, isMulti)
                 A.Swiftmend:IsSpellInRange(target) and
                 A.Swiftmend:PredictHeal("Swiftmend", "target") and
                 Unit(target):Health() <= Unit(target):HealthMax()*0.75
-            )
+            ) or 
+			NeedSnipe and Unit(unit):HealthPercent() < 70
         )
         then 
             return A.Swiftmend:Show(icon)
