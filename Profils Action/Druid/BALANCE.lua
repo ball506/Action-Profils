@@ -486,17 +486,15 @@ A[3] = function(icon, isMulti)
 	local MultiDotDistance = A.GetToggle(2, "MultiDotDistance")	
     local MoonfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 2, A.Moonfire.ID, 5)
     local SunfireToRefresh = MultiUnits:GetByRangeDoTsToRefresh(MultiDotDistance, 2, A.Sunfire.ID, 5)
-	local MissingSunfire = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 2, A.Sunfire.ID, 10)
-	local MissingMoonfire = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 2, A.Moonfire.ID, 10)
+	local MissingSunfire = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Sunfire.ID, 3)
+	local MissingMoonfire = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Moonfire.ID, 3)
     local StellarFlareRefresh = A.GetToggle(2, "StellarFlareRefresh")
 	local MoonfireRefresh = A.GetToggle(2, "MoonfireRefresh") 
 	local SunfireRefresh = A.GetToggle(2, "SunfireRefresh")
     local DBM = Action.GetToggle(1, "DBM")
     local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
     local Racial = Action.GetToggle(1, "Racial")
-    local Potion = Action.GetToggle(1, "Potion") 
-    
-     
+    local Potion = Action.GetToggle(1, "Potion")     
     local BloodoftheEnemySyncAoE = Action.GetToggle(2, "BloodoftheEnemySyncAoE")
     local BloodoftheEnemyAoETTD = Action.GetToggle(2, "BloodoftheEnemyAoETTD")
     local BloodoftheEnemyUnits = Action.GetToggle(2, "BloodoftheEnemyUnits")
@@ -604,7 +602,7 @@ A[3] = function(icon, isMulti)
 		
 		-- Auto multidot
 		local function Multidots(unit)
-		    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) > 0 and MultiUnits:GetActiveEnemies() <= 5 and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) > 0 and A.GetToggle(2, "AoE") and
+		    if Unit(unit):HasDeBuffs(A.Sunfire.ID, true) > 0 and MultiUnits:GetActiveEnemies() <= A.GetToggle(2, "MultiDotMaxUnits") and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) > 0 and A.GetToggle(2, "AoE") and
 		    (
 			    (MissingSunfire >= 1 )
 				or 
@@ -634,7 +632,6 @@ A[3] = function(icon, isMulti)
 		        or  (
 				        Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.SunfireDebuff.ID, true) <= 10
 					) 
-				or isMoving
 				then
 				    return A.Sunfire:Show(icon)
                 end	
@@ -657,7 +654,6 @@ A[3] = function(icon, isMulti)
 		        or  (
 				        Unit(player):HasBuffsStacks(A.ArcanicPulsarBuff.ID, true) >= 7 and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) <= 10
 					) 
-				or isMoving
 				then
 				    return A.Moonfire:Show(icon)
                 end	
@@ -665,7 +661,7 @@ A[3] = function(icon, isMulti)
 			
 		    --stellar_flare
 		    if A.StellarFlare:IsReady(unit) then
-			    if Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= StellarFlareRefresh and A.LastPlayerCastID ~= A.StellarFlare.ID and IsSchoolNatureUP() and A.StellarFlare:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.StellarFlare)
+			    if Unit(unit):HasDeBuffs(A.StellarFlare.ID, true) <= StellarFlareRefresh and A.LastPlayerCastID ~= A.StellarFlare.ID and A.StellarFlare:AbsentImun(unit, Temp.TotalAndPhys) and Player:IsStance(4) and AP_Check(A.StellarFlare)
 				and (
 				        VarAzSs == 0 or
 				        (
@@ -832,7 +828,7 @@ A[3] = function(icon, isMulti)
 		    -- Spenders
 			
 			-- starfall
-		    if A.Starfall:IsReady(unit, true) and IsSchoolArcaneUP() and IsSchoolNatureUP() and A.Starfall:AbsentImun(unit, Temp.TotalAndPhys) and 
+		    if A.Starfall:IsReady(unit, true) and IsSchoolArcaneUP() and A.Starfall:AbsentImun(unit, Temp.TotalAndPhys) and 
 		    (
 			    (
 				    Unit(player):HasBuffsStacks(A.StarlordBuff.ID, true) < 3 
@@ -899,6 +895,31 @@ A[3] = function(icon, isMulti)
 				    return true
 				end
 			end
+
+		    --Move
+		    if A.Sunfire:IsReady(unit) and isMoving and Player:IsStance(4) and Unit(unit):HasDeBuffs(A.Sunfire.ID, true) < 2 and
+		    (
+			    VarAzSs == 0 
+				or 
+				(Unit(player):HasBuffs(CaIncID, true) == 0) 
+				or 
+		        A.LastPlayerCastID ~= A.Sunfire.ID
+			)
+			then
+			    return A.Sunfire:Show(icon)
+		    end
+		
+		    if A.Moonfire:IsReady(unit) and isMoving and Player:IsStance(4) and Unit(unit):HasDeBuffs(A.Moonfire.ID, true) < 2 and
+		    (
+			    VarAzSs == 0 
+				or 
+				(Unit(player):HasBuffs(CaIncID, true) == 0) 
+				or 
+		        A.LastPlayerCastID ~= A.Moonfire.ID
+			)
+			then
+			    return A.Moonfire:Show(icon)
+		    end
 
             -- potion
             if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and UnbridledFuryAuto
@@ -1128,7 +1149,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- solar_wrath,if=variable.az_ss<3|!buff.ca_inc.up|!prev.solar_wrath
-            if A.SolarWrath:IsReady(unit) and IsSchoolNatureUP() and A.SolarWrath:AbsentImun(unit, Temp.TotalAndPhys) and 
+            if A.SolarWrath:IsReady(unit) and A.SolarWrath:AbsentImun(unit, Temp.TotalAndPhys) and 
 			    (
 				    VarAzSs < 3 
 					or 
@@ -1140,30 +1161,6 @@ A[3] = function(icon, isMulti)
                 return A.SolarWrath:Show(icon)
             end			
 	
-		    --Move
-		    if A.Sunfire:IsReady(unit) and IsSchoolNatureUP() and A.Sunfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
-		    (
-			    VarAzSs == 0 
-				or 
-				(Unit(player):HasBuffs(CaIncID, true) == 0) 
-				or 
-		        A.LastPlayerCastID ~= A.Sunfire.ID
-			)
-			then
-			    return A.Sunfire:Show(icon)
-		    end
-		
-		    if A.Moonfire:IsReady(unit) and IsSchoolArcaneUP() and A.Moonfire:AbsentImun(unit, Temp.TotalAndPhys) and isMoving and Player:IsStance(4) and 
-		    (
-			    VarAzSs == 0 
-				or 
-				(Unit(player):HasBuffs(CaIncID, true) == 0) 
-				or 
-		        A.LastPlayerCastID ~= A.Moonfire.ID
-			)
-			then
-			    return A.Moonfire:Show(icon)
-		    end
         end
     end
 
