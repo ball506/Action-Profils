@@ -1250,6 +1250,38 @@ local function Dispel(unit)
     Unit(unit):HasDeBuffs(51514, true) <= GetCurrentGCD()
 end
 
+-- Custom RSham Offensive Dispell handler
+local function ShouldPurge(unit)
+    -- Do not dispel these spells
+    local blacklist = {
+        33786,
+        131736,
+        30108,
+        124465,
+        34914
+    }
+    -- Dispell Types
+    local dispelTypes = {
+        "Magic"
+    }
+    
+    for i = 1, 40 do
+        for x = 1, #dispelTypes do
+            local name, rank, icon, count, buffType = UnitBuff(unit, i) 
+            if buffType == dispelTypes[x] then
+                for i = 1, #blacklist do
+                    if Unit(unit):HasBuffs(blacklist[i], true) then
+                        return false
+                    end
+                end
+                return true
+            end
+        end
+    end
+    return false
+end
+ShouldPurge = A.MakeFunctionCachedDynamic(ShouldPurge)
+
 -- Return total active Beacon of Light Buff for player only
 local function ActiveEarthShield()
     return HealingEngine.GetBuffsCount(A.EarthShield.ID, 0, player, true)
@@ -1339,7 +1371,9 @@ A[3] = function(icon, isMulti)
                 return A.Hex:Show(icon)     
             end 
         end 
-        
+ 
+        -- 
+ 
         -- Bursting 
         if BurstIsON(unit) and A.AbsentImun(nil, unit, Temp.TotalAndPhys) then 
             
@@ -1494,6 +1528,28 @@ A[3] = function(icon, isMulti)
         end
  
         -- Purge
+        if A.Purge:IsReady(unit) and inCombat and 
+		(
+		    ShouldPurge(unit) 
+		    or 
+		    AuraIsValid(unit, "UsePurge", "PurgeHigh") 
+		)
+		then 
+            return A.Purge:Show(icon)
+        end   
+
+        -- TremorTotem
+        if A.TremorTotem:IsReady(player) and inCombat and 
+		(
+            FriendlyTeam():GetDeBuffs("Sleep", 30) > 0 or
+		    FriendlyTeam():GetDeBuffs("Fear", 30) > 0 or
+			FriendlyTeam():IsCharmed()
+		)
+		then 
+            return A.TremorTotem:Show(icon)
+        end   
+ 
+        -- ArcaneTorrent
         if A.ArcaneTorrent:IsRacialReady(unit) and inCombat then 
             return A.ArcaneTorrent:Show(icon)
         end      
