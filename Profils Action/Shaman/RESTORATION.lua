@@ -249,8 +249,13 @@ local function RotationsVariables()
 	HealingTideTotemPartyUnits = GetToggle(2, "HealingTideTotemPartyUnits")
 	HealingTideTotemRaidHP = GetToggle(2, "HealingTideTotemRaidHP")
 	HealingTideTotemPartyHP = GetToggle(2, "HealingTideTotemPartyHP")
+	ChainHealRaidUnits = GetToggle(2, "ChainHealRaidUnits")
+	ChainHealPartyUnits = GetToggle(2, "ChainHealPartyUnits")
+	ChainHealRaidHP = GetToggle(2, "ChainHealRaidHP")
+	ChainHealPartyHP = GetToggle(2, "ChainHealPartyHP")
 	UseGhostWolf = GetToggle(2, "UseGhostWolf")
 	GhostWolfTime = GetToggle(2, "GhostWolfTime")
+	
 end
 
 -- [1] CC AntiFake Rotation
@@ -2074,12 +2079,12 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(80) >= 4 and
+                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealPartyHP) >= ChainHealPartyUnits and
 				Unit(player):HasBuffs(A.TidalWaveBuff.ID, true) == 0
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(92) >= AoEMembers(true, _, 4)
+                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealRaidHP) >= AoEMembers(true, _, ChainHealRaidUnits) 
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 10
         )
@@ -2356,10 +2361,7 @@ A[3] = function(icon, isMulti)
         then
             return A.HealingWave:Show(icon)
         end	
-	   
-	   
     end 
-
 		
     -- GhostWolf if out of range 
     if A.GhostWolf:IsReady(player) and Unit(player):HasBuffs(A.GhostWolf.ID, true) == 0 and isMovingFor > GhostWolfTime and UseGhostWolf then
@@ -2372,44 +2374,47 @@ A[3] = function(icon, isMulti)
         return SelfDefensive:Show(icon)
     end 
     
-    -- Mouseover 
-    if IsUnitEnemy("mouseover") then 
-        unit = "mouseover"
-        
+	-- Friendly Mouseover
+    if A.IsUnitFriendly(mouseover) then 
+        unit = mouseover  
+		
+        if HealingRotation(unit) then 
+            return true 
+        end             
+    end
+	
+    -- Heal Target 
+    if A.IsUnitFriendly(target) then 
+        unit = target 
+		
+        if HealingRotation(unit) then 
+            return true 
+        end 
+    end    
+	
+    -- Enemy Mouseover 
+    if A.IsUnitEnemy(mouseover) then 
+        unit = mouseover	
+		
         if DamageRotation(unit) then 
             return true 
         end 
     end 
     
-    if IsUnitFriendly("mouseover") then 
-        unit = "mouseover"    
-        
-        if HealingRotation(unit) then 
-            return true 
-        end             
-    end 
-    
-    -- Target / TargetTarget     
-    if IsUnitEnemy("target") then 
-        unit = "target"
+    -- DPS Target     
+    if A.IsUnitEnemy(target) then 
+        unit = target
         
         if DamageRotation(unit) then 
             return true 
         end 
     end 
 
-    if IsUnitEnemy("targettarget") then 
-        unit = "targettarget"
+    -- DPS targettarget     
+    if A.IsUnitEnemy(targettarget) then 
+        unit = targettarget
         
         if DamageRotation(unit) then 
-            return true 
-        end 
-    end    
-   
-    if IsUnitFriendly("target") then 
-        unit = "target"
-        
-        if HealingRotation(unit) then 
             return true 
         end 
     end 
