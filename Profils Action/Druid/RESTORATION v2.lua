@@ -2206,7 +2206,7 @@ A[3] = function(icon, isMulti)
 		    end)
 		end
         -- Macro Forced Rejuvenation
-        if CanCast and isForcedRejuvenation and A.Rejuvenation:IsReadyByPassCastGCD(unit) and Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then  
+        if CanCast and isForcedRejuvenation and A.Rejuvenation:IsReady(unit) and Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then  
             return A.Rejuvenation:Show(icon)
         end 
 
@@ -2974,7 +2974,7 @@ A[3] = function(icon, isMulti)
         end
 		
         -- PvE Rejuvenation
-        if CanCast and A.Rejuvenation:IsReadyByPassCastGCD(unit) and
+        if CanCast and A.Rejuvenation:IsReady(unit) and
 		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) <= 2 and
 		(
 		    A.Germination:IsSpellLearned() and 
