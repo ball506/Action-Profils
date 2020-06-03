@@ -81,8 +81,8 @@ function A:PredictHeal(SPELLID, UNIT, VARIATION)
     if SPELLID == "HealingWave" then        
         local pre_heal = UnitGetIncomingHeals(UNIT) or 0
         local cast = Unit("player"):CastTime(77472) + A.GetCurrentGCD()
-        local HealingSurge = A.GetSpellDescription(77472)[1] * deephealing * variation
-        total = HealingSurge + pre_heal + (HPS * cast) -- - (DMG*cast)           
+        local HealingWave = A.GetSpellDescription(77472)[1] * deephealing * variation
+        total = HealingWave + pre_heal + (HPS * cast) -- - (DMG*cast)           
     end
  
     -- Riptide 
