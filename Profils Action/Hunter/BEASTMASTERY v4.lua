@@ -114,7 +114,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
 	Intimidation                           = Action.Create({ Type = "Spell", ID = 19577  }),
 	TarTrap                                = Action.Create({ Type = "Spell", ID = 187698 }),
 	-- Defensives
-	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 274441 }),
+	AspectoftheTurtle                      = Action.Create({ Type = "Spell", ID = 186265 }),
 	FeignDeath                             = Action.Create({ Type = "Spell", ID = 5384 }),
 	FreezingTrap                           = Action.Create({ Type = "Spell", ID = 187650 }),
     -- Trinkets
@@ -395,7 +395,7 @@ local function SelfDefensives()
                 Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 30 or 
                 Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.30 or 
                 -- TTD 
-                Unit(player):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(15) < 5 or 
                 (
                     A.IsInPvP and 
                     (
