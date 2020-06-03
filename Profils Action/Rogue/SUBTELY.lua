@@ -113,6 +113,9 @@ Action[ACTION_CONST_ROGUE_SUBTLETY] = {
     CheapShot                              = Action.Create({ Type = "Spell", ID = 1833       }),
     KidneyShot                             = Action.Create({ Type = "Spell", ID = 408       }),
     Sprint                                 = Action.Create({ Type = "Spell", ID = 2983       }),
+	Shadowstep                             = Action.Create({ Type = "Spell", ID = 36554       }),
+	Distract                               = Action.Create({ Type = "Spell", ID = 1725       }),
+    TricksoftheTrade                       = Action.Create({ Type = "Spell", ID = 57934       }),	
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -347,18 +350,18 @@ local function InterruptsNEW(unit)
             -- Notification                    
             Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
             return A.Kick
-        end 
+        end         
     
-        if useCC and A.Gouge:IsReady(unit) and A.Gouge:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
-            -- Notification                    
-            Action.SendNotification("Gouge on : " .. UnitName(unit), A.Gouge.ID)
-            return A.Gouge              
-        end          
-    
-        if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+        if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
             -- Notification                    
             Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
             return A.CheapShot              
+        end
+
+        if useCC and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
+            -- Notification                    
+            Action.SendNotification("KidneyShot on : " .. UnitName(unit), A.KidneyShot.ID)
+            return A.KidneyShot              
         end
 		    
    	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -382,19 +385,25 @@ end
 
 local function Interrupts(unit)
     local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
-        return A.Kick
-    end      
-    
-    if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and A.CheapShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun") then 
+
+    if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
         -- Notification                    
         Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
         return A.CheapShot              
     end
+
+    if useCC and not A.Kick:IsReady(unit) and A.GetToggle(2, "AutoKidneyShot") and A.KidneyShot:IsReady(unit) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
+        -- Notification                    
+        Action.SendNotification("KidneyShot on : " .. UnitName(unit), A.KidneyShot.ID)
+        return A.KidneyShot              
+    end
     
+    if useKick and A.Kick:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+        -- Notification                    
+        Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
+        return A.Kick
+    end      
+      
     if useRacial and A.QuakingPalm:AutoRacial(unit) then 
         -- Notification                    
         Action.SendNotification("QuakingPalm on : " .. UnitName(unit), A.QuakingPalm.ID)
@@ -953,6 +962,14 @@ A[3] = function(icon, isMulti)
             end
 			
         end
+
+        -- Stealth out of combat
+        local CurrentStealth = A.Subterfuge:IsSpellLearned() and A.Stealth2 or A.Stealth -- w/ or w/o Subterfuge Talent        
+        if not inCombat and Unit("player"):HasBuffs(A.VanishBuff.ID, true) == 0 and Action.GetToggle(2, "StealthOOC") and not Unit("player"):HasFlags() and CurrentStealth:IsReady("player") and Unit("player"):HasBuffs(CurrentStealth.ID, true) == 0 then
+            -- Notification                    
+            Action.SendNotification("Auto Stealthing", A.Stealth.ID)
+            return CurrentStealth:Show(icon)
+        end 
   
         -- Sap out of combat
         if A.Sap:IsReady(unit) and Player:IsStealthed() and Unit(unit):CombatTime() == 0 then

@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0.5 (23.05.2020)",
+    DateTime = "v4.0. (03.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -834,6 +834,23 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Checkbox", 
+                    DB = "AutoKidneyShot",
+                    DBV = true,
+                    L = { 
+                        enUS = "Auto " .. A.GetSpellInfo(408), 
+                        ruRU = "Auto " .. A.GetSpellInfo(408), 
+                        frFR = "Auto " .. A.GetSpellInfo(408), 
+                    }, 
+                    TT = { 
+                        enUS = "Allow interrupt with " .. A.GetSpellInfo(408) .. " if nothing else is available.", 
+                        ruRU = "Allow interrupt with " .. A.GetSpellInfo(408) .. " if nothing else is available.", 
+                        frFR = "Allow interrupt with " .. A.GetSpellInfo(408) .. " if nothing else is available.", 
+                    }, 
+                    M = {},
+                },
+				
 			},
             { -- [4] 4th Row
 
