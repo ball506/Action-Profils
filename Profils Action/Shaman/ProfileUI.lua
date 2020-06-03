@@ -2222,7 +2222,84 @@ A.Data.ProfileUI = {
                     M = {},
                 },
             },	
-
+            { -- ChainHeal
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(1064) .. " -- ",
+                    },
+                }, 
+            },
+			{
+			    RowOptions = { margin = { top = -10 } },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Raid -- ",
+                    },
+                },
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Dungeon -- ",
+                    },
+                },
+			},
+            -- ChainHeal
+            { -- [3] 
+              	RowOptions = { margin = { top = 10 } },		
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ChainHealRaidUnits",
+                    DBV = 4,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1064) .. "\n(Total Units)",    
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "ChainHealPartyUnits",
+                    DBV = 3,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(1064) .. "\n(Total Units)",    
+                    },                     
+                    M = {},
+                },
+			},
+			{
+			    RowOptions = { margin = { top = 10 } },
+                {
+                    E = "Slider",                                                     
+                    MIN = 0, 
+                    MAX = 100,                            
+                    DB = "ChainHealRaidHP",
+                    DBV = 92,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                    },                     
+                    M = {},
+                },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 100,                            
+                    DB = "ChainHealPartyHP",
+                    DBV = 80,
+                    ONLYON = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                    },                     
+                    M = {},
+                },			    
+            },	
             { -- HealingStreamTotem
                 {
                     E = "Header",
