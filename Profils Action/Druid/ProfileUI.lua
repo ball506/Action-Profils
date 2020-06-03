@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.2.2 (02.06.2020)",
+    DateTime = "v4.2.3 (03.06.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -1012,7 +1012,7 @@ A.Data.ProfileUI = {
                     },
                     MULT = false,
                     DB = "AutoDotSelection",
-                    DBV = "In Raid", 
+                    DBV = "Everywhere", 
                     L = { 
                         enUS = "Multidots where", 
                         ruRU = "Multidots где", 
@@ -1024,6 +1024,25 @@ A.Data.ProfileUI = {
 						frFR = "Choisissez l'endroit où vous souhaitez multidoter automatiquement les unités.",
                     }, 
                     M = {},
+                },
+				{
+                    E 		= "Slider", 													
+					MIN 	= 5, 
+					MAX 	= 15,							
+					DB 		= "MultiDotMaxUnits",
+					DBV 	= 8,
+					ONLYOFF = false,
+					L 		= { 
+                        enUS = "Multidots\nMax Units", 
+                        ruRU = "Multidots\nMax Units", 
+                        frFR = "Multidots\nMax Units",  
+                    }, 
+					TT		= { 
+                        enUS = "Choose the maximum units in range to automatically multidots.", 
+                        ruRU = "Choose the maximum units in range to automatically multidots.",
+						frFR = "Choose the maximum units in range to automatically multidots.",
+                    }, 
+					M 		= {},
                 },				
 			},
             -- Blood of the enemy
@@ -1057,7 +1076,7 @@ A.Data.ProfileUI = {
                     MIN = 5, 
                     MAX = 20,                            
                     DB = "BloodoftheEnemyAoETTD",
-                    DBV = 10, -- Set healthpercentage @60% life. 
+                    DBV = 8, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(298277) .. " AoE TTD",
@@ -1095,9 +1114,9 @@ A.Data.ProfileUI = {
                 {
                     E = "Slider",                                                     
                     MIN = 3, 
-                    MAX = 50,                            
+                    MAX = 30,                            
                     DB = "FocusedAzeriteBeamTTD",
-                    DBV = 10, -- Set healthpercentage @30% life. 
+                    DBV = 5, -- Set healthpercentage @30% life. 
                     ONOFF = true,
                     L = { 
                         ANY = A.GetSpellInfo(295258) .. " TTD",
@@ -1176,7 +1195,7 @@ A.Data.ProfileUI = {
                     MIN = 2, 
                     MAX = 10,                            
                     DB = "TrinketsMinUnits",
-                    DBV = 20, -- Set healthpercentage @60% life. 
+                    DBV = 2, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = "Min Units",
@@ -1193,7 +1212,7 @@ A.Data.ProfileUI = {
                     MIN = 5, 
                     MAX = 40,                            
                     DB = "TrinketsUnitsRange",
-                    DBV = 20, -- Set healthpercentage @60% life. 
+                    DBV = 30, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
                         ANY = "Max AoE range",
