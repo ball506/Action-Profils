@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.8 (03.06.2020)",
+    DateTime = "v4.2.1 (07.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
@@ -2283,7 +2283,7 @@ A.Data.ProfileUI = {
                     DBV = 92,
                     ONLYON = true,
                     L = { 
-                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                        ANY = A.GetSpellInfo(1064) .. "\n(Per UnitHealth %)",                        
                     },                     
                     M = {},
                 },
@@ -2295,7 +2295,7 @@ A.Data.ProfileUI = {
                     DBV = 80,
                     ONLYON = true,
                     L = { 
-                        ANY = A.GetSpellInfo(108280) .. "\n(Per UnitHealth %)",                        
+                        ANY = A.GetSpellInfo(1064) .. "\n(Per UnitHealth %)",                        
                     },                     
                     M = {},
                 },			    
@@ -2403,6 +2403,18 @@ A.Data.ProfileUI = {
                     }, 
                     M = {},
                 },
+                {
+                    E = "Slider",                                                     
+                    MIN = 1, 
+                    MAX = 10,                            
+                    DB = "SpiritWalkersCatch",
+                    DBV = 3,
+                    ONOFF = false,
+                    L = { 
+                        ANY = A.GetSpellInfo(79206) .. "\nonly if rooted",
+                    }, 
+                    M = {},
+                },				
 			},				
             { -- [6]
                 {
