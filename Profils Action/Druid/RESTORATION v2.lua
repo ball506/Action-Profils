@@ -2825,11 +2825,11 @@ A[3] = function(icon, isMulti)
         if CanCast and A.Lifebloom:IsReady(player) and 
 		LifebloomWorkMode == "Auto" and
 		inCombat and 
-		Unit(player):HasBuffs(A.Lifebloom.ID, true) < 3 and 
+		Unit(player):HasBuffs(A.Lifebloom.ID, true) < 1 and 
 		A.Photosynthesis:IsSpellLearned() 
 		then		    
 		    -- Force Player target to gain 20% healing increase
-			HealingEngine.SetTarget(player)
+			HealingEngine.SetTarget(player, 1)
 			-- Notification
 			Action.SendNotification("Maintaining Lifebloom on you for 20% healing increase", A.Photosynthesis.ID, 2)
 			return A.Lifebloom:Show(icon)
@@ -2843,7 +2843,7 @@ A[3] = function(icon, isMulti)
 		not Unit(unit):IsTank() 
 		then		
             for i = 1, #getmembersAll do 
-                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and not Unit(unit):InLOS() then 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 then 
 			        if Unit(getmembersAll[i].Unit):IsTank() then
 			            HealingEngine.SetTarget(getmembersAll[i].Unit, 1)    -- Add 1sec delay in case of emergency switch              					
                     end					
