@@ -245,6 +245,7 @@ local function RotationsVariables()
 	EarthShieldWorkMode = GetToggle(2, "EarthShieldWorkMode")
     UseSpiritWalkersGrace = GetToggle(2, "UseSpiritWalkersGrace")
 	SpiritWalkersGraceTime = GetToggle(2, "SpiritWalkersGraceTime")
+	SpiritWalkersCatch = GetToggle(2, "SpiritWalkersGraceTime")
 	HealingTideTotemRaidUnits = GetToggle(2, "HealingTideTotemRaidUnits")
 	HealingTideTotemPartyUnits = GetToggle(2, "HealingTideTotemPartyUnits")
 	HealingTideTotemRaidHP = GetToggle(2, "HealingTideTotemRaidHP")
@@ -936,21 +937,29 @@ local DebuffSniperList = {
     { spellID = 302421, stacks = 0, secs = 5 }, -- Queen's Decree
 }
 
+local NeedSnipe = false
 local function SetFriendlyToSnipe()
     local getmembersAll = A.HealingEngine.GetMembersAll()
     for i = 1, #getmembersAll do
         if Unit(getmembersAll[i].Unit):GetRange() <= 40 then
             for k, v in pairs(DebuffSniperList) do
-                if Unit(getmembersAll[i].Unit):HasDeBuffs(v.spellID, true) > v.secs and Unit(getmembersAll[i].Unit):HasDeBuffsStacks(v.spellID, true) >= v.stacks and Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
-                    if A.Germination:IsSpellLearned() and Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) == 0 then
-                        if A.Rejuvenation:IsReady(getmembersAll[i].Unit) then
-                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
-                        end
-                    elseif Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then
-                        if A.Rejuvenation:IsReady(getmembersAll[i].Unit) then
-                            A.HealingEngine.SetTarget(getmembersAll[i].Unit)
-                        end
-                    end
+                if Unit(getmembersAll[i].Unit):HasDeBuffs(v.spellID, true) > v.secs and 
+				    --Unit(getmembersAll[i].Unit):HasDeBuffsStacks(v.spellID, true) >= v.stacks and 
+				    Unit(getmembersAll[i].Unit):HasBuffs(A.Rejuvenation.ID, player, true) > 0 and
+					-- Germination
+					(
+					    A.Germination:IsSpellLearned() and 
+						Unit(getmembersAll[i].Unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) > 0 
+						or 
+						not A.Germination:IsSpellLearned()
+					)					
+				then
+					-- Notification					
+                    Action.SendNotification("Healing snipe on " .. UnitName(getmembersAll[i].Unit), A.Regrowth.ID)
+	    			-- Global var
+					NeedSnipe = true
+					-- Force target
+                    A.HealingEngine.SetTarget(getmembersAll[i].Unit)
                 end
             end
         end
@@ -1356,6 +1365,17 @@ A[3] = function(icon, isMulti)
         if A.ArcaneTorrent:IsRacialReady(unit) then 
             return A.ArcaneTorrent:Show(icon)
         end             
+ 
+        -- Purge
+        if A.Purge:IsReady(unit) and inCombat and 
+		(
+		    ShouldPurge(unit) 
+		    or 
+		    AuraIsValid(unit, "UsePurge", "PurgeHigh") 
+		)
+		then 
+            return A.Purge:Show(icon)
+        end   
         
         -- Interrupts
         local Interrupt = Interrupts(unit)
@@ -1526,24 +1546,14 @@ A[3] = function(icon, isMulti)
 		then
 		    return A.AncestralSpirit:Show(icon)
         end
- 
-        -- Purge
-        if A.Purge:IsReady(unit) and inCombat and 
-		(
-		    ShouldPurge(unit) 
-		    or 
-		    AuraIsValid(unit, "UsePurge", "PurgeHigh") 
-		)
-		then 
-            return A.Purge:Show(icon)
-        end   
-
+		
         -- TremorTotem
         if A.TremorTotem:IsReady(player) and inCombat and 
 		(
             FriendlyTeam():GetDeBuffs("Sleep", 30) > 0 or
-		    FriendlyTeam():GetDeBuffs("Fear", 30) > 0 or
-			FriendlyTeam():IsCharmed()
+		    FriendlyTeam():GetDeBuffs("Fear", 30) > 0 --or
+			-- Do we got charm check anywhere ?
+			--FriendlyTeam():IsCharmed()
 		)
 		then 
             return A.TremorTotem:Show(icon)
@@ -1730,7 +1740,7 @@ A[3] = function(icon, isMulti)
             ) or
 			A.IsInPvP and Unit(player):IsFocused("MELEE") and
 			(
-		        CanSpiritWalkersGrace("CATCH")
+		        CanSpiritWalkersGrace("CATCH") and SpiritWalkersCatch
 			    or 
 			    CanSpiritWalkersGrace()
 			    or
