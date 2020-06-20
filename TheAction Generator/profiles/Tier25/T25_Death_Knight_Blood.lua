@@ -643,7 +643,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- potion
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             
@@ -663,7 +663,7 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
         
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains<2&!buff.dancing_rune_weapon.up
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) < 2 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) < 2 and not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -673,17 +673,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Player:RuneTimeToX(1) > GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- ripple_in_space,if=!buff.dancing_rune_weapon.up
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.RippleInSpace:Show(icon)
             end
             
@@ -703,7 +703,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- marrowrend,if=(buff.bone_shield.remains<=rune.time_to_3|buff.bone_shield.remains<=(gcd+cooldown.blooddrinker.ready*talent.blooddrinker.enabled*2)|buff.bone_shield.stack<3)&runic_power.deficit>=20
-            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (A.GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Player:RunicPowerDeficit() >= 20) then
+            if A.Marrowrend:IsReady(unit) and ((Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= Player:RuneTimeToX(3) or Unit("player"):HasBuffs(A.BoneShieldBuff.ID, true) <= (GetGCD() + num(A.BloodDrinker:GetCooldown() == 0) * num(A.BloodDrinker:IsSpellLearned()) * 2) or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) < 3) and Player:RunicPowerDeficit() >= 20) then
                 return A.Marrowrend:Show(icon)
             end
             
@@ -733,12 +733,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- rune_strike,if=(charges_fractional>=1.8|buff.dancing_rune_weapon.up)&rune.time_to_3>=gcd
-            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:GetSpellChargesFrac() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Player:RuneTimeToX(3) >= A.GetGCD()) then
+            if A.RuneStrike:IsReady(unit) and ((A.RuneStrike:GetSpellChargesFrac() >= 1.8 or Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) and Player:RuneTimeToX(3) >= GetGCD()) then
                 return A.RuneStrike:Show(icon)
             end
             
             -- heart_strike,if=buff.dancing_rune_weapon.up|rune.time_to_4<gcd
-            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Player:RuneTimeToX(4) < A.GetGCD()) then
+            if A.HeartStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true) or Player:RuneTimeToX(4) < GetGCD()) then
                 return A.HeartStrike:Show(icon)
             end
             
@@ -763,7 +763,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- heart_strike,if=rune.time_to_3<gcd|buff.bone_shield.stack>6
-            if A.HeartStrike:IsReady(unit) and (Player:RuneTimeToX(3) < A.GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
+            if A.HeartStrike:IsReady(unit) and (Player:RuneTimeToX(3) < GetGCD() or Unit("player"):HasBuffsStacks(A.BoneShieldBuff.ID, true) > 6) then
                 return A.HeartStrike:Show(icon)
             end
             
@@ -778,7 +778,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- arcane_torrent,if=runic_power.deficit>20
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 20) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -795,17 +795,17 @@ A[3] = function(icon, isMulti)
 
                     -- auto_attack
             -- blood_fury,if=cooldown.dancing_rune_weapon.ready&(!cooldown.blooddrinker.ready|!talent.blooddrinker.enabled)
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.DancingRuneWeapon:GetCooldown() == 0 and (not A.BloodDrinker:GetCooldown() == 0 or not A.BloodDrinker:IsSpellLearned())) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.DancingRuneWeapon:GetCooldown() == 0 and (not A.BloodDrinker:GetCooldown() == 0 or not A.BloodDrinker:IsSpellLearned())) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
             -- arcane_pulse,if=active_enemies>=2|rune<1&runic_power.deficit>60
-            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or Player:Rune() < 1 and Player:RunicPowerDeficit() > 60) then
+            if A.ArcanePulse:AutoRacial(unit) and Racial and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or Player:Rune() < 1 and Player:RunicPowerDeficit() > 60) then
                 return A.ArcanePulse:Show(icon)
             end
             
@@ -815,12 +815,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
@@ -871,7 +871,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.dancing_rune_weapon.up
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion and (Unit("player"):HasBuffs(A.DancingRuneWeaponBuff.ID, true)) then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             

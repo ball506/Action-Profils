@@ -472,7 +472,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion
-            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralIntellect:IsReady(unit) and Potion then
                 return A.PotionofSpectralIntellect:Show(icon)
             end
             
@@ -522,17 +522,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
@@ -562,27 +562,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion
-            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralIntellect:IsReady(unit) and Potion then
                 return A.PotionofSpectralIntellect:Show(icon)
             end
             
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -617,12 +617,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- living_bomb,if=buff.combustion.remains<gcd.max&active_enemies>1
-            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.LivingBomb:Show(icon)
             end
             
             -- dragons_breath,if=buff.combustion.remains<gcd.max&buff.combustion.up
-            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) then
+            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) then
                 return A.DragonsBreath:Show(icon)
             end
             
@@ -642,7 +642,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=hyperthread_wristwraps,if=buff.combustion.up&action.fire_blast.charges=0&action.fire_blast.recharge_time>gcd.max
-            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > A.GetGCD()) then
+            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > GetGCD()) then
                 return A.HyperthreadWristwraps:Show(icon)
             end
             
@@ -971,12 +971,12 @@ end
             end
             
             -- guardian_of_azeroth,if=(variable.time_to_combustion<10|target.time_to_die<variable.time_to_combustion)&!variable.disable_combustion
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((VarTimeToCombustion < 10 or Unit(unit):TimeToDie() < VarTimeToCombustion) and not VarDisableCombustion) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and ((VarTimeToCombustion < 10 or Unit(unit):TimeToDie() < VarTimeToCombustion) and not VarDisableCombustion) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -986,22 +986,22 @@ end
             end
             
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.RippleInSpace:Show(icon)
             end
             
             -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.TheUnboundForce:Show(icon)
             end
             

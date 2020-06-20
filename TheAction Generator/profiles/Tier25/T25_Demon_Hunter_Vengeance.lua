@@ -383,7 +383,7 @@ A[3] = function(icon, isMulti)
             -- food
             -- snapshot_stats
             -- potion
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -438,22 +438,22 @@ A[3] = function(icon, isMulti)
         local function Cooldowns(unit)
         
             -- potion
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
             -- concentrated_flame,if=(!dot.concentrated_flame_burn.ticking&!action.concentrated_flame.in_flight|full_recharge_time<gcd.max)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < A.GetGCD())) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and ((not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and not A.ConcentratedFlame:IsSpellInFlight() or A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < GetGCD())) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- worldvein_resonance,if=buff.lifeblood.stack<3
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsStacks(A.LifebloodBuff.ID, true) < 3) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             

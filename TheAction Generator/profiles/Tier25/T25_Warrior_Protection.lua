@@ -74,17 +74,15 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     EveryManforHimself                     = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
     ThunderClap                            = Create({ Type = "Spell", ID = 6343 }),
-    AvatarBuff                             = Create({ Type = "Spell", ID = 107574 }),
     DemoralizingShout                      = Create({ Type = "Spell", ID = 1160 }),
     BoomingVoice                           = Create({ Type = "Spell", ID = 202743 }),
-    AnimaofDeath                           = Create({ Type = "Spell", ID =  }),
-    LastStandBuff                          = Create({ Type = "Spell", ID =  }),
-    DragonRoar                             = Create({ Type = "Spell", ID = 118000 }),
-    Revenge                                = Create({ Type = "Spell", ID = 6572 }),
-    Ravager                                = Create({ Type = "Spell", ID = 228920 }),
     ShieldBlock                            = Create({ Type = "Spell", ID = 2565 }),
     ShieldSlam                             = Create({ Type = "Spell", ID = 23922 }),
     ShieldBlockBuff                        = Create({ Type = "Spell", ID = 132404 }),
+    DragonRoar                             = Create({ Type = "Spell", ID = 118000 }),
+    Revenge                                = Create({ Type = "Spell", ID = 6572 }),
+    AvatarBuff                             = Create({ Type = "Spell", ID = 107574 }),
+    Ravager                                = Create({ Type = "Spell", ID = 228920 }),
     UnstoppableForce                       = Create({ Type = "Spell", ID = 275336 }),
     Avatar                                 = Create({ Type = "Spell", ID = 107574 }),
     Devastate                              = Create({ Type = "Spell", ID = 20243 }),
@@ -98,7 +96,9 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     BagofTricks                            = Create({ Type = "Spell", ID =  }),
     IgnorePain                             = Create({ Type = "Spell", ID = 190456 }),
     TheCrucibleofFlame                     = Create({ Type = "Spell", ID =  }),
-    LastStand                              = Create({ Type = "Spell", ID =  })
+    LastStand                              = Create({ Type = "Spell", ID =  }),
+    AnimaofLifeandDeath                    = Create({ Type = "Spell", ID =  }),
+    HeartEssence                           = Create({ Type = "Spell", ID = 298554 })
     -- Trinkets
     TrinketTest                            = Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
     TrinketTest2                           = Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
@@ -587,7 +587,7 @@ local function ThunderClapRange()
     return A.CracklingThunder:IsSpellLearned() and 12 or 8
 end
 
-local function EvaluateCycleAshvanesRazorCoral84(unit)
+local function EvaluateCycleAshvanesRazorCoral78(unit)
     return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
 end
 
@@ -627,22 +627,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
-            -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.GuardianofAzeroth:Show(icon)
-            end
-            
             -- potion
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             
@@ -656,19 +651,19 @@ A[3] = function(icon, isMulti)
                 return A.ThunderClap:Show(icon)
             end
             
-            -- memory_of_lucid_dreams,if=buff.avatar.down
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true)) then
-                return A.MemoryofLucidDreams:Show(icon)
-            end
-            
             -- demoralizing_shout,if=talent.booming_voice.enabled
             if A.DemoralizingShout:IsReady(unit) and (A.BoomingVoice:IsSpellLearned()) then
                 return A.DemoralizingShout:Show(icon)
             end
             
-            -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
-                return A.AnimaofDeath:Show(icon)
+            -- shield_block,if=cooldown.shield_slam.ready&buff.shield_block.down&buff.memory_of_lucid_dreams.up
+            if A.ShieldBlock:IsReady(unit) and (A.ShieldSlam:GetCooldown() == 0 and Unit("player"):HasBuffsDown(A.ShieldBlockBuff.ID, true) and Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
+                return A.ShieldBlock:Show(icon)
+            end
+            
+            -- shield_slam,if=buff.memory_of_lucid_dreams.up
+            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
+                return A.ShieldSlam:Show(icon)
             end
             
             -- dragon_roar
@@ -716,8 +711,8 @@ A[3] = function(icon, isMulti)
                 return A.ShieldBlock:Show(icon)
             end
             
-            -- shield_slam,if=buff.shield_block.up
-            if A.ShieldSlam:IsReady(unit) and (Unit("player"):HasBuffs(A.ShieldBlockBuff.ID, true)) then
+            -- shield_slam
+            if A.ShieldSlam:IsReady(unit) then
                 return A.ShieldSlam:Show(icon)
             end
             
@@ -731,19 +726,9 @@ A[3] = function(icon, isMulti)
                 return A.DemoralizingShout:Show(icon)
             end
             
-            -- anima_of_death,if=buff.last_stand.up
-            if A.AnimaofDeath:IsReady(unit) and (Unit("player"):HasBuffs(A.LastStandBuff.ID, true)) then
-                return A.AnimaofDeath:Show(icon)
-            end
-            
-            -- shield_slam
-            if A.ShieldSlam:IsReady(unit) then
-                return A.ShieldSlam:Show(icon)
-            end
-            
             -- use_item,name=ashvanes_razor_coral,target_if=debuff.razor_coral_debuff.stack=0
             if A.AshvanesRazorCoral:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral84) then
+                if Action.Utils.CastTargetIf(A.AshvanesRazorCoral, 40, "min", EvaluateCycleAshvanesRazorCoral78) then
                     return A.AshvanesRazorCoral:Show(icon) 
                 end
             end
@@ -799,19 +784,18 @@ A[3] = function(icon, isMulti)
                 return A.Intercept:Show(icon)
             end
             
-            -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -821,12 +805,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -836,7 +820,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.avatar.up|target.time_to_die<25
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion and (Unit("player"):HasBuffs(A.AvatarBuff.ID, true) or Unit(unit):TimeToDie() < 25) then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             
@@ -846,30 +830,31 @@ A[3] = function(icon, isMulti)
             end
             
             -- worldvein_resonance,if=cooldown.avatar.remains<=2
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.Avatar:GetCooldown() <= 2) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.Avatar:GetCooldown() <= 2) then
                 return A.WorldveinResonance:Show(icon)
             end
             
-            -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
-                return A.RippleInSpace:Show(icon)
-            end
-            
-            -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            -- memory_of_lucid_dreams,if=cooldown.avatar.remains<=gcd
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.Avatar:GetCooldown() <= GetGCD()) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- concentrated_flame,if=buff.avatar.down&!dot.concentrated_flame_burn.remains>0|essence.the_crucible_of_flame.rank<3
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) and num(not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) > 0 or A.TheCrucibleofFlame:GetAzeriteRank() < 3) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.AvatarBuff.ID, true) and num(not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true)) > 0 or A.TheCrucibleofFlame:GetAzeriteRank() < 3) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
-            -- last_stand,if=cooldown.anima_of_death.remains<=2
-            if A.LastStand:IsReady(unit) and (A.AnimaofDeath:GetCooldown() <= 2) then
+            -- last_stand,if=essence.anima_of_life_and_death.major
+            if A.LastStand:IsReady(unit) and (Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID)) then
                 return A.LastStand:Show(icon)
             end
             
+            -- heart_essence,if=!(essence.the_crucible_of_flame.major|essence.worldvein_resonance.major|essence.anima_of_life_and_death.major|essence.memory_of_lucid_dreams.major)
+            if A.HeartEssence:IsReady(unit) and (not (Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID) or Azerite:EssenceHasMajor(A.WorldveinResonance.ID) or Azerite:EssenceHasMajor(A.AnimaofLifeandDeath.ID) or Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID))) then
+                return A.HeartEssence:Show(icon)
+            end
+            
+            -- use_items,if=cooldown.avatar.remains<=gcd|buff.avatar.up
             -- avatar
             if A.Avatar:IsReady(unit) and A.BurstIsON(unit) then
                 return A.Avatar:Show(icon)

@@ -350,7 +350,7 @@ local function EvaluateTargetIfFilterKillCommand55(unit)
 end
 
 local function EvaluateTargetIfKillCommand72(unit)
-  return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
+  return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax()
 end
 
 
@@ -368,7 +368,7 @@ local function EvaluateTargetIfFilterKillCommand261(unit)
 end
 
 local function EvaluateTargetIfKillCommand278(unit)
-  return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() - 20
+  return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) < Player:FocusMax() - 20
 end
 
 
@@ -390,7 +390,7 @@ local function EvaluateTargetIfFilterMongooseBite598(unit)
 end
 
 local function EvaluateTargetIfMongooseBite623(unit)
-  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true) > num((MultiUnits:GetByRangeInCombat(8, 5, 10) or 9)) and Unit(unit):TimeToDie() < MultiUnits:GetByRangeInCombat(8, 5, 10) * A.GetGCD()
+  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true) > num((MultiUnits:GetByRangeInCombat(8, 5, 10) or 9)) and Unit(unit):TimeToDie() < MultiUnits:GetByRangeInCombat(8, 5, 10) * GetGCD()
 end
 
 
@@ -481,7 +481,7 @@ local function APL()
             end
             
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
@@ -491,12 +491,12 @@ local function APL()
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- potion,dynamic_prepot=1
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -516,12 +516,12 @@ local function APL()
         local function Apst(unit)
         
             -- mongoose_bite,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD())) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * GetGCD())) then
                 return A.MongooseBite:Show(icon)
             end
             
             -- raptor_strike,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
-            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD())) then
+            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * GetGCD())) then
                 return A.RaptorStrike:Show(icon)
             end
             
@@ -542,7 +542,7 @@ local function APL()
             end
             
             -- wildfire_bomb,if=focus+cast_regen<focus.max&!ticking&!buff.memory_of_lucid_dreams.up&(full_recharge_time<1.5*gcd|!dot.wildfire_bomb.ticking&!buff.coordinated_assault.up|!dot.wildfire_bomb.ticking&buff.mongoose_fury.stack<1)|time_to_die<18&!dot.wildfire_bomb.ticking
-            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1) or Unit(unit):TimeToDie() < 18 and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true)) then
+            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1) or Unit(unit):TimeToDie() < 18 and not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true)) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -593,12 +593,12 @@ local function APL()
         local function Apwfi(unit)
         
             -- mongoose_bite,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < A.GetGCD()) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < GetGCD()) then
                 return A.MongooseBite:Show(icon)
             end
             
             -- raptor_strike,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
-            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < A.GetGCD()) then
+            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < GetGCD()) then
                 return A.RaptorStrike:Show(icon)
             end
             
@@ -613,7 +613,7 @@ local function APL()
             end
             
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd|focus+cast_regen<focus.max&(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() or Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() or Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -649,7 +649,7 @@ local function APL()
             end
             
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&focus>30&dot.serpent_sting.remains>5*gcd
-            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Player:Focus() > 30 and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * GetGCD()) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -690,17 +690,17 @@ local function APL()
         local function Cds(unit)
         
             -- blood_fury,if=cooldown.coordinated_assault.remains>30
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
                 return A.BloodFury:Show(icon)
             end
             
             -- ancestral_call,if=cooldown.coordinated_assault.remains>30
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
                 return A.AncestralCall:Show(icon)
             end
             
             -- fireblood,if=cooldown.coordinated_assault.remains>30
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 30) then
                 return A.Fireblood:Show(icon)
             end
             
@@ -710,12 +710,12 @@ local function APL()
             end
             
             -- berserking,if=cooldown.coordinated_assault.remains>60|time_to_die<13
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 60 or Unit(unit):TimeToDie() < 13) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.CoordinatedAssault:GetCooldown() > 60 or Unit(unit):TimeToDie() < 13) then
                 return A.Berserking:Show(icon)
             end
             
             -- potion,if=buff.guardian_of_azeroth.up&(buff.berserking.up|buff.blood_fury.up|!race.troll)|(consumable.potion_of_unbridled_fury&target.time_to_die<61|target.time_to_die<26)|!essence.condensed_lifeforce.major&buff.coordinated_assault.up
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) and (Unit("player"):HasBuffs(A.BerserkingBuff.ID, true) or Unit("player"):HasBuffs(A.BloodFuryBuff.ID, true) or not Unit("player"):IsRace("Troll")) or (Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -740,42 +740,42 @@ local function APL()
             end
             
             -- focused_azerite_beam,if=raid_event.adds.in>90&focus<focus.max-25|(active_enemies>1&!talent.birds_of_prey.enabled|active_enemies>2)&(buff.blur_of_talons.up&buff.blur_of_talons.remains>3*gcd|!buff.blur_of_talons.up)
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (IncomingAddsIn > 90 and Player:Focus() < Player:FocusMax() - 25 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) > 3 * A.GetGCD() or not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true))) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (IncomingAddsIn > 90 and Player:Focus() < Player:FocusMax() - 25 or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) > 3 * GetGCD() or not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true))) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- blood_of_the_enemy,if=((raid_event.adds.remains>90|!raid_event.adds.exists)|(active_enemies>1&!talent.birds_of_prey.enabled|active_enemies>2))&focus<focus.max
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (((0 > 90 or not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2)) and Player:Focus() < Player:FocusMax()) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (((0 > 90 or not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2)) and Player:Focus() < Player:FocusMax()) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- purifying_blast,if=((raid_event.adds.remains>60|!raid_event.adds.exists)|(active_enemies>1&!talent.birds_of_prey.enabled|active_enemies>2))&focus<focus.max
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (((0 > 60 or not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2)) and Player:Focus() < Player:FocusMax()) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (((0 > 60 or not (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) or (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1 and not A.BirdsofPrey:IsSpellLearned() or MultiUnits:GetByRangeInCombat(8, 5, 10) > 2)) and Player:Focus() < Player:FocusMax()) then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.RippleInSpace:Show(icon)
             end
             
             -- concentrated_flame,if=full_recharge_time<1*gcd
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < 1 * A.GetGCD()) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.ConcentratedFlame:GetSpellChargesFullRechargeTime() < 1 * GetGCD()) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
@@ -795,12 +795,12 @@ local function APL()
             end
             
             -- wildfire_bomb,if=essence.memory_of_lucid_dreams.major&full_recharge_time<1.5*gcd&focus<action.mongoose_bite.cost&!cooldown.memory_of_lucid_dreams.remains
-            if A.WildfireBomb:IsReady(unit) and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) and A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() < A.MongooseBite:GetSpellPowerCostCache() and not A.MemoryofLucidDreams:GetCooldown()) then
+            if A.WildfireBomb:IsReady(unit) and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID) and A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() and Player:Focus() < A.MongooseBite:GetSpellPowerCostCache() and not A.MemoryofLucidDreams:GetCooldown()) then
                 return A.WildfireBomb:Show(icon)
             end
             
             -- memory_of_lucid_dreams,if=focus<action.mongoose_bite.cost&buff.coordinated_assault.up
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:Focus() < A.MongooseBite:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Player:Focus() < A.MongooseBite:GetSpellPowerCostCache() and Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
@@ -816,7 +816,7 @@ local function APL()
                 end
             end
             -- mongoose_bite,if=azerite.blur_of_talons.rank>0&(buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd|buff.coordinated_assault.remains&!buff.blur_of_talons.remains))
-            if A.MongooseBite:IsReady(unit) and (A.BlurofTalons:GetAzeriteRank() > 0 and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true)))) then
+            if A.MongooseBite:IsReady(unit) and (A.BlurofTalons:GetAzeriteRank() > 0 and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and not Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true)))) then
                 return A.MongooseBite:Show(icon)
             end
             
@@ -842,12 +842,12 @@ local function APL()
             end
             
             -- wildfire_bomb,if=!talent.guerrilla_tactics.enabled|full_recharge_time<gcd|raid_event.adds.remains<6&raid_event.adds.exists
-            if A.WildfireBomb:IsReady(unit) and (not A.GuerrillaTactics:IsSpellLearned() or A.WildfireBomb:GetSpellChargesFullRechargeTime() < A.GetGCD() or 0 < 6 and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
+            if A.WildfireBomb:IsReady(unit) and (not A.GuerrillaTactics:IsSpellLearned() or A.WildfireBomb:GetSpellChargesFullRechargeTime() < GetGCD() or 0 < 6 and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 return A.WildfireBomb:Show(icon)
             end
             
             -- butchery,if=charges_fractional>2.5|dot.shrapnel_bomb.ticking|cooldown.wildfire_bomb.remains>active_enemies-gcd|debuff.blood_of_the_enemy.remains|raid_event.adds.remains<5&raid_event.adds.exists
-            if A.Butchery:IsReady(unit) and (A.Butchery:GetSpellChargesFrac() > 2.5 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) or A.WildfireBomb:GetCooldown() > MultiUnits:GetByRangeInCombat(8, 5, 10) - A.GetGCD() or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) or 0 < 5 and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
+            if A.Butchery:IsReady(unit) and (A.Butchery:GetSpellChargesFrac() > 2.5 or Unit(unit):HasDeBuffs(A.ShrapnelBombDebuff.ID, true) or A.WildfireBomb:GetCooldown() > MultiUnits:GetByRangeInCombat(8, 5, 10) - GetGCD() or Unit(unit):HasDeBuffs(A.BloodoftheEnemyDebuff.ID, true) or 0 < 5 and (MultiUnits:GetByRangeInCombat(8, 5, 10) > 1)) then
                 return A.Butchery:Show(icon)
             end
             
@@ -943,12 +943,12 @@ local function APL()
             end
             
             -- raptor_strike,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
-            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD())) then
+            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * GetGCD())) then
                 return A.RaptorStrike:Show(icon)
             end
             
             -- mongoose_bite,if=buff.coordinated_assault.up&(buff.coordinated_assault.remains<1.5*gcd|buff.blur_of_talons.up&buff.blur_of_talons.remains<1.5*gcd)
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * A.GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * A.GetGCD())) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) and (Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) < 1.5 * GetGCD() or Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < 1.5 * GetGCD())) then
                 return A.MongooseBite:Show(icon)
             end
             
@@ -959,7 +959,7 @@ local function APL()
                 end
             end
             -- serpent_sting,if=buff.vipers_venom.up&buff.vipers_venom.remains<1*gcd
-            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) < 1 * A.GetGCD()) then
+            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) < 1 * GetGCD()) then
                 return A.SerpentSting:Show(icon)
             end
             
@@ -969,12 +969,12 @@ local function APL()
             end
             
             -- wildfire_bomb,if=focus+cast_regen<focus.max&refreshable&full_recharge_time<gcd&!buff.memory_of_lucid_dreams.up|focus+cast_regen<focus.max&(!dot.wildfire_bomb.ticking&(!buff.coordinated_assault.up|buff.mongoose_fury.stack<1|time_to_die<18|!dot.wildfire_bomb.ticking&azerite.wilderness_survival.rank>0))&!buff.memory_of_lucid_dreams.up
-            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and Unit(unit):HasDeBuffsRefreshable(A.WildfireBombDebuff.ID, true) and A.WildfireBomb:GetSpellChargesFullRechargeTime() < A.GetGCD() and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and (not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1 or Unit(unit):TimeToDie() < 18 or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and A.WildernessSurvival:GetAzeriteRank() > 0)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
+            if A.WildfireBomb:IsReady(unit) and (Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and Unit(unit):HasDeBuffsRefreshable(A.WildfireBombDebuff.ID, true) and A.WildfireBomb:GetSpellChargesFullRechargeTime() < GetGCD() and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true) or Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() and (not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and (not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true) or Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 1 or Unit(unit):TimeToDie() < 18 or not Unit(unit):HasDeBuffs(A.WildfireBombDebuff.ID, true) and A.WildernessSurvival:GetAzeriteRank() > 0)) and not Unit("player"):HasBuffs(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.WildfireBomb:Show(icon)
             end
             
             -- serpent_sting,if=buff.vipers_venom.up&dot.serpent_sting.remains<4*gcd|dot.serpent_sting.refreshable&!buff.coordinated_assault.up
-            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 4 * A.GetGCD() or Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
+            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 4 * GetGCD() or Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) and not Unit("player"):HasBuffs(A.CoordinatedAssaultBuff.ID, true)) then
                 return A.SerpentSting:Show(icon)
             end
             
@@ -1019,22 +1019,22 @@ local function APL()
             end
             
             -- mongoose_bite,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
-            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < A.GetGCD()) then
+            if A.MongooseBite:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < GetGCD()) then
                 return A.MongooseBite:Show(icon)
             end
             
             -- raptor_strike,if=buff.blur_of_talons.up&buff.blur_of_talons.remains<gcd
-            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < A.GetGCD()) then
+            if A.RaptorStrike:IsReady(unit) and (Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) and Unit("player"):HasBuffs(A.BlurofTalonsBuff.ID, true) < GetGCD()) then
                 return A.RaptorStrike:Show(icon)
             end
             
             -- serpent_sting,if=buff.vipers_venom.up&buff.vipers_venom.remains<1.5*gcd|!dot.serpent_sting.ticking
-            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) < 1.5 * A.GetGCD() or not Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)) then
+            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) < 1.5 * GetGCD() or not Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)) then
                 return A.SerpentSting:Show(icon)
             end
             
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd&focus+cast_regen<focus.max|(next_wi_bomb.volatile&dot.serpent_sting.ticking&dot.serpent_sting.refreshable|next_wi_bomb.pheromone&!buff.mongoose_fury.up&focus+cast_regen<focus.max-action.kill_command.cast_regen*3)
-            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
+            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD() and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() or (S.VolatileBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) and Unit(unit):HasDeBuffsRefreshable(A.SerpentStingDebuff.ID, true) or S.PheromoneBomb:IsLearned() and not Unit("player"):HasBuffs(A.MongooseFuryBuff.ID, true) and Player:Focus() + Unit("player"):FocusCastRegen(A.WildfireBomb:GetSpellCastTime) < Player:FocusMax() - Unit("player"):FocusCastRegen(A.KillCommand:GetSpellCastTime) * 3)) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -1055,7 +1055,7 @@ local function APL()
             end
             
             -- wildfire_bomb,if=full_recharge_time<1.5*gcd
-            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD()) then
+            if A.WildfireBomb:IsReady(unit) and (A.WildfireBomb:GetSpellChargesFullRechargeTime() < 1.5 * GetGCD()) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -1065,7 +1065,7 @@ local function APL()
             end
             
             -- serpent_sting,if=buff.vipers_venom.up&dot.serpent_sting.remains<4*gcd
-            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 4 * A.GetGCD()) then
+            if A.SerpentSting:IsReady(unit) and (Unit("player"):HasBuffs(A.VipersVenomBuff.ID, true) and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 4 * GetGCD()) then
                 return A.SerpentSting:Show(icon)
             end
             
@@ -1075,7 +1075,7 @@ local function APL()
             end
             
             -- wildfire_bomb,if=next_wi_bomb.shrapnel&dot.serpent_sting.remains>5*gcd
-            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * A.GetGCD()) then
+            if A.WildfireBomb:IsReady(unit) and (S.ShrapnelBomb:IsLearned() and Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) > 5 * GetGCD()) then
                 return A.WildfireBomb:Show(icon)
             end
             
@@ -1125,7 +1125,7 @@ local function APL()
             end
             
             -- mongoose_bite,if=active_enemies=1&target.time_to_die<focus%(action.mongoose_bite.cost-cast_regen)*gcd
-            if A.MongooseBite:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) == 1 and Unit(unit):TimeToDie() < Player:Focus() / (A.MongooseBite:GetSpellPowerCostCache() - Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime)) * A.GetGCD()) then
+            if A.MongooseBite:IsReady(unit) and (MultiUnits:GetByRangeInCombat(8, 5, 10) == 1 and Unit(unit):TimeToDie() < Player:Focus() / (A.MongooseBite:GetSpellPowerCostCache() - Unit("player"):FocusCastRegen(A.MongooseBite:GetSpellCastTime)) * GetGCD()) then
                 return A.MongooseBite:Show(icon)
             end
             
@@ -1179,12 +1179,12 @@ local function APL()
             end
             
             -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
             

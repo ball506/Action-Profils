@@ -223,7 +223,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- potion
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.ProlongedPower:IsReady(unit) and Potion then
                 return A.ProlongedPower:Show(icon)
             end
             
@@ -267,17 +267,17 @@ A[3] = function(icon, isMulti)
             
             -- use_items
             -- potion
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.ProlongedPower:IsReady(unit) and Potion then
                 return A.ProlongedPower:Show(icon)
             end
             
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
@@ -287,12 +287,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -362,7 +362,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- concentrated_flame,if=dot.concentrated_flame.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(unit):HasDeBuffs(A.ConcentratedFlameDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -402,12 +402,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- tiger_palm,if=!talent.blackout_combo.enabled&cooldown.keg_smash.remains>gcd&(energy+(energy.regen*(cooldown.keg_smash.remains+gcd)))>=65
-            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > A.GetGCD() and (Player:EnergyPredicted() + (Player:EnergyRegen() * (A.KegSmash:GetCooldown() + A.GetGCD()))) >= 65) then
+            if A.TigerPalm:IsReady(unit) and (not A.BlackoutCombo:IsSpellLearned() and A.KegSmash:GetCooldown() > GetGCD() and (Player:EnergyPredicted() + (Player:EnergyRegen() * (A.KegSmash:GetCooldown() + GetGCD()))) >= 65) then
                 return A.TigerPalm:Show(icon)
             end
             
             -- arcane_torrent,if=energy<31
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:EnergyPredicted() < 31) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:EnergyPredicted() < 31) then
                 return A.ArcaneTorrent:Show(icon)
             end
             

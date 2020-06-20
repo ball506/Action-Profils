@@ -472,7 +472,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion
-            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralIntellect:IsReady(unit) and Potion then
                 return A.PotionofSpectralIntellect:Show(icon)
             end
             
@@ -522,17 +522,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- blood_of_the_enemy
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- worldvein_resonance
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.WorldveinResonance:Show(icon)
             end
             
@@ -562,27 +562,27 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion
-            if A.PotionofSpectralIntellect:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralIntellect:IsReady(unit) and Potion then
                 return A.PotionofSpectralIntellect:Show(icon)
             end
             
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -617,12 +617,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- living_bomb,if=buff.combustion.remains<gcd.max&active_enemies>1
-            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
+            if A.LivingBomb:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) > 1) then
                 return A.LivingBomb:Show(icon)
             end
             
             -- dragons_breath,if=buff.combustion.remains<gcd.max&buff.combustion.up
-            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < A.GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) then
+            if A.DragonsBreath:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) < GetGCD() and Unit("player"):HasBuffs(A.CombustionBuff.ID, true)) then
                 return A.DragonsBreath:Show(icon)
             end
             
@@ -642,7 +642,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=hyperthread_wristwraps,if=buff.combustion.up&action.fire_blast.charges=0&action.fire_blast.recharge_time>gcd.max
-            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > A.GetGCD()) then
+            if A.HyperthreadWristwraps:IsReady(unit) and (Unit("player"):HasBuffs(A.CombustionBuff.ID, true) and A.FireBlast:GetSpellCharges() == 0 and A.FireBlast:RechargeP() > GetGCD()) then
                 return A.HyperthreadWristwraps:Show(icon)
             end
             
@@ -794,8 +794,8 @@ A[3] = function(icon, isMulti)
                 return A.Pyroblast:Show(icon)
             end
             
-            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(!buff.heating_up.react&!buff.hot_streak.react&!prev_off_gcd.fire_blast&(action.fire_blast.charges>=2|(action.phoenix_flames.charges>=1&talent.phoenix_flames.enabled)|(talent.alexstraszas_fury.enabled&cooldown.dragons_breath.ready)|(talent.searing_touch.enabled&target.health.pct<=30)))
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):PrevOffGCDP(1, A.FireBlast) and (A.FireBlast:GetSpellCharges() >= 2 or (A.PhoenixFlames:GetSpellCharges() >= 1 and A.PhoenixFlames:IsSpellLearned()) or (A.AlexstraszasFury:IsSpellLearned() and A.DragonsBreath:GetCooldown() == 0) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30)))) then
+            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(!buff.heating_up.react&!buff.hot_streak.react&!prev_off_gcd.fire_blast&(action.fire_blast.charges>=2|(action.phoenix_flames.charges>=1&talent.phoenix_flames.enabled)|(talent.alexstraszas_fury.enabled&cooldown.dragons_breath.ready)|(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)))
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):PrevOffGCDP(1, A.FireBlast) and (A.FireBlast:GetSpellCharges() >= 2 or (A.PhoenixFlames:GetSpellCharges() >= 1 and A.PhoenixFlames:IsSpellLearned()) or (A.AlexstraszasFury:IsSpellLearned() and A.DragonsBreath:GetCooldown() == 0) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1)))) then
                 return A.FireBlast:Show(icon)
             end
             
@@ -809,18 +809,18 @@ A[3] = function(icon, isMulti)
                 return A.Pyroblast:Show(icon)
             end
             
-            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(buff.heating_up.react&(target.health.pct>=30|!talent.searing_touch.enabled))
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and (Unit(unit):HealthPercent() >= 30 or not A.SearingTouch:IsSpellLearned()))) then
+            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(buff.heating_up.react&spell_crit<1&(target.health.pct>=30|!talent.searing_touch.enabled))
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and spell_crit < 1 and (Unit(unit):HealthPercent() >= 30 or not A.SearingTouch:IsSpellLearned()))) then
                 return A.FireBlast:Show(icon)
             end
             
-            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!action.scorch.executing|!buff.heating_up.react&!buff.hot_streak.react)
-            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
+            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=!(active_enemies>=variable.hard_cast_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))&!firestarter.active&(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&(buff.heating_up.react&!action.scorch.executing|!buff.heating_up.react&!buff.hot_streak.react)
+            if A.FireBlast:IsReady(unit) and (not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHardCastFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion)) and not S.Firestarter:ActiveStatus() and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true))) then
                 return A.FireBlast:Show(icon)
             end
             
-            -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&talent.searing_touch.enabled&target.health.pct<=30&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -829,8 +829,8 @@ A[3] = function(icon, isMulti)
                 return A.PhoenixFlames:Show(icon)
             end
             
-            -- scorch,if=target.health.pct<=30&talent.searing_touch.enabled
-            if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
+            -- scorch,if=target.health.pct<=30&talent.searing_touch.enabled|spell_crit>=1
+            if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned() or spell_crit >= 1) then
                 return A.Scorch:Show(icon)
             end
             
@@ -874,8 +874,8 @@ A[3] = function(icon, isMulti)
                 return A.PhoenixFlames:Show(icon)
             end
             
-            -- pyroblast,if=buff.hot_streak.react&target.health.pct<=30&talent.searing_touch.enabled
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
+            -- pyroblast,if=buff.hot_streak.react&(target.health.pct<=30&talent.searing_touch.enabled|spell_crit>=1)
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned() or spell_crit >= 1)) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -884,18 +884,18 @@ A[3] = function(icon, isMulti)
                 return A.Pyroblast:Show(icon)
             end
             
-            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(buff.rune_of_power.down&!firestarter.active)&!variable.fire_blast_pooling&(((action.fireball.executing|action.pyroblast.executing)&buff.heating_up.react)|(talent.searing_touch.enabled&target.health.pct<=30&(buff.heating_up.react&!action.scorch.executing|!buff.hot_streak.react&!buff.heating_up.react&action.scorch.executing&!action.pyroblast.in_flight&!action.fireball.in_flight)))
-            if A.FireBlast:IsReady(unit) and ((Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and not S.Firestarter:ActiveStatus()) and not VarFireBlastPooling and (((action.fireball.executing or action.pyroblast.executing) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) or (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())))) then
+            -- fire_blast,use_off_gcd=1,use_while_casting=1,if=(buff.rune_of_power.down&!firestarter.active)&!variable.fire_blast_pooling&(((action.fireball.executing|action.pyroblast.executing)&buff.heating_up.react)|((talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&(buff.heating_up.react&!action.scorch.executing|!buff.hot_streak.react&!buff.heating_up.react&action.scorch.executing&!action.pyroblast.in_flight&!action.fireball.in_flight)))
+            if A.FireBlast:IsReady(unit) and ((Unit("player"):HasBuffsDown(A.RuneofPowerBuff.ID, true) and not S.Firestarter:ActiveStatus()) and not VarFireBlastPooling and (((action.fireball.executing or action.pyroblast.executing) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) or ((A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and (Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and not action.scorch.executing or not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and not Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) and action.scorch.executing and not A.Pyroblast:IsSpellInFlight() and not A.Fireball:IsSpellInFlight())))) then
                 return A.FireBlast:Show(icon)
             end
             
-            -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&talent.searing_touch.enabled&target.health.pct<=30&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
-            -- phoenix_flames,if=(buff.heating_up.react|(!buff.hot_streak.react&(action.fire_blast.charges>0|talent.searing_touch.enabled&target.health.pct<=30)))&!variable.phoenix_pooling
-            if A.PhoenixFlames:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) or (not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (A.FireBlast:GetSpellCharges() > 0 or A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30))) and not VarPhoenixPooling) then
+            -- phoenix_flames,if=(buff.heating_up.react|(!buff.hot_streak.react&(action.fire_blast.charges>0|talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)))&!variable.phoenix_pooling
+            if A.PhoenixFlames:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true) or (not Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (A.FireBlast:GetSpellCharges() > 0 or A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1))) and not VarPhoenixPooling) then
                 return A.PhoenixFlames:Show(icon)
             end
             
@@ -914,8 +914,8 @@ A[3] = function(icon, isMulti)
                 return true
             end
             
-            -- scorch,if=target.health.pct<=30&talent.searing_touch.enabled
-            if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned()) then
+            -- scorch,if=target.health.pct<=30&talent.searing_touch.enabled|spell_crit>=1
+            if A.Scorch:IsReady(unit) and (Unit(unit):HealthPercent() <= 30 and A.SearingTouch:IsSpellLearned() or spell_crit >= 1) then
                 return A.Scorch:Show(icon)
             end
             
@@ -971,12 +971,12 @@ end
             end
             
             -- guardian_of_azeroth,if=(variable.time_to_combustion<10|target.time_to_die<variable.time_to_combustion)&!variable.disable_combustion
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((VarTimeToCombustion < 10 or Unit(unit):TimeToDie() < VarTimeToCombustion) and not VarDisableCombustion) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and ((VarTimeToCombustion < 10 or Unit(unit):TimeToDie() < VarTimeToCombustion) and not VarDisableCombustion) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- concentrated_flame
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -986,22 +986,22 @@ end
             end
             
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.RippleInSpace:Show(icon)
             end
             
             -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.TheUnboundForce:Show(icon)
             end
             

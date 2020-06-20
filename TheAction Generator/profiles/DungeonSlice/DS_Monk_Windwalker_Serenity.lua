@@ -373,7 +373,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- potion
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.ProlongedPower:IsReady(unit) and Potion then
                 return A.ProlongedPower:Show(icon)
             end
             
@@ -409,7 +409,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- guardian_of_azeroth
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
@@ -498,17 +498,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- guardian_of_azeroth,if=target.time_to_die>185|!variable.hold_tod&cooldown.touch_of_death.remains<=14|target.time_to_die<35
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):TimeToDie() > 185 or not VarHoldTod and A.TouchofDeath:GetCooldown() <= 14 or Unit(unit):TimeToDie() < 35) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(unit):TimeToDie() > 185 or not VarHoldTod and A.TouchofDeath:GetCooldown() <= 14 or Unit(unit):TimeToDie() < 35) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- worldvein_resonance,if=cooldown.touch_of_death.remains>58|cooldown.touch_of_death.remains<2|variable.hold_tod|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.TouchofDeath:GetCooldown() > 58 or A.TouchofDeath:GetCooldown() < 2 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.TouchofDeath:GetCooldown() > 58 or A.TouchofDeath:GetCooldown() < 2 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- arcane_torrent,if=chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -523,22 +523,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- blood_of_the_enemy,if=cooldown.touch_of_death.remains>45|variable.hold_tod&cooldown.fists_of_fury.remains<2|target.time_to_die<12|target.time_to_die>100&target.time_to_die<110&(cooldown.fists_of_fury.remains<3|cooldown.whirling_dragon_punch.remains<5|cooldown.rising_sun_kick.remains<5)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.TouchofDeath:GetCooldown() > 45 or VarHoldTod and A.FistsofFury:GetCooldown() < 2 or Unit(unit):TimeToDie() < 12 or Unit(unit):TimeToDie() > 100 and Unit(unit):TimeToDie() < 110 and (A.FistsofFury:GetCooldown() < 3 or A.WhirlingDragonPunch:GetCooldown() < 5 or A.RisingSunKick:GetCooldown() < 5)) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.TouchofDeath:GetCooldown() > 45 or VarHoldTod and A.FistsofFury:GetCooldown() < 2 or Unit(unit):TimeToDie() < 12 or Unit(unit):TimeToDie() > 100 and Unit(unit):TimeToDie() < 110 and (A.FistsofFury:GetCooldown() < 3 or A.WhirlingDragonPunch:GetCooldown() < 5 or A.RisingSunKick:GetCooldown() < 5)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- concentrated_flame,if=!dot.concentrated_flame_burn.remains&((cooldown.concentrated_flame.remains<=cooldown.touch_of_death.remains+1|variable.hold_tod)&(!talent.whirling_dragon_punch.enabled|cooldown.whirling_dragon_punch.remains)&cooldown.rising_sun_kick.remains&cooldown.fists_of_fury.remains&buff.storm_earth_and_fire.down|dot.touch_of_death.remains)|target.time_to_die<8
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and ((A.ConcentratedFlame:GetCooldown() <= A.TouchofDeath:GetCooldown() + 1 or VarHoldTod) and (not A.WhirlingDragonPunch:IsSpellLearned() or A.WhirlingDragonPunch:GetCooldown()) and A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true) or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and ((A.ConcentratedFlame:GetCooldown() <= A.TouchofDeath:GetCooldown() + 1 or VarHoldTod) and (not A.WhirlingDragonPunch:IsSpellLearned() or A.WhirlingDragonPunch:GetCooldown()) and A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() and Unit("player"):HasBuffsDown(A.StormEarthandFireBuff.ID, true) or Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true)) or Unit(unit):TimeToDie() < 8) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- blood_fury,if=cooldown.touch_of_death.remains>30|variable.hold_tod|target.time_to_die<20
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking,if=cooldown.touch_of_death.remains>30|variable.hold_tod|target.time_to_die<15
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 15) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 15) then
                 return A.Berserking:Show(icon)
             end
             
@@ -548,12 +548,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fireblood,if=cooldown.touch_of_death.remains>30|variable.hold_tod|target.time_to_die<10
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 10) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 10) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call,if=cooldown.touch_of_death.remains>30|variable.hold_tod|target.time_to_die<20
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.TouchofDeath:GetCooldown() > 30 or VarHoldTod or Unit(unit):TimeToDie() < 20) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -568,12 +568,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- purifying_blast
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -583,17 +583,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- memory_of_lucid_dreams,if=energy<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:EnergyPredicted() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Player:EnergyPredicted() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- ripple_in_space
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.RippleInSpace:Show(icon)
             end
             
@@ -613,22 +613,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- guardian_of_azeroth,if=buff.serenity.down&(target.time_to_die>185|cooldown.serenity.remains<=7)|target.time_to_die<35
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (Unit(unit):TimeToDie() > 185 or A.Serenity:GetCooldown() <= 7) or Unit(unit):TimeToDie() < 35) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (Unit(unit):TimeToDie() > 185 or A.Serenity:GetCooldown() <= 7) or Unit(unit):TimeToDie() < 35) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- blood_fury,if=cooldown.serenity.remains>20|target.time_to_die<20
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 20) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 20) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking,if=cooldown.serenity.remains>20|target.time_to_die<15
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 15) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 15) then
                 return A.Berserking:Show(icon)
             end
             
             -- arcane_torrent,if=buff.serenity.down&chi.max-chi>=1&energy.time_to_max>=0.5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:ChiMax() - Player:Chi() >= 1 and Player:EnergyTimeToMaxPredicted() >= 0.5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -638,12 +638,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fireblood,if=cooldown.serenity.remains>20|target.time_to_die<10
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 10) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 10) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call,if=cooldown.serenity.remains>20|target.time_to_die<20
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 20) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (A.Serenity:GetCooldown() > 20 or Unit(unit):TimeToDie() < 20) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -658,7 +658,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- blood_of_the_enemy,if=buff.serenity.down&(cooldown.serenity.remains>20|cooldown.serenity.remains<2)|target.time_to_die<15
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 20 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 15) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 20 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 15) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
@@ -668,12 +668,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- worldvein_resonance,if=buff.serenity.down&(cooldown.serenity.remains>15|cooldown.serenity.remains<2)|target.time_to_die<20
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 15 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 20) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() > 15 or A.Serenity:GetCooldown() < 2) or Unit(unit):TimeToDie() < 20) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- concentrated_flame,if=buff.serenity.down&(cooldown.serenity.remains|cooldown.concentrated_flame.charges=2)&!dot.concentrated_flame_burn.remains&(cooldown.rising_sun_kick.remains&cooldown.fists_of_fury.remains|target.time_to_die<8)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() or A.ConcentratedFlame:GetSpellCharges() == 2) and not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and (A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() or Unit(unit):TimeToDie() < 8)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and (A.Serenity:GetCooldown() or A.ConcentratedFlame:GetSpellCharges() == 2) and not Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) and (A.RisingSunKick:GetCooldown() and A.FistsofFury:GetCooldown() or Unit(unit):TimeToDie() < 8)) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -683,12 +683,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- the_unbound_force,if=buff.serenity.down
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- purifying_blast,if=buff.serenity.down
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.PurifyingBlast:Show(icon)
             end
             
@@ -698,17 +698,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- focused_azerite_beam,if=buff.serenity.down
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- memory_of_lucid_dreams,if=buff.serenity.down&energy<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:EnergyPredicted() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true) and Player:EnergyPredicted() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- ripple_in_space,if=buff.serenity.down
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffsDown(A.SerenityBuff.ID, true)) then
                 return A.RippleInSpace:Show(icon)
             end
             
@@ -874,7 +874,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.serenity.up|buff.storm_earth_and_fire.up&dot.touch_of_death.remains|target.time_to_die<=60
-            if A.ProlongedPower:IsReady(unit) and Action.GetToggle(1, "Potion") and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) and Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() <= 60) then
+            if A.ProlongedPower:IsReady(unit) and Potion and (Unit("player"):HasBuffs(A.SerenityBuff.ID, true) or Unit("player"):HasBuffs(A.StormEarthandFireBuff.ID, true) and Unit(unit):HasDeBuffs(A.TouchofDeathDebuff.ID, true) or Unit(unit):TimeToDie() <= 60) then
                 return A.ProlongedPower:Show(icon)
             end
             

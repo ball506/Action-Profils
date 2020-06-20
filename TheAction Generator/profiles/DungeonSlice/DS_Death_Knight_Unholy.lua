@@ -529,7 +529,7 @@ local function EvaluateCycleSoulReaper203(unit)
 end
 
 local function EvaluateCycleOutbreak529(unit)
-    return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= A.GetGCD()
+    return Unit(unit):HasDeBuffs(A.VirulentPlagueDebuff.ID, true) <= GetGCD()
 end
 
 --- ======= ACTION LISTS =======
@@ -563,7 +563,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- potion
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             
@@ -629,7 +629,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- death_coil,if=buff.sudden_doom.react&rune.time_to_4>gcd
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) and Player:RuneTimeToX(4) > A.GetGCD()) then
+            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) and Player:RuneTimeToX(4) > GetGCD()) then
                 return A.DeathCoil:Show(icon)
             end
             
@@ -706,7 +706,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- unholy_frenzy,if=active_enemies>=2&((cooldown.death_and_decay.remains<=gcd&!talent.defile.enabled)|(cooldown.defile.remains<=gcd&talent.defile.enabled))
-            if A.UnholyFrenzy:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and ((A.DeathandDecay:GetCooldown() <= A.GetGCD() and not A.Defile:IsSpellLearned()) or (A.Defile:GetCooldown() <= A.GetGCD() and A.Defile:IsSpellLearned()))) then
+            if A.UnholyFrenzy:IsReady(unit) and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 and ((A.DeathandDecay:GetCooldown() <= GetGCD() and not A.Defile:IsSpellLearned()) or (A.Defile:GetCooldown() <= GetGCD() and A.Defile:IsSpellLearned()))) then
                 return A.UnholyFrenzy:Show(icon)
             end
             
@@ -732,52 +732,52 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
         
             -- memory_of_lucid_dreams,if=rune.time_to_1>gcd&runic_power<40
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Player:RuneTimeToX(1) > A.GetGCD() and Player:RunicPower() < 40) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Player:RuneTimeToX(1) > GetGCD() and Player:RunicPower() < 40) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- blood_of_the_enemy,if=death_and_decay.ticking|pet.apoc_ghoul.active&active_enemies=1
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (death_and_decay.ticking or Pet:IsActive(A.ApocGhoul.ID) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1) then
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (death_and_decay.ticking or Pet:IsActive(A.ApocGhoul.ID) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
             -- guardian_of_azeroth,if=(cooldown.apocalypse.remains<6&cooldown.army_of_the_dead.remains>cooldown.condensed_lifeforce.remains)|cooldown.army_of_the_dead.remains<2|equipped.ineffable_truth|equipped.ineffable_truth_oh
-            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and ((A.Apocalypse:GetCooldown() < 6 and A.ArmyoftheDead:GetCooldown() > A.CondensedLifeforce:GetCooldown()) or A.ArmyoftheDead:GetCooldown() < 2 or A.IneffableTruth:IsExists() or A.IneffableTruthOh:IsExists()) then
+            if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and ((A.Apocalypse:GetCooldown() < 6 and A.ArmyoftheDead:GetCooldown() > A.CondensedLifeforce:GetCooldown()) or A.ArmyoftheDead:GetCooldown() < 2 or A.IneffableTruth:IsExists() or A.IneffableTruthOh:IsExists()) then
                 return A.GuardianofAzeroth:Show(icon)
             end
             
             -- the_unbound_force,if=buff.reckless_force.up|buff.reckless_force_counter.stack<11
-            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
+            if A.TheUnboundForce:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffs(A.RecklessForceBuff.ID, true) or Unit("player"):HasBuffsStacks(A.RecklessForceCounterBuff.ID, true) < 11) then
                 return A.TheUnboundForce:Show(icon)
             end
             
             -- focused_azerite_beam,if=!death_and_decay.ticking
-            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not death_and_decay.ticking) then
+            if A.FocusedAzeriteBeam:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not death_and_decay.ticking) then
                 return A.FocusedAzeriteBeam:Show(icon)
             end
             
             -- concentrated_flame,if=dot.concentrated_flame_burn.remains=0
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit(unit):HasDeBuffs(A.ConcentratedFlameBurnDebuff.ID, true) == 0) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
             -- purifying_blast,if=!death_and_decay.ticking
-            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not death_and_decay.ticking) then
+            if A.PurifyingBlast:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not death_and_decay.ticking) then
                 return A.PurifyingBlast:Show(icon)
             end
             
             -- worldvein_resonance,if=talent.army_of_the_damned.enabled&essence.vision_of_perfection.minor&buff.unholy_strength.up|essence.vision_of_perfection.minor&pet.apoc_ghoul.active|talent.army_of_the_damned.enabled&pet.apoc_ghoul.active&cooldown.army_of_the_dead.remains>60|talent.army_of_the_damned.enabled&pet.army_ghoul.active
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (A.ArmyoftheDamned:IsSpellLearned() and Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Pet:IsActive(A.ApocGhoul.ID) or A.ArmyoftheDamned:IsSpellLearned() and Pet:IsActive(A.ApocGhoul.ID) and A.ArmyoftheDead:GetCooldown() > 60 or A.ArmyoftheDamned:IsSpellLearned() and pet.army_ghoul.active) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (A.ArmyoftheDamned:IsSpellLearned() and Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) or Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and Pet:IsActive(A.ApocGhoul.ID) or A.ArmyoftheDamned:IsSpellLearned() and Pet:IsActive(A.ApocGhoul.ID) and A.ArmyoftheDead:GetCooldown() > 60 or A.ArmyoftheDamned:IsSpellLearned() and pet.army_ghoul.active) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- worldvein_resonance,if=!death_and_decay.ticking&buff.unholy_strength.up&!essence.vision_of_perfection.minor&!talent.army_of_the_damned.enabled|target.time_to_die<cooldown.apocalypse.remains
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not death_and_decay.ticking and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and not Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and not A.ArmyoftheDamned:IsSpellLearned() or Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown()) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not death_and_decay.ticking and Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and not Azerite:EssenceHasMinor(A.VisionofPerfection.ID) and not A.ArmyoftheDamned:IsSpellLearned() or Unit(unit):TimeToDie() < A.Apocalypse:GetCooldown()) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- ripple_in_space,if=!death_and_decay.ticking
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (not death_and_decay.ticking) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (not death_and_decay.ticking) then
                 return A.RippleInSpace:Show(icon)
             end
             
@@ -792,12 +792,12 @@ A[3] = function(icon, isMulti)
         local function Generic(unit)
         
             -- death_coil,if=buff.sudden_doom.react&rune.time_to_4>gcd&!variable.pooling_for_gargoyle|pet.gargoyle.active
-            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) and Player:RuneTimeToX(4) > A.GetGCD() and not VarPoolingForGargoyle or Pet:IsActive(A.Gargoyle.ID)) then
+            if A.DeathCoil:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.SuddenDoomBuff.ID, true) and Player:RuneTimeToX(4) > GetGCD() and not VarPoolingForGargoyle or Pet:IsActive(A.Gargoyle.ID)) then
                 return A.DeathCoil:Show(icon)
             end
             
             -- death_coil,if=runic_power.deficit<14&rune.time_to_4>gcd&!variable.pooling_for_gargoyle
-            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and Player:RuneTimeToX(4) > A.GetGCD() and not VarPoolingForGargoyle) then
+            if A.DeathCoil:IsReady(unit) and (Player:RunicPowerDeficit() < 14 and Player:RuneTimeToX(4) > GetGCD() and not VarPoolingForGargoyle) then
                 return A.DeathCoil:Show(icon)
             end
             
@@ -842,17 +842,17 @@ A[3] = function(icon, isMulti)
             VarPoolingForGargoyle = num(A.SummonGargoyle:GetCooldown() < 5 and A.SummonGargoyle:IsSpellLearned())
             
             -- arcane_torrent,if=runic_power.deficit>65&(pet.gargoyle.active|!talent.summon_gargoyle.enabled)&rune.deficit>=5
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) and Player:RuneDeficit() >= 5) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:RunicPowerDeficit() > 65 and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) and Player:RuneDeficit() >= 5) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
             -- blood_fury,if=pet.gargoyle.active|!talent.summon_gargoyle.enabled
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Pet:IsActive(A.Gargoyle.ID) or not A.SummonGargoyle:IsSpellLearned()) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking,if=buff.unholy_frenzy.up|pet.gargoyle.active|(talent.army_of_the_damned.enabled&pet.apoc_ghoul.active)
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) or Pet:IsActive(A.Gargoyle.ID) or (A.ArmyoftheDamned:IsSpellLearned() and Pet:IsActive(A.ApocGhoul.ID))) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true) or Pet:IsActive(A.Gargoyle.ID) or (A.ArmyoftheDamned:IsSpellLearned() and Pet:IsActive(A.ApocGhoul.ID))) then
                 return A.Berserking:Show(icon)
             end
             
@@ -862,22 +862,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- ancestral_call,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((Pet:IsActive(A.Gargoyle.ID) and A.SummonGargoyle:IsSpellLearned()) or Pet:IsActive(A.ApocGhoul.ID)) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and ((Pet:IsActive(A.Gargoyle.ID) and A.SummonGargoyle:IsSpellLearned()) or Pet:IsActive(A.ApocGhoul.ID)) then
                 return A.AncestralCall:Show(icon)
             end
             
             -- arcane_pulse,if=active_enemies>=2|(rune.deficit>=5&runic_power.deficit>=60)
-            if A.ArcanePulse:AutoRacial(unit) and Action.GetToggle(1, "Racial") and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or (Player:RuneDeficit() >= 5 and Player:RunicPowerDeficit() >= 60)) then
+            if A.ArcanePulse:AutoRacial(unit) and Racial and (MultiUnits:GetByRangeInCombat(40, 5, 10) >= 2 or (Player:RuneDeficit() >= 5 and Player:RunicPowerDeficit() >= 60)) then
                 return A.ArcanePulse:Show(icon)
             end
             
             -- fireblood,if=(pet.gargoyle.active&talent.summon_gargoyle.enabled)|pet.apoc_ghoul.active
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) and ((Pet:IsActive(A.Gargoyle.ID) and A.SummonGargoyle:IsSpellLearned()) or Pet:IsActive(A.ApocGhoul.ID)) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and ((Pet:IsActive(A.Gargoyle.ID) and A.SummonGargoyle:IsSpellLearned()) or Pet:IsActive(A.ApocGhoul.ID)) then
                 return A.Fireblood:Show(icon)
             end
             
             -- bag_of_tricks,if=buff.unholy_strength.up&active_enemies=1|buff.festermight.remains<gcd&active_enemies=1
-            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) < A.GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1) then
+            if A.BagofTricks:IsReady(unit) and (Unit("player"):HasBuffs(A.UnholyStrengthBuff.ID, true) and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or Unit("player"):HasBuffs(A.FestermightBuff.ID, true) < GetGCD() and MultiUnits:GetByRangeInCombat(40, 5, 10) == 1) then
                 return A.BagofTricks:Show(icon)
             end
             
@@ -948,7 +948,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=cooldown.army_of_the_dead.ready|pet.gargoyle.active|buff.unholy_frenzy.up
-            if A.PotionofSpectralStrength:IsReady(unit) and Action.GetToggle(1, "Potion") and (A.ArmyoftheDead:GetCooldown() == 0 or Pet:IsActive(A.Gargoyle.ID) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)) then
+            if A.PotionofSpectralStrength:IsReady(unit) and Potion and (A.ArmyoftheDead:GetCooldown() == 0 or Pet:IsActive(A.Gargoyle.ID) or Unit("player"):HasBuffs(A.UnholyFrenzyBuff.ID, true)) then
                 return A.PotionofSpectralStrength:Show(icon)
             end
             

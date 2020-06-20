@@ -517,7 +517,7 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- snapshot_stats
             -- memory_of_lucid_dreams
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
@@ -527,7 +527,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -590,22 +590,22 @@ A[3] = function(icon, isMulti)
         local function Cooldowns(unit)
         
             -- potion
-            if A.PotionofSpectralAgility:IsReady(unit) and Action.GetToggle(1, "Potion") then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
             -- blood_fury
-            if A.BloodFury:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.BloodFury:Show(icon)
             end
             
             -- berserking
-            if A.Berserking:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Berserking:Show(icon)
             end
             
             -- arcane_torrent
-            if A.ArcaneTorrent:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.ArcaneTorrent:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.ArcaneTorrent:Show(icon)
             end
             
@@ -615,12 +615,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- fireblood
-            if A.Fireblood:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.Fireblood:Show(icon)
             end
             
             -- ancestral_call
-            if A.AncestralCall:AutoRacial(unit) and Action.GetToggle(1, "Racial") and A.BurstIsON(unit) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) then
                 return A.AncestralCall:Show(icon)
             end
             
@@ -666,7 +666,7 @@ A[3] = function(icon, isMulti)
         local function Essences(unit)
         
             -- concentrated_flame,if=essence.the_crucible_of_flame.major&((!dot.concentrated_flame_burn.ticking&!action.concentrated_flame_missile.in_flight)^time_to_die<=7)
-            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID) and ({}^time_to_die <= 7)) then
+            if A.ConcentratedFlame:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Azerite:EssenceHasMajor(A.TheCrucibleofFlame.ID) and ({}^time_to_die <= 7)) then
                 return A.ConcentratedFlame:Show(icon)
             end
             
@@ -676,17 +676,17 @@ A[3] = function(icon, isMulti)
             end
             
             -- memory_of_lucid_dreams,if=essence.memory_of_lucid_dreams.major
-            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) then
+            if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Azerite:EssenceHasMajor(A.MemoryofLucidDreams.ID)) then
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
             -- worldvein_resonance,if=essence.worldvein_resonance.major
-            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) then
+            if A.WorldveinResonance:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Azerite:EssenceHasMajor(A.WorldveinResonance.ID)) then
                 return A.WorldveinResonance:Show(icon)
             end
             
             -- ripple_in_space,if=essence.ripple_in_space.major
-            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Azerite:EssenceHasMajor(A.RippleInSpace.ID)) then
+            if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Azerite:EssenceHasMajor(A.RippleInSpace.ID)) then
                 return A.RippleInSpace:Show(icon)
             end
             
