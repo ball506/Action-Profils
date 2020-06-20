@@ -552,12 +552,14 @@ end
 --------------------------------------
 -- Since they need some CustomStuff snippets that load in 0.6, these function only work in this CustomPvE snippets that load in 1
 -- Only checks IsUsableP against the primary resource for pooling
+-- /dump Action[Action.PlayerSpec].WarStomp:IsUsablePPool()
+-- /dump Action[Action.PlayerSpec].WarStomp.ID:IsUsablePPool()
 function A:IsUsablePPool(Offset)
-    local CostTable = GetSpellPowerCost(self.ID)
-    if CostTable then
-        local CostInfo = CostTable[1]
-        local Type = CostInfo.type
-        return ( Player.PredictedResourceMap[Type]() >= ( ( (self.CustomCost and self.CustomCost[Type]) and self.CustomCost[Type]() or CostInfo.minCost ) + ( Offset and Offset or 0 ) ) )
+    local CostInfo, TypeInfo = self:GetSpellPowerCost() 	
+	--print(CostInfo)
+	--print(TypeInfo)
+    if CostInfo and TypeInfo then
+        return ( Player.PredictedResourceMap[TypeInfo]() >= ( CostInfo + ( Offset and Offset or 0 ) ) )
     else
         return true
     end
