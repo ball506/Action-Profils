@@ -1434,6 +1434,40 @@ A[3] = function(icon, isMulti)
 				
             end
             
+			
+            -- Kidney Shot on enemies with burst damage buff or if our friend healer is cc
+            if A.IsInPvP and A.KidneyShot:IsReady(unit) and CanCast and inMelee and Player:ComboPoints() >= 4 and Unit(unit):IsControlAble("stun", 25) and Unit(unit):HasBuffs("DamageBuffs") > 0 then
+                -- Notification                    
+                Action.SendNotification("Defensive Kidney Shot on : " .. UnitName(unit), A.KidneyShot.ID)
+                return A.KidneyShot:Show(icon)
+            end    
+            
+            -- 'Full' Kidney Shot
+            if A.IsInPvP and A.KidneyShot:IsReady(unit) and CanCast and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 4 and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "CCTotalImun"}, true) and Unit(unit):IsControlAble("stun", 0) then 
+                return A.KidneyShot:Show(icon)              
+            end
+            
+            -- Neuro
+            if A.IsInPvP and A.Neuro:IsSpellLearned() and CanCast and A.Neuro:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 75 and not Player:IsStealthed() then
+                return A.Neuro:Show(icon)
+            end
+            
+            -- Shiv
+            if A.IsInPvP and A.Shiv:IsSpellLearned() and CanCast and A.Shiv:IsReady(unit) and inMelee and Unit(unit):HealthPercent() <= 50 and Action.AbsentImun(unit, "DamagePhysImun", true) and A.Shiv:IsReady(unit) and not Unit(unit):InCC()  then
+                return A.Shiv:Show(icon)
+            end
+            
+            -- Death From Above
+            if A.IsInPvP and A.DFA:IsSpellLearned() and CanCast and A.DFA:IsReady(unit) and Unit(unit):HealthPercent() <= 70 and Player:ComboPoints() >= 5 and Unit(unit):GetRange() <= 15 and Action.AbsentImun("target", "DamagePhysImun", true) then
+                return A.DFA:Show(icon)
+            end        
+            
+            -- Mouseover KidneyShot on enemy trying to leave with less than 30% HP
+            if unit ~= "mouseover" and CanCast and Player:ComboPoints() >= 4 and Unit(unit):HealthPercent() <= 30 and  Unit(unit):GetRange() <= 5 and (A.IsInPvP or (not Unit(unit):IsBoss() and Unit(unit):IsMovingOut())) and A.KidneyShot:IsReady(unit) and A.KidneyShot:AbsentImun(unit, {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"}, true) and Unit(unit):GetMaxSpeed() >= 100 and Unit(unit):HasDeBuffs("Slowed") == 0 and not Unit(unit):IsTotem() then 
+                return A.KidneyShot:Show(icon)
+            end 
+			
+			
             -- marked_for_death,target_if=min:target.time_to_die,if=raid_event.adds.up&(target.time_to_die<combo_points.deficit*1.5|combo_points.deficit>=cp_max_spend)
             if A.MarkedForDeath:IsReady(unit) then
                 if Unit(unit):TimeToDie() > A.GetGCD() and (Unit(unit):TimeToDie() < Player:ComboPointsDeficit() * 1.5 or Player:ComboPointsDeficit() >= CPMaxSpend())
