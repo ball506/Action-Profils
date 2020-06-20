@@ -212,53 +212,6 @@ local function IsSchoolFree()
 	return LoC:IsMissed("SILENCE") and LoC:Get("SCHOOL_INTERRUPT", "SHADOW") == 0
 end 
 
--- API - Spell v2
--- Lib:AddActionsSpells(owner, spells, useManagement, useSilence, delMacros)
-Pet:AddActionsSpells(266, { 
-	-- number accepted
-	A.Felstorm.ID, -- Felstorm -- Dont work range is in tooltip so buggy ? 
-	A.LegionStrike.ID, -- Legion Strike	
-}, false)
-
--- API - Tracker v2
--- Initialize Tracker 
--- Lib:AddTrackers(A.PlayerSpec, Lib.Data.TrackersConfigPetID[A.PlayerSpec])
-Pet:AddTrackers(266, Pet.Data.TrackersConfigPetID[266])
--- /dump LibStub("PetLibrary").Data.TrackersConfigPetID[266]
---[[Pet:AddTrackers(266, { 
-	[98035] = {
-		name = "Dreadstalker",
-		duration = 12.25,
-	},
-	[55659] = {
-		name = "Wild Imp",
-		duration = 20,
-	},
-	--[143622] = {
-	--	name = "Wild Imp",
-	--	duration = 12,
-	--},
-	[17252] = {
-		name = "Felguard",
-		duration = 28,
-	},
-	[135002] = {
-		name = "Demonic Tyrant",
-		duration = 15,
-	},
-    [135816] = {
-        name = "Vilefiend",
-        duration = 15,
-    },
-})]]--
-
---local Pointer.PetGUIDs = Pet:GetTrackerGUID()
---local Pointer.PetIDs = Pet:GetTrackerData() -- this is table with [petID] = @table 
--- Pet Lib v2
-local owner								= "PlayerSpec"
-local Pointer = Pet.Data.Trackers[266]
-local petID, petData = next(Pointer.PetIDs) 
-
 -- Calculate future shard count
 local function FutureShard()
     local Shard = Player:SoulShards()
@@ -314,30 +267,22 @@ end
 ---------------------------
 ----- PETS MANAGEMENT -----
 ---------------------------
--- Example of use:
---[[
-/dump LibStub("PetLibrary"):GetRemainDuration(135002)
-/dump LibStub("PetLibrary"):IsActive(135002)
-/dump LibStub("PetLibrary"):GetMainPet()
--- Callbacks 
-local Pointer.PetIDs = Pet:GetTrackerData() -- this is table with [petID] = @table 
-TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_REMOVED", function(callbackEvent, PetID, PetGUID)
-	print("Removed " .. PetID .. ", GUID: " .. PetGUID)
-end)
-TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
-	-- PetData is a @table with next keys: name, duration, count, GUIDs 
-	print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID)
-	-- If we want to modify data we can 
-	Pointer.PetIDs.myVar = "custom data"
-	print(Pointer.PetIDs.myVar)
-end)
-]]--
+-- API - Spell v2
+-- Lib:AddActionsSpells(owner, spells, useManagement, useSilence, delMacros)
+Pet:AddActionsSpells(266, { 
+	-- number accepted
+	A.Felstorm.ID, -- Felstorm 
+	A.LegionStrike.ID, -- Legion Strike	
+}, true)
 
+-- API - Tracker v2
+-- Initialize Tracker 
+Pet:AddTrackers(266, Pet.Data.TrackersConfigPetID[266])
 
--- Function to check for imp count
---local function WildImpsCount()
---    return Pet:GetCount(55659) or 0
---end
+-- Pet Lib v2
+local owner = "PlayerSpec"
+local Pointer = Pet.Data.Trackers[266]
+local petID, petData = next(Pointer.PetIDs)
 
 -- Function to check for remaining Dreadstalker duration
 local function DreadStalkersTime()
@@ -369,7 +314,6 @@ local function DemonicTyrantIsActive()
     return DemonicTyrantTime() > 0 and true or false
 end 
 
-
 -- Hack to record timestamp of passive imp spawn 
 local function LastPassiveImpTimeStamp()
     -- Since imp is active for 20sec, track every special npcid for Inner Demons imps with duration at 19.9 to get timestamp record
@@ -389,35 +333,10 @@ end
 -----------------------------------
 ------- CUSTOM IMP TRACKER --------
 -----------------------------------
-
 -- Protect errors
 TMW:RegisterCallback("TMW_ACTION_IS_INITIALIZED", function()
     Action.TimerSet("DISABLE_PET_ERRORS", 99999, function() Pet:DisableErrors(true)  end)
 end)
-
---TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
-	-- PetData is a @table with next keys: name, duration, count, GUIDs 
-    -- Add 5 cast to PetData table for each summoned Imp
-	--PetData.impcasts = 5
-	--PetData.petenergy = 100
-	--Pointer.PetIDs[55659].impcasts = 5
-	-- Also add 5 to local TR.GuardianTable
-	--TR.GuardiansTable.ImpCastsRemaing = 5
-	--if PetID == 55659 then
-	   -- Pointer.PetIDs[Pointer.PetGUIDs[PetGUID]].GUIDs[PetGUID].impcasts = 5
-		--Pointer.PetIDs[Pointer.PetGUIDs[PetGUID]].GUIDs[PetGUID].petenergy = 100
-	    --Pointer.PetIDs[PetID].GUIDs[PetGUID].impcasts = 5
-	    --Pointer.PetIDs[PetID].GUIDs[PetGUID].petenergy = 100
-	--end
-	--print("Added " .. PetID .. ", his name is " .. PetData.name .. ", GUID: " .. PetGUID .. "and he got " .. PetData.impcasts .. " casts lefts")
-
---end)
-
---TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_REMOVED", function(callbackEvent, PetID, PetGUID)
-	--Pointer.PetGUIDs[PetGUID].impcasts = 0
-	--Pointer.PetGUIDs[PetGUID].petenergy = 0
-	--print("Removed " .. PetID .. ", GUID: " .. PetGUID)
---end)
 
 TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, PetID, PetGUID, PetData)
 	-- PetData is a @table with next keys: name, duration, count, GUIDs 
@@ -433,13 +352,11 @@ TMW:RegisterCallback("TMW_ACTION_PET_LIBRARY_ADDED", function(callbackEvent, Pet
 	end
 end)
 --/dump LibStub("PetLibrary"):GetTrackerData().[55659].GUIDs
+
 -------------------------------------------------------------------------------
 -- Remap
 -------------------------------------------------------------------------------
-local A_Unit, A_GetSpellInfo, A_GetSpellLink, ActiveNameplates
 local TeamCacheFriendly, TeamCacheFriendlyUNITs
-
--------------------------------------------------------------------------------
 local A_Unit						= A.Unit
 local A_GetSpellInfo				= A.GetSpellInfo
 local A_GetSpellLink				= A.GetSpellLink
@@ -455,13 +372,15 @@ local PetOnEventCLEU					= {
 		["SPELL_INSTAKILL"] = "Remove",
 		["SPELL_SUMMON"] 	= "Add",
 }
-		
+	
+-- Global ImpData	
 TR.ImpData = {
     ImpCastsRemaing = 0,
 	ImpCount = 0,
 	ImpTotalEnergy = 0,
 }
 
+-- Tools
 local function GetGUID(unitID)
 	return (unitID and TeamCacheFriendlyUNITs[unitID]) or UnitGUID(unitID)
 end 
@@ -476,6 +395,7 @@ local function ConvertGUIDtoNPCID(GUID)
 	end 
 end 
 
+-- Deprecated
 local function AddWildImpToTracker(PetID, PetGUID, PetName)
 	
 	if not Pointer.PetIDs[PetID] then 
@@ -500,6 +420,7 @@ local function AddWildImpToTracker(PetID, PetGUID, PetName)
 	TMW:Fire("TMW_ACTION_PET_LIBRARY_ADDED", PetID, PetGUID, Pointer.PetIDs[PetID])
 end 
 
+-- CLEU events 
 TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
 	 	
 	local _, Event, _, SourceGUID, _, SourceFlags, _, DestGUID, DestName, DestFlags,_, SpellID, SpellName = CombatLogGetCurrentEventInfo()
@@ -540,25 +461,17 @@ TR.COMBAT_LOG_EVENT_UNFILTERED			= function(...)
 end
 Listener:Add("ACTION_TASTE_IMP_TRACKER", "COMBAT_LOG_EVENT_UNFILTERED", TR.COMBAT_LOG_EVENT_UNFILTERED)
 
+-- Imps advanced Data
+-- Return the realtime Wild Imps count, Total Energy for all active Imps and Total Casts remains for all active Imps
+-- @usage: local WildImpCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetImpsData(55659, "Wild Imp")
+-- @parameters: petID or petName or both
+-- @return number, number, number
 local function GetImpsData(petID, petName)
-	-- @return number 
-	-- Note: Only if template has "duration" key otherwise it's huge 
+	
 	local TotalImpEnergy = 0
 	local TotalImpCast = 0
 	local TotalImpCount = 0
 	
-	-- Note: Number of active pets
---[[	if petName or petID then 
-		for _, petData in pairs(Pointer.PetIDs) do 
-			if petData.id == petID or petData.name == petName then 
-				-- Imp count
-			    if petData.count > 1 then
-			        TotalImpCount = petData.count
-			    end
-			end 
-		end 
-	end 
-	]]--
 	-- Note: Imp energy value + remaining casts
 	if petID and Pointer.PetIDs[petID] then 
         for _, petData in pairs(Pointer.PetIDs) do 
@@ -631,6 +544,7 @@ local function MegaTyrant()
     return (WildImpCount + ImpsSpawnedDuring(2000) >= 6 and A.LastPlayerCastName == A.HandofGuldan:Info() and castName == A.HandofGuldan:Info() and true) or false
 end
 
+-- Defensives
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
         return 
@@ -721,7 +635,7 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.PetKick:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -755,38 +669,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.PetKick
-    end 
-    
-    if useCC and A.Shadowfury:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-        return A.Shadowfury              
-    end          
-	
-	if useCC and A.Fear:IsReady(unit) and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 75) then 
-        return A.Fear              
-    end
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Multidot Handler UI w/ Doom --
 local function HandleMultidots()
@@ -818,9 +700,7 @@ local function HandleMultidots()
 	--print(choice)
 end
 
-local function EvaluateCycleDoom140(unit)
-    return Unit(unit):HasDeBuffsRefreshable(A.DoomDebuff.ID, true)
-end
+
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
@@ -848,7 +728,6 @@ A[3] = function(icon, isMulti)
 	local ImplosionImp = A.GetToggle(2, "ImplosionImp")
 	local ImplosionRange = A.GetToggle(2, "ImplosionRange")
 	local ImplosionMode = A.GetToggle(2, "ImplosionMode")
-	
 	
 	-- Multidots var
 	local MissingDoom = MultiUnits:GetByRangeMissedDoTs(MultiDotDistance, 5, A.Doom.ID) 
@@ -884,7 +763,7 @@ A[3] = function(icon, isMulti)
     local function EnemyRotation(unit)
         
 	-- DEBUG PRINT PETS	
-	print("WildImpsCount: " .. WildImpsCount)
+	--print("WildImpsCount: " .. WildImpsCount)
 	--print("Pet:GetCount(55659): " .. Pet:GetWildImpCount(55659))
 	--print("Pet:GetCount(Wild Imp): " .. Pet:GetWildImpCount("Wild Imp"))
 	--print("DreadStalkersTime: " .. DreadStalkersTime)
@@ -893,8 +772,8 @@ A[3] = function(icon, isMulti)
 
 	--end	 
 	--if WildImpTotalEnergy ~= nil then
-	print("WildImpTotalEnergy " .. WildImpTotalEnergy)
-	print("WildImpTotalCastsRemains " .. WildImpTotalCastsRemains)
+	--print("WildImpTotalEnergy " .. WildImpTotalEnergy)
+	--print("WildImpTotalCastsRemains " .. WildImpTotalCastsRemains)
 	--end	
 	
 		--Precombat
@@ -1106,13 +985,15 @@ A[3] = function(icon, isMulti)
             end
 
 		    -- Auto Multidot Doom
-	    	if Unit(unit):TimeToDie() >= 10  
-		       and Action.GetToggle(2, "AoE") and Action.GetToggle(2, "AutoDot") and CanMultidot
-		       and (
-            		   ((MissingDoom > 0 and MissingDoom < 5) or (DoomToRefresh > 0 and DoomToRefresh < 5)) 
-					   and 
-					   Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) > 5
-			        ) 
+	    	if Unit(unit):TimeToDie() >= 10 and 
+			Action.GetToggle(2, "AoE") and 
+			Action.GetToggle(2, "AutoDot") and 
+			CanMultidot
+		    and (
+            	   ((MissingDoom > 0 and MissingDoom < 5) or (DoomToRefresh > 0 and DoomToRefresh < 5)) 
+				   and 
+				   Unit(unit):HasDeBuffs(A.DoomDebuff.ID, true) > 5
+			    ) 
 		       and MultiUnits:GetByRange(MultiDotDistance, 5, 10) > 1 and MultiUnits:GetByRange(MultiDotDistance, 5, 10) <= 5
 		    then
 		       return A:Show(icon, ACTION_CONST_AUTOTARGET)
