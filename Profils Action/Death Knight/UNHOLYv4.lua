@@ -187,8 +187,7 @@ local function bool(val)
 end
 
 -- API - Pet Tracker 
---Pet:AddTrackers(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template table is the same with what has this library already built-in, just for example
-Pet:InitializeTrackerFor(ACTION_CONST_DEATHKNIGHT_UNHOLY, {
+Pet:AddTrackers(ACTION_CONST_DEATHKNIGHT_UNHOLY, { -- this template table is the same with what has this library already built-in, just for example
 	[152396] = {
 		name = "GuardianofAzeroth",
 		duration = 30,
@@ -434,7 +433,7 @@ end
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.MindFreeze:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -471,48 +470,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover") or A.IsInPvP and A.InterruptIsValid(unit, "PvP")   
-    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
-		
-    -- MindFreeze
-    if useKick and A.MindFreeze:IsReady(unit) then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.MindFreeze
-       	end 
-   	end 
-	
-    -- DeathGrip
-    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:IsReady(unit) and DeathGripInterrupt then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.DeathGrip
-       	end 
-   	end 
-	
-   	-- Asphyxiate
-   	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-   	        return A.Asphyxiate
-   	    end 
-   	end 
-		    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local CanCast = true
 
