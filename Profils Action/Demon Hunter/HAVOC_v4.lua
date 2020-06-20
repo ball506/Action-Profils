@@ -564,13 +564,13 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Disrupt:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- Disrupt
         if useKick and not notInterruptable and A.Disrupt:IsReady(unit) then 
-            return A.Disrupt:Show(icon)
+            return A.Disrupt
         end
 
         -- Fel Eruption
@@ -611,57 +611,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    -- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Kick : Disrupt", A.Disrupt.ID)        
-        return A.Disrupt
-    end 
-    
-    -- Fel Eruption
-    if (useCC) and not A.Disrupt:IsReady(unit) and A.FelEruption:IsSpellLearned() and A.FelEruption:IsReady(unit) and GetByRange(1, 20) and A.FelEruption:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):IsControlAble("stun") then 
-        -- Notification                    
-        Action.SendNotification("CC : Fel Eruption", A.FelEruption.ID)
-        return A.FelEruption              
-    end 
-    
-    -- Chaos Nova    
-    if (useCC) and A.ChaosNova:IsReady(unit) and GetByRange(2, 10) and A.ChaosNova:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun") then 
-        -- Notification                    
-        Action.SendNotification("CC : Chaos Nova", A.ChaosNova.ID)        
-        return A.ChaosNova              
-    end 
-    
-    -- Imprison    
-    if (useCC) and A.Imprison:IsReady(unit) and A.GetToggle(2, "ImprisonAsInterrupt") and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("CC : Imprison", A.Imprison.ID)        
-        return A.Imprison              
-    end 
-    
-    
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- ExpectedCombatLength
 local function ExpectedCombatLength()
@@ -719,7 +668,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = A.BossMods:GetPullTimer()	
     local HoABossOnly = A.GetToggle(2, "HoABossOnly")
     local EyeBeamTTD = A.GetToggle(2, "EyeBeamTTD")
     local EyeBeamRange = A.GetToggle(2, "EyeBeamRange")
@@ -886,14 +835,14 @@ A[3] = function(icon, isMulti)
             end
             
             -- immolation_aura
-            if A.ImmolationAura:IsReady(player) and ((Pull > 0.1 and Pull <= ImmolationAuraPrePull) or not Action.GetToggle(1, "DBM")) then
+            if A.ImmolationAura:IsReady(player) and ((Pull > 0.1 and Pull <= ImmolationAuraPrePull) or not Action.GetToggle(1, "BossMods")) then
                 -- Notification                    
                 Action.SendNotification("Prepull: Immolation Aura", A.ImmolationAura.ID) 
                 return A.ImmolationAura:Show(icon)
             end    
             
             -- Arcane Torrent dispell or if FuryDeficit >= 30
-            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and (Pull > 0.1 and Pull <= ArcaneTorrentPrePull or not Action.GetToggle(1, "DBM")) 
+            if A.ArcaneTorrent:IsRacialReady(unit) and BurstIsON(unit) and Action.GetToggle(1, "Racial") and (Pull > 0.1 and Pull <= ArcaneTorrentPrePull or not Action.GetToggle(1, "BossMods")) 
             then
                 -- Notification                    
                 Action.SendNotification("Prepull: Arcane Torrent", A.ArcaneTorrent.ID) 
@@ -908,7 +857,7 @@ A[3] = function(icon, isMulti)
             end    
             
             -- guardian_of_azeroth,if=(buff.metamorphosis.up&cooldown.metamorphosis.ready)|buff.metamorphosis.remains>25|target.time_to_die<=30
-            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and (Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.5 or not Action.GetToggle(1, "DBM"))
+            if A.GuardianofAzeroth:AutoHeartOfAzeroth(unit) and BurstIsON(unit) and (Action.GetToggle(1, "Racial") and Pull > 0.1 and Pull <= 1.5 or not Action.GetToggle(1, "BossMods"))
             then
                 -- Notification                    
                 Action.SendNotification("Prepull: Guardian of Azeroth", A.GuardianofAzeroth.ID) 
@@ -916,12 +865,12 @@ A[3] = function(icon, isMulti)
             end            
             
             -- use_item,name=azsharas_font_of_power
-            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.DemonsBite:IsReady(unit) and not A.Demonic:IsSpellLearned() and not A.DemonBlades:IsSpellLearned() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "BossMods")) then
                 return A.DemonsBite:Show(icon)
             end
             
             -- eye_beam,if=raid_event.adds.up|raid_event.adds.in>25
-            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "DBM")) then
+            if A.EyeBeam:IsReady(unit) and not ShouldDelayEyeBeam() and not Unit(unit):IsDead() and A.Demonic:IsSpellLearned() and HandleEyeBeam() and ((Pull > 0.1 and Pull <= 1) or not Action.GetToggle(1, "BossMods")) then
                 -- Notification                    
                 Action.SendNotification("Stop moving!! Using Eye Beam", A.EyeBeam.ID)                 
                 return A.EyeBeam:Show(icon)
