@@ -695,7 +695,7 @@ end
 IsSaveManaPhase = A.MakeFunctionCachedStatic(IsSaveManaPhase)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Rebuke:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -728,39 +728,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-        
-    if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Rebuke interrupting", A.Rebuke.ID)
-        return A.Rebuke
-    end 
-    
-    if useCC and A.HammerofJustice:IsReady(unit) and A.HammerofJustice:AbsentImun(unit, Temp.TotalAndPhysAndCCAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Hammer of Justice interrupting", A.HammerofJustice.ID)
-        return A.HammerofJustice            
-    end          
-        
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Return total active Glimmer of Light buff and debuff
 local function GlimmerofLightCount()
@@ -1260,127 +1227,6 @@ local function BoP(unit, Icon)
     )
 end
 
-
-local DispelSpell = {
-    -- Spell ID
-    ["CleansingLight"] = 236186, -- PvP AoE Dispel 15 yards (Cleansing Light)
-    [70] = 213644, -- Retribution
-    [66] = 213644, -- Protection
-    [65] = 4987, -- Holy
-    -- DeBuffs Poison and Disease
-    ["Slow"] = {
-        3408, -- Crippling Poison
-        58180, -- Infected Wounds
-        197091, -- Neurotoxin
-        -- 55095б -- Frost DK dot (no reason spend gcd for that)
-    },
-}
-
-local function Dispel(unit, Icon)    
-    return 
-    (
-        -- SELF 
-        (
-            UnitIsUnit(unit, player) and 
-            (
-                (
-                    not Unit(player):HasSpec(65) and -- Holy            
-                    A.CleansingLight:IsSpellLearned() and -- AoE Dispel 
-                    A.Cleanse:IsReady(unit) and 
-                    A.LastPlayerCastID ~= DispelSpell["CleansingLight"]
-                ) or 
-                (
-                    not A.CleansingLight:IsSpellLearned() and -- AoE Dispel 
-                    A.Cleanse:IsReady(unit) and 
-                    A.LastPlayerCastID ~= 4987
-                )
-            ) and 
-            Unit(unit):HasDeBuffs(DispelSpell["Slow"], true) > 2 and 
-            Unit(unit):GetCurrentSpeed() > 0 and
-            Unit(unit):GetCurrentSpeed() < 100 and
-            (
-                not Unit(player):HasSpec(65) or -- Holy
-                (
-                    not AutoFreedom or 
-                    not A.BlessingofFreedom:IsReady(unit) -- Freedom
-                )
-            )
-        ) or 
-        -- PvE: ANOTHER UNIT   
-        (
-            -- Useable conditions
-            not A.IsInPvP and
-            Unit(unit):IsExists() and
-            --not UnitIsUnit(unit, player) and 
-            Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-            Env.PvEDispel(unit)             
-        ) or
-        -- PvP: ANOTHER UNIT   
-        (
-            -- Useable conditions
-            A.IsInPvP and
-            Unit(unit):IsExists() and
-            --not UnitIsUnit(unit, player) and 
-            Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-            (
-                (
-                    not Unit(player):HasSpec(65) and -- Holy            
-                    A.CleansingLight:IsSpellLearned() and -- AoE Dispel 
-                    A.Cleanse:IsReady(unit) and 
-                    A.LastPlayerCastID ~= DispelSpell["CleansingLight"] and
-                    Unit(unit):GetRange() <= 15 
-                ) or 
-                (
-                    not A.CleansingLight:IsSpellLearned() and -- AoE Dispel 
-                    A.Cleanse:IsReady(unit) and 
-                    A.LastPlayerCastID ~= 4987 and
-                    --not Unit(unit):InLOS() and 
-                    A.Cleanse:IsInRange(unit)
-                )
-            ) and 
-            -- Dispel types 
-            (
-                -- Poison CC 
-                Unit(unit):HasDeBuffs("Poison") > 2 or
-                (
-                    -- Holy Paladin Magic CC 
-                    Unit(player):HasSpec(65) and -- Holy
-                    (
-                        Unit(unit):HasDeBuffs("Magic") > 2 or 
-                        -- Magic Rooted (if not available freedom)
-                        (                            
-                            (
-                                not AutoFreedom or 
-                                not A.BlessingofFreedom:IsReady(unit) -- Freedom
-                            ) and 
-                            select(2, UnitClass(unit)) ~= "DRUID" and
-                            Unit(unit):HasDeBuffs("MagicRooted") > 3 and 
-                            Unit(unit):IsMelee() and
-                            Unit(unit):GetRealTimeDMG() <= Unit(unit):HealthMax() * 0.1 
-                        )
-                    )
-                ) or 
-                -- Poison Slowed 
-                (
-                    not Unit(player):HasSpec(65) and -- Holy 
-                    (
-                        not AutoFreedom or 
-                        not A.BlessingofFreedom:IsReady(unit) -- Freedom
-                    ) and     
-                    select(2, UnitClass(unit)) ~= "DRUID" and
-                    Unit(unit):HasDeBuffs(DispelSpell["Slow"], true) > 5 and                        
-                    Unit(unit):HasDeBuffs("DamageBuffs_Melee") > 6
-                )
-            )
-        )
-    ) and
-    -- Check another CC types     
-    Unit(unit):HasDeBuffs("Physical") <= GetCurrentGCD() and 
-    -- Hex
-    Unit(unit):HasDeBuffs(51514, true) <= GetCurrentGCD()
-end
-
-
 local function UrgentMythicPlusTargetting()
     
     local getmembersAll = HealingEngine.GetMembersAll()
@@ -1820,44 +1666,55 @@ A[3] = function(icon, isMulti)
     --- HEAL ROTATION ---
     ---------------------
     local function HealingRotation(unit) 
-
+        
+		-- Vars
+		local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)
         local unitGUID = UnitGUID(unit)
         
         -- StopCast if destination is unknown as unitID 
         if not Temp.LastPrimaryUnitID and StopCastOverHeal and CanStopCastingOverHeal(unit, unitGUID) then 
             return A:Show(icon, ACTION_CONST_STOPCAST)
         end 
-		
+
+    	-- Dispel Sniper
+        if A.Cleanse:IsReady() then
+     		for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and AuraIsValid(getmembersAll[i].Unit, "UseDispel", "Dispel") then  
+			        HealingEngine.SetTarget(getmembersAll[i].Unit)                  					
+			        -- Notification					
+                    Action.SendNotification("Sniping dispel", A.Cleanse.ID) 					
+                end				
+            end
+        end
         -- #1 HPvE Dispel
-        if A.Cleanse:IsReady(unit) and 
+        if A.Cleanse:IsReady(unit) and
+		useDispel and
         (
             -- MouseOver
             (
-                MouseOver and        
-                A.MouseHasFrame() and                      
-                not IsUnitEnemy(mouseover) and                 
-                Unit(mouseover):IsPlayer() and  
-                Unit(mouseover):TimeToDie() >= 6 and
-                Dispel(mouseover)
+                A.GetToggle(2, "mouseover") and
+                Unit("mouseover"):IsExists() and 
+                MouseHasFrame() and                      
+                not IsUnitEnemy("mouseover") and         
+				AuraIsValid(mouseover, "UseDispel", "Dispel")
             ) or 
-            -- Target
             (
                 (
-                    not MouseOver or 
-                    not Unit(mouseover):IsExists() 
-                ) and       
-                not IsUnitEnemy(target) and
-                Unit(target):IsPlayer() and  
-                Unit(target):TimeToDie() >= 6 and
-                Dispel(target)
+                    not A.GetToggle(2, "mouseover") or 
+                    not Unit("mouseover"):IsExists() or 
+                    IsUnitEnemy("mouseover")
+                ) and        
+                not IsUnitEnemy("target") and
+				AuraIsValid(target, "UseDispel", "Dispel")
             )
         )
-        then
-            return A.Cleanse:Show(icon)
-        end
-
-        -- #2 HPvE Arcane Torrent
+		then
+		    return A.Cleanse:Show(icon)
+        end		
+      
+        -- #2 HPvE Arcane Torrent dispel
         if A.ArcaneTorrent:IsRacialReady(unit) and combatTime > 0 and
+		useDispel and
         (
             -- Mouseover
             (
@@ -1957,7 +1814,7 @@ A[3] = function(icon, isMulti)
 
         -- #5 Bursting Essences		        
         -- #5.1 Life Binders Invocation
-        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
+        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
             -- Notification                    
             Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)            
             return A.LifeBindersInvocation:Show(icon)
@@ -2252,16 +2109,16 @@ A[3] = function(icon, isMulti)
                         ) and
                         (
                             HealingEngine.GetTimeToDieUnits(15) >= GetValidMembers(true) * 0.5 or
-                            HealingEngine.GetBelowHealthPercentercentUnits(60) >= GetValidMembers(true) * 0.5
+                            HealingEngine.GetBelowHealthPercentUnits(60) >= GetValidMembers(true) * 0.5
                         )
                     ) or        
                     (
                         TeamCacheFriendlyType == "party" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(HolyAvengerPartyHP) >= HolyAvengerPartyUnits  
+                        HealingEngine.GetBelowHealthPercentUnits(HolyAvengerPartyHP) >= HolyAvengerPartyUnits  
                     ) or 
                     (
                         TeamCacheFriendlyType == "raid" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(HolyAvengerRaidHP) >= HolyAvengerRaidUnits               
+                        HealingEngine.GetBelowHealthPercentUnits(HolyAvengerRaidHP) >= HolyAvengerRaidUnits               
                     )
                 )
             ) or
@@ -2342,12 +2199,12 @@ A[3] = function(icon, isMulti)
 							or
                             (
                                 TeamCacheFriendlyType == "party" and
-                                HealingEngine.GetBelowHealthPercentercentUnits(AvengingWrathPartyHP) >= AvengingWrathPartyUnits
+                                HealingEngine.GetBelowHealthPercentUnits(AvengingWrathPartyHP) >= AvengingWrathPartyUnits
                             ) 
 							or 
                             (
                                 TeamCacheFriendlyType == "raid" and
-                                HealingEngine.GetBelowHealthPercentercentUnits(AvengingWrathRaidHP) >= AvengingWrathRaidUnits
+                                HealingEngine.GetBelowHealthPercentUnits(AvengingWrathRaidHP) >= AvengingWrathRaidUnits
                             )  
                         )                
                     ) 
@@ -2436,9 +2293,9 @@ A[3] = function(icon, isMulti)
             or
                ReceivedLast5sec > AVG_DMG * AuraMasteryLast -- AuraMasteryLast
             or
-            HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= GetValidMembers(true) * 0.35 -- -- AuraMasteryBelowHealthPercent
+            HealingEngine.GetBelowHealthPercentUnits(AuraMasteryBelowHealthPercent) >= GetValidMembers(true) * 0.35 -- -- AuraMasteryBelowHealthPercent
             or
-            HealingEngine.GetBelowHealthPercentercentUnits(AuraMasteryBelowHealthPercent) >= AuraMasteryUnits -- -- AuraMasteryBelowHealthPercent
+            HealingEngine.GetBelowHealthPercentUnits(AuraMasteryBelowHealthPercent) >= AuraMasteryUnits -- -- AuraMasteryBelowHealthPercent
         )             
         then
             -- Notification                    
@@ -2602,7 +2459,7 @@ A[3] = function(icon, isMulti)
                 Unit(player):HasBuffs(A.DivinePurpose.ID, true) < GetCurrentGCD() + GetGCD() + 2
             ) or
             -- Custom UI settings
-            HealingEngine.GetBelowHealthPercentercentUnits(LightofDawnHP) >= LightofDawnUnits
+            HealingEngine.GetBelowHealthPercentUnits(LightofDawnHP) >= LightofDawnUnits
         )
         then
             return A.LightofDawn:Show(icon)
@@ -2812,11 +2669,11 @@ A[3] = function(icon, isMulti)
         (
             (
                 TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(80) >= 3 
+                HealingEngine.GetBelowHealthPercentUnits(80) >= 3 
             ) or
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(75) >= 4
+                HealingEngine.GetBelowHealthPercentUnits(75) >= 4
             )
         )
         then
@@ -2869,16 +2726,16 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     HealingEngine.GetTimeToDieUnits(15) >= ValidMembers(true) * 0.5 or
-                    HealingEngine.GetBelowHealthPercentercentUnits(50) >= ValidMembers(true) * 0.5
+                    HealingEngine.GetBelowHealthPercentUnits(50) >= ValidMembers(true) * 0.5
                 )
             ) or        
             (
                 TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(50) >= 3
+                HealingEngine.GetBelowHealthPercentUnits(50) >= 3
             ) or 
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(65) >= 6              
+                HealingEngine.GetBelowHealthPercentUnits(65) >= 6              
             ) or
             -- Master Aur
             A.LastPlayerCastName == A.AuraMastery:Info()
@@ -3125,15 +2982,6 @@ A[3] = function(icon, isMulti)
     end    
     HealingRotation = Action.MakeFunctionCachedDynamic(HealingRotation)
 
-    -- DPS TargetTarget 
-    if IsUnitEnemy(targettarget) then 
-        unit = targettarget    
-        
-        if DamageRotation(unit) then 
-            return true 
-        end 
-    end 
-
     -- Heal Target 
     if IsUnitFriendly(target) then 
         unit = target 
@@ -3142,6 +2990,24 @@ A[3] = function(icon, isMulti)
             return true 
         end 
     end  
+	    
+    -- Heal Mouseover
+    if IsUnitFriendly(mouseover) then 
+        unit = mouseover  
+        
+        if HealingRotation(unit) then 
+            return true 
+        end             
+    end 
+	
+    -- DPS TargetTarget 
+    if IsUnitEnemy(targettarget) then 
+        unit = targettarget    
+        
+        if DamageRotation(unit) then 
+            return true 
+        end 
+    end     
 	
     -- DPS Mouseover 
     if IsUnitEnemy(mouseover) then 
@@ -3151,16 +3017,7 @@ A[3] = function(icon, isMulti)
             return true 
         end 
     end 
-    
-    -- Heal Mouseover
-    if IsUnitFriendly(mouseover) then 
-        unit = mouseover  
-        
-        if HealingRotation(unit) then 
-            return true 
-        end             
-    end  
-    
+	
     -- DPS Target     
     if IsUnitEnemy(target) then 
         unit = target
@@ -3448,9 +3305,9 @@ local function PartyRotation(unit)
     end
 
     --Dispell
-	if A.CleanseToxins:IsReady(unit) and not UnitIsUnit("target", unit) and Dispel(unit)
+	if A.Cleanse:IsReady(unit) and not UnitIsUnit("target", unit) and AuraIsValid(unit, "UseDispel", "Dispel")
     then
-        return A.CleanseToxins
+        return A.Cleanse
     end
 	
 	-- BlessingofSacrifice
