@@ -296,6 +296,81 @@ function Action:RegisterForSelfCombatEvent(Handler, ...)
     end
 end
 
+-- Register a handler for a pet combat event.
+-- @param Handler The handler function.
+-- @param Events The events name.
+function Action:RegisterForPetCombatEvent(Handler, ...)
+    local EventsTable = { ... }
+    for i = 1, #EventsTable do
+        local Event = EventsTable[i]
+        if not PetCombatEvents[Event] then
+            PetCombatEvents[Event] = { Handler }
+        else
+            tableinsert(PetCombatEvents[Event], Handler)
+        end
+    end
+end
+
+-- OnEvent Frame Listener
+EventFrame:SetScript("OnEvent",
+    function(self, Event, ...)
+        for _, Handler in pairs(Events[Event]) do
+            Handler(Event, ...)
+        end
+end)
+
+-- Combat Log Event Unfiltered Listener
+local function ListenerCombatLogEventUnfiltered(Event, TimeStamp, SubEvent, ...)
+    if CombatEvents[SubEvent] then
+        -- Unfiltered Combat Log
+        for _, Handler in pairs(CombatEvents[SubEvent]) do
+            Handler(TimeStamp, SubEvent, ...)
+        end
+    end
+    if SelfCombatEvents[SubEvent] then
+        -- Unfiltered Combat Log with SourceGUID == PlayerGUID filter
+        if select(2, ...) == Player:GUID() then
+            for _, Handler in pairs(SelfCombatEvents[SubEvent]) do
+                Handler(TimeStamp, SubEvent, ...)
+            end
+        end
+    end
+    if PetCombatEvents[SubEvent] then
+        -- Unfiltered Combat Log with SourceGUID == PetGUID filter
+        if select(2, ...) == Pet:GUID() then
+            for _, Handler in pairs(SelfCombatEvents[SubEvent]) do
+                Handler(TimeStamp, SubEvent, ...)
+            end
+        end
+    end
+    for i = 1, CombatLogPrefixesCount do
+        -- TODO : Optimize the str find
+        if SubEvent then
+            local Start, End = stringfind(SubEvent, CombatLogPrefixes[i])
+                if Start and End then
+                    -- TODO: Optimize the double str sub
+                    local Prefix, Suffix = stringsub(SubEvent, Start, End), stringsub(SubEvent, End + 1)
+                    if PrefixCombatEvents[Prefix] then
+                    -- Unfiltered Combat Log with Prefix only
+                    for _, Handler in pairs(PrefixCombatEvents[Prefix]) do
+                        Handler(TimeStamp, SubEvent, ...)
+                    end
+                end
+                if SuffixCombatEvents[Suffix] then
+                    -- Unfiltered Combat Log with Suffix only
+                    for _, Handler in pairs(SuffixCombatEvents[Suffix]) do
+                        Handler(TimeStamp, SubEvent, ...)
+                    end
+                end
+            end
+        end
+    end
+end
+
+Action:RegisterForEvent(function(Event)
+  ListenerCombatLogEventUnfiltered(Event, CombatLogGetCurrentEventInfo())
+end, "COMBAT_LOG_EVENT_UNFILTERED")
+
 local function removeLastChar(text)
 	return text:sub(1, -2)
 end
