@@ -354,7 +354,7 @@ end
 
 -- SelfDefensives
 local function SelfDefensives()
-    local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
+    local HPLoosePerSecond = math.max((Unit(player):GetDMG() * 100 / Unit(player):HealthMax()) - (Unit(player):GetHEAL() * 100 / Unit(player):HealthMax()), 0)
 
 	
     if Unit(player):CombatTime() == 0 then 
@@ -513,7 +513,7 @@ end
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Pummel:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -555,45 +555,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-	    -- Notification					
-        Action.SendNotification("Pummel interrupting on Target ", A.Pummel.ID)
-        return A.Pummel
-    end 
-    
-    if useCC and A.Stormbolt:IsReady(unit) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-	    -- Notification					
-        Action.SendNotification("Stormbolt interrupting...", A.Stormbolt.ID)
-        return A.Stormbolt              
-    end  
-
-    if useCC and A.Shockwave:IsReady(player) and GetByRange(2, 8, true, false) and A.Shockwave:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-	    -- Notification					
-        Action.SendNotification("Shockwave interrupting...", A.Shockwave.ID)
-        return A.Shockwave              
-    end 	
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function EvaluateCycleAshvanesRazorCoral84(unit)
     return Unit(unit):HasDeBuffsStacks(A.RazorCoralDebuff.ID, true) == 0
