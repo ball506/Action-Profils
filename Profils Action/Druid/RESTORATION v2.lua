@@ -1175,7 +1175,6 @@ local function PvPEntanglingRoots(unit)
     return
     Unit(unit):IsMelee() and
     not UnitIsUnit(unit, "target") and
-    --not Env.InLOS(unit) and 
     Unit(unit):HasBuffs("DamageBuffs") > 0 and
     A.EntanglingRoots:IsSpellInRange(unit) and
     (
@@ -1184,33 +1183,6 @@ local function PvPEntanglingRoots(unit)
         ) or
         Unit(player):GetCurrentSpeed()==0
     ) 
-end
-
-local function CanDispel(unit)
-    return
-    (         
-        A.GetToggle(2, "AutoDispel")
-    ) and
-    Unit(unit):IsExists() and
-    --not Env.InLOS(unit) and    
-    A.NaturesCure:IsSpellInRange(unit) and    
-    A.LastPlayerCastID ~= A.NaturesCure.ID and
-    (
-        (
-            A.IsInPvP and 
-            (
-                Unit(unit):HasDeBuffs("Curse")>2 or
-                Unit(unit):HasDeBuffs("Poison")>2 or
-                Unit(unit):HasDeBuffs("Magic")>2 or
-                (
-                    select(2, UnitClass(unit)) ~= "DRUID" and
-                    Unit(unit):IsMelee()  and
-                    Unit(unit):HasDeBuffs("MagicRooted")>2
-                )
-            ) 
-        ) or         
-        Env.PvEDispel(unit)    
-    )
 end
 	
 local function HasEnoughRejuvenationApplied()	
@@ -1320,7 +1292,7 @@ A[3] = function(icon, isMulti)
 	local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5)
 	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
 	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
-	
+	local getmembersAll = HealingEngine.GetMembersAll()
 	-- Smart Targeting functions
     SetFriendlyToSnipe()
 	SetFriendlyToPreHot()
@@ -1697,18 +1669,6 @@ A[3] = function(icon, isMulti)
 		CanCast and	
 		not IsSaveManaPhase() and
         (
-            Player:GetStance()==4 or
-            (
-                Player:GetStance()==0 --and        
-                --(
-                --    (
-                --        combatTime > 0 and
-                --        Unit(target):GetRange() >= 25
-                --    )            
-                --)
-            )    
-        ) and
-        (
             A.BalanceAffinity:IsSpellLearned() or -- Boomkin affility
             Unit(player):HasSpec(105) -- Restor
         ) and
@@ -1755,19 +1715,6 @@ A[3] = function(icon, isMulti)
         if A.Moonfire:IsReady(unit) and
         CanCast and		
 		not IsSaveManaPhase() and
-        (
-            Player:GetStance()==4 or
-            (        
-                Unit(player):HasSpec(105) and -- Restor
-                Player:GetStance()==0
-            )
-        ) and
-        (
-            (
-                --not A.Shred:IsSpellInRange(target) and
-                combatTime > 0
-            )
-        ) and
         --A.BalanceAffinity:IsSpellLearned() and -- Boomkin affility
         (
             -- MouseOver
@@ -1960,7 +1907,8 @@ A[3] = function(icon, isMulti)
     ---------------------
     local function HealingRotation(unit)
 
-        -- General
+        -- Vars
+		local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)
 		
 		-- BattleRez
         if A.Rebirth:IsReady(unit) and
@@ -2056,8 +2004,19 @@ A[3] = function(icon, isMulti)
 		    return A.Revive:Show(icon)
         end
 
+    	-- Dispel Sniper
+        if A.NaturesCure:IsReady() then
+     		for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and AuraIsValid(getmembersAll[i].Unit, "UseDispel", "Dispel") then  
+			        HealingEngine.SetTarget(getmembersAll[i].Unit)                  					
+			        -- Notification					
+                    Action.SendNotification("Sniping dispel", A.NaturesCure.ID) 					
+                end				
+            end
+        end
         -- General Dispel
         if A.NaturesCure:IsReady(unit) and
+		useDispel and
         (
             -- MouseOver
             (
@@ -2065,7 +2024,7 @@ A[3] = function(icon, isMulti)
                 Unit("mouseover"):IsExists() and 
                 MouseHasFrame() and                      
                 not IsUnitEnemy("mouseover") and         
-                CanDispel("mouseover")
+				AuraIsValid(mouseover, "UseDispel", "Dispel")
             ) or 
             (
                 (
@@ -2074,7 +2033,7 @@ A[3] = function(icon, isMulti)
                     IsUnitEnemy("mouseover")
                 ) and        
                 not IsUnitEnemy("target") and
-                CanDispel("target")
+				AuraIsValid(target, "UseDispel", "Dispel")
             )
         )
 		then
@@ -2190,26 +2149,30 @@ A[3] = function(icon, isMulti)
         end
         
 		-- Special Macro to force Rejuvenation on maximum units
-	    local HealingEngineQueueOrder = HealingEngine.Data.QueueOrder -- this is very useful @table which resets every full enumeration-loop (see example of use below)
         if CanCast and isForcedRejuvenation then
-	    HealingEngine.SetPerformByProfileHP(
-		    function(member, memberhp, membermhp, DMG)
-			    if not HealingEngineQueueOrder.useRejuv and Unit(member):HasBuffs(A.Rejuvenation.ID, player, true) < 1 then 
-				    HealingEngineQueueOrder.useRejuv = true -- that will skips check :HasBuffs(18, true) for other members and save performance because you can use shield only on one unit per GCD but loop refrehes every ~0.3 sec
-				    memberhp = memberhp - 20
-				    if memberhp < 40 then 
-					    memberhp = 40 
+	    TMW:RegisterCallback("TMW_ACTION_HEALINGENGINE_UNIT_UPDATE", function(callbackEvent, thisUnit, db, QueueOrder)
+	    	local HP			= thisUnit.HP
+		    local MHP			= thisUnit.MHP
+		    local DMG 			= thisUnit.incOffsetDMG
+		    local Role 			= thisUnit.Role
+		    local unitID 		= thisUnit.Unit
+	        local isSelf 		= thisUnit.isSelf
+
+			    if Unit(unitID):HasBuffs(A.Rejuvenation.ID, player, true) <= 1 then 
+				    --QueueOrder.useRejuv = true -- that will skips check :HasBuffs(18, true) for other members and save performance because you can use shield only on one unit per GCD but loop refrehes every ~0.3 sec
+				    HP = HP - 20
+				    if HP < 40 then 
+					    HP = 40 
 				    end 
 			    end 
 			
-			    return memberhp
+			    return HP
 		    end)
 		end
         -- Macro Forced Rejuvenation
         if CanCast and isForcedRejuvenation and A.Rejuvenation:IsReady(unit) and Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) == 0 then  
             return A.Rejuvenation:Show(icon)
         end 
-
 			
         -- PvE Tranquility
         if A.Tranquility:IsReady(player) and
@@ -2224,15 +2187,15 @@ A[3] = function(icon, isMulti)
         (        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(45) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(45) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
+                HealingEngine.GetBelowHealthPercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(TranquilityRaidHP) >= AoEMembers(true, _, TranquilityRaidUnits)
+                HealingEngine.GetBelowHealthPercentUnits(TranquilityRaidHP) >= TranquilityRaidUnits
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
 			or
@@ -2316,15 +2279,15 @@ A[3] = function(icon, isMulti)
             (        
                 (
                     TeamCache.Friendly.Size <= 2 and
-                    HealingEngine.GetBelowHealthPercentercentUnits(45) >= 2
+                    HealingEngine.GetBelowHealthPercentUnits(45) >= 2
                 ) or
                 (
                     TeamCache.Friendly.Size <= 5 and
-                    HealingEngine.GetBelowHealthPercentercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
+                    HealingEngine.GetBelowHealthPercentUnits(TranquilityPartyHP) >= TranquilityPartyUnits
                 ) or
                 (
                     TeamCache.Friendly.Size > 5 and      
-                    HealingEngine.GetBelowHealthPercentercentUnits(TranquilityRaidHP) >= AoEMembers(true, _, TranquilityRaidUnits)
+                    HealingEngine.GetBelowHealthPercentUnits(TranquilityRaidHP) >= TranquilityRaidUnits
                 ) or     
                 HealingEngine.GetHealthFrequency(GetGCD()*4) > 35
             ) or
@@ -2536,9 +2499,12 @@ A[3] = function(icon, isMulti)
                 )
             ) or
             -- Tranquility
-            A.LastPlayerCastID == 740 or
-            HealingEngine.GetBuffsCount(157982, 0, player, true) >= 2
-        ) and
+			A.Tranquility:GetCooldown() > 0 and
+			(
+                A.LastPlayerCastID == 740 or
+                HealingEngine.GetBuffsCount(157982, 0, player, true) >= 2
+            )     
+		) and
         (
             -- MouseOver
             (
@@ -2606,7 +2572,11 @@ A[3] = function(icon, isMulti)
 
         -- RPvE #1 Swiftmend
         if CanCast and A.Swiftmend:IsReady(unit) and
-		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > 2 and
+		(
+		    Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > Unit("player"):CastTime(A.Regrowth.ID) 
+			or
+		    A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true, true) > Unit("player"):CastTime(A.Regrowth.ID)
+        ) and
         -- Talent Soul of Forest
         Unit(player):HasBuffs(114108, player, true) == 0 and
         (
@@ -2654,7 +2624,11 @@ A[3] = function(icon, isMulti)
         -- RPvE #1 Regrowth (Clearcasting, Soul of Forest, Incarnation)
         --Note: Soul of Forest should be used if hots is not refresh able
         if CanCast and A.Regrowth:IsReady(unit) and
-		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > Unit("player"):CastTime(A.Regrowth.ID) and
+		(
+		    Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) > Unit("player"):CastTime(A.Regrowth.ID) 
+			or
+		    A.Germination:IsSpellLearned() and Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, true, true) > Unit("player"):CastTime(A.Regrowth.ID)
+        ) and
         (
             Unit(player):HasBuffs(A.IncarnationTreeofLifeBuff.ID, true) > 0 or
             Unit(player):GetCurrentSpeed() == 0
@@ -2975,14 +2949,14 @@ A[3] = function(icon, isMulti)
 		
         -- PvE Rejuvenation
         if CanCast and A.Rejuvenation:IsReady(unit) and
-		Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) <= 2 and
+	--[[	Unit(unit):HasBuffs(A.Rejuvenation.ID, player, true) <= 2 and
 		(
 		    A.Germination:IsSpellLearned() and 
 		    (			    
 			    Unit(unit):HasBuffs(A.RejuvenationGermimation.ID, player, true) <= 2 
 			) 
 			or not A.Germination:IsSpellLearned() 
-		) and
+		) and]]--
         (
             -- MouseOver
             (
@@ -2994,10 +2968,12 @@ A[3] = function(icon, isMulti)
                 A.Rejuvenation:IsSpellInRange(mouseover) and
                 A.Rejuvenation:PredictHeal("Rejuvenation", "mouseover") and
                 (
-                    Unit(mouseover):PT(774, nil, true) or
+                    --Unit(mouseover):PT(774, nil, true) or
+					Unit(mouseover):HasBuffs(A.Rejuvenation.ID, true, true) <= 2 or
                     (
                         A.Germination:IsSpellLearned() and -- Germination
-                        Unit(mouseover):PT(155777, nil, true)
+                        --Unit(mouseover):PT(155777, nil, true)
+						Unit(mouseover):HasBuffs(A.RejuvenationGermimation.ID, true, true) <= 2
                     )
                 )
             ) or 
@@ -3012,18 +2988,22 @@ A[3] = function(icon, isMulti)
                 A.Rejuvenation:IsSpellInRange(target) and
                 A.Rejuvenation:PredictHeal("Rejuvenation", "target") and
                 (
-                    Unit(target):PT(774, nil, true) or
+                    Unit(target):HasBuffs(A.Rejuvenation.ID, true, true) <= 2 or
                     (
                         A.Germination:IsSpellLearned() and -- Germination
-                        Unit(target):PT(155777, nil, true)
+                        Unit(target):HasBuffs(A.RejuvenationGermimation.ID, true, true) <= 2
                     )
                 )
             ) or
             -- Smart prehot
-			NeedPreHot
-            or
-			-- MostlyIncDMG
-            HealingEngine.IsMostlyIncDMG(unit)			
+			NeedPreHot and
+            (
+			    Unit(target):HasBuffs(A.Rejuvenation.ID, true, true) <= 2 or
+                (
+                    A.Germination:IsSpellLearned() and -- Germination
+                    Unit(target):HasBuffs(A.RejuvenationGermimation.ID, true, true) <= 2
+                )
+			)			
         )
         then 
             return A.Rejuvenation:Show(icon)
@@ -3173,45 +3153,45 @@ A[3] = function(icon, isMulti)
         return SelfDefensive:Show(icon)
     end 
 	
-	-- Friendly Mouseover
-    if A.IsUnitFriendly(mouseover) then 
+    -- Heal Target 
+    if IsUnitFriendly(target) then 
+        unit = target 
+        
+        if HealingRotation(unit) then 
+            return true 
+        end 
+    end  
+	    
+    -- Heal Mouseover
+    if IsUnitFriendly(mouseover) then 
         unit = mouseover  
-		
+        
         if HealingRotation(unit) then 
             return true 
         end             
-    end
+    end 
 	
-    -- Heal Target 
-    if A.IsUnitFriendly(target) then 
-        unit = target 
-		
-        if HealingRotation(unit) then 
-            return true 
-        end 
-    end    
-	
-    -- Enemy Mouseover 
-    if A.IsUnitEnemy(mouseover) then 
-        unit = mouseover	
-		
+    -- DPS TargetTarget 
+    if IsUnitEnemy(targettarget) then 
+        unit = targettarget    
+        
         if DamageRotation(unit) then 
             return true 
         end 
-    end 
-    
-    -- DPS Target     
-    if A.IsUnitEnemy(target) then 
-        unit = target
+    end     
+	
+    -- DPS Mouseover 
+    if IsUnitEnemy(mouseover) then 
+        unit = mouseover    
         
         if DamageRotation(unit) then 
             return true 
         end 
     end 
-
-    -- DPS targettarget     
-    if A.IsUnitEnemy(targettarget) then 
-        unit = targettarget
+	
+    -- DPS Target     
+    if IsUnitEnemy(target) then 
+        unit = target
         
         if DamageRotation(unit) then 
             return true 
@@ -3353,7 +3333,7 @@ local function PartyRotation(unit)
 
     -- Dispel Party1
     if A.NaturesCure:IsReady(unit) and
-    CanDispel(unit)
+    AuraIsValid(unit, "UseDispel", "Dispel")
     then
 	    return A.NaturesCure
 	end
