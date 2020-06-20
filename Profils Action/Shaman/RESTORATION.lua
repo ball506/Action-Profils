@@ -1890,7 +1890,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemRaidHP) >= AoEMembers(true, _, HealingTideTotemRaidUnits)
+                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemRaidHP) >= HealingTideTotemRaidUnits
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 35
 			or
@@ -2048,7 +2048,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(85) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 5
             ) or     
 			-- Big damage
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 25
@@ -2075,7 +2075,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(94) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(94) >= 5
             ) or
 			HealingEngine.GetHealthFrequency(GetGCD()*2) > 5
 			or
@@ -2150,7 +2150,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealRaidHP) >= AoEMembers(true, _, ChainHealRaidUnits) 
+                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealRaidHP) >= ChainHealRaidUnits 
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 10
         )
@@ -2282,7 +2282,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 5
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 10
         )
@@ -2303,7 +2303,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= AoEMembers(true, _, 5)
+                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 5
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 10
         )
@@ -2322,7 +2322,7 @@ A[3] = function(icon, isMulti)
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= AoEMembers(true, _, 4)
+                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 4
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 20
         )
