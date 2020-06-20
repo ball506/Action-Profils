@@ -1266,14 +1266,12 @@ function TR.ToggleForceRejuvenation(state)
     -- Note: For button use in UI 
     if state ~= nil then 
         isForcedRejuvenation = state
+		Action.SendNotification("Enabled Force spread: " .. A.GetSpellInfo(A.Rejuvenation.ID), A.Rejuvenation.ID)
     else
         isForcedRejuvenation = not isForcedRejuvenation
+		Action.SendNotification("Disabled Force spread: " .. A.GetSpellInfo(A.Rejuvenation.ID), A.Rejuvenation.ID)
     end  
 	Action.Print("Force Rejuvenation: " .. toStr(isForcedRejuvenation))
-	if isForcedRejuvenation then
-        -- Notification					
-        Action.SendNotification("Spreading maximum : " .. A.GetSpellInfo(A.Rejuvenation.ID), A.Rejuvenation.ID)
-	end
 end
 
 -- [3] Single Rotation
