@@ -221,7 +221,7 @@ local function IsSchoolFree()
 end 
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Disrupt:IsReady(unit)) -- A.Kick non GCD spell
     local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
 	
@@ -274,59 +274,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local EnemiesCasting = MultiUnits:GetByRangeCasting(30, 5, true, "TargetMouseover")
-	
-	-- Sigil of Chains (Snare)
-	if useCC and A.SigilofChains:IsReady("player") and A.SigilofChains:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):GetRange() > 5 then 
-        return A.SigilofChains              
-    end 
-	
-	-- Sigil of Misery (Disorient)
-	if useCC and A.SigilofMisery:IsReady("player") and EnemiesCasting > 1 and A.SigilofMisery:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.SigilofMisery              
-    end 
-	
-	-- Sigil of Silence (Silence)
-	if useKick and (not A.Disrupt:IsReady(unit) or EnemiesCasting > 1) and A.SigilofSilence:IsReady("player") and Unit(unit):CanInterrupt(true, nil, 25, 70) and A.SigilofSilence:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.SigilofSilence              
-    end 
-
-	-- Imprison    
-    if useCC and A.Imprison:IsReady(unit) and not A.Disrupt:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then        
-		return A.Imprison              
-    end 
-	
-    -- Chaos Nova    
-    if useCC and A.ChaosNova:IsReady(unit) and EnemiesCasting > 1 and A.ChaosNova:AbsentImun(unit, Temp.TotalAndCC, true) then 
-        return A.ChaosNova              
-    end 
-	
-	-- Disrupt
-    if useKick and A.Disrupt:IsReady(unit) and A.Disrupt:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.Disrupt
-    end 	
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
 
 -- Soul Fragments function taking into consideration aura lag
 local function UpdateSoulFragments()
