@@ -424,7 +424,7 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.SkullBash:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -457,40 +457,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.SkullBash:IsReady(unit) and A.SkullBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Skull Bash interrupting on " .. unit, A.SkullBash.ID)
-        return A.SkullBash
-    end         
-
-    if useCC and A.MightyBash:IsReady(unit) and not A.SkullBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Mighty Bash interrupting on " .. unit, A.MightyBash.ID)
-        return A.MightyBash
-    end  
-        
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Stealth Handler UI --
 local function HandleStealth()
