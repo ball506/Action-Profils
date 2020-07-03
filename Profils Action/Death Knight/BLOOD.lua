@@ -495,13 +495,13 @@ end
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.MindFreeze:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- MindFreeze
         if useKick and not notInterruptable and A.MindFreeze:IsReady(unit) then 
-            return A.MindFreeze:Show(icon)
+            return A.MindFreeze
         end
 	
         -- DeathGrip
@@ -531,56 +531,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
-		
-    -- MindFreeze
-    if useKick and A.MindFreeze:IsReady(unit) and A.MindFreeze:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.MindFreeze
-       	end 
-   	end 
-	
-    -- DeathGrip
-    if useCC and not A.MindFreeze:IsReady(unit) and A.DeathGrip:AbsentImun(unit, Temp.TotalAndCC, true) and A.DeathGrip:IsReady(unit) and A.GetToggle(2, "DeathGripInterrupt") then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.DeathGrip
-       	end 
-   	end 
-
-    -- GorefiendsGrasp
-    if useCC and not A.MindFreeze:IsReady(unit) and A.GorefiendsGrasp:AbsentImun(unit, Temp.TotalAndCC, true) and A.GorefiendsGrasp:IsReady(unit) and A.GetToggle(2, "GorefiendsGraspInterrupt") then 
-     	if MultiUnits:GetByRangeTaunting(20, 10, 10) >= 3 or EnemiesCasting >= 3 then
-       	    return A.GorefiendsGrasp
-       	end 
-   	end 		
-	
-   	-- Asphyxiate
-   	if useCC and A.Asphyxiate:IsSpellLearned() and A.Asphyxiate:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-   	        return A.Asphyxiate
-   	    end 
-   	end 
-		    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function PredictDS() 
     local ReceivedLast5sec, HP7 = Unit(player):GetLastTimeDMGX(5) * 0.25, Unit(player):HealthMax() * 0.07  
