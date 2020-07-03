@@ -342,7 +342,7 @@ end
 
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Kick:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -383,52 +383,6 @@ local function InterruptsNEW(unit)
 end
 
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-
-    if useCC and Player:IsStealthed() and A.CheapShot:IsReady(unit) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
-        -- Notification                    
-        Action.SendNotification("CheapShot on : " .. UnitName(unit), A.CheapShot.ID)
-        return A.CheapShot              
-    end
-
-    if useCC and not A.Kick:IsReady(unit) and A.GetToggle(2, "AutoKidneyShot") and A.KidneyShot:IsReady(unit) and Unit(unit):IsControlAble("stun") and Unit(unit):HasDeBuffs("Stuned") < A.GetGCD() + 0.1 then 
-        -- Notification                    
-        Action.SendNotification("KidneyShot on : " .. UnitName(unit), A.KidneyShot.ID)
-        return A.KidneyShot              
-    end
-    
-    if useKick and A.Kick:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        -- Notification                    
-        Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
-        return A.Kick
-    end      
-      
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        -- Notification                    
-        Action.SendNotification("QuakingPalm on : " .. UnitName(unit), A.QuakingPalm.ID)
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        -- Notification                    
-        Action.SendNotification("Haymaker on : " .. UnitName(unit), A.Haymaker.ID)
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        -- Notification                    
-        Action.SendNotification("WarStomp on : " .. UnitName(unit), A.WarStomp.ID)
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        -- Notification                    
-        Action.SendNotification("BullRush on : " .. UnitName(unit), A.BullRush.ID)
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
