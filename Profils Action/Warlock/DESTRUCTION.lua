@@ -265,7 +265,7 @@ end
 
 -- API - Tracker
 -- Initialize Tracker 
-Pet:InitializeTrackerFor(ACTION_CONST_WARLOCK_DESTRUCTION, { -- this template table is the same with what has this library already built-in, just for example
+Pet:AddTrackers(ACTION_CONST_WARLOCK_DESTRUCTION, { -- this template table is the same with what has this library already built-in, just for example
     [89] = {
         name = "Infernal",
         duration = 30,
@@ -371,7 +371,7 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.PetKick:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -405,43 +405,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.PetKick:IsReady(unit) and Pet:IsActive(417) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.PetKick
-    end 
-    
-    if useCC and A.Shadowfury:IsReady("player") and MultiUnits:GetActiveEnemies() >= 2 and A.Shadowfury:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-        return A.Shadowfury              
-    end          
-
-	-- Mortal Coil PvP
-	if useCC and A.MortalCoil:IsReady(unit) and A.MortalCoil:IsSpellLearned() then 
-	   return A.MortalCoil
-    end 
-	
-	if useCC and UseFearAsInterrupt and A.Fear:IsReady(unit) and not Unit(unit):IsTotem() and A.Shadowfury:GetCooldown() > 0 and A.Fear:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("disorient", 75) then 
-        return A.Fear              
-    end
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- [2] Kick AntiFake Rotation
 A[2] = function(icon)        
