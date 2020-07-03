@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.0. (03.06.2020)",
+    DateTime = "v4.1.1 (20.06.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -1019,7 +1019,22 @@ A.Data.ProfileUI = {
 					},
 
                 },  
-				
+                {
+                    E = "Checkbox", 
+                    DB = "UsePriorityRotation",
+                    DBV = false,
+                    L = { 
+                        enUS = "Priority Rotation", 
+                        ruRU = "Priority Rotation", 
+                        frFR = "Priority Rotation",
+                    }, 
+                    TT = { 
+                        enUS = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)\nNOT RECOMMANDED !!! OR IN SPECIFICS SITUATIONS LIKE BOSS LIKE ZUL", 
+                        ruRU = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)\nNOT RECOMMANDED !!! OR IN SPECIFICS SITUATIONS LIKE BOSS LIKE ZUL", 
+                        frFR = "Select when to show rotation for maximum priority damage (at the cost of overall AoE damage.)\nNOT RECOMMANDED !!! OR IN SPECIFICS SITUATIONS LIKE BOSS LIKE ZUL", 
+                    }, 
+                    M = {},
+                }, 				
             },
             { -- [7] Spell Status Frame
                 {
