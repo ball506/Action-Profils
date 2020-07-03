@@ -318,7 +318,7 @@ GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
 -- API - Tracker
 -- Initialize Tracker 
-Pet:InitializeTrackerFor(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
+Pet:AddTrackers(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
     [29264] = {
         name = "Spirit Wolves",
         duration = 15,
@@ -403,7 +403,7 @@ A[2] = function(icon)
 end
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.WindShear:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -446,50 +446,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-	-- WindShear
-    if useKick and A.WindShear:IsReady(unit) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-	    -- Notification					
-        Action.SendNotification("Wind Shear interrupting on " .. unit, A.WindShear.ID)
-        return A.WindShear
-    end 
-	
-    -- CapacitorTotem
-    if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady(player) then 
-        if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-			-- Notification					
-            Action.SendNotification("Capacitor Totem interrupting", A.CapacitorTotem.ID)
-            return A.CapacitorTotem
-        end 
-    end  
-    
-    -- Hex	
-    if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
-	    -- Notification					
-        Action.SendNotification("Hex interrupting", A.Hex.ID)
-        return A.Hex              
-    end          
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
-
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
         return 
@@ -525,7 +481,7 @@ local function SelfDefensives()
     
     -- HealingSurgeHP
     local HealingSurge = Action.GetToggle(2, "HealingSurgeHP")
-    if     HealingSurge >= 0 and A.HealingSurge:IsReady(player) and Player:Maelstrom() >= 20 and
+    if     HealingSurge >= 0 and A.HealingSurge:IsReady(player) and Player:Maelstrom() > 20 and
     (
         (     -- Auto 
             HealingSurge >= 100 and 
