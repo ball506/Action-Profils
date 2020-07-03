@@ -357,13 +357,13 @@ A[2] = function(icon)
 end
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterSpell:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- CounterSpell
         if useKick and not notInterruptable and A.CounterSpell:IsReady(unit) then 
-            return A.CounterSpell:Show(icon)
+            return A.CounterSpell
         end
 		    
    	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -383,31 +383,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.CounterSpell:IsReady(unit) and A.CounterSpell:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.CounterSpell
-    end 
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
