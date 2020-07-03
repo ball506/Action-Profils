@@ -380,7 +380,7 @@ end
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Pummel:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -417,41 +417,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    -- Pummel
-    if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-        return A.Pummel
-    end 
-    
-    -- Stormbolt
-    if A.Stormbolt:IsReady(unit, nil, nil, true) and A.Stormbolt:AbsentImun(unit, Temp.TotalAndPhysAndStun, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("stun", 0) then
-        return A.Stormbolt                 
-    end 
-    
-    -- IntimidatingShout
-    if useCC and A.IntimidatingShout:IsReady(unit) and A.IntimidatingShout:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) and Unit(unit):IsControlAble("fear", 0) then 
-        return A.IntimidatingShout              
-    end             
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 --------------------------------
 --- ======= ACTION LISTS =======
@@ -550,38 +515,38 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- battle_shout
             if A.BattleShout:IsReady(player) and A.BattleShout:GetSpellTimeSinceLastCast() >= 60 and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
-                return A.BattleShout
+                return A.BattleShout:Show(icon)
             end            
             if Unit(unit):IsExists() then
                 -- snapshot_stats
                 -- use_item,name=azsharas_font_of_power
                 if A.AzsharasFontofPower:IsReady(player) and TR.TrinketON() and Pull > 1 and Pull <= 6 then
-                    return A.AzsharasFontofPower
+                    return A.AzsharasFontofPower:Show(icon)
                 end
                 
                 -- memory_of_lucid_dreams
                 if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and BurstIsON(unit) and not ShouldStop and Pull > 0.1 and Pull <= 2 then
-                    return A.MemoryofLucidDreams
+                    return A.MemoryofLucidDreams:Show(icon)
                 end
                 
                 -- guardian_of_azeroth
                 if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and BurstIsON(unit) and not ShouldStop and Pull > 0.1 and Pull <= 2 then
-                    return A.GuardianofAzeroth
+                    return A.GuardianofAzeroth:Show(icon)
                 end
                 
                 -- potion
                 if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") and Pull > 0.1 and Pull <= 1 + GetGCD() then
-                    return A.PotionofUnbridledFury
+                    return A.PotionofUnbridledFury:Show(icon)
                 end
                 
                 -- recklessness
                 if A.Recklessness:IsReady(player) and A.BurstIsON(unit) and InRange(unit) and not ShouldStop and Pull > 0.1 and Pull <= 0.7 then
-                    return A.Recklessness
+                    return A.Recklessness:Show(icon)
                 end
                 
                 -- charge
-                if A.Charge:IsReady(unit) and UseCharge and isMoving >= ChargeTime then
-                    return A.Charge
+                if A.Charge:IsReady(unit) and UseCharge and isMovingFor >= ChargeTime then
+                    return A.Charge:Show(icon)
                 end    
                 
             end
@@ -593,39 +558,39 @@ A[3] = function(icon, isMulti)
             -- augmentation
             -- augmentation
             if A.BattleShout:IsReady(player) and A.BattleShout:GetSpellTimeSinceLastCast() >= 60 and Unit(player):HasBuffs(A.BattleShout.ID, true) == 0 then
-                return A.BattleShout
+                return A.BattleShout:Show(icon)
             end
             if Unit(unit):IsExists() then
                 -- snapshot_stats
                 -- use_item,name=azsharas_font_of_power
                 if A.AzsharasFontofPower:IsReady(player) and A.AzsharasFontofPower:IsReady(unit) and TR.TrinketON() then
-                    return A.AzsharasFontofPower
+                    return A.AzsharasFontofPower:Show(icon)
                 end
                 
                 -- memory_of_lucid_dreams
                 if A.MemoryofLucidDreams:AutoHeartOfAzerothP(unit, true) and not ShouldStop and BurstIsON(unit)  then
-                    return A.MemoryofLucidDreams
+                    return A.MemoryofLucidDreams:Show(icon)
                 end
                 
                 -- guardian_of_azeroth
                 if A.GuardianofAzeroth:AutoHeartOfAzerothP(unit, true) and not ShouldStop and BurstIsON(unit)  then
-                    return A.GuardianofAzeroth
+                    return A.GuardianofAzeroth:Show(icon)
                 end
                 
                 -- recklessness
                 if A.Recklessness:IsReady(player) and A.BurstIsON(unit) and not ShouldStop and InRange(unit) then
-                    return A.Recklessness
+                    return A.Recklessness:Show(icon)
                 end
                 
                 -- potion
                 if A.PotionofUnbridledFury:IsReady(unit) and Action.GetToggle(1, "Potion") then
-                    return A.PotionofUnbridledFury
+                    return A.PotionofUnbridledFury:Show(icon)
                 end
                 
                 -- charge
-                if A.Charge:IsReady(unit) and UseCharge then
-                    return A.Charge
-                end    
+                if A.Charge:IsReady(unit) and UseCharge and isMovingFor >= ChargeTime then
+                    return A.Charge:Show(icon)
+                end 
                 
             end
         end
@@ -718,13 +683,13 @@ A[3] = function(icon, isMulti)
         -- Out of combat call DBM precombat
         local Precombat_DBMRot = Precombat_DBM(unit)
         if not inCombat and Precombat_DBMRot and Action.GetToggle(1, "DBM") and CanCast then 
-            return Precombat_DBMRot:Show(icon)
+            return true
         end
         
         -- Out of combat call non DBM precombat
         local PrecombatRot = Precombat(unit)
         if not inCombat and PrecombatRot and not Action.GetToggle(1, "DBM") and CanCast then 
-            return PrecombatRot:Show(icon)
+            return true
         end   
         
         -- In Combat
