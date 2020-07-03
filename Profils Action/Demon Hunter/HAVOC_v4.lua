@@ -746,8 +746,10 @@ A[3] = function(icon, isMulti)
     
     -- Start Rotation
     local function EnemyRotation(unit)
+	
+        local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)       
         
-        VarBladeDance = A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned()))
+		VarBladeDance = A.FirstBlood:IsSpellLearned() or GetByRange(8, 3 - num(A.TrailofRuin:IsSpellLearned()))
         VarPoolingMeta = not A.Demonic:IsSpellLearned() and A.Metamorphosis:GetCooldown() < 6 and FuryDeficit > 30 and (not varWaitingForNemesis or A.Nemesis:GetCooldown() < 10)
         -- variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
         VarWaitingForNemesis = not (not A.Nemesis:IsSpellLearned() or A.Nemesis:GetCooldown() == 0 or A.Nemesis:GetCooldown() > Unit(unit):TimeToDie() or A.Nemesis:GetCooldown() > 60)           
