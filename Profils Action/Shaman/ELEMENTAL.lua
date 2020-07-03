@@ -198,7 +198,7 @@ end
 
 -- API - Tracker
 -- Initialize Tracker 
-Pet:InitializeTrackerFor(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
+Pet:AddTrackers(ACTION_CONST_SHAMAN_ENCHANCEMENT, { -- this template table is the same with what has this library already built-in, just for example
     [77942] = {
         name = "Primal Storm Elemental",
         duration = 30,
@@ -1234,14 +1234,13 @@ A[3] = function(icon, isMulti)
             (    -- Auto 
                 AncestralGuidance >= 100 and 
                 (
-                    FriendlyTeam():GetDMG() > FriendlyTeam():GetHPS()
+                    A.HealingEngine.GetIncomingDMGAVG() >= 35
                 )
             ) or 
             (    -- Custom
                 AncestralGuidance < 100 and 
                 -- HP lose per sec >= 40
-                FriendlyTeam():GetDMG() * 100 / FriendlyTeam():HealthMax() >= AncestralGuidance or 
-                FriendlyTeam():GetRealTimeDMG() >= FriendlyTeam():HealthMax() * AncestralGuidance / 100 
+                A.HealingEngine.GetIncomingDMGAVG() >= AncestralGuidance
             )
         ) 
         then 
