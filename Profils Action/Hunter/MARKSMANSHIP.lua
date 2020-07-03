@@ -216,17 +216,91 @@ local Temp = {
 }
 
 -- API - Spell
--- Example of create:
-Pet:Add(254, {
+Pet:AddActionsSpells(254, {
+
 	-- number accepted
 	17253, -- Bite
 	16827, -- Claw
-	49966, -- Smack
-	--47481, -- Gnaw
-	-- strings also accepted!
---	"Gnaw",
---	(GetSpellInfo(47481)), -- must be in '(' ')' because call this function will return multi returns through ',' 
-})
+	49966, -- Smack 
+}, true)
+
+local GameLocale = GetLocale()    
+local PetLocalization = {
+    [GameLocale] = {},
+    ruRU = {
+	    SPIRITBEAST = "Дух зверя",
+		TENACITY = "Упорство",
+		FEROCITY = "Свирепость",
+		CUNNING = "Хитрость",
+	},
+    enGB = {
+    	SPIRITBEAST = "Spirit Beast",
+		TENACITY = "Tenacity",
+		FEROCITY = "Ferocity",
+		CUNNING = "Cunning",
+	},
+    enUS = {
+    	SPIRITBEAST = "Spirit Beast",
+		TENACITY = "Tenacity",
+		FEROCITY = "Ferocity",
+		CUNNING = "Cunning",
+	},
+    deDE = {
+	    SPIRITBEAST = "Geisterbestie",
+		TENACITY = "Hartnäckigkeit",
+		FEROCITY = "Wildheit",
+		CUNNING = "Gerissenheit",
+	},
+    esES = {
+    	SPIRITBEAST = "Bestia espíritu",
+		TENACITY = "Tenacidad",
+		FEROCITY = "Ferocidad",
+		CUNNING = "Astucia",
+	},
+    esMX = {
+	    SPIRITBEAST = "Bestia espíritu",
+		TENACITY = "Tenacidad",
+		FEROCITY = "Ferocidad",
+		CUNNING = "Astucia",
+	},
+    frFR = {
+	    SPIRITBEAST = "Esprit de bête",
+		TENACITY = "Tenacité",
+		FEROCITY = "Férocité",
+		CUNNING = "Ruse",
+	},
+    itIT = {
+	    SPIRITBEAST = "Bestia Eterea",
+		TENACITY = "Tenacia",
+		FEROCITY = "Ferocia",
+		CUNNING = "Scaltrezza",
+	},
+    ptBR = {
+    	SPIRITBEAST = "Fera Espiritual",
+		TENACITY = "Tenacidade",
+		FEROCITY = "Ferocidade",
+		CUNNING = "Astúcia",
+	},
+    koKR = {
+    	SPIRITBEAST = "야수 정령",
+		TENACITY = "끈기",
+		FEROCITY = "야성",
+		CUNNING = "교활",
+	},
+    zhCN = {
+	    SPIRITBEAST = "灵魂兽",
+		TENACITY = "坚韧",
+		FEROCITY = "狂野",
+		CUNNING = "狡诈",
+	},
+    zhTW = {
+	    SPIRITBEAST = "靈獸",
+		TENACITY = "",
+		FEROCITY = "",
+		CUNNING = "",
+	},
+}
+local LP = setmetatable(PetLocalization[GameLocale], { __index = PetLocalization.enUS })
 
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
@@ -361,13 +435,13 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- CounterShot
         if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
-            return A.CounterShot:Show(icon)
+            return A.CounterShot
         end
 
         -- ConcussiveShot
@@ -398,45 +472,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-	    -- Notification					
-        Action.SendNotification("Counter Shot interrupting on Target ", A.CounterShot.ID)
-        return A.CounterShot
-    end 
-
-    if useCC and A.ConcussiveShot:IsReady(unit) and A.ConcussiveShot:AbsentImun(unit, Temp.TotalAndCC, true) then 
-	    -- Notification					
-        Action.SendNotification("Concussive Shot snare...", A.ConcussiveShot.ID)
-        return A.ConcussiveShot              
-    end    
-
-    if useCC and A.BindingShot:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.BindingShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-	    -- Notification					
-        Action.SendNotification("Binding Shot interrupting...", A.BindingShot.ID)
-        return A.BindingShot              
-    end          
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Offensive dispel rotation
 local function PurgeDispellMagic(unit)
