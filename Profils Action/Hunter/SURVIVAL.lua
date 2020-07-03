@@ -300,13 +300,13 @@ end
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- CounterShot
         if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
-            return A.CounterShot:Show(icon)
+            return A.CounterShot
         end  
 		    
    	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
@@ -327,74 +327,6 @@ local function InterruptsNEW(unit)
     end
 end
 
-local function EvaluateTargetIfFilterKillCommand55(unit)
-    return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
-end
-
-local function EvaluateTargetIfKillCommand72(unit)
-    return A.KillCommand:GetSpellChargesFullRechargeTime() < 1.5 * A.GetGCD() and Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax()
-end
-
-
-local function EvaluateTargetIfFilterKillCommand134(unit)
-    return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
-end
-
-local function EvaluateTargetIfKillCommand153(unit)
-    return Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax() and (Unit("player"):HasBuffsStacks(A.MongooseFuryBuff.ID, true) < 5 or Player:Focus() < MongooseBite:GetSpellPowerCostCache())
-end
-
-local function EvaluateCycleCarveCdr472(unit)
-    return (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5) and (MultiUnits:GetByRangeInCombat(8, 5, 10) < 5)
-end
-
-local function EvaluateTargetIfFilterMongooseBite508(unit)
-  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
-end
-
-local function EvaluateTargetIfMongooseBite517(unit)
-  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true) == 10
-end
-
-local function EvaluateTargetIfFilterKillCommand525(unit)
-  return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
-end
-
-local function EvaluateTargetIfKillCommand538(unit)
-  return Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax()
-end
-
-local function EvaluateTargetIfFilterSerpentSting574(unit)
-  return Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)
-end
-
-local function EvaluateTargetIfSerpentSting591(unit)
-  return bool(Unit("player"):HasBuffsStacks(A.VipersVenomBuff.ID, true))
-end
-
-local function EvaluateTargetIfFilterSerpentSting609(unit)
-  return Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true)
-end
-
-local function EvaluateTargetIfSerpentSting632(unit)
-  return Unit(unit):HasDeBuffs(A.SerpentStingDebuff.ID, true) < 5 and Unit("player"):HasBuffsStacks(A.TipoftheSpearBuff.ID, true) < 3
-end
-
-local function EvaluateTargetIfFilterMongooseBite638(unit)
-  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
-end
-
-local function EvaluateTargetIfFilterRaptorStrike649(unit)
-  return Unit(unit):HasDeBuffsStacks(A.LatentPoisonDebuff.ID, true)
-end
-
-local function EvaluateTargetIfFilterKillCommand692(unit)
-  return Unit(unit):HasDeBuffs(A.BloodseekerDebuff.ID, true)
-end
-
-local function EvaluateTargetIfKillCommand705(unit)
-  return Player:Focus() + Player:FocusCastRegen(A.KillCommand:GetSpellCastTime()) < Player:FocusMax()
-end
 
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
