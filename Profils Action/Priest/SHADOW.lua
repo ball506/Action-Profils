@@ -276,7 +276,7 @@ local function ExecuteRange()
 end
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, nil) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
@@ -311,41 +311,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-	-- Silence
-    if useKick and A.Silence:IsReady(unit) and A.Silence:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-   	    -- Notification					
-        Action.SendNotification("Silence interrupting...", A.Silence.ID)
-		return A.Silence
-    end 
-    
-	-- Fear Disarm
-    if useCC and A.PsychicHorror:IsReady(unit) and A.PsychicHorror:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) then 
-   	    -- Notification					
-        Action.SendNotification("Psychic Horror interrupting...", A.PsychicHorror.ID)
-        return A.PsychicHorror              
-    end          
-    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Defensives
 local function SelfDefensives()
