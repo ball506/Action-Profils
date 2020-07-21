@@ -846,6 +846,25 @@ local StunsBlackList = {
 }
 
 
+-- Return valid members that can be healed
+--@parameter IsPlayer : return only members that are real players
+local function GetValidMembers(IsPlayer)
+    local HealingEngineMembersALL = A.HealingEngine.GetMembersAll()
+    if not IsPlayer then 
+        return #HealingEngineMembersALL
+    else 
+        local total = 0 
+        if #HealingEngineMembersALL > 0 then 
+            for i = 1, #HealingEngineMembersALL do
+                if Unit(HealingEngineMembersALL[i].Unit):IsPlayer() then
+                    total = total + 1
+                end
+            end 
+        end 
+        return total 
+    end 
+end
+
 local PriestVars = {
     ["TargetTargetLOS"] = {},
     ["active_enemies"] = 0,
@@ -867,37 +886,6 @@ local function PriestBurst()
     local spec_burst = (PriestBurstBuffs[A.PlayerSpec] and Unit("player"):HasBuffs(PriestBurstBuffs[A.PlayerSpec], "player", true)) or 0
     local heroism = Unit("player"):HasBuffs("BurstHaste")
     return (sf > 0 and sf) or (spec_burst > 0 and spec_burst) or (heroism > 0 and heroism) or 0
-end
-
-local function Dispel(unit)
-    return
-    (
-        --MacroSpells(ICON, "Dispel") or
-        A.GetToggle(2, "Dispel")
-    ) and
-    A.Purify:IsReady() and
-    UnitExists(unit) and
-    --not A.InLOS(unit) and      
-    A.Purify:IsSpellInRange(unit) and    
-    A.LastPlayerCastID ~= 527 and
-    Unit(unit):DeBuffCyclone() == 0 and
-    (
-        (
-            A.IsInPvP and 
-            (                             
-                Unit(unit):HasDeBuffs("Magic") > 2 or
-                (
-                    select(2, UnitClass(unit)) ~= "DRUID" and
-                    Unit(unit):IsMelee() and
-                    Unit(unit):HasDeBuffs("MagicRooted") > 2
-                )
-            ) 
-        ) or 
-        (
-            not A.IsInPvP and 
-            Env.PvEDispel(unit)
-        )
-    )
 end
 
 local function MassDispel(unit)
@@ -959,7 +947,7 @@ local function MassDispel(unit)
                         -- Inervate
                         Unit("player"):HasBuffs(29166, true) > 0
                     ) and 
-                    Env.PvEDispel(unit)
+                    AuraIsValid(unit, "UseDispel", "Dispel")
                 )
             )
         )
@@ -1058,7 +1046,7 @@ local function CanHealPenanceDMG()
         for i = 1, #members do
             -- Applied Atonement while channeling Penance and predicted for PenanceDMG        
             if Unit(members[i].Unit):HasBuffs(81749, "player", true) > Unit("player"):CastTime(47540) then
-                local predicted, amount = A.PenanceDMG:PredictHeal("PenanceDMG", members[i].Unit)
+                local predicted, amount = A.PenanceDMG:PredictHeal(members[i].Unit)
                 if predicted then 
                     total = total + 1
                     totalamount = totalamount + amount
@@ -1075,11 +1063,11 @@ local function CanHealPenanceDMG()
 end 
 
 local function CanHealShadowCovenant()
-    local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(nil, 3, 4)
+    local members, validmembers = A.HealingEngine.GetMembersAll(), GetValidMembers(true)
     local total = 0
     if tableexist(members) and validmembers > 1 then 
         for i = 1, #members do            
-            if A.ShadowCovenant:PredictHeal("ShadowCovenant", members[i].Unit) then
+            if A.ShadowCovenant:PredictHeal(members[i].Unit) then
                 total = total + 1
             end
             -- If we reached count of units depend on valid in range units                 
@@ -1093,7 +1081,7 @@ end
 
 -- Only players for Evangelism and if we reached near max possible count Atonements buffs
 local function CanEvangelism()
-    local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(true, 1, 5)
+    local members, validmembers = A.HealingEngine.GetMembersAll(), GetValidMembers(true)
     local total = 0
     if tableexist(members) and validmembers >= 2 then 
         for i = 1, #members do
@@ -1115,13 +1103,12 @@ local function CanHealPWR()
     if A.Zone == "none" then 
         return true 
     else
-        local members, validmembers = A.HealingEngine.GetMembersAll(), AoEMembers(nil, 2, 4)
+        local members, validmembers = A.HealingEngine.GetMembersAll(), GetValidMembers(true)
         local total = 0
         if tableexist(members) and validmembers > 1 then 
             for i = 1, #members do
                 -- Spell PWR in range and NO Atonement and predicted for PWR
-                -- Env.SpellInRange(members[i].Unit, 194509) and -- its already in range by "members" 40yards
-                if Unit(members[i].Unit):HasBuffs(81749, "player", true) <= Unit("player"):CastTime(194509) + GetCurrentGCD() and A.PowerWordRadiance:PredictHeal("PW:R", members[i].Unit) then
+                if Unit(members[i].Unit):HasBuffs(81749, "player", true) <= Unit("player"):CastTime(194509) + GetCurrentGCD() and A.PowerWordRadiance:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached count of units depend on valid in range units                 
@@ -1144,7 +1131,7 @@ local function CanHealHolyNova()
         for i = 1, #members do                
             -- In range
             if Unit(members[i].Unit):GetRange() <= 12 then
-                local predicted, amount = A.HolyNova:PredictHeal("HolyNova", members[i].Unit, nil, Enemies)
+                local predicted, amount = A.HolyNova:PredictHeal(members[i].Unit, nil, Enemies)
                 -- If can predicted heal
                 if predicted then 
                     -- SummUp output healing by that 
@@ -1168,7 +1155,7 @@ local function CanHealHalo(VARIATION)
         for i = 1, #members do    
             -- In range
             if Unit(members[i].Unit):GetRange() <= 30 then
-                local predicted, amount = A.Halo:PredictHeal("Halo", members[i].Unit, VARIATION, Enemies)
+                local predicted, amount = A.Halo:PredictHeal(members[i].Unit, VARIATION, Enemies)
                 -- If can predicted heal
                 if predicted then 
                     -- SummUp output healing by that 
@@ -1207,8 +1194,7 @@ local function IsNotEnoughAtonementHPS(unit)
 end
 
 local function RefreshVars()
-    PriestVars["DamageSpellRace"] = Env.SpellRace("DAMAGE")
-    PriestVars["PriestBurst"] = PriestBurst()
+
     -- Discipline
     if Unit(player):HasSpec(256) then 
         local CurrentSpeed = Unit("player"):GetCurrentSpeed()
@@ -1420,11 +1406,11 @@ local function CanRaptureAoE(hp)
     local members = HealingEngine.GetMembersAll()   
     if tableexist(members) then 
         local total = 0    
-        local valid = AoEMembers(true, 2, math.floor((10 - (GetGCD() + GetCurrentGCD())) / (GetGCD() + GetCurrentGCD())))
+        local valid = GetValidMembers(true)
         if valid > 1 then 
             for i = 1, #members do
                 if UnitIsPlayer(members[i].Unit) and (not hp or Unit(members[i].Unit):HealthPercent() <= hp) then 
-                    local predicted, amount = A.PowerWordShield:PredictHeal("PW:S", members[i].Unit, 300)
+                    local predicted, amount = A.PowerWordShield:PredictHeal(members[i].Unit, 300)
                     -- If can predicted heal
                     if predicted then                     
                         total = total + 1 
@@ -1464,7 +1450,9 @@ A[3] = function(icon, isMulti)
     --- HEAL/DPS ROTATION ---
     --------------------------
     local function HealingDamageRotation(unit)
-	
+		-- Vars
+		local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)
+        local unitGUID = UnitGUID(unit)	
 
         -- RESS ALL PEOPLE
         if A.MassResurrection:IsReady(player) and
@@ -1531,22 +1519,41 @@ A[3] = function(icon, isMulti)
 		    return A.Purify:Show(icon)
 		end
 
+    	-- Dispel Sniper
+        if A.DispelMagic:IsReady() then
+     		for i = 1, #getmembersAll do 
+                if Unit(getmembersAll[i].Unit):GetRange() <= 40 and AuraIsValid(getmembersAll[i].Unit, "UseDispel", "Dispel") then  
+			        HealingEngine.SetTarget(getmembersAll[i].Unit)                  					
+			        -- Notification					
+                    Action.SendNotification("Sniping dispel", A.DispelMagic.ID) 					
+                end				
+            end
+        end
         -- General Dispel
         if A.DispelMagic:IsReady(unit) and
-        A.GetToggle(2, "Dispel") and
+		useDispel and
         (
+            -- MouseOver
             (
-                TR.CanHeal(A.DispelMagic.ID):Mouse(true) and        
-                Dispel("mouseover")
+                A.GetToggle(2, "mouseover") and
+                Unit("mouseover"):IsExists() and 
+                MouseHasFrame() and                      
+                not IsUnitEnemy("mouseover") and         
+				AuraIsValid(mouseover, "UseDispel", "Dispel")
             ) or 
             (
-                TR.CanHeal(A.DispelMagic.ID):Target(true) and        
-                Dispel("target")
+                (
+                    not A.GetToggle(2, "mouseover") or 
+                    not Unit("mouseover"):IsExists() or 
+                    IsUnitEnemy("mouseover")
+                ) and        
+                not IsUnitEnemy("target") and
+				AuraIsValid(target, "UseDispel", "Dispel")
             )
         )
-        then
+		then
 		    return A.DispelMagic:Show(icon)
-		end
+        end
 
         -- General Mass Dispel
         if A.MassDispel:IsReady(player) and
@@ -1958,7 +1965,7 @@ A[3] = function(icon, isMulti)
                             )
                         )
                     ) or    
-                    HealingEngine.GetBelowHealthPercentercentUnits(50) >= AoEMembers(_, 1, 5) 
+                    HealingEngine.GetBelowHealthPercentercentUnits(50) >= 5
                 ) 
             ) or
             -- Self
@@ -2099,7 +2106,7 @@ A[3] = function(icon, isMulti)
             (        
                 TR.CanHeal(A.DivineStar.ID):Target() and         
                 Unit("target"):GetRange() <= 24 and
-                A.DivineStar:PredictHeal("DivineStar", "target")
+                A.DivineStar:PredictHeal("target")
             ) or 
             -- HEAL/DMG
             (        
@@ -2108,7 +2115,7 @@ A[3] = function(icon, isMulti)
                     -- HEAL
                     (
                         Unit("mouseover"):GetRange() <= 24 and
-                        A.DivineStar:PredictHeal("DivineStar", "mouseover")
+                        A.DivineStar:PredictHeal("mouseover")
                     ) or
                     -- DMG
                     (
@@ -2264,12 +2271,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Mouse() and 
                 A.ShadowCovenant:IsSpellInRange("mouseover") and        
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "mouseover")
+                A.ShadowCovenant:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Target() and
                 A.ShadowCovenant:IsSpellInRange("target") and       
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "target")
+                A.ShadowCovenant:PredictHeal("target")
             )
         )
 		then
@@ -2284,12 +2291,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Mouse() and 
                 A.ShadowCovenant:IsSpellInRange("mouseover") and        
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "mouseover")
+                A.ShadowCovenant:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Target() and
                 A.ShadowCovenant:IsSpellInRange("target") and       
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "target")
+                A.ShadowCovenant:PredictHeal("target")
             )
         )
 		then
@@ -2304,21 +2311,21 @@ A[3] = function(icon, isMulti)
         TMW.time - SpellLastCast("player", A.PowerWordRadiance.ID) > 1 and
         A.LastPlayerCastID ~= ID and
         VarAtonements and 
-        VarAtonements < AoEMembers(_, 2, 5) and
+        VarAtonements < 5 and
         (
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Mouse() and 
                 A.PowerWordRadiance:IsSpellInRange("mouseover") and
                 -- Atonement
                 Unit("mouseover"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
-                A.PowerWordRadiance:PredictHeal("PW:R", "mouseover")
+                A.PowerWordRadiance:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Target() and
                 A.PowerWordRadiance:IsSpellInRange("target") and
                 -- Atonement
                 Unit("target"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
-                A.PowerWordRadiance:PredictHeal("PW:R", "target")
+                A.PowerWordRadiance:PredictHeal("target")
             )
         )
 		then
@@ -2337,14 +2344,14 @@ A[3] = function(icon, isMulti)
                 A.PowerWordRadiance:IsSpellInRange("mouseover") and
                 -- Atonement
                 Unit("mouseover"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
-                A.PowerWordRadiance:PredictHeal("PW:R", "mouseover")
+                A.PowerWordRadiance:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.PowerWordRadiance.ID):Target() and
                 A.PowerWordRadiance:IsSpellInRange("target") and
                 -- Atonement
                 Unit("target"):HasBuffs(81749, "player", true) <= GetCurrentGCD() and        
-                A.PowerWordRadiance:PredictHeal("PW:R", "target")
+                A.PowerWordRadiance:PredictHeal("target")
             )
         )
 		then
@@ -2360,12 +2367,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.Halo.ID):Mouse() and 
                 Unit("mouseover"):GetRange() <= 30 and
-                A.Halo:PredictHeal("Halo", "mouseover")
+                A.Halo:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.Halo.ID):Target() and
                 Unit("target"):GetRange() <= 30  and
-                A.Halo:PredictHeal("Halo", "target")
+                A.Halo:PredictHeal("target")
             )
         )
 		then
@@ -2447,7 +2454,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.Penance.ID):Mouse() and 
                 A.Penance:IsSpellInRange("mouseover") and
                 IsNotEnoughAtonementHPS("mouseover") and
-                A.Penance:PredictHeal("PenanceHeal", "mouseover", 1650) and
+                A.Penance:PredictHeal("mouseover", 1650) and
                 (
                     HealingEngine.IsMostlyIncDMG("mouseover") or
                     ( VarAtonements and VarAtonements < 2 )
@@ -2457,7 +2464,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.Penance.ID):Target() and
                 A.Penance:IsSpellInRange("target") and
                 IsNotEnoughAtonementHPS("target") and
-                A.Penance:PredictHeal("PenanceHeal", "target", 1650) and
+                A.Penance:PredictHeal("target", 1650) and
                 (
                     HealingEngine.IsMostlyIncDMG("target") or
                     ( VarAtonements and VarAtonements < 2 )
@@ -2580,7 +2587,7 @@ A[3] = function(icon, isMulti)
                     Unit("player"):HasBuffs(47536, "player", true) > GetCurrentGCD()
                 ) and
                 -- Use condition
-                A.PowerWordShield:PredictHeal("PW:S", "mouseover") and        
+                A.PowerWordShield:PredictHeal("mouseover") and        
                 -- ReBuff condition
                 Unit("mouseover"):HasBuffs(A.PowerWordShield.ID, "player", true) <= GetCurrentGCD()
             ) or 
@@ -2595,7 +2602,7 @@ A[3] = function(icon, isMulti)
                     Unit("player"):HasBuffs(47536, "player", true) > GetCurrentGCD()
                 ) and
                 -- Use condition
-                A.PowerWordShield:PredictHeal("PW:S", "target") and        
+                A.PowerWordShield:PredictHeal("target") and        
                 -- ReBuff condition
                 Unit("target"):HasBuffs(A.PowerWordShield.ID, "player", true) <= GetCurrentGCD()
             )
@@ -2687,7 +2694,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.ShadowMend.ID):Mouse() and 
                 A.ShadowMend:IsSpellInRange("mouseover") and
                 IsNotEnoughAtonementHPS("mouseover") and
-                A.ShadowMend:PredictHeal("ShadowMend", "mouseover", 200) and
+                A.ShadowMend:PredictHeal("mouseover", 200) and
                 -- Atonement
                 Unit("mouseover"):HasBuffs(81749, "player", true) <= Unit("player"):CastTime(A.ShadowMend.ID)
             ) or 
@@ -2695,7 +2702,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.ShadowMend.ID):Target() and
                 A.ShadowMend:IsSpellInRange("target") and
                 IsNotEnoughAtonementHPS("target") and
-                A.ShadowMend:PredictHeal("ShadowMend", "target", 200) and
+                A.ShadowMend:PredictHeal("target", 200) and
                 -- Atonement
                 Unit("target"):HasBuffs(81749, "player", true) <= Unit("player"):CastTime(A.ShadowMend.ID)
             )
@@ -3015,12 +3022,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(ID):Mouse() and 
                 A.ShadowMend:IsSpellInRange("mouseover") and        
-                A.ShadowMend:PredictHeal("ShadowMend", "mouseover")
+                A.ShadowMend:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(ID):Target() and
                 A.ShadowMend:IsSpellInRange("target") and        
-                A.ShadowMend:PredictHeal("ShadowMend", "target")
+                A.ShadowMend:PredictHeal("target")
             )
         )
 		then
@@ -3034,12 +3041,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.Penance.ID):Mouse() and 
                 A.Penance:IsSpellInRange("mouseover") and        
-                A.Penance:PredictHeal("PenanceHeal", "mouseover")
+                A.Penance:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.Penance.ID):Target() and
                 A.Penance:IsSpellInRange("target") and       
-                A.Penance:PredictHeal("PenanceHeal", "target")
+                A.Penance:PredictHeal("target")
             )
         )
 		then
@@ -3062,7 +3069,7 @@ A[3] = function(icon, isMulti)
                 -- Use condition
                 (
                     UnitIsUnit("mouseover", "player") or
-                    A.PowerWordShield:PredictHeal("PW:S", "mouseover") 
+                    A.PowerWordShield:PredictHeal("mouseover") 
                 ) and                
                 -- ReBuff condition
                 Unit("mouseover"):HasBuffs(A.PowerWordShield.ID, "player", true) <= GetCurrentGCD()
@@ -3079,7 +3086,7 @@ A[3] = function(icon, isMulti)
                 -- Use condition
                 (
                     UnitIsUnit("target", "player") or
-                    A.PowerWordShield:PredictHeal("PW:S", "target")
+                    A.PowerWordShield:PredictHeal("target")
                 ) and        
                 -- ReBuff condition
                 Unit("target"):HasBuffs(A.PowerWordShield.ID, "player", true) <= GetCurrentGCD()
@@ -3096,12 +3103,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Mouse() and 
                 A.ShadowCovenant:IsSpellInRange("mouseover") and        
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "mouseover")
+                A.ShadowCovenant:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.ShadowCovenant.ID):Target() and
                 A.ShadowCovenant:IsSpellInRange("target") and       
-                A.ShadowCovenant:PredictHeal("ShadowCovenant", "target")
+                A.ShadowCovenant:PredictHeal("target")
             )
         )
 		then
@@ -3124,12 +3131,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.HolyNova.ID):Mouse() and 
                 Unit("mouseover"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("HolyNova", "mouseover", nil, VarAoE12)
+                A.HolyNova:PredictHeal("mouseover", nil, VarAoE12)
             ) or 
             (
                 TR.CanHeal(A.HolyNova.ID):Target() and
                 Unit("target"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("HolyNova", "target", nil, VarAoE12)
+                A.HolyNova:PredictHeal("target", nil, VarAoE12)
             )    
         )
 		then
@@ -3271,7 +3278,7 @@ local function PartyRotation(unit)
     -- Party Dispel
     if A.DispelMagic:IsReady(unit) and
     A.GetToggle(2, "Dispel") and
-    Dispel(unit)
+    AuraIsValid(unit, "UseDispel", "Dispel")
     then
 	    return A.DispelMagic
 	end
