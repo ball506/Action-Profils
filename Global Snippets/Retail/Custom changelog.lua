@@ -931,7 +931,7 @@ end
 -- Love Popup
 -- This is secret popup :)
 StaticPopupDialogs["LOVE_POPUP"] = {
-  text = "Hey there ! Thanks for clicking the love button :)\n\nLove is the most important part :)\n\nDon't forget that you can ask me whatever you want on rotations. Feedbacks are really appreciated if you got optimized gear for the current content and see some rotations mistakes !\n\nCreating good profils is long task and take a lot of time as you can imagine. I will always try to do my best to satisfy everyone so do not hesitate to discord me if needed!\n\nAlso if you really like my work you can make a little coffee donation to: paypal.me/roifok\n\nEvery donation is welcome but not mandatory.\n\nHave a good game and thanks for reading !\n\nPS:Don't forget to post logs on discord :)",
+  text = "Hey there ! Thanks for clicking the love button :)\n\nLove is the most important part :)\n\nDon't forget that you can ask me whatever you want on rotations. Feedbacks are really appreciated if you got optimized gear for the current content and see some rotations mistakes !\n\nCreating good profils is long task and take a lot of time as you can imagine. I will always try to do my best to satisfy everyone so do not hesitate to discord me if needed!\n\nHave a good game and thanks for reading !\n\nPS:Don't forget to post logs on discord :)",
   button1 = "Okay :)",
   button2 = "Close",
   OnAccept = function()
