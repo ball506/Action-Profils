@@ -82,6 +82,7 @@ Action[ACTION_CONST_PRIEST_HOLY] = {
 	HolyWordSanctify                          = Create({ Type = "Spell", ID = 34861    }),
 	PrayerofHealing                           = Create({ Type = "Spell", ID = 596    }),
 	PrayerofMending                           = Create({ Type = "Spell", ID = 33076    }),
+	PrayerOfMendingHoT                        = Create({ Type = "Spell", ID = 33076    }), -- needed for PredictHeal predict name
 	DivineHymn                                = Create({ Type = "Spell", ID = 64843    }), -- Burst CD
 	-- Damage Spells
     HolyWordChastise                          = Create({ Type = "Spell", ID = 88625    }),
@@ -356,6 +357,24 @@ local function Interrupts(unit)
 end 
 Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
 
+-- Return valid members that can be healed
+--@parameter IsPlayer : return only members that are real players
+local function GetValidMembers(IsPlayer)
+    local HealingEngineMembersALL = A.HealingEngine.GetMembersAll()
+    if not IsPlayer then 
+        return #HealingEngineMembersALL
+    else 
+        local total = 0 
+        if #HealingEngineMembersALL > 0 then 
+            for i = 1, #HealingEngineMembersALL do
+                if Unit(HealingEngineMembersALL[i].Unit):IsPlayer() then
+                    total = total + 1
+                end
+            end 
+        end 
+        return total 
+    end 
+end
 
 function FriendlyTeam:GetLastTimeDMGX(x, range)
     -- @return number, number, number
@@ -920,7 +939,7 @@ local function Dispel(unit)
         ) or 
         (
             not A.IsInPvP and 
-            Env.PvEDispel(unit)
+            AuraIsValid(unit, "UseDispel", "Dispel")
         )
     )
 end
@@ -984,7 +1003,7 @@ local function MassDispel(unit)
                         -- Inervate
                         Unit("player"):HasBuffs(29166, true) > 0
                     ) and 
-                    Env.PvEDispel(unit)
+                    AuraIsValid(unit, "UseDispel", "Dispel")
                 )
             )
         )
@@ -1036,13 +1055,13 @@ local function CanHealHaloHOLY(VARIATION)
     local members = A.HealingEngine.GetMembersAll() 
     if tableexist(members) and (not A.IsInPvP or not EnemyTeam():IsBreakAble(30)) then 
         local total = 0
-        local units = AoEMembers(nil, 2, 4)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end     
         for i = 1, #members do    
             -- In range
-            if Unit(members[i].Unit):GetRange() <= 30 and A.Halo:PredictHeal("Halo", members[i].Unit, VARIATION) then                               
+            if Unit(members[i].Unit):GetRange() <= 30 and A.Halo:PredictHeal(members[i].Unit, VARIATION) then                               
                 total = total + 1                 
             end
             -- If we reached limit of required units               
@@ -1078,7 +1097,6 @@ local function PriestBurst()
 end
 
 local function RefreshVars()
-    PriestVars["DamageSpellRace"] = Env.SpellRace("DAMAGE")
 
     -- Holy 
     if Unit(player):HasSpec(257) then 
@@ -1275,7 +1293,7 @@ local function PredictTrailOfLight(SpellName)
         local members = A.HealingEngine.GetMembersAll()
         for i = 1, #members do 
             if UnitIsTrailOfLight(members[i].Unit) then
-                if not Unit(members[i].Unit):IsDead() and A.FlashHeal:PredictHeal(SpellName, members[i].Unit, 35) and Unit(members[i].Unit):DeBuffCyclone() <= 1 then 
+                if not Unit(members[i].Unit):IsDead() and A.FlashHeal:PredictHeal(members[i].Unit, 35) and Unit(members[i].Unit):DeBuffCyclone() <= 1 then 
                     return true 
                 end 
                 break 
@@ -1291,7 +1309,7 @@ local function CanHealHolyWordSanctify(unit)
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0
-        local units = AoEMembers(nil, 2, 5)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end         
@@ -1299,7 +1317,7 @@ local function CanHealHolyWordSanctify(unit)
             -- Clear true position
             for i = 1, #members do    
                 -- In range
-                if Unit(members[i].Unit):GetRange() <= 10 and A.HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
+                if Unit(members[i].Unit):GetRange() <= 10 and A.HolyWordSanctify:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end 
                 -- If we reached limit of required units
@@ -1311,7 +1329,7 @@ local function CanHealHolyWordSanctify(unit)
             -- Worn rest position 
             for i = 1, #members do    
                 -- In range (they are already into by table of members) 
-                if A.HolyWordSanctify:PredictHeal("HW:Sanctify", members[i].Unit) then
+                if A.HolyWordSanctify:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached limit of required units
@@ -1329,7 +1347,7 @@ local function CanHealCircleOfHealing(unit)
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0
-        local units = AoEMembers(nil, 2, 4)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end         
@@ -1337,7 +1355,7 @@ local function CanHealCircleOfHealing(unit)
             -- Clear true position
             for i = 1, #members do    
                 -- In range
-                if Unit(members[i].Unit):GetRange() <= 30 and A.CircleofHealing:PredictHeal("CircleOfHealing", members[i].Unit) then
+                if Unit(members[i].Unit):GetRange() <= 30 and A.CircleofHealing:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end 
                 -- If we reached limit of required units
@@ -1349,7 +1367,7 @@ local function CanHealCircleOfHealing(unit)
             -- Worn rest position 
             for i = 1, #members do    
                 -- In range (they are already into by table of members) 
-                if A.CircleofHealing:PredictHeal("CircleOfHealing", members[i].Unit) then
+                if A.CircleofHealing:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached limit of required units
@@ -1371,7 +1389,7 @@ local function CanHealPrayerOfMending(unit)
             -- Clear true position
             for i = 1, #members do    
                 -- In range
-                if Unit(members[i].Unit):GetRange() <= 20 and A.PrayerofMending:PredictHeal("PrayerOfMendingHoT", members[i].Unit) then
+                if Unit(members[i].Unit):GetRange() <= 20 and A.PrayerofMendingHoT:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end 
                 -- If we reached limit of required units
@@ -1383,7 +1401,7 @@ local function CanHealPrayerOfMending(unit)
             -- Worn rest position 
             for i = 1, #members do    
                 -- In range (they are already into by table of members) 
-                if A.PrayerofMending:PredictHeal("PrayerOfMendingHoT", members[i].Unit) then
+                if A.PrayerofMendingHoT:PredictHeal(members[i].Unit) then
                     total = total + 1
                 end
                 -- If we reached limit of required units
@@ -1401,13 +1419,13 @@ local function CanHealHaloHOLY(VARIATION)
     local members = A.HealingEngine.GetMembersAll() 
     if tableexist(members) and (not A.IsInPvP or not EnemyTeam():IsBreakAble(30)) then 
         local total = 0
-        local units = AoEMembers(nil, 2, 4)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end     
         for i = 1, #members do    
             -- In range
-            if Unit(members[i].Unit):GetRange() <= 30 and A.Halo:PredictHeal("Halo", members[i].Unit, VARIATION) then                               
+            if Unit(members[i].Unit):GetRange() <= 30 and A.Halo:PredictHeal(members[i].Unit, VARIATION) then                               
                 total = total + 1                 
             end
             -- If we reached limit of required units               
@@ -1424,14 +1442,14 @@ local function CanHealPrayerOfHealing()
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
-        local units = AoEMembers(nil, 2, 4)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end     
         -- Worn rest position 
         for i = 1, #members do    
             -- In range (they are already into by table of members) 
-            if A.PrayerofHealing:PredictHeal("PrayerOfHealing", members[i].Unit) then
+            if A.PrayerofHealing:PredictHeal(members[i].Unit) then
                 total = total + 1
             end
             -- If we reached limit of required units
@@ -1451,7 +1469,7 @@ local function CanHealBindingHeal(unit)
         -- Worn rest position 
         for i = 1, #members do            
             -- In range (they are already into by table of members) and it's not our target/mouseover unit 
-            if not UnitIsUnit(unit, members[i].Unit) and A.BindingHeal:PredictHeal("BindingHeal", members[i].Unit) then
+            if not UnitIsUnit(unit, members[i].Unit) and A.BindingHeal:PredictHeal(members[i].Unit) then
                 total = total + 1
             end
             -- If we reached limit of required units
@@ -1468,14 +1486,14 @@ local function CanHealDivineStarHOLY()
     local members = A.HealingEngine.GetMembersAll()    
     if tableexist(members) then 
         local total = 0    
-        local units = AoEMembers(nil, 2, 3)
+        local units = GetValidMembers(true)
         if units < 2 then 
             return false 
         end     
         -- Worn rest position 
         for i = 1, #members do    
             -- In range
-            if Unit(members[i].Unit):GetRange() <= 24 and A.PrayerofHealing:PredictHeal("PrayerOfHealing", members[i].Unit) then
+            if Unit(members[i].Unit):GetRange() <= 24 and A.PrayerofHealing:PredictHeal(members[i].Unit) then
                 total = total + 1
             end
             -- If we reached limit of required units
@@ -1493,7 +1511,7 @@ local function CanHealHolyNovaHOLY()
     if tableexist(members) and (not A.IsInPvP or not EnemyTeam():IsBreakAble(12)) then    
         for i = 1, #members do                
             -- In range
-            if Unit(members[i].Unit):GetRange() <= 12 and A.HolyNova:PredictHeal("HolyNova", members[i].Unit) then
+            if Unit(members[i].Unit):GetRange() <= 12 and A.HolyNova:PredictHeal(members[i].Unit) then
                 return true 
             end           
         end
@@ -1560,7 +1578,11 @@ A[3] = function(icon, isMulti)
     --- HEAL ROTATION ---
     ---------------------
     local function HealingDamageRotation(unit)
-
+	
+		-- Vars
+		local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)
+        local unitGUID = UnitGUID(unit)
+		
         -- RESS ALL PEOPLE
         if A.MassResurrection:IsReady(player) and
         Unit(player):CombatTime() == 0 and
@@ -2012,7 +2034,7 @@ A[3] = function(icon, isMulti)
                     )
                 )
             ) or    
-            HealingEngine.GetBelowHealthPercentercentUnits(60) >= AoEMembers(_, 2, 6) 
+            HealingEngine.GetBelowHealthPercentercentUnits(60) >= 6
         )
         then
 		    return A.DivineHymn:Show(icon)
@@ -2056,7 +2078,7 @@ A[3] = function(icon, isMulti)
                     )
                 )
             ) or    
-            HealingEngine.GetBelowHealthPercentercentUnits(40) >= AoEMembers(_, 2, 6) 
+            HealingEngine.GetBelowHealthPercentercentUnits(40) >= 6
         )
         then
 		    return A.HolyWordSalvation:Show(icon)
@@ -2081,13 +2103,13 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.Apotheosis.ID):Mouse(true) and 
                 UnitInRange("mouseover") and
                 Unit("mouseover"):TimeToDie() > GetGCD() + GetCurrentGCD() + 1 and
-                A.Apotheosis:PredictHeal("Apotheosis", "mouseover", 250)
+                A.Apotheosis:PredictHeal("mouseover", 250)
             ) or 
             (
                 TR.CanHeal(A.Apotheosis.ID):Target(true) and
                 UnitInRange("target") and
                 Unit("target"):TimeToDie() > GetGCD() + GetCurrentGCD() + 1 and
-                A.Apotheosis:PredictHeal("Apotheosis", "target", 250)
+                A.Apotheosis:PredictHeal("target", 250)
             )
         ) and
         (		    
@@ -2115,7 +2137,7 @@ A[3] = function(icon, isMulti)
         (
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Mouse() and               
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "mouseover") and
+                A.HolyWordSanctify:PredictHeal("mouseover") and
                 CanHealHolyWordSanctify("mouseover") and
                 (
                     UnitIsUnit("mouseover", "player") or
@@ -2124,7 +2146,7 @@ A[3] = function(icon, isMulti)
             ) or 
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Target() and             
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "target") and
+                A.HolyWordSanctify:PredictHeal("target") and
                 CanHealHolyWordSanctify("target") and
                 (
                     UnitIsUnit("target", "player") or
@@ -2147,7 +2169,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Mouse() and       
                 UnitInRange("mouseover") and        
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "mouseover") and
+                A.HolyWordSanctify:PredictHeal("mouseover") and
                 CanHealHolyWordSanctify("mouseover") and
                 (
                     UnitIsUnit("mouseover", "player") or
@@ -2157,7 +2179,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Target() and  
                 UnitInRange("target") and
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "target") and
+                A.HolyWordSanctify:PredictHeal("target") and
                 CanHealHolyWordSanctify("target") and
                 (
                     UnitIsUnit("target", "player") or
@@ -2179,12 +2201,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.HolyWordSerenity.ID):Mouse() and 
                 A.HolyWordSerenity:IsSpellInRange("mouseover") and        
-                A.HolyWordSerenity:PredictHeal("HW:Serenity", "mouseover")
+                A.HolyWordSerenity:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.HolyWordSerenity.ID):Target() and
                 A.HolyWordSerenity:IsSpellInRange("target") and       
-                A.HolyWordSerenity:PredictHeal("HW:Serenity", "target")
+                A.HolyWordSerenity:PredictHeal("target")
             )
         )
         then
@@ -2204,7 +2226,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(ID):Mouse() and    
                 UnitInRange("mouseover") and
-                PredictHeal("HW:Sanctify", "mouseover") and
+                A.HolyWordSerenity:PredictHeal("mouseover") and
                 CanHealHolyWordSanctify("mouseover") and
                 (
                     UnitIsUnit("mouseover", "player") or
@@ -2214,7 +2236,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(ID):Target() and             
                 UnitInRange("target") and
-                PredictHeal("HW:Sanctify", "target") and
+                A.HolyWordSerenity:PredictHeal("target") and
                 CanHealHolyWordSanctify("target") and
                 (
                     UnitIsUnit("target", "player") or
@@ -2244,7 +2266,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Mouse() and  
                 A.FlashHeal:IsSpellInRange("mouseover") and          
-                A.FlashHeal:PredictHeal("FlashHeal", "mouseover") and
+                A.FlashHeal:PredictHeal("mouseover") and
                 (
                     Unit("mouseover"):HealthPercent() < 55 or
                     Unit("mouseover"):TimeToDieX(35) < GetGCD() * 3.5
@@ -2253,7 +2275,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Target() and      
                 A.FlashHeal:IsSpellInRange("target") and         
-                A.FlashHeal:PredictHeal("FlashHeal", "target") and
+                A.FlashHeal:PredictHeal("target") and
                 ( 
                     Unit("target"):HealthPercent() < 55 or
                     Unit("target"):TimeToDieX(35) < GetGCD() * 3.5
@@ -2280,12 +2302,12 @@ A[3] = function(icon, isMulti)
             (        
                 TR.CanHeal(A.DivineStar.ID):Mouse() and  
                 Unit("mouseover"):GetRange() <= 24 and
-                A.DivineStar:PredictHeal("DivineStar", "mouseover")
+                A.DivineStar:PredictHeal("mouseover")
             ) or
             (        
                 TR.CanHeal(A.DivineStar.ID):Target() and         
                 Unit("target"):GetRange() <= 24 and
-                A.DivineStar:PredictHeal("DivineStar", "target")
+                A.DivineStar:PredictHeal("target")
             )     
         ) and
         CanHealDivineStarHOLY()
@@ -2303,12 +2325,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.CircleofHealing.ID):Mouse() and  
                 A.CircleofHealing:IsSpellInRange("mouseover") and             
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "mouseover") 
+                A.CircleofHealing:PredictHeal("mouseover") 
             ) or 
             (
                 TR.CanHeal(A.CircleofHealing.ID):Target() and   
                 A.CircleofHealing:IsSpellInRange("target") and          
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "target") 
+                A.CircleofHealing:PredictHeal("target") 
             )
         )
         then
@@ -2328,13 +2350,13 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.CircleofHealing.ID):Mouse() and         
                 A.CircleofHealing:IsSpellInRange("mouseover") and
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "mouseover") and
+                A.CircleofHealing:PredictHeal("mouseover") and
                 CanHealCircleOfHealing("mouseover")
             ) or 
             (
                 TR.CanHeal(A.CircleofHealing.ID):Target() and       
                 A.CircleofHealing:IsSpellInRange("target") and      
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "target") and
+                A.CircleofHealing:PredictHeal("target") and
                 CanHealCircleOfHealing("target")
             )
         )
@@ -2354,12 +2376,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.Halo.ID):Mouse() and 
                 Unit("mouseover"):GetRange() <= 30 and
-                A.Halo:PredictHeal("Halo", "mouseover")
+                A.Halo:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.Halo.ID):Target() and
                 Unit("target"):GetRange() <= 30  and
-                A.Halo:PredictHeal("Halo", "target")
+                A.Halo:PredictHeal("target")
             )
         )
         then
@@ -2404,12 +2426,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Mouse() and  
                 A.FlashHeal:IsSpellInRange("mouseover") and          
-                A.FlashHeal:PredictHeal("FlashHeal", "mouseover") 
+                A.FlashHeal:PredictHeal("mouseover") 
             ) or 
             (
                 TR.CanHeal(A.FlashHeal.ID):Target() and      
                 A.FlashHeal:IsSpellInRange("target") and         
-                A.FlashHeal:PredictHeal("FlashHeal", "target") 
+                A.FlashHeal:PredictHeal("target") 
             )
         ) and
         -- If we can heal previous unit
@@ -2430,12 +2452,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Mouse() and  
                 A.PrayerofHealing:IsSpellInRange("mouseover") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "mouseover")
+                A.PrayerofHealing:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Target() and      
                 A.PrayerofHealing:IsSpellInRange("target") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "target")
+                A.PrayerofHealing:PredictHeal("target")
             )
         ) and
         CanHealPrayerOfHealing()
@@ -2459,12 +2481,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Mouse() and  
                 A.PrayerofHealing:IsSpellInRange("mouseover") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "mouseover")
+                A.PrayerofHealing:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Target() and      
                 A.PrayerofHealing:IsSpellInRange("target") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "target")
+                A.PrayerofHealing:PredictHeal("target")
             )
         ) and
         CanHealPrayerOfHealing()
@@ -2491,7 +2513,7 @@ A[3] = function(icon, isMulti)
                     Unit("mouseover"):IsTank() or
                     (
                         Unit("mouseover"):GetRealTimeDMG() > 0 and
-                        A.PrayerofMending:PredictHeal("PrayerOfMending", "mouseover") 
+                        A.PrayerofMending:PredictHeal("mouseover") 
                     )
                 ) and
                 CanHealPrayerOfMending("mouseover") and
@@ -2505,7 +2527,7 @@ A[3] = function(icon, isMulti)
                     Unit("target"):IsTank() or
                     (
                         Unit("target"):GetRealTimeDMG() > 0 and
-                        A.PrayerofMending:PredictHeal("PrayerOfMending", "target")
+                        A.PrayerofMending:PredictHeal("target")
                     ) 
                 ) and
                 CanHealPrayerOfMending("target") and
@@ -2532,7 +2554,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Mouse() and  
                 A.FlashHeal:IsSpellInRange("mouseover") and          
-                A.FlashHeal:PredictHeal("FlashHeal", "mouseover") and
+                A.FlashHeal:PredictHeal("mouseover") and
                 (
                     Unit("mouseover"):HealthPercent() < 40 or
                     Unit("mouseover"):TimeToDieX(20) < GetGCD() * 3
@@ -2541,7 +2563,7 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Target() and      
                 A.FlashHeal:IsSpellInRange("target") and         
-                A.FlashHeal:PredictHeal("FlashHeal", "target") and
+                A.FlashHeal:PredictHeal("target") and
                 ( 
                     Unit("target"):HealthPercent() < 40 or
                     Unit("target"):TimeToDieX(20) < GetGCD() * 3
@@ -2567,12 +2589,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Mouse() and  
                 A.PrayerofHealing:IsSpellInRange("mouseover") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "mouseover")
+                A.PrayerofHealing:PredictHeal("mouseover")
             ) or 
             (
                 TR.CanHeal(A.PrayerofHealing.ID):Target() and      
                 A.PrayerofHealing:IsSpellInRange("target") and
-                A.PrayerofHealing:PredictHeal("PrayerOfHealing", "target")
+                A.PrayerofHealing:PredictHeal("target")
             )
         ) and
         CanHealPrayerOfHealing()
@@ -2592,13 +2614,13 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.Renew.ID):Mouse() and  
                 A.Renew:IsSpellInRange("mouseover") and
                 Unit("mouseover"):PT(A.Renew.ID) and        
-                A.Renew:PredictHeal("Renew", "mouseover") 
+                A.Renew:PredictHeal("mouseover") 
             ) or 
             (
                 TR.CanHeal(A.Renew.ID):Target() and      
                 A.Renew:IsSpellInRange("target") and    
                 Unit("target"):PT(A.Renew.ID) and  
-                A.Renew:PredictHeal("Renew", "target") 
+                A.Renew:PredictHeal("target") 
             )
         )
         then
@@ -2620,7 +2642,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.BindingHeal.ID):Mouse() and  
                 not UnitIsUnit("player", "mouseover") and 
                 A.BindingHeal:IsSpellInRange("mouseover") and
-                A.BindingHeal:PredictHeal("BindingHeal", "mouseover") and
+                A.BindingHeal:PredictHeal("mouseover") and
                 -- Check if it can heal as well any another unit
                 CanHealBindingHeal("mouseover")        
             ) or 
@@ -2628,7 +2650,7 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(A.BindingHeal.ID):Target() and    
                 not UnitIsUnit("player", "target") and   
                 A.BindingHeal:IsSpellInRange("target") and
-                A.BindingHeal:PredictHeal("BindingHeal", "target") and
+                A.BindingHeal:PredictHeal("target") and
                 -- Check if it can heal as well any another unit
                 CanHealBindingHeal("target")
             )
@@ -2650,12 +2672,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.Heal.ID):Mouse() and  
                 A.Heal:IsSpellInRange("mouseover") and          
-                A.Heal:PredictHeal("Heal", "mouseover")       
+                A.Heal:PredictHeal("mouseover")       
             ) or 
             (
                 TR.CanHeal(A.Heal.ID):Target() and      
                 A.Heal:IsSpellInRange("target") and         
-                A.Heal:PredictHeal("Heal", "target") 
+                A.Heal:PredictHeal("target") 
             )
         )
         then
@@ -2696,12 +2718,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.FlashHeal.ID):Mouse() and  
                 A.FlashHeal:IsSpellInRange("mouseover") and          
-                A.FlashHeal:PredictHeal("FlashHeal", "mouseover")       
+                A.FlashHeal:PredictHeal("mouseover")       
             ) or 
             (
                 TR.CanHeal(A.FlashHeal.ID):Target() and      
                 A.FlashHeal:IsSpellInRange("target") and         
-                A.FlashHeal:PredictHeal("FlashHeal", "target") 
+                A.FlashHeal:PredictHeal("target") 
             )
         )
         then
@@ -2745,13 +2767,13 @@ A[3] = function(icon, isMulti)
                 TR.CanHeal(ID):Mouse() and  
                 A.Renew:IsSpellInRange("mouseover") and    
                 Unit("mouseover"):PT(A.Renew.ID) and
-                A.Renew:PredictHeal("Renew", "mouseover")         
+                A.Renew:PredictHeal("mouseover")         
             ) or 
             (
                 TR.CanHeal(ID):Target() and      
                 A.Renew:IsSpellInRange("target") and 
                 Unit("target"):PT(A.Renew.ID) and
-                A.Renew:PredictHeal("Renew", "target") 
+                A.Renew:PredictHeal("target") 
             )
         )
         then
@@ -2768,7 +2790,7 @@ A[3] = function(icon, isMulti)
         (
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Mouse() and               
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "mouseover") and
+                A.HolyWordSanctify:PredictHeal("mouseover") and
                 (
                     UnitIsUnit("mouseover", "player") or
                     not IsMouselooking() 
@@ -2776,7 +2798,7 @@ A[3] = function(icon, isMulti)
             ) or 
             (
                 TR.CanHeal(A.HolyWordSanctify.ID):Target() and             
-                A.HolyWordSanctify:PredictHeal("HW:Sanctify", "target") and
+                A.HolyWordSanctify:PredictHeal("target") and
                 (
                     UnitIsUnit("target", "player") or
                     not IsMouselooking() 
@@ -2801,12 +2823,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.CircleofHealing.ID):Mouse() and  
                 A.CircleofHealing:IsSpellInRange("mouseover") and             
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "mouseover") 
+                A.CircleofHealing:PredictHeal("mouseover") 
             ) or 
             (
                 TR.CanHeal(A.CircleofHealing.ID):Target() and   
                 A.CircleofHealing:IsSpellInRange("target") and          
-                A.CircleofHealing:PredictHeal("CircleOfHealing", "target") 
+                A.CircleofHealing:PredictHeal("target") 
             )
         )
         then
@@ -2830,12 +2852,12 @@ A[3] = function(icon, isMulti)
             (        
                 TR.CanHeal(A.DivineStar.ID):Mouse() and  
                 Unit("mouseover"):GetRange() <= 24 and
-                A.DivineStar:PredictHeal("DivineStar", "mouseover", 200)
+                A.DivineStar:PredictHeal("mouseover", 200)
             ) or
             (        
                 TR.CanHeal(A.DivineStar.ID):Target() and         
                 Unit("target"):GetRange() <= 24 and
-                A.DivineStar:PredictHeal("DivineStar", "target", 200)
+                A.DivineStar:PredictHeal("target", 200)
             ) 
         )
         then
@@ -3145,7 +3167,7 @@ local function PartyRotation(unit)
     -- Party Dispel
     if A.DispelMagic:IsReady(unit) and
     A.GetToggle(2, "Dispel") and
-    Dispel(unit)
+    AuraIsValid(unit, "UseDispel", "Dispel")
     then
 	    return A.DispelMagic
 	end
