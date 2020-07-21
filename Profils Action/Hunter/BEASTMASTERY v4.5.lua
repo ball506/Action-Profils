@@ -59,27 +59,25 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
-    SummonPet                              = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
-    AspectoftheWildBuff                    = Action.Create({ Type = "Spell", ID = 193530 }),
+    AspectoftheWildBuff                    = Action.Create({ Type = "Spell", ID = 193530, Hidden = true     }),
     AspectoftheWild                        = Action.Create({ Type = "Spell", ID = 193530 }),
-    PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810 }),
+    PrimalInstinctsBuff                    = Action.Create({ Type = "Spell", ID = 279810, Hidden = true     }), 
     PrimalInstincts                        = Action.Create({ Type = "Spell", ID = 279806 }),
-    BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574 }),
+    BestialWrathBuff                       = Action.Create({ Type = "Spell", ID = 19574, Hidden = true     }), 
     BestialWrath                           = Action.Create({ Type = "Spell", ID = 19574 }),
     AncestralCall                          = Action.Create({ Type = "Spell", ID = 274738 }),
     Fireblood                              = Action.Create({ Type = "Spell", ID = 265221 }),
     Berserking                             = Action.Create({ Type = "Spell", ID = 26297 }),
-    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297 }),
+    BerserkingBuff                         = Action.Create({ Type = "Spell", ID = 26297, Hidden = true     }), 
     KillerInstinct                         = Action.Create({ Type = "Spell", ID = 273887 }),
-    BloodFury                              = Action.Create({ Type = "Spell", ID = 20572 }),
-    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572 }),
+    BloodFuryBuff                          = Action.Create({ Type = "Spell", ID = 20572, Hidden = true     }), 
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
-    FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790 }),
-    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078 }),
+    FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790, Hidden = true     }),
+    LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078, Hidden = true     }),
     BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
-	BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID = 217200 }),
+	BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID = 217200, Hidden = true     }),,
     Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
-    BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455 }),
+    BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455, Hidden = true     }),
     Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
     OneWiththePack                         = Action.Create({ Type = "Spell", ID = 199528 }),
     ChimaeraShot                           = Action.Create({ Type = "Spell", ID = 53209 }),
@@ -91,26 +89,26 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     CobraShot                              = Action.Create({ Type = "Spell", ID = 193455 }),
     SpittingCobra                          = Action.Create({ Type = "Spell", ID = 194407 }),
     DanceofDeath                           = Action.Create({ Type = "Spell", ID = 274443 }),
-    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443 }),
+    DanceofDeathBuff                       = Action.Create({ Type = "Spell", ID = 274443, Hidden = true     }),
 	ConcussiveShot                         = Action.Create({ Type = "Spell", ID = 5116 }),
 	Flare                                  = Action.Create({ Type = "Spell", ID = 1543 }),
 	AnimalCompanion                        = Action.Create({ Type = "Spell", ID = 267116 , isTalent = true, Hidden = true     }), -- Avoid error with second pet with no abilities
     -- Pet
-    CallPet                                = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
+    SummonPet                              = Action.Create({ Type = "Spell", ID = 883, Texture = 136 }),
     MendPet                                = Action.Create({ Type = "Spell", ID = 136, Texture = 136  }),
     RevivePet                              = Action.Create({ Type = "Spell", ID = 982, Texture = 136 }),
-    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "LIGHT BLUE" }), -- Pet dispell/purge { Type = "SpellSingleColor", Color = "LIGHT BLUE" }
-    SonicBlast                             = Action.Create({ Type = "SpellSingleColor", ID = 264263, Color = "YELLOW" }), -- Pet dispell/purge
+    SpiritShock                            = Action.Create({ Type = "SpellSingleColor", ID = 264265, Color = "LIGHT BLUE", Desc = "Purje"}), -- Pet dispell/purge { Type = "SpellSingleColor", Color = "LIGHT BLUE" }
+    SonicBlast                             = Action.Create({ Type = "SpellSingleColor", ID = 264263, Color = "YELLOW", Desc = "Purje"}), -- Pet dispell/purge
     CounterShot                            = Action.Create({ Type = "Spell", ID = 147362 }),
     Exhilaration                           = Action.Create({ Type = "Spell", ID = 109304 }),
-	SpiritMend                             = Action.Create({ Type = "SpellSingleColor", ID = 90361, Color = "YELLOW"}), 
+	SpiritMend                             = Action.Create({ Type = "SpellSingleColor", ID = 90361, Color = "YELLOW", Desc = "Pet1"}), 
 	BindingShot                            = Action.Create({ Type = "Spell", ID = 109248  }), 
 	Smack                                  = Action.Create({ Type = "Spell", ID = 49966  }), 
 	Claw                                   = Action.Create({ Type = "Spell", ID = 16827  }), 
 	Bite                                   = Action.Create({ Type = "Spell", ID = 17253  }), 
-    SurvivaloftheFittest                   = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),
-    PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK"  }),
-    MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK"  }),	
+    SurvivaloftheFittest                   = Action.Create({ Type = "SpellSingleColor", ID = 264735, Color = "PINK" , Desc = "Pet2"}),
+    PrimalRage                             = Action.Create({ Type = "SpellSingleColor", ID = 264667, Color = "PINK" , Desc = "Pet3"}),
+    MastersCall                            = Action.Create({ Type = "SpellSingleColor", ID = 53271, Color = "PINK" , Desc = "Pet4"}),	
 	Intimidation                           = Action.Create({ Type = "Spell", ID = 19577  }),
 	TarTrap                                = Action.Create({ Type = "Spell", ID = 187698 }),
 	-- Defensives
@@ -120,8 +118,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530 }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611 }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314 }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555 }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true     }), 
     RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624 }), 
     ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905 }), 
     AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305 }), 
@@ -136,8 +133,8 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081 }),
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530 }),
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611 }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314 }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555 }),
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true     }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true     }),
     RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624 }),
     ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905 }),
     AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305 }),
@@ -146,11 +143,11 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614 }),
     InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568 }),
     LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617 }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555 }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true     }),
     VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572 }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314 }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311 }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311 }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true     }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true     }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true     }),
     -- Misc
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
@@ -280,17 +277,19 @@ local PetLocalization = {
 local LP = setmetatable(PetLocalization[GameLocale], { __index = PetLocalization.enUS })
 
 -- API - Spell v2
---Pet:AddActionsSpells(253, {
-Pet:Add(253, {
+-- Retail: 	 Lib:AddActionsSpells(@number, @table, @boolean, @boolean, @boolean), example Lib:AddActionsSpells(A.PlayerSpec,  { A.PetSpell1, A.PetSpell2.ID, (A.PetSpell3:Info()) }, true)
+-- owner is class (Classic) or specialization (Retail)
+-- spells is array table which accepts object-table, spellID, spellName
+-- useManagement is boolean indicated to control action panel by petaction or macro buttons 
+-- useSilence is boolean if 'true' will turns off print notifications about missed actions
+
+Pet:AddActionsSpells(253, {
+
 	-- number accepted
 	17253, -- Bite
 	16827, -- Claw
-	49966, -- Smack
-	--47481, -- Gnaw
-	-- strings also accepted!
---	"Gnaw",
---	(GetSpellInfo(47481)), -- must be in '(' ')' because call this function will return multi returns through ',' 
-}, false)
+	49966, -- Smack 
+}, true)
 
 local function SelfDefensives()
     if Unit(player):CombatTime() == 0 then 
@@ -429,13 +428,13 @@ end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
 -- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
+local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
     
 	if castDoneTime > 0 then
         -- CounterShot
         if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
-            return A.CounterShot:Show(icon)
+            return A.CounterShot
         end
 	
         -- BindingShot
@@ -460,39 +459,6 @@ local function InterruptsNEW(unit)
    	    end 
     end
 end
-
-local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
-    
-    if useKick and A.CounterShot:IsReady(unit) and A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
-	    -- Notification					
-        Action.SendNotification("Counter Shot interrupting on Target ", A.CounterShot.ID)
-        return A.CounterShot
-    end 
-    
-    if useCC and A.BindingShot:IsReady(unit) and MultiUnits:GetActiveEnemies() >= 2 and A.BindingShot:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-	    -- Notification					
-        Action.SendNotification("Binding Shot interrupting...", A.BindingShot.ID)
-        return A.BindingShot              
-    end          
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
-    
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
-    
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
-Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Offensive dispel rotation
 local function PurgeDispellMagic(unit)
@@ -794,7 +760,7 @@ A[3] = function(icon, isMulti)
 		end
 			
 	    -- summon_pet if not active
-        if not Pet:IsActive() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
+        if not Pet:IsActive() and Pet:CanCall() and A.MendPet:IsReady(player) and not A.LastPlayerCastName == A.MendPet:Info() then
 		    return A.MendPet:Show(icon)
         end
 		
@@ -889,7 +855,9 @@ A[3] = function(icon, isMulti)
 			or 
 			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
 			or
-			Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + (CheckLatency and GetPing() or 0) + 0.5
+			Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + GetCurrentGCD() + 0.1
+			or
+			A.BarbedShot:GetSpellChargesFrac() > 1.8
 		)
 		then
             return A.BarbedShot:Show(icon) 
@@ -1097,7 +1065,13 @@ A[3] = function(icon, isMulti)
         end
 
         -- aspect_of_the_wild
-        if A.AspectoftheWild:IsReady(player) and combatTime > 2 and ((AspectoftheWildTTD > 0 and Unit(unit):TimeToDie() >= AspectoftheWildTTD) or Unit(unit):TimeToDie() >= 0) and AspectoftheWildOnCDRapidReload and 
+        if A.AspectoftheWild:IsReady(player) and combatTime > 2 and 
+		(
+		    (AspectoftheWildTTD > 0 and Unit(unit):TimeToDie() >= AspectoftheWildTTD) 
+			or 
+			Unit(unit):TimeToDie() >= 0
+		)
+		and AspectoftheWildOnCDRapidReload and 
 		    (
 			    (InstanceInfo.KeyStone and InstanceInfo.KeyStone > 1) 
 				or 
@@ -1113,9 +1087,9 @@ A[3] = function(icon, isMulti)
 			-- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-				Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
-				Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
-				Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
+				Pet:GetInRange(17253) >= MultishotMinAoETargets or -- Bite
+				Pet:GetInRange(16827) >= MultishotMinAoETargets or -- Claw
+				Pet:GetInRange(49966) >= MultishotMinAoETargets -- Smack					
 			)
 			or 
 			-- Range by nameplate
@@ -1140,9 +1114,9 @@ A[3] = function(icon, isMulti)
             -- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-			    Pet:GetMultiUnitsBySpell(17253) > 1 or -- Bite
-			    Pet:GetMultiUnitsBySpell(16827) > 1 or -- Claw
-			    Pet:GetMultiUnitsBySpell(49966) > 1 -- Smack					
+			    Pet:GetInRange(17253) > 1 or -- Bite
+			    Pet:GetInRange(16827) > 1 or -- Claw
+			    Pet:GetInRange(49966) > 1 -- Smack					
 			)
 			or 
 			-- Range by nameplate
@@ -1158,20 +1132,7 @@ A[3] = function(icon, isMulti)
 			)
 		)
 	    then 
-		    
-            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.up&pet.turtle.buff.frenzy.remains<=gcd.max
-            if A.BarbedShot:IsReadyByPassCastGCD(unit) and A.BestialWrath:GetCooldown() > 0 and --Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) > 0 and 
-		    (
-		        Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) > 0 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0))
-			    or 
-			    Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0
-				or
-			    Unit(pet):HasBuffsStacks(A.FrenzyBuff.ID, true) >= 2 and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) <= GetGCD() + (CheckLatency and GetPing() or 0) + 0.5
-		   	)
-		   	then
-                return A.BarbedShot:Show(icon) 
-            end
-						
+		    						
             -- bestial_wrath,if=cooldown.aspect_of_the_wild.remains_guess>20|talent.one_with_the_pack.enabled|target.time_to_die<15
             if A.BestialWrath:IsReady(player) and ((BestialWrathTTD > 0 and Unit(unit):TimeToDie() >= BestialWrathTTD) or Unit(unit):TimeToDie() >= 0) and HandleBestialWrath() and 
 		    (
@@ -1187,7 +1148,10 @@ A[3] = function(icon, isMulti)
 			
             -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=full_recharge_time<gcd.max&cooldown.bestial_wrath.remains
             if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) < (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0)) and A.BarbedShot:GetSpellChargesFullRechargeTime() < GetGCD() and A.BestialWrath:GetCooldown() > 0 then 
+                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) < (BarbedShotRefreshSec + (CheckLatency and GetPing() or 0)) and 
+				A.BarbedShot:GetSpellChargesFullRechargeTime() < GetGCD() and 
+				A.BestialWrath:GetCooldown() > 0 
+				then 
                     return A.BarbedShot:Show(icon) 
                 end
             end
@@ -1231,9 +1195,9 @@ A[3] = function(icon, isMulti)
 					-- Range by pet
 					--[[AoEMode == "RangeByPet" and 
 					(
-						Pet:GetMultiUnitsBySpell(17253) < 4 or -- Bite
-						Pet:GetMultiUnitsBySpell(16827) < 4 or -- Claw
-						Pet:GetMultiUnitsBySpell(49966) < 4 -- Smack					
+						Pet:GetInRange(17253) < 4 or -- Bite
+						Pet:GetInRange(16827) < 4 or -- Claw
+						Pet:GetInRange(49966) < 4 -- Smack					
 					)
 					or 
 					-- Range by nameplate
@@ -1257,13 +1221,6 @@ A[3] = function(icon, isMulti)
             -- dire_beast
             if A.DireBeast:IsReady(unit) then
                 return A.DireBeast:Show(icon)
-            end
-			
-            -- barbed_shot,target_if=min:dot.barbed_shot.remains,if=pet.turtle.buff.frenzy.down&(charges_fractional>1.8|buff.bestial_wrath.up)|cooldown.aspect_of_the_wild.remains<pet.turtle.buff.frenzy.duration-gcd&azerite.primal_instincts.enabled|charges_fractional>1.4|target.time_to_die<9
-            if A.BarbedShot:IsReadyByPassCastGCD(unit) then
-                if Unit(unit):HasDeBuffs(A.BarbedShotDebuff.ID, true) < BarbedShotRefreshSec + A.GetPing() and Unit(pet):HasBuffs(A.FrenzyBuff.ID, true) == 0 and (A.BarbedShot:GetSpellChargesFrac() > 1.8 or Unit(player):HasBuffs(A.BestialWrathBuff.ID, true) > 0) or A.AspectoftheWild:GetCooldown() < 8 - GetGCD() and A.PrimalInstincts:GetAzeriteRank() > 0 then 
-                    return A.BarbedShot:Show(icon) 
-                end
             end
 			
             -- focused_azerite_beam,if=spell_targets.blade_dance1>=2|raid_event.adds.in>60
@@ -1296,9 +1253,9 @@ A[3] = function(icon, isMulti)
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-					Pet:GetMultiUnitsBySpell(17253) >= 3 or -- Bite
-					Pet:GetMultiUnitsBySpell(16827) >= 3 or -- Claw
-					Pet:GetMultiUnitsBySpell(49966) >= 3 -- Smack					
+					Pet:GetInRange(17253) >= MultishotMinAoETargets or -- Bite
+					Pet:GetInRange(16827) >= MultishotMinAoETargets or -- Claw
+					Pet:GetInRange(49966) >= MultishotMinAoETargets -- Smack					
 				)
 				or 
 				-- Range by nameplate
@@ -1310,7 +1267,7 @@ A[3] = function(icon, isMulti)
 				-- Range by active enemies CLEU
 				AoEMode == "RangeByCLEU" and
 				(        				
-					MultiUnits:GetActiveEnemies() >= 3					     
+					MultiUnits:GetActiveEnemies() >= MultishotMinAoETargets					     
 				)					
 			) 			
 			then
@@ -1323,9 +1280,9 @@ A[3] = function(icon, isMulti)
 				-- Range by pet
 				AoEMode == "RangeByPet" and 
 				(
-					Pet:GetMultiUnitsBySpell(17253) >= MultishotMinAoETargets or -- Bite
-					Pet:GetMultiUnitsBySpell(16827) >= MultishotMinAoETargets or -- Claw
-					Pet:GetMultiUnitsBySpell(49966) >= MultishotMinAoETargets -- Smack					
+					Pet:GetInRange(17253) >= MultishotMinAoETargets or -- Bite
+					Pet:GetInRange(16827) >= MultishotMinAoETargets or -- Claw
+					Pet:GetInRange(49966) >= MultishotMinAoETargets -- Smack					
 				)
 				or 
 				-- Range by nameplate
@@ -1348,14 +1305,14 @@ A[3] = function(icon, isMulti)
             if A.CobraShot:IsReady(unit) and not MultiShotForceAoE and 
 		    (
 			    A.KillCommand:GetCooldown() > Player:FocusTimeToMaxPredicted() and 
-			   (
+			    (
 				    (
     					-- Range by pet
 				        AoEMode == "RangeByPet" and 
 				        (
-			    	        Pet:GetMultiUnitsBySpell(17253) < 3 or -- Bite
-			    	        Pet:GetMultiUnitsBySpell(16827) < 3 or -- Claw
-			   	            Pet:GetMultiUnitsBySpell(49966) < 3 -- Smack					
+			    	        Pet:GetInRange(17253) < 3 or -- Bite
+			    	        Pet:GetInRange(16827) < 3 or -- Claw
+			   	            Pet:GetInRange(49966) < 3 -- Smack					
 				        )
 				        or 
 				        -- Range by nameplate
@@ -1391,9 +1348,9 @@ A[3] = function(icon, isMulti)
             -- Range by pet
 			AoEMode == "RangeByPet" and 
 			(
-			    Pet:GetMultiUnitsBySpell(17253) < 2 or -- Bite
-			    Pet:GetMultiUnitsBySpell(16827) < 2 or -- Claw
-			    Pet:GetMultiUnitsBySpell(49966) < 2 -- Smack					
+			    Pet:GetInRange(17253) < 2 or -- Bite
+			    Pet:GetInRange(16827) < 2 or -- Claw
+			    Pet:GetInRange(49966) < 2 -- Smack					
 			)
 			or 
 			-- Range by nameplate
