@@ -378,7 +378,7 @@ local function CanDarkness()
         local DarknessUnitsHP = A.GetToggle(2, "DarknessUnitsHP")    
         local DarknessUnitsTTD = A.GetToggle(2, "DarknessUnitsTTD")
         local totalMembers = HealingEngine.GetMembersAll()
-        
+		
         -- Auto Counter
         if DarknessUnits > 1 then 
             DarknessUnits = HealingEngine.GetMinimumUnits(1)
@@ -403,7 +403,7 @@ local function CanDarkness()
             end 
             
             -- Auto TTD 
-            if DarknessUnitsTTD >= 100 and Unit(HealingEngineMembersALL[i].Unit):TimeToDie() <= 5 then 
+            if DarknessUnitsTTD >= 100 and Unit(totalMembers[i].Unit):TimeToDie() <= 5 then 
                 counter = counter + 1
             end 
             
@@ -413,7 +413,7 @@ local function CanDarkness()
             end
             
             -- Custom TTD 
-            if DarknessUnitsTTD < 100 and Unit(HealingEngineMembersALL[i].Unit):TimeToDie() <= DarknessUnitsTTD then 
+            if DarknessUnitsTTD < 100 and Unit(totalMembers[i].Unit):TimeToDie() <= DarknessUnitsTTD then 
                 counter = counter + 1
             end             
             
