@@ -559,7 +559,7 @@ local function CanHealingStreamTotem()
         local counter = 0 
         for i = 1, #HealingEngineMembersALL do 
             -- Auto HP 
-            if HealingStreamTotemHP >= 100 and A.HealingStreamTotem:PredictHeal("HealingStreamTotem", HealingEngineMembersALL[i].Unit, 1500) then 
+            if HealingStreamTotemHP >= 100 and A.HealingStreamTotem:PredictHeal(HealingEngineMembersALL[i].Unit, 1500) then 
                 counter = counter + 1
             end 
             
@@ -1215,7 +1215,7 @@ local function Dispel(unit)
             Unit(unit):IsExists() and
             --not UnitIsUnit(unit, player) and 
             Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-            Env.PvEDispel(unit)             
+            AuraIsValid(unit, "UseDispel", "Dispel")            
         ) or
         -- PvP: ANOTHER UNIT   
         (
@@ -1724,33 +1724,6 @@ A[3] = function(icon, isMulti)
 		
         -- #9 Burst Cooldowns
 		
-        -- SpiritWalkersGrace
-        if A.SpiritWalkersGrace:IsReady(player) and
-		isMoving and
-		UseSpiritWalkersGrace and
-		isMovingFor >= SpiritWalkersGraceTime and
-		(
-            (
-                TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(25) >= 3  
-            ) or 
-            (
-                TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(35) >= 4               
-            ) or
-			A.IsInPvP and Unit(player):IsFocused("MELEE") and
-			(
-		        CanSpiritWalkersGrace("CATCH") and SpiritWalkersCatch
-			    or 
-			    CanSpiritWalkersGrace()
-			    or
-			    Unit(player):HasBuffs(A.Ascendance.ID, true) > 3
-			)
-		)
-		then 
-            return A.SpiritWalkersGrace:Show(icon)
-        end 	
-		
         -- #9.1 Ascendance
         if A.Ascendance:IsReady(player) and A.Ascendance:IsSpellLearned() and A.BurstIsON(unit) and
         (       
@@ -1913,7 +1886,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.Riptide:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.Riptide:PredictHeal("Riptide", mouseover) and
+                A.Riptide:PredictHeal(mouseover) and
                 (
                     (
                         Action.InstanceInfo.KeyStone > 0 and
@@ -1949,7 +1922,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.Riptide:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.Riptide:PredictHeal("Riptide", target) and
+                A.Riptide:PredictHeal(target) and
                 (
                     (
                         Action.InstanceInfo.KeyStone > 0 and
@@ -2006,7 +1979,7 @@ A[3] = function(icon, isMulti)
                     Unit(player):GetCurrentSpeed() > 0 or
                     HealingStreamTotemDuration() <= HealingStreamTotemRefresh  
                 ) and
-                A.HealingStreamTotem:PredictHeal("HealingStreamTotem", "mouseover")        
+                A.HealingStreamTotem:PredictHeal("mouseover")        
             ) or 
             (
                 (
@@ -2022,7 +1995,7 @@ A[3] = function(icon, isMulti)
                     Unit(player):GetCurrentSpeed() > 0 or
                     HealingStreamTotemDuration() <= HealingStreamTotemRefresh					
                ) and
-                A.HealingStreamTotem:PredictHeal("HealingStreamTotem", "target") 
+                A.HealingStreamTotem:PredictHeal("target") 
             ) or
             HealingEngine.HealingByRange(40, "Riptide", A.Riptide, true) >= 3
 			or     
@@ -2033,9 +2006,11 @@ A[3] = function(icon, isMulti)
             return A.HealingStreamTotem:Show(icon)
         end	
 
-        -- RPvE #1 Cloudburst Totem Recall
+        -- RPvE #1 Cloudburst Totem Recall in the 0 - 5sec range remain
 		if A.CloudburstTotem:IsSpellLearned() and A.CloudburstTotem:IsReady(player) and
+		CloudburstTotemDuration() > 0 and
 		CloudburstTotemDuration() < 5 and
+		A.CloudburstTotem:GetSpellTimeSinceLastCast() > 10 and
 		combatTime > 3 and
 		(        
             (
@@ -2062,7 +2037,7 @@ A[3] = function(icon, isMulti)
 
         -- RPvE #2 Cloudburst Totem Call
 		if A.CloudburstTotem:IsSpellLearned() and A.CloudburstTotem:IsReady(player) and
-		CloudburstTotemDuration() == 0 and
+		CloudburstTotemDuration() <= 0 and
 		combatTime > 2  and
 		(        
             (
@@ -2099,7 +2074,7 @@ A[3] = function(icon, isMulti)
                 not Unit(mouseover):IsDead() and                
                 not IsUnitEnemy(mouseover) and                 
                 A.UnleashLife:IsSpellInRange(mouseover) and
-                A.UnleashLife:PredictHeal("UnleashLife", "mouseover") and
+                A.UnleashLife:PredictHeal("mouseover") and
                 (
                     Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.95
                 )
@@ -2113,7 +2088,7 @@ A[3] = function(icon, isMulti)
                 not Unit(target):IsDead() and
                 not IsUnitEnemy(target) and
                 A.UnleashLife:IsSpellInRange(target) and
-                A.UnleashLife:PredictHeal("UnleashLife", "target") and
+                A.UnleashLife:PredictHeal("target") and
                 (
                     Unit(target):Health() <= Unit(target):HealthMax()*0.95
                 )
@@ -2123,6 +2098,33 @@ A[3] = function(icon, isMulti)
         then 
             return A.UnleashLife:Show(icon)
         end 
+		
+        -- SpiritWalkersGrace
+        if A.SpiritWalkersGrace:IsReady(player) and
+		isMoving and
+		UseSpiritWalkersGrace and
+		isMovingFor >= SpiritWalkersGraceTime and
+		(
+            (
+                TeamCacheFriendlyType == "party" and
+                HealingEngine.GetBelowHealthPercentercentUnits(25) >= 3  
+            ) or 
+            (
+                TeamCacheFriendlyType == "raid" and
+                HealingEngine.GetBelowHealthPercentercentUnits(35) >= 4               
+            ) or
+			A.IsInPvP and Unit(player):IsFocused("MELEE") and
+			(
+		        CanSpiritWalkersGrace("CATCH") and SpiritWalkersCatch
+			    or 
+			    CanSpiritWalkersGrace()
+			    or
+			    Unit(player):HasBuffs(A.Ascendance.ID, true) > 3
+			)
+		)
+		then 
+            return A.SpiritWalkersGrace:Show(icon)
+        end 	
 		
         -- RPvE #1 Chain Heal
         if A.ChainHeal:IsReady(unit) and
@@ -2177,7 +2179,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HealingSurge:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
-                A.HealingSurge:PredictHeal("HealingSurge", mouseover) and
+                A.HealingSurge:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(mouseover):IsTank() or
@@ -2196,7 +2198,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HealingSurge:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
-                A.HealingSurge:PredictHeal("HealingSurge", target) and
+                A.HealingSurge:PredictHeal(target) and
                 Unit(target):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(target):IsTank() or
@@ -2237,7 +2239,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HealingWave:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
-                A.HealingWave:PredictHeal("HealingWave", mouseover) and
+                A.HealingWave:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
             ) or 
             -- Target
@@ -2250,7 +2252,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HealingWave:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
-                A.HealingWave:PredictHeal("HealingWave", target) and
+                A.HealingWave:PredictHeal(target) and
                 Unit(target):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
             )   
         )
@@ -2346,7 +2348,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HealingSurge:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
-                A.HealingSurge:PredictHeal("HealingSurge", mouseover) and
+                A.HealingSurge:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(mouseover):IsTank() or
@@ -2365,7 +2367,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HealingSurge:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HScast_t + GetCurrentGCD() and
-                A.HealingSurge:PredictHeal("HealingSurge", target) and
+                A.HealingSurge:PredictHeal(target) and
                 Unit(target):TimeToDie() > HScast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(target):IsTank() or
@@ -2401,7 +2403,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HealingWave:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
-                A.HealingWave:PredictHeal("HealingWave", mouseover) and
+                A.HealingWave:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
             ) or 
             -- Target
@@ -2414,7 +2416,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HealingWave:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < HWcast_t + GetCurrentGCD() and
-                A.HealingWave:PredictHeal("HealingWave", target) and
+                A.HealingWave:PredictHeal(target) and
                 Unit(target):TimeToDie() > HWcast_t + GetCurrentGCD() + 1
             )
             or
@@ -2523,7 +2525,7 @@ local function PartyRotation(unit)
     (
         Unit(unit):IsPlayer() and  
         Unit(unit):TimeToDie() >= 6 and
-        Dispel(unit)     
+        AuraIsValid(unit, "UseDispel", "Dispel")    
     )
     then
         return A.PurifySpirit
