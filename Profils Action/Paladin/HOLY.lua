@@ -827,7 +827,7 @@ local function CanStopCastingOverHeal(unitID, unitGUID)
                 if A[ObjKey] then 
                     if A[ObjKey].ID == Temp.LastPrimarySpellID then 
                         --return not A[ObjKey]:PredictHeal(unit, 0.8, unitGUID)
-						return not A[ObjKey]:PredictHeal(spellName, unit, 0.8)
+						return not A[ObjKey]:PredictHeal(unit, 0.8)
                     end 
                 else 
                     break 
@@ -2016,7 +2016,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and 
                 Unit(mouseover):HealthPercent() < LayOnHandsHP and        
                 (
-                    A.LayonHands:PredictHeal("LayonHands", mouseover) or           
+                    A.LayonHands:PredictHeal(mouseover) or           
                     Unit(mouseover):Health() <= Unit(mouseover):HealthMax() * 0.17
                 ) and
                 Unit(mouseover):IsPlayer() and  
@@ -2035,7 +2035,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 Unit(target):HealthPercent() < LayOnHandsHP and 
                 (
-                    A.LayonHands:PredictHeal("LayonHands", target) or            
+                    A.LayonHands:PredictHeal(target) or            
                     Unit(target):Health() <= Unit(target):HealthMax() * 0.17
                 ) and
                 Unit(target):IsPlayer() and  
@@ -2340,7 +2340,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HolyShock:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.HolyShock:PredictHeal("HolyShock", mouseover) and
+                A.HolyShock:PredictHeal(mouseover) and
                 (
                     (
                         Action.InstanceInfo.KeyStone > 0 and
@@ -2378,7 +2378,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HolyShock:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.HolyShock:PredictHeal("HolyShock", target) and
+                A.HolyShock:PredictHeal(target) and
                 (
                     (
                         Action.InstanceInfo.KeyStone > 0 and
@@ -2476,7 +2476,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                  
                 A.BestowFaith:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.BestowFaith:PredictHeal("BestowFaith", mouseover) 
+                A.BestowFaith:PredictHeal(mouseover) 
             ) or 
             -- Target
             (
@@ -2487,7 +2487,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.BestowFaith:IsInRange(target) and
                 Unit(target):HasBuffs(A.Cyclone.ID, true) == 0 and
-                A.BestowFaith:PredictHeal("BestowFaith", target) 
+                A.BestowFaith:PredictHeal(target) 
             )
         )
         then
@@ -2509,7 +2509,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.FlashofLight:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", mouseover) and
+                A.FlashofLight:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(mouseover):IsTank() or
@@ -2528,7 +2528,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.FlashofLight:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", target) and
+                A.FlashofLight:PredictHeal(target) and
                 Unit(target):TimeToDie() > FLcast_t + GetCurrentGCD() + 2 and
                 (
                     Unit(target):IsTank() or
@@ -2563,7 +2563,7 @@ A[3] = function(icon, isMulti)
                 (
                     -- Divine Shield
                     Unit(player):HasBuffs(642, true) > 0 or
-                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)) * 3
+                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal(mouseover)) * 3
                 ) and        
                 (
                     Unit(mouseover):Health() <= Unit(mouseover):HealthMax()*0.18 or
@@ -2586,7 +2586,7 @@ A[3] = function(icon, isMulti)
                 (
                     -- Divine Shield
                     Unit(player):HasBuffs(642, true) > 0 or            
-                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", target)) * 3
+                    Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal(target)) * 3
                 ) and
                 (
                     Unit(target):Health() <= Unit(target):HealthMax()*0.18 or
@@ -2612,7 +2612,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HolyLight:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
-                A.HolyLight:PredictHeal("HolyLight", mouseover) and
+                A.HolyLight:PredictHeal(mouseover) and
                 Unit(mouseover):TimeToDie() > HLcast_t + GetCurrentGCD() + 1 or
                 Unit(mouseover):HealthPercent() < HolyLightHP or
                 Unit(mouseover):TimeToDieX(15) < HolyLightTTD            
@@ -2627,7 +2627,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HolyLight:IsInRange(target) and
                 Unit(target):HasBuffs(A.Cyclone.ID, true) < HLcast_t + GetCurrentGCD() and
-                A.HolyLight:PredictHeal("HolyLight", target) and
+                A.HolyLight:PredictHeal(target) and
                 Unit(target):TimeToDie() > HLcast_t + GetCurrentGCD() + 1 or
                 Unit(target):HealthPercent() < HolyLightHP or
                 Unit(target):TimeToDieX(15) < HolyLightTTD            
@@ -2756,7 +2756,7 @@ A[3] = function(icon, isMulti)
                 A.FlashofLight:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", mouseover) and
+                A.FlashofLight:PredictHeal(mouseover) and
                 (
                     -- Tank
                     (                
@@ -2783,7 +2783,7 @@ A[3] = function(icon, isMulti)
                 A.FlashofLight:IsInRange(target) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) and
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) < FLcast_t + GetCurrentGCD() and
-                A.FlashofLight:PredictHeal("FlashofLight", target) and
+                A.FlashofLight:PredictHeal(target) and
                 (
                     -- Tank
                     (                
@@ -2856,7 +2856,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(mouseover) and                 
                 A.HolyPrism:IsInRange(mouseover) and
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.HolyPrism:PredictHeal("HolyPrism", mouseover)
+                A.HolyPrism:PredictHeal(mouseover)
             ) or 
             -- Target
             (
@@ -2867,7 +2867,7 @@ A[3] = function(icon, isMulti)
                 not IsUnitEnemy(target) and
                 A.HolyPrism:IsInRange(target) and
                 Unit(unit):HasDeBuffs(A.Cyclone.ID, true) == 0 and -- Cyclone
-                A.HolyPrism:PredictHeal("HolyPrism", target)
+                A.HolyPrism:PredictHeal(target)
             ) or
             -- DMG
             -- MouseOver
@@ -2914,9 +2914,9 @@ A[3] = function(icon, isMulti)
             (
                  -- Divine Shield
                  Unit(player):HasBuffs(642, true) > 0 or
-                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)) * 4.5
+                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal(mouseover)) * 4.5
                ) and        
-               A.LightofMartyr:PredictHeal("LightofMartyr", mouseover)
+               A.LightofMartyr:PredictHeal(mouseover)
            ) or 
            -- Target
            (
@@ -2931,9 +2931,9 @@ A[3] = function(icon, isMulti)
                (
                    -- Divine Shield
                    Unit(player):HasBuffs(642, true) > 0 or            
-                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal("LightofMartyr", target)) * 4.5
+                  Unit(player):Health() >= select(2, A.LightofMartyr:PredictHeal(target)) * 4.5
                ) and
-                A.LightofMartyr:PredictHeal("LightofMartyr", target)
+                A.LightofMartyr:PredictHeal(target)
             )
         )
         then        
@@ -2950,7 +2950,7 @@ A[3] = function(icon, isMulti)
                 A.MouseHasFrame() and                        
                 not IsUnitEnemy(mouseover) and                         
                 Unit(mouseover):HasDeBuffs(A.Cyclone.ID, true) == 0 and
-                A.LightofDawn:PredictHeal("LightofDawn", mouseover) and
+                A.LightofDawn:PredictHeal(mouseover) and
                 -- Azerite Breaking Dawn
                 Unit(mouseover):CanInterract((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
             ) or 
@@ -2962,7 +2962,7 @@ A[3] = function(icon, isMulti)
                 ) and        
                 not IsUnitEnemy(target) and        
                 Unit(target):HasDeBuffs(A.Cyclone.ID, true) == 0 and
-                A.LightofDawn:PredictHeal("LightofDawn", target) and
+                A.LightofDawn:PredictHeal(target) and
                 -- Azerite Breaking Dawn
                 Unit(target):CanInterract((A.BreakingDawn:GetAzeriteRank() > 0 and 40) or 15)
             )
