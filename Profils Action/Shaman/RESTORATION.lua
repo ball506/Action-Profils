@@ -1997,7 +1997,7 @@ A[3] = function(icon, isMulti)
                ) and
                 A.HealingStreamTotem:PredictHeal("target") 
             ) or
-            HealingEngine.HealingByRange(40, "Riptide", A.Riptide, true) >= 3
+            HealingEngine.HealingByRange(40, nil, A.Riptide, true) >= 3
 			or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 15
         ) and
