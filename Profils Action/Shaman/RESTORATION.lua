@@ -1690,7 +1690,7 @@ A[3] = function(icon, isMulti)
 		
         -- #5 Bursting Essences		        
         -- #5.1 Life Binders Invocation
-        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
+        if A.LifeBindersInvocation:AutoHeartOfAzeroth(unit, true) and A.BurstIsON(unit) and HealingEngine.GetBelowHealthPercentUnits(LifeBindersInvocationHP, 40) >= LifeBindersInvocationUnits then
             -- Notification                    
             Action.SendNotification("Burst " .. A.GetSpellInfo(A.LifeBindersInvocation.ID), A.LifeBindersInvocation.ID)            
             return A.LifeBindersInvocation:Show(icon)
@@ -1752,16 +1752,16 @@ A[3] = function(icon, isMulti)
                         ) and
                         (
                             HealingEngine.GetTimeToDieUnits(5) >= GetValidMembers(true) * 0.5 or
-                            HealingEngine.GetBelowHealthPercentercentUnits(60) >= GetValidMembers(true) * 0.5
+                            HealingEngine.GetBelowHealthPercentUnits(60) >= GetValidMembers(true) * 0.5
                         )
                     ) or        
                     (
                         TeamCacheFriendlyType == "party" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(20) >= 3  
+                        HealingEngine.GetBelowHealthPercentUnits(20) >= 3  
                     ) or 
                     (
                         TeamCacheFriendlyType == "raid" and
-                        HealingEngine.GetBelowHealthPercentercentUnits(30) >= 5               
+                        HealingEngine.GetBelowHealthPercentUnits(30) >= 5               
                     )
                 )
             ) or
@@ -1829,16 +1829,16 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     HealingEngine.GetTimeToDieUnits(5) >= GetValidMembers(true) * 0.5 or
-                    HealingEngine.GetBelowHealthPercentercentUnits(25) >= GetValidMembers(true) * 0.5
+                    HealingEngine.GetBelowHealthPercentUnits(25) >= GetValidMembers(true) * 0.5
                 )
             ) or        
             (
                 TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(15) >= 3  
+                HealingEngine.GetBelowHealthPercentUnits(15) >= 3  
             ) or 
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(15) >= 5               
+                HealingEngine.GetBelowHealthPercentUnits(15) >= 5               
             ) or
 			A.HealingEngine.GetTimeToFullDie() < 3
         )
@@ -1855,15 +1855,15 @@ A[3] = function(icon, isMulti)
         (        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(45) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(45) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemPartyHP) >= HealingTideTotemPartyUnits
+                HealingEngine.GetBelowHealthPercentUnits(HealingTideTotemPartyHP) >= HealingTideTotemPartyUnits
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(HealingTideTotemRaidHP) >= HealingTideTotemRaidUnits
+                HealingEngine.GetBelowHealthPercentUnits(HealingTideTotemRaidHP) >= HealingTideTotemRaidUnits
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 35
 			or
@@ -2015,15 +2015,15 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(85) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 3
+                HealingEngine.GetBelowHealthPercentUnits(85) >= 3
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(85) >= 5
+                HealingEngine.GetBelowHealthPercentUnits(85) >= 5
             ) or     
 			-- Big damage
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 25
@@ -2042,15 +2042,15 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(95) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(92) >= 3
+                HealingEngine.GetBelowHealthPercentUnits(92) >= 3
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(94) >= 5
+                HealingEngine.GetBelowHealthPercentUnits(94) >= 5
             ) or
 			HealingEngine.GetHealthFrequency(GetGCD()*2) > 5
 			or
@@ -2107,11 +2107,11 @@ A[3] = function(icon, isMulti)
 		(
             (
                 TeamCacheFriendlyType == "party" and
-                HealingEngine.GetBelowHealthPercentercentUnits(25) >= 3  
+                HealingEngine.GetBelowHealthPercentUnits(25) >= 3  
             ) or 
             (
                 TeamCacheFriendlyType == "raid" and
-                HealingEngine.GetBelowHealthPercentercentUnits(35) >= 4               
+                HealingEngine.GetBelowHealthPercentUnits(35) >= 4               
             ) or
 			A.IsInPvP and Unit(player):IsFocused("MELEE") and
 			(
@@ -2147,12 +2147,12 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealPartyHP) >= ChainHealPartyUnits and
+                HealingEngine.GetBelowHealthPercentUnits(ChainHealPartyHP) >= ChainHealPartyUnits and
 				Unit(player):HasBuffs(A.TidalWaveBuff.ID, true) == 0
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(ChainHealRaidHP) >= ChainHealRaidUnits 
+                HealingEngine.GetBelowHealthPercentUnits(ChainHealRaidHP) >= ChainHealRaidUnits 
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*2) > 10
         )
@@ -2276,15 +2276,15 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(95) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 3
+                HealingEngine.GetBelowHealthPercentUnits(95) >= 3
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 5
+                HealingEngine.GetBelowHealthPercentUnits(90) >= 5
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 10
         )
@@ -2297,15 +2297,15 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 2 and
-                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 2
+                HealingEngine.GetBelowHealthPercentUnits(95) >= 2
             ) or
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(95) >= 3
+                HealingEngine.GetBelowHealthPercentUnits(95) >= 3
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 5
+                HealingEngine.GetBelowHealthPercentUnits(90) >= 5
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 10
         )
@@ -2320,11 +2320,11 @@ A[3] = function(icon, isMulti)
 		(        
             (
                 TeamCache.Friendly.Size <= 5 and
-                HealingEngine.GetBelowHealthPercentercentUnits(70) >= 4
+                HealingEngine.GetBelowHealthPercentUnits(70) >= 4
             ) or
             (
                 TeamCache.Friendly.Size > 5 and      
-                HealingEngine.GetBelowHealthPercentercentUnits(90) >= 4
+                HealingEngine.GetBelowHealthPercentUnits(90) >= 4
             ) or     
             HealingEngine.GetHealthFrequency(GetGCD()*4) > 20
         )
@@ -2435,7 +2435,7 @@ A[3] = function(icon, isMulti)
     if A.GhostWolf:IsReady(player) and Unit(player):HasBuffs(A.GhostWolf.ID, true) == 0 and isMovingFor > GhostWolfTime and UseGhostWolf then
         return A.GhostWolf:Show(icon)
     end	
-    
+	    
     -- Defensive
     local SelfDefensive = SelfDefensives()
     if SelfDefensive then 
