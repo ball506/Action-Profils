@@ -24,7 +24,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.2.2 (21.07.2020)",
+    DateTime = "v4.2.3 (22.07.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_SHAMAN_ENCHANCEMENT] = {
