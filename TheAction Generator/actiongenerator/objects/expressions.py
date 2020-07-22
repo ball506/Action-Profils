@@ -759,7 +759,6 @@ class Equipped(BuildExpression):
         """
         self.method = Method('IsExists()', type_=BOOL)
 
-
 class PrevGCD(BuildExpression):
     """
     Represent the expression for a prev_gcd. condition.
@@ -770,7 +769,8 @@ class PrevGCD(BuildExpression):
         call = 'value'
         self.object_ = condition.caster(condition.condition_list[2])
         self.method = None
-        self.args = [Spell(condition.parent_action,
+        self.args = [Literal(condition.condition_list[1]),
+                     Spell(condition.parent_action,
                            condition.condition_list[2])]
         super().__init__(call)
 
@@ -778,8 +778,7 @@ class PrevGCD(BuildExpression):
         """
         Return the arguments for the expression prev_gcd.
         """
-        self.method = Method('GetSpellLastCast', type_=BOOL)
-
+        self.method = Method('PrevGCDP', type_=BOOL)
 
 class ActiveDot(BuildExpression):
     """
