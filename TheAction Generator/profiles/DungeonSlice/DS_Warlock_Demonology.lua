@@ -864,7 +864,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- soul_strike,if=!talent.demonic_consumption.enabled|time>15|prev_gcd.1.hand_of_guldan&!buff.bloodlust.remains
-            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime() > 15 or Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):HasHeroism) then
+            if A.SoulStrike:IsReady(unit) and (not A.DemonicConsumption:IsSpellLearned() or Unit("player"):CombatTime() > 15 or Unit("player"):PrevGCDP(1, A.HandofGuldan) and not Unit("player"):HasHeroism) then
                 return A.SoulStrike:Show(icon)
             end
             
@@ -879,7 +879,7 @@ A[3] = function(icon, isMulti)
         local function Implosion(unit)
         
             -- implosion,if=(buff.wild_imps.stack>=6&(soul_shard<3|prev_gcd.1.call_dreadstalkers|buff.wild_imps.stack>=9|prev_gcd.1.bilescourge_bombers|(!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan))&!prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&buff.demonic_power.down)|(time_to_die<3&buff.wild_imps.stack>0)|(prev_gcd.2.call_dreadstalkers&buff.wild_imps.stack>2&!talent.demonic_calling.enabled)
-            if A.Implosion:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 6 and (Player:SoulShardsP < 3 or Unit("player"):GetSpellLastCast(A.CallDreadstalkers) or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 9 or Unit("player"):GetSpellLastCast(A.BilescourgeBombers) or (not Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):GetSpellLastCast(A.HandofGuldan))) and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true)) or (Unit(unit):TimeToDie() < 3 and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 0) or (Unit("player"):GetSpellLastCast(A.CallDreadstalkers) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 2 and not A.DemonicCalling:IsSpellLearned())) then
+            if A.Implosion:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 6 and (Player:SoulShardsP < 3 or Unit("player"):PrevGCDP(1, A.CallDreadstalkers) or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 9 or Unit("player"):PrevGCDP(1, A.BilescourgeBombers) or (not Unit("player"):PrevGCDP(1, A.HandofGuldan) and not Unit("player"):PrevGCDP(2, A.HandofGuldan))) and not Unit("player"):PrevGCDP(1, A.HandofGuldan) and not Unit("player"):PrevGCDP(2, A.HandofGuldan) and Unit("player"):HasBuffsDown(A.DemonicPowerBuff.ID, true)) or (Unit(unit):TimeToDie() < 3 and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 0) or (Unit("player"):PrevGCDP(2, A.CallDreadstalkers) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 2 and not A.DemonicCalling:IsSpellLearned())) then
                 return A.Implosion:Show(icon)
             end
             
@@ -904,12 +904,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- hand_of_guldan,if=soul_shard>=3&(((prev_gcd.2.hand_of_guldan|buff.wild_imps.stack>=3)&buff.wild_imps.stack<9)|cooldown.summon_demonic_tyrant.remains<=gcd*2|buff.demonic_power.remains>gcd*2)
-            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and (((Unit("player"):GetSpellLastCast(A.HandofGuldan) or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 3) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 9) or A.SummonDemonicTyrant:GetCooldown() <= GetGCD() * 2 or Unit("player"):HasBuffs(A.DemonicPowerBuff.ID, true) > GetGCD() * 2)) then
+            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and (((Unit("player"):PrevGCDP(2, A.HandofGuldan) or Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) >= 3) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 9) or A.SummonDemonicTyrant:GetCooldown() <= GetGCD() * 2 or Unit("player"):HasBuffs(A.DemonicPowerBuff.ID, true) > GetGCD() * 2)) then
                 return A.HandofGuldan:Show(icon)
             end
             
             -- demonbolt,if=prev_gcd.1.hand_of_guldan&soul_shard>=1&(buff.wild_imps.stack<=3|prev_gcd.3.hand_of_guldan)&soul_shard<4&buff.demonic_core.up
-            if A.Demonbolt:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.HandofGuldan) and Player:SoulShardsP >= 1 and (Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) <= 3 or Unit("player"):GetSpellLastCast(A.HandofGuldan)) and Player:SoulShardsP < 4 and Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true)) then
+            if A.Demonbolt:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.HandofGuldan) and Player:SoulShardsP >= 1 and (Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) <= 3 or Unit("player"):PrevGCDP(3, A.HandofGuldan)) and Player:SoulShardsP < 4 and Unit("player"):HasBuffs(A.DemonicCoreBuff.ID, true)) then
                 return A.Demonbolt:Show(icon)
             end
             
@@ -1111,12 +1111,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- hand_of_guldan,if=prev_gcd.1.hand_of_guldan&soul_shard>0&prev_gcd.2.soul_strike
-            if A.HandofGuldan:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.HandofGuldan) and Player:SoulShardsP > 0 and Unit("player"):GetSpellLastCast(A.SoulStrike)) then
+            if A.HandofGuldan:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.HandofGuldan) and Player:SoulShardsP > 0 and Unit("player"):PrevGCDP(2, A.SoulStrike)) then
                 return A.HandofGuldan:Show(icon)
             end
             
             -- demonic_strength,if=prev_gcd.1.hand_of_guldan&!prev_gcd.2.hand_of_guldan&(buff.wild_imps.stack>1&action.hand_of_guldan.in_flight)
-            if A.DemonicStrength:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.HandofGuldan) and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and (Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 1 and A.HandofGuldan:IsSpellInFlight())) then
+            if A.DemonicStrength:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.HandofGuldan) and not Unit("player"):PrevGCDP(2, A.HandofGuldan) and (Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) > 1 and A.HandofGuldan:IsSpellInFlight())) then
                 return A.DemonicStrength:Show(icon)
             end
             
@@ -1126,7 +1126,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- soul_strike,line_cd=30,if=!buff.bloodlust.remains|time>5&prev_gcd.1.hand_of_guldan
-            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism or Unit("player"):CombatTime() > 5 and Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
+            if A.SoulStrike:IsReady(unit) and (not Unit("player"):HasHeroism or Unit("player"):CombatTime() > 5 and Unit("player"):PrevGCDP(1, A.HandofGuldan)) then
                 return A.SoulStrike:Show(icon)
             end
             
@@ -1151,12 +1151,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- hand_of_guldan,if=soul_shard>=3&prev_gcd.2.hand_of_guldan&time>5&(prev_gcd.1.soul_strike|!talent.soul_strike.enabled&prev_gcd.1.shadow_bolt)
-            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):CombatTime() > 5 and (Unit("player"):GetSpellLastCast(A.SoulStrike) or not A.SoulStrike:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.ShadowBolt))) then
+            if A.HandofGuldan:IsReady(unit) and (Player:SoulShardsP >= 3 and Unit("player"):PrevGCDP(2, A.HandofGuldan) and Unit("player"):CombatTime() > 5 and (Unit("player"):PrevGCDP(1, A.SoulStrike) or not A.SoulStrike:IsSpellLearned() and Unit("player"):PrevGCDP(1, A.ShadowBolt))) then
                 return A.HandofGuldan:Show(icon)
             end
             
             -- summon_demonic_tyrant,if=prev_gcd.1.demonic_strength|prev_gcd.1.hand_of_guldan&prev_gcd.2.hand_of_guldan|!talent.demonic_strength.enabled&buff.wild_imps.stack+imps_spawned_during.2000%spell_haste>=6
-            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):GetSpellLastCast(A.DemonicStrength) or Unit("player"):GetSpellLastCast(A.HandofGuldan) and Unit("player"):GetSpellLastCast(A.HandofGuldan) or not A.DemonicStrength:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Player:SpellHaste() >= 6) then
+            if A.SummonDemonicTyrant:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.DemonicStrength) or Unit("player"):PrevGCDP(1, A.HandofGuldan) and Unit("player"):PrevGCDP(2, A.HandofGuldan) or not A.DemonicStrength:IsSpellLearned() and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) + imps_spawned_during.2000 / Player:SpellHaste() >= 6) then
                 return A.SummonDemonicTyrant:Show(icon)
             end
             
@@ -1266,7 +1266,7 @@ end
             end
             
             -- hand_of_guldan,if=azerite.explosive_potential.rank&time<5&soul_shard>2&buff.explosive_potential.down&buff.wild_imps.stack<3&!prev_gcd.1.hand_of_guldan&&!prev_gcd.2.hand_of_guldan
-            if A.HandofGuldan:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() and Unit("player"):CombatTime() < 5 and Player:SoulShardsP > 2 and Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 3 and not Unit("player"):GetSpellLastCast(A.HandofGuldan) and true and not Unit("player"):GetSpellLastCast(A.HandofGuldan)) then
+            if A.HandofGuldan:IsReady(unit) and (A.ExplosivePotential:GetAzeriteRank() and Unit("player"):CombatTime() < 5 and Player:SoulShardsP > 2 and Unit("player"):HasBuffsDown(A.ExplosivePotentialBuff.ID, true) and Unit("player"):HasBuffsStacks(A.WildImpsBuff.ID, true) < 3 and not Unit("player"):PrevGCDP(1, A.HandofGuldan) and true and not Unit("player"):PrevGCDP(2, A.HandofGuldan)) then
                 return A.HandofGuldan:Show(icon)
             end
             
@@ -1340,7 +1340,7 @@ end
             end
             
             -- hand_of_guldan,if=(azerite.baleful_invocation.enabled|talent.demonic_consumption.enabled)&prev_gcd.1.hand_of_guldan&cooldown.summon_demonic_tyrant.remains<2
-            if A.HandofGuldan:IsReady(unit) and ((A.BalefulInvocation:GetAzeriteRank() > 0 or A.DemonicConsumption:IsSpellLearned()) and Unit("player"):GetSpellLastCast(A.HandofGuldan) and A.SummonDemonicTyrant:GetCooldown() < 2) then
+            if A.HandofGuldan:IsReady(unit) and ((A.BalefulInvocation:GetAzeriteRank() > 0 or A.DemonicConsumption:IsSpellLearned()) and Unit("player"):PrevGCDP(1, A.HandofGuldan) and A.SummonDemonicTyrant:GetCooldown() < 2) then
                 return A.HandofGuldan:Show(icon)
             end
             

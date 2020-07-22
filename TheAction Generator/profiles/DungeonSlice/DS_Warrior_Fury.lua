@@ -558,7 +558,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- bladestorm,if=prev_gcd.1.rampage
-            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):GetSpellLastCast(A.Rampage)) then
+            if A.Bladestorm:IsReady(unit) and A.BurstIsON(unit) and (Unit("player"):PrevGCDP(1, A.Rampage)) then
                 return A.Bladestorm:Show(icon)
             end
             

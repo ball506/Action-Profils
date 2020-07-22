@@ -239,7 +239,7 @@ local function EvaluateTargetIfFilterBlackoutKick152(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick165(unit)
-  return combo_strike and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() < 4))
+  return combo_strike and (Unit("player"):HasBuffs(A.BokProcBuff.ID, true) or (A.HitCombo:IsSpellLearned() and Unit("player"):PrevGCDP(1, A.TigerPalm) and Player:Chi() < 4))
 end
 
 
@@ -320,7 +320,7 @@ local function EvaluateTargetIfFilterBlackoutKick611(unit)
 end
 
 local function EvaluateTargetIfBlackoutKick622(unit)
-  return (A.FistsofFury:GetCooldown() < 3 and Player:Chi() == 2 or Player:EnergyTimeToMaxPredicted() < 1) and (Unit("player"):GetSpellLastCast(A.TigerPalm) or Player:ChiMax() - Player:Chi() < 2)
+  return (A.FistsofFury:GetCooldown() < 3 and Player:Chi() == 2 or Player:EnergyTimeToMaxPredicted() < 1) and (Unit("player"):PrevGCDP(1, A.TigerPalm) or Player:ChiMax() - Player:Chi() < 2)
 end
 
 
@@ -424,7 +424,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- energizing_elixir,if=!prev_gcd.1.tiger_palm&chi<=1&energy<50
-            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):GetSpellLastCast(A.TigerPalm) and Player:Chi() <= 1 and Player:EnergyPredicted() < 50) then
+            if A.EnergizingElixir:IsReady(unit) and A.BurstIsON(unit) and (not Unit("player"):PrevGCDP(1, A.TigerPalm) and Player:Chi() <= 1 and Player:EnergyPredicted() < 50) then
                 return A.EnergizingElixir:Show(icon)
             end
             
@@ -896,7 +896,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- chi_wave,if=!talent.fist_of_the_white_tiger.enabled&prev_gcd.1.tiger_palm&time<=3
-            if A.ChiWave:IsReady(unit) and (not A.FistoftheWhiteTiger:IsSpellLearned() and Unit("player"):GetSpellLastCast(A.TigerPalm) and Unit("player"):CombatTime() <= 3) then
+            if A.ChiWave:IsReady(unit) and (not A.FistoftheWhiteTiger:IsSpellLearned() and Unit("player"):PrevGCDP(1, A.TigerPalm) and Unit("player"):CombatTime() <= 3) then
                 return A.ChiWave:Show(icon)
             end
             
