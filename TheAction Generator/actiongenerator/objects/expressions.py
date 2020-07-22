@@ -778,7 +778,7 @@ class PrevGCD(BuildExpression):
         """
         Return the arguments for the expression prev_gcd.
         """
-        self.method = Method('PrevGCDP', type_=BOOL)
+        self.method = Method('PrevGCD', type_=BOOL)
 
 class ActiveDot(BuildExpression):
     """
