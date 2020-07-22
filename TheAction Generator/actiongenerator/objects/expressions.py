@@ -767,7 +767,7 @@ class PrevGCD(BuildExpression):
     def __init__(self, condition):
         self.condition = condition
         call = 'value'
-        self.object_ = condition.caster(condition.condition_list[2])
+        self.object_ = Literal('Player')
         self.method = None
         self.args = [Literal(condition.condition_list[1]),
                      Spell(condition.parent_action,
