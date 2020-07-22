@@ -110,7 +110,9 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     Fireblood                              = Create({ Type = "Spell", ID = 265221 }),
     BagofTricks                            = Create({ Type = "Spell", ID =  }),
     ColdHeart                              = Create({ Type = "Spell", ID =  }),
+    FrostwhelpsIndignation                 = Create({ Type = "Spell", ID =  }),
     Obliteration                           = Create({ Type = "Spell", ID = 281238 }),
+    BloodoftheEnemyBuff                    = Create({ Type = "Spell", ID = 297108 }),
     ChillStreak                            = Create({ Type = "Spell", ID =  }),
     ReapingFlames                          = Create({ Type = "Spell", ID =  }),
     FrozenPulseBuff                        = Create({ Type = "Spell", ID =  }),
@@ -626,19 +628,19 @@ local function EvaluateCycleObliterate284(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Player:RunicPowerDeficit() > 25 or Player:Rune() > 3 and not A.Frostscythe:IsSpellLearned()
 end
 
-local function EvaluateCycleObliterate728(unit)
+local function EvaluateCycleObliterate762(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned() and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) and MultiUnits:GetByRangeInCombat(30, 5, 10) >= 3
 end
 
-local function EvaluateCycleObliterate761(unit)
+local function EvaluateCycleObliterate795(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Unit("player"):PrevGCDP(1, A.FrostStrike) or Unit("player"):PrevGCDP(1, A.HowlingBlast) or Unit("player"):PrevGCDP(1, A.GlacialAdvance)))
 end
 
-local function EvaluateCycleFrostStrike802(unit)
+local function EvaluateCycleFrostStrike836(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not Unit("player"):HasBuffs(A.RimeBuff.ID, true) or Player:RunicPowerDeficit() < 10 or Player:RuneTimeToX(2) > GetGCD() and not A.Frostscythe:IsSpellLearned()
 end
 
-local function EvaluateCycleObliterate825(unit)
+local function EvaluateCycleObliterate859(unit)
     return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and not A.Frostscythe:IsSpellLearned()
 end
 
@@ -1072,8 +1074,8 @@ A[3] = function(icon, isMulti)
                 return A.BagofTricks:Show(icon)
             end
             
-            -- pillar_of_frost,if=(cooldown.empower_rune_weapon.remains|talent.icecap.enabled)&!buff.pillar_of_frost.up
-            if A.PillarofFrost:IsReady(unit) and ((A.EmpowerRuneWeapon:GetCooldown() or A.Icecap:IsSpellLearned()) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true)) then
+            -- pillar_of_frost,if=(cooldown.empower_rune_weapon.remains|talent.icecap.enabled)&!buff.pillar_of_frost.up|talent.icecap.enabled&azerite.frostwhelps_indignation.enabled&buff.pillar_of_frost.remains<2
+            if A.PillarofFrost:IsReady(unit) and ((A.EmpowerRuneWeapon:GetCooldown() or A.Icecap:IsSpellLearned()) and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) or A.Icecap:IsSpellLearned() and A.FrostwhelpsIndignation:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 2) then
                 return A.PillarofFrost:Show(icon)
             end
             
@@ -1124,8 +1126,8 @@ A[3] = function(icon, isMulti)
         --Essences
         local function Essences(unit)
         
-            -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)
-            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or A.Obliteration:IsSpellLearned() or A.Icecap:IsSpellLearned() and not A.IcyCitadel:GetAzeriteRank() > 0) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) and A.Icecap:IsSpellLearned())) then
+            -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)&(active_enemies=1|!talent.icecap.enabled)|active_enemies>=2&talent.icecap.enabled&cooldown.pillar_of_frost.ready&(azerite.icy_citadel.rank>=1&buff.icy_citadel.up|!azerite.icy_citadel.enabled)
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and (Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and (Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) or A.Obliteration:IsSpellLearned() or A.Icecap:IsSpellLearned() and not A.IcyCitadel:GetAzeriteRank() > 0) or Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) and A.Icecap:IsSpellLearned()) and (MultiUnits:GetByRangeInCombat(10, 5, 10) == 1 or not A.Icecap:IsSpellLearned()) or MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and A.Icecap:IsSpellLearned() and A.PillarofFrost:GetCooldown() == 0 and (A.IcyCitadel:GetAzeriteRank() >= 1 and Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) or not A.IcyCitadel:GetAzeriteRank() > 0)) then
                 return A.BloodoftheEnemy:Show(icon)
             end
             
@@ -1191,7 +1193,7 @@ A[3] = function(icon, isMulti)
             
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled&!buff.rime.up&spell_targets.howling_blast>=3
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate728) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate762) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -1207,7 +1209,7 @@ A[3] = function(icon, isMulti)
             
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance))
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate761) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate795) then
                     return A.Obliterate:Show(icon) 
                 end
             end
@@ -1228,7 +1230,7 @@ A[3] = function(icon, isMulti)
             
             -- frost_strike,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!buff.rime.up|runic_power.deficit<10|rune.time_to_2>gcd&!talent.frostscythe.enabled
             if A.FrostStrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike802) then
+                if Action.Utils.CastTargetIf(A.FrostStrike, 10, "min", EvaluateCycleFrostStrike836) then
                     return A.FrostStrike:Show(icon) 
                 end
             end
@@ -1244,7 +1246,7 @@ A[3] = function(icon, isMulti)
             
             -- obliterate,target_if=(debuff.razorice.stack<5|debuff.razorice.remains<10)&!talent.frostscythe.enabled
             if A.Obliterate:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate825) then
+                if Action.Utils.CastTargetIf(A.Obliterate, 10, "min", EvaluateCycleObliterate859) then
                     return A.Obliterate:Show(icon) 
                 end
             end

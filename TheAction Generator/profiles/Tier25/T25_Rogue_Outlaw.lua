@@ -778,15 +778,15 @@ local function EvaluateTargetIfMarkedForDeath70(unit)
 end
 
 
-local function EvaluateCycleReapingFlames202(unit)
+local function EvaluateCycleReapingFlames204(unit)
     return Unit(unit):TimeToDie() < 1.5 or ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 29)) or (target.time_to_pct_20 > 30 and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 44))
 end
 
-local function EvaluateTargetIfFilterCheapShot248(unit)
+local function EvaluateTargetIfFilterCheapShot250(unit)
   return Unit(unit):HasDeBuffs(A.PreyOntheWeakDebuff.ID, true)
 end
 
-local function EvaluateTargetIfCheapShot257(unit)
+local function EvaluateTargetIfCheapShot259(unit)
   return A.PreyOntheWeak:IsSpellLearned() and not target.is_boss
 end
 
@@ -1033,6 +1033,9 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
+            -- variable,name=reaping_delay,value=target.time_to_die
+            VarReapingDelay = Unit(unit):TimeToDie()
+            
             -- cycling_variable,name=reaping_delay,op=min,if=essence.breath_of_the_dying.major,value=target.time_to_die
             if A.CyclingVariable:IsReady(unit) and (Azerite:EssenceHasMajor(A.BreathoftheDying.ID)) then
                 return A.CyclingVariable:Show(icon) = math.min(return A.CyclingVariable:Show(icon), Unit(unit):TimeToDie())
@@ -1040,7 +1043,7 @@ A[3] = function(icon, isMulti)
             
             -- reaping_flames,target_if=target.time_to_die<1.5|((target.health.pct>80|target.health.pct<=20)&(active_enemies=1|variable.reaping_delay>29))|(target.time_to_pct_20>30&(active_enemies=1|variable.reaping_delay>44))
             if A.ReapingFlames:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames202) then
+                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames204) then
                     return A.ReapingFlames:Show(icon) 
                 end
             end
@@ -1081,7 +1084,7 @@ A[3] = function(icon, isMulti)
         
             -- cheap_shot,target_if=min:debuff.prey_on_the_weak.remains,if=talent.prey_on_the_weak.enabled&!target.is_boss
             if A.CheapShot:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.CheapShot, 40, "min", EvaluateTargetIfFilterCheapShot248, EvaluateTargetIfCheapShot257) then 
+                if Action.Utils.CastTargetIf(A.CheapShot, 40, "min", EvaluateTargetIfFilterCheapShot250, EvaluateTargetIfCheapShot259) then 
                     return A.CheapShot:Show(icon) 
                 end
             end

@@ -1088,8 +1088,7 @@ A[3] = function(icon, isMulti)
         -- In Combat
         if inCombat and Unit(unit):IsExists() then
 
-                    -- bloodlust,if=azerite.ancestral_resonance.enabled
-            -- potion,if=expected_combat_length-time<60|cooldown.guardian_of_azeroth.remains<30
+                    -- potion,if=expected_combat_length-time<60|cooldown.guardian_of_azeroth.remains<30
             if A.PotionofSpectralIntellect:IsReady(unit) and Potion and (expected_combat_length - Unit("player"):CombatTime() < 60 or A.GuardianofAzeroth:GetCooldown() < 30) then
                 return A.PotionofSpectralIntellect:Show(icon)
             end

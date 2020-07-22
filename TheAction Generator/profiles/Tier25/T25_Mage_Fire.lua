@@ -719,8 +719,8 @@ A[3] = function(icon, isMulti)
                 return A.ManifestoofMadness:Show(icon)
             end
             
-            -- use_item,name=azsharas_font_of_power,if=variable.time_to_combustion<=5+15*variable.font_double_on_use&!variable.disable_combustion
-            if A.AzsharasFontofPower:IsReady(unit) and (VarTimeToCombustion <= 5 + 15 * VarFontDoubleOnUse and not VarDisableCombustion) then
+            -- use_item,name=azsharas_font_of_power,if=variable.time_to_combustion<=5+15*variable.font_double_on_use&variable.time_to_combustion>0&!variable.disable_combustion
+            if A.AzsharasFontofPower:IsReady(unit) and (VarTimeToCombustion <= 5 + 15 * VarFontDoubleOnUse and VarTimeToCombustion > 0 and not VarDisableCombustion) then
                 return A.AzsharasFontofPower:Show(icon)
             end
             

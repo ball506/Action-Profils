@@ -161,6 +161,14 @@ Action:CreateEssencesFor(ACTION_CONST_MAGE_FROST)  -- where PLAYERSPEC is Consta
 local A = setmetatable(Action[ACTION_CONST_MAGE_FROST], { __index = Action })
 
 
+------------------------------------------
+---------------- VARIABLES ---------------
+------------------------------------------
+local VarIlIfGaming = 0;
+
+A.Listener:Add("ROTATION_VARS", "PLAYER_REGEN_ENABLED", function()
+  VarIlIfGaming = 0
+end)
 
 
 
@@ -413,6 +421,9 @@ A[3] = function(icon, isMulti)
             if A.ArcaneIntellect:IsReady(unit) and Unit("player"):HasBuffsDown(A.ArcaneIntellectBuff.ID, true, true) then
                 return A.ArcaneIntellect:Show(icon)
             end
+            
+            -- variable,name=il_if_gaming,default=0,op=reset
+            VarIlIfGaming = 0
             
             -- summon_water_elemental
             if A.SummonWaterElemental:IsReady(unit) then
@@ -708,8 +719,8 @@ A[3] = function(icon, isMulti)
                 return A.Ebonbolt:Show(icon)
             end
             
-            -- ice_lance,if=buff.brain_freeze.react&(buff.fingers_of_frost.react|prev_gcd.1.flurry)&(buff.icicles.max_stack-buff.icicles.stack)*action.frostbolt.execute_time+action.glacial_spike.cast_time+action.glacial_spike.travel_time<incanters_flow_time_to.5.any&buff.memory_of_lucid_dreams.down
-            if A.IceLance:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true) or Unit("player"):PrevGCDP(1, A.Flurry)) and (buff.icicles.max_stack - Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.5.any and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) then
+            -- ice_lance,if=variable.il_if_gaming&buff.brain_freeze.react&(buff.fingers_of_frost.react|prev_gcd.1.flurry)&(buff.icicles.max_stack-buff.icicles.stack)*action.frostbolt.execute_time+action.glacial_spike.cast_time+action.glacial_spike.travel_time<incanters_flow_time_to.5.any&buff.memory_of_lucid_dreams.down
+            if A.IceLance:IsReady(unit) and (VarIlIfGaming and Unit("player"):HasBuffsStacks(A.BrainFreezeBuff.ID, true) and (Unit("player"):HasBuffsStacks(A.FingersofFrostBuff.ID, true) or Unit("player"):PrevGCDP(1, A.Flurry)) and (buff.icicles.max_stack - Unit("player"):HasBuffsStacks(A.IciclesBuff.ID, true)) * A.Frostbolt:GetSpellCastTime() + A.GlacialSpike:GetSpellCastTime() + A.GlacialSpike:TravelTime() < incanters_flow_time_to.5.any and Unit("player"):HasBuffsDown(A.MemoryofLucidDreamsBuff.ID, true)) then
                 return A.IceLance:Show(icon)
             end
             

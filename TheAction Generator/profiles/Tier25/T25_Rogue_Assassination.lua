@@ -978,24 +978,24 @@ local function EvaluateTargetIfCrimsonTempest707(unit)
 end
 
 
-local function EvaluateCycleReapingFlames824(unit)
+local function EvaluateCycleReapingFlames826(unit)
     return Unit(unit):TimeToDie() < 1.5 or ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 29)) or (target.time_to_pct_20 > 30 and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 44))
 end
 
-local function EvaluateTargetIfFilterGarrote868(unit)
+local function EvaluateTargetIfFilterGarrote870(unit)
   return Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)
 end
 
-local function EvaluateTargetIfGarrote903(unit)
+local function EvaluateTargetIfGarrote905(unit)
   return A.Subterfuge:IsSpellLearned() and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 12 or A.PMultiplier(unit, A.GarroteDebuff.ID) <= 1) and Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) > 2
 end
 
 
-local function EvaluateTargetIfFilterGarrote921(unit)
+local function EvaluateTargetIfFilterGarrote923(unit)
   return Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true)
 end
 
-local function EvaluateTargetIfGarrote962(unit)
+local function EvaluateTargetIfGarrote964(unit)
   return A.Subterfuge:IsSpellLearned() and A.ShroudedSuffocation:GetAzeriteRank() > 0 and (MultiUnits:GetByRangeInCombat(40, 5, 10) > 1 or not A.Exsanguinate:IsSpellLearned()) and Unit(unit):TimeToDie() > Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) and (Unit(unit):HasDeBuffs(A.GarroteDebuff.ID, true) < 18 or not ss_buffed)
 end
 
@@ -1097,8 +1097,8 @@ A[3] = function(icon, isMulti)
             -- variable,name=variable,name=vendetta_font_condition,value=!equipped.azsharas_font_of_power|azerite.shrouded_suffocation.enabled|debuff.razor_coral_debuff.down|trinket.ashvanes_razor_coral.cooldown.remains<10&(cooldown.toxic_blade.remains<1|debuff.toxic_blade.up)
             VarVendettaFontCondition = num(not A.AzsharasFontofPower:IsExists() or A.ShroudedSuffocation:GetAzeriteRank() > 0 or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or trinket.ashvanes_razor_coral.cooldown.remains < 10 and (A.ToxicBlade:GetCooldown() < 1 or Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true)))
             
-            -- vendetta,if=!stealthed.rogue&dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition
-            if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthed(true, false) and Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and VarVendettaSubterfugeCondition and VarVendettaNightstalkerCondition and VarVendettaFontCondition) then
+            -- vendetta,if=!stealthed.rogue&((dot.rupture.ticking&!debuff.vendetta.up&variable.vendetta_subterfuge_condition&variable.vendetta_nightstalker_condition&variable.vendetta_font_condition)|fight_remains<=20)
+            if A.Vendetta:IsReady(unit) and (not Unit("player"):IsStealthed(true, false) and ((Unit(unit):HasDeBuffs(A.RuptureDebuff.ID, true) and not Unit(unit):HasDeBuffs(A.VendettaDebuff.ID, true) and VarVendettaSubterfugeCondition and VarVendettaNightstalkerCondition and VarVendettaFontCondition) or fight_remains <= 20)) then
                 return A.Vendetta:Show(icon)
             end
             
@@ -1390,6 +1390,9 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
+            -- variable,name=reaping_delay,value=target.time_to_die
+            VarReapingDelay = Unit(unit):TimeToDie()
+            
             -- cycling_variable,name=reaping_delay,op=min,if=essence.breath_of_the_dying.major,value=target.time_to_die
             if A.CyclingVariable:IsReady(unit) and (Azerite:EssenceHasMajor(A.BreathoftheDying.ID)) then
                 return A.CyclingVariable:Show(icon) = math.min(return A.CyclingVariable:Show(icon), Unit(unit):TimeToDie())
@@ -1397,7 +1400,7 @@ A[3] = function(icon, isMulti)
             
             -- reaping_flames,target_if=target.time_to_die<1.5|((target.health.pct>80|target.health.pct<=20)&(active_enemies=1|variable.reaping_delay>29))|(target.time_to_pct_20>30&(active_enemies=1|variable.reaping_delay>44))
             if A.ReapingFlames:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames824) then
+                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames826) then
                     return A.ReapingFlames:Show(icon) 
                 end
             end
@@ -1424,7 +1427,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&(remains<12|pmultiplier<=1)&target.time_to_die-remains>2
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote868, EvaluateTargetIfGarrote903) then 
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote870, EvaluateTargetIfGarrote905) then 
                     return A.Garrote:Show(icon) 
                 end
             end
@@ -1436,7 +1439,7 @@ A[3] = function(icon, isMulti)
             -- pool_resource,for_next=1
             -- garrote,target_if=min:remains,if=talent.subterfuge.enabled&azerite.shrouded_suffocation.enabled&(active_enemies>1|!talent.exsanguinate.enabled)&target.time_to_die>remains&(remains<18|!ss_buffed)
             if A.Garrote:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote921, EvaluateTargetIfGarrote962) then 
+                if Action.Utils.CastTargetIf(A.Garrote, 40, "min", EvaluateTargetIfFilterGarrote923, EvaluateTargetIfGarrote964) then 
                     return A.Garrote:Show(icon) 
                 end
             end

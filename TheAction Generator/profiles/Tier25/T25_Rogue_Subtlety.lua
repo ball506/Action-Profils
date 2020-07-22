@@ -406,15 +406,15 @@ local function EvaluateTargetIfMarkedForDeath88(unit)
 end
 
 
-local function EvaluateCycleReapingFlames220(unit)
+local function EvaluateCycleReapingFlames222(unit)
     return Unit(unit):TimeToDie() < 1.5 or ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 29)) or (target.time_to_pct_20 > 30 and (MultiUnits:GetByRangeInCombat(40, 5, 10) == 1 or VarReapingDelay > 44))
 end
 
-local function EvaluateCycleNightblade279(unit)
+local function EvaluateCycleNightblade281(unit)
   return not VarUsePriorityRotation and MultiUnits:GetByRangeInCombat(10, 5, 10) >= 2 and (A.NightsVengeance:GetAzeriteRank() > 0 or not A.ReplicatingShadows:GetAzeriteRank() > 0 or MultiUnits:GetByRangeInCombat(10, 5, 10) - A.NightbladeDebuff.ID, true:ActiveDot >= 2) and not Unit("player"):HasBuffs(A.ShadowDanceBuff.ID, true) and Unit(unit):TimeToDie() >= (5 + (2 * Player:ComboPoints())) and Unit(unit):HasDeBuffsRefreshable(A.NightbladeDebuff.ID, true)
 end
 
-local function EvaluateCycleShadowstrike422(unit)
+local function EvaluateCycleShadowstrike424(unit)
   return A.SecretTechnique:IsSpellLearned() and A.FindWeakness:IsSpellLearned() and Unit(unit):HasDeBuffs(A.FindWeaknessDebuff.ID, true) < 1 and MultiUnits:GetByRangeInCombat(10, 5, 10) == 2 and Unit(unit):TimeToDie() - remains > 6
 end
 
@@ -647,6 +647,9 @@ A[3] = function(icon, isMulti)
                 return A.MemoryofLucidDreams:Show(icon)
             end
             
+            -- variable,name=reaping_delay,value=target.time_to_die
+            VarReapingDelay = Unit(unit):TimeToDie()
+            
             -- cycling_variable,name=reaping_delay,op=min,if=essence.breath_of_the_dying.major,value=target.time_to_die
             if A.CyclingVariable:IsReady(unit) and (Azerite:EssenceHasMajor(A.BreathoftheDying.ID)) then
                 return A.CyclingVariable:Show(icon) = math.min(return A.CyclingVariable:Show(icon), Unit(unit):TimeToDie())
@@ -654,7 +657,7 @@ A[3] = function(icon, isMulti)
             
             -- reaping_flames,target_if=target.time_to_die<1.5|((target.health.pct>80|target.health.pct<=20)&(active_enemies=1|variable.reaping_delay>29))|(target.time_to_pct_20>30&(active_enemies=1|variable.reaping_delay>44))
             if A.ReapingFlames:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames220) then
+                if Action.Utils.CastTargetIf(A.ReapingFlames, 40, "min", EvaluateCycleReapingFlames222) then
                     return A.ReapingFlames:Show(icon) 
                 end
             end
@@ -680,7 +683,7 @@ A[3] = function(icon, isMulti)
             
             -- nightblade,cycle_targets=1,if=!variable.use_priority_rotation&spell_targets.shuriken_storm>=2&(azerite.nights_vengeance.enabled|!azerite.replicating_shadows.enabled|spell_targets.shuriken_storm-active_dot.nightblade>=2)&!buff.shadow_dance.up&target.time_to_die>=(5+(2*combo_points))&refreshable
             if A.Nightblade:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade279) then
+                if Action.Utils.CastTargetIf(A.Nightblade, 40, "min", EvaluateCycleNightblade281) then
                     return A.Nightblade:Show(icon) 
                 end
             end
@@ -778,7 +781,7 @@ A[3] = function(icon, isMulti)
             
             -- shadowstrike,cycle_targets=1,if=talent.secret_technique.enabled&talent.find_weakness.enabled&debuff.find_weakness.remains<1&spell_targets.shuriken_storm=2&target.time_to_die-remains>6
             if A.Shadowstrike:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike422) then
+                if Action.Utils.CastTargetIf(A.Shadowstrike, 40, "min", EvaluateCycleShadowstrike424) then
                     return A.Shadowstrike:Show(icon) 
                 end
             end
