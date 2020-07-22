@@ -47,7 +47,7 @@ function A:PredictHeal(unitID, variation)
 	end 
     
     -- Frenzied Regeneration
-    if self.predictName == "Frenzied Regeneration" then
+    if self.predictName == "FrenziedRegeneration" then
 		local desc = self:GetSpellDescription()
 		local castTime = self:GetSpellCastTime()
 		
@@ -130,7 +130,7 @@ function A:PredictHeal(unitID, variation)
 			absorbNegative = Unit(unitID):GetTotalHealAbsorbs()
 		end 
 						
-		local withoutOptions = desc[1] * extraHealModifier * variation
+		local withoutOptions = desc[1] * variation
 		local total = withoutOptions + incHeal - incDMG + HoTs + absorbPossitive - absorbNegative
 		
 		return Unit(unitID):HealthDeficit() >= total, total
@@ -241,7 +241,7 @@ function A:PredictHeal(unitID, variation)
 
     end
     
-    if self.predictName == "Lunar Beam" then
+    if self.predictName == "LunarBeam" then
 		local desc = self:GetSpellDescription()
 		local castTime = self:GetSpellCastTime()
 		
@@ -282,7 +282,7 @@ function A:PredictHeal(unitID, variation)
 	
     end
     
-    if self.predictName == "Wild Growth" then
+    if self.predictName == "WildGrowth" then
 	
 		local desc = self:GetSpellDescription()
 		local castTime = self:GetSpellCastTime()
@@ -373,7 +373,7 @@ function A:PredictHeal(unitID, variation)
 		
     end
     
-    if self.predictName == "Cenarion Ward" then 
+    if self.predictName == "CenarionWard" then 
 		local desc = self:GetSpellDescription()
 		local castTime = self:GetSpellCastTime()
 		
