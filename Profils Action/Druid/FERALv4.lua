@@ -76,7 +76,7 @@ Action[ACTION_CONST_DRUID_FERAL] = {
     Shred                                   = Create({ Type = "Spell", ID = 5221     }),
     Rip                                     = Create({ Type = "Spell", ID = 1079     }),
     TigersFury                              = Create({ Type = "Spell", ID = 5217     }),
-    FerociousBiteMaxEnergy                  = Create({ Type = "Spell", ID = 22568    }), -- Used to check special conditions on FerociousBite
+    FerociousBiteMaxEnergy                  = Create({ Type = "Spell", ID = 22568, Hidden = true    }), -- Used to check special conditions on FerociousBite
     FerociousBite                           = Create({ Type = "Spell", ID = 22568    }),
     Maim                                    = Create({ Type = "Spell", ID = 22570     }),  
     Incarnation                             = Create({ Type = "Spell", ID = 102543 }),	
