@@ -85,19 +85,19 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	-- Knockbacks
 	Typhoon                                   = Create({ Type = "Spell", ID = 132469, isTalent = true   }),
     -- Hots
-    Lifebloom                                 = Create({ Type = "Spell", ID = 33763     }),
-	Rejuvenation                              = Create({ Type = "Spell", ID = 774     }),
-	RejuvenationGermimation                   = Create({ Type = "Spell", ID = 155777    }),
-    WildGrowth                                = Create({ Type = "Spell", ID = 48438     }),
-	CenarionWard                              = Create({ Type = "Spell", ID = 102351, isTalent = true     }),
+    Lifebloom                                 = Create({ Type = "Spell", ID = 33763, predictName = "Lifebloom"     }),
+	Rejuvenation                              = Create({ Type = "Spell", ID = 774, predictName = "Rejuvenation"     }),
+	RejuvenationGermimation                   = Create({ Type = "Spell", ID = 155777, predictName = "Rejuvenation"    }),
+    WildGrowth                                = Create({ Type = "Spell", ID = 48438, predictName = "WildGrowth"     }),
+	CenarionWard                              = Create({ Type = "Spell", ID = 102351, isTalent = true, predictName = "CenarionWard"     }),
 	-- Direct Heals
-	Regrowth                                  = Create({ Type = "Spell", ID = 8936     }),
-	Swiftmend                                 = Create({ Type = "Spell", ID = 18562     }),
+	Regrowth                                  = Create({ Type = "Spell", ID = 8936, predictName = "Regrowth"     }),
+	Swiftmend                                 = Create({ Type = "Spell", ID = 18562, predictName = "Swiftmend"     }),
     -- Self Defensives
     Barkskin                                  = Create({ Type = "Spell", ID = 22812     }),
 	-- Cooldowns
 	Ironbark                                  = Create({ Type = "Spell", ID = 102342     }),
-	Tranquility                               = Create({ Type = "Spell", ID = 740     }),
+	Tranquility                               = Create({ Type = "Spell", ID = 740, predictName = "Tranquility"     }),
     Innervate                                 = Create({ Type = "Spell", ID = 29166     }),
     -- Shapeshift
     TravelForm                                = Create({ Type = "Spell", ID = 783     }), 
@@ -116,7 +116,7 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	Revitalize                                = Create({ Type = "Spell", ID = 212040     }), 
 	WildCharge                                = Create({ Type = "Spell", ID = 102401, isTalent = true     }),
     -- Healing Spells       
-    Efflorescence                             = Create({ Type = "Spell", ID = 145205     }),
+    Efflorescence                             = Create({ Type = "Spell", ID = 145205, predictName = "Efflorescence"     }),
 	Renewal                                   = Create({ Type = "Spell", ID = 108238, isTalent = true     }),
 	-- Talents
 	SouloftheForest                           = Create({ Type = "Spell", ID = 114108, isTalent = true, Hidden = true     }),
@@ -138,8 +138,8 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	Disentanglement                           = Create({ Type = "Spell", ID = 233673, isTalent = true, Hidden = true     }),
 	EntanglingBark                            = Create({ Type = "Spell", ID = 247543, isTalent = true, Hidden = true     }),
 	EarlySpring                               = Create({ Type = "Spell", ID = 203624, isTalent = true, Hidden = true     }),
-	Nourish                                   = Create({ Type = "Spell", ID = 289022, isTalent = true     }),
-	Overgrowth                                = Create({ Type = "Spell", ID = 203651, isTalent = true     }),
+	Nourish                                   = Create({ Type = "Spell", ID = 289022, isTalent = true, predictName = "Nourish"     }),
+	Overgrowth                                = Create({ Type = "Spell", ID = 203651, isTalent = true, predictName = "Overgrowth"     }),
 	Thorns                                    = Create({ Type = "Spell", ID = 236696, isTalent = true     }),
 	DeepRoots                                 = Create({ Type = "Spell", ID = 233755, isTalent = true, Hidden = true     }),		
     MarkoftheWild                             = Create({ Type = "Spell", ID = 289318, isTalent = true     }),
@@ -165,10 +165,10 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	LunarStrike                               = Create({ Type = "Spell", ID = 197628     }),
 	MoonkinForm                               = Create({ Type = "Spell", ID = 24858     }),
 	-- Guardian
-	FrenziedRegeneration                      = Create({ Type = "Spell", ID = 22842     }),
+	FrenziedRegeneration                      = Create({ Type = "Spell", ID = 22842, predictName = "FrenziedRegeneration"     }),
 	Ironfur                                   = Create({ Type = "Spell", ID = 192081     }),
 	Thrash                                    = Create({ Type = "Spell", ID = 77758     }),
-	Mangle                                    = Create({ Type = "Spell", ID = 33917   }),
+	Mangle                                    = Create({ Type = "Spell", ID = 22570   }),
 	-- Feral
 	Shred                                     = Create({ Type = "Spell", ID = 5221     }),
 	Rip                                       = Create({ Type = "Spell", ID = 1079     }),
@@ -176,8 +176,6 @@ Action[ACTION_CONST_DRUID_RESTORATION] = {
 	Rake                                      = Create({ Type = "Spell", ID = 1822     }),
 	RakeDebuff                                = Create({ Type = "Spell", ID = 155722	,    Hidden = true }),
 	Swipe                                     = Create({ Type = "Spell", ID = 106785 }),
-    -- Movememnt    
-
     -- Items
     PotionofReconstitution                    = Create({ Type = "Potion", ID = 168502     }),     
     CoastalManaPotion                         = Create({ Type = "Potion", ID = 152495     }), 
@@ -2508,11 +2506,11 @@ A[3] = function(icon, isMulti)
                 (
                     (
                         TeamCache.Friendly.Size > 5 and 
-                        HealingEngine.HealingBySpell("Wild Growth", A.WildGrowth) >= 4
+                        HealingEngine.HealingBySpell(nil, A.WildGrowth) >= 4
                     ) or
                     (
                         TeamCache.Friendly.Size <= 5 and 
-                        HealingEngine.HealingBySpell("Wild Growth", A.WildGrowth) >= 3
+                        HealingEngine.HealingBySpell(nil, A.WildGrowth) >= 3
                     )
                 )
             ) or
@@ -3106,7 +3104,7 @@ A[3] = function(icon, isMulti)
                ) and
                 A.Efflorescence:PredictHeal("target") 
             ) or
-            HealingEngine.HealingByRange(40, "Efflorescence", A.Efflorescence, true) >= 3
+            HealingEngine.HealingByRange(40, nil, A.Efflorescence, true) >= 3
         ) and A.LastPlayerCastID ~= A.Efflorescence.ID -- Efflorescence
 		and A.Efflorescence:GetSpellTimeSinceLastCast() > 3
         then 
