@@ -602,7 +602,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) then
+            if A.Pyroblast:IsReady(unit) and (Player:PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true)) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -820,12 +820,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            if A.Pyroblast:IsReady(unit) and (Player:PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
             -- phoenix_flames,if=!prev_gcd.1.phoenix_flames&buff.heating_up.react
-            if A.PhoenixFlames:IsReady(unit) and (not Unit("player"):PrevGCDP(1, A.PhoenixFlames) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) then
+            if A.PhoenixFlames:IsReady(unit) and (not Player:PrevGCDP(1, A.PhoenixFlames) and Unit("player"):HasBuffsStacks(A.HeatingUpBuff.ID, true)) then
                 return A.PhoenixFlames:Show(icon)
             end
             
@@ -865,7 +865,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- pyroblast,if=buff.hot_streak.react&(prev_gcd.1.fireball|firestarter.active|action.pyroblast.in_flight)
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (Unit("player"):PrevGCDP(1, A.Fireball) or S.Firestarter:ActiveStatus() or A.Pyroblast:IsSpellInFlight())) then
+            if A.Pyroblast:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.HotStreakBuff.ID, true) and (Player:PrevGCDP(1, A.Fireball) or S.Firestarter:ActiveStatus() or A.Pyroblast:IsSpellInFlight())) then
                 return A.Pyroblast:Show(icon)
             end
             
@@ -890,7 +890,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- pyroblast,if=prev_gcd.1.scorch&buff.heating_up.up&(talent.searing_touch.enabled&target.health.pct<=30|spell_crit>=1)&!(active_enemies>=variable.hot_streak_flamestrike&(time-buff.combustion.last_expire>variable.delay_flamestrike|variable.disable_combustion))
-            if A.Pyroblast:IsReady(unit) and (Unit("player"):PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
+            if A.Pyroblast:IsReady(unit) and (Player:PrevGCDP(1, A.Scorch) and Unit("player"):HasBuffs(A.HeatingUpBuff.ID, true) and (A.SearingTouch:IsSpellLearned() and Unit(unit):HealthPercent() <= 30 or spell_crit >= 1) and not (MultiUnits:GetByRangeInCombat(40, 5, 10) >= VarHotStreakFlamestrike and (Unit("player"):CombatTime() - buff.combustion.last_expire > VarDelayFlamestrike or VarDisableCombustion))) then
                 return A.Pyroblast:Show(icon)
             end
             
