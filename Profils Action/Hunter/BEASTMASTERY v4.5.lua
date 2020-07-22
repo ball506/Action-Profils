@@ -75,7 +75,7 @@ Action[ACTION_CONST_HUNTER_BEASTMASTERY] = {
     FrenzyBuff                             = Action.Create({ Type = "Spell", ID = 272790, Hidden = true     }),
     LifebloodBuff                          = Action.Create({ Type = "Spell", ID = 295078, Hidden = true     }),
     BarbedShot                             = Action.Create({ Type = "Spell", ID = 217200 }),
-	BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID = 217200, Hidden = true     }),,
+	BarbedShotDebuff                       = Action.Create({ Type = "Spell", ID = 217200, Hidden = true     }),
     Multishot                              = Action.Create({ Type = "Spell", ID = 2643 }),
     BeastCleaveBuff                        = Action.Create({ Type = "Spell", ID = 118455, Hidden = true     }),
     Stampede                               = Action.Create({ Type = "Spell", ID = 201430 }),
