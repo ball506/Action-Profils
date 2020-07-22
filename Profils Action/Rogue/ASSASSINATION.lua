@@ -153,42 +153,42 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     BloodoftheEnemyDebuff                  = Action.Create({ Type = "Spell", ID = 297108 , Hidden = true     }),
     ToxicBladeDebuff                       = Action.Create({ Type = "Spell", ID = 245389, Hidden = true     }),
     -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }), 
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }), 
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }), 
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, Hidden = true, QueueForbidden = true }), 
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, Hidden = true, QueueForbidden = true }), 
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, Hidden = true, QueueForbidden = true }), 
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }), 
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, Hidden = true, QueueForbidden = true }), 
     -- Potions
-    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }), 
-    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-    AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }),       
-    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, Hidden = true, QueueForbidden = true }), 
+    BattlePotionOfAgility                  = Action.Create({ Type = "Potion", ID = 163223, Hidden = true, QueueForbidden = true }), 
+    SuperiorBattlePotionOfAgility          = Action.Create({ Type = "Potion", ID = 168489, Hidden = true, QueueForbidden = true }), 
+    AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, Hidden = true, QueueForbidden = true }),       
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, Hidden = true, QueueForbidden = true }), 
     -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    LurkersInsidiousGift                   = Action.Create({ Type = "Trinket", ID = 167866, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, Hidden = true, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, Hidden = true, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, Hidden = true, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, Hidden = true, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, Hidden = true, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, Hidden = true, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, Hidden = true, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, Hidden = true, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, Hidden = true, QueueForbidden = true }),
+    LurkersInsidiousGift                   = Action.Create({ Type = "Trinket", ID = 167866, Hidden = true, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, Hidden = true, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
     -- Misc
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),    -- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),    -- Change Target (Tab button)
@@ -202,35 +202,8 @@ Action[ACTION_CONST_ROGUE_ASSASSINATION] = {
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleInSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleInSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleInSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
-    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),     
+    RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }), 
+    TwisttheKnife                          = Action.Create({ Type = "Spell", ID = 273488, Hidden = true     }),  
 };
 
 -- To create essences use next code:
@@ -883,7 +856,8 @@ Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 Action.BleedTable = {
     Assassination = {
         Garrote = {},
-        Rupture = {}
+        Rupture = {},
+		CrimsonTempest = {}
     },
     --Subtlety = {
     --  Nightblade = {},
@@ -905,6 +879,10 @@ local function Exsanguinated(unit, SpellName)
         elseif SpellName == "Rupture" then
             if Action.BleedTable.Assassination.Rupture[BleedGUID] then
                 return Action.BleedTable.Assassination.Rupture[BleedGUID][3];
+            end
+        elseif SpellName == "CrimsonTempest" then
+            if Action.BleedTable.Assassination.CrimsonTempest[BleedGUID] then
+                return Action.BleedTable.Assassination.CrimsonTempest[BleedGUID][3];
             end
         end
     end
@@ -1327,7 +1305,7 @@ A[3] = function(icon, isMulti)
             end
             -- pool_resource,for_next=1
             -- garrote,if=talent.subterfuge.enabled&talent.exsanguinate.enabled&active_enemies=1&buff.subterfuge.remains<1.3
-            if A.Garrote:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and A.Exsanguinate:IsSpellLearned() and MultiUnits:GetByRange(40) == 1 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3) then
+            if A.Garrote:IsReady(unit) and (A.Subterfuge:IsSpellLearned() and A.Exsanguinate:IsSpellLearned() and MultiUnits:GetByRange(10) == 1 and Unit("player"):HasBuffs(A.SubterfugeBuff.ID, true) < 1.3) then
                 if A.Garrote:IsUsablePPool() then
                     return A.Garrote:Show(icon)
                 else
@@ -1402,8 +1380,8 @@ A[3] = function(icon, isMulti)
                 end
             
                 -- ripple_in_space
-                if A.RippleInSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
-                    return A.RippleInSpace:Show(icon)
+                if A.RippleinSpace:AutoHeartOfAzerothP(unit, true) and HeartOfAzeroth then
+                    return A.RippleinSpace:Show(icon)
                 end
             
                 -- worldvein_resonance
@@ -1424,9 +1402,9 @@ A[3] = function(icon, isMulti)
 				(
                     Unit(unit):TimeToDie() < 1.5 
 				    or 
-				    ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and (MultiUnits:GetByRange(40) == 1 or VarReapingDelay > 29)) 
+				    ((Unit(unit):HealthPercent() > 80 or Unit(unit):HealthPercent() <= 20) and (MultiUnits:GetByRange(10) == 1 or VarReapingDelay > 29)) 
 				    or 
-				    (Unit(unit):TimeToDieX(20) > 30 and (MultiUnits:GetByRange(40) == 1 or VarReapingDelay > 44))
+				    (Unit(unit):TimeToDieX(20) > 30 and (MultiUnits:GetByRange(10) == 1 or VarReapingDelay > 44))
 				)
 				then
                     return A.ReapingFlames:Show(icon) 
@@ -1719,9 +1697,9 @@ A[3] = function(icon, isMulti)
             end
 			
             -- crimson_tempest,target_if=min:remains,if=spell_targets>3&remains<2+(spell_targets>=5)&combo_points>=4
-            if A.CrimsonTempest:IsReady(unit) and
+            if A.CrimsonTempest:IsReady(player) and
             GetByRange(3, 10, true) and 
-			Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) < 2 + num(GetByRange(5, 10)) and 
+			Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < 2 + num(GetByRange(5, 10)) and 
 			Player:ComboPoints() >= 4
 			then 
                 return A.CrimsonTempest:Show(icon)                 
@@ -1779,22 +1757,32 @@ A[3] = function(icon, isMulti)
             end
 			
             -- crimson_tempest,target_if=min:remains,if=spell_targets>1&spell_targets<4&remains<2&combo_points>=4
-            if A.CrimsonTempest:IsReady(unit) and
+            if A.CrimsonTempest:IsReady(player) and
             GetByRange(1, 40, true) and 
 			GetByRange(4, 10, false, true) and 
-			Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) < 2 and 
+			Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < 2 and 
 			Player:ComboPoints() >= 4 
 			then 
                 return A.CrimsonTempest:Show(icon) 
             end
 			
             -- crimson_tempest,if=spell_targets=1&combo_points>=(cp_max_spend-1)&refreshable&!exsanguinated&!debuff.toxic_blade.up&master_assassin_remains=0&!azerite.twist_the_knife.enabled&target.time_to_die-remains>4
-            if A.CrimsonTempest:IsReady(unit) and (MultiUnits:GetByRange(40) == 1 and Player:ComboPoints() >= (CPMaxSpend() - 1) and Unit("player"):HasBuffsRefreshable(A.CrimsonTempestBuff.ID, true) and not A.Exsanguinated(Unit(unit), "CrimsonTempest") and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0 and MasterAssassinRemains == 0 and A.TwisttheKnife:GetAzeriteRank() == 0 and Unit(unit):TimeToDie() - Unit("player"):HasBuffs(A.CrimsonTempestBuff.ID, true) > 4) then
+            if A.CrimsonTempest:IsReady(player) and 
+			(
+			    --MultiUnits:GetByRange(10) == 1 and 
+				Player:ComboPoints() >= (CPMaxSpend() - 1) and 
+				Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) < A.GetGCD() + 0.1 and 
+				not Exsanguinated(unit, "CrimsonTempest") and 
+				Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0 and 
+				MasterAssassinRemains == 0 and 
+				A.TwisttheKnife:GetAzeriteRank() == 0 and
+				Unit(unit):TimeToDie() - Unit(unit):HasDeBuffs(A.CrimsonTempest.ID, true) > 4) 
+			then
                 return A.CrimsonTempest:Show(icon)
             end
             
             -- crimson_tempest,if=spell_targets>(7-buff.envenom.up)&combo_points>=4+talent.deeper_stratagem.enabled&!debuff.vendetta.up&!debuff.toxic_blade.up&!azerite.twist_the_knife.enabled&energy.deficit<=25+variable.energy_regen_combined
-            if A.CrimsonTempest:IsReady(unit) and (GetByRange(7 - num(Unit("player"):HasBuffs(A.EnvenomBuff.ID, true) > 0), 10, true) and Player:ComboPoints() >= 4 + num(A.DeeperStratagem:IsSpellLearned()) and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0 and A.TwisttheKnife:GetAzeriteRank() == 0 and Player:EnergyDeficitPredicted() <= 25 + VarEnergyRegenCombined) then
+            if A.CrimsonTempest:IsReady(player) and (GetByRange(7 - num(Unit("player"):HasBuffs(A.Envenom.ID, true) > 0), 10, true) and Player:ComboPoints() >= 4 + num(A.DeeperStratagem:IsSpellLearned()) and Unit(unit):HasDeBuffs(A.Vendetta.ID, true) == 0 and Unit(unit):HasDeBuffs(A.ToxicBladeDebuff.ID, true) == 0 and A.TwisttheKnife:GetAzeriteRank() == 0 and Player:EnergyDeficitPredicted() <= 25 + VarEnergyRegenCombined) then
                 return A.CrimsonTempest:Show(icon)
             end
         end
