@@ -57,7 +57,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     EscapeArtist                         = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                   = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics Spells
-    DreadfulCalling                      = Action.Create({ Type = "Spell", ID = 278727     }),
+    DreadfulCalling                      = Action.Create({ Type = "Spell", ID = 279650     }), -- Azerite traits
     SummonImp                            = Action.Create({ Type = "Spell", ID = 688        }),    
     SummonVoidwalker                     = Action.Create({ Type = "Spell", ID = 697        }),
     SummonFelhunter                      = Action.Create({ Type = "Spell", ID = 691        }),
@@ -84,7 +84,7 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
     CascadingCalamity                    = Action.Create({ Type = "Spell", ID = 275372     }),
     SowtheSeeds                          = Action.Create({ Type = "Spell", ID = 196226     }),
     PetKick                              = Action.Create({ Type = "SpellSingleColor", ID = 119910, Color = "RED", Desc = "RED Color for Pet Target kick" }),  
-    FearGreen                            = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", QueueForbidden = true }),	
+    FearGreen                            = Action.Create({ Type = "SpellSingleColor", ID = 5782, Color = "GREEN", Desc = "[2] Kick", Hidden = true, QueueForbidden = true }),	
     Fear                                 = Action.Create({ Type = "Spell", ID = 5782       }),
     SpellLock                            = Action.Create({ Type = "Spell", ID = 119898     }),
     DispellMagic                         = Action.Create({ Type = "Spell", ID = 111400     }),
@@ -134,19 +134,19 @@ Action[ACTION_CONST_WARLOCK_AFFLICTION] = {
 	RotandDecay                          = Action.Create({ Type = "Spell", ID = 212371, Hidden = true        }), -- Drain Life increasing dots duration by 1sec per tick
 	Soulshatter                          = Action.Create({ Type = "Spell", ID = 212356     }), -- Big burst on multi target 
     -- Trinkets
-    TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                         = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
+    TrinketTest                          = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }),
+    TrinketTest2                         = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
+    AzsharasFontofPower                  = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    PocketsizedComputationDevice         = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    RotcrustedVoodooDoll                 = Action.Create({ Type = "Trinket", ID = 159624, Hidden = true, QueueForbidden = true }),
+    ShiverVenomRelic                     = Action.Create({ Type = "Trinket", ID = 168905, Hidden = true, QueueForbidden = true }),
+    AquipotentNautilus                   = Action.Create({ Type = "Trinket", ID = 169305, Hidden = true, QueueForbidden = true }),
+    TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }),
+    VialofStorms                         = Action.Create({ Type = "Trinket", ID = 158224, Hidden = true, QueueForbidden = true }),
     -- Potions
-    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }),
-	AbyssalHealingPotion    			 = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }),	
-    PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
+    PotionofUnbridledFury                = Action.Create({ Type = "Potion", ID = 169299, Hidden = true, QueueForbidden = true }),
+	AbyssalHealingPotion    			 = Action.Create({ Type = "Potion", ID = 169451, Hidden = true, QueueForbidden = true }),	
+    PotionTest                           = Action.Create({ Type = "Potion", ID = 142117, Hidden = true, QueueForbidden = true }),
     -- Misc
     CyclotronicBlast                     = Action.Create({ Type = "Spell", ID = 293491, Hidden = true}),
     ConcentratedFlameBurn                = Action.Create({ Type = "Spell", ID = 295368, Hidden = true}),
