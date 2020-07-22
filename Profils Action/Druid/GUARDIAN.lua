@@ -67,17 +67,17 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     EscapeArtist                           = Action.Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
-    BearFormBuff                           = Action.Create({ Type = "Spell", ID = 5487 }),
+    BearFormBuff                           = Action.Create({ Type = "Spell", ID = 5487, Hidden = true }),
     BearForm                               = Action.Create({ Type = "Spell", ID = 5487 }),
     CatForm                                = Action.Create({ Type = "Spell", ID = 768     }),
     HeartEssence                           = Action.Create({ Type = "Spell", ID = 298554 }),
     LightsJudgment                         = Action.Create({ Type = "Spell", ID = 255647 }),
     Barkskin                               = Action.Create({ Type = "Spell", ID = 22812 }),
-    LunarBeam                              = Action.Create({ Type = "Spell", ID = 204066 }),
+    LunarBeam                              = Action.Create({ Type = "Spell", ID = 204066, predictName = "LunarBeam" }),
     BristlingFur                           = Action.Create({ Type = "Spell", ID = 155835 }),
     Incarnation                            = Action.Create({ Type = "Spell", ID = 102558 }),
     MoonfireDebuff                         = Action.Create({ Type = "Spell", ID = 164812 }),
-    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102558 }),
+    IncarnationBuff                        = Action.Create({ Type = "Spell", ID = 102558, Hidden = true }),
     ThrashBearDebuff                       = Action.Create({ Type = "Spell", ID = 192090 }),
     Maul                                   = Action.Create({ Type = "Spell", ID = 6807 }),
     Ironfur                                = Action.Create({ Type = "Spell", ID = 192081 }),
@@ -101,55 +101,46 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
 	Soothe                                = Action.Create({ Type = "Spell", ID = 2908   }),
 	Growl                                 = Action.Create({ Type = "Spell", ID = 6795   }),
 	StampedingRoar                        = Action.Create({ Type = "Spell", ID = 77761   }),
+	Rebirth                               = Action.Create({ Type = "Spell", ID = 20484     }),  -- Combat Rez
     -- Defensive
 	SurvivalInstincts                     = Action.Create({ Type = "Spell", ID = 61336   }),
-	FrenziedRegeneration                  = Action.Create({ Type = "Spell", ID = 22842   }),
+	FrenziedRegeneration                  = Action.Create({ Type = "Spell", ID = 22842, predictName = "FrenziedRegeneration"   }),
     -- Buffs
-    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081 }),
-    PulverizeBuff                         = Action.Create({ Type = "Spell", ID = 158792     }),
-    IncarnationBuff                       = Action.Create({ Type = "Spell", ID = 102558     }),
-    GalacticGuardianBuff                  = Action.Create({ Type = "Spell", ID = 213708     }),
-    SharpenedClawsBuff                    = Action.Create({ Type = "Spell", ID = 279943     }),
+    IronfurBuff                            = Action.Create({ Type = "Spell", ID = 192081, Hidden = true }),
+    PulverizeBuff                         = Action.Create({ Type = "Spell", ID = 158792, Hidden = true     }),
+    IncarnationBuff                       = Action.Create({ Type = "Spell", ID = 102558, Hidden = true     }),
+    GalacticGuardianBuff                  = Action.Create({ Type = "Spell", ID = 213708, Hidden = true     }),
+    SharpenedClawsBuff                    = Action.Create({ Type = "Spell", ID = 279943, Hidden = true     }),
 	-- Debuffs 
-    ThrashBearDebuff                      = Action.Create({ Type = "Spell", ID = 192090     }),
-    MoonfireDebuff                        = Action.Create({ Type = "Spell", ID = 164812     }),
-    -- Trinkets
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }), 
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }), 
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }), 
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }), 
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }), 
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }), 
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }), 
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }), 
+    ThrashBearDebuff                      = Action.Create({ Type = "Spell", ID = 192090, Hidden = true     }),
+    MoonfireDebuff                        = Action.Create({ Type = "Spell", ID = 164812, Hidden = true     }), 
     -- Potions
-    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
-    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
-	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
-    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }), 
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, Hidden = true, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, Hidden = true, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, Hidden = true, QueueForbidden = true }), 
+	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, Hidden = true, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, Hidden = true, QueueForbidden = true }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, Hidden = true, QueueForbidden = true }), 
     -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, Hidden = true, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, Hidden = true, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, Hidden = true, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, Hidden = true, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, Hidden = true, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, Hidden = true, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, Hidden = true, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, Hidden = true, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, Hidden = true, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, Hidden = true, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
     -- Misc
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
@@ -164,34 +155,6 @@ Action[ACTION_CONST_DRUID_GUARDIAN] = {
     VisionofPerfectionMinor                = Action.Create({ Type = "Spell", ID = 296320, Hidden = true}),
     VisionofPerfectionMinor2               = Action.Create({ Type = "Spell", ID = 299367, Hidden = true}),
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
-    UnleashHeartOfAzeroth                  = Action.Create({ Type = "Spell", ID = 280431, Hidden = true}),
-    BloodoftheEnemy                        = Action.Create({ Type = "HeartOfAzeroth", ID = 297108, Hidden = true}),
-    BloodoftheEnemy2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298273, Hidden = true}),
-    BloodoftheEnemy3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 298277, Hidden = true}),
-    ConcentratedFlame                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295373, Hidden = true}),
-    ConcentratedFlame2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299349, Hidden = true}),
-    ConcentratedFlame3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299353, Hidden = true}),
-    GuardianofAzeroth                      = Action.Create({ Type = "HeartOfAzeroth", ID = 295840, Hidden = true}),
-    GuardianofAzeroth2                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299355, Hidden = true}),
-    GuardianofAzeroth3                     = Action.Create({ Type = "HeartOfAzeroth", ID = 299358, Hidden = true}),
-    FocusedAzeriteBeam                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295258, Hidden = true}),
-    FocusedAzeriteBeam2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299336, Hidden = true}),
-    FocusedAzeriteBeam3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299338, Hidden = true}),
-    PurifyingBlast                         = Action.Create({ Type = "HeartOfAzeroth", ID = 295337, Hidden = true}),
-    PurifyingBlast2                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299345, Hidden = true}),
-    PurifyingBlast3                        = Action.Create({ Type = "HeartOfAzeroth", ID = 299347, Hidden = true}),
-    TheUnboundForce                        = Action.Create({ Type = "HeartOfAzeroth", ID = 298452, Hidden = true}),
-    TheUnboundForce2                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299376, Hidden = true}),
-    TheUnboundForce3                       = Action.Create({ Type = "HeartOfAzeroth", ID = 299378, Hidden = true}),
-    RippleinSpace                          = Action.Create({ Type = "HeartOfAzeroth", ID = 302731, Hidden = true}),
-    RippleinSpace2                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302982, Hidden = true}),
-    RippleinSpace3                         = Action.Create({ Type = "HeartOfAzeroth", ID = 302983, Hidden = true}),
-    WorldveinResonance                     = Action.Create({ Type = "HeartOfAzeroth", ID = 295186, Hidden = true}),
-    WorldveinResonance2                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298628, Hidden = true}),
-    WorldveinResonance3                    = Action.Create({ Type = "HeartOfAzeroth", ID = 299334, Hidden = true}),
-    MemoryofLucidDreams                    = Action.Create({ Type = "HeartOfAzeroth", ID = 298357, Hidden = true}),
-    MemoryofLucidDreams2                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299372, Hidden = true}),
-    MemoryofLucidDreams3                   = Action.Create({ Type = "HeartOfAzeroth", ID = 299374, Hidden = true}), 
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),	 
 };
 
@@ -207,6 +170,9 @@ local function bool(val)
     return val ~= 0
 end
 
+local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
+local player = "player"
+
 ------------------------------------------
 -------------- COMMON PREAPL -------------
 ------------------------------------------
@@ -221,6 +187,7 @@ local Temp = {
 	TotalAndMagKick                         = {"TotalImun", "DamageMagicImun", "KickImun"},
     DisablePhys                             = {"TotalImun", "DamagePhysImun", "Freedom", "CCTotalImun"},
     DisableMag                              = {"TotalImun", "DamageMagicImun", "Freedom", "CCTotalImun"},
+	BigDeff                                 = {A.SurvivalInstincts.ID},
 }
 
 local IsIndoors, UnitIsUnit = IsIndoors, UnitIsUnit
@@ -250,136 +217,52 @@ local function Thrash()
   end
 end
 
+
 -- SelfDefensives
 local function SelfDefensives()
-    local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
-		
-    if Unit("player"):CombatTime() == 0 then 
+    local HPLoosePerSecond = math.max((Unit(player):GetDMG() * 100 / Unit(player):HealthMax()) - (Unit(player):GetHEAL() * 100 / Unit(player):HealthMax()), 0)
+
+	
+    if Unit(player):CombatTime() == 0 then 
         return 
     end 
-
-		
-    -- Emergency Ironfur
-        local Ironfur = Action.GetToggle(2, "IronfurHP")
-        if     Ironfur >= 0 and A.Ironfur:IsReady("player") and
-        (
-            (   -- Auto 
-                Ironfur >= 100 and 
-                (
-                    -- HP lose per sec >= 2
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 2 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.02 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                Ironfur < 100 and 
-                Unit("player"):HealthPercent() <= Ironfur
-            )
-        ) 
-        then 
-            return A.Ironfur
-        end  		
-
-        -- Emergency FrenziedRegeneration
-        local FrenziedRegeneration = Action.GetToggle(2, "FrenziedRegenerationHP")
-        if     FrenziedRegeneration >= 0 and A.FrenziedRegeneration:IsReady("player") and Unit("player"):HasBuffs(A.FrenziedRegeneration.ID, true) == 0 and
-        (
-            (   -- Auto 
-                FrenziedRegeneration >= 100 and 
-                (
-                    -- HP lose per sec >= 5
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-					-- Custom logic with current HPS and DMG
-					Unit("player"):HealthPercent() <= 85 or
-					Unit("player"):GetHEAL() * 2 < Unit("player"):GetDMG() or
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                FrenziedRegeneration < 100 and 
-                Unit("player"):HealthPercent() <= FrenziedRegeneration
-            )
-        ) 
-        then 
-            return A.FrenziedRegeneration
-        end  		
-		
-        -- Emergency Barkskin
-        local Barkskin = Action.GetToggle(2, "BarkskinHP")
-        if     Barkskin >= 0 and A.Barkskin:IsReady("player") and 
-        (
-            (   -- Auto 
-                Barkskin >= 100 and 
-                (
-                    -- HP lose per sec >= 10
-                    Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 10 or 
-                    Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.10 or 
-                    -- TTD 
-                    Unit("player"):TimeToDieX(25) < 5 or 
-					-- Custom logic with current HPS and DMG
-					Unit("player"):HealthPercent() <= 65 or
-                    (
-                        A.IsInPvP and 
-                        (
-                            Unit("player"):UseDeff() or 
-                            (
-                                Unit("player", 5):HasFlags() and 
-                                Unit("player"):GetRealTimeDMG() > 0 and 
-                                Unit("player"):IsFocused() 
-                            )
-                        )
-                    )
-                ) 
-            ) or 
-            (    -- Custom
-                Barkskin < 100 and 
-                Unit("player"):HealthPercent() <= Barkskin
-            )
-        ) 
-    then 
-        return A.Barkskin
-    end  
 	
-    -- Survival Instincts
-    local SurvivalInstincts = Action.GetToggle(2, "SurvivalInstinctsHP")
-    if     SurvivalInstincts >= 0 and A.SurvivalInstincts:IsReady("player") and Unit("player"):HasBuffs(A.SurvivalInstincts.ID, true) == 0 and
+    -- memory_of_lucid_dreams
+    if A.MemoryofLucidDreams:AutoHeartOfAzerothP(player, true) and Action.GetToggle(1, "HeartOfAzeroth") then 
+	    local LucidDreamTTD = GetToggle(2, "LucidDreamTTD")	
+	    local LucidDreamHP = GetToggle(2, "LucidDreamHP")
+            
+        if  (    
+                ( LucidDreamHP      >= 0     or LucidDreamTTD                    >= 0                                        ) and 
+                ( LucidDreamHP      <= 0     or Unit(player):HealthPercent()     <= LucidDreamHP                             ) and 
+                ( LucidDreamTTD     <= 0     or Unit(player):TimeToDie()         <= LucidDreamTTD                            ) 
+            )                 
+        then                
+            return A.MemoryofLucidDreams
+        end 
+    end
+			
+    -- Ironfur (any role, whenever have physical damage)
+	local IronfurHPLost = GetToggle(2, "IronfurHPLost")
+    if Player:Rage() >= A.Ironfur:GetSpellPowerCost() and HPLoosePerSecond >= IronfurHPLost and A.Ironfur:IsReady(player) and Unit(player):HasBuffs(A.SurvivalInstincts.ID, true) == 0 and Unit(player):GetRealTimeDMG(3) > 0 then 
+        return A.Ironfur
+    end 
+
+    -- Emergency FrenziedRegeneration
+    local FrenziedRegeneration = Action.GetToggle(2, "FrenziedRegenerationHP")
+    if     FrenziedRegeneration >= 0 and A.FrenziedRegeneration:IsReady("player") and Unit("player"):HasBuffs(A.FrenziedRegeneration.ID, true) == 0 and
     (
         (   -- Auto 
-            SurvivalInstincts >= 100 and 
+            FrenziedRegeneration >= 100 and 
             (
-                -- HP lose per sec >= 15
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 25 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.25 or 
+                -- HP lose per sec >= 5
+                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 15 or 
+                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.15 or 
                 -- TTD 
                 Unit("player"):TimeToDieX(25) < 5 or 
 				-- Custom logic with current HPS and DMG
-				Unit("player"):HealthPercent() <= 45 or
+				Unit("player"):HealthPercent() <= 85 or
+	    		Unit("player"):GetHEAL() * 2 < Unit("player"):GetDMG() or
                 (
                     A.IsInPvP and 
                     (
@@ -394,93 +277,183 @@ local function SelfDefensives()
             ) 
         ) or 
         (    -- Custom
-            SurvivalInstincts < 100 and 
-            Unit("player"):HealthPercent() <= SurvivalInstincts
+            FrenziedRegeneration < 100 and 
+            Unit("player"):HealthPercent() <= FrenziedRegeneration
         )
     ) 
     then 
-        return A.SurvivalInstincts
+        return A.FrenziedRegeneration
+    end 
+			
+    -- SurvivalInstincts
+    if A.SurvivalInstincts:IsReadyByPassCastGCD(player) then 
+        local SI_HP                 = A.GetToggle(2, "SurvivalInstinctsHP")
+        local SI_TTD                = A.GetToggle(2, "SurvivalInstinctsTTD")
+            
+        if  (    
+                ( SI_HP     >= 0     or SI_TTD                              >= 0                                        ) and 
+                ( SI_HP     <= 0     or Unit(player):HealthPercent()     <= SI_HP                                    ) and 
+                ( SI_TTD     <= 0     or Unit(player):TimeToDie()         <= SI_TTD      )  
+            ) 
+			or 
+            (
+                A.GetToggle(2, "SurvivalInstinctsCatchKillStrike") and 
+                (
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD() + A.GetCurrentGCD()
+                )
+            )                
+        then
+            -- Ironfur
+            if A.Ironfur:IsReadyByPassCastGCD(player) and Player:Rage() >= A.Ironfur:GetSpellPowerCostCache() and Unit(player):HasBuffs(A.IronfurBuff.ID, true) == 0 and Unit(player):HasBuffs(A.SurvivalInstincts.ID, true) == 0 then  
+                return A.Ironfur        -- #4
+            end 
+                
+            -- SurvivalInstincts
+            return A.SurvivalInstincts         -- #3                  
+             
+        end 
+    end
+
+    -- Barkskin	
+    if A.Barkskin:IsReadyByPassCastGCD(player) and (not A.GetToggle(2, "BarkskinIgnoreBigDeff") or Unit(player):HasBuffs(Temp.BigDeff, true) == 0) then 
+        local BS_HP                 = A.GetToggle(2, "BarkskinHP")
+        local BS_TTD                = A.GetToggle(2, "BarkskinTTD")
+            
+        if  (    
+                ( BS_HP     >= 0     or BS_TTD                              >= 0                                     ) and 
+                ( BS_HP     <= 0     or Unit(player):HealthPercent()     <= BS_HP                                    ) and 
+                ( BS_TTD    <= 0     or Unit(player):TimeToDie()         <= BS_TTD                                   ) 
+            ) 
+		    or 
+            (
+                A.GetToggle(2, "BarkskinCatchKillStrike") and 
+                (
+                    ( Unit(player):GetDMG()         >= Unit(player):Health() and Unit(player):HealthPercent() <= 20 ) or 
+                    Unit(player):GetRealTimeDMG() >= Unit(player):Health() or 
+                    Unit(player):TimeToDie()         <= A.GetGCD()
+                )
+            )                
+        then                
+            return A.Barkskin
+        end 
+    end 
+
+	-- SuperiorSteelskinPotion
+    local SuperiorSteelskinPotion = A.GetToggle(2, "SuperiorSteelskinPotionHP")
+    if     SuperiorSteelskinPotion >= 0 and A.SuperiorSteelskinPotion:IsReady(player) and 
+    (
+        (     -- Auto 
+            SuperiorSteelskinPotion >= 100 and 
+            (
+                -- HP lose per sec >= 20
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
+                -- TTD 
+                Unit(player):TimeToDieX(20) < 3 or 
+				GetByRange(5, 15) and Unit(player):HealthPercent() <= 25 and Player:AreaTTD(15) > 20 or
+                (
+                    A.IsInPvP and 
+                    (
+                        Unit(player):UseDeff() or 
+                        (
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
+                        )
+                    )
+                )
+            ) and 
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
+        ) or 
+        (    -- Custom
+            SuperiorSteelskinPotion < 100 and 
+            Unit(player):HealthPercent() <= SuperiorSteelskinPotion
+        )
+    ) 
+    then 
+        return A.SuperiorSteelskinPotion
     end
 	
-		    -- HealingPotion
+	-- HealingPotion
     local AbyssalHealingPotion = A.GetToggle(2, "AbyssalHealingPotionHP")
-    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady("player") and 
+    if     AbyssalHealingPotion >= 0 and A.AbyssalHealingPotion:IsReady(player) and 
     (
         (     -- Auto 
             AbyssalHealingPotion >= 100 and 
             (
                 -- HP lose per sec >= 20
-                Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax() >= 20 or 
-                Unit("player"):GetRealTimeDMG() >= Unit("player"):HealthMax() * 0.20 or 
+                Unit(player):GetDMG() * 100 / Unit(player):HealthMax() >= 10 or 
+                Unit(player):GetRealTimeDMG() >= Unit(player):HealthMax() * 0.10 or 
                 -- TTD 
-                Unit("player"):TimeToDieX(25) < 5 or 
+                Unit(player):TimeToDieX(20) < 5 or 
                 (
                     A.IsInPvP and 
                     (
-                        Unit("player"):UseDeff() or 
+                        Unit(player):UseDeff() or 
                         (
-                            Unit("player", 5):HasFlags() and 
-                            Unit("player"):GetRealTimeDMG() > 0 and 
-                            Unit("player"):IsFocused() 
+                            Unit(player, 5):HasFlags() and 
+                            Unit(player):GetRealTimeDMG() > 0 and 
+                            Unit(player):IsFocused() 
                         )
                     )
                 )
             ) and 
-            Unit("player"):HasBuffs("DeffBuffs", true) == 0
+            Unit(player):HasBuffs("DeffBuffs", true) == 0
         ) or 
         (    -- Custom
             AbyssalHealingPotion < 100 and 
-            Unit("player"):HealthPercent() <= AbyssalHealingPotion
+            Unit(player):HealthPercent() <= AbyssalHealingPotion
         )
     ) 
     then 
         return A.AbyssalHealingPotion
-    end 
-	
+    end 			
+
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
+-- TO USE AFTER NEXT ACTION UPDATE
 local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")    
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.SkullBash:IsReady(unit)) -- A.Kick non GCD spell
     local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
-		
-    -- SkullBash
-    if useKick and A.SkullBash:IsReady(unit) then 
-     	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-       	    return A.SkullBash
-       	end 
-   	end 
 	
-   	 -- MightyBash
-   	if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-   	        return A.MightyBash
-   	    end 
-   	end 
+	if castDoneTime > 0 then
+        if useKick and A.SkullBash:IsReady(unit) and A.SkullBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
+            -- Notification                    
+            Action.SendNotification("Skull Bash interrupting on " .. unit, A.SkullBash.ID)
+            return A.SkullBash
+        end         
 
- 	 -- IncapacitatingRoar
-   	if useCC and EnemiesCasting >= 3 and (not A.MightyBash:IsSpellLearned() or not A.MightyBash:IsReady(unit)) and A.IncapacitatingRoar:IsReady(unit) then 
- 		if Unit(unit):CanInterrupt(true, nil, 25, 70) then
+        if useCC and A.MightyBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
+            -- Notification                    
+            Action.SendNotification("Mighty Bash interrupting on " .. unit, A.MightyBash.ID)
+            return A.MightyBash
+        end  
+
+ 	     -- IncapacitatingRoar
+   	    if useCC and EnemiesCasting >= 3 and (not A.MightyBash:IsSpellLearned() or not A.MightyBash:IsReady(unit)) and A.IncapacitatingRoar:IsReady(unit) then 
    	        return A.IncapacitatingRoar
+      	end 
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
    	    end 
-  	end 		
-	    
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
     
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
     
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-end 
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 -- Multidot Handler UI --
@@ -511,10 +484,6 @@ local function HandleMultidots()
 		return false
     end
 	--print(choice)
-end
-
-local function EvaluateCyclePulverize107(unit)
-    return Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == 3
 end
 
 local function EvaluateCycleMoonfire118(unit)
@@ -555,7 +524,6 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
-        local Precombat, Cooldowns
         
 		--Precombat
         local function Precombat(unit)
@@ -750,7 +718,7 @@ A[3] = function(icon, isMulti)
 			
             -- pulverize,target_if=dot.thrash_bear.stack=dot.thrash_bear.max_stacks
             if A.Pulverize:IsReady(unit) then
-                if Action.Utils.CastTargetIf(A.Pulverize, 8, "min", EvaluateCyclePulverize107) then
+                if Unit(unit):HasDeBuffsStacks(A.ThrashBearDebuff.ID, true) == 3 then
                     return A.Pulverize:Show(icon) 
                 end
             end
@@ -786,7 +754,7 @@ A[3] = function(icon, isMulti)
     -- End on EnemyRotation()
 	
     -- bear_form
-    if A.BearForm:IsReady(unit) and inStance ~= 1 then
+    if A.BearForm:IsReady(unit) and inStance ~= 1 and inCombat then
         return A.BearForm:Show(icon)
     end
 	
