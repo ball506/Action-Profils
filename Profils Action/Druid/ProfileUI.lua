@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.2.4 (07.06.2020)",
+    DateTime = "v4.2.6 (22.07.2020)",
     -- Class settings
     [2] = {
         [ACTION_CONST_DRUID_FERAL] = {             
@@ -1712,11 +1712,53 @@ A.Data.ProfileUI = {
                     M = {},
                 },				
             },
-            { -- [4] 4th Row
-
+            { -- Lucid Dream
                 {
-                    E = "LayoutSpace",                                                                         
+                    E = "Header",
+                    L = {
+                        ANY = " -- " .. A.GetSpellInfo(299374) .. " -- ",
+                    },
                 },
+            },
+            { -- [4] 4th Row
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "LucidDreamTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "LucidDreamHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(299374) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(299374) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
             },
             { -- [7] 
                 {
@@ -1725,20 +1767,139 @@ A.Data.ProfileUI = {
                         ANY = " -- Defensives -- ",
                     },
                 },
-            },			
-            { -- [3] 3rd Row 
+            },
+            { -- [1] Barkskin  	
                 {
-                    E = "Slider",                                                     
-                    MIN = -1, 
-                    MAX = 100,                            
-                    DB = "BarkskinHP",
-                    DBV = 100, -- Set healthpercentage @60% life. 
-                    ONOFF = true,
+                    E = "Checkbox", 
+                    DB = "BarkskinIgnoreBigDeff",
+                    DBV = true,
                     L = { 
-                        ANY = A.GetSpellInfo(22812) .. " (%)",
+                        enUS = A.GetSpellInfo(22812) .. "\nSkip if " .. A.GetSpellInfo(61336) .. " used",
+                        ruRU = A.GetSpellInfo(22812) .. "\nSkip if " .. A.GetSpellInfo(61336) .. " used",  
+                        frFR = A.GetSpellInfo(22812) .. "\nSkip if " .. A.GetSpellInfo(61336) .. " used", 
                     }, 
                     M = {},
+                }, 		    
+                {
+                    E = "Checkbox", 
+                    DB = "BarkskinCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(22812) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(22812) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(22812) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
                 },
+            },
+            {			
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "BarkskinTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(22812) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(22812) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(22812) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "BarkskinHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(22812) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(22812) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(22812) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            { -- [1] SurvivalInstincts			    
+                {
+                    E = "Checkbox", 
+                    DB = "SurvivalInstinctsCatchKillStrike",
+                    DBV = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(61336) .. "\nCatch death hit",
+                        ruRU = A.GetSpellInfo(61336) .. "\nCatch death hit",  
+                        frFR = A.GetSpellInfo(61336) .. "\nCatch death hit", 
+                    }, 
+                    TT = { 
+                        enUS = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!", 
+                        ruRU = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",
+                        frFR = "Try to manage to use\nability before receiving a fatal strike\nThis option is not related to other triggers!",  
+                    },
+                    M = {},
+                }, 					
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 20,                            
+                    DB         = "SurvivalInstinctsTTD",
+                    DBV     = 5,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(61336) .. "\n<= time to die (sec)", 
+                        ruRU = A.GetSpellInfo(61336) .. "\n<= time to die (sec)",  
+                        frFR = A.GetSpellInfo(61336) .. "\n<= time to die (sec)",  
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition", 
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                },
+                {
+                    E         = "Slider",                                                     
+                    MIN     = -1, 
+                    MAX     = 100,                            
+                    DB         = "SurvivalInstinctsHP",
+                    DBV     = 20,
+                    ONLYOFF    = true,
+                    L = { 
+                        enUS = A.GetSpellInfo(61336) .. "\n<= health (%)", 
+                        ruRU = A.GetSpellInfo(61336) .. "\n<= health (%)",  
+                        frFR = A.GetSpellInfo(61336) .. "\n<= health (%)", 
+                    }, 
+                    TT = { 
+                        enUS = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",
+                        ruRU = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                        frFR = "OFF - The trigger is disabled\n0->100 Less than or equal to the specified percentage of your health\nWARNING: There must be at least one of several triggers turned on\nWhen selecting multiple triggers, they will be synchronized as one general condition",  
+                    },
+                    M = {},
+                }, 
+            }, 
+            { -- [4] 4th Row
+
+                {
+                    E = "LayoutSpace",                                                                         
+                },
+            },			
+            { -- [3] 3rd Row 
                 {
                     E = "Slider",                                                     
                     MIN = -1, 
@@ -1781,7 +1942,7 @@ A.Data.ProfileUI = {
                     E = "Slider",                                                     
                     MIN = -1, 
                     MAX = 100,                            
-                    DB = "IronfurHP",
+                    DB = "IronfurHPLost",
                     DBV = 100, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
@@ -1797,11 +1958,25 @@ A.Data.ProfileUI = {
                     DBV = 70, -- Set healthpercentage @60% life. 
                     ONOFF = true,
                     L = { 
-                        ANY = A.GetSpellInfo(155835) .. " Rage",
+                        ANY = A.GetSpellInfo(155835) .. "\nmin rage",
                     }, 
                     TT = { 
                         enUS = "Minimum rage required before using Bristling Fur", 
                         ruRU = "Minimum rage required before using Bristling Fur", 
+                    }, 
+                    M = {},
+                },
+            },
+            { -- [4] Potions 
+                {
+                    E = "Slider",                                                     
+                    MIN = -1, 
+                    MAX = 100,                            
+                    DB = "SuperiorSteelskinPotionHP",
+                    DBV = 100, -- Set healthpercentage @60% life. 
+                    ONOFF = true,
+                    L = { 
+                        ANY = A.GetSpellInfo(298155) .. " (%)",
                     }, 
                     M = {},
                 },
