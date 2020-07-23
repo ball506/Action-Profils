@@ -359,7 +359,7 @@ function A:PredictHeal(unitID, variation)
 		return Unit(unitID):HealthDeficit() >= total, total 
     end 
     
-    if self.predictName == "HammerofLight" then  
+    if self.predictName == "LightsHammer" then  
 		local desc = self:GetSpellDescription()
 		local castTime = self:GetSpellCastTime()
 		
