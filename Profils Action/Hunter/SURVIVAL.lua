@@ -299,11 +299,18 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.CounterShot:IsReadyByPassCastGCD(unit) or not A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
-    
-	if castDoneTime > 0 then
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit)) 
+	
+	if castRemainsTime < A.GetLatency() then
         -- CounterShot
         if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
             return A.CounterShot
@@ -337,7 +344,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	-- Custom Spells remap
     local WildfireBomb = CurrentWildfireInfusion()
     local CurrentRaptorStrike = CurrentRaptorStrike()
