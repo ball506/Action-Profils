@@ -83,17 +83,17 @@ Action[ACTION_CONST_PRIEST_DISCIPLINE] = {
     Rapture                                   = Create({ Type = "Spell", ID = 47536}),
     PainSuppression                           = Create({ Type = "Spell", ID = 33206}),
     PowerWordBarrier                          = Create({ Type = "Spell", ID = 62618}),
-    PowerWordRadiance                         = Create({ Type = "Spell", ID = 194509}),
+    PowerWordRadiance                         = Create({ Type = "Spell", ID = 194509, predictName = "PowerWordRadiance"}),
 	Shadowfiend                               = Create({ Type = "Spell", ID = 34433}),
     -- Healing   
-    PowerWordShield                           = Create({ Type = "Spell", ID = 17}),
-    ShadowMend                                = Create({ Type = "Spell", ID = 186263}),
-    Penance                                   = Create({ Type = "Spell", ID = 47540}),
+    PowerWordShield                           = Create({ Type = "Spell", ID = 17, predictName = "PowerWordShield"}),
+    ShadowMend                                = Create({ Type = "Spell", ID = 186263, predictName = "ShadowMend"}),
+    Penance                                   = Create({ Type = "Spell", ID = 47540, predictName = "PenanceHeal"}),
     -- Damage       
     ShadowWordPain                            = Create({ Type = "Spell", ID = 589}),    
-    PenanceDMG                                = Create({ Type = "Spell", ID = 47540, Texture = 23018}),
+    PenanceDMG                                = Create({ Type = "Spell", ID = 47540, Texture = 23018, Hidden = true, predictName = "PenanceDMG"}),
     Smite                                     = Create({ Type = "Spell", ID = 585}),
-	HolyNova                                  = Create({ Type = "Spell", ID = 132157}),
+	HolyNova                                  = Create({ Type = "Spell", ID = 132157, predictName = "HolyNova"}),
     -- Utilities
     LeapofFaith                               = Create({ Type = "Spell", ID = 73325}),
 	Fade                                      = Create({ Type = "Spell", ID = 586}),
@@ -126,10 +126,10 @@ Action[ACTION_CONST_PRIEST_DISCIPLINE] = {
     ShiningForce                              = Create({ Type = "Spell", ID = 204263, isTalent = true}), -- Talent 4/3
     SinsoftheMany                             = Create({ Type = "Spell", ID = 280391, isTalent = true}), -- Talent 5/1
     Contrition                                = Create({ Type = "Spell", ID = 197419, isTalent = true}), -- Talent 5/2
-    ShadowCovenant                            = Create({ Type = "Spell", ID = 204065, isTalent = true}), -- Talent 5/3
+    ShadowCovenant                            = Create({ Type = "Spell", ID = 204065, isTalent = true, predictName = "ShadowCovenant"}), -- Talent 5/3
     PurgetheWicked                            = Create({ Type = "Spell", ID = 204197, isTalent = true}), -- Talent 6/1
-    DivineStar                                = Create({ Type = "Spell", ID = 110744, isTalent = true}), -- Talent 6/2
-    Halo                                      = Create({ Type = "Spell", ID = 120517, isTalent = true}), -- Talent 6/3
+    DivineStar                                = Create({ Type = "Spell", ID = 110744, isTalent = true, predictName = "DivineStar"}), -- Talent 6/2
+    Halo                                      = Create({ Type = "Spell", ID = 120517, isTalent = true, predictName = "Halo"}), -- Talent 6/3
     Lenience                                  = Create({ Type = "Spell", ID = 238063, isTalent = true}), -- Talent 7/1
     LuminousBarrier                           = Create({ Type = "Spell", ID = 271466, isTalent = true}), -- Talent 7/2
     Evangelism                                = Create({ Type = "Spell", ID = 246287, isTalent = true}), -- Talent 7/3
@@ -845,6 +845,37 @@ local StunsBlackList = {
     [161241] = "Voidweaver Mal'thir",
 }
 
+local function GetMobsBySpell(count, spellId, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetBySpell(spellId, count)
+end
+
+local function GetMobsByRange(count, range, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetByRange(range)
+end
+
+local function AoE(count, num, reaction) 
+    if not reaction  then reaction = "enemy" end  
+    if not num 	 then num = 40 end 
+	
+	local units 
+	if num <= ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE then
+		units = GetMobsByRange(count, num, reaction)
+	else 
+		units = GetMobsBySpell(count, num, reaction)
+	end                         
+               
+    if not count then
+        return units or 0
+    else
+        return units and units >= count
+    end    
+end
 
 -- Return valid members that can be healed
 --@parameter IsPlayer : return only members that are real players
@@ -1208,7 +1239,7 @@ local function RefreshVars()
         -- Member's controllers
         VarFrequency = HealingEngine.GetHealthFrequency(GetGCD() * 3 + GetCurrentGCD())
         -- Enemies 
-        VarAoE12 = AoE(nil, 12)
+        VarAoE12 = AoE(nil, 12) 
         VarAoE30 = (A.Halo:IsSpellLearned() and A.Halo:IsReady() and AoE(nil, 30)) or 0
         -- AoE healing 
         -- Toggle dependence
@@ -1427,7 +1458,6 @@ local function CanRaptureAoE(hp)
     return false 
 end 
 
-
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
 
@@ -1453,7 +1483,8 @@ A[3] = function(icon, isMulti)
 		-- Vars
 		local useDispel, useShields, useHoTs, useUtils = HealingEngine.GetOptionsByUnitID(unit)
         local unitGUID = UnitGUID(unit)	
-
+        local getmembersAll = HealingEngine.GetMembersAll()
+		
         -- RESS ALL PEOPLE
         if A.MassResurrection:IsReady(player) and
         Unit(player):CombatTime() == 0 and
@@ -1956,7 +1987,7 @@ A[3] = function(icon, isMulti)
                                 TeamCache.Friendly.Size <= 5 and
                                 (
                                     VarFrequency >= 40 or
-                                    HealingEngine.GetBelowHealthPercentercentUnits(45) >= 3
+                                    HealingEngine.GetBelowHealthPercentUnits(45) >= 3
                                 )                        
                             ) or
                             (
@@ -1965,7 +1996,7 @@ A[3] = function(icon, isMulti)
                             )
                         )
                     ) or    
-                    HealingEngine.GetBelowHealthPercentercentUnits(50) >= 5
+                    HealingEngine.GetBelowHealthPercentUnits(50) >= 5
                 ) 
             ) or
             -- Self
@@ -3131,12 +3162,12 @@ A[3] = function(icon, isMulti)
             (
                 TR.CanHeal(A.HolyNova.ID):Mouse() and 
                 Unit("mouseover"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("mouseover", nil, VarAoE12)
+                A.HolyNova:PredictHeal("mouseover", nil, MultiUnits:GetByRange(12))
             ) or 
             (
                 TR.CanHeal(A.HolyNova.ID):Target() and
                 Unit("target"):GetRange() <= 12 and        
-                A.HolyNova:PredictHeal("target", nil, VarAoE12)
+                A.HolyNova:PredictHeal("target", nil, MultiUnits:GetByRange(12))
             )    
         )
 		then
