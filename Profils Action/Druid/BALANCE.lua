@@ -412,6 +412,50 @@ local function SelfDefensives()
 end
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+			
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.SkullBash:IsReadyByPassCastGCD(unit) or not A.SkullBash:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
+local function Interrupts(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+    
+	if castRemainsTime < A.GetLatency() then
+  	    -- SolarBeam
+  	    if useKick and A.SolarBeam:IsReady() and A.SolarBeam:IsSpellLearned() then 
+		    -- Notification					
+            Action.SendNotification("Solar Beam on: " .. UnitName(unit), A.SolarBeam.ID) 
+            return A.SolarBeam
+        end         
+
+        if useCC and A.MightyBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
+            -- Notification                    
+            Action.SendNotification("Mighty Bash interrupting on " .. unit, A.MightyBash.ID)
+            return A.MightyBash
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 local function IsInHumanForm()
     return Player:GetStance() == 0
 end
@@ -441,7 +485,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit(player):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local CaIncID = CaIncID()
 	local CaInc = CaInc()
 	local MultiDot = A.GetToggle(2, "MultiDot")
@@ -735,28 +779,15 @@ A[3] = function(icon, isMulti)
             end
 			
 		    -- Interrupt Handler 	 	
-  		    local unit = "target"
-   		    local useKick, useCC, useRacial = Action.InterruptIsValid(unit, "TargetMouseover")    
+  		    local unit = "target"   
             local Trinket1IsAllowed, Trinket2IsAllowed = TR.TrinketIsAllowed()
 	        local castLeft, _, spellID, _, notKickAble = Unit(unit):IsCastingRemains()
 		
-  	        -- SolarBeam
-  	        if useKick and A.SolarBeam:IsReady() and A.SolarBeam:IsSpellLearned() then 
-		      	if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-				    -- Notification					
-                    Action.SendNotification("Solar Beam on: " .. UnitName(unit), A.SolarBeam.ID) 
-          	        return A.SolarBeam:Show(icon)
-             	end 
-          	end 	
-			
-     	    -- MightyBash
-      	    if useCC and A.MightyBash:IsSpellLearned() and A.MightyBash:IsReady(unit) then 
-	  		    if Unit(unit):CanInterrupt(true, nil, 25, 70) then
-				    -- Notification					
-                    Action.SendNotification("Mighty Bash on: " .. UnitName(unit), A.MightyBash.ID) 
-     	            return A.MightyBash:Show(icon)
-     	        end 
-     	    end 	
+		    -- Interrupt
+   	        local Interrupt = Interrupts(unit)
+  	        if Interrupt and inCombat then 
+  	            return Interrupt:Show(icon)
+  	        end			
 			
 			-- Soothe
 			if unit ~= "targettarget" and A.Soothe:IsReady(unit, nil, nil, true) 
