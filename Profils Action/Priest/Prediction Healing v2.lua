@@ -44,7 +44,9 @@ function A:PredictHeal(unitID, variation, enemies)
 		defaultVariation = variation
 		variation = math_max(variation - 1 + GetToggle(8, "ManaManagementPredictVariation"), 1)		
 	end    
-   
+    
+	local enemies = enemies or 0
+	
     -- Class things
     -- Discipline
     if Unit("player"):HasSpec(256) then 
@@ -331,7 +333,7 @@ function A:PredictHeal(unitID, variation, enemies)
 		if PO[6] then 
 			absorbNegative = Unit(unitID):GetTotalHealAbsorbs()
 		end 
-		
+		local cast = Unit("player"):CastTime(120517) + A.GetCurrentGCD()
 		local withoutOptions = (desc[1] * variation) + ((AtonementBuff > cast and desc[1] * 0.55 * enemies) or 0) 
 		local total = withoutOptions + incHeal - incDMG + HoTs + absorbPossitive - absorbNegative
 		
@@ -373,7 +375,7 @@ function A:PredictHeal(unitID, variation, enemies)
 			absorbNegative = Unit(unitID):GetTotalHealAbsorbs()
 		end 
 		
-		local withoutOptions = (desc[2] * variation) + ((AtonementBuff > cast and desc[1] * 0.55 * enemies) or 0) 
+		local withoutOptions = (desc[2] * variation) + ((AtonementBuff > 0 and desc[1] * 0.55 * enemies) or 0) 
 		local total = withoutOptions + incHeal - incDMG + HoTs + absorbPossitive - absorbNegative
 		
 		return Unit(unitID):HealthDeficit() >= total, total           
