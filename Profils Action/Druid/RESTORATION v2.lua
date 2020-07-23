@@ -500,32 +500,42 @@ local function SelfDefensives()
 end 
 SelfDefensives = Action.MakeFunctionCachedDynamic(SelfDefensives)
 
--- Interrupts
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.SkullBash:IsReadyByPassCastGCD(unit) or not A.SkullBash:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial = A.InterruptIsValid(unit, "TargetMouseover")
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-    if useCC and A.MightyBash:IsReady(unit) and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("stun", 0) then 
-        return A.MightyBash              
-    end             
+	if castRemainsTime < A.GetLatency() then
+        -- MightyBash
+        if useCC and A.MightyBash:IsReady(unit) and A.MightyBash:IsSpellLearned() and A.MightyBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
+            -- Notification                    
+            Action.SendNotification("Mighty Bash interrupting on " .. unit, A.MightyBash.ID)
+            return A.MightyBash
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
     
-    if useRacial and A.QuakingPalm:AutoRacial(unit, nil, nil, true) then 
-        return A.QuakingPalm
-    end 
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
     
-    if useRacial and A.Haymaker:AutoRacial(unit, nil, nil, true) then 
-        return A.Haymaker
-    end 
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit, nil, nil, true) then 
-        return A.WarStomp
-    end 
-    
-    if useRacial and A.BullRush:AutoRacial(unit, nil, nil, true) then 
-        return A.BullRush
-    end      
-    
-end 
-Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
 
 -- Return average DMG taken from all our current member team
 -- DEPRECATED SEE FriendlyTeam:GetLastTimeDMGX(x, range)
@@ -1335,7 +1345,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5)
 	local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
 	local AVG_HPS = HealingEngine.GetIncomingHPSAVG()
