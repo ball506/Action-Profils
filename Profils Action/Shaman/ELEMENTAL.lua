@@ -527,6 +527,57 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.WindShear:IsReadyByPassCastGCD(unit) or not A.Kick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
+local function Interrupts(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+        
+	if castRemainsTime < A.GetLatency() then
+	    -- WindShear
+        if useKick and A.WindShear:IsReady(unit) then 
+	        -- Notification					
+            Action.SendNotification("Wind Shear interrupting on " .. unit, A.WindShear.ID)
+            return A.WindShear
+        end 
+	
+        -- CapacitorTotem
+        if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady(player) then 
+			-- Notification					
+            Action.SendNotification("Capacitor Totem interrupting", A.CapacitorTotem.ID)
+            return A.CapacitorTotem
+        end  
+    
+        -- Hex	
+        if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+	        -- Notification					
+            Action.SendNotification("Hex interrupting", A.Hex.ID)
+            return A.Hex              
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 --- ======= ACTION LISTS =======
 -- [3] Single Rotation
 A[3] = function(icon, isMulti)
@@ -536,7 +587,7 @@ A[3] = function(icon, isMulti)
     local isMoving = Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local AppliedFlameShock = MultiUnits:GetByRangeAppliedDoTs(Action.GetToggle(2, "MultiDotDistance"), 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
     local FlameShockToRefresh = MultiUnits:GetByRangeDoTsToRefresh(Action.GetToggle(2, "MultiDotDistance"), 5, 188389, 5)
     local MissingFlameShock = MultiUnits:GetByRangeMissedDoTs(Action.GetToggle(2, "MultiDotDistance"), 5, 188389) --MultiDots(40, A.FlameShockDebuff, 15, 4) --MultiUnits:GetByRangeMissedDoTs(40, 10, 188389)  MultiUnits:GetByRangeMissedDoTs(range, stop, dots, ttd)
@@ -549,6 +600,12 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
+
+    	-- Interrupt
+        local Interrupt = Interrupts(unit)
+        if Interrupt then 
+            return Interrupt:Show(icon)
+        end	
 
         --Precombat
         local function Precombat(unit)
