@@ -722,7 +722,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 local function InterruptsNEW(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.PetKick:IsReady(unit)) -- A.Kick non GCD spell
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) then 
             return A.PetKick
         end 
@@ -830,7 +830,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit(player):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local FutureShard = FutureShard()
     local WildImpsCount, WildImpTotalEnergy, WildImpTotalCastsRemains = GetImpsData(55659, "Wild Imp")
 	local DreadStalkersTime = DreadStalkersTime()
