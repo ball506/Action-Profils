@@ -1477,7 +1477,7 @@ A.Data.ProfileUI                                     = {
                     M = {},
                 },
             },
-            { -- [7] 
+            { -- Lucid Dream
                 {
                     E = "Header",
                     L = {
