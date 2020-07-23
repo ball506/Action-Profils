@@ -494,11 +494,18 @@ local function SelfDefensives(unit)
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.MindFreeze:IsReadyByPassCastGCD(unit) or not A.MindFreeze:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.MindFreeze:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         -- MindFreeze
         if useKick and not notInterruptable and A.MindFreeze:IsReady(unit) then 
             return A.MindFreeze
@@ -585,7 +592,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
 	local IsTanking = Unit(player):IsTanking("target", 8) or Unit(player):IsTankingAoE(8)
 	local HPLoosePerSecond = Unit(player):GetDMG() * 100 / Unit(player):HealthMax()
