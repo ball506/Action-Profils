@@ -402,11 +402,18 @@ A[2] = function(icon)
     end                                                                                 
 end
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.WindShear:IsReadyByPassCastGCD(unit) or not A.Kick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.WindShear:IsReady(unit)) -- A.Kick non GCD spell
-    
-	if castDoneTime > 0 then
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+        
+	if castRemainsTime < A.GetLatency() then
 	    -- WindShear
         if useKick and A.WindShear:IsReady(unit) then 
 	        -- Notification					
@@ -617,7 +624,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
 	local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local CanCast = true
 	local profileStop = false
     local SpiritWolvesTime = SpiritWolvesTime()
