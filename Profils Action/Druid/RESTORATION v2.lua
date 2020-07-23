@@ -1169,6 +1169,38 @@ local StunsBlackList = {
     [161241] = "Voidweaver Mal'thir",
 }
 
+local function GetMobsBySpell(count, spellId, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetBySpell(spellId, count)
+end
+
+local function GetMobsByRange(count, range, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetByRange(range)
+end
+
+local function AoE(count, num, reaction) 
+    if not reaction  then reaction = "enemy" end  
+    if not num 	 then num = 40 end 
+	
+	local units 
+	if num <= ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE then
+		units = GetMobsByRange(count, num, reaction)
+	else 
+		units = GetMobsBySpell(count, num, reaction)
+	end                         
+               
+    if not count then
+        return units or 0
+    else
+        return units and units >= count
+    end    
+end
+
 local function PvPEntanglingRoots(unit)
     return
     Unit(unit):IsMelee() and
