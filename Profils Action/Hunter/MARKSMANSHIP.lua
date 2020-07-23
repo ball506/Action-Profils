@@ -434,11 +434,18 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.CounterShot:IsReadyByPassCastGCD(unit) or not A.CounterShot:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.CounterShot:IsReady(unit)) -- A.Kick non GCD spell
-    
-	if castDoneTime > 0 then
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit)) 
+	
+	if castRemainsTime < A.GetLatency() then
         -- CounterShot
         if useKick and not notInterruptable and A.CounterShot:IsReady(unit) then 
             return A.CounterShot
@@ -561,7 +568,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
 	local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local profileStop = false
 	local MendPet = Action.GetToggle(2, "MendPet")
 	local DBM = Action.GetToggle(1, "DBM")
