@@ -631,7 +631,7 @@ local function EvaluateCycleObliterate728(unit)
 end
 
 local function EvaluateCycleObliterate761(unit)
-    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCDP(1, A.FrostStrike) or Player:PrevGCDP(1, A.HowlingBlast) or Player:PrevGCDP(1, A.GlacialAdvance)))
+    return (Unit(unit):HasDeBuffsStacks(A.RazoriceDebuff.ID, true) < 5 or Unit(unit):HasDeBuffs(A.RazoriceDebuff.ID, true) < 10) and Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCD(1, A.FrostStrike) or Player:PrevGCD(1, A.HowlingBlast) or Player:PrevGCD(1, A.GlacialAdvance)))
 end
 
 local function EvaluateCycleFrostStrike802(unit)
@@ -1201,7 +1201,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- frostscythe,if=(buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance)))&spell_targets.frostscythe>=2
-            if A.Frostscythe:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCDP(1, A.FrostStrike) or Player:PrevGCDP(1, A.HowlingBlast) or Player:PrevGCDP(1, A.GlacialAdvance)))) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
+            if A.Frostscythe:IsReady(unit) and ((Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCD(1, A.FrostStrike) or Player:PrevGCD(1, A.HowlingBlast) or Player:PrevGCD(1, A.GlacialAdvance)))) and MultiUnits:GetByRangeInCombat(8, 5, 10) >= 2) then
                 return A.Frostscythe:Show(icon)
             end
             
@@ -1212,7 +1212,7 @@ A[3] = function(icon, isMulti)
                 end
             end
             -- obliterate,if=buff.killing_machine.react|(buff.killing_machine.up&(prev_gcd.1.frost_strike|prev_gcd.1.howling_blast|prev_gcd.1.glacial_advance))
-            if A.Obliterate:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCDP(1, A.FrostStrike) or Player:PrevGCDP(1, A.HowlingBlast) or Player:PrevGCDP(1, A.GlacialAdvance)))) then
+            if A.Obliterate:IsReady(unit) and (Unit("player"):HasBuffsStacks(A.KillingMachineBuff.ID, true) or (Unit("player"):HasBuffs(A.KillingMachineBuff.ID, true) and (Player:PrevGCD(1, A.FrostStrike) or Player:PrevGCD(1, A.HowlingBlast) or Player:PrevGCD(1, A.GlacialAdvance)))) then
                 return A.Obliterate:Show(icon)
             end
             

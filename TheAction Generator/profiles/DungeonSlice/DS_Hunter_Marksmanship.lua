@@ -608,22 +608,22 @@ A[3] = function(icon, isMulti)
             end
             
             -- berserking,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.berserking.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<13
-            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCDP(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration() + A.BerserkingBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
+            if A.Berserking:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCD(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.Berserking:BaseDuration() + A.BerserkingBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 13) then
                 return A.Berserking:Show(icon)
             end
             
             -- blood_fury,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.blood_fury.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<16
-            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCDP(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration() + A.BloodFuryBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+            if A.BloodFury:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCD(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.BloodFury:BaseDuration() + A.BloodFuryBuff.ID, true:BaseDuration() or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
                 return A.BloodFury:Show(icon)
             end
             
             -- ancestral_call,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.ancestral_call.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<16
-            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCDP(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.AncestralCall:BaseDuration() + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
+            if A.AncestralCall:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCD(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.AncestralCall:BaseDuration() + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 16) then
                 return A.AncestralCall:Show(icon)
             end
             
             -- fireblood,if=prev_gcd.1.trueshot&(target.time_to_die>cooldown.fireblood.duration+duration|(target.health.pct<20|!talent.careful_aim.enabled))|target.time_to_die<9
-            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCDP(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.Fireblood:BaseDuration() + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 9) then
+            if A.Fireblood:AutoRacial(unit) and Racial and A.BurstIsON(unit) and (Player:PrevGCD(1, A.Trueshot) and (Unit(unit):TimeToDie() > A.Fireblood:BaseDuration() + duration or (Unit(unit):HealthPercent() < 20 or not A.CarefulAim:IsSpellLearned())) or Unit(unit):TimeToDie() < 9) then
                 return A.Fireblood:Show(icon)
             end
             
@@ -663,7 +663,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- potion,if=buff.trueshot.react&buff.bloodlust.react|prev_gcd.1.trueshot&target.health.pct<20|((consumable.potion_of_unbridled_fury|consumable.unbridled_fury)&target.time_to_die<61|target.time_to_die<26)
-            if A.PotionofSpectralAgility:IsReady(unit) and Potion and (Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true) and Unit("player"):HasHeroism() or Player:PrevGCDP(1, A.Trueshot) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
+            if A.PotionofSpectralAgility:IsReady(unit) and Potion and (Unit("player"):HasBuffsStacks(A.TrueshotBuff.ID, true) and Unit("player"):HasHeroism() or Player:PrevGCD(1, A.Trueshot) and Unit(unit):HealthPercent() < 20 or ((Unit(unit):HasBuffs(A.PotionofUnbridledFuryBuff.ID, true) or Unit(unit):HasBuffs(A.UnbridledFuryBuff.ID, true)) and Unit(unit):TimeToDie() < 61 or Unit(unit):TimeToDie() < 26)) then
                 return A.PotionofSpectralAgility:Show(icon)
             end
             
@@ -870,12 +870,12 @@ A[3] = function(icon, isMulti)
             end
             
             -- use_item,name=galecallers_boon,if=prev_gcd.1.trueshot|!talent.calling_the_shots.enabled|target.time_to_die<10
-            if A.GalecallersBoon:IsReady(unit) and (Player:PrevGCDP(1, A.Trueshot) or not A.CallingtheShots:IsSpellLearned() or Unit(unit):TimeToDie() < 10) then
+            if A.GalecallersBoon:IsReady(unit) and (Player:PrevGCD(1, A.Trueshot) or not A.CallingtheShots:IsSpellLearned() or Unit(unit):TimeToDie() < 10) then
                 return A.GalecallersBoon:Show(icon)
             end
             
             -- use_item,name=ashvanes_razor_coral,if=prev_gcd.1.trueshot&(buff.guardian_of_azeroth.up|!essence.condensed_lifeforce.major&ca_execute)|debuff.razor_coral_debuff.down|target.time_to_die<20
-            if A.AshvanesRazorCoral:IsReady(unit) and (Player:PrevGCDP(1, A.Trueshot) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and ca_execute) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):TimeToDie() < 20) then
+            if A.AshvanesRazorCoral:IsReady(unit) and (Player:PrevGCD(1, A.Trueshot) and (Unit("player"):HasBuffs(A.GuardianofAzerothBuff.ID, true) or not Azerite:EssenceHasMajor(A.CondensedLifeforce.ID) and ca_execute) or Unit(unit):HasDeBuffsDown(A.RazorCoralDebuff.ID, true) or Unit(unit):TimeToDie() < 20) then
                 return A.AshvanesRazorCoral:Show(icon)
             end
             

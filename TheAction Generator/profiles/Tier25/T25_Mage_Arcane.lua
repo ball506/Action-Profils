@@ -674,7 +674,7 @@ A[3] = function(icon, isMulti)
             end
             
             -- stop_burn_phase,if=burn_phase&prev_gcd.1.evocation&target.time_to_die>variable.average_burn_length&burn_phase_duration>0
-            if (BurnPhase:On() and Player:PrevGCDP(1, A.Evocation) and Unit(unit):TimeToDie() > VarAverageBurnLength and BurnPhase:Duration() > 0) then
+            if (BurnPhase:On() and Player:PrevGCD(1, A.Evocation) and Unit(unit):TimeToDie() > VarAverageBurnLength and BurnPhase:Duration() > 0) then
                 BurnPhase:Stop
             end
             

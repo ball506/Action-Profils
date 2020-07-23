@@ -924,17 +924,17 @@ end
             end
             
             -- agony,if=buff.movement.up&!(talent.siphon_life.enabled&(prev_gcd.1.agony&prev_gcd.2.agony&prev_gcd.3.agony)|prev_gcd.1.agony)
-            if A.Agony:IsReady(unit) and (Unit("player"):IsMoving and not (A.SiphonLife:IsSpellLearned() and (Player:PrevGCDP(1, A.Agony) and Player:PrevGCDP(2, A.Agony) and Player:PrevGCDP(3, A.Agony)) or Player:PrevGCDP(1, A.Agony))) then
+            if A.Agony:IsReady(unit) and (Unit("player"):IsMoving and not (A.SiphonLife:IsSpellLearned() and (Player:PrevGCD(1, A.Agony) and Player:PrevGCD(2, A.Agony) and Player:PrevGCD(3, A.Agony)) or Player:PrevGCD(1, A.Agony))) then
                 return A.Agony:Show(icon)
             end
             
             -- siphon_life,if=buff.movement.up&!(prev_gcd.1.siphon_life&prev_gcd.2.siphon_life&prev_gcd.3.siphon_life)
-            if A.SiphonLife:IsReady(unit) and (Unit("player"):IsMoving and not (Player:PrevGCDP(1, A.SiphonLife) and Player:PrevGCDP(2, A.SiphonLife) and Player:PrevGCDP(3, A.SiphonLife))) then
+            if A.SiphonLife:IsReady(unit) and (Unit("player"):IsMoving and not (Player:PrevGCD(1, A.SiphonLife) and Player:PrevGCD(2, A.SiphonLife) and Player:PrevGCD(3, A.SiphonLife))) then
                 return A.SiphonLife:Show(icon)
             end
             
             -- corruption,if=buff.movement.up&!prev_gcd.1.corruption&!talent.absolute_corruption.enabled
-            if A.Corruption:IsReady(unit) and (Unit("player"):IsMoving and not Player:PrevGCDP(1, A.Corruption) and not A.AbsoluteCorruption:IsSpellLearned()) then
+            if A.Corruption:IsReady(unit) and (Unit("player"):IsMoving and not Player:PrevGCD(1, A.Corruption) and not A.AbsoluteCorruption:IsSpellLearned()) then
                 return A.Corruption:Show(icon)
             end
             
@@ -1046,7 +1046,7 @@ end
             end
             
             -- unstable_affliction,if=!variable.use_seed&!prev_gcd.1.summon_darkglare&(talent.deathbolt.enabled&cooldown.deathbolt.remains<=execute_time&!azerite.cascading_calamity.enabled|(soul_shard>=5&spell_targets.seed_of_corruption_aoe<2|soul_shard>=2&spell_targets.seed_of_corruption_aoe>=2)&target.time_to_die>4+execute_time&spell_targets.seed_of_corruption_aoe=1|target.time_to_die<=8+execute_time*soul_shard)
-            if A.UnstableAffliction:IsReady(unit) and (not VarUseSeed and not Player:PrevGCDP(1, A.SummonDarkglare) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() > 0 or (Player:SoulShardsP >= 5 and MultiUnits:GetByRangeInCombat(5, 5, 10) < 2 or Player:SoulShardsP >= 2 and MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(5, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP)) then
+            if A.UnstableAffliction:IsReady(unit) and (not VarUseSeed and not Player:PrevGCD(1, A.SummonDarkglare) and (A.Deathbolt:IsSpellLearned() and A.Deathbolt:GetCooldown() <= A.UnstableAffliction:GetSpellCastTime() and not A.CascadingCalamity:GetAzeriteRank() > 0 or (Player:SoulShardsP >= 5 and MultiUnits:GetByRangeInCombat(5, 5, 10) < 2 or Player:SoulShardsP >= 2 and MultiUnits:GetByRangeInCombat(5, 5, 10) >= 2) and Unit(unit):TimeToDie() > 4 + A.UnstableAffliction:GetSpellCastTime() and MultiUnits:GetByRangeInCombat(5, 5, 10) == 1 or Unit(unit):TimeToDie() <= 8 + A.UnstableAffliction:GetSpellCastTime() * Player:SoulShardsP)) then
                 return A.UnstableAffliction:Show(icon)
             end
             
