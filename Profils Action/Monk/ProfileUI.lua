@@ -14,7 +14,7 @@ local InstanceInfo                                    = A.InstanceInfo
 
 local select                                        = select
 
-A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
+A.Data.ProfileEnabled[Action.CurrentProfile] = true     = true
 A.Data.ProfileUI                                     = {    
     DateTime = "v6 (17.09.2019)",
     [2] = {        

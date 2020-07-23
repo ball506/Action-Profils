@@ -23,9 +23,9 @@ local TR                                            = Action.TasteRotation
 local select, setmetatable							= select, setmetatable
 
 
-A.Data.ProfileEnabled[TMW.db:GetCurrentProfile()]     = true
+A.Data.ProfileEnabled[Action.CurrentProfile] = true     = true
 A.Data.ProfileUI                                     = {    
-    DateTime = "v4.2.2 (16.05.2020)",
+    DateTime = "v4.2.3 (23.07.2020)",
 	-- Class Settings
     [2] = {        
         [ACTION_CONST_WARRIOR_FURY] = {
