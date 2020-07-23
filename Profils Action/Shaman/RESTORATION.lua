@@ -505,34 +505,56 @@ local function SelfDefensives()
     end 
 end 
 
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.WindShear:IsReadyByPassCastGCD(unit) or not A.Kick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial = InterruptIsValid(unit, "TargetMouseover")
-    
-    if useKick and A.WindShear:IsReady(unit) and A.WindShear:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) then 
-        return A.WindShear              
-    end   
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+        
+	if castRemainsTime < A.GetLatency() then
+	    -- WindShear
+        if useKick and A.WindShear:IsReady(unit) then 
+	        -- Notification					
+            Action.SendNotification("Wind Shear interrupting on " .. unit, A.WindShear.ID)
+            return A.WindShear
+        end 
 	
-    if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndPhysAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
-        return A.Hex              
-    end  
-	
-    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
-        return A.QuakingPalm
-    end 
+        -- CapacitorTotem
+        if useCC and Action.GetToggle(2, "UseCapacitorTotem") and A.WindShear:GetCooldown() > 0 and A.CapacitorTotem:IsReady(player) then 
+			-- Notification					
+            Action.SendNotification("Capacitor Totem interrupting", A.CapacitorTotem.ID)
+            return A.CapacitorTotem
+        end  
     
-    if useRacial and A.Haymaker:AutoRacial(unit) then 
-        return A.Haymaker
-    end 
+        -- Hex	
+        if useCC and A.Hex:IsReady(unit) and A.Hex:AbsentImun(unit, Temp.TotalAndCC, true) and Unit(unit):IsControlAble("incapacitate", 0) then 
+	        -- Notification					
+            Action.SendNotification("Hex interrupting", A.Hex.ID)
+            return A.Hex              
+        end  
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
     
-    if useRacial and A.WarStomp:AutoRacial(unit) then 
-        return A.WarStomp
-    end 
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
     
-    if useRacial and A.BullRush:AutoRacial(unit) then 
-        return A.BullRush
-    end      
-	
-end 
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
 Interrupts = A.MakeFunctionCachedDynamic(Interrupts)
 
 local function CanHealingStreamTotem()
@@ -1344,7 +1366,7 @@ A[3] = function(icon, isMulti)
     local isMovingFor = A.Player:IsMovingTime()
     local combatTime = Unit(player):CombatTime()    
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     -- Healing Engine vars
     local ReceivedLast5sec = FriendlyTeam("ALL"):GetLastTimeDMGX(5) --Unit(player):GetLastTimeDMGX(5) -- LastIncDMG(player, 5)
     local AVG_DMG = HealingEngine.GetIncomingDMGAVG()
