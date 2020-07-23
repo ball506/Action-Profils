@@ -784,7 +784,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit("player"):CombatTime() > 0
     local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local RtB_Buffs = RtB_Buffs() 
 	local RtB_Reroll = RtB_Reroll()
 	CheckGoodBuffs()

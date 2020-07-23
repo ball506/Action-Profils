@@ -25,7 +25,9 @@ local setmetatable                          = setmetatable
 local stringformat                          = string.format
 local tableinsert                           = table.insert
 local TR                                    = Action.TasteRotation
-
+local GameLocale                            = _G.GetLocale()
+local StdUi                                 = Action.StdUi -- Custom StdUI with Action shared settings
+local math_random                           = math.random
 -------------------------------------------------------------------------------
 -- Tanks specifics functions
 -------------------------------------------------------------------------------
@@ -610,4 +612,31 @@ function A:TravelTime()
 	    return 0 
 	end
     return ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE / (ProjectileSpeed[self.ID] or 22)
+end
+
+-- Custom BFA Interrupt list
+-- StdUi.Factory[4].PvEContent
+if not StdUi.Factory[4].PvEContent then
+    StdUi.Factory[4].PvEContent = {} 
+	
+    local PvEContent = StdUi.Factory[4].PvEContent
+	PvEContent = StdUi:tGenerateMinMax({
+		[GameLocale] = {	
+			ISINTERRUPT = true,
+            -- Freehold
+			[256060] = "RevitalizingBrew",
+			[257397] = "HealingBalm",
+			[257899] = "PainfulMotivation",
+		--[[	[257736] = "",
+			[257739] = "",
+			[257756] = "",
+			[257784] = "",
+			[257870] = "",
+			[258779] = "",
+			[274383] = "",
+			[274400] = "",
+			[274507] = "",
+			[281420] = "",]]--
+		},			
+	}, 43, 70, math_random(87, 95), true)
 end

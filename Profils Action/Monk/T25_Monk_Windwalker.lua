@@ -288,7 +288,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
     local inCombat = Unit("player"):CombatTime() > 0
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local unit = "player"
 
     ------------------------------------------------------
