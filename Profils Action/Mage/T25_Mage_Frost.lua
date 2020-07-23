@@ -95,6 +95,7 @@ Action[ACTION_CONST_MAGE_FROST] = {
     FreezingRain                           = Action.Create({ Type = "Spell", ID = 240555 }),
 	Shimmer                                = Action.Create({ Type = "Spell", ID = 212653     }),
 	Blink                                  = Action.Create({ Type = "Spell", ID = 1953     }),
+	CounterSpell                           = Action.Create({ Type = "Spell", ID = 2139     }),
     -- Trinkets    
     TidestormCodex                       = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }),
     MalformedHeraldsLegwraps             = Action.Create({ Type = "Trinket", ID = 167835, Hidden = true, QueueForbidden = true }),
@@ -260,6 +261,41 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 	
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
+
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.CounterSpell:IsReadyByPassCastGCD(unit) or not A.CounterSpell:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
+local function Interrupts(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+    
+	if castRemainsTime < A.GetLatency() then
+        -- CounterSpell
+        if useKick and not notInterruptable and A.CounterSpell:IsReady(unit) then 
+            return A.CounterSpell
+        end
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
 
 -- Variables
 TR.IFST = {
@@ -506,7 +542,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
  	local profileStop = false
 	local DBM = Action.GetToggle(1, "DBM")
 	local HeartOfAzeroth = Action.GetToggle(1, "HeartOfAzeroth")
@@ -570,6 +606,12 @@ A[3] = function(icon, isMulti)
     ---------------- ENEMY UNIT ROTATION -----------------
     ------------------------------------------------------
     local function EnemyRotation(unit)
+
+		-- Interrupts
+        local Interrupt = Interrupts(unit)
+        if inCombat and Interrupt then 
+            return Interrupt:Show(icon)
+        end 
 
         --Precombat
         if combatTime == 0 and not profileStop and Unit(unit):IsExists() and unit ~= "mouseover" then
