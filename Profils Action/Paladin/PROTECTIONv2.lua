@@ -638,11 +638,18 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.Rebuke:IsReadyByPassCastGCD(unit) or not A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Rebuke:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         if useKick and A.Rebuke:IsReady(unit) and A.Rebuke:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
 	        -- Notification					
             Action.SendNotification("Rebuke interrupting...", A.Rebuke.ID)
@@ -1244,7 +1251,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit("player"):CombatTime() > 0
 	local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	-- Trinkets vars
     local Trinket1IsAllowed, Trinket2IsAllowed = TR:TrinketIsAllowed()
 	local expected_combat_length = ExpectedCombatLength()
