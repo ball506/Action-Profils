@@ -75,28 +75,28 @@ Action[ACTION_CONST_PRIEST_HOLY] = {
     EscapeArtist                              = Create({ Type = "Spell", ID = 20589    }), -- not usable in APL but user can Queue it
     EveryManforHimself                        = Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
 	-- Healing Spells
-	Heal                                      = Create({ Type = "Spell", ID = 2060    }),
-	FlashHeal                                 = Create({ Type = "Spell", ID = 2061    }),
-	Renew                                     = Create({ Type = "Spell", ID = 139    }),
-	HolyWordSerenity                          = Create({ Type = "Spell", ID = 2050    }),
-	HolyWordSanctify                          = Create({ Type = "Spell", ID = 34861    }),
-	PrayerofHealing                           = Create({ Type = "Spell", ID = 596    }),
-	PrayerofMending                           = Create({ Type = "Spell", ID = 33076    }),
-	PrayerOfMendingHoT                        = Create({ Type = "Spell", ID = 33076    }), -- needed for PredictHeal predict name
-	DivineHymn                                = Create({ Type = "Spell", ID = 64843    }), -- Burst CD
+	Heal                                      = Create({ Type = "Spell", ID = 2060, predictName = "Heal"    }),
+	FlashHeal                                 = Create({ Type = "Spell", ID = 2061, predictName = "FlashHeal"    }),
+	Renew                                     = Create({ Type = "Spell", ID = 139, predictName = "Renew"    }),
+	HolyWordSerenity                          = Create({ Type = "Spell", ID = 2050, predictName = "HolyWordSerenity"    }),
+	HolyWordSanctify                          = Create({ Type = "Spell", ID = 34861, predictName = "HolyWordSanctify"    }),
+	PrayerofHealing                           = Create({ Type = "Spell", ID = 596, predictName = "PrayerofHealing"    }),
+	PrayerofMending                           = Create({ Type = "Spell", ID = 33076, predictName = "PrayerofMending"    }),
+	PrayerOfMendingHoT                        = Create({ Type = "Spell", ID = 33076, Hidden = true, predictName = "PrayerOfMendingHoT"    }), -- needed for PredictHeal predict name
+	DivineHymn                                = Create({ Type = "Spell", ID = 64843, predictName = "DivineHymn"    }), -- Burst CD
 	-- Damage Spells
     HolyWordChastise                          = Create({ Type = "Spell", ID = 88625    }),
 	Smite                                     = Create({ Type = "Spell", ID = 585    }),
-	HolyNova                                  = Create({ Type = "Spell", ID = 132157    }),
+	HolyNova                                  = Create({ Type = "Spell", ID = 132157, predictName = "HolyNova"    }),
 	HolyFire                                  = Create({ Type = "Spell", ID = 14914    }),	
 	-- Talents
     AngelicFeather                            = Create({ Type = "Spell", ID = 121536    }),	
     HolyWordSalvation                         = Create({ Type = "Spell", ID = 265202    }),	
-	Halo                                      = Create({ Type = "Spell", ID = 120517    }),	
-	Apotheosis                                = Create({ Type = "Spell", ID = 200183    }),	
-	CircleofHealing                           = Create({ Type = "Spell", ID = 204883    }),	
+	Halo                                      = Create({ Type = "Spell", ID = 120517, predictName = "Halo"    }),	
+	Apotheosis                                = Create({ Type = "Spell", ID = 200183, predictName = "Apotheosis"    }),	
+	CircleofHealing                           = Create({ Type = "Spell", ID = 204883, predictName = "CircleOfHealing"    }),	
     ShiningForce                              = Create({ Type = "Spell", ID = 204263    }),	
-    BindingHeal                               = Create({ Type = "Spell", ID = 32546    }),	
+    BindingHeal                               = Create({ Type = "Spell", ID = 32546, predictName = "BindingHeal"    }),	
 	TrailofLight                              = Create({ Type = "Spell", ID = 200128    }),	
 	GuardianAngel                             = Create({ Type = "Spell", ID = 200209    }),	
 	SurgeofLight                              = Create({ Type = "Spell", ID = 109186    }),
@@ -117,7 +117,7 @@ Action[ACTION_CONST_PRIEST_HOLY] = {
 	MiracleWorker                             = Create({ Type = "Spell", ID = 235587    }),
 	HolyWordConcentration                     = Create({ Type = "Spell", ID = 289657    }),
 	HolyWard                                  = Create({ Type = "Spell", ID = 213610    }),
-	GreaterHeal                               = Create({ Type = "Spell", ID = 289666    }),
+	GreaterHeal                               = Create({ Type = "Spell", ID = 289666, predictName = "GreaterHeal"    }),
 	CardinalMending                           = Create({ Type = "Spell", ID = 328529    }),
 	SpiritoftheRedeemer                       = Create({ Type = "Spell", ID = 215982    }),		
 	-- Utilities
@@ -356,6 +356,38 @@ local function Interrupts(unit)
     
 end 
 Interrupts = Action.MakeFunctionCachedDynamic(Interrupts)
+
+local function GetMobsBySpell(count, spellId, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetBySpell(spellId, count)
+end
+
+local function GetMobsByRange(count, range, reaction)
+	if reaction == "friendly" then 
+		return 0
+	end 
+    return MultiUnits:GetByRange(range)
+end
+
+local function AoE(count, num, reaction) 
+    if not reaction  then reaction = "enemy" end  
+    if not num 	 then num = 40 end 
+	
+	local units 
+	if num <= ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE then
+		units = GetMobsByRange(count, num, reaction)
+	else 
+		units = GetMobsBySpell(count, num, reaction)
+	end                         
+               
+    if not count then
+        return units or 0
+    else
+        return units and units >= count
+    end    
+end
 
 -- Return valid members that can be healed
 --@parameter IsPlayer : return only members that are real players
@@ -2025,7 +2057,7 @@ A[3] = function(icon, isMulti)
                         TeamCache.Friendly.Size <= 5 and
                         (
                             VarFrequency >= 40 or
-                            HealingEngine.GetBelowHealthPercentercentUnits(45) >= 3
+                            HealingEngine.GetBelowHealthPercentUnits(45) >= 3
                         )                        
                     ) or
                     (
@@ -2034,7 +2066,7 @@ A[3] = function(icon, isMulti)
                     )
                 )
             ) or    
-            HealingEngine.GetBelowHealthPercentercentUnits(60) >= 6
+            HealingEngine.GetBelowHealthPercentUnits(60) >= 6
         )
         then
 		    return A.DivineHymn:Show(icon)
@@ -2069,7 +2101,7 @@ A[3] = function(icon, isMulti)
                         TeamCache.Friendly.Size <= 5 and
                         (
                             VarFrequency >= 35 or
-                            HealingEngine.GetBelowHealthPercentercentUnits(35) >= 3
+                            HealingEngine.GetBelowHealthPercentUnits(35) >= 3
                         )                        
                     ) or
                     (
@@ -2078,7 +2110,7 @@ A[3] = function(icon, isMulti)
                     )
                 )
             ) or    
-            HealingEngine.GetBelowHealthPercentercentUnits(40) >= 6
+            HealingEngine.GetBelowHealthPercentUnits(40) >= 6
         )
         then
 		    return A.HolyWordSalvation:Show(icon)
