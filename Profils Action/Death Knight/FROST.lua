@@ -175,6 +175,7 @@ Action[ACTION_CONST_DEATHKNIGHT_FROST] = {
     VisionofPerfectionMinor3               = Action.Create({ Type = "Spell", ID = 299369, Hidden = true}),
     RecklessForceBuff                      = Action.Create({ Type = "Spell", ID = 302932, Hidden = true     }),
     DummyTest                              = Action.Create({ Type = "Spell", ID = 159999, Hidden = true     }), -- Dummy stop dps icon	
+	FrostwhelpsIndignation                 = Action.Create({ Type = "Spell", ID = 287283, Hidden = true     }), -- Azerite 
 };
 
 -- To create essences use next code:
@@ -250,8 +251,18 @@ end
 
 -- @return boolean  
 -- @parameters count, range are mandatory, others parameters optionals
-local function GetByRange(count, range, isCheckEqual, isCheckCombat)
+local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, isCheckEqual, isCheckCombat)
+	-- @return boolean 
 	local c = 0 
+	
+	if isStrictlySuperior == nil then
+	    isStrictlySuperior = false
+	end
+
+	if isStrictlyInferior == nil then
+	    isStrictlyInferior = false
+	end	
+	
 	for unit in pairs(ActiveUnitPlates) do 
 		if (not isCheckEqual or not UnitIsUnit("target", unit)) and (not isCheckCombat or Unit(unit):CombatTime() > 0) then 
 			if InMelee(unit) then 
@@ -262,13 +273,32 @@ local function GetByRange(count, range, isCheckEqual, isCheckCombat)
 					c = c + 1
 				end 
 			end 
+			-- Strictly superior than >
+			if isStrictlySuperior and not isStrictlyInferior then
+			    if c > count then
+				    return true
+				end
+			end
 			
-			if c >= count then 
-				return true 
-			end 
+			-- Stryctly inferior <
+			if isStrictlyInferior and not isStrictlySuperior then
+			    if c < count then
+			        return true
+				end
+			end
+			
+			-- Classic >=
+			if not isStrictlyInferior and not isStrictlySuperior then
+			    if c >= count then 
+				    return true 
+			    end 
+			end
 		end 
+		
 	end
+	
 end  
+GetByRange = A.MakeFunctionCachedDynamic(GetByRange) 
 
 -- ExpectedCombatLength
 local function ExpectedCombatLength()
@@ -515,11 +545,18 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.MindFreeze:IsReadyByPassCastGCD(unit) or not A.MindFreeze:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.MindFreeze:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         -- MindFreeze
         if useKick and not notInterruptable and A.MindFreeze:IsReady(unit) then 
             return A.MindFreeze:Show(icon)
@@ -566,7 +603,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local DeathStrikeHeal = DeathStrikeHeal()
 	local BoSPoolTime = A.GetToggle(2, "BoSPoolTime")
 	local BoSMinPower = A.GetToggle(2, "BoSMinPower")
@@ -679,6 +716,42 @@ A[3] = function(icon, isMulti)
             --if A.MemoryofLucidDreams:AutoHeartOfAzeroth(unit, true) and Action.GetToggle(1, "HeartOfAzeroth") and (Unit(player):HasBuffs(A.EmpowerRuneWeaponBuff.ID, true) < 5 and Unit(player):HasBuffs(A.BreathofSindragosaBuff.ID, true) > 0 or (Player:RuneTimeToX(2) > A.GetGCD() and Player:RunicPower() < 50)) then
            --     return A.MemoryofLucidDreams:Show(icon)
            -- end
+
+           -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)&(active_enemies=1|!talent.icecap.enabled)|active_enemies>=2&talent.icecap.enabled&cooldown.pillar_of_frost.ready&(azerite.icy_citadel.rank>=1&buff.icy_citadel.up|!azerite.icy_citadel.enabled)
+            if A.BloodoftheEnemy:AutoHeartOfAzerothP(unit, true) and not BloodoftheEnemySyncAoE and Action.GetToggle(1, "HeartOfAzeroth") and 
+			(
+			    Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) and 
+				(
+				    Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 10 and 
+					(
+					    Unit("player"):HasBuffs(A.BreathofSindragosaBuff.ID, true) 
+						or 
+						A.Obliteration:IsSpellLearned() 
+						or 
+						A.Icecap:IsSpellLearned() and not A.IcyCitadel:GetAzeriteRank() > 0
+					)
+					or 
+					Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) > 0 and A.Icecap:IsSpellLearned()
+					or
+					Unit(unit):IsBoss()
+				)
+				and 
+				(
+				    GetByRange(1, 20, false, true) 
+					or 
+					not A.Icecap:IsSpellLearned()
+				)
+				or 
+				GetByRange(2, 20) and A.Icecap:IsSpellLearned() and A.PillarofFrost:GetCooldown() == 0 and 
+				(
+				    A.IcyCitadel:GetAzeriteRank() >= 1 and Unit("player"):HasBuffs(A.IcyCitadelBuff.ID, true) 
+					or 
+					not A.IcyCitadel:GetAzeriteRank() > 0
+				)
+			)
+			then
+                return A.BloodoftheEnemy:Show(icon)
+            end
 			
             -- blood_of_the_enemy,if=buff.pillar_of_frost.up&(buff.pillar_of_frost.remains<10&(buff.breath_of_sindragosa.up|talent.obliteration.enabled|talent.icecap.enabled&!azerite.icy_citadel.enabled)|buff.icy_citadel.up&talent.icecap.enabled)
             if A.BloodoftheEnemy:AutoHeartOfAzeroth(unit, true) and not BloodoftheEnemySyncAoE and Action.GetToggle(1, "HeartOfAzeroth") and 
@@ -868,7 +941,16 @@ A[3] = function(icon, isMulti)
             end	
 			
 			-- howling_blast,if=!dot.frost_fever.ticking&(!talent.breath_of_sindragosa.enabled|cooldown.breath_of_sindragosa.remains>15)
-            if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and (Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) == 0 and (not A.BreathofSindragosa:IsSpellLearned() or A.BreathofSindragosa:GetCooldown() > 15)) then
+            if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and 
+			(
+			    Unit(unit):HasDeBuffs(A.FrostFeverDebuff.ID, true) == 0 and 
+				(
+				    not A.BreathofSindragosa:IsSpellLearned() 
+					or 
+					A.BreathofSindragosa:GetCooldown() > 15
+				)
+			)
+			then
                 return A.HowlingBlast:Show(icon)
             end
             
@@ -1021,10 +1103,20 @@ A[3] = function(icon, isMulti)
        --             return A.EmpowerRuneWeapon:Show(icon)
        --         end	
 				
-                -- pillar_of_frost,if=cooldown.empower_rune_weapon.remains|talent.icecap.enabled
-                if A.PillarofFrost:IsReady(player) and (A.EmpowerRuneWeapon:GetCooldown() > 0 or A.Icecap:IsSpellLearned()) and not A.BreathofSindragosa:IsSpellLearned() then
+                -- pillar_of_frost,if=(cooldown.empower_rune_weapon.remains|talent.icecap.enabled)&!buff.pillar_of_frost.up|talent.icecap.enabled&azerite.frostwhelps_indignation.enabled&buff.pillar_of_frost.remains<2
+                if A.PillarofFrost:IsReady(player) and 
+				(
+				    (
+					    A.EmpowerRuneWeapon:GetCooldown() 
+						or 
+						A.Icecap:IsSpellLearned()
+					)
+					and not Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) 
+					or 
+					A.Icecap:IsSpellLearned() and A.FrostwhelpsIndignation:GetAzeriteRank() > 0 and Unit("player"):HasBuffs(A.PillarofFrostBuff.ID, true) < 2) 
+				then
                     return A.PillarofFrost:Show(icon)
-                end		
+                end	
 			
                 -- empower_rune_weapon,if=(cooldown.pillar_of_frost.ready|Unit(unit):TimeToDie()<20)&talent.breath_of_sindragosa.enabled&runic_power>60
             --    if A.EmpowerRuneWeapon:IsReadyByPassCastGCD(player) and A.PillarofFrost:GetCooldown() == 0 and A.BreathofSindragosa:IsSpellLearned() and Player:RunicPower() > BoSMinPower then
@@ -1091,7 +1183,7 @@ A[3] = function(icon, isMulti)
 			-- run_action_list,name=bos_pooling,if=talent.breath_of_sindragosa.enabled&((cooldown.breath_of_sindragosa.remains=0&cooldown.pillar_of_frost.remains<10)|(cooldown.breath_of_sindragosa.remains<20&Unit(unit):TimeToDie()<35))
             if A.BreathofSindragosa:IsSpellLearned() and A.BreathofSindragosa:GetCooldown() <= BoSPoolTime then
                 -- howling_blast,if=buff.rime.up
-                if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+                if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
                     return A.HowlingBlast:Show(icon)
                 end
 			
@@ -1199,7 +1291,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- howling_blast,if=buff.rime.up
-                if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+                if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
                     return A.HowlingBlast:Show(icon)
                 end
 			
@@ -1286,7 +1378,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- howling_blast,if=buff.rime.up&spell_targetA.howling_blast>=2
-                if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and (Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 and GetByRange(2, 10)) then
+                if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 and GetByRange(2, 10) then
                     return A.HowlingBlast:Show(icon)
                 end
 			
@@ -1301,7 +1393,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- howling_blast,if=buff.rime.up
-                if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+                if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
                     return A.HowlingBlast:Show(icon)
                 end
 			
@@ -1358,7 +1450,7 @@ A[3] = function(icon, isMulti)
                 end
 			
                 -- howling_blast,if=buff.rime.up
-                if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+                if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
                     return A.HowlingBlast:Show(icon)
                 end
 			
@@ -1447,7 +1539,7 @@ A[3] = function(icon, isMulti)
             end
 			
             -- howling_blast,if=buff.rime.up
-            if A.HowlingBlast:IsReady(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(unit):GetRange() < 30 and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
+            if A.HowlingBlast:IsReadyByPassCastGCD(unit) and A.HowlingBlast:AbsentImun(unit, Temp.TotalAndMag) and Unit(player):HasBuffs(A.RimeBuff.ID, true) > 0 then
                 return A.HowlingBlast:Show(icon)
             end
 			
