@@ -422,11 +422,18 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.PetKick:IsReadyByPassCastGCD(unit) or not A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.PetKick:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         if useKick and A.PetKick:IsReady(unit) and A.PetKick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):IsControlAble("stun", 0) then 
             return A.PetKick
         end 
@@ -506,7 +513,7 @@ A[3] = function(icon, isMulti)
     local isMoving = A.Player:IsMoving()
 	local inCombat = Unit("player"):CombatTime() > 0
 	local ShouldStop = Action.ShouldStop()
-	local Pull = Action.BossMods_Pulling()
+	local Pull = Action.BossMods:GetPullTimer()
     local CanMultidot = HandleMultidots()
     local time_to_shard = TimeToShard()
 	local PredictSpells = A.GetToggle(2, "PredictSpells")
