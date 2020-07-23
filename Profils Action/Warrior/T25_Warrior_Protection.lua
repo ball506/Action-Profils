@@ -58,7 +58,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     EveryManforHimself                     = Action.Create({ Type = "Spell", ID = 59752    }), -- not usable in APL but user can Queue it
     -- Generics
     ThunderClap                            = Action.Create({ Type = "Spell", ID = 6343 }),
-    AvatarBuff                             = Action.Create({ Type = "Spell", ID = 107574 }),
+    AvatarBuff                             = Action.Create({ Type = "Spell", ID = 107574, Hidden = true }),
     DemoralizingShout                      = Action.Create({ Type = "Spell", ID = 1160 }),
     BoomingVoice                           = Action.Create({ Type = "Spell", ID = 202743 }),
     LastStandBuff                          = Action.Create({ Type = "Spell", ID = 12975, Hidden = true     }),
@@ -67,7 +67,7 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
     Ravager                                = Action.Create({ Type = "Spell", ID = 228920 }),
     ShieldBlock                            = Action.Create({ Type = "Spell", ID = 2565 }),
     ShieldSlam                             = Action.Create({ Type = "Spell", ID = 23922 }),
-    ShieldBlockBuff                        = Action.Create({ Type = "Spell", ID = 132404 }),
+    ShieldBlockBuff                        = Action.Create({ Type = "Spell", ID = 132404, Hidden = true }),
     UnstoppableForce                       = Action.Create({ Type = "Spell", ID = 275336 }),
     Avatar                                 = Action.Create({ Type = "Spell", ID = 107574 }),
     Devastate                              = Action.Create({ Type = "Spell", ID = 20243 }),
@@ -99,51 +99,51 @@ Action[ACTION_CONST_WARRIOR_PROTECTION] = {
 	SpellReflection                        = Action.Create({ Type = "Spell", ID = 23920     }),
 	HeroicLeap                             = Action.Create({ Type = "Spell", ID = 6544      }),
     -- Potions
-    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, QueueForbidden = true }), 
-    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, QueueForbidden = true }),
-    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, QueueForbidden = true }), 
-	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, QueueForbidden = true }), 
-	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, QueueForbidden = true }), 
-    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, QueueForbidden = true }),
+    PotionofUnbridledFury                  = Action.Create({ Type = "Potion", ID = 169299, Hidden = true, QueueForbidden = true }), 
+    BattlePotionofAgility                  = Action.Create({ Type = "Potion", ID = 163223, Hidden = true, QueueForbidden = true }),
+    SuperiorPotionofUnbridledFury          = Action.Create({ Type = "Potion", ID = 168489, Hidden = true, QueueForbidden = true }), 
+	SuperiorSteelskinPotion                = Action.Create({ Type = "Potion", ID = 168501, Hidden = true, QueueForbidden = true }), 
+	AbyssalHealingPotion                   = Action.Create({ Type = "Potion", ID = 169451, Hidden = true, QueueForbidden = true }), 
+    PotionTest                             = Action.Create({ Type = "Potion", ID = 142117, Hidden = true, QueueForbidden = true }),
     -- Trinkets  
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    DribblingInkpod                        = Action.Create({ Type = "Trinket", ID = 169319, QueueForbidden = true }),
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RazdunksBigRedButton                   = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }),
-    MerekthasFang                          = Action.Create({ Type = "Trinket", ID = 158367, QueueForbidden = true }),
-    KnotofAncientFuryAlliance              = Action.Create({ Type = "Trinket", ID = 161413, QueueForbidden = true }),
-    KnotofAncientFuryHorde                 = Action.Create({ Type = "Trinket", ID = 166795, QueueForbidden = true }),
-    FirstMatesSpyglass                     = Action.Create({ Type = "Trinket", ID = 158163, QueueForbidden = true }),
-    GrongsPrimalRage                       = Action.Create({ Type = "Trinket", ID = 165574, QueueForbidden = true }),
-    LurkersInsidiousGift                   = Action.Create({ Type = "Trinket", ID = 167866, QueueForbidden = true }),
-    NotoriousGladiatorsBadge               = Action.Create({ Type = "Trinket", ID = 167380, QueueForbidden = true }),
-    NotoriousGladiatorsMedallion           = Action.Create({ Type = "Trinket", ID = 167377, QueueForbidden = true }),
-    SinisterGladiatorsBadge                = Action.Create({ Type = "Trinket", ID = 165058, QueueForbidden = true }),
-    SinisterGladiatorsMedallion            = Action.Create({ Type = "Trinket", ID = 165055, QueueForbidden = true }),
-    VialofAnimatedBlood                    = Action.Create({ Type = "Trinket", ID = 159625, QueueForbidden = true }),
-    JesHowler                              = Action.Create({ Type = "Trinket", ID = 159627, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
+    DribblingInkpod                        = Action.Create({ Type = "Trinket", ID = 169319, Hidden = true, QueueForbidden = true }),
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, Hidden = true, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    RazdunksBigRedButton                   = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }),
+    MerekthasFang                          = Action.Create({ Type = "Trinket", ID = 158367, Hidden = true, QueueForbidden = true }),
+    KnotofAncientFuryAlliance              = Action.Create({ Type = "Trinket", ID = 161413, Hidden = true, QueueForbidden = true }),
+    KnotofAncientFuryHorde                 = Action.Create({ Type = "Trinket", ID = 166795, Hidden = true, QueueForbidden = true }),
+    FirstMatesSpyglass                     = Action.Create({ Type = "Trinket", ID = 158163, Hidden = true, QueueForbidden = true }),
+    GrongsPrimalRage                       = Action.Create({ Type = "Trinket", ID = 165574, Hidden = true, QueueForbidden = true }),
+    LurkersInsidiousGift                   = Action.Create({ Type = "Trinket", ID = 167866, Hidden = true, QueueForbidden = true }),
+    NotoriousGladiatorsBadge               = Action.Create({ Type = "Trinket", ID = 167380, Hidden = true, QueueForbidden = true }),
+    NotoriousGladiatorsMedallion           = Action.Create({ Type = "Trinket", ID = 167377, Hidden = true, QueueForbidden = true }),
+    SinisterGladiatorsBadge                = Action.Create({ Type = "Trinket", ID = 165058, Hidden = true, QueueForbidden = true }),
+    SinisterGladiatorsMedallion            = Action.Create({ Type = "Trinket", ID = 165055, Hidden = true, QueueForbidden = true }),
+    VialofAnimatedBlood                    = Action.Create({ Type = "Trinket", ID = 159625, Hidden = true, QueueForbidden = true }),
+    JesHowler                              = Action.Create({ Type = "Trinket", ID = 159627, Hidden = true, QueueForbidden = true }),
     -- Trinkets
-    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, QueueForbidden = true }),
-    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, QueueForbidden = true }),
-    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, QueueForbidden = true }),
-    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, QueueForbidden = true }), 
-    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, QueueForbidden = true }),
-    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, QueueForbidden = true }),
-    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, QueueForbidden = true }),
-    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, QueueForbidden = true }),
-    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, QueueForbidden = true }),
-    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, QueueForbidden = true }),
-    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, QueueForbidden = true }),
-    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, QueueForbidden = true }),
-    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, QueueForbidden = true }),
-    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, QueueForbidden = true }),
-    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, QueueForbidden = true }),
-    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
-    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, QueueForbidden = true }),
+    GenericTrinket1                        = Action.Create({ Type = "Trinket", ID = 114616, Hidden = true, QueueForbidden = true }),
+    GenericTrinket2                        = Action.Create({ Type = "Trinket", ID = 114081, Hidden = true, QueueForbidden = true }),
+    TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }),
+    TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
+    AzsharasFontofPower                    = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    PocketsizedComputationDevice           = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    RotcrustedVoodooDoll                   = Action.Create({ Type = "Trinket", ID = 159624, Hidden = true, QueueForbidden = true }),
+    ShiverVenomRelic                       = Action.Create({ Type = "Trinket", ID = 168905, Hidden = true, QueueForbidden = true }),
+    AquipotentNautilus                     = Action.Create({ Type = "Trinket", ID = 169305, Hidden = true, QueueForbidden = true }),
+    TidestormCodex                         = Action.Create({ Type = "Trinket", ID = 165576, Hidden = true, QueueForbidden = true }),
+    VialofStorms                           = Action.Create({ Type = "Trinket", ID = 158224, Hidden = true, QueueForbidden = true }),
+    GalecallersBoon                        = Action.Create({ Type = "Trinket", ID = 159614, Hidden = true, QueueForbidden = true }),
+    InvocationOfYulon                      = Action.Create({ Type = "Trinket", ID = 165568, Hidden = true, QueueForbidden = true }),
+    LustrousGoldenPlumage                  = Action.Create({ Type = "Trinket", ID = 159617, Hidden = true, QueueForbidden = true }),
+    ComputationDevice                      = Action.Create({ Type = "Trinket", ID = 167555, Hidden = true, QueueForbidden = true }),
+    VigorTrinket                           = Action.Create({ Type = "Trinket", ID = 165572, Hidden = true, QueueForbidden = true }),
+    FontOfPower                            = Action.Create({ Type = "Trinket", ID = 169314, Hidden = true, QueueForbidden = true }),
+    RazorCoral                             = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
+    AshvanesRazorCoral                     = Action.Create({ Type = "Trinket", ID = 169311, Hidden = true, QueueForbidden = true }),
     -- Misc
     Channeling                             = Action.Create({ Type = "Spell", ID = 209274, Hidden = true     }),	-- Show an icon during channeling
     TargetEnemy                            = Action.Create({ Type = "Spell", ID = 44603, Hidden = true     }),	-- Change Target (Tab button)
@@ -516,7 +516,7 @@ SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 local function Interrupts(unit)
     local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Pummel:IsReady(unit)) -- A.Kick non GCD spell
     
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         -- Pummel
         if useKick and A.Pummel:IsReady(unit) and A.Pummel:AbsentImun(unit, Temp.TotalAndPhysKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
             return A.Pummel
@@ -575,7 +575,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
 	local DBM = GetToggle(1 ,"DBM")
 	local Potion = GetToggle(1, "Potion")
 	local Racial = GetToggle(1, "Racial")
