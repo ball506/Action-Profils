@@ -414,12 +414,19 @@ local function SelfDefensives()
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.SkullBash:IsReadyByPassCastGCD(unit) or not A.SkullBash:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.SkullBash:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     local EnemiesCasting = MultiUnits:GetByRangeCasting(10, 5, true, "TargetMouseover")
 	
-	if castDoneTime > 0 then
+	if castRemainsTime < A.GetLatency() then
         if useKick and A.SkullBash:IsReady(unit) and A.SkullBash:AbsentImun(unit, Temp.TotalAndPhysKick, true) then 
             -- Notification                    
             Action.SendNotification("Skull Bash interrupting on " .. unit, A.SkullBash.ID)
@@ -506,7 +513,7 @@ A[3] = function(icon, isMulti)
     local combatTime = Unit("player"):CombatTime()
     local inStance = GetStance()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local ActiveMitigationNeeded = Player:ActiveMitigationNeeded()
 	local IsTanking = Unit("player"):IsTanking("target", 8) or Unit("player"):IsTankingAoE(8)
 	local HPLoosePerSecond = Unit("player"):GetDMG() * 100 / Unit("player"):HealthMax()
