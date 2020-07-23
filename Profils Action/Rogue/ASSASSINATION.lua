@@ -758,12 +758,19 @@ local function RefreshPoisons()
 end
 RefreshPoisons = A.MakeFunctionCachedDynamic(RefreshPoisons)
 
--- TO USE AFTER NEXT ACTION UPDATE
-local function InterruptsNEW(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Kick:IsReady(unit)) -- A.Kick non GCD spell
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.Kick:IsReadyByPassCastGCD(unit) or not A.Kick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
+local function Interrupts(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
-        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	if castRemainsTime < A.GetLatency() then
+        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
             -- Notification                    
             Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
             return A.Kick
