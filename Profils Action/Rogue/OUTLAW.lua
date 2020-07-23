@@ -697,12 +697,19 @@ local function SelfDefensives(unit)
 end 
 SelfDefensives = A.MakeFunctionCachedDynamic(SelfDefensives)
 
--- TO USE AFTER NEXT ACTION UPDATE
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.Kick:IsReadyByPassCastGCD(unit) or not A.Kick:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
 local function Interrupts(unit)
-    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, not A.Kick:IsReady(unit)) -- A.Kick non GCD spell
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
     
-	if castDoneTime > 0 then
-        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) and Unit(unit):CanInterrupt(true, nil, 25, 70) then 
+	if castRemainsTime < A.GetLatency() then
+        if useKick and A.Kick:IsReady(unit) and A.Kick:AbsentImun(unit, Temp.TotalAndMagKick, true) then 
             -- Notification                    
             Action.SendNotification("Kick on : " .. UnitName(unit), A.Kick.ID)
             return A.Kick
@@ -758,7 +765,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit("player"):CombatTime() > 0
     local combatTime = Unit("player"):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     local unit = "player"
     local RtB_Buffs = RtB_Buffs() 
     local RtB_Reroll = RtB_Reroll()
