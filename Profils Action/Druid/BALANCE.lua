@@ -415,7 +415,7 @@ SelfDefensives = A.MakeFunctionCachedStatic(SelfDefensives)
 			
 -- Non GCD spell check
 local function countInterruptGCD(unit)
-    if not A.SkullBash:IsReadyByPassCastGCD(unit) or not A.SkullBash:AbsentImun(unit, Temp.TotalAndMagKick) then
+    if not A.SolarBeam:IsReadyByPassCastGCD(unit) or not A.SolarBeam:AbsentImun(unit, Temp.TotalAndMagKick) then
 	    return true
 	end
 end
