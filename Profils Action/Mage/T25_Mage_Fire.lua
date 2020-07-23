@@ -94,6 +94,7 @@ Action[ACTION_CONST_MAGE_FIRE] = {
 	Blink                                  = Action.Create({ Type = "Spell", ID = 1953     }),
     AlexstraszasFury                       = Action.Create({ Type = "Spell", ID = 235870 }),
     Kindling                               = Action.Create({ Type = "Spell", ID = 155148 }),
+	CounterSpell                           = Action.Create({ Type = "Spell", ID = 2139     }),
     -- Trinkets
     TrinketTest                            = Action.Create({ Type = "Trinket", ID = 122530, Hidden = true, QueueForbidden = true }), 
     TrinketTest2                           = Action.Create({ Type = "Trinket", ID = 159611, Hidden = true, QueueForbidden = true }), 
@@ -296,6 +297,41 @@ local function GetByRange(count, range, isStrictlySuperior, isStrictlyInferior, 
 end  
 GetByRange = A.MakeFunctionCachedDynamic(GetByRange)
 
+-- Non GCD spell check
+local function countInterruptGCD(unit)
+    if not A.CounterSpell:IsReadyByPassCastGCD(unit) or not A.CounterSpell:AbsentImun(unit, Temp.TotalAndMagKick) then
+	    return true
+	end
+end
+
+-- Interrupts spells
+local function Interrupts(unit)
+    local useKick, useCC, useRacial, notInterruptable, castRemainsTime, castDoneTime = Action.InterruptIsValid(unit, nil, nil, countInterruptGCD(unit))
+    
+	if castRemainsTime < A.GetLatency() then
+        -- CounterSpell
+        if useKick and not notInterruptable and A.CounterSpell:IsReady(unit) then 
+            return A.CounterSpell
+        end
+		    
+   	    if useRacial and A.QuakingPalm:AutoRacial(unit) then 
+   	        return A.QuakingPalm
+   	    end 
+    
+   	    if useRacial and A.Haymaker:AutoRacial(unit) then 
+            return A.Haymaker
+   	    end 
+    
+   	    if useRacial and A.WarStomp:AutoRacial(unit) then 
+            return A.WarStomp
+   	    end 
+    
+   	    if useRacial and A.BullRush:AutoRacial(unit) then 
+            return A.BullRush
+   	    end 
+    end
+end
+
 -- Variables
 TR.IFST = {
     CurrStacks = 0,
@@ -416,7 +452,7 @@ A[3] = function(icon, isMulti)
     local inCombat = Unit(player):CombatTime() > 0
     local combatTime = Unit(player):CombatTime()
     local ShouldStop = Action.ShouldStop()
-    local Pull = Action.BossMods_Pulling()
+    local Pull = Action.BossMods:GetPullTimer()
     -- Blink Handler
 	local BlinkAny = A.Shimmer:IsSpellLearned() and A.Shimmer or A.Blink
     
@@ -467,6 +503,12 @@ A[3] = function(icon, isMulti)
     local function EnemyRotation(unit)
 	    -- variable,name=disable_combustion,op=reset
 	    VarDisableCombustion = not A.BurstIsON(unit)
+
+		-- Interrupts
+        local Interrupt = Interrupts(unit)
+        if inCombat and Interrupt then 
+            return Interrupt:Show(icon)
+        end 
 		
         --Precombat
         if combatTime == 0 and not Player:IsMounted() and Unit(unit):IsExists() and unit ~= "mouseover" then
