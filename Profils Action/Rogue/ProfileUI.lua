@@ -25,7 +25,7 @@ local select, setmetatable							= select, setmetatable
 
 A.Data.ProfileEnabled[Action.CurrentProfile] = true
 A.Data.ProfileUI = {    
-    DateTime = "v4.1.3 (24.07.2020)",
+    DateTime = "v4.1.4 (24.07.2020)",
     -- Class settings
     [2] = {        
         [ACTION_CONST_ROGUE_OUTLAW] = {  
@@ -186,6 +186,37 @@ A.Data.ProfileUI = {
 
                 {
                     E = "LayoutSpace",                                                                         
+                },
+            },
+            { -- [2]
+                {
+                    E = "Header",
+                    L = {
+                        ANY = " -- Opener -- ",
+                    },
+                },
+            },
+            {
+                {
+                    E = "Dropdown",                                                         
+                    OT = {
+                        { text = "AUTO", value = "AUTO" },
+                        { text = "AMBUSH", value = "AMBUSH" },
+                        { text = "CHEAPSHOT", value = "CHEAPSHOT" },
+                    },
+                    DB = "OpenerMode",
+                    DBV = "AUTO",
+                    L = { 
+                        enUS = "Opener mode", 
+                        ruRU = "Режим выхода из невидимости",  
+                        frFR = "Mode Opener", 
+                    }, 
+                    TT = { 
+                        enUS = "AUTO : Will automatically open depending of the type of your current target. Ambush for bosses and CheapShot on mobs or players in PvP.\nAMBUSH : Will open with forced Ambush.\nCHEAPSHOT : Will open with forced CheapShot.", 
+                        ruRU = "АВТО: автоматически открывается в зависимости от типа вашей текущей цели. Засада для боссов и CheapShot на мобах или игроках в PvP.\nAMBUSH: Открывается с принудительной засадой.\nCHEAPSHOT: Открывается с принудительной CheapShot.", 
+                        frFR = "AUTO: Fera un open automatiquement en fonction du type de votre cible actuelle. Embuscade pour les boss et CheapShot sur les monstres ou les joueurs en PvP.\nAMBUSH: Fera un open avec Embuscade forcée.\nCHEAPSHOT: Fera un open avec CheapShot forcé..", 
+                    }, 
+                    M = {},
                 },
             },
             { -- [7]
@@ -422,6 +453,7 @@ A.Data.ProfileUI = {
                 {
                     E = "Dropdown",                                                         
                     OT = {
+					    { text = "AUTO", value = "AUTO" },
                         { text = "SIMC", value = "SIMC" },
 						{ text = "MYTHICPLUS", value = "MYTHICPLUS" },
 						{ text = "AOESTRAT", value = "AOESTRAT" },
@@ -434,16 +466,16 @@ A.Data.ProfileUI = {
 						{ text = "TRUEBEARING", value = "TRUEBEARING" },							
                     },
                     DB = "RolltheBonesLogic",
-                    DBV = "SIMC",
+                    DBV = "AUTO",
                     L = { 
                         enUS = "Roll the Bones Logic", 
                         ruRU = "Бросок костей Логика", 
                         frFR = "Logique pour les Jet d’osselets",
                     }, 
                     TT = { 
-                        enUS = "Define the Roll the Bones logic to follow.\n(SimC highly recommended!)", 
-                        ruRU = "Определите логику Бросок костей, которой нужно следовать. \ N (SimC настоятельно рекомендуется!)", 
-                        frFR = "Définissez la logique à suivre pour les Jet d’osselets.(SimC fortement recommandé!)",
+                        enUS = "Define the Roll the Bones logic to follow.\n(SimC or Auto highly recommended!)", 
+                        ruRU = "Определите логику Бросок костей, которой нужно следовать. \ N (SimC or Auto настоятельно рекомендуется!)", 
+                        frFR = "Définissez la logique à suivre pour les Jet d’osselets.(SimC ou Auto fortement recommandé!)",
 					},
                     M = {},
                 }, 
