@@ -1625,7 +1625,7 @@ A[3] = function(icon, isMulti)
                 A.LeapofFaith:IsSpellInRange("mouseover") and      
                 not UnitIsUnit("mouseover", "player") and
                 not Unit("mouseover"):IsTank() and        
-                Unit("mouseover"):TimeToDie() <= GCD() + CurrentTimeGCD() and
+                Unit("mouseover"):TimeToDie() <= GetGCD() + GetCurrentGCD() and
                 Unit("mouseover"):HasBuffs("TotalImun") == 0 and
                 Unit("mouseover"):HasDeBuffs("Rooted") == 0
             ) or 
@@ -1634,7 +1634,7 @@ A[3] = function(icon, isMulti)
                 A.LeapofFaith:IsSpellInRange("target") and       
                 not UnitIsUnit("target", "player") and
                 not Unit("target"):IsTank() and
-                Unit("target"):TimeToDie() <= GCD() + CurrentTimeGCD() and
+                Unit("target"):TimeToDie() <= GetGCD() + GetCurrentGCD() and
                 Unit("target"):HasBuffs("TotalImun") == 0 and
                 Unit("target"):HasDeBuffs("Rooted") == 0
             )
@@ -1718,7 +1718,7 @@ A[3] = function(icon, isMulti)
             Unit("mouseover"):GetRange() <= 24 and
             (
                 not Unit("mouseover"):IsPlayer() or
-                TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                UnitMagicImun("mouseover") <= GetCurrentGCD()
             )
         )
 		then
@@ -1754,7 +1754,7 @@ A[3] = function(icon, isMulti)
             (
                 not Unit("mouseover"):IsPlayer() or
                 (
-                    TR.UnitMagicImun("mouseover") <= GetCurrentGCD() and
+                    UnitMagicImun("mouseover") <= GetCurrentGCD() and
                     -- AMS
                     Unit("mouseover"):HasBuffs(48707, true) <= GetCurrentGCD()
                 )
@@ -1803,7 +1803,7 @@ A[3] = function(icon, isMulti)
                 ) or
                 (
                     Unit("mouseover"):IsPlayer() and
-                    TR.UnitMagicImun("mouseover") <= GetCurrentGCD() and
+                    UnitMagicImun("mouseover") <= GetCurrentGCD() and
                     -- AMS
                     Unit("mouseover"):HasBuffs(48707, true) <= GetCurrentGCD()
                 ) 
@@ -1822,7 +1822,7 @@ A[3] = function(icon, isMulti)
             A.PowerWordSolace:IsSpellInRange("mouseover") and 
             (
                 not Unit("mouseover"):IsPlayer() or
-                TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                UnitMagicImun("mouseover") <= GetCurrentGCD()
             ) 
         )
 		then
@@ -1837,7 +1837,7 @@ A[3] = function(icon, isMulti)
             A.PenanceDMG:IsSpellInRange("mouseover") and                
             (
                 not Unit("mouseover"):IsPlayer() or
-                TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                UnitMagicImun("mouseover") <= GetCurrentGCD()
             )
         )
 		then
@@ -1853,7 +1853,7 @@ A[3] = function(icon, isMulti)
             A.Smite:IsSpellInRange("mouseover") and 
             (
                 not Unit("mouseover"):IsPlayer() or
-                TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                UnitMagicImun("mouseover") <= GetCurrentGCD()
             ) 
         )
 		then
@@ -2156,7 +2156,7 @@ A[3] = function(icon, isMulti)
                         Unit("mouseover"):GetRange() <= 24 and
                         (
                             not UnitIsPlayer("mouseover") or
-                            TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                            UnitMagicImun("mouseover") <= GetCurrentGCD()
                         )
                     )
                 )        
@@ -2167,7 +2167,7 @@ A[3] = function(icon, isMulti)
                 Unit("mouseover"):GetRange() <= 24 and
                 (
                     not Unit("mouseover"):IsPlayer() or
-                    TR.UnitMagicImun("mouseover") <= GetCurrentGCD()
+                    UnitMagicImun("mouseover") <= GetCurrentGCD()
                 )
             ) or 
             (
@@ -2175,7 +2175,7 @@ A[3] = function(icon, isMulti)
                 Unit("target"):GetRange() <= 24 and
                 (
                     not Unit("target"):IsPlayer() or
-                    TR.UnitMagicImun("target") <= GetCurrentGCD()
+                    UnitMagicImun("target") <= GetCurrentGCD()
                 )
             ) or 
             (
@@ -2185,7 +2185,7 @@ A[3] = function(icon, isMulti)
                 Unit("targettarget"):GetRange() <= 24 and
                (
                     not UnitIsPlayer("targettarget") or
-                    TR.UnitMagicImun("targettarget") <= GetCurrentGCD()
+                    UnitMagicImun("targettarget") <= GetCurrentGCD()
                 )
             ) 
         )
@@ -2442,7 +2442,7 @@ A[3] = function(icon, isMulti)
             (
                 not UnitIsPlayer("targettarget") or
                 (
-                    TR.UnitMagicImun("targettarget") <= GetCurrentGCD() and
+                    UnitMagicImun("targettarget") <= GetCurrentGCD() and
                     -- AMS
                     Unit("targettarget"):HasBuffs(48707, true) <= GetCurrentGCD()
                 )
@@ -2465,7 +2465,7 @@ A[3] = function(icon, isMulti)
             A.Penance:IsSpellInRange("targettarget") and         
             (
                 not UnitIsPlayer("targettarget") or
-                TR.UnitMagicImun("targettarget") <= GetCurrentGCD()
+                UnitMagicImun("targettarget") <= GetCurrentGCD()
             )
         )
 		then
@@ -2567,7 +2567,7 @@ A[3] = function(icon, isMulti)
             (
                 not UnitIsPlayer("targettarget") or
                 (
-                    TR.UnitMagicImun("targettarget") <= GetCurrentGCD() and
+                    UnitMagicImun("targettarget") <= GetCurrentGCD() and
                     -- AMS
                     Unit("targettarget"):HasBuffs(48707, true) <= GetCurrentGCD()
                 )
@@ -2817,7 +2817,7 @@ A[3] = function(icon, isMulti)
                 (
                     not Unit("target"):IsPlayer() or
                     (
-                        TR.UnitMagicImun("target") <= GetCurrentGCD() and
+                        UnitMagicImun("target") <= GetCurrentGCD() and
                         -- AMS
                         Unit("target"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2831,7 +2831,7 @@ A[3] = function(icon, isMulti)
                 (
                     not UnitIsPlayer("targettarget") or
                     (
-                        TR.UnitMagicImun("targettarget") <= GetCurrentGCD() and
+                        UnitMagicImun("targettarget") <= GetCurrentGCD() and
                         -- AMS
                         Unit("targettarget"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2869,7 +2869,7 @@ A[3] = function(icon, isMulti)
                     ) or
                     (
                         Unit("target"):IsPlayer() and
-                        TR.UnitMagicImun("target") <= GetCurrentGCD() and
+                        UnitMagicImun("target") <= GetCurrentGCD() and
                         -- AMS
                         Unit("target"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2890,7 +2890,7 @@ A[3] = function(icon, isMulti)
                     ) or
                     (
                         UnitIsPlayer("targettarget") and
-                        TR.UnitMagicImun("targettarget") <= GetCurrentGCD() and
+                        UnitMagicImun("targettarget") <= GetCurrentGCD() and
                         -- AMS
                         Unit("targettarget"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2918,7 +2918,7 @@ A[3] = function(icon, isMulti)
                 (
                     not Unit("target"):IsPlayer() or
                     (
-                        TR.UnitMagicImun("target") <= GetCurrentGCD() and
+                        UnitMagicImun("target") <= GetCurrentGCD() and
                         -- AMS
                         Unit("target"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2930,7 +2930,7 @@ A[3] = function(icon, isMulti)
                 (
                     not UnitIsPlayer("targettarget") or
                     (
-                        TR.UnitMagicImun("targettarget") <= GetCurrentGCD() and
+                        UnitMagicImun("targettarget") <= GetCurrentGCD() and
                         -- AMS
                         Unit("targettarget"):HasBuffs(48707, true) <= GetCurrentGCD()
                     ) 
@@ -2956,7 +2956,7 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     not Unit("target"):IsPlayer() or
-                    TR.UnitMagicImun("target") <= GetCurrentGCD()
+                    UnitMagicImun("target") <= GetCurrentGCD()
                 )
             ) or
             (
@@ -2964,7 +2964,7 @@ A[3] = function(icon, isMulti)
                 A.PenanceDMG:IsSpellInRange("targettarget") and         
                 (
                     not UnitIsPlayer("targettarget") or
-                    TR.UnitMagicImun("targettarget") <= GetCurrentGCD()
+                    UnitMagicImun("targettarget") <= GetCurrentGCD()
                 )
             ) 
         )
@@ -2988,7 +2988,7 @@ A[3] = function(icon, isMulti)
                 ) and
                 (
                     not Unit("target"):IsPlayer() or
-                    TR.UnitMagicImun("target") <= GetCurrentGCD() + Unit("player"):CastTime(ID)
+                    UnitMagicImun("target") <= GetCurrentGCD() + Unit("player"):CastTime(ID)
                 )
             ) or
             (
@@ -2996,7 +2996,7 @@ A[3] = function(icon, isMulti)
                 A.Smite:IsSpellInRange("targettarget") and         
                 (
                     not UnitIsPlayer("targettarget") or
-                    TR.UnitMagicImun("targettarget") <= GetCurrentGCD() + Unit("player"):CastTime(ID)
+                    UnitMagicImun("targettarget") <= GetCurrentGCD() + Unit("player"):CastTime(ID)
                 )
             ) 
         )
