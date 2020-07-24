@@ -1775,7 +1775,7 @@ A[3] = function(icon, isMulti)
                 Unit("mouseover"):IsBoss() or 
                 (
                     Unit("mouseover"):IsPlayer() and
-                    TR.UnitPhysImun("mouseover") <= GetCurrentGCD()
+                    UnitPhysImun("mouseover") <= GetCurrentGCD()
                 )        
             ) 
         )
@@ -2761,7 +2761,7 @@ A[3] = function(icon, isMulti)
                     Unit("target"):IsBoss() or 
                     (
                         Unit("target"):IsPlayer() and
-                        TR.UnitPhysImun("target") <= GetCurrentGCD()
+                        UnitPhysImun("target") <= GetCurrentGCD()
                     )        
                 ) 
             ) or
@@ -2772,7 +2772,7 @@ A[3] = function(icon, isMulti)
                     Unit("targettarget"):IsBoss() or 
                     (
                         UnitIsPlayer("targettarget") and
-                        TR.UnitPhysImun("targettarget") <= GetCurrentGCD()
+                        UnitPhysImun("targettarget") <= GetCurrentGCD()
                     )        
                 )       
             ) 
