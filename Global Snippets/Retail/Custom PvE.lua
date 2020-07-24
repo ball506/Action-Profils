@@ -1,8 +1,8 @@
 ---------------------------------------------------
 ---------------- CUSTOM PVE FUNCTIONS -------------
 ---------------------------------------------------
-local TMW                                   = TMW
-local A     								= Action
+local TMW                                   = _G.TMW
+local A                                     = _G.Action
 local TeamCache								= Action.TeamCache
 local EnemyTeam								= Action.EnemyTeam
 local FriendlyTeam							= Action.FriendlyTeam
@@ -25,9 +25,12 @@ local setmetatable                          = setmetatable
 local stringformat                          = string.format
 local tableinsert                           = table.insert
 local TR                                    = Action.TasteRotation
-local GameLocale                            = _G.GetLocale()
-local StdUi                                 = Action.StdUi -- Custom StdUI with Action shared settings
+local _G, math, setmetatable                = _G, math, setmetatable
+local GameLocale                            = A.FormatGameLocale(_G.GetLocale())
+local StdUi                                 = A.StdUi -- Custom StdUI with Action shared settings
+local Factory                               = StdUi.Factory
 local math_random                           = math.random
+
 -------------------------------------------------------------------------------
 -- Tanks specifics functions
 -------------------------------------------------------------------------------
@@ -614,29 +617,243 @@ function A:TravelTime()
     return ACTION_CONST_CACHE_DEFAULT_NAMEPLATE_MAX_DISTANCE / (ProjectileSpeed[self.ID] or 22)
 end
 
+local L                                     = setmetatable({
+        ruRU = {
+            TasteInterruptName = "BFA Mythic+ & Raid (by Dizzy)",
+        },    
+        enUS = {
+            TasteInterruptName = "BFA Mythic+ & Raid (by Dizzy)",
+        },    
+    }, { __index = function(t) return t.enUS end })
+
+TMW:RegisterCallback("TMW_ACTION_INTERRUPTS_UI_CREATE_CATEGORY", function(callbackEvent, Category)
+        Category.options[#Category.options + 1] = { text = L[GameLocale].TasteInterruptName, value = "PvEContent" }
+        Category:SetOptions(Category.options)
+end)
+
 -- Custom BFA Interrupt list
--- StdUi.Factory[4].PvEContent
-if not StdUi.Factory[4].PvEContent then
-    StdUi.Factory[4].PvEContent = {} 
-	
-    local PvEContent = StdUi.Factory[4].PvEContent
-	PvEContent = StdUi:tGenerateMinMax({
-		[GameLocale] = {	
-			ISINTERRUPT = true,
+-- Factory[4].PvEContent
+-- /dump Action.StdUi.Factory[4].PvEContent[Action.FormatGameLocale(_G.GetLocale())][256060].useCC
+Factory[4].PvEContent = StdUi:tGenerateMinMax({
+        [GameLocale] = {    
+            ISINTERRUPT = true,
             -- Freehold
-			[256060] = "RevitalizingBrew",
-			[257397] = "HealingBalm",
-			[257899] = "PainfulMotivation",
-		--[[	[257736] = "",
-			[257739] = "",
-			[257756] = "",
-			[257784] = "",
-			[257870] = "",
-			[258779] = "",
-			[274383] = "",
-			[274400] = "",
-			[274507] = "",
-			[281420] = "",]]--
-		},			
-	}, 43, 70, math_random(87, 95), true)
-end
+            [256060] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [257397] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [257899] = { useKick = false, useCC = false, useRacial = false }, -- Block
+            [257736] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [257739] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [257756] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [257784] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [257870] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [258779] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [274383] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [274400] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [274507] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [281420] = { useKick = false, useCC = true, useRacial = true }, -- CC
+			-- Atal'Dazar
+            [250096] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [252781] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [252923] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [253562] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [253583] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [253666] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [254959] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [255041] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [255824] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [256849] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [258653] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [259572] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [260668] = { useKick = false, useCC = true, useRacial = true }, -- CC		
+			-- King's Rest
+            [269931] = { useKick = false, useCC = true, useRacial = true }, -- CC	
+            [269972] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [269973] = { useKick = false, useCC = false, useRacial = false }, -- Block
+            [270084] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [270482] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [270492] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [270493] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [270507] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [270872] = { useKick = false, useCC = true, useRacial = true }, -- CC
+            [270901] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+            [270920] = { useKick = true, useCC = true, useRacial = true }, -- All
+            [270923] = { useKick = false, useCC = false, useRacial = false }, -- Block	
+			-- Shrine of the Storm
+[267809] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[267969] = { useKick = true, useCC = true, useRacial = true }, -- All
+[267973] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[267977] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[267981] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268030] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268050] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[268177] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[268273] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268309] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[268317] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268322] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268375] = { useKick = true, useCC = true, useRacial = true }, -- All
+[274437] = { useKick = true, useCC = true, useRacial = true }, -- All
+[274703] = { useKick = true, useCC = true, useRacial = true }, -- All
+[276297] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[276292] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[274631] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268315] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268347] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[267818] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+--[276266]	Purge	
+
+        -- Siege of Boralus	
+[256957] = { useKick = true, useCC = true, useRacial = true }, -- All
+[272571] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[272581] = { useKick = true, useCC = true, useRacial = true }, -- All
+[272588] = { useKick = true, useCC = true, useRacial = true }, -- All
+[274569] = { useKick = true, useCC = true, useRacial = true }, -- All
+[274941] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[256627] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[257641] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[257292] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[256866] = { useKick = false, useCC = true, useRacial = true }, -- CC
+        -- Temple of Seth
+[255741] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[263318] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[263775] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[264574] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265912] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[265968] = { useKick = true, useCC = true, useRacial = true }, -- All
+[267237] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268008] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268061] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268703] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[269116] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[272657] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[272659] = { useKick = true, useCC = true, useRacial = true }, -- All
+[272696] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[272700] = { useKick = true, useCC = true, useRacial = true }, -- All
+[272820] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[274642] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+
+-- Motherload
+[258627] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[262092] = { useKick = true, useCC = true, useRacial = true }, -- All
+[262377] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[262540] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[262554] = { useKick = true, useCC = true, useRacial = true }, -- All
+[262794] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[262947] = { useKick = true, useCC = true, useRacial = true }, -- All
+[263066] = { useKick = true, useCC = true, useRacial = true }, -- All
+[263103] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[263202] = { useKick = true, useCC = true, useRacial = true }, -- All
+[263215] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[267354] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268129] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268702] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268709] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268797] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268865] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[269302] = { useKick = true, useCC = true, useRacial = true }, -- All
+[280604] = { useKick = true, useCC = true, useRacial = true }, -- All
+
+ -- Underrot
+[260879] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[265081] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[265084] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265089] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265091] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265376] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265377] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265433] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[265487] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265523] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[265540] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265568] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[265668] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[266106] = { useKick = true, useCC = true, useRacial = true }, -- All
+[266107] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[266201] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[266209] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[272180] = { useKick = true, useCC = true, useRacial = true }, -- All
+[272183] = { useKick = true, useCC = true, useRacial = true }, -- All
+[278755] = { useKick = true, useCC = true, useRacial = true }, -- All
+[278961] = { useKick = true, useCC = true, useRacial = true }, -- All
+
+-- Tol Dagor	
+[258128] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[258150] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[258153] = { useKick = true, useCC = true, useRacial = true }, -- All
+[258313] = { useKick = true, useCC = true, useRacial = true }, -- All
+[258317] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[258634] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[258864] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[258869] = { useKick = true, useCC = true, useRacial = true }, -- All
+[258917] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[258935] = { useKick = true, useCC = true, useRacial = true }, -- All
+
+-- Waycrest	
+[260699] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[260700] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[260701] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[263891] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[263943] = { useKick = true, useCC = true, useRacial = true }, -- All
+[263959] = { useKick = true, useCC = true, useRacial = true }, -- All
+[264024] = { useKick = false, useCC = false, useRacial = false }, -- Block
+[264050] = { useKick = true, useCC = true, useRacial = true }, -- All
+[264105] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[264153] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[264390] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[264396] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[264520] = { useKick = true, useCC = true, useRacial = true }, -- All
+[264525] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265346] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265368] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265407] = { useKick = true, useCC = true, useRacial = true }, -- All
+[265876] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[266035] = { useKick = true, useCC = true, useRacial = true }, -- All
+[266036] = { useKick = true, useCC = true, useRacial = true }, -- All
+[266225] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[267824] = { useKick = true, useCC = true, useRacial = true }, -- All
+[268202] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[268278] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[271174] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[278444] = { useKick = true, useCC = true, useRacial = true }, -- All
+[278463] = { useKick = true, useCC = true, useRacial = true }, -- All
+[278474] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[278504] = { useKick = true, useCC = true, useRacial = true }, -- All
+[278551] = { useKick = true, useCC = true, useRacial = true }, -- All
+
+-- Workshop	
+[293729] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[293827] = { useKick = true, useCC = true, useRacial = true }, -- All
+[293930] = { useKick = true, useCC = true, useRacial = true }, -- All
+[293986] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[294195] = { useKick = true, useCC = true, useRacial = true }, -- All
+[294290] = { useKick = true, useCC = true, useRacial = true }, -- All
+[294324] = { useKick = false, useCC = true, useRacial = true }, -- CC
+
+-- Junkyard	
+[7289] = { useKick = true, useCC = true, useRacial = true }, -- All
+[299475] = { useKick = false, useCC = true, useRacial = true }, -- CC
+[31532] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[158338] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[284507] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[48604] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[8365] = { useKick = true, useCC = false, useRacial = false }, -- Kick/Purge
+[299415] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[300650] = { useKick = true, useCC = true, useRacial = true }, -- All
+[28995] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[300436] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+
+-- Nyalotha 	
+[316211] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[313652] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[15407] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[310788] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[29184] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[136993] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+
+-- Awakened	
+[314592] = { useKick = true, useCC = true, useRacial = true }, -- All
+[314406] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+[314411] = { useKick = true, useCC = false, useRacial = false }, -- Kick
+
+        },            
+    }, 43, 70, math_random(87, 95), true)
